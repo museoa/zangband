@@ -1370,11 +1370,14 @@ void update_mon(int m_idx, bool full)
 			/* Hack -- Count "fresh" sightings */
 			if (r_ptr->r_sights < MAX_SHORT) r_ptr->r_sights++;
 
+#if 0
 			/* Eldritch Horror */
 			if (r_ptr->flags2 & RF2_ELDRITCH_HORROR)
 			{
 				sanity_blast(m_ptr, FALSE);
 			}
+
+#endif /* 0 */
 
 			/* Disturb on appearance */
 			if (disturb_move)
