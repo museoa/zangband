@@ -1530,7 +1530,7 @@ void field_action_corpse_decay(s16b *field_ptr, vptr nothing)
 		{
 			if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_VIEW)
 			{
-				msg_format("The %s rises.", t_ptr->name);
+				if (disturb_minor) msg_format("The %s rises.", t_ptr->name);
 			}
 
 			/* Set the cloned flag, so no treasure is dropped */
@@ -1541,7 +1541,7 @@ void field_action_corpse_decay(s16b *field_ptr, vptr nothing)
 		else if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_VIEW)
 		{
 			/* Let player know what happened. */
-			msg_format("The %s decays.", t_ptr->name);
+			if (disturb_minor) msg_format("The %s decays.", t_ptr->name);
 		}
 		
 	}
@@ -1550,7 +1550,7 @@ void field_action_corpse_decay(s16b *field_ptr, vptr nothing)
 		if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_VIEW)
 		{
 			/* Let player know what happened. */
-			msg_format("The %s decays.", t_ptr->name);
+			if (disturb_minor) msg_format("The %s decays.", t_ptr->name);
 		}
 	}
 
