@@ -14975,7 +14975,7 @@ extern void borg_flow_direct_dig(int x, int y)
 /*
  * Hack -- mark off the edges of a rectangle as "avoid" or "clear"
  */
-static void borg_flow_border(int y1, int x1, int y2, int x2, bool stop)
+static void borg_flow_border(int x1, int y1, int x2, int y2, bool stop)
 {
 	int x, y;
 
@@ -15383,13 +15383,13 @@ static bool borg_flow_dark_4(int b_stair)
 	x2++;
 
 	/* Avoid the edges */
-	borg_flow_border(y1, x1, y2, x2, TRUE);
+	borg_flow_border(x1, y1, x2, y2, TRUE);
 
 	/* Spread the flow (limit depth) */
 	borg_flow_spread(32, TRUE, TRUE, FALSE);
 
 	/* Clear the edges */
-	borg_flow_border(y1, x1, y2, x2, FALSE);
+	borg_flow_border(x1, y1, x2, y2, FALSE);
 
 
 	/* Attempt to Commit the flow */
