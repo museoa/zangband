@@ -1783,7 +1783,7 @@ W:9:0:5:0
 A:9/2
 F:EASY_KNOW
 L:USE:	msgf("There is a high pitched humming noise.")
-L:USE:	aggravate_monster(0)
+L:USE:	aggravate_monsters(0)
 
 N:203:Trap Creation
 G:?:d
