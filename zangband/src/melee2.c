@@ -23,6 +23,10 @@
 #define CYBERNOISE 20
 
 
+/* Monster fighting indicator */
+bool mon_fight = FALSE;
+
+
 /*
  * Calculate the direction to the next enemy
  */
@@ -214,15 +218,15 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 
 			if (known)
 			{
+				/* Unseen death by normal attack */
+				if (!seen)
+				{
+					mon_fight = TRUE;
+				}
 				/* Death by special attack */
-				if (note)
+				else if (note)
 				{
 					msg_format("%^s%s", m_name, note);
-				}
-				/* Unseen death by normal attack */
-				else if (!seen)
-				{
-					/* Do nothing */
 				}
 				/* Death by normal attack -- nonliving monster */
 				else if (!monster_living(r_ptr))
@@ -1116,7 +1120,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 
 	if (!see_either && known)
 	{
-		msg_print("You hear noise.");
+		mon_fight = TRUE;
 	}
 
 	/* Scan through all four blows */
@@ -1672,7 +1676,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 		}
 		else if (known)
 		{
-			msg_print("You hear laughter!");
+			mon_fight = TRUE;
 		}
 
 		teleport_away(m_idx, MAX_SIGHT * 2 + 5);
@@ -2038,7 +2042,7 @@ static void process_monster(int m_idx)
 	/* Hack! "Cyber" monster makes noise... */
 	if (strstr((r_name + r_ptr->name), "Cyber") &&
 	    (randint(CYBERNOISE) == 1) &&
-	    !m_ptr->ml)
+	    !m_ptr->ml && (m_ptr->cdis <= MAX_SIGHT))
 	{
 		disturb(FALSE, FALSE);
 		msg_print("You hear heavy steps.");
@@ -2892,6 +2896,9 @@ void process_monsters(void)
 
 	int speed;
 
+	/* Clear monster fighting indicators */
+	mon_fight = FALSE;
+
 	/* Memorize old race */
 	old_monster_race_idx = p_ptr->monster_race_idx;
 
@@ -3063,5 +3070,10 @@ void process_monsters(void)
 			/* Window stuff */
 			p_ptr->window |= (PW_MONSTER);
 		}
+	}
+
+	if (mon_fight)
+	{
+		msg_print("You hear noise.");
 	}
 }

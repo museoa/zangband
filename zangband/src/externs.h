@@ -637,6 +637,7 @@ extern void display_roff(int r_idx);
 extern void create_name(int type, char *name);
 
 /* monster2.c */
+extern bool mon_fight;
 extern cptr horror_desc[MAX_SAN_HORROR];
 extern cptr funny_desc[MAX_SAN_FUNNY];
 extern cptr funny_comments[MAX_SAN_COMMENT];

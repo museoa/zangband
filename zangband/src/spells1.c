@@ -1226,6 +1226,9 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	/* Can the player know about this effect? */
 	bool known = (m_ptr->cdis <= MAX_SIGHT);
 
+	/* Can the player see the source of this effect? */
+	bool see_s = ((who <= 0) || m_list[who].ml);
+
 	/* Were the effects "irrelevant"? */
 	bool skipped = FALSE;
 
@@ -3144,7 +3147,17 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			delete_monster_idx(c_ptr->m_idx);
 
 			/* Give detailed messages if destroyed */
-			if (known && note) msg_format("%^s%s", m_name, note);
+			if (known && note)
+			{
+				if (see_s)
+				{
+					msg_format("%^s%s", m_name, note);
+				}
+				else
+				{
+					mon_fight = TRUE;
+				}
+			}
 
 			if (sad)
 			{
@@ -3156,10 +3169,15 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		else
 		{
 			/* Give detailed messages if visible or destroyed */
-			if (note && seen) msg_format("%^s%s", m_name, note);
-
+			if (note && seen)
+			{
+				msg_format("%^s%s", m_name, note);
+			}
 			/* Hack -- Pain message */
-			else message_pain(c_ptr->m_idx, dam);
+			else if (see_s)
+			{
+				message_pain(c_ptr->m_idx, dam);
+			}
 
 			/* Hack -- handle sleep */
 			if (do_sleep) m_ptr->csleep = do_sleep;
@@ -3170,10 +3188,10 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	#ifdef AVATAR
 	else if (heal_leper)
 	{
-		msg_print("The Mangy looking leper is healed!");
+		msg_format("%^s is healed!", m_name);
 		delete_monster_idx(c_ptr->m_idx);
 	}
- 	#endif
+	#endif
 	/* If the player did it, give him experience, check fear */
 	else
 	{
@@ -3193,12 +3211,17 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 
 			/* Give detailed messages if visible or destroyed */
 			if (note && seen)
+			{
 				msg_format("%^s%s", m_name, note);
-
+			}
 			/* Hack -- Pain message */
-			else if (known)
+			else if (see_s)
 			{
 				message_pain(c_ptr->m_idx, dam);
+			}
+			else
+			{
+				mon_fight = TRUE;
 			}
 
 			/* Anger monsters */
