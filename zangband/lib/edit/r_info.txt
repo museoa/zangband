@@ -13415,3 +13415,20 @@ S:HOLD
 D:A swirling, rotating red disk.  A funnel thrusts out, seeking the
 D: one who disturbed the Pattern.
 
+N:877:Storm Troll
+G:T:B
+I:120:40d50:20:55:100
+W:51:2:0:3500
+B:HIT:ELEC:3d10
+B:BITE:HURT:1d22
+B:HIT:COLD:3d10
+B:BITE:HURT:1d22
+F:FORCE_SLEEP | FORCE_MAXHP | 
+F:DROP_3D2 | SMART | TAKE_ITEM | 
+F:OPEN_DOOR | BASH_DOOR | MOVE_BODY | POWERFUL |  OPEN_DOOR | BASH_DOOR |
+F:IM_ACID | IM_COLD | IM_ELEC | TROLL | EVIL
+S:1_IN_7 | 
+S:BA_COLD | BO_ICEE | BO_WATE | BA_ELEC
+D:The dungeon shakes as an enormous troll-form thunders into view, hurling 
+D:ice and lightning in every direction.  It is thirty feet tall, has six 
+D:heads, and is enraged at your impudence.
