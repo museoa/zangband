@@ -22,6 +22,12 @@
 extern list_notice_hook_type old_list_hook;
 extern void borg_list_info(byte list_type);
 
+/* Treat items differently depending on flags */
+#define TREAT_AS_NORM	0	/* Normal item */
+#define TREAT_AS_GONE	1	/* Pretend item doesn't exist */
+#define TREAT_AS_LESS	2	/* Pretend one less item */ 
+
+
 /* Borg functions */
 extern void borg_notice(bool notice_swap);
 extern void borg_notice_home(list_item *l_ptr, bool no_items);

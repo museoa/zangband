@@ -1497,58 +1497,51 @@ bool borg_recharging(void)
 	int i = -1;
 	bool charge = FALSE;
 
-
 	/* Forbid blind/confused */
 	if (borg_skill[BI_ISBLIND] || borg_skill[BI_ISCONFUSED]) return (FALSE);
 
 	/* XXX XXX XXX Dark */
 
 	/* Look for an item to recharge */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		list_item *l_ptr = &inventory[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+		/* Skip empty /unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* Skip non-identified items */
-		if (!item->able) continue;
+		if (!(l_ptr->info & OB_KNOWN)) continue;
 
 		/* assume we can't charge it. */
 		charge = FALSE;
 
 		/* Wands with no charges can be charged */
-		if ((item->tval == TV_WAND) && (item->pval < 1))
+		if ((l_ptr->tval == TV_WAND) && (l_ptr->pval < 1))
 			charge = TRUE;
 
 		/* recharge staves sometimes */
-		if (item->tval == TV_STAFF)
+		if (l_ptr->tval == TV_STAFF)
 		{
-			/* Allow staves to be recharged at 2 charges if
+			/*
+			 * Allow staves to be recharged at 2 charges if
 			 * the borg has the big recharge spell. And its not a *Dest*
 			 */
-			if ((item->pval < 3) &&
+			if ((l_ptr->pval < 3) &&
 				(borg_spell_okay(REALM_SORCERY, 0, 7) ||
 				 borg_spell_okay(REALM_CHAOS, 2, 2) ||
 				 borg_spell_okay(REALM_ARCANE, 3, 0)) &&
-				item->sval < SV_STAFF_POWER)
+				k_info[l_ptr->k_idx].sval < SV_STAFF_POWER)
 				charge = TRUE;
 
 			/* recharge any staff at 0 charges */
-			if (item->pval < 1)
+			if (l_ptr->pval < 1)
 				charge = TRUE;
-
-			/* Staves of teleport get recharged at 2 charges in town */
-			if ((item->sval == SV_STAFF_TELEPORTATION) &&
-				(item->pval < 3) && !borg_skill[BI_CDEPTH])
-				charge = TRUE;
-
 		}
 
 		/* recharge rods that are 'charging' if we have the big recharge */
 		/* spell */
-		if ((item->tval == TV_ROD) && (!item->pval) &&
+		if ((l_ptr->tval == TV_ROD) && l_ptr->timeout &&
 			(borg_spell_okay(REALM_SORCERY, 0, 7) ||
 			 borg_spell_okay(REALM_CHAOS, 2, 2) ||
 			 borg_spell_okay(REALM_ARCANE, 3, 0)))
@@ -1567,7 +1560,7 @@ bool borg_recharging(void)
 			borg_activate_artifact(ART_THINGOL, FALSE))
 		{
 			/* Message */
-			borg_note(format("Recharging %s", item->desc));
+			borg_note(format("Recharging %s", l_ptr->o_name));
 
 			/* Recharge the item */
 			borg_keypress(I2A(i));
@@ -1588,19 +1581,15 @@ bool borg_recharging(void)
 /*
  * Attempt to consume an item
  */
-static bool borg_consume(int i)
+static bool borg_consume(list_item *l_ptr)
 {
-	borg_item *item = &borg_items[i];
-
-
 	/* Special destruction */
-	switch (item->tval)
+	switch (l_ptr->tval)
 	{
 		case TV_POTION:
 		{
-
 			/* Check the potion */
-			switch (item->sval)
+			switch (k_info[l_ptr->k_idx].sval)
 			{
 				case SV_POTION_WATER:
 				case SV_POTION_APPLE_JUICE:
@@ -1631,7 +1620,7 @@ static bool borg_consume(int i)
 				{
 
 					/* Try quaffing the potion */
-					if (borg_quaff_potion(item->sval)) return (TRUE);
+					if (borg_quaff_potion(k_info[l_ptr->k_idx].sval)) return (TRUE);
 				}
 			}
 
@@ -1642,7 +1631,7 @@ static bool borg_consume(int i)
 		{
 
 			/* Check the scroll */
-			switch (item->sval)
+			switch (k_info[l_ptr->k_idx].sval)
 			{
 				case SV_SCROLL_REMOVE_CURSE:
 				case SV_SCROLL_LIGHT:
@@ -1660,7 +1649,7 @@ static bool borg_consume(int i)
 					/* XXX maybe consume Enchant scrolls on items */
 
 					/* Try reading the scroll */
-					if (borg_read_scroll(item->sval)) return (TRUE);
+					if (borg_read_scroll(k_info[l_ptr->k_idx].sval)) return (TRUE);
 				}
 			}
 
@@ -1669,9 +1658,8 @@ static bool borg_consume(int i)
 
 		case TV_FOOD:
 		{
-
 			/* Check the grub */
-			switch (item->sval)
+			switch (k_info[l_ptr->k_idx].sval)
 			{
 				case SV_FOOD_CURE_POISON:
 				case SV_FOOD_CURE_BLINDNESS:
@@ -1689,10 +1677,9 @@ static bool borg_consume(int i)
 				case SV_FOOD_PINT_OF_ALE:
 				case SV_FOOD_PINT_OF_WINE:
 				{
-
 					/* Try eating the food (unless Bloated) */
 					if (!borg_skill[BI_ISFULL] &&
-						borg_eat_food(item->sval)) return (TRUE);
+						borg_eat_food(k_info[l_ptr->k_idx].sval)) return (TRUE);
 				}
 			}
 
@@ -1707,7 +1694,6 @@ static bool borg_consume(int i)
 
 
 
-
 /*
  * Destroy "junk" items
  */
@@ -1717,7 +1703,7 @@ bool borg_crush_junk(void)
 	bool fix = FALSE;
 	s32b p;
 	s32b value;
-
+	
 	/* Hack -- no need */
 	if (!borg_do_crush_junk) return (FALSE);
 
@@ -1726,89 +1712,103 @@ bool borg_crush_junk(void)
 		borg_skill[BI_CURHP] / 10) return (FALSE);
 
 	/* Destroy actual "junk" items */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		list_item *l_ptr = &inventory[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* dont crush the swap weapon */
-		if (i == weapon_swap && item->iqty == 1 &&
-			item->tval != TV_FOOD) continue;
-		if (i == armour_swap && item->tval != TV_FOOD) continue;
-
-		/* Dont crush weapons if we are weilding a digger */
-#if 0
-		if (item->tval >= TV_DIGGING && item->tval <= TV_SWORD &&
-			borg_items[INVEN_WIELD].tval == TV_DIGGING) continue;
-#endif
+		if (i == weapon_swap) continue;
+		if (i == armour_swap) continue;
 
 		/* dont crush our spell books */
-		if (item->tval == mp_ptr->spell_book) continue;
+		if (l_ptr->tval == mp_ptr->spell_book) continue;
 
 		/* save the items value */
-		value = item->value;
+		/* value = item->value; */
+		
+		/* Hack - we need to work this out properly */
+		value = 0;
 
-		/* Crush missiles that aren't mine */
-		if (item->tval == TV_SHOT ||
-			item->tval == TV_ARROW || item->tval == TV_BOLT)
-		{
-			if (item->tval != my_ammo_tval) value = 0L;
-		}
+		/* Try not to crush ammo */
+		if (l_ptr->tval == my_ammo_tval) value = 100L;
 
 		/* Skip non "worthless" items */
-		if (item->tval >= TV_SHOT)
+		if (l_ptr->tval >= TV_FIGURINE)
 		{
-			/* unknown and not worthless */
-			if (!item->able && !strstr(item->desc, "{average") && value > 0)
-				continue;
+			/* unknown? */
+			if (!(l_ptr->info & OB_KNOWN) && !strstr(l_ptr->o_name, "{average")) continue;
+
+#if 0
 
 			/* skip items that are 'valuable'.  This is level dependent */
 			/* try to make the borg junk +1,+1 dagger at level 40 */
 
 			/* if the item gives a bonus to a stat, boost its value */
-			if (((item->flags1 & TR1_STR) ||
-				 (item->flags1 & TR1_INT) ||
-				 (item->flags1 & TR1_WIS) ||
-				 (item->flags1 & TR1_DEX) ||
-				 (item->flags1 & TR1_CON)) && value > 0)
+			if ((l_ptr->flags1 & TR1_STR) ||
+				 (l_ptr->flags1 & TR1_INT) ||
+				 (l_ptr->flags1 & TR1_WIS) ||
+				 (l_ptr->flags1 & TR1_DEX) ||
+				 (l_ptr->flags1 & TR1_CON))
 			{
 				value += 2000L;
 			}
+			
+			/* Get sval */
+			sval = k_info[l_ptr->k_idx].sval;
 
 			/* Keep some stuff */
-			if ((item->tval == my_ammo_tval && value > 0) ||
-				((item->tval == TV_POTION &&
-				  item->sval == SV_POTION_RESTORE_MANA) &&
-				 (borg_skill[BI_MAXSP] >= 1)) || (item->tval == TV_POTION &&
-												  item->sval ==
-												  SV_POTION_HEALING) ||
-				(item->tval == TV_POTION &&
-				 item->sval == SV_POTION_STAR_HEALING) ||
-				(item->tval == TV_POTION && item->sval == SV_POTION_LIFE) ||
-				(item->tval == TV_POTION && item->sval == SV_POTION_SPEED) ||
-				(item->tval == TV_ROD && item->sval == SV_ROD_DRAIN_LIFE) ||
-				(item->tval == TV_ROD &&
-				 (item->sval == SV_ROD_HEALING || item->sval == SV_ROD_MAPPING)
-				 && borg_class == CLASS_WARRIOR) || (item->tval == TV_STAFF &&
-													 item->sval ==
+			if (((l_ptr->tval == TV_POTION &&
+				  sval == SV_POTION_RESTORE_MANA) &&
+				 (borg_skill[BI_MAXSP] >= 1)) || (l_ptr->tval == TV_POTION &&
+												  (sval ==
+												  SV_POTION_HEALING)) ||
+				(l_ptr->tval == TV_POTION &&
+				 sval == SV_POTION_STAR_HEALING) ||
+				(l_ptr->tval == TV_POTION && sval == SV_POTION_LIFE) ||
+				(l_ptr->tval == TV_POTION && sval == SV_POTION_SPEED) ||
+				(l_ptr->tval == TV_ROD && sval == SV_ROD_DRAIN_LIFE) ||
+				(l_ptr->tval == TV_ROD &&
+				 (sval == SV_ROD_HEALING || sval == SV_ROD_MAPPING)
+				 && borg_class == CLASS_WARRIOR) || (l_ptr->tval == TV_STAFF &&
+													 sval ==
 													 SV_STAFF_DISPEL_EVIL) ||
-				(item->tval == TV_STAFF && item->sval == SV_STAFF_POWER) ||
-				(item->tval == TV_STAFF && item->sval == SV_STAFF_HOLINESS) ||
-				(item->tval == TV_WAND && item->sval == SV_WAND_DRAIN_LIFE) ||
-				(item->tval == TV_WAND && item->sval == SV_WAND_ANNIHILATION) ||
-				(item->tval == TV_CLOAK && item->xtra_name) ||
-				(item->tval == TV_SCROLL &&
-				 item->sval == SV_SCROLL_TELEPORT_LEVEL &&
-				 borg_skill[BI_ATELEPORTLVL] < 1000) || (item->tval == TV_SCROLL
-														 && item->sval ==
+				(l_ptr->tval == TV_STAFF && sval == SV_STAFF_POWER) ||
+				(l_ptr->tval == TV_STAFF && sval == SV_STAFF_HOLINESS) ||
+				(l_ptr->tval == TV_WAND && sval == SV_WAND_DRAIN_LIFE) ||
+				(l_ptr->tval == TV_WAND && sval == SV_WAND_ANNIHILATION) ||
+				(l_ptr->tval == TV_SCROLL &&
+				 sval == SV_SCROLL_TELEPORT_LEVEL &&
+				 borg_skill[BI_ATELEPORTLVL] < 1000) || (l_ptr->tval == TV_SCROLL
+														 && sval ==
 														 SV_SCROLL_PROTECTION_FROM_EVIL))
 			{
 				value += 5000L;
 			}
 
+			
+#endif /* 0 */
+
+			/* Pretend item isn't there */
+			l_ptr->treat_as = TREAT_AS_GONE;
+
+			/* Fix later */
+			fix = TRUE;
+
+			/* Examine the inventory */
+			borg_notice(FALSE);
+
+			/* Evaluate the inventory */
+			p = borg_power();
+			
+			/* Restore item */
+			l_ptr->treat_as = TREAT_AS_NORM;
+
+			/* Hack - set value */
+			value = my_power - p;
+			
 			/* up to level 5, keep anything of any value */
 			if (borg_skill[BI_CDEPTH] < 5 && value > 0)
 				continue;
@@ -1836,52 +1836,30 @@ bool borg_crush_junk(void)
 			/* below level 127, keep anything of value 2000 or better */
 			if (borg_skill[BI_CDEPTH] < 127 && value > 2000)
 				continue;
-
-			/* Save the item */
-			COPY(&safe_items[i], &borg_items[i], borg_item);
-
-			/* Destroy the item */
-			WIPE(&borg_items[i], borg_item);
-
-			/* Fix later */
-			fix = TRUE;
-
-			/* Examine the inventory */
-			borg_notice(FALSE);
-
-			/* Evaluate the inventory */
-			p = borg_power();
-
-			/* Restore the item */
-			COPY(&borg_items[i], &safe_items[i], borg_item);
-
-			/* skip things we are using */
-			if (p < my_power) continue;
 		}
 
 		/* re-examine the inventory */
 		if (fix) borg_notice(TRUE);
 
 		/* Hack -- skip good un-id'd "artifacts" */
-		if (strstr(item->desc, "{special")) continue;
-		if (strstr(item->desc, "{terrible")) continue;
-		if (strstr(item->desc, "{indestructible")) continue;
+		if (strstr(l_ptr->o_name, "{special")) continue;
+		if (strstr(l_ptr->o_name, "{terrible")) continue;
+		if (strstr(l_ptr->o_name, "{indestructible")) continue;
 
-		/* hack -- apw with random artifacts some are good and bad */
-		/*         so check them all */
-		if (item->xtra_name && !item->fully_identified) continue;
+		/* hack check anything interesting */
+		if (l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
 
 		/* Message */
 		borg_note(format("# Junking junk (valued at %d)", value));
 
 		/* Message */
-		borg_note(format("# Destroying %s.", item->desc));
+		borg_note(format("# Destroying %s.", l_ptr->o_name));
 
 		/* Destroy all items */
 		borg_keypresses("099");
 
 		/* Destroy that item */
-		if (!item->xtra_name)
+		if (!(l_ptr->kn_flags3 & TR3_INSTA_ART))
 			borg_keypress('k');
 		else
 		{
@@ -1948,77 +1926,61 @@ bool borg_crush_hole(void)
 	int i, b_i = -1;
 	s32b p, b_p = 0L;
 
-	s32b value;
-
 	bool fix = FALSE;
 
+	byte sval;
 
 	/* Do not destroy items unless we need the space */
-	if (!borg_items[INVEN_PACK - 1].iqty) return (FALSE);
-#if 0
-	/* No crush if even slightly dangerous */
-	if (borg_danger(c_x, c_y, 1, TRUE) > borg_skill[BI_CURHP] / 10 &&
-		(borg_skill[BI_CURHP] != borg_skill[BI_MAXHP] ||
-		 borg_danger(c_x, c_y, 1, TRUE) > (borg_skill[BI_CURHP] * 2) / 3))
-		return (FALSE);
-#endif /* 0 */
-	/* Scan the inventory */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
-		borg_item *item = &borg_items[i];
+	if (inven_num < INVEN_PACK) return (FALSE);
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+	/* Scan the inventory */
+	for (i = 0; i < inven_num; i++)
+	{
+		list_item *l_ptr = &inventory[i];
+
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* Hack -- skip "artifacts" */
-		if (item->xtra_name) continue;
+		if (l_ptr->kn_flags3 & TR3_INSTA_ART) continue;
 
 		/* dont crush the swap weapon */
-		if (i == weapon_swap && item->tval != TV_FOOD) continue;
-		if (i == armour_swap && item->tval != TV_FOOD) continue;
+		if (i == weapon_swap) continue;
+		if (i == armour_swap) continue;
 
 		/* dont crush our spell books */
-		if (item->tval == mp_ptr->spell_book) continue;
+		if (l_ptr->tval == mp_ptr->spell_book) continue;
 
-		/* Dont crush weapons if we are weilding a digger */
-		if (item->tval >= TV_DIGGING && item->tval <= TV_SWORD &&
-			borg_items[INVEN_WIELD].tval == TV_DIGGING) continue;
-
-		/* Hack -- skip "artifacts" */
-		if (item->xtra_name && !item->fully_identified) continue;
-		if (strstr(item->desc, "{special")) continue;
-		if (strstr(item->desc, "{terrible")) continue;
-		if (strstr(item->desc, "{indestructible")) continue;
+		/* Hack -- skip artifacts and ego items not fully identified */
+		if (l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
+		if (strstr(l_ptr->o_name, "{special")) continue;
+		if (strstr(l_ptr->o_name, "{terrible")) continue;
+		
+		/* Get sval */
+		sval = k_info[l_ptr->k_idx].sval;
 
 		/* never crush cool stuff that we might be needing later */
-		if ((item->tval == TV_POTION && item->sval == SV_POTION_RESTORE_MANA) &&
+		if ((l_ptr->tval == TV_POTION && sval == SV_POTION_RESTORE_MANA) &&
 			(borg_skill[BI_MAXSP] >= 1)) continue;
-		if (item->tval == TV_POTION &&
-			item->sval == SV_POTION_HEALING) continue;
-		if (item->tval == TV_POTION &&
-			item->sval == SV_POTION_STAR_HEALING) continue;
-		if (item->tval == TV_POTION && item->sval == SV_POTION_LIFE) continue;
-		if (item->tval == TV_POTION && item->sval == SV_POTION_SPEED) continue;
-		if (item->tval == TV_SCROLL &&
-			item->sval == SV_SCROLL_PROTECTION_FROM_EVIL) continue;
-		if (item->tval == TV_SCROLL &&
-			item->sval == SV_SCROLL_RUNE_OF_PROTECTION) continue;
-		if (item->tval == TV_SCROLL && item->sval == SV_SCROLL_TELEPORT_LEVEL &&
+		if ((l_ptr->tval == TV_POTION) &&
+			(sval == SV_POTION_HEALING)) continue;
+		if ((l_ptr->tval == TV_POTION) &&
+			(sval == SV_POTION_STAR_HEALING)) continue;
+		if (l_ptr->tval == TV_POTION && sval == SV_POTION_LIFE) continue;
+		if (l_ptr->tval == TV_POTION && sval == SV_POTION_SPEED) continue;
+		if (l_ptr->tval == TV_SCROLL &&
+			sval == SV_SCROLL_PROTECTION_FROM_EVIL) continue;
+		if (l_ptr->tval == TV_SCROLL &&
+			sval == SV_SCROLL_RUNE_OF_PROTECTION) continue;
+		if (l_ptr->tval == TV_SCROLL && sval == SV_SCROLL_TELEPORT_LEVEL &&
 			borg_skill[BI_ATELEPORTLVL] < 1000) continue;
-		if (item->tval == TV_CLOAK && item->xtra_name) continue;
-		if (item->tval == TV_ROD && (item->sval == SV_ROD_HEALING ||
-									 item->sval == SV_ROD_MAPPING) &&
-			borg_class == CLASS_WARRIOR && item->iqty <= 5) continue;
+		if (l_ptr->tval == TV_ROD && (sval == SV_ROD_HEALING ||
+									 sval == SV_ROD_MAPPING) &&
+			borg_class == CLASS_WARRIOR && l_ptr->number <= 5) continue;
 
-		/* save the items value */
-		value = item->value;
 
-		/* Save the item */
-		COPY(&safe_items[i], &borg_items[i], borg_item);
-
-		/* Destroy the item */
-		WIPE(&borg_items[i], borg_item);
+		/* Pretend item isn't there */
+		l_ptr->treat_as = TREAT_AS_GONE;
 
 		/* Fix later */
 		fix = TRUE;
@@ -2028,259 +1990,9 @@ bool borg_crush_hole(void)
 
 		/* Evaluate the inventory */
 		p = borg_power();
-
-		/* power is much more important than gold. */
-		p *= 100;
-
-		/* Restore the item */
-		COPY(&borg_items[i], &safe_items[i], borg_item);
-
-		/* Penalize loss of "gold" */
-
-		/* if the item gives a bonus to a stat, boost its value */
-		if ((item->flags1 & TR1_STR) ||
-			(item->flags1 & TR1_INT) ||
-			(item->flags1 & TR1_WIS) ||
-			(item->flags1 & TR1_DEX) || (item->flags1 & TR1_CON))
-		{
-			value += 20000L;
-		}
-
-		/* apw Keep the correct types of missiles which have value */
-		if ((item->tval == my_ammo_tval) && (value > 0))
-		{
-			value += 5000L;
-		}
-
-		/* Hack  show prefrence for destroying things we will not use */
-		/* if we are high enough level not to worry about gold. */
-		if (borg_skill[BI_CLEVEL] > 35)
-		{
-			switch (item->tval)
-			{
-					/* rings are under valued. */
-				case TV_RING:
-				{
-					p -= (item->iqty * value * 10);
-					break;
-				}
-
-				case TV_AMULET:
-				case TV_BOW:
-				case TV_HAFTED:
-				case TV_POLEARM:
-				case TV_SWORD:
-				case TV_BOOTS:
-				case TV_GLOVES:
-				case TV_HELM:
-				case TV_CROWN:
-				case TV_SHIELD:
-				case TV_SOFT_ARMOR:
-				case TV_HARD_ARMOR:
-				case TV_DRAG_ARMOR:
-				{
-					p -= (item->iqty * value * 5);
-					break;
-				}
-				case TV_CLOAK:
-				{
-					if (!item->xtra_name)
-						p -= (item->iqty * (300000L));
-					else
-						p -= (item->iqty * value);
-					break;
-				}
-
-				case TV_ROD:
-				{
-					/* BIG HACK! don't crush cool stuff. */
-					if ((item->sval != SV_ROD_DRAIN_LIFE) ||
-						(item->sval != SV_ROD_ACID_BALL) ||
-						(item->sval != SV_ROD_ELEC_BALL) ||
-						(item->sval != SV_ROD_FIRE_BALL) ||
-						(item->sval != SV_ROD_COLD_BALL))
-						p -= (item->iqty * (300000L));	/* value at 30k */
-					else
-						p -= (item->iqty * value);
-					break;
-				}
-
-				case TV_STAFF:
-				{
-					/* BIG HACK! don't crush cool stuff. */
-					if (item->sval != SV_STAFF_DISPEL_EVIL ||
-						((item->sval != SV_STAFF_POWER ||
-						  item->sval != SV_STAFF_HOLINESS) &&
-						 amt_cool_staff < 2) ||
-						(item->sval != SV_STAFF_DESTRUCTION &&
-						 borg_skill[BI_ASTFDEST] < 2))
-						p -= (item->iqty * (300000L));	/* value at 30k */
-					else
-						p -= (item->iqty * (value / 2));
-				}
-				case TV_WAND:
-				{
-					/* BIG HACK! don't crush cool stuff. */
-					if ((item->sval != SV_WAND_DRAIN_LIFE) ||
-						(item->sval != SV_WAND_ACID_BALL) ||
-						(item->sval != SV_WAND_ELEC_BALL) ||
-						(item->sval != SV_WAND_FIRE_BALL) ||
-						(item->sval != SV_WAND_COLD_BALL) ||
-						(item->sval != SV_WAND_ANNIHILATION) ||
-						(item->sval != SV_WAND_DRAGON_FIRE) ||
-						(item->sval != SV_WAND_DRAGON_COLD))
-						p -= (item->iqty * (300000L));	/* value at 30k */
-					else
-						p -= (item->iqty * (value / 2));
-					break;
-				}
-
-					/* scrolls and potions crush easy */
-				case TV_SCROLL:
-				{
-					if ((item->sval != SV_SCROLL_PROTECTION_FROM_EVIL) ||
-						(item->sval != SV_SCROLL_RUNE_OF_PROTECTION))
-						p -= (item->iqty * (30000L));
-					else
-						p -= (item->iqty * (value / 10));
-					break;
-				}
-
-				case TV_POTION:
-				{
-					/* BIG HACK! don't crush heal/mana potions.  It could be */
-					/* that we are in town and are collecting them. */
-					if ((item->sval != SV_POTION_HEALING) ||
-						(item->sval != SV_POTION_STAR_HEALING) ||
-						(item->sval != SV_POTION_LIFE) ||
-						(item->sval != SV_POTION_RESTORE_MANA))
-						p -= (item->iqty * (300000L));	/* value at 30k */
-					else
-						p -= (item->iqty * (value / 10));
-					break;
-				}
-
-				default:
-				{
-					p -= (item->iqty * (value / 3));
-					break;
-				}
-			}
-		}
-		else
-		{
-			p -= (item->iqty * value);
-		}
-
-		/* Hack -- try not to destroy "unaware" items */
-		if (!item->kind && (value > 0))
-		{
-			/* Hack -- Reward "unaware" items */
-			switch (item->tval)
-			{
-				case TV_RING:
-				case TV_AMULET:
-				{
-					p -= (borg_skill[BI_MAXDEPTH] * 5000L);
-					break;
-				}
-
-				case TV_ROD:
-				{
-					p -= (borg_skill[BI_MAXDEPTH] * 3000L);
-					break;
-				}
-
-				case TV_STAFF:
-				case TV_WAND:
-				{
-					p -= (borg_skill[BI_MAXDEPTH] * 2000L);
-					break;
-				}
-
-				case TV_SCROLL:
-				case TV_POTION:
-				{
-					p -= (borg_skill[BI_MAXDEPTH] * 500L);
-					break;
-				}
-
-				case TV_FOOD:
-				{
-					p -= (borg_skill[BI_MAXDEPTH] * 10L);
-					break;
-				}
-			}
-		}
-
-		/* Hack -- try not to destroy "unknown" items (unless "icky") */
-		if (!item->able && (value > 0) && !borg_item_icky(l_ptr))
-		{
-			/* Reward "unknown" items */
-			switch (item->tval)
-			{
-				case TV_SHOT:
-				case TV_ARROW:
-				case TV_BOLT:
-				{
-					p -= 100L;
-					break;
-				}
-
-				case TV_BOW:
-				{
-					p -= 20000L;
-					break;
-				}
-
-				case TV_DIGGING:
-				{
-					p -= 10L;
-					break;
-				}
-
-				case TV_HAFTED:
-				case TV_POLEARM:
-				case TV_SWORD:
-				{
-					p -= 10000L;
-					break;
-				}
-
-				case TV_BOOTS:
-				case TV_GLOVES:
-				case TV_HELM:
-				case TV_CROWN:
-				case TV_SHIELD:
-				case TV_CLOAK:
-				{
-					p -= 15000L;
-					break;
-				}
-
-				case TV_SOFT_ARMOR:
-				case TV_HARD_ARMOR:
-				case TV_DRAG_ARMOR:
-				{
-					p -= 15000L;
-					break;
-				}
-
-				case TV_AMULET:
-				case TV_RING:
-				{
-					p -= 5000L;
-					break;
-				}
-
-				case TV_STAFF:
-				case TV_WAND:
-				{
-					p -= 1000L;
-					break;
-				}
-			}
-		}
+		
+		/* Restore item */
+		l_ptr->treat_as = TREAT_AS_NORM;
 
 		/* Ignore "bad" swaps */
 		if ((b_i >= 0) && (p < b_p)) continue;
@@ -2296,16 +2008,13 @@ bool borg_crush_hole(void)
 	/* Attempt to destroy it */
 	if (b_i >= 0)
 	{
-		borg_item *item = &borg_items[b_i];
-
-		/* Debug */
-		borg_note(format("# Junking %ld gold (full)", my_power * 100 - b_p));
+		list_item *l_ptr = &inventory[b_i];
 
 		/* Try to consume the junk */
-		if (borg_consume(b_i)) return (TRUE);
+		if (borg_consume(l_ptr)) return (TRUE);
 
 		/* Message */
-		borg_note(format("# Destroying %s.", item->desc));
+		borg_note(format("# Destroying %s.", l_ptr->o_name));
 
 		/* Destroy all items */
 		borg_keypresses("099");
@@ -2321,7 +2030,6 @@ bool borg_crush_hole(void)
 		return (TRUE);
 	}
 
-
 	/* Hack -- no need */
 	borg_do_crush_hole = FALSE;
 
@@ -2335,19 +2043,13 @@ bool borg_crush_hole(void)
 /*
  * Destroy "junk" when slow (in the dungeon).
  *
- * We penalize the loss of both power and monetary value, and reward
- * the loss of weight that may be slowing us down.  The weight loss
- * is worth one gold per tenth of a pound.  This causes things like
- * lanterns and chests and spikes to be considered "annoying".
+ * We penalize the loss of power, and reward
+ * the loss of weight that may be slowing us down.
  */
 bool borg_crush_slow(void)
 {
 	int i, b_i = -1;
 	s32b p, b_p = 0L;
-
-	s32b temp;
-
-	s32b greed;
 
 	bool fix = FALSE;
 
@@ -2361,49 +2063,36 @@ bool borg_crush_slow(void)
 	/* Do not crush items unless we are slow */
 	if (borg_skill[BI_SPEED] >= 110) return (FALSE);
 
-
-	/* Calculate "greed" factor */
-	greed = (borg_gold / 100L) + 100L;
-
-	/* Minimal greed */
-	if (greed < 500L && borg_skill[BI_CLEVEL] > 35) greed = 500L;
-	if (greed > 25000L) greed = 25000L;
-
-	/* Decrease greed by our slowness */
-	greed -= (110 - borg_skill[BI_SPEED]) * 100;
-	if (greed <= 0) greed = 0L;
-
 	/* Scan for junk */
-	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < inven_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		list_item *l_ptr = &inventory[i];
 
-		/* Skip empty items */
-		if (!item->iqty) continue;
-		if (!item->kind) continue;
+		/* Skip empty / unaware items */
+		if (!l_ptr->k_idx) continue;
 
 		/* dont crush the swap weapon */
-		if (i == weapon_swap && item->iqty == 1) continue;
+		if (i == weapon_swap && l_ptr->number == 1) continue;
 		if (i == armour_swap) continue;
 
 		/* Skip "good" unknown items (unless "icky") */
-		if (!item->able && !borg_item_icky(l_ptr)) continue;
+		if (!(l_ptr->info & OB_KNOWN) && !borg_item_icky(l_ptr)) continue;
 
 		/* Hack -- Skip artifacts */
-		if (item->xtra_name && !item->fully_identified) continue;
-		if (strstr(item->desc, "{special")) continue;
-		if (strstr(item->desc, "{terrible")) continue;
-		if (strstr(item->desc, "{indestructible")) continue;
-
-		/* Dont crush weapons if we are weilding a digger */
-		if (item->tval >= TV_DIGGING && item->tval <= TV_SWORD &&
-			borg_items[INVEN_WIELD].tval == TV_DIGGING) continue;
-
-		/* Save the item */
-		COPY(&safe_items[i], &borg_items[i], borg_item);
-
-		/* Destroy one of the items */
-		borg_items[i].iqty--;
+		if (l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
+		if (strstr(l_ptr->o_name, "{special")) continue;
+		if (strstr(l_ptr->o_name, "{terrible")) continue;
+		
+		if (l_ptr->number > 1)
+		{
+			/* Pretend item is less */
+			l_ptr->treat_as = TREAT_AS_LESS;
+		}
+		else
+		{
+			/* Pretend item isn't there */
+			l_ptr->treat_as = TREAT_AS_GONE;
+		}
 
 		/* Fix later */
 		fix = TRUE;
@@ -2413,24 +2102,12 @@ bool borg_crush_slow(void)
 
 		/* Evaluate the inventory */
 		p = borg_power();
+		
+		/* Restore item */
+		l_ptr->treat_as = TREAT_AS_NORM;
 
-		/* Restore the item */
-		COPY(&borg_items[i], &safe_items[i], borg_item);
-
-		/* Obtain the base price */
-		temp = ((item->value < 30000L) ? item->value : 30000L);
-
-		/* Hack -- ignore very cheap items */
-		if (temp < greed) temp = 0L;
-
-		/* Penalize */
-		p -= temp;
-
-		/* Obtain the base weight */
-		temp = item->weight;
-
-		/* Reward */
-		p += (temp * 50);
+		/* Reward getting rid of heavy items */
+		p += (l_ptr->weight * 100);
 
 		/* Ignore "bad" swaps */
 		if (p < b_p) continue;
@@ -2446,16 +2123,13 @@ bool borg_crush_slow(void)
 	/* Destroy "useless" things */
 	if ((b_i >= 0) && (b_p >= (my_power)))
 	{
-		borg_item *item = &borg_items[b_i];
-
-		/* Message */
-		borg_note(format("# Junking %ld gold (slow)", (my_power) - b_p));
+		list_item *l_ptr = &inventory[b_i];
 
 		/* Attempt to consume it */
-		if (borg_consume(b_i)) return (TRUE);
+		if (borg_consume(l_ptr)) return (TRUE);
 
 		/* Message */
-		borg_note(format("# Destroying %s.", item->desc));
+		borg_note(format("# Destroying %s.", l_ptr->o_name));
 
 		/* Destroy one item */
 		borg_keypress('0');
@@ -2468,7 +2142,6 @@ bool borg_crush_slow(void)
 		/* Verify destruction */
 		borg_keypress('y');
 	}
-
 
 	/* Hack -- no need */
 	borg_do_crush_slow = FALSE;
