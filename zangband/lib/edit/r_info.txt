@@ -205,7 +205,7 @@ D:A thin flea-ridden mutt, growling as you get close.
 N:8:Farmer Maggot
 G:h:w
 I:110:35d10:40:10:3
-W:0:4:0:0
+W:0:3:0:0
 B:HIT:HURT:1d3
 F:UNIQUE | MALE | CAN_SPEAK | DROP_CORPSE | FRIENDLY
 F:FORCE_MAXHP | WILD_TOWN | WILD_ONLY
@@ -536,7 +536,7 @@ D:them here!
 N:39:Topi Ylinen, the Cute, Furry Bunny
 G:r:U
 I:110:1d129:10:3:43
-W:1:100:0:66
+W:1:7:0:66
 B:GAZE:TERRIFY:1d2
 F:FORCE_MAXHP | UNIQUE | CAN_SPEAK | 
 F:WILD_ONLY | WILD_WOOD | FRIENDLY | 
@@ -4838,7 +4838,7 @@ D:Alberich's son, born of a mortal woman won with gold.
 N:384:Meneldor the Swift
 G:B:u
 I:130:80d10:20:65:20
-W:24:6:0:360
+W:24:5:0:360
 B:CLAW:HURT:7d3
 B:CLAW:HURT:7d3
 B:BITE:HURT:3d7
@@ -5196,7 +5196,7 @@ D:He is out to have a revenge on you who have desecrated his tomb.
 N:410:Gwaihir the Windlord
 G:B:u
 I:130:85d10:20:65:20
-W:24:6:0:360
+W:24:5:0:360
 B:CLAW:HURT:15d2
 B:CLAW:HURT:15d2
 B:BITE:HURT:3d10
