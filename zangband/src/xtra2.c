@@ -1698,7 +1698,7 @@ static void ang_sort_swap_distance(vptr u, vptr v, int a, int b)
 /*
  * Hack -- help "select" a location (see below)
  */
-static s16b target_pick(int y1, int x1, int dy, int dx)
+static s16b target_pick(int x1, int y1, int dx, int dy)
 {
 	int i, v;
 
@@ -1750,7 +1750,7 @@ static s16b target_pick(int y1, int x1, int dy, int dx)
 /*
  * Hack -- determine if a given location is "interesting"
  */
-static bool target_set_accept(int y, int x)
+static bool target_set_accept(int x, int y)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -1872,7 +1872,7 @@ static void target_set_prepare(int mode)
 			if (!expand_look && !player_can_see_bold(x, y)) continue;
 
 			/* Require "interesting" contents */
-			if (!target_set_accept(y, x)) continue;
+			if (!target_set_accept(x, y)) continue;
 
 			/* Require target_able monsters for "TARGET_KILL" */
 			if ((mode & (TARGET_KILL)) && !target_able(c_ptr->m_idx)) continue;
@@ -1924,7 +1924,7 @@ static void target_set_prepare(int mode)
  *
  * This function must handle blindness/hallucination.
  */
-static int target_set_aux(int y, int x, int mode, cptr info)
+static int target_set_aux(int x, int y, int mode, cptr info)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
@@ -2531,7 +2531,7 @@ bool target_set(int mode)
 			}
 
 			/* Describe and Prompt */
-			query = target_set_aux(y, x, mode, info);
+			query = target_set_aux(x, y, mode, info);
 
 			/* Cancel tracking */
 			/* health_track(0); */
@@ -2646,7 +2646,7 @@ bool target_set(int mode)
 				int x2 = panel_col_min;
 
 				/* Find a new monster */
-				i = target_pick(temp_y[m], temp_x[m], ddy[d], ddx[d]);
+				i = target_pick(temp_x[m], temp_y[m], ddx[d], ddy[d]);
 
 				/* Request to target past last interesting grid */
 				while (flag && (i < 0))
@@ -2664,7 +2664,7 @@ bool target_set(int mode)
 						flag = TRUE;
 
 						/* Find a new monster */
-						i = target_pick(v, u, ddy[d], ddx[d]);
+						i = target_pick(u, v, ddx[d], ddy[d]);
 
 						/* Use that grid */
 						if (i >= 0) m = i;
@@ -2746,7 +2746,7 @@ bool target_set(int mode)
 			strcpy(info, "q,t,p,m,+,-,<dir>");
 
 			/* Describe and Prompt (enable "TARGET_LOOK") */
-			query = target_set_aux(y, x, mode | TARGET_LOOK, info);
+			query = target_set_aux(x, y, mode | TARGET_LOOK, info);
 
 			/* Cancel tracking */
 			/* health_track(0); */
