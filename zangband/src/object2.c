@@ -1859,19 +1859,22 @@ static s16b m_bonus(int max, int level)
  */
 static s16b w_bonus(int max, int lev_dif)
 {
+	/* Paranoia - max must be greater than 5 */
+	if (max < 6) return (0);
+	
 	/* Level difference is too small? */
 	if (abs(lev_dif) < 6) return (0);
 	
 	if (lev_dif < 0)
 	{
 		/* Negative bonus */
-		return (-randint1(5) - m_bonus(max, lev_dif * 3));
+		return (-randint1(5) - m_bonus(max - 5, lev_dif * 3));
 	
 	}
 	else
 	{
 		/* Positive bonus */
-		return (randint1(5) + m_bonus(max, lev_dif * 3));
+		return (randint1(5) + m_bonus(max - 5, lev_dif * 3));
 	}
 }
 
@@ -2914,7 +2917,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			}
 
 			/* Very cursed */
-			else if (OC_FORCE_BAD)
+			else if (flags & OC_FORCE_BAD)
 			{
 				/* Roll for ego-item */
 				switch (randint1(2))
