@@ -40,9 +40,10 @@
 #define BUILD_STORE_HOME		7
 #define BUILD_STORE_BOOK		8
 #define BUILD_STAIRS			9
+#define BUILD_WEAPONSMITH		10
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			10
+#define MAX_CITY_BUILD			11
 
 /* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
 

@@ -575,6 +575,12 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 			break;
 		}
 		
+		case BUILD_WEAPONSMITH:
+		{
+			field = FT_BUILD_WEAPON;
+			break;
+		}
+		
 		default:
 		{
 			/* Hack - nothing here? */
@@ -610,7 +616,7 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 	if (build_is_store(st_ptr->type))
 	{
 		/* Draw the store */
-		draw_store(xx + 4, yy + 4, st_ptr, x, y);	
+		draw_store(xx + 4, yy + 4, st_ptr, x, y);
 	}
 	else if (build_is_general(st_ptr->type))
 	{
@@ -619,7 +625,8 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 	}
 	else
 	{
-		/* Draw the "normal" building */
+		/* Hack - Draw the "normal" building */
+		draw_store(xx + 4, yy + 4, st_ptr, x, y);
 	}
 }
 
@@ -987,8 +994,9 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 				case FT_STORE_BLACK:
 				case FT_STORE_HOME:
 				case FT_STORE_BOOK:
+				case FT_BUILD_WEAPON:
 				{
-					/* Stores */
+					/* Stores + buildings */
 					(void) place_field(y * 16 + j, x * 16 + i, c_ptr->fld_idx);
 
 					break;

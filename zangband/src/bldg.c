@@ -413,6 +413,7 @@ static bool is_member(building_type *bldg)
 	return (FALSE);
 }
 
+#endif /* 0 */
 
 /*
  * Clear the building information
@@ -425,7 +426,6 @@ static void clear_bldg(int min_row, int max_row)
 		prt("", i, 0);
 }
 
-#endif /* 0 */
 
 static void building_prt_gold(void)
 {
@@ -445,19 +445,31 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 {
 	char tmp_str[80];
 	
-	b_own_type *bo_ptr = &b_owners[b_ptr->type][b_ptr->owner];
+	b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
 	
 	cptr build_name = t_info[f_ptr->t_idx].name;
 	cptr owner_name = (bo_ptr->owner_name);
 	cptr race_name = race_info[bo_ptr->owner_race].title;
 
 	Term_clear();
-	sprintf(tmp_str, "%s (%s) %35s", owner_name, race_name, build_name);
+	sprintf(tmp_str, "%s (%s) %s", owner_name, race_name, build_name);
 	prt(tmp_str, 2, 1);
 	prt("You may:", 19, 0);
 
 
 	prt(" ESC) Exit building", 23, 0);
+
+	/* Display building-specific information */
+	switch (f_ptr->data[0])
+	{
+		case BLDG_WEAPONSMITH:
+		{
+			sprintf(tmp_str, " E) Examine Weapons (%dgp)",
+				 f_ptr->data[1] * bo_ptr->inflate);
+			c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+		}
+	}
+
 
 	building_prt_gold();
 }
@@ -1050,6 +1062,8 @@ static void town_history(void)
 }
 
 
+#endif /* 0 */
+
 /*
  * Display the damage figure of an object
  * (used by compare_weapon_aux1)
@@ -1216,6 +1230,7 @@ static bool item_tester_hook_melee_weapon(object_type *o_ptr)
 	return (FALSE);
 }
 
+#if 0 
 
 /*
  * Hook to specify "ammo"
@@ -1235,6 +1250,7 @@ static bool item_tester_hook_ammo(object_type *o_ptr)
 	return (FALSE);
 }
 
+#endif /* 0 */
 
 /*
  * Compare weapons
@@ -1318,6 +1334,8 @@ static bool compare_weapons(void)
 	return (TRUE);
 }
 
+
+#if 0
 
 /*
  * Enchant item
@@ -1831,10 +1849,34 @@ void do_cmd_quest(void)
 
 #endif /* 0 */
 
-/*
- * Hack -- set this to leave the building
- */
-static bool leave_build = FALSE;
+static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
+{
+	long	cost = 0;
+	bool	done = FALSE;
+	
+	b_own_type *bo_ptr = &b_owners[f_ptr->data[0]][b_ptr->owner];
+	
+	switch (f_ptr->data[0])
+	{
+		case BLDG_WEAPONSMITH:
+		{
+			if (p_ptr->command_cmd == 'E')
+			{
+				if(compare_weapons())
+				{
+					cost = f_ptr->data[1] * bo_ptr->inflate;
+					done = TRUE;
+				} 
+			}
+		}
+	}
+	
+	/* Subtract off cost */
+	p_ptr->au -= cost;
+	
+	/* Did we do anything? */
+	return (done);
+}
 
 
 /*
@@ -1843,7 +1885,7 @@ static bool leave_build = FALSE;
  * Note that we must disable some commands which are allowed
  * in the dungeon but not in the stores, to prevent chaos.
  */
-static void build_process_command(field_type *f_ptr, store_type *b_ptr)
+static bool build_process_command(field_type *f_ptr, store_type *b_ptr)
 {
 	/* Handle repeating the last command */
 	repeat_check();
@@ -1853,14 +1895,16 @@ static void build_process_command(field_type *f_ptr, store_type *b_ptr)
 		p_ptr->command_cmd = 'x';	/* hack! */
 	}
 
+	/* Process the building-specific commands */
+	if (process_build_hook(f_ptr, b_ptr)) return(FALSE);
+	
 	/* Parse the command */
 	switch (p_ptr->command_cmd)
 	{
 		/* Leave */
 		case ESCAPE:
 		{
-			leave_build = TRUE;
-			break;
+			return (TRUE);
 		}
 
 		/* Redraw */
@@ -1930,7 +1974,6 @@ static void build_process_command(field_type *f_ptr, store_type *b_ptr)
 			toggle_inven_equip();
 			break;
 		}
-
 
 
 		/*** Use various objects ***/
@@ -2093,6 +2136,8 @@ static void build_process_command(field_type *f_ptr, store_type *b_ptr)
 			break;
 		}
 	}
+	
+	return (FALSE);
 }
 
 
@@ -2101,8 +2146,9 @@ static void build_process_command(field_type *f_ptr, store_type *b_ptr)
  */
 void do_cmd_bldg(field_type *f_ptr)
 {
-	int             i, which = -1;
+	int		i, which = -1;
 	store_type   *b_ptr;
+	bool	leave_build = FALSE;
 
 	town_type	*twn_ptr = &town[p_ptr->town_num];
 	
@@ -2159,7 +2205,7 @@ void do_cmd_bldg(field_type *f_ptr)
 		request_command(FALSE);
 
 		/* Process the command */
-		build_process_command(f_ptr, b_ptr);
+		leave_build = build_process_command(f_ptr, b_ptr);
 
 		/* Hack -- Character is still in "icky" mode */
 		character_icky = TRUE;

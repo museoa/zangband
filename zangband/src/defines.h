@@ -110,21 +110,7 @@
 #define QUEST_SERPENT        9
 
 
-/*
- * Total number of stores (see "store.c", etc)
- */
-#define MAX_STORES      9
-
-/*
- * Total number of stores with stock (see "store.c", etc)
- */
-#define STORE_CACHE_AMNT 50
-
-/*
- * Number of buildings
- */
-#define MAX_BLDG		1
-
+/* The store types */
 #define STORE_GENERAL   0
 #define STORE_ARMOURY   1
 #define STORE_WEAPON    2
@@ -135,15 +121,33 @@
 #define STORE_HOME      7
 #define STORE_BOOK      8
 
+/*
+ * Total number of stores (see "store.c", etc)
+ */
+#define MAX_STORES      9
 
-#define BUILDING_NON_MEMBER 0
-#define BUILDING_MEMBER     1
-#define BUILDING_OWNER      2
+
+/*
+ * Total number of stores with stock (see "store.c", etc)
+ */
+#define STORE_CACHE_AMNT 50
+
 
 /*
  * Total number of owners per store (see "store.c", etc)
  */
 #define MAX_OWNERS			32
+
+
+/* The building types */
+#define BLDG_WEAPONSMITH	0
+
+/*
+ * Total number of buildings (see "bldg.c", etc)
+ */
+#define MAX_BLDG		1
+
+
 
 /*
  * Total number of owners per building (see "bldg.c", etc)
@@ -1018,6 +1022,8 @@
 #define FT_STORE_BLACK		0x0028
 #define FT_STORE_HOME		0x0029
 #define FT_STORE_BOOK		0x002A
+#define FT_BUILD_WEAPON		0x002B
+
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
