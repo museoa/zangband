@@ -121,8 +121,6 @@ int use_shop;
 
 void borg_list_info(byte list_type, vptr dummy)
 {
-	int i;
-	
 	/* Hack - ignore parameter */
 	(void) dummy;
 
