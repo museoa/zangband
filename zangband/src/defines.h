@@ -2910,7 +2910,6 @@
 #define TR2_RES_CHAOS           0x40000000L
 #define TR2_RES_DISEN           0x80000000L
 
-
 #define TR3_SH_FIRE             0x00000001L	/* Immolation (Fire) */
 #define TR3_SH_ELEC             0x00000002L	/* Electric Sheath */
 #define TR3_QUESTITEM           0x00000004L	/* quest level item -KMW- */

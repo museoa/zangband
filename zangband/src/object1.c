@@ -172,22 +172,25 @@ cptr item_activation(const object_type *o_ptr)
 	return string_buf;
 }
 
+#define TR1_STAT_MASK \
+	(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR)
+#define TR2_SUST_MASK \
+	(TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS | \
+	 TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR)
 
 /*
  * Fully describe the known information about an item
  */
-bool identify_fully_aux(const object_type *o_ptr)
+static void roff_obj_aux(const object_type *o_ptr)
 {
 	object_kind *k_ptr;
 	
-	int i = 0, j, k;
+	int n;
 
 	u32b f1, f2, f3, f4;
 
-	cptr info[160], reclaim[160], temp;
-	int num_reclaim = 0;
-	
-	int wid, hgt;
+	int vn;
+	cptr vp[80];
 
 	k_ptr = &k_info[o_ptr->k_idx];
 
@@ -197,34 +200,28 @@ bool identify_fully_aux(const object_type *o_ptr)
 	/* Add the 'description' if any */
 	if (object_known_p(o_ptr) && k_ptr->text)
 	{
-		info[i++] = k_text + k_ptr->text;
+		roff(k_text + k_ptr->text);
+		roff("  ");
 	}
 
 	/* Indicate if fully known */
 	if (object_known_full(o_ptr))
 	{
-		info[i++] = "You have full knowledge of this item.";
+		roff("You have full knowledge of this item.  ");
 	}
 
 	/* Mega-Hack -- describe activation if item is identified */
 	if ((o_ptr->flags3 & (TR3_ACTIVATE)) && object_known_p(o_ptr))
 	{
-		info[i++] = "It can be activated for...";
-		info[i++] = item_activation(o_ptr);
-		info[i++] = "...if it is being worn.";
-	}
-
-	/* Books, a hack */
-	if ((o_ptr->tval >= TV_BOOKS_MIN) && (o_ptr->tval <= TV_BOOKS_MAX))
-	{
-		do_cmd_browse_aux(o_ptr);
-		return (TRUE);
+		roff("It can be activated for ");
+		roff(item_activation(o_ptr));
+		roff(" if it is being worn.  ");
 	}
 
 	/* Figurines, a hack */
 	if (o_ptr->tval == TV_FIGURINE)
 	{
-		info[i++] = "It will transform into a pet when thrown.";
+		roff("It will transform into a pet when thrown.  ");
 	}
 
 	/* Hack -- describe lite's */
@@ -232,730 +229,545 @@ bool identify_fully_aux(const object_type *o_ptr)
 	{
 		if (o_ptr->flags3 & TR3_INSTA_ART)
 		{
-			info[i++] = "It provides light (radius 3).";
+			roff("It provides light (radius 3).  ");
 		}
 		else if (o_ptr->sval == SV_LITE_LANTERN)
 		{
-			info[i++] = "It provides light (radius 2) when fueled.";
+			roff("It provides light (radius 2) when fueled.  ");
 		}
 		else
 		{
-			info[i++] = "It provides light (radius 1) when fueled.";
+			roff("It provides light (radius 1) when fueled.  ");
 		}
 	}
 
 
 	/* And then describe it fully */
 
-	if (f1 & (TR1_STR))
+	/* Collect stat boosts */
+	vn = 0;
+	/* All stats is handled specially */
+	if ((f1 & TR1_STAT_MASK) == TR1_STAT_MASK)
+		vp[vn++] = "all your stats";
+	else
 	{
-		if (o_ptr->pval > 0)
-		{
-			temp = string_make(format("It increases your strength by %+i.",
-									  o_ptr->pval));
-		}
-		else
-		{
-			temp = string_make(format("It decreases your strength by %+i.",
-									  o_ptr->pval));
-		}
-
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
+		if (f1 & TR1_STR) vp[vn++] = "strength";
+		if (f1 & TR1_INT) vp[vn++] = "intelligence";
+		if (f1 & TR1_WIS) vp[vn++] = "wisdom";
+		if (f1 & TR1_DEX) vp[vn++] = "dexterity";
+		if (f1 & TR1_CON) vp[vn++] = "constitution";
+		if (f1 & TR1_CHR) vp[vn++] = "charisma";
 	}
-	if (f1 & (TR1_INT))
+
+	if (f1 & TR1_SPEED)   vp[vn++] = "speed";
+	if (f1 & TR1_STEALTH) vp[vn++] = "stealth";
+	if (f1 & TR1_SEARCH)  vp[vn++] = "perception";
+	if (f1 & TR1_TUNNEL)  vp[vn++] = "ability to dig";
+
+	/* Describe stat boosts */
+	if (vn > 0)
 	{
 		if (o_ptr->pval > 0)
-		{
-			temp = string_make(format("It increases your intelligence by %+i.",
-									  o_ptr->pval));
-		}
+			roff("It increases ");
 		else
+			roff("It decreases ");
+
+		/* Omit "your" for "all stats" */
+		if (strncmp(vp[0], "all ", 4) != 0)
+			roff("your ");
+
+		/* Scan */
+		for (n = 0; n < vn; n++)
 		{
-			temp = string_make(format("It decreases your intelligence by %+i.",
-									  o_ptr->pval));
+			if (n > 0 && n == vn - 1) roff(" and ");
+			else if (n > 0)  roff(", ");
+
+			roff(CLR_L_RED "%s", vp[n]);
 		}
 
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
-	}
-	if (f1 & (TR1_WIS))
-	{
-		if (o_ptr->pval > 0)
-		{
-			temp = string_make(format("It increases your wisdom by %+i.",
-									  o_ptr->pval));
-		}
-		else
-		{
-			temp = string_make(format("It decreases your wisdom by %+i.",
-									  o_ptr->pval));
-		}
-
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
-	}
-	if (f1 & (TR1_DEX))
-	{
-		if (o_ptr->pval > 0)
-		{
-			temp = string_make(format("It increases your dexterity by %+i.",
-									  o_ptr->pval));
-		}
-		else
-		{
-			temp = string_make(format("It decreases your dexterity by %+i.",
-									  o_ptr->pval));
-		}
-
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
-	}
-	if (f1 & (TR1_CON))
-	{
-		if (o_ptr->pval > 0)
-		{
-			temp = string_make(format("It increases your constitution by %+i.",
-									  o_ptr->pval));
-		}
-		else
-		{
-			temp = string_make(format("It decreases your constitution by %+i.",
-									  o_ptr->pval));
-		}
-
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
-	}
-	if (f1 & (TR1_CHR))
-	{
-		if (o_ptr->pval > 0)
-		{
-			temp = string_make(format("It increases your charisma by %+i.",
-									  o_ptr->pval));
-		}
-		else
-		{
-			temp = string_make(format("It decreases your charisma by %+i.",
-									  o_ptr->pval));
-		}
-
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
+		roff(" by %+i.  ", o_ptr->pval);
 	}
 
 	if (f1 & (TR1_SP))
 	{
 		if (o_ptr->pval > 0)
 		{
-			temp = string_make(format("It increases your maximum sp by %i per level.", o_ptr->pval));
+			roff("It increases your maximum sp by %i per level.", o_ptr->pval);
 		}
 		else
 		{
-			temp = string_make(format("It decreases your maximum sp by %i per level.", o_ptr->pval));
+			roff("It decreases your maximum sp by %i per level.", o_ptr->pval);
 		}
-
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
 	}
 
-	if (f1 & (TR1_STEALTH))
-	{
-		if (o_ptr->pval > 0)
-		{
-			temp = string_make(format("It increases your stealth by %+i.",
-									  o_ptr->pval));
-		}
-		else
-		{
-			temp = string_make(format("It decreases your stealth by %+i.",
-									  o_ptr->pval));
-		}
-
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
-	}
-	if (f1 & (TR1_SEARCH))
-	{
-		if (o_ptr->pval > 0)
-		{
-			temp =
-				string_make(format
-							("It increases your searching ability by %+i.",
-							 o_ptr->pval));
-		}
-		else
-		{
-			temp =
-				string_make(format
-							("It decreases your searching ability by %+i.",
-							 o_ptr->pval));
-		}
-
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
-	}
 	if (f1 & (TR1_INFRA))
 	{
 		if (o_ptr->pval > 0)
 		{
-			temp =
-				string_make(format
-							("It increases your infravision by %i feet.",
-							 o_ptr->pval * 10));
+			roff("It increases your infravision by %i feet.", o_ptr->pval * 10);
 		}
 		else
 		{
-			temp =
-				string_make(format
-							("It decreases your infravision by %i feet.",
-							 -o_ptr->pval * 10));
+			roff("It decreases your infravision by %i feet.", -o_ptr->pval * 10);
 		}
-
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
 	}
-	if (f1 & (TR1_TUNNEL))
-	{
-		if (o_ptr->pval > 0)
-		{
-			temp =
-				string_make(format
-							("It increases your ability to dig by %+i.",
-							 o_ptr->pval));
-		}
-		else
-		{
-			temp =
-				string_make(format
-							("It decreases your ability to dig by %+i.",
-							 o_ptr->pval));
-		}
 
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
-	}
-	if (f1 & (TR1_SPEED))
-	{
-		if (o_ptr->pval > 0)
-		{
-			temp = string_make(format("It increases your speed by %+i.",
-									  o_ptr->pval));
-		}
-		else
-		{
-			temp = string_make(format("It decreases your speed by %+i.",
-									  o_ptr->pval));
-		}
-
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
-	}
 	if (f1 & (TR1_BLOWS))
 	{
 		if (o_ptr->pval > 0)
 		{
-			temp = string_make(format("It provides %i extra blows per turn.",
-									  o_ptr->pval));
+			roff("It provides %i extra blows per turn.", o_ptr->pval);
 		}
 		else
 		{
-			temp = string_make(format("It provides %i fewer blows per turn.",
-									  -o_ptr->pval));
+			roff("It provides %i fewer blows per turn.", -o_ptr->pval);
+		}
+	}
+
+	/* Collect brands */
+	vn = 0;
+	if (f1 & TR1_BRAND_ACID) vp[vn++] = "acid";
+	if (f1 & TR1_BRAND_ELEC) vp[vn++] = "electricity";
+	if (f1 & TR1_BRAND_FIRE) vp[vn++] = "fire";
+	if (f1 & TR1_BRAND_COLD) vp[vn++] = "frost";
+
+	/* Describe brands */
+	if (vn)
+	{
+		roff("It does extra damage from ");
+
+		/* Scan */
+		for (n = 0; n < vn; n++)
+		{
+			if (n > 0 && n == vn - 1) roff(" and ");
+			else if (n > 0)  roff(", ");
+
+			roff(CLR_L_RED "%s", vp[n]);
 		}
 
-		info[i++] = temp;
-		reclaim[num_reclaim++] = temp;
-	}
-
-	if (f1 & (TR1_BRAND_ACID))
-	{
-		info[i++] = "It does extra damage from acid.";
-	}
-	if (f1 & (TR1_BRAND_ELEC))
-	{
-		info[i++] = "It does extra damage from electricity.";
-	}
-	if (f1 & (TR1_BRAND_FIRE))
-	{
-		info[i++] = "It does extra damage from fire.";
-	}
-	if (f1 & (TR1_BRAND_COLD))
-	{
-		info[i++] = "It does extra damage from frost.";
+		roff(".  ");
 	}
 
 	if (f1 & (TR1_BRAND_POIS))
 	{
-		info[i++] = "It poisons your foes.";
+		roff("It poisons your foes.  ");
 	}
 
 	if (f1 & (TR1_CHAOTIC))
 	{
-		info[i++] = "It produces chaotic effects.";
+		roff("It produces chaotic effects.  ");
 	}
 
 	if (f1 & (TR1_VAMPIRIC))
 	{
-		info[i++] = "It drains life from your foes.";
+		roff("It drains life from your foes.  ");
 	}
 
 	if (f1 & (TR1_IMPACT))
 	{
-		info[i++] = "It can cause earthquakes.";
+		roff("It can cause earthquakes.  ");
 	}
 
 	if (f1 & (TR1_VORPAL))
 	{
-		info[i++] = "It is very sharp and can cut your foes.";
+		roff("It is very sharp and can cut your foes.  ");
 	}
 
 	if (o_ptr->tval >= TV_DIGGING && o_ptr->tval <= TV_SWORD)
 	{
 		if (f1 & (TR1_KILL_DRAGON))
 		{
-			info[i++] = "It is a great bane of dragons.";
+			roff("It is a great bane of dragons.  ");
 		}
-		else if (f1 & (TR1_SLAY_DRAGON))
+
+		/* Collect slays */
+		vn = 0;
+		if ((f1 & (TR1_SLAY_DRAGON)) && !(f1 & (TR1_KILL_DRAGON)))
+			vp[vn++] = "dragons";
+		if (f1 & TR1_SLAY_ORC)    vp[vn++] = "orcs";
+		if (f1 & TR1_SLAY_TROLL)  vp[vn++] = "trolls";
+		if (f1 & TR1_SLAY_GIANT)  vp[vn++] = "giants";
+		if (f1 & TR1_SLAY_DEMON)  vp[vn++] = "demons";
+		if (f1 & TR1_SLAY_UNDEAD) vp[vn++] = "the undead";
+		if (f1 & TR1_SLAY_EVIL)   vp[vn++] = "evil monsters";
+		if (f1 & TR1_SLAY_ANIMAL) vp[vn++] = "natural creatures";
+
+		/* Print slays */
+		if (vn)
 		{
-			info[i++] = "It is especially deadly against dragons.";
-		}
-		if (f1 & (TR1_SLAY_ORC))
-		{
-			info[i++] = "It is especially deadly against orcs.";
-		}
-		if (f1 & (TR1_SLAY_TROLL))
-		{
-			info[i++] = "It is especially deadly against trolls.";
-		}
-		if (f1 & (TR1_SLAY_GIANT))
-		{
-			info[i++] = "It is especially deadly against giants.";
-		}
-		if (f1 & (TR1_SLAY_DEMON))
-		{
-			info[i++] = "It strikes at demons with holy wrath.";
-		}
-		if (f1 & (TR1_SLAY_UNDEAD))
-		{
-			info[i++] = "It strikes at undead with holy wrath.";
-		}
-		if (f1 & (TR1_SLAY_EVIL))
-		{
-			info[i++] = "It fights against evil with holy fury.";
-		}
-		if (f1 & (TR1_SLAY_ANIMAL))
-		{
-			info[i++] = "It is especially deadly against natural creatures.";
+			roff("It is especially deadly against ");
+
+			/* Scan */
+			for (n = 0; n < vn; n++)
+			{
+				if (n > 0 && n == vn - 1) roff(" and ");
+				else if (n > 0)  roff(", ");
+	
+				roff(CLR_L_RED "%s", vp[n]);
+			}
+
+			roff(".  ");
 		}
 	}
 
 	if (f4 & (TR4_GHOUL_TOUCH))
 	{
-		info[i++] = "It gives you a paralyzing touch.";
+		roff("It gives you a paralyzing touch.  ");
 	}
 	if (f4 & (TR4_PSI_CRIT))
 	{
-		info[i++] = "It uses psychic energy to strike great blows.";
+		roff("It uses psychic energy to strike great blows.  ");
 	}
 	if (f4 & (TR4_RETURN))
 	{
-		info[i++] = "It returns when thrown.";
+		roff("It returns when thrown.  ");
 	}
 	if (f4 & (TR4_EXPLODE))
 	{
-		info[i++] = "It explodes when fired.";
+		roff("It explodes when fired.  ");
 	}
 
-	if (f2 & (TR2_SUST_STR))
+	/* Collect sustains */
+	if ((f2 & TR2_SUST_MASK) == TR2_SUST_MASK)
 	{
-		info[i++] = "It sustains your strength.";
+		/* Handle all stats specially */
+		roff("It sustains all your stats.  ");
 	}
-	if (f2 & (TR2_SUST_INT))
+	else
 	{
-		info[i++] = "It sustains your intelligence.";
+		vn = 0;
+		if (f2 & TR2_SUST_STR) vp[vn++] = "strength";
+		if (f2 & TR2_SUST_INT) vp[vn++] = "intelligence";
+		if (f2 & TR2_SUST_WIS) vp[vn++] = "wisdom";
+		if (f2 & TR2_SUST_DEX) vp[vn++] = "dexterity";
+		if (f2 & TR2_SUST_CON) vp[vn++] = "constitution";
+		if (f2 & TR2_SUST_CHR) vp[vn++] = "charisma";
+
+		/* Print sustains */
+		if (vn)
+		{
+			roff("It sustains your ");
+
+			/* Scan */
+			for (n = 0; n < vn; n++)
+			{
+				if (n > 0 && n == vn - 1) roff(" and ");
+				else if (n > 0)  roff(", ");
+	
+				roff(CLR_L_RED "%s", vp[n]);
+			}
+
+			roff(".  ");
+		}
 	}
-	if (f2 & (TR2_SUST_WIS))
+	
+	/* Collect immunities */
+	vn = 0;
+	if (f2 & (TR2_IM_ACID)) vp[vn++] = "acid";
+	if (f2 & (TR2_IM_ELEC)) vp[vn++] = "electricity";
+	if (f2 & (TR2_IM_FIRE)) vp[vn++] = "fire";
+	if (f2 & (TR2_IM_COLD)) vp[vn++] = "cold";
+	if (f4 & (TR4_IM_LITE)) vp[vn++] = "light";
+	if (f4 & (TR4_IM_DARK)) vp[vn++] = "darkness";
+	if (f2 & (TR2_FREE_ACT)) vp[vn++] = "paralysis";
+
+	/* Print immunities */
+	if (vn)
 	{
-		info[i++] = "It sustains your wisdom.";
-	}
-	if (f2 & (TR2_SUST_DEX))
-	{
-		info[i++] = "It sustains your dexterity.";
-	}
-	if (f2 & (TR2_SUST_CON))
-	{
-		info[i++] = "It sustains your constitution.";
-	}
-	if (f2 & (TR2_SUST_CHR))
-	{
-		info[i++] = "It sustains your charisma.";
+		roff("It provides immunity to ");
+
+		/* Scan */
+		for (n = 0; n < vn; n++)
+		{
+			if (n > 0 && n == vn - 1) roff(" and ");
+			else if (n > 0)  roff(", ");
+	
+			roff(CLR_L_RED "%s", vp[n]);
+		}
+
+		roff(".  ");
 	}
 
-	if (f2 & (TR2_IM_ACID))
+	/* Collect resistances */
+	vn = 0;
+	if (f2 & (TR2_RES_ACID))   vp[vn++] = "acid";
+	if (f2 & (TR2_RES_ELEC))   vp[vn++] = "electricity";
+	if (f2 & (TR2_RES_FIRE))   vp[vn++] = "fire";
+	if (f2 & (TR2_RES_COLD))   vp[vn++] = "cold";
+	if (f2 & (TR2_RES_POIS))   vp[vn++] = "poison";
+	if (f2 & (TR2_RES_LITE))   vp[vn++] = "bright light";
+	if (f2 & (TR2_RES_DARK))   vp[vn++] = "magical darkness";
+	if (f2 & (TR2_RES_FEAR))   vp[vn++] = "fear";
+	if (f2 & (TR2_RES_BLIND))  vp[vn++] = "blindness";
+	if (f2 & (TR2_RES_CONF))   vp[vn++] = "confusion";
+	if (f2 & (TR2_RES_SOUND))  vp[vn++] = "sound";
+	if (f2 & (TR2_RES_SHARDS)) vp[vn++] = "shards";
+	if (f2 & (TR2_RES_NETHER)) vp[vn++] = "nether";
+	if (f2 & (TR2_RES_NEXUS))  vp[vn++] = "nexus";
+	if (f2 & (TR2_RES_CHAOS))  vp[vn++] = "chaos";
+	if (f2 & (TR2_RES_DISEN))  vp[vn++] = "disenchantment";
+	if (f2 & (TR2_HOLD_LIFE))  vp[vn++] = "life draining";
+
+	/* Print resistances */
+	if (vn)
 	{
-		info[i++] = "It provides immunity to acid.";
-	}
-	if (f2 & (TR2_IM_ELEC))
-	{
-		info[i++] = "It provides immunity to electricity.";
-	}
-	if (f2 & (TR2_IM_FIRE))
-	{
-		info[i++] = "It provides immunity to fire.";
-	}
-	if (f2 & (TR2_IM_COLD))
-	{
-		info[i++] = "It provides immunity to cold.";
-	}
-	if (f4 & (TR4_IM_LITE))
-	{
-		info[i++] = "It provides immunity to light.";
-	}
-	if (f4 & (TR4_IM_DARK))
-	{
-		info[i++] = "It provides immunity to darkness.";
+		roff("It provides resistance to ");
+
+		/* Scan */
+		for (n = 0; n < vn; n++)
+		{
+			if (n > 0 && n == vn - 1) roff(" and ");
+			else if (n > 0)  roff(", ");
+	
+			roff(CLR_L_RED "%s", vp[n]);
+		}
+
+		roff(".  ");
 	}
 
 	if (f2 & (TR2_THROW))
 	{
-		info[i++] = "It is perfectly balanced for throwing.";
+		roff("It is perfectly balanced for throwing.  ");
 	}
 
-	if (f2 & (TR2_FREE_ACT))
+	/* Collect miscellaneous */
+	vn = 0;
+	if (f3 & (TR3_XXX7))        vp[vn++] = "renders you XXX7'ed";
+	if (f3 & (TR3_FEATHER))     vp[vn++] = "allows you to levitate";
+	if (f3 & (TR3_LITE))        vp[vn++] = "provides permanent light";
+	if (f3 & (TR3_SEE_INVIS))   vp[vn++] = "allows you to see invisible monsters";
+	if (f3 & (TR3_TELEPATHY))   vp[vn++] = "gives telepathic powers";
+	if (f3 & (TR3_SLOW_DIGEST)) vp[vn++] = "slows your metabolism";
+	if (f3 & (TR3_REGEN))       vp[vn++] = "speeds your regenerative powers";
+	if (f2 & (TR2_REFLECT))     vp[vn++] = "reflects bolts and arrows";
+	if (f4 & TR4_LUCK_10)       vp[vn++] = "increases your saving throws";
+	if (f4 & TR4_MUTATE)        vp[vn++] = "causes mutations";
+	if (f4 & TR4_PATRON)        vp[vn++] = "attracts the attention of chaos gods";
+	if (f4 & TR4_STRANGE_LUCK)  vp[vn++] = "warps fate around you";
+	if (f4 & TR4_PASS_WALL)     vp[vn++] = "allows you to pass through solid rock";
+
+	/* Print miscellaneous */
+	if (vn)
 	{
-		info[i++] = "It provides immunity to paralysis.";
-	}
-	if (f2 & (TR2_HOLD_LIFE))
-	{
-		info[i++] = "It provides resistance to life draining.";
-	}
-	if (f2 & (TR2_RES_FEAR))
-	{
-		info[i++] = "It makes you completely fearless.";
-	}
-	if (f2 & (TR2_RES_ACID))
-	{
-		info[i++] = "It provides resistance to acid.";
-	}
-	if (f2 & (TR2_RES_ELEC))
-	{
-		info[i++] = "It provides resistance to electricity.";
-	}
-	if (f2 & (TR2_RES_FIRE))
-	{
-		info[i++] = "It provides resistance to fire.";
-	}
-	if (f2 & (TR2_RES_COLD))
-	{
-		info[i++] = "It provides resistance to cold.";
-	}
-	if (f2 & (TR2_RES_POIS))
-	{
-		info[i++] = "It provides resistance to poison.";
+		roff("It ");
+
+		/* Scan */
+		for (n = 0; n < vn; n++)
+		{
+			if (n > 0 && n == vn - 1) roff(" and ");
+			else if (n > 0)  roff(", ");
+	
+			roff(CLR_L_RED "%s", vp[n]);
+		}
+
+		roff(".  ");
 	}
 
-	if (f2 & (TR2_RES_LITE))
+	/* Collect "produces" */
+	vn = 0;
+	if (f3 & (TR3_SH_FIRE))  vp[vn++] = "a fiery sheath";
+	if (f3 & (TR3_SH_ELEC))  vp[vn++] = "an electric sheath";
+	if (f4 & (TR4_SH_ACID))  vp[vn++] = "an acidic sheath";
+	if (f4 & (TR4_SH_COLD))  vp[vn++] = "a freezing sheath";
+	if (f3 & (TR3_NO_MAGIC)) vp[vn++] = "an anti-magic shell";
+
+	/* Print "produces" */
+	if (vn)
 	{
-		info[i++] = "It provides resistance to light.";
-	}
-	if (f2 & (TR2_RES_DARK))
-	{
-		info[i++] = "It provides resistance to dark.";
+		roff("It produces ");
+
+		/* Scan */
+		for (n = 0; n < vn; n++)
+		{
+			if (n > 0 && n == vn - 1) roff(" and ");
+			else if (n > 0)  roff(", ");
+	
+			roff(CLR_L_RED "%s", vp[n]);
+		}
+
+		roff(".  ");
 	}
 
-	if (f2 & (TR2_RES_BLIND))
-	{
-		info[i++] = "It provides resistance to blindness.";
-	}
-	if (f2 & (TR2_RES_CONF))
-	{
-		info[i++] = "It provides resistance to confusion.";
-	}
-	if (f2 & (TR2_RES_SOUND))
-	{
-		info[i++] = "It provides resistance to sound.";
-	}
-	if (f2 & (TR2_RES_SHARDS))
-	{
-		info[i++] = "It provides resistance to shards.";
-	}
-
-	if (f2 & (TR2_RES_NETHER))
-	{
-		info[i++] = "It provides resistance to nether.";
-	}
-	if (f2 & (TR2_RES_NEXUS))
-	{
-		info[i++] = "It provides resistance to nexus.";
-	}
-	if (f2 & (TR2_RES_CHAOS))
-	{
-		info[i++] = "It provides resistance to chaos.";
-	}
-	if (f2 & (TR2_RES_DISEN))
-	{
-		info[i++] = "It provides resistance to disenchantment.";
-	}
-
-	if (f3 & (TR3_XXX7))
-	{
-		info[i++] = "It renders you XXX7'ed.";
-	}
-	if (f3 & (TR3_FEATHER))
-	{
-		info[i++] = "It allows you to levitate.";
-	}
-	if (f3 & (TR3_LITE))
-	{
-		info[i++] = "It provides permanent light.";
-	}
-	if (f3 & (TR3_SEE_INVIS))
-	{
-		info[i++] = "It allows you to see invisible monsters.";
-	}
-	if (f3 & (TR3_TELEPATHY))
-	{
-		info[i++] = "It gives telepathic powers.";
-	}
-	if (f3 & (TR3_SLOW_DIGEST))
-	{
-		info[i++] = "It slows your metabolism.";
-	}
-	if (f3 & (TR3_REGEN))
-	{
-		info[i++] = "It speeds your regenerative powers.";
-	}
-	if (f2 & (TR2_REFLECT))
-	{
-		info[i++] = "It reflects bolts and arrows.";
-	}
-	if (f3 & (TR3_SH_FIRE))
-	{
-		info[i++] = "It produces a fiery sheath.";
-	}
-	if (f3 & (TR3_SH_ELEC))
-	{
-		info[i++] = "It produces an electric sheath.";
-	}
-	if (f4 & (TR4_SH_ACID))
-	{
-		info[i++] = "It produces an acidic sheath.";
-	}
-	if (f4 & (TR4_SH_COLD))
-	{
-		info[i++] = "It produces a freezing sheath.";
-	}
-	if (f3 & (TR3_NO_MAGIC))
-	{
-		info[i++] = "It produces an anti-magic shell.";
-	}
 	if (f3 & (TR3_NO_TELE))
 	{
-		info[i++] = "It prevents teleportation.";
+		roff("It prevents teleportation.");
 	}
 	if (f3 & (TR3_XTRA_MIGHT))
 	{
-		info[i++] = "It fires missiles with extra might.";
+		roff("It fires missiles with extra might.");
 	}
 	if (f3 & (TR3_XTRA_SHOTS))
 	{
-		info[i++] = "It fires missiles excessively fast.";
+		roff("It fires missiles excessively fast.");
 	}
 
-	if (f3 & (TR3_DRAIN_EXP))
+	/* Collect curses */
+	vn = 0;
+	if (f3 & (TR3_DRAIN_EXP))   vp[vn++] = "drains your experience";
+	if (f3 & (TR3_TELEPORT))    vp[vn++] = "induces random teleportation";
+	if (f3 & TR3_AGGRAVATE)     vp[vn++] = "aggravates nearby creatures";
+	if (f4 & (TR4_AUTO_CURSE))  vp[vn++] = "becomes cursed randomly";
+	if (f4 & (TR4_DRAIN_STATS)) vp[vn++] = "drain your stats";
+	if (f4 & (TR4_CANT_EAT))    vp[vn++] = "makes you unable to eat normal food";
+	if (f4 & (TR4_SLOW_HEAL))   vp[vn++] = "slows your healing";
+
+	/* Print curses */
+	if (vn)
 	{
-		info[i++] = "It drains your experience.";
-	}
-	if (f3 & (TR3_TELEPORT))
-	{
-		info[i++] = "It induces random teleportation.";
-	}
-	if (f3 & TR3_AGGRAVATE)
-	{
-		info[i++] = "It aggravates nearby creatures.";
-	}
-	if (f4 & (TR4_AUTO_CURSE))
-	{
-		info[i++] = "It becomes cursed randomly.";
-	}
-	if (f4 & (TR4_DRAIN_STATS))
-	{
-		info[i++] = "It drains your stats.";
-	}
-	if (f4 & (TR4_CANT_EAT))
-	{
-		info[i++] = "It makes you unable to eat normal food.";
-	}
-	if (f4 & (TR4_SLOW_HEAL))
-	{
-		info[i++] = "It slows your healing.";
+		roff("It ");
+
+		/* Scan */
+		for (n = 0; n < vn; n++)
+		{
+			if (n > 0 && n == vn - 1) roff(" and ");
+			else if (n > 0)  roff(", ");
+	
+			roff(CLR_L_RED "%s", vp[n]);
+		}
+
+		roff(".  ");
 	}
 
 	if (f3 & TR3_BLESSED)
 	{
-		info[i++] = "It has been blessed by the gods.";
+		roff("It has been blessed by the gods.");
 	}
 
-	if (f1 & TR1_SLAY_ANIMAL)
+	/* Collect protections */
+	vn = 0;
+	if (f1 & TR1_SLAY_ANIMAL) vp[vn++] = "natural creatures";
+	if (f1 & TR1_SLAY_EVIL)   vp[vn++] = "evil monsters";
+	if (f1 & TR1_SLAY_UNDEAD) vp[vn++] = "the undead";
+	if (f1 & TR1_SLAY_DEMON)  vp[vn++] = "demons";
+	if (f1 & TR1_SLAY_ORC)    vp[vn++] = "orcs";
+	if (f1 & TR1_SLAY_TROLL)  vp[vn++] = "trolls";
+	if (f1 & TR1_SLAY_GIANT)  vp[vn++] = "giants";
+	if (f1 & TR1_SLAY_DRAGON) vp[vn++] = "dragons";
+
+	/* Print protections */
+	if (vn)
 	{
-		info[i++] = "It provides protection from natural creatures.";
-	}
-	if (f1 & TR1_SLAY_EVIL)
-	{
-		info[i++] = "It provides protection from evil monsters.";
-	}
-	if (f1 & TR1_SLAY_UNDEAD)
-	{
-		info[i++] = "It provides protection from the undead.";
-	}
-	if (f1 & TR1_SLAY_DEMON)
-	{
-		info[i++] = "It provides protection from demons.";
-	}
-	if (f1 & TR1_SLAY_ORC)
-	{
-		info[i++] = "It provides protection from orcs.";
-	}
-	if (f1 & TR1_SLAY_TROLL)
-	{
-		info[i++] = "It provides protection from trolls.";
-	}
-	if (f1 & TR1_SLAY_GIANT)
-	{
-		info[i++] = "It provides protection from giants.";
-	}
-	if (f1 & TR1_SLAY_DRAGON)
-	{
-		info[i++] = "It provides protection from dragons.";
+		roff("It provides protection from ");
+
+		/* Scan */
+		for (n = 0; n < vn; n++)
+		{
+			if (n > 0 && n == vn - 1) roff(" and ");
+			else if (n > 0)  roff(", ");
+	
+			roff(CLR_L_RED "%s", vp[n]);
+		}
+
+		roff(".  ");
 	}
 
-	if (f4 & TR4_LUCK_10)
-	{
-		info[i++] = "It increase your saving throws.";
-	}
-	if (f4 & TR4_MUTATE)
-	{
-		info[i++] = "It causes mutations.";
-	}
-	if (f4 & TR4_PATRON)
-	{
-		info[i++] = "It attracts the attention of chaos gods.";
-	}
-	if (f4 & TR4_STRANGE_LUCK)
-	{
-		info[i++] = "It warps fate around it.";
-	}
-	if (f4 & TR4_PASS_WALL)
-	{
-		info[i++] = "It allows you to pass through solid rock.";
-	}
+	/* Collect vulnerabilities */
+	vn = 0;
+	if (f4 & TR4_HURT_ACID) vp[vn++] = "acid";
+	if (f4 & TR4_HURT_ELEC) vp[vn++] = "lightning";
+	if (f4 & TR4_HURT_FIRE) vp[vn++] = "fire";
+	if (f4 & TR4_HURT_COLD) vp[vn++] = "frost";
+	if (f4 & TR4_HURT_LITE) vp[vn++] = "bright light";
+	if (f4 & TR4_HURT_DARK) vp[vn++] = "magical darkness";
 
-	if (f4 & TR4_HURT_ACID)
+	/* Print vulnerabilities */
+	if (vn)
 	{
-		info[i++] = "It makes you vulnerable to acid.";
-	}
-	if (f4 & TR4_HURT_ELEC)
-	{
-		info[i++] = "It makes you vulnerable to lightning.";
-	}
-	if (f4 & TR4_HURT_FIRE)
-	{
-		info[i++] = "It makes you vulnerable to fire.";
-	}
-	if (f4 & TR4_HURT_COLD)
-	{
-		info[i++] = "It makes you vulnerable to frost.";
-	}
-	if (f4 & TR4_HURT_LITE)
-	{
-		info[i++] = "It makes you vulnerable to bright light.";
-	}
-	if (f4 & TR4_HURT_DARK)
-	{
-		info[i++] = "It makes you vulnerable to darkness.";
+		roff("It renders you vulnerable to ");
+
+		/* Scan */
+		for (n = 0; n < vn; n++)
+		{
+			if (n > 0 && n == vn - 1) roff(" and ");
+			else if (n > 0)  roff(", ");
+	
+			roff(CLR_L_RED "%s", vp[n]);
+		}
+
+		roff(".  ");
 	}
 
 	if (cursed_p(o_ptr))
 	{
 		if (f3 & TR3_PERMA_CURSE)
 		{
-			info[i++] = "It is permanently cursed.";
+			roff("It is permanently cursed.  ");
 		}
 		else if (f3 & TR3_HEAVY_CURSE)
 		{
-			info[i++] = "It is heavily cursed.";
+			roff("It is heavily cursed.  ");
 		}
 		else if (f3 & TR3_CURSED)
 		{
-			info[i++] = "It is cursed.";
+			roff("It is cursed.  ");
 		}
 	}
 
 	if (f3 & TR3_TY_CURSE)
 	{
-		info[i++] = "It carries an ancient foul curse.";
+		roff("It carries an ancient foul curse.");
 	}
 
-	if (f3 & (TR3_IGNORE_ACID))
+	if ((f3 & TR3_IGNORE_MASK) == TR3_IGNORE_MASK)
 	{
-		info[i++] = "It cannot be harmed by acid.";
+		roff("It cannot be harmed by the elements.  ");
 	}
-	if (f3 & (TR3_IGNORE_ELEC))
+	else
 	{
-		info[i++] = "It cannot be harmed by electricity.";
-	}
-	if (f3 & (TR3_IGNORE_FIRE))
-	{
-		info[i++] = "It cannot be harmed by fire.";
-	}
-	if (f3 & (TR3_IGNORE_COLD))
-	{
-		info[i++] = "It cannot be harmed by cold.";
-	}
+		/* Collect ignores */
+		vn = 0;
+		if (f3 & (TR3_IGNORE_ACID)) vp[vn++] = "acid";
+		if (f3 & (TR3_IGNORE_ELEC)) vp[vn++] = "electricity";
+		if (f3 & (TR3_IGNORE_FIRE)) vp[vn++] = "fire";
+		if (f3 & (TR3_IGNORE_COLD)) vp[vn++] = "cold";
 
+		/* Print ignores */
+		if (vn)
+		{
+			roff("It cannot be harmed by ");
 
-	/* No special effects */
-	if (!i) return (FALSE);
+			/* Scan */
+			for (n = 0; n < vn; n++)
+			{
+				if (n > 0 && n == vn - 1) roff(" or ");
+				else if (n > 0)  roff(", ");
 	
-	/* Get size */
-	Term_get_size(&wid, &hgt);
+				roff(CLR_L_RED "%s", vp[n]);
+			}
+
+			roff(".  ");
+		}
+	}
+}
+
+bool identify_fully_aux(const object_type *o_ptr)
+{
+	/* Books, a hack */
+	if ((o_ptr->tval >= TV_BOOKS_MIN) && (o_ptr->tval <= TV_BOOKS_MAX))
+	{
+		do_cmd_browse_aux(o_ptr);
+		return (TRUE);
+	}
+
+	/* Flush messages */
+	message_flush();
 
 	/* Save the screen */
 	screen_save();
 
-	/* Erase the screen */
-    clear_region(13, 1, hgt);
+	/* Begin recall */
+	clear_row(1);
 
-	/* Label the information */
-	prtf(15, 1, "     Item Attributes:");
-
-	/* We will print on top of the map (column 13) */
-	for (k = 2, j = 0; j < i; j++)
-	{
-		/* Show the info */
-		prtf(15, k++, info[j]);
-
-		/* Every hgt-2 entries (lines 2 to hgt-3), start over */
-		if ((k == hgt - 2) && (j + 1 < i))
-		{
-			prtf(15, k, "-- more --");
-			(void)inkey();
-			for (; k > 2; k--) prtf(15, k, "");
-		}
-	}
+	/* Recall object */
+	roff_obj_aux(o_ptr);
 
 	/* Wait for it */
-	prtf(13, k, "[Press any key to continue]");
 	(void)inkey();
 
 	/* Restore the screen */
 	screen_load();
 
-	/* Reclaim the used memory */
-	for (i = 0; i < num_reclaim; i++) string_free(reclaim[i]);
-
-	/* Gave knowledge */
+	/* XXX */
 	return (TRUE);
 }
 
