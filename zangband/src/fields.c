@@ -3140,6 +3140,9 @@ void field_action_door_unlock(s16b *field_ptr, void *input)
 		/* Message */
 		msg_print("The door is unlocked.");
 		
+		/* Open the door */
+		cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
+		
 		/* Delete the field */
 		delete_field_ptr(field_ptr);
 	}

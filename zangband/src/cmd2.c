@@ -805,9 +805,6 @@ bool do_cmd_open_aux(int y, int x)
 		if (!field_hook_single(field_find(fld_idx), FIELD_ACT_INTERACT,
 			 (void *) &i))
 		{
-			/* Open the door */
-			cave_set_feat(y, x, FEAT_OPEN);
-
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 
