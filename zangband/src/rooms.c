@@ -1898,7 +1898,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				/* Monster */
 				case '&':
 				{
-					monster_level = base_level + 5;
+					monster_level = base_level + 4;
 					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					break;
@@ -1907,7 +1907,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				/* Meaner monster */
 				case '@':
 				{
-					monster_level = base_level + 11;
+					monster_level = base_level + 8;
 					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					break;
@@ -1916,10 +1916,10 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				/* Meaner monster, plus treasure */
 				case '9':
 				{
-					monster_level = base_level + 9;
+					monster_level = base_level + 6;
 					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
-					object_level = base_level + 7;
+					object_level = base_level + 6;
 					place_object(x, y, TRUE, FALSE);
 					object_level = base_level;
 					break;
@@ -1928,7 +1928,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 				/* Nasty monster and treasure */
 				case '8':
 				{
-					monster_level = base_level + 40;
+					monster_level = base_level + 25;
 					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					object_level = base_level + 20;
@@ -1948,7 +1948,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 					}
 					if (randint0(100) < 50)
 					{
-						object_level = base_level + 7;
+						object_level = base_level + 5;
 						place_object(x, y, FALSE, FALSE);
 						object_level = base_level;
 					}
@@ -1957,7 +1957,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 
 				case 'A':
 				{
-					object_level = base_level + 12;
+					object_level = base_level + 10;
 					place_object(x, y, TRUE, FALSE);
 					object_level = base_level;
 				}
@@ -2313,17 +2313,17 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				if (value < 0)
 				{
 					/* Meanest monster + treasure */
-					monster_level = base_level + 40;
+					monster_level = base_level + 25;
 					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
-					object_level = base_level + 20;
+					object_level = base_level + 25;
 					place_object(x, y, TRUE, FALSE);
 					object_level = base_level;
 				}
 				else if (value < 5)
 				{
 					/* Mean monster + treasure */
-					monster_level = base_level + 20;
+					monster_level = base_level + 15;
 					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 					object_level = base_level + 10;
@@ -2333,7 +2333,7 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				else if (value < 10)
 				{
 					/* Monster */
-					monster_level = base_level + 9;
+					monster_level = base_level + 6;
 					(void)place_monster(x, y, TRUE, TRUE);
 					monster_level = base_level;
 				}
