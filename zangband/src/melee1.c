@@ -179,6 +179,8 @@ bool make_attack_normal(int m_idx)
 		int d_dice = r_ptr->blow[ap_cnt].d_dice;
 		int d_side = r_ptr->blow[ap_cnt].d_side;
 
+		/* Stop attacking if the aggressor dies (fire sheath etc.) */
+		if (m_ptr->hp < 0) return TRUE;
 
 		/* Hack -- no more attacks */
 		if (!method) break;
