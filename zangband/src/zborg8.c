@@ -512,7 +512,7 @@ static bool borg_good_sell(list_item *l_ptr)
 		case TV_SCROLL:
 		{
 			/* Never sell if not "known" and interesting */
-			if (!l_ptr->k_idx && (borg_skill[BI_MAXDEPTH] > 5)) return (FALSE);
+			if (!l_ptr->k_idx && (borg_skill[BI_MAXDEPTH] > 20)) return (FALSE);
 
 			break;
 		}

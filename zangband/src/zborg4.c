@@ -1971,9 +1971,11 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			/* Use as fuel if we equip a lantern */
 			if (borg_skill[BI_CUR_LITE] == 2) borg_skill[BI_AFUEL] += number;
 
-			/* Count as Missiles */
-			if (borg_skill[BI_CLEVEL] < 15) borg_skill[BI_AMISSILES] += number;
-
+			/* Count as (crappy) Missiles */
+			if (borg_skill[BI_CLEVEL] < 15)
+			{
+				borg_skill[BI_AMISSILES] += number / 2;
+			}
 			break;
 		}
 
@@ -1991,13 +1993,11 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			break;
 		}
 
-
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
 		{
 			/* Weapons */
-
 
 			/* These items are checked a bit later in a sub routine
 			 * to notice the flags.  It is done outside this switch.
