@@ -2069,7 +2069,7 @@ player_race race_info[MAX_RACES] =
  *      {STR,INT,WIS,DEX,CON,CHR},
  *      c_dis, c_dev, c_sav, c_stl, c_sns, c_fos, c_thn, c_thb,
  *      x_dis, x_dev, x_sav, x_stl, x_sns, x_fos, x_thn, x_thb,
- *      HD, Exp, pet_upkeep_div
+ *      HD, Exp, pet_upkeep_div, heavy_sense
  */
 player_class class_info[MAX_CLASS] =
 {
