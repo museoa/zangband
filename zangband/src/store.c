@@ -1491,14 +1491,27 @@ static void store_maint(void)
 
 	/* Sell a few items */
 	j = j - randint1(STORE_TURNOVER);
+	
+	if (st_ptr->max_stock == STORE_INVEN_MAX)
+	{
+		/* Never keep more than "STORE_MAX_KEEP" slots */
+		if (j > STORE_MAX_KEEP1) j = STORE_MAX_KEEP1;
 
-	/* Never keep more than "STORE_MAX_KEEP" slots */
-	if (j > STORE_MAX_KEEP) j = STORE_MAX_KEEP;
+		/* Always "keep" at least "STORE_MIN_KEEP" items */
+		if (j < STORE_MIN_KEEP1) j = STORE_MIN_KEEP1;
+	}
+	else
+	{
+		/* The store has half the normal inventory space */
 
-	/* Always "keep" at least "STORE_MIN_KEEP" items */
-	if (j < STORE_MIN_KEEP) j = STORE_MIN_KEEP;
+		/* Never keep more than "STORE_MAX_KEEP" slots */
+		if (j > STORE_MAX_KEEP2) j = STORE_MAX_KEEP2;
 
-	/* Hack -- prevent "underflow" */
+		/* Always "keep" at least "STORE_MIN_KEEP" items */
+		if (j < STORE_MIN_KEEP2) j = STORE_MIN_KEEP2;
+	}
+
+	/* Hack -- prevent "underflow" (This should never happen anyway.) */
 	if (j < 0) j = 0;
 
 	/* Destroy objects until only "j" slots are left */
@@ -1510,14 +1523,27 @@ static void store_maint(void)
 
 	/* Buy some more items */
 	j = j + randint1(STORE_TURNOVER);
+	
+	if (st_ptr->max_stock == STORE_INVEN_MAX)
+	{
+		/* Never keep more than "STORE_MAX_KEEP" slots */
+		if (j > STORE_MAX_KEEP1) j = STORE_MAX_KEEP1;
 
-	/* Never keep more than "STORE_MAX_KEEP" slots */
-	if (j > STORE_MAX_KEEP) j = STORE_MAX_KEEP;
+		/* Always "keep" at least "STORE_MIN_KEEP" items */
+		if (j < STORE_MIN_KEEP1) j = STORE_MIN_KEEP1;
+	}
+	else
+	{
+		/* The store has half the normal inventory space */
 
-	/* Always "keep" at least "STORE_MIN_KEEP" items */
-	if (j < STORE_MIN_KEEP) j = STORE_MIN_KEEP;
+		/* Never keep more than "STORE_MAX_KEEP" slots */
+		if (j > STORE_MAX_KEEP2) j = STORE_MAX_KEEP2;
 
-	/* Hack -- prevent "overflow" */
+		/* Always "keep" at least "STORE_MIN_KEEP" items */
+		if (j < STORE_MIN_KEEP2) j = STORE_MIN_KEEP2;
+	}
+
+	/* Hack -- prevent "overflow" (This shouldn't do anything) */
 	if (j >= st_ptr->max_stock) j = st_ptr->max_stock - 1;
 
 	/* Acquire some new items */
