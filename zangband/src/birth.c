@@ -27,6 +27,60 @@
 #define MAX_TRIES 100
 
 /*
+ * Race groups only needed in the race selection display
+ */
+
+/* 
+ *In fact, THESE are not needed...
+ * #define RACES_HUMAN       0
+ * #define RACES_ELVEN       1
+ * #define RACES_TINY        2
+ * #define RACES_HUGE        3
+ * #define RACES_ZOOMORPH    4
+ * #define RACES_GOBLIN      5
+ * #define RACES_MAGIC       6
+ * #define RACES_UNDEAD      7
+ * #define RACES_PLANAR      8
+ */
+
+#define MAX_RACE_GROUPS   9
+
+const cptr race_group_name[MAX_RACE_GROUPS]=
+{
+  "Human", "Elven", "Midget", "Giant", "Goblinoid", 
+  "Natural", "Magic", "Undead", "Extraplanar",
+
+};
+
+const cptr race_group_desc[MAX_RACE_GROUPS]=
+{
+  "This group consists of human subtypes and human-looking races.",
+  "This group consists of elven subraces.",
+  "This group consists of races that are smaller than humans.",
+  "This group consists of races that are larger than humans.",
+  "This group consists of 'evil' races such as kobolds and half-orcs.",
+  "This group consists of sentient animal and plant races.",
+  "This group consists of races with a magical origin or background.",
+  "This group consists of undead races.",
+  "This group consists of races from other planes of existence."
+};
+
+#define MAX_GROUP_INT 6 /* Internal max amount of races per group. */
+
+const sint race_groups [MAX_RACE_GROUPS][MAX_GROUP_INT]=
+{
+  {RACE_HUMAN, RACE_BARBARIAN, RACE_AMBERITE, -1, -1, -1},
+  {RACE_HALF_ELF, RACE_ELF, RACE_HIGH_ELF, RACE_DARK_ELF, -1, -1},
+  {RACE_HOBBIT, RACE_GNOME, RACE_DWARF, RACE_NIBELUNG, RACE_YEEK, RACE_SPRITE},
+  {RACE_CYCLOPS, RACE_HALF_OGRE, RACE_HALF_GIANT, RACE_HALF_TITAN, -1, -1},
+  {RACE_KOBOLD, RACE_HALF_ORC, RACE_HALF_TROLL, -1, -1, -1},
+  {RACE_KLACKON, -1, -1, -1, -1, -1},
+  {RACE_DRACONIAN, RACE_MIND_FLAYER, RACE_GOLEM, RACE_BEASTMAN, -1, -1},
+  {RACE_SKELETON, RACE_ZOMBIE, RACE_VAMPIRE, RACE_SPECTRE, -1, -1},
+  {RACE_IMP, -1, -1, -1, -1, -1}
+};
+
+/*
  * Forward declare
  */
 typedef struct birther birther;
@@ -58,8 +112,6 @@ struct birther
  * The last character displayed
  */
 static birther prev;
-
-
 
 /*
  * Forward declare
@@ -1836,44 +1888,46 @@ static void player_outfit(void)
 /*
  * Player race
  */
-static bool get_player_race(void)
+
+
+static byte get_sub_race(int group)
 {
-	int     k, n;
-	cptr    str;
-	char    c;
-	char    p2 = ')';
-	char    buf[80];
+  int k, n;
+  sint group_max = -1;
+  cptr str;
+  char c;
+  char p2 = ')';
+  char buf[85]; /* Paranoia: 85  */
 
+  clear_from(15);
+  Term_putstr(5, 15, -1, TERM_WHITE, race_group_desc[group]);
 
-	/* Extra info */
-	Term_putstr(5, 15, -1, TERM_WHITE,
-		"Your 'race' determines various intrinsic factors and bonuses.");
-	hack_mutation = FALSE;
-
-	/* Dump races */
-	for (n = 0; n < MAX_RACES; n++)
+  /* Dump races */
+  for (n = 0; n < MAX_GROUP_INT; n++)
+    {
+      /* Analyze, ignore null races  */
+      if (race_groups[group][n] != -1)
 	{
-		/* Analyze */
-		p_ptr->prace = n;
+		p_ptr->prace = race_groups[group][n];
 		rp_ptr = &race_info[p_ptr->prace];
 		str = rp_ptr->title;
-
-		/* Display */
-
-		if (n < RACE_VAMPIRE)
-			sprintf(buf, "%c%c %s", I2A(n), p2, str);
-		else
-		{
-			/* HACK - there are only so many letters */
-			sprintf(buf, "%d%c %s", (n - RACE_ZOMBIE), p2, str); /* HACK */
-		}
+		sprintf(buf, "%c%c %s", I2A(n), p2, str);
 		put_str(buf, 18 + (n/5), 2 + 15 * (n%5));
+		group_max++;
 	}
+    }
+
+  /* Paranoia */
+  if (group_max == -1)
+    {
+      return (1);
+    }
+
 
 	/* Choose */
 	while (1)
 	{
-		sprintf(buf, "Choose a race (%c-4), * for random, or = for options: ", I2A(0));
+		sprintf(buf, "Choose a race (%c-%c), * for random, ESC for previous menu, or = for options: ", I2A(0), I2A(group_max));
 		put_str(buf, 17, 2);
 		c = inkey();
 		if (c == 'Q')
@@ -1881,36 +1935,18 @@ static bool get_player_race(void)
 			remove_loc();
 			quit(NULL);
 		}
-		if (c == 'S') return (FALSE);
+		if (c == 'S') return (2);
+		if (c == ESCAPE) return (3);
 		if (c == '*')
 		{
-			k = randint0(MAX_RACES);
-			break;
+		  k = randint0(group_max+1);
+		  break;
 		}
-		if (c == '1')
-		{
-			k = RACE_VAMPIRE;
-			break;
-		}
-		else if (c == '2')
-		{
-			k = RACE_SPECTRE;
-			break;
-		}
-		else if (c == '3')
-		{
-			k = RACE_SPRITE;
-			break;
-		}
-		else if (c == '4')
-		{
-			k = RACE_BEASTMAN;
-			break;
-		}
+
 		else
 		{
 			k = (islower(c) ? A2I(c) : -1);
-			if ((k >= 0) && (k < n)) break;
+			if ((k >= 0) && (k < group_max+1)) break;
 			if (c == '?')
 			{
 				screen_save();
@@ -1928,8 +1964,122 @@ static bool get_player_race(void)
 		}
 	}
 
+
+
 	/* Set race */
-	p_ptr->prace = k;
+	p_ptr->prace = race_groups[group][k];
+
+	/* Selection made */
+	return 0;
+
+}
+
+static bool get_player_race(void)
+{
+	int     k, n;
+	cptr    str;
+	char    c;
+	char    p2 = ')';
+	char    buf[80];
+	bool    selected = FALSE;
+	byte sub_ret_val;
+
+	/* Extra info */
+	Term_putstr(5, 15, -1, TERM_WHITE,
+		"Your 'race' determines various intrinsic factors and bonuses.");
+
+	hack_mutation = FALSE;
+
+	/* Dump race groups */
+	for (n = 0; n < MAX_RACE_GROUPS;  n++)
+	{
+		/* Display */
+		sprintf(buf, "%c%c %s", I2A(n), p2, race_group_name[n]);
+		put_str(buf, 18 + (n/5), 2 + 15 * (n%5));
+	}
+
+	/* Choose */
+	while (1)
+	{
+		sprintf(buf, "Choose a race group (%c-%c), * for random race, or = for options: ", I2A(0), I2A(n));
+		put_str(buf, 17, 2);
+		c = inkey();
+		if (c == 'Q')
+		{
+			remove_loc();
+			quit(NULL);
+		}
+		if (c == 'S') return (FALSE);
+		if (c == '*')
+		{
+			k = randint0(MAX_RACES);
+			break;
+		}
+		else
+		{
+			k = (islower(c) ? A2I(c) : -1);
+			if ((k >= 0) && (k < n)) 
+			  {
+			    sub_ret_val = get_sub_race(k);
+			    if (sub_ret_val == 1)
+			      { 
+				bell();
+				msg_print("There are no races in this group.");
+			      }
+			    else if(sub_ret_val == 2)
+			      {
+				return (FALSE);
+			      }
+			    else if (sub_ret_val == 3)
+			      {
+				/* Do nothing */
+			      }
+			    else if (sub_ret_val == 0)
+			      {
+				/* Success! */
+				selected = TRUE;
+				break;
+			      }
+			    else 
+			      {
+				sprintf(buf, "Unknown value: get_sub_race returned %d. Please submit a bug report.", sub_ret_val);
+				bell();
+				msg_print(buf);
+				msg_print(NULL);
+			      }
+			    if(!selected)
+			      {
+				/* No selection, refresh display */
+				clear_from(15);
+				Term_putstr(5, 15, -1, TERM_WHITE,
+					    "Your 'race' determines various intrinsic factors and bonuses.");
+
+				for (n = 0; n < MAX_RACE_GROUPS;  n++)
+				  {				    
+				    sprintf(buf, "%c%c %s", I2A(n), p2, race_group_name[n]);
+				    put_str(buf, 18 + (n/5), 2 + 15 * (n%5));
+				  }
+			      }
+			  }
+			else if (c == '?')
+			{
+				screen_save();
+				show_file("charattr.txt#TheRaces", NULL, 0, 0);
+				screen_load();
+			}
+			else if (c == '=')
+			{
+				screen_save();
+				do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER |
+						 OPT_FLAG_PLAYER);
+				screen_load();
+			}
+			else bell();
+		}
+	}
+
+	/* Set random race */
+	if (!selected) p_ptr->prace = k;
 
 	/* Give beastman a mutation at character birth */
 	if (p_ptr->prace == RACE_BEASTMAN)
