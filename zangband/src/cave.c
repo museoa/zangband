@@ -41,7 +41,7 @@ static int p_slope_max[MAX_SIGHT+1][MAX_SIGHT+1];
 /*
  * Distance between two points via Newton-Raphson technique
  */
-int distance(int y1, int x1, int y2, int x2)
+int distance(int x1, int y1, int x2, int y2)
 {
 	int dy = ABS(y2 - y1);
 	int dx = ABS(x2 - x1);
@@ -101,7 +101,7 @@ bool is_visible_trap(cave_type *c_ptr)
  * Use this function instead of cut+pasting los() everywhere
  * with only tiny changes made to it.
  */
-static bool los_general(int y1, int x1, int y2, int x2, cave_hook_type c_hook)
+static bool los_general(int x1, int y1, int x2, int y2, cave_hook_type c_hook)
 {
 	int i, j, temp, dist;
 	
@@ -244,7 +244,7 @@ static bool cave_stop_wall(cave_type *c_ptr)
  */
 bool los(int y1, int x1, int y2, int x2)
 {
-	return (los_general(y1, x1, y2, x2, cave_stop_wall));
+	return (los_general(x1, y1, x2, y2, cave_stop_wall));
 }
 
 
@@ -720,7 +720,7 @@ static bool cave_stop_ball(cave_type *c_ptr)
  */
 bool in_ball_range(int y1, int x1, int y2, int x2)
 {
-	return (los_general(y1, x1, y2, x2, cave_stop_ball));
+	return (los_general(x1, y1, x2, y2, cave_stop_ball));
 }
 
 
@@ -747,7 +747,7 @@ static bool cave_stop_disintegration(cave_type *c_ptr)
  */
 bool in_disintegration_range(int y1, int x1, int y2, int x2)
 {
-	return (los_general(y1, x1, y2, x2, cave_stop_disintegration));
+	return (los_general(x1, y1, x2, y2, cave_stop_disintegration));
 }
 
 
