@@ -732,9 +732,8 @@ static bool get_moves(int m_idx, int *mm)
 	 * (...unless they can move through walls -- TY)
 	 */
 		if ((r_ptr->flags1 & RF1_FRIENDS) &&
-			(r_ptr->flags3 & RF3_ANIMAL) &&
-			!((r_ptr->flags2 & RF2_PASS_WALL) ||
-			  (r_ptr->flags2 & RF2_KILL_WALL)))
+			 (r_ptr->flags3 & RF3_ANIMAL) &&
+			 !(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)))
 		{
 			int i, room = 0;
 
@@ -746,7 +745,7 @@ static bool get_moves(int m_idx, int *mm)
 
 				/* Check grid */
 				if (cave_floor_bold(y, x) ||
-				   (cave[y][x].feat == FEAT_TREES))
+					(cave[y][x].feat == FEAT_TREES))
 				{
 					/* One more room grid */
 					room++;
