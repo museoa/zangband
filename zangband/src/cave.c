@@ -2605,7 +2605,7 @@ static int display_map_info(int x, int y, char *c, byte *a, char *tc, byte *ta)
 		*c = r_ptr->x_char;
 #ifdef VARIABLE_PLAYER_GRAPH
 
-		variable_player_graph(a, c)
+		variable_player_graph(a, c);
 #endif /* VARIABLE_PLAYER_GRAPH */
 			/* Highest priority */
 			tp = 50;
