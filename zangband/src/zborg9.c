@@ -4018,7 +4018,14 @@ void do_cmd_borg(void)
 
 			get_com("Stop when Morgoth Dies? (y or n)? ", &cmd);
 
-			if (cmd == 'n' || cmd == 'N') borg_stop_king = FALSE;
+			if (cmd == 'n' || cmd == 'N')
+			{
+				borg_stop_king = FALSE;
+			}
+			else
+			{
+				borg_stop_king = TRUE;
+			}
 
 			break;
 		}
