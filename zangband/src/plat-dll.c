@@ -243,7 +243,6 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 		IPC_CREAT | 0777);
 	if (ret < 0)
 	{
-		printf("shmget: errno is %s (%d): %s\n", Tcl_ErrnoId(), errno, Tcl_ErrnoMsg(errno));
 		Tcl_Panic((char *)"shmget() failed");
 	}
 
@@ -252,7 +251,6 @@ void Plat_BitmapNew(Tcl_Interp *interp, BitmapPtr bitmapPtr)
 	
     if(ret == -1)
     {
-		printf("shmat: errno is %s (%d): %s\n", Tcl_ErrnoId(), errno, Tcl_ErrnoMsg(errno));
 		shmctl(platData->shminfo.shmid, IPC_RMID, 0);
 		Tcl_Panic((char *) "shmat() failed");
 	}

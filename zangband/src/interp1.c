@@ -681,7 +681,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		"infravision", "level", "mana", "max_depth", "name", "position",
 		"race", "sex", "shots_per_round", "social_class", "spell_book",
 		"stat", "status", "title", "to_dam", "to_hit", "weight",
-		"total_weight", "preserve", "base_name", "flags",
+		"total_weight", "preserve", "base_name",
 		"is_dead", "turn", "max_level", "disturb", "new_spells",
 		"command_rep", "running", "prayer_or_spell", "health_who",
 		"monster_race_idx", "life_rating",
@@ -693,7 +693,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_NAME, IDX_POSITION,
 		IDX_RACE, IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS, IDX_SPELL_BOOK,
 		IDX_STAT, IDX_STATUS, IDX_TITLE, IDX_TO_DAM, IDX_TO_HIT, IDX_WEIGHT,
-		IDX_TOTAL_WEIGHT, IDX_PRESERVE, IDX_BASE_NAME, IDX_FLAGS,
+		IDX_TOTAL_WEIGHT, IDX_PRESERVE, IDX_BASE_NAME,
 		IDX_IS_DEAD, IDX_TURN, IDX_MAX_LEVEL, IDX_DISTURB, IDX_NEW_SPELLS,
 		IDX_COMMAND_REP, IDX_RUNNING, IDX_PRAYER_OR_SPELL, IDX_HEALTH_WHO,
 		IDX_MONSTER_RACE_IDX, IDX_LIFE_RATING,
@@ -1056,15 +1056,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			ExtToUtf_SetResult(interp, (char *) player_base);
 			break;
 
-		case IDX_FLAGS: /* flags */
-			listObjPtr = dump_player_flags(interp);
-			if (listObjPtr == NULL)
-			{
-				return TCL_ERROR;
-			}
-			Tcl_SetObjResult(interp, listObjPtr);
-			break;
-
 		case IDX_IS_DEAD: /* is_dead */
 			Tcl_SetBooleanObj(resultPtr, p_ptr->is_dead);
 			break;
@@ -1271,271 +1262,6 @@ cptr power_desc[] = {
 "Throw Object"
 };
 
-/*
- * Set a Tcl array variable with info about a power
- */
-static void dump_power_info(char *varName, int power, bool racial, int min_level, int cost, int use_stat, int difficulty)
-{
-	cptr type = racial ? "racial" : "mutation";
-	int chance = 100 - racial_chance(min_level, use_stat, difficulty);
-	
-	SetArrayValueLong(varName, "chance", chance);
-	SetArrayValueLong(varName, "cost", cost);
-	SetArrayValueLong(varName, "level", min_level);
-	ExtToUtf_SetArrayValueString(varName, (char *) "name", (char *) power_desc[power]);
-	SetArrayValueString(varName, "stat", keyword_stat[use_stat]);
-	SetArrayValueString(varName, "type", type);
-}
-
-/*
- * Set a Tcl array variable with info about a power
- */
-static void DumpPowerAux(char *varName, int power)
-{
-    s16b plev = p_ptr->lev;
-
-	switch (power)
-	{
-		/* Racial power */
-		case POWER_DWARF:
-			dump_power_info(varName, power, TRUE, 5, 5, A_WIS, 12);
-			break;
-
-		case POWER_HOBBIT:
-			dump_power_info(varName, power, TRUE, 15, 10, A_INT, 10);
-			break;
-
-		case POWER_GNOME:
-			dump_power_info(varName, power, TRUE, 5, (5 + (plev / 5)),
-				A_INT, 12);
-			break;
-
-		case POWER_HALF_ORC:
-			dump_power_info(varName, power, TRUE, 3, 5, A_WIS,
-				(p_ptr->pclass == CLASS_WARRIOR?5:10));
-			break;
-
-		case POWER_HALF_TROLL:
-			dump_power_info(varName, power, TRUE, 10, 12, A_WIS,
-			(p_ptr->pclass == CLASS_WARRIOR) ? 6 : 12);
-			break;
-
-		/* Shadow Shifting */
-		case POWER_AMBERITE_A:
-			dump_power_info(varName, power, TRUE, 30, 50, A_INT, 50);
-			break;
-
-		/* Pattern Mindwalking */
-		case POWER_AMBERITE_B:
-			dump_power_info(varName, power, TRUE, 40, 75, A_WIS, 50);
-			break;
-
-		case POWER_BARBARIAN:
-			dump_power_info(varName, power, TRUE, 8, 10, A_WIS,
-				(p_ptr->pclass == CLASS_WARRIOR) ? 6 : 12);
-			break;
-
-		case POWER_HALF_OGRE:
-			dump_power_info(varName, power, TRUE, 25, 35, A_INT, 15);
-			break;
-
-		case POWER_HALF_GIANT:
-			dump_power_info(varName, power, TRUE, 20, 10, A_STR, 12);
-			break;
-
-		case POWER_HALF_TITAN:
-			dump_power_info(varName, power, TRUE, 35, 20, A_INT, 12);
-			break;
-
-		case POWER_CYCLOPS:
-			dump_power_info(varName, power, TRUE, 20, 15, A_STR, 12);
-			break;
-
-		case POWER_YEEK:
-			dump_power_info(varName, power, TRUE, 15, 15, A_WIS, 10);
-			break;
-
-		case POWER_KLACKON:
-			dump_power_info(varName, power, TRUE, 9, 9, A_DEX, 14);
-			break;
-
-		case POWER_KOBOLD:
-			dump_power_info(varName, power, TRUE, 12, 8, A_DEX, 14);
-			break;
-
-		case POWER_NIBELUNG:
-			dump_power_info(varName, power, TRUE, 10, 5, A_WIS, 10);
-			break;
-
-		case POWER_DARK_ELF:
-			dump_power_info(varName, power, TRUE, 2, 2, A_INT, 9);
-			break;
-
-		case POWER_DRACONIAN:
-			dump_power_info(varName, power, TRUE, 1, p_ptr->lev, A_CON, 12);
-			break;
-
-		case POWER_MIND_FLAYER:
-			dump_power_info(varName, power, TRUE, 15, 12, A_INT, 14);
-			break;
-
-		case POWER_IMP:
-			dump_power_info(varName, power, TRUE, 9, 15, A_WIS, 15);
-			break;
-
-		case POWER_GOLEM:
-			dump_power_info(varName, power, TRUE, 20, 15, A_CON, 8);
-			break;
-
-		case POWER_SKELETON:
-		case POWER_ZOMBIE:
-			dump_power_info(varName, power, TRUE, 30, 30, A_WIS, 18);
-			break;
-
-		case POWER_VAMPIRE:
-	   		dump_power_info(varName, power, TRUE, 2, (1 + (plev / 3)),
-	   			A_CON, 9);
-			break;
-
-		case POWER_SPECTRE:
-			dump_power_info(varName, power, TRUE, 4, 6, A_INT, 3);
-			break;
-
-		case POWER_SPRITE:
-			dump_power_info(varName, power, TRUE, 12, 12, A_INT, 15);
-			break;
-
-		/* Mutation power */
-		case POWER_SPIT_ACID:
-			dump_power_info(varName, power, FALSE, 9, 9, A_DEX, 15);
-			break;
-
-		case POWER_BR_FIRE:
-			dump_power_info(varName, power, FALSE, 20, p_ptr->lev, A_CON, 18);
-			break;
-
-		case POWER_HYPN_GAZE:
-			dump_power_info(varName, power, FALSE, 12, 12, A_CHR, 18);
-			break;
-
-		case POWER_TELEKINES:
-			dump_power_info(varName, power, FALSE, 9, 9, A_WIS, 14);
-			break;
-
-		case POWER_VTELEPORT:
-			dump_power_info(varName, power, FALSE, 7, 7, A_WIS, 15);
-			break;
-
-		case POWER_MIND_BLST:
-			dump_power_info(varName, power, FALSE, 5, 3, A_WIS, 15);
-			break;
-
-		case POWER_RADIATION:
-			dump_power_info(varName, power, FALSE, 15, 15, A_CON, 14);
-			break;
-
-		case POWER_VAMPIRISM:
-			dump_power_info(varName, power, FALSE, 2,
-				(1 + (p_ptr->lev / 3)), A_CON, 9);
-			break;
-			
-		case POWER_SMELL_MET:
-			dump_power_info(varName, power, FALSE, 3, 2, A_INT, 12);
-			break;
-
-		case POWER_SMELL_MON:
-			dump_power_info(varName, power, FALSE, 5, 4, A_INT, 15);
-			break;
-
-		case POWER_BLINK:
-			dump_power_info(varName, power, FALSE, 3, 3, A_WIS, 12);
-			break;
-
-		case POWER_EAT_ROCK:
-			dump_power_info(varName, power, FALSE, 8, 12, A_CON, 18);
-			break;
-
-		case POWER_SWAP_POS:
-			dump_power_info(varName, power, FALSE, 15, 12, A_DEX, 16);
-			break;
-
-		case POWER_SHRIEK:
-			dump_power_info(varName, power, FALSE, 4, 4, A_CON, 6);
-			break;
-
-		case POWER_ILLUMINE:
-			dump_power_info(varName, power, FALSE, 3, 2, A_INT, 10);
-			break;
-
-		case POWER_DET_CURSE:
-			dump_power_info(varName, power, FALSE, 7, 14, A_WIS, 14);
-			break;
-
-		case POWER_BERSERK:
-			dump_power_info(varName, power, FALSE, 8, 8, A_STR, 14);
-			break;
-
-		case POWER_POLYMORPH:
-			dump_power_info(varName, power, FALSE, 18, 20, A_CON, 18);
-			break;
-
-		case POWER_MIDAS_TCH:
-			dump_power_info(varName, power, FALSE, 10, 5, A_INT, 12);
-			break;
-
-		case POWER_GROW_MOLD:
-			dump_power_info(varName, power, FALSE, 1, 6, A_CON, 14);
-			break;
-
-		case POWER_RESIST:
-			dump_power_info(varName, power, FALSE, 10, 12, A_CON, 12);
-			break;
-
-		case POWER_EARTHQUAKE:
-			dump_power_info(varName, power, FALSE, 12, 12, A_STR, 16);
-			break;
-
-		case POWER_EAT_MAGIC:
-			dump_power_info(varName, power, FALSE, 17, 1, A_WIS, 15);
-			break;
-			
-		case POWER_WEIGH_MAG:
-			dump_power_info(varName, power, FALSE, 6, 6, A_INT, 10);
-			break;
-			
-		case POWER_STERILITY:
-			dump_power_info(varName, power, FALSE, 12, 23, A_CHR, 15);
-			break;
-
-		case POWER_PANIC_HIT:
-			dump_power_info(varName, power, FALSE, 10, 12, A_DEX, 14);
-			break;
-
-		case POWER_DAZZLE:
-			dump_power_info(varName, power, FALSE, 7, 15, A_CHR, 8);
-			break;
-
-		case POWER_LASER_EYE:
-			dump_power_info(varName, power, FALSE, 7, 10, A_WIS, 9);
-			break;
-
-		case POWER_RECALL:
-			dump_power_info(varName, power, FALSE, 17, 50, A_INT, 16);
-			break;
-
-		case POWER_BANISH:
-			dump_power_info(varName, power, FALSE, 25, 25, A_WIS, 18);
-			break;
-			
-		case POWER_COLD_TOUCH:
-			dump_power_info(varName, power, FALSE, 2, 2, A_CON, 11);
-			break;
-
-		case POWER_LAUNCHER:
-			dump_power_info(varName, power, FALSE, 1, p_ptr->lev, A_STR, 6);
-			break;
-	}
-}
 
 /*
  * Get a list of POWER_XXX indexes of character powers.
@@ -1812,13 +1538,11 @@ objcmd_power(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static cptr cmdOptions[] = {"get", "info", NULL};
-	enum {IDX_GET, IDX_INFO} option;
+	static cptr cmdOptions[] = {"get", NULL};
+	enum {IDX_GET} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	int index;
 
 	Tcl_Obj *listObjPtr;
-	char *t;
 	int i, num, power[MAX_POWER];
 
 	/* Required number of arguments */
@@ -1856,21 +1580,6 @@ objcmd_power(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 				}
 				Tcl_SetObjResult(interp, listObjPtr);
 			}
-			break;
-
-		case IDX_INFO: /* info */
-		    if (objC != 4)
-		    {
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "power arrayName");
-				return TCL_ERROR;
-		    }
-			if (Tcl_GetIntFromObj(interp, objV[2], &index)
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			t = Tcl_GetStringFromObj(objV[3], NULL);
-			DumpPowerAux(t, index);
 			break;
 	}
 

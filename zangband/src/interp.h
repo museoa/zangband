@@ -22,8 +22,6 @@ extern int CanvasWidget_Init(Tcl_Interp *interp);
 extern int init_const(Tcl_Interp *interp);
 
 /* describe.c */
-extern Tcl_Obj *dump_object_flags(Tcl_Interp *interp, object_type *o_ptr);
-extern Tcl_Obj *dump_player_flags(Tcl_Interp *interp);
 extern int objcmd_equipinfo _ANSI_ARGS_((ClientData clientData,
 		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
 extern int objcmd_inveninfo _ANSI_ARGS_((ClientData clientData,

@@ -2091,8 +2091,6 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 				rlePtr += 2;
 				for (j = 0; j < opaq; j++)
 				{
-					extern int gamma_correct(int value, double gamma);
-		
 					int r, g, b;
 		
 					PixelPtrToRGB(rlePtr + j * bypp, &r, &g, &b, bypp);
@@ -2113,8 +2111,6 @@ void Icon_MakeDark(t_icon_data *iconDataPtr, int index)
 		/* Darken */
 		for (j = 0; j < iconDataPtr->pixels; j++)
 		{
-			extern int gamma_correct(int value, double gamma);
-
 			int r, g, b;
 
 			PixelPtrToRGB(darkData + j * iconDataPtr->bypp,
@@ -3773,8 +3769,4 @@ void Icon_Exit(Tcl_Interp *interp)
 					Tcl_FreeDebug((char *) iconDataPtr->dark_data[j]);
 		}
 	}
-{
-	extern void db_heap_check(int mark);
-	db_heap_check(0);
-}
 }

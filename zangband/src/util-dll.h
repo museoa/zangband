@@ -15,15 +15,6 @@
 
 #include <tk.h>
 
-#if !defined(PLATFORM_MAC) && !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
-#error "you must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
-#endif /* */
-
-#if !defined(MIN)
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
-#endif
-
 extern int g_palette_white, g_palette_black;
 #define PALETTE_WHITE g_palette_white
 #define PALETTE_BLACK g_palette_black
@@ -34,6 +25,8 @@ extern int g_colormap_white, g_colormap_black;
 
 extern unsigned char g_palette2colormap[256];
 extern unsigned char g_colormap2palette[256];
+
+extern int gamma_correct(int value, double gamma);
 
 typedef unsigned char TintValue, TintTable[256], *TintPtr;
 int Palette_Init(Tcl_Interp *interp, char *fileName);
@@ -129,14 +122,6 @@ Tcl_Obj *ExtToUtf_NewStringObj(CONST char *bytes, int length);
 void ExtToUtf_SetResult(Tcl_Interp *interp, char *string);
 char *UtfToExt_TranslateFileName(Tcl_Interp *interp, char *utfPath,
 	Tcl_DString *extDStringPtr);
-
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
 
 #endif /* _INCLUDE_UTILDLL_H_ */
 

@@ -316,8 +316,7 @@ objcmd_equipment(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	int objC = objc - infoCmd->depth;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
-	static cptr cmdOptions[] = {"flags",
-		"inscription", NULL};
+	static cptr cmdOptions[] = {"inscription", NULL};
 	enum {IDX_FLAGS,
 		IDX_INSCRIPTION} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
@@ -348,40 +347,6 @@ objcmd_equipment(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 
 	switch (option)
 	{
-		case IDX_FLAGS: /* flags */
-
-			if (objC != 3)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "slot");
-				return TCL_ERROR;
-			}
-
-			/* Get a numerical index or slot name */
-			if (Tcl_GetIntFromObj(interp, objV[2], &i_idx) != TCL_OK)
-			{
-				Tcl_ResetResult(interp);
-				if (Tcl_GetIndexFromObj(interp, objV[2],
-					(char **) keyword_slot, (char *) "slot", 0, &i_idx) != TCL_OK)
-				{
-					return TCL_ERROR;
-				}
-			}
-			if ((i_idx < 0) || (i_idx >= EQUIP_MAX))
-			{
-				goto bad_index;
-			}
-	
-			/* Get object info */
-			o_ptr = &p_ptr->equipment[i_idx];
-
-			listObjPtr = dump_object_flags(interp, o_ptr);
-			if (listObjPtr == NULL)
-			{
-				return TCL_ERROR;
-			}
-			Tcl_SetObjResult(interp, listObjPtr);
-			break;
-
 		case IDX_INSCRIPTION: /* inscription */
 
 			if (objC < 3)
@@ -1217,78 +1182,6 @@ objcmd_game(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	return TCL_OK;
 }
 
-/*
- *--------------------------------------------------------------
- *
- * objcmd_highscore --
- *
- *	Implements the "highscore" script command.
- * 	Syntax:
- *		highscore find -- search for high scores
- *		highscore info -- get info about a highscore
- *		highscore predict -- get predicted character score (if any)
- *
- *--------------------------------------------------------------
- */
-
-static bool (*highscore_tester_hook)(high_score *the_score) = NULL;
-static int highscore_tester_param = 0;
-static bool highscore_predict = FALSE;
-
-static bool highscore_tester_race(high_score * the_score)
-{
-	int p_r;
-	int race_num = highscore_tester_param;
-
-	p_r = atoi(the_score->p_r);
-	if (p_r == race_num)
-		return (TRUE);
-	return (FALSE);
-}
-
-/*
- * Race Legends
- * -KMW- 
- */
-void race_score(int race_num)
-{
-	char out_val[80];
-
-	highscore_tester_hook = highscore_tester_race;
-	highscore_tester_param = race_num;
-	highscore_predict = FALSE;
-
-	/* add player if qualified */
-	if (p_ptr->prace == race_num)
-	{
-		highscore_predict = TRUE;
-	}
-
-	(void) sprintf(out_val, "The Greatest of all the %s",
-		race_info[race_num].title);
-	angtk_eval("angband_display", "highscore", "show", out_val, NULL);
-
-	any_more(NULL);
-
-	highscore_tester_hook = NULL;
-	highscore_tester_param = 0;
-}
-
-/*
- * Race Legends
- * -KMW-
- */
-void race_legends(void)
-{
-	int i;
-
-	for (i = 0; i < MAX_RACES; i++)
-	{
-		race_score(i);
-	}
-
-	angtk_eval("angband_display", "highscore", "hide", NULL);
-}
 
 /*
  *--------------------------------------------------------------

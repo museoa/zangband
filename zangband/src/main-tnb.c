@@ -556,7 +556,7 @@ static void init_stuff(char **argv)
 	use_graphics = 1;
 }
 
-int main(int argc, char **argv)
+int init_tnb(int argc, char **argv)
 {
 	char *t;
 

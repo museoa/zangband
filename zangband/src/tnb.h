@@ -34,19 +34,6 @@
 #define CHEAT_MAX 6
 extern option_type cheat_info[];
 
-/* init1.c */
-extern char **r_info_flags[10];
-extern int r_info_flags_max;
-extern cptr k_info_flags1[], k_info_flags2[], k_info_flags3[];
-
-/* racial.c */
-extern int racial_chance(s16b min_level, int use_stat, int difficulty);
-
-/* spells3.c */
-extern void spell_info(char *p, int spell, int realm);
-
-
-
 /* main-tnb.c */
 extern bool g_initialized;
 extern bool game_in_progress;
@@ -222,8 +209,6 @@ extern int inkey_flags;
 /* r_info.c */
 extern long angtk_roff(int r_idx, char *buffer);
 
-extern bool store_will_buy(const object_type *o_ptr);
-
 /* Event types */
 #define EVENT_POSITION 1
 #define EVENT_STAT 2
@@ -354,13 +339,6 @@ extern void init_settings(void);
 
 /* struct.c */
 extern void init_struct(void);
-
-/* town.c */
-extern void init_vault(void);
-extern int vault_apply_icon(int y, int x);
-extern int vault_apply_feat(int y, int x);
-extern bool angtk_build_town(void);
-extern void angtk_rebuild_town(void);
 
 /* util-tnb.c */
 extern cptr keyword_term_color[];

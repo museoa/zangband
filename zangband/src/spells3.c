@@ -3231,7 +3231,7 @@ bool spell_okay(int spell, bool known, int realm)
  * The strings in this function were extracted from the code in the
  * functions "do_cmd_cast()" and "do_cmd_pray()" and may be dated.
  */
-static void spell_info(char *p, int spell, int realm)
+void spell_info(char *p, int spell, int realm)
 {
 	/* Default */
 	strcpy(p, "");

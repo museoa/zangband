@@ -258,7 +258,7 @@ static void IndexedColor_TintTable(IndexedColor *idc, int tint, int opacity, Tin
  * Return gamma-corrected intensity. This is usually called on
  * each component of an RGB value.
  */
-static int gamma_correct(int value, double gamma)
+int gamma_correct(int value, double gamma)
 {
 #if 0 /* Don't use the math library... use util.c */
 	double ind;
