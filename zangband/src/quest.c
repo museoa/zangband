@@ -541,16 +541,16 @@ void activate_quests(int level)
 		{
 			q_ptr->flags |= QUEST_FLAG_ACTIVE;
 			
-			/* Hack - we notice the dungeon quest */
-			if (q_ptr->status == QUEST_STATUS_UNTAKEN)
-			{
-				q_ptr->status = QUEST_STATUS_TAKEN;
-			}
-			
 			/* Hack - toggle QUESTOR flag */
 			if (q_ptr->type == QUEST_TYPE_DUNGEON)
 			{
 				r_info[q_ptr->data.dun.r_idx].flags1 |= RF1_QUESTOR;
+				
+				/* Hack - we notice the dungeon quest */
+				if (q_ptr->status == QUEST_STATUS_UNTAKEN)
+				{
+					q_ptr->status = QUEST_STATUS_TAKEN;
+				}
 			}
 		}
 		else
@@ -1670,7 +1670,12 @@ void draw_quest(u16b town_num)
 	
 	/* Activate quest + create quest */
 	q_ptr->flags |= (QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED);
-
+	
+	/* Hack - we now take this quest */
+	if (q_ptr->status == QUEST_STATUS_UNTAKEN)
+	{
+		q_ptr->status = QUEST_STATUS_TAKEN;
+	}
 	
 	/* Mega-hack Give a message if we "discover" it */
 	quest_discovery();
