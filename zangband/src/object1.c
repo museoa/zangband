@@ -2958,7 +2958,7 @@ object_type *test_floor(int *num, cave_type *c_ptr, int mode)
 /*
  * Toggle the inventory and equipment terms when needed
  */
-static bool toggle_windows(bool toggle)
+static bool toggle_windows(bool toggle, int command_wrk)
 {
 	bool ni = FALSE;
 	bool ne = FALSE;
@@ -2979,8 +2979,8 @@ static bool toggle_windows(bool toggle)
 	}
 
 	/* Toggle if needed */
-	if ((p_ptr->command_wrk == (USE_EQUIP) && ni && !ne) ||
-		(p_ptr->command_wrk == (USE_INVEN) && !ni && ne))
+	if ((command_wrk == (USE_EQUIP) && ni && !ne) ||
+		(command_wrk == (USE_INVEN) && !ni && ne))
 	{
 		/* Toggle */
 		toggle_inven_equip();
@@ -3002,7 +3002,8 @@ static bool toggle_windows(bool toggle)
 /*
  * Show the prompt for items
  */
-static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
+static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt,
+	int command_wrk)
 {
 	int i;
 
@@ -3012,7 +3013,7 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 
 	object_type *eo_ptr;
 
-	switch (p_ptr->command_wrk)
+	switch (command_wrk)
 	{
 		case USE_INVEN:
 		{
@@ -3116,7 +3117,7 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
  * Remember the object we selected so that
  * we can repeat the action if required.
  */
-static void save_object_choice(object_type *o_ptr)
+static void save_object_choice(object_type *o_ptr, int command_wrk)
 {
 	int index = -1;
 
@@ -3126,9 +3127,9 @@ static void save_object_choice(object_type *o_ptr)
 	if (!o_ptr) return;
 
 	/* Save type of prompt */
-	repeat_push(p_ptr->command_wrk);
+	repeat_push(command_wrk);
 
-	switch (p_ptr->command_wrk)
+	switch (command_wrk)
 	{
 		case USE_INVEN:
 		{
@@ -3158,7 +3159,7 @@ static void save_object_choice(object_type *o_ptr)
 /*
  * Recall which object we have previously used.
  */
-static object_type *recall_object_choice(void)
+static object_type *recall_object_choice(int *command_wrk)
 {
 	int type;
 	int index;
@@ -3170,7 +3171,7 @@ static object_type *recall_object_choice(void)
 	if (!repeat_pull(&type)) return (NULL);
 
 	/* Set type of prompt */
-	p_ptr->command_wrk = type;
+	*command_wrk = type;
 
 	/* Get index */
 	if (!repeat_pull(&index)) return (NULL);
@@ -3274,9 +3275,6 @@ static object_type *recall_object_choice(void)
  * to allow the user to enter a command while viewing those screens, and
  * also to induce "auto-enter" of stores, and other such stuff.
  *
- * Global "p_ptr->command_wrk" is used to choose between equip/inven listings.
- * If it is TRUE then we are viewing inventory, else equipment.
- *
  * We always erase the prompt when we are done, leaving a blank line,
  * or a warning message, if appropriate, if no items are available.
  *
@@ -3300,6 +3298,8 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	bool allow_equip = FALSE;
 	bool allow_inven = FALSE;
 	bool allow_floor = FALSE;
+	
+	int command_wrk;
 
 	bool toggle = FALSE;
 
@@ -3385,28 +3385,28 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	/* Use inventory if allowed */
 	if (allow_inven)
 	{
-		p_ptr->command_wrk = (USE_INVEN);
+		command_wrk = (USE_INVEN);
 	}
 
 	/* Use equipment if allowed */
 	else if (allow_equip)
 	{
-		p_ptr->command_wrk = (USE_EQUIP);
+		command_wrk = (USE_EQUIP);
 	}
 
 	/* Use floor if allowed */
 	else if (allow_floor)
 	{
-		p_ptr->command_wrk = (USE_FLOOR);
+		command_wrk = (USE_FLOOR);
 	}
 
 	/* Get the saved item index */
-	o_ptr = recall_object_choice();
+	o_ptr = recall_object_choice(&command_wrk);
 
 	if (o_ptr)
 	{
 		/* Save this object */
-		save_object_choice(o_ptr);
+		save_object_choice(o_ptr, command_wrk);
 		
 		/* Forget the item_tester_tval restriction */
 		item_tester_tval = 0;
@@ -3427,10 +3427,11 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	while (!done)
 	{
 		/* Activate the correct term info */
-		toggle = toggle_windows(toggle);
+		toggle = toggle_windows(toggle, command_wrk);
 
 		/* Display the prompt */
-		show_item_prompt(allow_inven, allow_equip, allow_floor, pmt);
+		show_item_prompt(allow_inven, allow_equip, allow_floor, pmt,
+						 command_wrk);
 
 		/* Get a key */
 		which = inkey();
@@ -3446,33 +3447,33 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 
 			case '/':
 			{
-				if (p_ptr->command_wrk == (USE_INVEN))
+				if (command_wrk == (USE_INVEN))
 				{
 					if (!allow_equip)
 					{
 						bell("Cannot switch item selector!");
 						break;
 					}
-					p_ptr->command_wrk = (USE_EQUIP);
+					command_wrk = (USE_EQUIP);
 				}
-				else if (p_ptr->command_wrk == (USE_EQUIP))
+				else if (command_wrk == (USE_EQUIP))
 				{
 					if (!allow_inven)
 					{
 						bell("Cannot switch item selector!");
 						break;
 					}
-					p_ptr->command_wrk = (USE_INVEN);
+					command_wrk = (USE_INVEN);
 				}
-				else if (p_ptr->command_wrk == (USE_FLOOR))
+				else if (command_wrk == (USE_FLOOR))
 				{
 					if (allow_inven)
 					{
-						p_ptr->command_wrk = (USE_INVEN);
+						command_wrk = (USE_INVEN);
 					}
 					else if (allow_equip)
 					{
-						p_ptr->command_wrk = (USE_EQUIP);
+						command_wrk = (USE_EQUIP);
 					}
 					else
 					{
@@ -3528,7 +3529,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				 */
 				else if (floor_num == 1)
 				{
-					if ((p_ptr->command_wrk == (USE_FLOOR))
+					if ((command_wrk == (USE_FLOOR))
 						|| (!carry_query_flag))
 					{
 						/* Allow player to "refuse" certain actions */
@@ -3556,7 +3557,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				/* Save screen */
 				screen_save();
 
-				p_ptr->command_wrk = (USE_FLOOR);
+				command_wrk = (USE_FLOOR);
 
 				break;
 			}
@@ -3616,7 +3617,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				o_ptr = NULL;
 
 				/* Choose "default" floor item */
-				if (p_ptr->command_wrk == (USE_FLOOR))
+				if (command_wrk == (USE_FLOOR))
 				{
 					if (floor_num == 1)
 					{
@@ -3655,19 +3656,19 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 				which = tolower(which);
 
 				/* Convert letter to inventory index */
-				if (p_ptr->command_wrk == (USE_INVEN))
+				if (command_wrk == (USE_INVEN))
 				{
 					o_ptr = label_to_list(which, p_ptr->inventory);
 				}
 
 				/* Convert letter to equipment index */
-				else if (p_ptr->command_wrk == (USE_EQUIP))
+				else if (command_wrk == (USE_EQUIP))
 				{
 					o_ptr = label_to_equip(which);
 				}
 
 				/* Convert letter to floor index */
-				else if (p_ptr->command_wrk == USE_FLOOR)
+				else if (command_wrk == USE_FLOOR)
 				{
 					o_ptr = label_to_list(which, c_ptr->o_idx);
 				}
@@ -3737,7 +3738,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	prt("", 0, 0);
 
 	/* Save this object */
-	save_object_choice(o_ptr);
+	save_object_choice(o_ptr, command_wrk);
 
 	/* Done */
 	return (o_ptr);

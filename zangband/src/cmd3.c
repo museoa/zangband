@@ -21,9 +21,6 @@ void do_cmd_inven(void)
 {
 	char out_val[160];
 
-	/* Note that we are in "inventory" mode */
-	p_ptr->command_wrk = (USE_INVEN);
-
 	/* Save screen */
 	screen_save();
 
@@ -66,9 +63,6 @@ void do_cmd_inven(void)
 void do_cmd_equip(void)
 {
 	char out_val[160];
-
-	/* Note that we are in "equipment" mode */
-	p_ptr->command_wrk = (USE_EQUIP);
 
 	/* Save the screen */
 	screen_save();

@@ -3231,26 +3231,6 @@ static int toluaI_set_player_player_type_command_dir(lua_State* tolua_S)
  return 0;
 }
 
-/* get function: command_wrk of class  player_type */
-static int toluaI_get_player_player_type_command_wrk(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  tolua_pushnumber(tolua_S,(long)self->command_wrk);
- return 1;
-}
-
-/* set function: command_wrk of class  player_type */
-static int toluaI_set_player_player_type_command_wrk(lua_State* tolua_S)
-{
-  player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
-   TOLUA_ERR_ASSIGN;
-  self->command_wrk = ((s16b)  tolua_getnumber(tolua_S,2,0));
- return 0;
-}
-
 /* get function: command_new of class  player_type */
 static int toluaI_get_player_player_type_command_new(lua_State* tolua_S)
 {
@@ -6334,7 +6314,6 @@ int tolua_player_open (lua_State* tolua_S)
  tolua_tablevar(tolua_S,"player_type","command_arg",toluaI_get_player_player_type_command_arg,toluaI_set_player_player_type_command_arg);
  tolua_tablevar(tolua_S,"player_type","command_rep",toluaI_get_player_player_type_command_rep,toluaI_set_player_player_type_command_rep);
  tolua_tablevar(tolua_S,"player_type","command_dir",toluaI_get_player_player_type_command_dir,toluaI_set_player_player_type_command_dir);
- tolua_tablevar(tolua_S,"player_type","command_wrk",toluaI_get_player_player_type_command_wrk,toluaI_set_player_player_type_command_wrk);
  tolua_tablevar(tolua_S,"player_type","command_new",toluaI_get_player_player_type_command_new,toluaI_set_player_player_type_command_new);
  tolua_tablevar(tolua_S,"player_type","new_spells",toluaI_get_player_player_type_new_spells,toluaI_set_player_player_type_new_spells);
  tolua_tablevar(tolua_S,"player_type","cumber_armor",toluaI_get_player_player_type_cumber_armor,toluaI_set_player_player_type_cumber_armor);
