@@ -3671,15 +3671,15 @@ void do_cmd_knowledge(void)
 		prt("Display current knowledge", 2, 0);
 
 		/* Give some choices */
-		prt("(2) Display known uniques", 4, 5);
-		prt("(3) Display known objects", 5, 5);
-		prt("(4) Display kill count", 6, 5);
-		prt("(5) Display mutations", 7, 5);
-		prt("(6) Display current pets", 8, 5);
-		prt("(7) Display current quests", 9, 5);
-		prt("(8) Display virtues", 10, 5);
+		prt("(1) Display known uniques", 4, 5);
+		prt("(2) Display known objects", 5, 5);
+		prt("(3) Display kill count", 6, 5);
+		prt("(4) Display mutations", 7, 5);
+		prt("(5) Display current pets", 8, 5);
+		prt("(6) Display current quests", 9, 5);
+		prt("(7) Display virtues", 10, 5);
 		if (take_notes)
-			prt("(9) Display notes", 11, 5);
+			prt("(8) Display notes", 11, 5);
 
 		/* Prompt */
 		prt("Command: ", 13, 0);
