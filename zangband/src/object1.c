@@ -2525,6 +2525,9 @@ void show_list(s16b o_list_ptr)
 	/* Display the inventory */
 	OBJ_ITT_START (o_list_ptr, o_ptr)
 	{
+		/* Paranoia - don't display too many items */
+		if (k >= INVEN_PACK) break;
+	
 		i++;
 
 		/* Is this item acceptable? */
