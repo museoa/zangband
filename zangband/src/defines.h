@@ -3980,17 +3980,17 @@
 #ifdef __MSVC__
 
 /* Hack - VC++ doesn't expand preprocessor macros properly */
-static inline bool FLAG_AUX(const u32b *flags, int num, u32b mask)
+static __inline bool FLAG_AUX(const u32b *flags, int num, u32b mask)
 {
 	return((flags[num] & mask) != 0);
 }
 
-static inline void SET_FLAG_AUX(u32b *flags, int num, u32b mask)
+static __inline void SET_FLAG_AUX(u32b *flags, int num, u32b mask)
 {
 	flags[num] |= mask;
 }
 
-static inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u32b mask)
+static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u32b mask)
 {
 	flags2[num] |= flags1[num] & mask;
 }
