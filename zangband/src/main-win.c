@@ -28,11 +28,11 @@
  * and/or color redefinitions.
  *
  * The "lib/user/font-win.prf" contains attr/char mappings for use with the
- * normal "lib/xtra/font/*.fon" font files.
+ * normal "*.fon" font files in the "lib/xtra/font/" directory.
  *
  * The "lib/user/graf-win.prf" contains attr/char mappings for use with the
- * special "lib/xtra/graf/*.bmp" bitmap files, which are activated by a menu
- * item.
+ * special "*.bmp" bitmap files in the "lib/xtra/graf/" directory, which
+ * are activated by a menu item.
  *
  *
  * Compiling this file, and using the resulting executable, requires
