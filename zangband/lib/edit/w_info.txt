@@ -30,10 +30,11 @@
 
 # 'T' describes wilderness Type.  The first slot is the number of the
 # function to call to generate the 16x16 wilderness block.
-# The second slot is the "type" - 2 bits for "forest","mountian",
-# "flat", and "swamp".  This describes the density of forest (for example)
-# in that 16x16 block.  This is used to smooth the the boundaries between
-# blocks using the plasma fractal routine.
+# The second slot describes the "chance" field.  The higher the number
+# - the higher the probability of the wild. gen. type being used.
+
+# 'F' describes the type of terrain so that the plasma fractal routines
+# can blend adjacent 16x16 wilderness blocks.
 
 # 'E' is a list of eight extra parameters.  These parameters are passed to
 # the function in the 'T' flag.  This allows the same function to be used
@@ -43,13 +44,13 @@
 
 # Grass
 G:.:G
-W:0:128:0:255:0:255
-T:1:12:1
+W:0:128:0:128:0:128
+T:1:1
 E:0:0:0:0:0:0:0:0
 
 # Forest
 G:#:g
-W:128:255:0:255:0:255
-T:1:192:1
+W:0:128:0:128:128:255
+T:1:1
+F:FOREST1 | FOREST2
 E:0:0:0:0:0:0:0:0
-
