@@ -772,14 +772,11 @@ bool monster_death(int m_idx, bool explode)
 	/* Drop some objects */
 	for (j = 0; j < number; j++)
 	{
-		/* Get local object */
-		q_ptr = &forge;
-
 		/* Make Gold */
 		if (do_gold && (!do_item || one_in_(2)))
 		{
 			/* Make some gold */
-			make_gold(q_ptr, force_coin);
+			q_ptr = make_gold(force_coin);
 
 			/* XXX XXX XXX */
 			dump_gold++;
@@ -791,7 +788,10 @@ bool monster_death(int m_idx, bool explode)
 			u16b delta_level = (good ? 15 : 0) + (great ? 15 : 0);
 
 			/* Make an object */
-			if (!make_object(q_ptr, delta_level, r_ptr->obj_drop)) continue;
+			q_ptr = make_object(delta_level, r_ptr->obj_drop);
+			
+			/* Paranoia */
+			if (!q_ptr) continue;
 
 			/* XXX XXX XXX */
 			dump_item++;

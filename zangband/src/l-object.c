@@ -3652,28 +3652,6 @@ tolua_lerror:
  return 0;
 }
 
-/* function: make_artifact */
-static int toluaI_object_make_artifact00(lua_State* tolua_S)
-{
- if (
-     !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"object_type"),0) ||
-     !tolua_isnoobj(tolua_S,2)
- )
-  goto tolua_lerror;
- else
- {
-  object_type* o_ptr = ((object_type*)  tolua_getusertype(tolua_S,1,0));
-  {
-   bool toluaI_ret = (bool)  make_artifact(o_ptr);
-   tolua_pushbool(tolua_S,(int)toluaI_ret);
-  }
- }
- return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'make_artifact'.");
- return 0;
-}
-
 /* function: add_ego_power */
 static int toluaI_object_add_ego_power00(lua_State* tolua_S)
 {
@@ -3816,20 +3794,18 @@ tolua_lerror:
 static int toluaI_object_make_object00(lua_State* tolua_S)
 {
  if (
-     !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"object_type"),0) ||
-     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
-     !tolua_istype(tolua_S,3,tolua_tag(tolua_S,"obj_theme"),0) ||
-     !tolua_isnoobj(tolua_S,4)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,2,tolua_tag(tolua_S,"obj_theme"),0) ||
+     !tolua_isnoobj(tolua_S,3)
  )
   goto tolua_lerror;
  else
  {
-  object_type* o_ptr = ((object_type*)  tolua_getusertype(tolua_S,1,0));
-  u16b delta_level = ((u16b)  tolua_getnumber(tolua_S,2,0));
-  obj_theme theme = *((obj_theme*)  tolua_getusertype(tolua_S,3,0));
+  u16b delta_level = ((u16b)  tolua_getnumber(tolua_S,1,0));
+  obj_theme theme = *((obj_theme*)  tolua_getusertype(tolua_S,2,0));
   {
-   bool toluaI_ret = (bool)  make_object(o_ptr,delta_level,theme);
-   tolua_pushbool(tolua_S,(int)toluaI_ret);
+   object_type* toluaI_ret = (object_type*)  make_object(delta_level,theme);
+   tolua_pushusertype(tolua_S,(void*)toluaI_ret,tolua_tag(tolua_S,"object_type"));
   }
  }
  return 1;
@@ -3869,20 +3845,19 @@ tolua_lerror:
 static int toluaI_object_make_gold00(lua_State* tolua_S)
 {
  if (
-     !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"object_type"),0) ||
-     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
-     !tolua_isnoobj(tolua_S,3)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
   goto tolua_lerror;
  else
  {
-  object_type* j_ptr = ((object_type*)  tolua_getusertype(tolua_S,1,0));
-  int coin_type = ((int)  tolua_getnumber(tolua_S,2,0));
+  int coin_type = ((int)  tolua_getnumber(tolua_S,1,0));
   {
-   make_gold(j_ptr,coin_type);
+   object_type* toluaI_ret = (object_type*)  make_gold(coin_type);
+   tolua_pushusertype(tolua_S,(void*)toluaI_ret,tolua_tag(tolua_S,"object_type"));
   }
  }
- return 0;
+ return 1;
 tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'make_gold'.");
  return 0;
@@ -5611,7 +5586,6 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"object_prep",toluaI_object_object_prep00);
  tolua_function(tolua_S,NULL,"object_copy",toluaI_object_object_copy00);
  tolua_function(tolua_S,NULL,"add_ego_flags",toluaI_object_add_ego_flags00);
- tolua_function(tolua_S,NULL,"make_artifact",toluaI_object_make_artifact00);
  tolua_function(tolua_S,NULL,"add_ego_power",toluaI_object_add_ego_power00);
  tolua_function(tolua_S,NULL,"apply_magic",toluaI_object_apply_magic00);
  tolua_function(tolua_S,NULL,"init_match_hook",toluaI_object_init_match_hook00);
@@ -6692,7 +6666,6 @@ void tolua_object_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"object_prep");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"object_copy");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"add_ego_flags");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"make_artifact");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"add_ego_power");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"apply_magic");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"init_match_hook");

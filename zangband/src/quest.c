@@ -652,27 +652,26 @@ static void create_stairs(int x, int y)
  */
 static void quest_reward(int num, int x, int y)
 {
-	object_type forge, *o_ptr;
+	object_type *o_ptr;
 
 	/* Ignore num for now */
 	(void)num;
 
 	while (TRUE)
 	{
-		/* Get local object */
-		o_ptr = &forge;
-
 		/* Average of 20 great objects per game */
 		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
-			(void)make_object(o_ptr, 30, dun_theme);
+			o_ptr = make_object(30, dun_theme);
 		}
 		else
 		{
 			/* Make a good object */
-			(void)make_object(o_ptr, 15, dun_theme);
+			o_ptr = make_object(15, dun_theme);
 		}
+		
+		if (!o_ptr) continue;
 
 		/* We need a 'good' item - so check the price */
 		if (object_value_real(o_ptr) > 100 * p_ptr->depth) break;

@@ -2191,19 +2191,16 @@ void add_ego_flags(object_type *o_ptr, byte ego)
 
 /*
  * Mega-Hack -- Attempt to create an artifact.
- *
- * We are only called from "make_object()".
  */
-bool make_artifact(object_type *o_ptr)
+static object_type *make_artifact(void)
 {
 	int i;
 	int k_idx = 0;
 
-	/* Moria had no artifacts */
-	if (ironman_moria) return (FALSE);
+	object_type *o_ptr = &temp_object;
 
-	/* No artifacts in the town  Why???  (There is a wilderness...) */
-	if (!p_ptr->depth) return (FALSE);
+	/* Moria had no artifacts */
+	if (ironman_moria) return (NULL);
 
 	/* Check the artifact list */
 	for (i = 1; i < z_info->a_max; i++)
@@ -2296,11 +2293,11 @@ bool make_artifact(object_type *o_ptr)
 		dun_ptr->good_item_flag = TRUE;
 
 		/* Success */
-		return (TRUE);
+		return (o_ptr);
 	}
 
 	/* Failure */
-	return (FALSE);
+	return (NULL);
 }
 
 
@@ -4136,13 +4133,14 @@ byte kind_is_theme(int k_idx)
  *
  * We assume that the given object has been "wiped".
  */
-bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
+object_type *make_object(u16b delta_level, obj_theme theme)
 {
 	int prob, base, min_level;
 	byte obj_level;
 	byte flags;
 	int k_idx = 0, count = 5;
 
+	object_type *o_ptr = &temp_object;
 
 	/* Chance of "special object" */
 	if (delta_level > 0)
@@ -4185,7 +4183,12 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	}
 
 	/* Make an artifact */
-	if (one_in_(prob) && (make_artifact(o_ptr))) return (TRUE);
+	if (one_in_(prob))
+	{
+		o_ptr = make_artifact();
+		
+		if (o_ptr) return (o_ptr);
+	}
 
 	/* Is there a restriction already? */
 	if (!get_obj_num_hook)
@@ -4224,7 +4227,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	}
 
 	/* Handle failure */
-	if (!k_idx) return (FALSE);
+	if (!k_idx) return (NULL);
 
 	/* Prepare the object */
 	object_prep(o_ptr, k_idx);
@@ -4267,7 +4270,7 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 	}
 
 	/* Success */
-	return (TRUE);
+	return (o_ptr);
 }
 
 void place_specific_object(int x, int y, int level, int k_idx)
@@ -4351,15 +4354,11 @@ void place_object(int x, int y, bool good, bool great)
 		return;
 	}
 
-	/* Get local object */
-	q_ptr = &temp_object;
-
 	/* Make an object (if possible) */
-	if (!make_object(q_ptr, (u16b)((good ? 15 : 0) + (great ? 15 : 0)),
-					 dun_theme))
-	{
-		return;
-	}
+	q_ptr = make_object((u16b)((good ? 15 : 0) + (great ? 15 : 0)), dun_theme);
+
+	/* Failure? */
+	if (!q_ptr) return;
 
 	/* Make an object */
 	o_idx = o_pop();
@@ -4407,11 +4406,13 @@ void place_object(int x, int y, bool good, bool great)
  *
  * The location must be a legal, clean, floor grid.
  */
-void make_gold(object_type *j_ptr, int coin_type)
+object_type *make_gold(int coin_type)
 {
 	s16b i;
 
 	s32b base;
+	
+	object_type *o_ptr = &temp_object;
 
 	if (coin_type)
 	{
@@ -4434,13 +4435,16 @@ void make_gold(object_type *j_ptr, int coin_type)
 	if (i >= MAX_GOLD) i = MAX_GOLD - 1;
 
 	/* Prepare a gold object */
-	object_prep(j_ptr, OBJ_GOLD_LIST + i);
+	object_prep(o_ptr, OBJ_GOLD_LIST + i);
 
 	/* Hack -- Base coin cost */
 	base = k_info[OBJ_GOLD_LIST + i].cost;
 
 	/* Determine how much the treasure is "worth" */
-	j_ptr->pval = (base + (8L * randint1(base)) + randint1(8));
+	o_ptr->pval = (base + (8L * randint1(base)) + randint1(8));
+
+	/* return pointer to gold */
+	return (o_ptr);
 }
 
 
@@ -4476,7 +4480,7 @@ void place_gold(int x, int y)
 		o_ptr = &o_list[o_idx];
 		
 		/* Make some gold */
-		make_gold(o_ptr, 0);
+		object_copy(o_ptr, make_gold(0));
 
 		/* Save location */
 		o_ptr->iy = y;
@@ -4834,8 +4838,9 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
  */
 void acquirement(int x1, int y1, int num, bool great, bool known)
 {
-	object_type *i_ptr;
-	object_type object_type_body;
+	object_type *o_ptr;
+	
+	int i;
 
 	obj_theme theme;
 
@@ -4849,37 +4854,40 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 	while (num--)
 	{
 		/* We want a good object */
-		while (TRUE)
+		for (i = 0; i < 1000; i++)
 		{
-			/* Get local object */
-			i_ptr = &object_type_body;
-
-			/* Wipe the object */
-			object_wipe(i_ptr);
-
 			if (great)
 			{
 				/* Make a great object (if possible) */
-				if (!make_object(i_ptr, 40, theme)) continue;
+				o_ptr = make_object(40, theme);
+				
+				/* Paranoia */
+				if (!o_ptr) continue;
 			}
 			else
 			{
 				/* Make a good object (if possible) */
-				if (!make_object(i_ptr, 20, theme)) continue;
+				o_ptr = make_object(20, theme);
+				
+				/* Paranoia */
+				if (!o_ptr) continue;
 			}
 
 			/* Check to see if the object is worth anything */
-			if (object_value_real(i_ptr) > 0) break;
+			if (object_value_real(o_ptr) > 0) break;
 		}
+		
+		/* Paranoia */
+		if (i >= 1000) return;
 
 		if (known)
 		{
-			object_aware(i_ptr);
-			object_known(i_ptr);
+			object_aware(o_ptr);
+			object_known(o_ptr);
 		}
 
 		/* Drop the object */
-		drop_near(i_ptr, -1, x1, y1);
+		drop_near(o_ptr, -1, x1, y1);
 	}
 }
 

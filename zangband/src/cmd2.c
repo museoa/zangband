@@ -248,7 +248,6 @@ static void chest_death(int x, int y, object_type *o_ptr)
 
 	bool small;
 
-	object_type forge;
 	object_type *q_ptr;
 
 	/* 
@@ -345,21 +344,19 @@ static void chest_death(int x, int y, object_type *o_ptr)
 	/* Drop some objects (non-chests) */
 	for (; number > 0; --number)
 	{
-		/* Get local object */
-		q_ptr = &forge;
-
 		/* Small chests often drop gold */
 		if (small && one_in_(4))
 		{
 			/* Make some gold */
-			make_gold(q_ptr, 0);
+			q_ptr = make_gold(0);
 		}
 
 		/* Otherwise drop an item */
 		else
 		{
 			/* Make a good themed object */
-			if (!make_object(q_ptr, 15, dun_theme)) continue;
+			q_ptr = make_object(15, dun_theme);
+			if (!q_ptr) continue;
 		}
 
 		/* Drop it in the dungeon */
