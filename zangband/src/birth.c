@@ -994,11 +994,11 @@ static int adjust_stat(int value, int amount, int auto_roll)
 			}
 			else if (value < 18+70)
 			{
-				value += (auto_roll ? 15 : rand_range(5, 20));
+				value += (auto_roll ? 20 : rand_range(5, 20));
 			}
 			else if (value < 18+90)
 			{
-				value += (auto_roll ? 6 : rand_range(2, 8));
+				value += (auto_roll ? 8 : rand_range(2, 8));
 			}
 			else if (value < 18+100)
 			{
