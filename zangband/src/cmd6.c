@@ -1654,7 +1654,7 @@ static void do_cmd_use_staff_aux(int item)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -1669,7 +1669,7 @@ static void do_cmd_use_staff_aux(int item)
 	if (p_ptr->confused) chance = chance / 2;
 
 	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
+	chance = chance - lev / 2;
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -2115,7 +2115,7 @@ static void do_cmd_aim_wand_aux(int item)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2129,8 +2129,8 @@ static void do_cmd_aim_wand_aux(int item)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
-	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
+	/* High level objects are harder */
+	chance = chance - lev / 2;
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -2520,7 +2520,7 @@ static void do_cmd_zap_rod_aux(int item)
 
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2535,7 +2535,7 @@ static void do_cmd_zap_rod_aux(int item)
 	if (p_ptr->confused) chance = chance / 2;
 
 	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev);
+	chance = chance - lev / 2;
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -2963,7 +2963,7 @@ static void do_cmd_activate_aux(int item)
 	}
 
 	/* Take a turn */
-	energy_use = 100;
+	energy_use = 100 * 40 / (30 + p_ptr->skill_dev);
 
 	/* Extract the item level */
 	lev = get_object_level(o_ptr);
