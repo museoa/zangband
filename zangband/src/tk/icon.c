@@ -96,9 +96,7 @@ static int StringToAssign_Icon(Tcl_Interp *interp, t_assign_icon *assignPtr, cpt
 	char option[64], typeName[64];
 	IconSpec iconSpec;
 
-	iconSpec.ascii = -1;
-	if (sscanf(desc, "%s %s %d %d", option, typeName, &iconSpec.index,
-		&iconSpec.ascii) < 3)
+	if (sscanf(desc, "%s %s %d", option, typeName, &iconSpec.index) < 3)
 	{
 		Tcl_SetResult(interp, format("malformed assignment \"%s\"",
 			desc), TCL_VOLATILE);
@@ -125,7 +123,7 @@ int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
 	Tcl_Obj *objPtr;
 	int assignType;
 
-	/* Ex. "icon dungeon 10" or "icon ascii 12 10" */
+	/* Ex. "icon dungeon 10" */
 	if (sscanf(desc, "%s", option) != 1)
 	{
 		Tcl_SetResult(interp, format("malformed assignment \"%s\"",

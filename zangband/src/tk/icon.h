@@ -16,7 +16,6 @@
 typedef struct IconSpec {
 	int type;
 	int index;
-	int ascii;
 } IconSpec;
 
 extern int g_icon_depth; /* 8, 16 or 24 */
