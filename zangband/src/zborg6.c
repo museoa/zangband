@@ -2685,6 +2685,9 @@ bool borg_flow_take(bool viewable, int nearness)
 		/* Require line of sight if requested */
 		if (viewable && !(mb_ptr->info & BORG_MAP_VIEW)) continue;
 
+		/* Require the item to be on a safe feat */
+		if (!borg_on_safe_feat(mb_ptr->feat)) continue;
+
 		/* Careful -- Remember it */
 		borg_temp_x[borg_temp_n] = x;
 		borg_temp_y[borg_temp_n] = y;
