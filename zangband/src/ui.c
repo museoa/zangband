@@ -381,6 +381,46 @@ void put_str(cptr str, int col, int row)
 
 
 /*
+ * Put a string with control characters at a given location
+ */
+void put_cstr(cptr str, int col, int row)
+{
+	cptr c = str;
+	
+	/* Default to white */
+	byte a = TERM_WHITE;
+	
+	while (*c)
+	{
+		/* Does this character match the escape code? */
+		if (*c == 1)
+		{
+			/* Scan the next character */
+			c++;
+			
+			/* Is it a colour specifier? */
+			if (*c && (*c < TERM_L_UMBER + 1))
+			{
+				/* Save the new colour */
+				a = *c - 1;
+				c++;
+				
+				/* Paranoia: no more in string? */
+				if (!(*c)) return;
+			}
+		}
+		
+		/* Display the character */
+		Term_putch(col, row, a, *c);
+		
+		/* Next position */
+		col++;
+		c++;
+	}
+}
+
+
+/*
  * Display a string on the screen using an attribute, and clear
  * to the end of the line.
  */

@@ -4099,6 +4099,34 @@ extern int PlayerUID;
 #define TERM_L_UMBER            15  /* 'U' */	/* 3,2,1 */
 
 
+/*
+ * Colour format specifiers in strings
+ *
+ * Start with /001, and then have a character that depends on the
+ * colour.  We could also use this techinque for other formatting
+ * specifiers...
+ *
+ * Note how we start from 001 instead of 0, because a zero would
+ * end the string. Also note how the numbers have to be in octal. :-/
+ */
+#define COL_DARK		"/001/001"  
+#define COL_WHITE		"/001/002"
+#define COL_SLATE		"/001/003"
+#define COL_ORANGE		"/001/004"
+#define COL_RED			"/001/005"
+#define COL_GREEN		"/001/006"
+#define COL_BLUE		"/001/007"
+#define COL_UMBER		"/001/010"
+#define COL_L_DARK		"/001/011"
+#define COL_L_WHITE		"/001/012"
+#define COL_VIOLET		"/001/013"
+#define COL_YELLOW		"/001/014"
+#define COL_L_RED		"/001/015"
+#define COL_L_GREEN		"/001/016"
+#define COL_L_BLUE		"/001/017"
+#define COL_L_UMBER		"/001/020"
+
+
 #define MSG_GENERIC          0
 #define MSG_HIT              1
 #define MSG_MISS             2
