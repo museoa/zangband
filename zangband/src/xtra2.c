@@ -976,9 +976,8 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* Extract monster name */
 		monster_desc(m_name, m_ptr, 0);
 
-		/* Don't kill Amberites (or Topi) */
-		if (((r_ptr->flags3 & RF3_AMBERITE) && (randint(2) == 1)) ||
-			 strstr(r_name + r_ptr->name, "Ylinen"))
+		/* Don't kill Amberites */
+		if ((r_ptr->flags3 & RF3_AMBERITE) && (randint(2) == 1))
 		{
 			int curses = 1 + randint(3);
 			bool stop_ty = FALSE;

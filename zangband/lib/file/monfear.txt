@@ -370,14 +370,6 @@ N:862:The Serpent of Chaos
 1
 screams, 'This CAN'T be happening!'
 
-N:871:Topi Ylinen, the Cute, Furry Bunny
-5
-shouts, 'Stop, or I'll TY_CURSE you!'
-shouts, 'Hey look!  It's a Cyberdemon!'
-hops about frantically. 
-protests, 'I'm not evil!' 
-pleads, 'What would Zangband be like without me?'
-
 N:*:Default lines
 61
 says: 'I am too young to die.'

@@ -426,15 +426,6 @@ yawns at your pathetic efforts to kill it.
 says, 'Another day, another bastard to slaughter...'
 says, 'I can't be bothered... minions, slaughter this fool!'
 
-N:871:Topi Ylinen, the Cute, Furry Bunny
-6
-magically summons Cyberdemons!
-magically summons Greater Hell-Beasts!
-invokes an Ancient Foul Curse!
-activates Nightmare mode!
-says, 'You'd better stop!'
-says, 'The SPCA is going to hear of this!'
-
 N:*:Default lines
 104
 cackles evilly.

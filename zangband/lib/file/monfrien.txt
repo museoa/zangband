@@ -181,19 +181,5 @@ wails, 'Tekeli-li!  Tekeli-li!'
 #N:860:Oberon, King of Amber
 #N:862:The Serpent of Chaos
 
-N:871:Topi Ylinen, the Cute, Furry Bunny
-11
-says, "Let's make a super-nightmare mode!"
-wants you to pet it.
-gets a red glow in its eyes.
-says, "Don't give away my secret lair!"
-says, "I'm not evil!"
-suggests adding a monster with TY_CURSE to level 1.
-says, 'You wouldn't hurt a harmless little bunny, would you?'
-asks you for a carrot.
-tries to look cute and harmless.
-keeps going... and going... and going...
-wiggles his nose.
-
 #N:*:Default lines
 
