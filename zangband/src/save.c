@@ -1055,9 +1055,8 @@ static void wr_extra(void)
 	/* Trap detection status */
 	wr_byte(p_ptr->detected);
 
-	/* Old Coords of last trap detection spell */
-	wr_s16b(0);
-	wr_s16b(0);
+	/* Player inventory item */
+	wr_s16b(p_ptr->inventory);
 }
 
 /*

@@ -1463,6 +1463,8 @@ struct player_type
 	s16b command_new;	/* Hack -- command chaining XXX XXX */
 
 	s16b new_spells;	/* Number of spells available */
+	
+	s16b inventory;		/* Index to inventory item list */
 
 	bool cumber_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */

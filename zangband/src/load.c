@@ -1378,8 +1378,15 @@ static void rd_extra(void)
 		/* Get trap detection status */
 		rd_byte((byte *)&player_detected);
 
-		/* oops */
-		strip_bytes(4);
+		if (sf_version < 33)
+		{
+			/* oops */
+			strip_bytes(4);
+		}
+		else
+		{
+			rd_s16b(&p_ptr->inventory);
+		}
 	}
 }
 
