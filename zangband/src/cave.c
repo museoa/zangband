@@ -760,7 +760,7 @@ bool in_disintegration_range(int x1, int y1, int x2, int y2)
  * This function is often called from inside a loop which searches for
  * locations while increasing the "d" distance.
  */
-void scatter(int *yp, int *xp, int y, int x, int d)
+void scatter(int *xp, int *yp, int x, int y, int d)
 {
 	int nx = 0, ny = 0;
 

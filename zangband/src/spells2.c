@@ -3992,7 +3992,7 @@ void wall_breaker(void)
 	{
 		while (attempts--)
 		{
-			scatter(&y, &x, py, px, 4);
+			scatter(&x, &y, px, py, 4);
 
 			if ((y != py) || (x != px)) break;
 		}
@@ -4012,7 +4012,7 @@ void wall_breaker(void)
 		{
 			while (1)
 			{
-				scatter(&y, &x, py, px, 4);
+				scatter(&x, &y, px, py, 4);
 
 				if ((y != py) || (x != px)) break;
 			}
@@ -4150,7 +4150,7 @@ bool starlite(void)
 
 		while (attempts--)
 		{
-			scatter(&y, &x, p_ptr->py, p_ptr->px, 4);
+			scatter(&x, &y, p_ptr->px, p_ptr->py, 4);
 
 			/* paranoia */
 			if (!in_bounds2(y, x)) continue;

@@ -118,7 +118,7 @@ static void do_cmd_summon_horde(void)
 
 	while (--attempts)
 	{
-		scatter(&wy, &wx, py, px, 3);
+		scatter(&wx, &wy, px, py, 3);
 
 		/* paranoia */
 		if (!in_bounds2(wy, wx)) continue;
@@ -1363,7 +1363,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 		int d = 1;
 
 		/* Pick a location */
-		scatter(&y, &x, py, px, d);
+		scatter(&x, &y, px, py, d);
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;

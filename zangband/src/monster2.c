@@ -1667,7 +1667,7 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 		{
 			int mx, my;
 
-			scatter(&my, &mx, hy, hx, 4);
+			scatter(&mx, &my, hx, hy, 4);
 
 			/* paranoia */
 			if (!in_bounds2(my, mx)) continue;
@@ -1802,7 +1802,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool friendl
 			int nx, ny, z, d = 3;
 
 			/* Pick a location */
-			scatter(&ny, &nx, y, x, d);
+			scatter(&nx, &ny, x, y, d);
 
 			/* paranoia */
 			if (!in_bounds2(y, x)) continue;
@@ -1914,7 +1914,7 @@ bool alloc_horde(int y, int x)
 
 	for (attempts = rand_range(5, 15); attempts; attempts--)
 	{
-		scatter(&cy, &cx, y, x, 5);
+		scatter(&cx, &cy, x, y, 5);
 
 		(void)summon_specific(m_idx, cy, cx, p_ptr->depth + 5, SUMMON_KIN,
 		                      TRUE, FALSE, FALSE);
@@ -2331,7 +2331,7 @@ bool summon_specific(int who, int y1, int x1, int lev, int type,
 		int d = (i / 15) + 1;
 
 		/* Pick a location */
-		scatter(&y, &x, y1, x1, d);
+		scatter(&x, &y, x1, y1, d);
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;
@@ -2425,7 +2425,7 @@ bool summon_named_creature(int oy, int ox, int r_idx, bool slp,
 		int d = 1;
 
 		/* Pick a location */
-		scatter(&y, &x, oy, ox, d);
+		scatter(&x, &y, ox, oy, d);
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;
@@ -2470,7 +2470,7 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 		int d = 1;
 
 		/* Pick a location */
-		scatter(&y, &x, m_ptr->fy, m_ptr->fx, d);
+		scatter(&x, &y, m_ptr->fx, m_ptr->fy, d);
 
 		/* paranoia */
 		if (!in_bounds2(y, x)) continue;

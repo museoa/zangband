@@ -571,7 +571,7 @@ static void create_stairs(int y, int x)
 	while ((cave_perma_grid(c_ptr) || c_ptr->o_idx) && !(i > 100))
 	{
 		/* Pick a location */
-		scatter(&ny, &nx, y, x, 1);
+		scatter(&nx, &ny, x, y, 1);
 
 		/* Stagger */
 		y = ny; x = nx;

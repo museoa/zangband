@@ -337,7 +337,7 @@ void vault_monsters(int y1, int x1, int num)
 			int d = 1;
 
 			/* Pick a nearby location */
-			scatter(&y, &x, y1, x1, d);
+			scatter(&x, &y, x1, y1, d);
 
 			/* Require "empty" floor grids */
 			c_ptr = &cave[y][x];

@@ -440,7 +440,7 @@ bool monster_death(int m_idx, bool explode)
 
 			do
 			{
-				scatter(&wy, &wx, y, x, 20);
+				scatter(&wx, &wy, x, y, 20);
 			}
 			while (!(in_bounds(wy, wx) && cave_floor_grid(area(wy, wx))) && --attempts);
 
