@@ -3744,8 +3744,6 @@ static bool do_cmd_knowledge_objects(int dummy)
 
 	FILE *fff;
 
-	char o_name[256];
-
 	char file_name[1024];
 	
 	/* Hack - ignore parameter */
@@ -3773,11 +3771,8 @@ static bool do_cmd_knowledge_objects(int dummy)
 			/* Create fake object */
 			o_ptr = object_prep(k);
 
-			/* Describe the object */
-			object_desc_store(o_name, o_ptr, FALSE, 0, 256);
-
 			/* Print a message */
-			froff(fff, "     %s\n", o_name);
+			froff(fff, "     %v\n", OBJECT_STORE_FMT(o_ptr, FALSE, 0));
 		}
 	}
 

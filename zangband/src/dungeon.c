@@ -1038,20 +1038,14 @@ static void process_world(void)
 			!(FLAG(p_ptr, TR_RES_LITE)) &&
 			!(FLAG(p_ptr, TR_IM_LITE)))
 		{
-			char o_name[256];
 			char ouch[280];
 
-			/* Get an object description */
-			object_desc(o_name, o_ptr, FALSE, 0, 256);
-
-			msgf("The %s scorches your undead flesh!", o_name);
+			msgf("The %v scorches your undead flesh!", OBJECT_FMT(o_ptr, FALSE, 0));
 
 			cave_no_regen = TRUE;
 
-			/* Get an object description */
-			object_desc(o_name, o_ptr, TRUE, 0, 256);
-
-			strnfmt(ouch, 280, "wielding %s", o_name);
+			strnfmt(ouch, 280, "wielding %v", OBJECT_FMT(o_ptr, TRUE, 0));
+			
 			if (!p_ptr->tim.invuln) take_hit(1, ouch);
 		}
 	}

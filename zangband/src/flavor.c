@@ -1617,21 +1617,21 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	/* Use the standard inscription if available */
 	if (o_ptr->inscription)
 	{
-		char tmp_val[256];
-		char *tmp = tmp_val;
-
-		strnfmt(tmp_val, 256, "%s", quark_str(o_ptr->inscription));
+		cptr tmp = quark_str(o_ptr->inscription);
+	
+		/* Append the inscription */
+		strnfcat(buf, max, &len, " {");
 
 		/* Scan for the '#' character which marks a fake name. */
 		while(*tmp && (*tmp != '#'))
 		{
+			strnfcat(buf, max, &len, "%c", *tmp);
+		
 			tmp++;
 		}
 		
-		*tmp = '\0';
-		
-		/* Append the inscription */
-		strnfcat(buf, max, &len, " {%s" CLR_DEFAULT "}", tmp_val);
+		/* Finish the inscription */
+		strnfcat(buf, max, &len, CLR_DEFAULT "}");
 	}
 
 	/* Use the game-generated "feeling" otherwise, if available */

@@ -580,8 +580,6 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 	bool obvious = FALSE;
 	bool known = player_can_see_bold(x, y);
 
-	char o_name[256];
-
 	int k_idx = 0;
 
 	object_type *o_ptr;
@@ -803,17 +801,16 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 			if (known && (o_ptr->info & OB_SEEN))
 			{
 				obvious = TRUE;
-				object_desc(o_name, o_ptr, FALSE, 0, 256);
 			}
 
 			/* Artifacts, and other objects, get to resist */
 			if (is_art || ignore)
 			{
 				/* Observe the resist */
-				if (known && (o_ptr->info & OB_SEEN))
+				if (obvious)
 				{
-					msgf("The %s %s unaffected!",
-							   o_name, (plural ? "are" : "is"));
+					msgf("The %v %s unaffected!",
+						OBJECT_FMT(o_ptr, FALSE, 0), (plural ? "are" : "is"));
 				}
 			}
 
@@ -824,9 +821,9 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 				object_type *j_ptr;
 			
 				/* Describe if needed */
-				if (known && (o_ptr->info & OB_SEEN) && note_kill)
+				if (obvious && note_kill)
 				{
-					msgf("The %s%s", o_name, note_kill);
+					msgf("The %v%s", OBJECT_FMT(o_ptr, FALSE, 0), note_kill);
 				}
 
 				k_idx = o_ptr->k_idx;

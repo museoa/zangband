@@ -2533,11 +2533,6 @@ static void take_move(int m_idx, int *mm)
 				{
 					u32b flg3 = 0L;
 
-					char o_name[256];
-
-					/* Acquire the object name */
-					object_desc(o_name, o_ptr, TRUE, 3, 256);
-
 					/* Acquire the monster name */
 					monster_desc(m_name, m_ptr, 0x04, 80);
 
@@ -2567,8 +2562,8 @@ static void take_move(int m_idx, int *mm)
 							if (m_ptr->ml && see_grid)
 							{
 								/* Dump a message */
-								msgf("%^s tries to pick up %s, but fails.",
-									 m_name, o_name);
+								msgf("%^s tries to pick up %v, but fails.",
+									 m_name, OBJECT_FMT(o_ptr, TRUE, 3));
 							}
 						}
 					}
@@ -2583,7 +2578,7 @@ static void take_move(int m_idx, int *mm)
 						if (see_grid)
 						{
 							/* Dump a message */
-							msgf("%^s picks up %s.", m_name, o_name);
+							msgf("%^s picks up %v.", m_name, OBJECT_FMT(o_ptr, TRUE, 3));
 						}
 
 						/* Forget mark */
@@ -2609,7 +2604,7 @@ static void take_move(int m_idx, int *mm)
 						if (see_grid)
 						{
 							/* Dump a message */
-							msgf("%^s destroys %s.", m_name, o_name);
+							msgf("%^s destroys %v.", m_name, OBJECT_FMT(o_ptr, TRUE, 3));
 						}
 
 						/* Delete the object */

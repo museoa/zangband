@@ -1323,20 +1323,19 @@ static int get_stock(int *com_val, cptr pmt, int maxobj)
 
 static bool store_access_item(const object_type *o_ptr, s32b price, bool buy)
 {
-	char o_name[256];
-
 	if (buy)
 	{
 		/* Describe the object (fully) */
-		object_desc_store(o_name, o_ptr, TRUE, 3, 256);
+		put_fstr(0, 1, "%s %v", (buy) ? "Buying" : "Selling",
+					OBJECT_STORE_FMT(o_ptr, TRUE, 3));
 	}
 	else
 	{
 		/* Describe the object (only what we know) */
-		object_desc(o_name, o_ptr, TRUE, 3, 256);
+		put_fstr(0, 1, "%s %v", (buy) ? "Buying" : "Selling",
+					OBJECT_FMT(o_ptr, TRUE, 3));
 	}
 
-	put_fstr(0, 1, "%s %s", (buy) ? "Buying" : "Selling", o_name);
 	put_fstr(0, 2, "Offer :  %ld", (long)price);
 
 	/* Ask the user for a response */

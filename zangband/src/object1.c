@@ -1640,12 +1640,10 @@ void display_inven(void)
  */
 void display_equip(void)
 {
-	int i, n;
+	int i;
 	object_type *o_ptr;
 	cptr attr;
 	char tmp_val[80];
-	char o_name[256];
-
 
 	int wid, hgt;
 
@@ -1674,9 +1672,6 @@ void display_equip(void)
 
 		/* Display the index (or blank space) */
 		prtf(0, i, tmp_val);
-
-		/* Obtain the length of the description */
-		n = strlen(o_name);
 
 		/* Get the color */
 		attr = color_seq[tval_to_attr[o_ptr->tval % 128]];
@@ -1723,8 +1718,6 @@ void show_list(s16b o_list_ptr)
 	int col, len, lim;
 	object_type *o_ptr;
 
-	char o_name[256];
-
 	object_type *out_object[23];
 	int out_index[23];
 	cptr out_color[23];
@@ -1769,12 +1762,6 @@ void show_list(s16b o_list_ptr)
 		/* Advance to next "line" */
 		k++;
 
-		/* Describe the object */
-		object_desc(o_name, o_ptr, TRUE, 3, 256);
-
-		/* Hack -- enforce max length */
-		o_name[lim] = '\0';
-
 		/* Save the object index, color, and description */
 		out_index[k] = i;
 		out_object[k] = o_ptr;
@@ -1783,10 +1770,11 @@ void show_list(s16b o_list_ptr)
 		/* Grey out charging items */
 		if (item_is_recharging(o_ptr)) out_color[k] = CLR_L_DARK;
 
-		(void)strcpy(out_desc[k], o_name);
+		/* Save the name for later */
+		l = strnfmt(out_desc[k], lim, "%v", OBJECT_FMT(o_ptr, TRUE, 3));
 
 		/* Find the predicted "line length" */
-		l = strlen(out_desc[k]) + 5;
+		l += 5;
 
 		/* Be sure to account for the weight */
 		if (show_weights) l += 9;

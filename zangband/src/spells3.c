@@ -767,8 +767,6 @@ bool apply_disenchant(void)
 {
 	int t = 0;
 	object_type *o_ptr;
-	char o_name[256];
-
 
 	/* Pick a random slot */
 	switch (randint1(8))
@@ -830,21 +828,22 @@ bool apply_disenchant(void)
 	}
 
 
-	/* Describe the object */
-	object_desc(o_name, o_ptr, FALSE, 0, 256);
-
-
 	/* Artifacts have 71% chance to resist */
 	if ((FLAG(o_ptr, TR_INSTA_ART)) && (randint0(100) < 71))
 	{
 		/* Message */
-		msgf("Your %s (%c) resist%s disenchantment!",
-				   o_name, I2A(t), ((o_ptr->number != 1) ? "" : "s"));
+		msgf("Your %v (%c) resist%s disenchantment!",
+				OBJECT_FMT(o_ptr, FALSE, 0), I2A(t),
+				((o_ptr->number != 1) ? "" : "s"));
 
 		/* Notice */
 		return (TRUE);
 	}
-
+	
+	/* Message */
+	msgf("Your %v (%c) %s disenchanted!",
+			OBJECT_FMT(o_ptr, FALSE, 0), I2A(t),
+			((o_ptr->number != 1) ? "were" : "was"));
 
 	/* Disenchant tohit */
 	if (o_ptr->to_h > 0) o_ptr->to_h--;
@@ -858,9 +857,6 @@ bool apply_disenchant(void)
 	if (o_ptr->to_a > 0) o_ptr->to_a--;
 	if ((o_ptr->to_a > 10) && (randint0(100) < 20)) o_ptr->to_a--;
 
-	/* Message */
-	msgf("Your %s (%c) %s disenchanted!",
-			   o_name, I2A(t), ((o_ptr->number != 1) ? "were" : "was"));
 
 	chg_virtue(V_HARMONY, 1);
 	chg_virtue(V_ENCHANT, -2);
@@ -1026,10 +1022,6 @@ void brand_weapon(int brand_type)
 	{
 		cptr act;
 
-		/* Let's get the name before it is changed... */
-		char o_name[256];
-		object_desc(o_name, o_ptr, FALSE, 0, 256);
-
 		switch (brand_type)
 		{
 			case 1:
@@ -1073,7 +1065,7 @@ void brand_weapon(int brand_type)
 			}
 		}
 
-		msgf("Your %s %s", o_name, act);
+		msgf("Your %v %s", OBJECT_FMT(o_ptr, FALSE, 0), act);
 
 		(void)enchant(o_ptr, rand_range(4, 6), ENCH_TOHIT | ENCH_TODAM);
 	}
@@ -2527,7 +2519,7 @@ bool recharge(int power)
 				}
 				else if (o_ptr->tval == TV_WAND)
 				{
-					msgf("You save your %s from destruction, but all charges are lost.",
+					msgf("You save your %v from destruction, but all charges are lost.",
 						 o_name);
 					o_ptr->ac += o_ptr->pval;
 					o_ptr->pval = 0;
@@ -3990,7 +3982,6 @@ int inven_damage(inven_func typ, int perc)
 {
 	int j, k, amt;
 	object_type *o_ptr;
-	char o_name[256];
 
 	int slot;
 
@@ -4016,18 +4007,16 @@ int inven_damage(inven_func typ, int perc)
 			/* Some casualities */
 			if (amt)
 			{
-				/* Get a description */
-				object_desc(o_name, o_ptr, FALSE, 3, 256);
-
 				/* Get slot */
 				slot = get_item_position(p_ptr->inventory, o_ptr);
 
 				/* Message */
-				msgf("%sour %s (%c) %s destroyed!",
+				msgf("%sour %v (%c) %s destroyed!",
 						   ((o_ptr->number > 1) ?
 							((amt == o_ptr->number) ? "All of y" :
 							 (amt > 1 ? "Some of y" : "One of y")) : "Y"),
-						   o_name, I2A(slot), ((amt > 1) ? "were" : "was"));
+						   OBJECT_FMT(o_ptr, FALSE, 3), I2A(slot),
+						    ((amt > 1) ? "were" : "was"));
 
 				/* Potions smash open */
 				if (object_is_potion(o_ptr))
@@ -4059,7 +4048,6 @@ int inven_damage(inven_func typ, int perc)
 bool rustproof(void)
 {
 	object_type *o_ptr;
-	char o_name[256];
 	cptr q, s;
 
 	/* Select a piece of armour */
@@ -4074,19 +4062,16 @@ bool rustproof(void)
 	/* Not a valid item */
 	if (!o_ptr) return (FALSE);
 
-	/* Description */
-	object_desc(o_name, o_ptr, FALSE, 0, 256);
-
 	SET_FLAG(o_ptr, TR_IGNORE_ACID);
 
 	if ((o_ptr->to_a < 0) && !(cursed_p(o_ptr)))
 	{
-		msgf("The %s look%s as good as new!", o_name,
+		msgf("The %v look%s as good as new!", OBJECT_FMT(o_ptr, FALSE, 0),
 				   ((o_ptr->number > 1) ? "" : "s"));
 		o_ptr->to_a = 0;
 	}
 
-	msgf("The %s %s now protected against corrosion.", o_name,
+	msgf("The %v %s now protected against corrosion.", OBJECT_FMT(o_ptr, FALSE, 0),
 			   ((o_ptr->number > 1) ? "are" : "is"));
 
 	return TRUE;
@@ -4100,8 +4085,6 @@ bool curse_armor(void)
 {
 	object_type *o_ptr;
 
-	char o_name[256];
-
 
 	/* Curse the body armor */
 	o_ptr = &p_ptr->equipment[EQUIP_BODY];
@@ -4110,22 +4093,19 @@ bool curse_armor(void)
 	if (!o_ptr->k_idx) return (FALSE);
 
 
-	/* Describe */
-	object_desc(o_name, o_ptr, FALSE, 3, 256);
-
 	/* Attempt a saving throw for artifacts */
 	if ((FLAG(o_ptr, TR_INSTA_ART)) && !one_in_(3))
 	{
 		/* Cool */
-		msgf("A %s tries to %s, but your %s resists the effects!",
-				   "terrible black aura", "surround your armor", o_name);
+		msgf("A terrible black aura tries to surround your armor, but your %v resists the effects!",
+			OBJECT_FMT(o_ptr, FALSE, 3));
 	}
 
 	/* not artifact or failed save... */
 	else
 	{
 		/* Oops */
-		msgf("A terrible black aura blasts your %s!", o_name);
+		msgf("A terrible black aura blasts your %v!", OBJECT_FMT(o_ptr, FALSE, 3));
 
 		chg_virtue(V_ENCHANT, -5);
 
@@ -4170,32 +4150,25 @@ bool curse_weapon(void)
 {
 	object_type *o_ptr;
 
-	char o_name[256];
-
-
 	/* Curse the weapon */
 	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 
 	/* Nothing to curse */
 	if (!o_ptr->k_idx) return (FALSE);
 
-
-	/* Describe */
-	object_desc(o_name, o_ptr, FALSE, 3, 256);
-
 	/* Attempt a saving throw */
 	if ((FLAG(o_ptr, TR_INSTA_ART)) && !one_in_(3))
 	{
 		/* Cool */
-		msgf("A %s tries to %s, but your %s resists the effects!",
-				   "terrible black aura", "surround your weapon", o_name);
+		msgf("A terrible black aura tries to surround your weapon, but your %v resists the effects!",
+				OBJECT_FMT(o_ptr, FALSE, 3));
 	}
 
 	/* not artifact or failed save... */
 	else
 	{
 		/* Oops */
-		msgf("A terrible black aura blasts your %s!", o_name);
+		msgf("A terrible black aura blasts your %v!", OBJECT_FMT(o_ptr, FALSE, 3));
 
 		chg_virtue(V_ENCHANT, -5);
 
