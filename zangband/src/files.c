@@ -1273,6 +1273,7 @@ static void display_player_abilities(void)
 	cptr		desc;
 	int         muta_att = 0;
 	long		avgdam;
+	u32b            f1, f2, f3;
 
 	object_type		*o_ptr;
 
@@ -1369,9 +1370,28 @@ static void display_player_abilities(void)
 
 	/* number of blows */
 	avgdam *= blows;
-
+	
 	/*rescale*/
 	avgdam /= 200;
+	
+	/* see if have a weapon with extra power*/
+	if (o_ptr->k_idx)
+	{
+		/* Is there a vorpal effect we know about? */
+		object_flags(o_ptr, &f1, &f2, &f3);
+		if ((o_ptr->ident & IDENT_MENTAL)&&(o_ptr->name1 == ART_VORPAL_BLADE))
+		{
+			/* vorpal blade */
+			avgdam *= 786;
+			avgdam /= 500;
+		}
+		else if((object_known_p(o_ptr))&&(f1 & TR1_VORPAL))
+		{
+			/* vorpal flag only */
+			avgdam *= 609;
+			avgdam /= 500;
+		}
+	}
 
 	/* normal players get two 1d1 punches */
 	if ((!o_ptr->k_idx) && (!(p_ptr->pclass == CLASS_MONK))) avgdam = 2;
