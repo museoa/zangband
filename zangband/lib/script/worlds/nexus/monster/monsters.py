@@ -1,6 +1,16 @@
 from base.monster import *
 from variable import monsters
 
+monsters.append(humanoid)
+monsters.append(human)
+monsters.append(amberite)
+monsters.append(troll)
+monsters.append(orc)
+monsters.append(giant)
+monsters.append(dragon)
+monsters.append(demon)
+
+
 class filthy_street_urchin(monster):
 	name = "Filthy street urchin"
 	r_idx = 1
