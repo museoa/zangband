@@ -285,6 +285,10 @@ term *Term = NULL;
  */
 static errr term_win_nuke(term_win *s, int w, int h)
 {
+	/* Hack - ignore parameters */
+	(void) w;
+	(void) h;
+	
 	/* Free the window access arrays */
 	KILL(s->a);
 	KILL(s->c);

@@ -31,6 +31,9 @@ static int xxx_msg_print(lua_State *L)
 
 static int xxx_msg_flush(lua_State *L)
 {
+	/* Hack - ignore parameter */
+	(void) L;
+	
 	message_flush();
 
 	return 0;
