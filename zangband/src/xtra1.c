@@ -2326,7 +2326,7 @@ static sint add_special_missile_skill(byte pclass)
  *
  * This function induces various "status" messages.
  */
-void calc_bonuses(void)
+static void calc_bonuses(void)
 {
 	int             i, j, hold;
 	int             old_speed;

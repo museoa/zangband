@@ -3746,6 +3746,12 @@ void play_game(bool new_game)
 	/* React to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
 
+	/* Need to recalculate some transient things */
+	p_ptr->update |= (PU_BONUS | PU_SPELLS);
+	
+	/* Update stuff */
+	update_stuff();
+	
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 

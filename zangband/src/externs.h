@@ -963,7 +963,6 @@ extern void update_stuff(void);
 extern void redraw_stuff(void);
 extern void window_stuff(void);
 extern void handle_stuff(void);
-extern void calc_bonuses(void);
 
 
 /* effects.c */
