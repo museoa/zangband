@@ -2868,7 +2868,7 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				if (r_info[monster_index].flags3 & RF3_UNIQUE_7)
 				{
 					if (r_info[monster_index].cur_num == 7)
-						r_info[monster_index].cur_num = 6;
+						r_info[monster_index].cur_num--;
 					r_info[monster_index].max_num = 7;
 				}
 
