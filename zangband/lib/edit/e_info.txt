@@ -697,7 +697,10 @@ F:SLAY_EVIL
 
 # 117 (unused)
 
-# 118 (unused)
+N:118:of Explosion
+X:23:10
+W:0:2:0:30
+F:EXPLODE
 
 N:119:of Hurt Dragon
 X:23:10

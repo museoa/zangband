@@ -632,7 +632,7 @@ static cptr k_info_flags4[] =
 	"GHOUL_TOUCH",
 	"PSI_CRIT",
 	"RETURN",
-	"XXX20",
+	"EXPLODE",
 	"HURT_ACID",
 	"HURT_ELEC",
 	"HURT_FIRE",

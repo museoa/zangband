@@ -1092,7 +1092,7 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (o_ptr->flags4 & TR4_GHOUL_TOUCH) total += 750;
 	if (o_ptr->flags4 & TR4_PSI_CRIT) total += 1500;
 	if (o_ptr->flags4 & TR4_RETURN) total += 500;
-	if (o_ptr->flags4 & TR4_XXX20) total += 0;
+	if (o_ptr->flags4 & TR4_EXPLODE) total += 500;
 	if (o_ptr->flags4 & TR4_HURT_ACID) total -= 5000;
 	if (o_ptr->flags4 & TR4_HURT_ELEC) total -= 5000;
 	if (o_ptr->flags4 & TR4_HURT_FIRE) total -= 5000;

@@ -1158,6 +1158,10 @@ bool identify_fully_aux(const object_type *o_ptr)
 	{
 		info[i++] = "It returns when thrown.";
 	}
+	if (f4 & (TR4_EXPLODE))
+	{
+		info[i++] = "It explodes when fired.";
+	}
 
 	if (f2 & (TR2_SUST_STR))
 	{

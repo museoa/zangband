@@ -2283,6 +2283,15 @@ static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
 		return;
 	}
 
+	/* Exploding arrows */
+	if ((o_ptr->flags4 & TR4_EXPLODE) && hit_body)
+	{
+		project(0, 2, x, y, 100, GF_FIRE, (PROJECT_JUMP |
+					PROJECT_ITEM | PROJECT_KILL));
+
+		return;
+	}
+
 	/* Potions smash open */
 	if (object_is_potion(o_ptr))
 	{
@@ -2769,9 +2778,6 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 							   tdam, m_ptr->hp);
 				}
 
-				/* Drop (or break) near that location (i_ptr is now invalid) */
-				throw_item_effect(i_ptr, TRUE, FALSE, x, y);
-
 				/* Hit the monster, check for death */
 				if (mon_take_hit(c_ptr->m_idx, tdam, &fear, note_dies))
 				{
@@ -2793,6 +2799,9 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 						flee_message(m_name, m_ptr->r_idx);
 					}
 				}
+
+				/* Drop (or break) near that location (i_ptr is now invalid) */
+				throw_item_effect(i_ptr, TRUE, FALSE, x, y);
 			}
 			else
 			{

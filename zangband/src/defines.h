@@ -1639,7 +1639,7 @@
 /* xxx */
 /* xxx */
 /* xxx */
-/* xxx */
+#define EGO_EXPLOSION           118
 #define EGO_HURT_DRAGON         119
 #define EGO_SLAYING_BOLT        120
 #define EGO_LIGHTNING_BOLT      121
@@ -2974,7 +2974,7 @@
 #define TR4_GHOUL_TOUCH         0x00010000L
 #define TR4_PSI_CRIT            0x00020000L
 #define TR4_RETURN              0x00040000L
-#define TR4_XXX20               0x00080000L
+#define TR4_EXPLODE             0x00080000L
 #define TR4_HURT_ACID           0x00100000L
 #define TR4_HURT_ELEC           0x00200000L
 #define TR4_HURT_FIRE           0x00400000L
