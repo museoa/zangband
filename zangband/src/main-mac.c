@@ -3869,10 +3869,6 @@ static bool CheckEvents(bool wait)
 					/* Reset map size if required */
 					if (window == 0)
 					{
-						/* Recalculate map size */
-						map_hgt = td->rows - 2;
-						map_wid = td->cols - 14;
-
 						/* Mega-Hack -- no panel yet */
 						panel_row_min = 0;
 						panel_row_max = 0;

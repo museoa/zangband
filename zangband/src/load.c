@@ -2771,10 +2771,14 @@ static void load_wild_data(void)
 static errr rd_dungeon(void)
 {
 	int i;
-
+	int wid, hgt;
 	u16b limit;
 	cave_type *c_ptr;
 	u16b dun_level_backup, px_back, py_back;
+
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 	/*** Basic info ***/
 
@@ -2800,8 +2804,8 @@ static errr rd_dungeon(void)
 	
 	if (sf_version < 12)
 	{
-		max_panel_cols = max_panel_cols * map_wid / 2;
-		max_panel_rows = max_panel_rows * map_hgt / 2;
+		max_panel_cols = max_panel_cols * (wid - 14) / 2;
+		max_panel_rows = max_panel_rows * (hgt - 2) / 2;
 		
 		/* Reset the panel */
 		panel_row_min = max_panel_rows;

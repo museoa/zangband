@@ -2745,10 +2745,6 @@ static void init_windows(void)
 	 * Reset map size if required
 	 */
 
-	/* Recalculate map size */
-	map_hgt = td->rows - 2;
-	map_wid = td->cols - 14;
-
 	/* Mega-Hack -- no panel yet */
 	panel_row_min = 0;
 	panel_row_max = 0;

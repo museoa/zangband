@@ -989,8 +989,14 @@ static int map_wid_old = 66;
 
 void map_panel_size(void)
 {
+	int wid, hgt;
+
+
 	/* Only if the map exists */
 	if (!character_dungeon) return;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 	/* reset panels */
 	if (dun_level)
@@ -1024,20 +1030,20 @@ void map_panel_size(void)
 	if (mp_c) C_KILL(mp_c, map_wid_old, char);
 	
 	/* Save size */
-	map_wid_old = map_wid;
+	map_wid_old = wid - 14;
 	
 	/* Make the new lines */
 
 #ifdef USE_TRANSPARENCY
 	/* String of terrain characters along one row of the map */
-	C_MAKE(mp_ta, map_wid, byte);
-	C_MAKE(mp_tc, map_wid, char);
+	C_MAKE(mp_ta, wid - 14, byte);
+	C_MAKE(mp_tc, wid - 14, char);
 	
 #endif /* USE_TRANSPARENCY */	
 	
 	/* String of characters along one row of the map */
-	C_MAKE(mp_a, map_wid, byte);
-	C_MAKE(mp_c, map_wid, char);
+	C_MAKE(mp_a, wid - 14, byte);
+	C_MAKE(mp_c, wid - 14, char);
 }
 
 /* Make a real level */

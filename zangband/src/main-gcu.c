@@ -930,10 +930,6 @@ static errr term_data_init_gcu(term_data *td, int rows, int cols, int y, int x, 
 	/* Reset map size if required */
 	if (i == 0)
 	{
-		/* Recalculate map size */
-		map_hgt = rows - 2;
-		map_wid = cols - 14;
-
 		/* Mega-Hack -- no panel yet */
 		panel_row_min = 0;
 		panel_row_max = 0;

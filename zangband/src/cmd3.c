@@ -1065,12 +1065,14 @@ void do_cmd_look(void)
  */
 void do_cmd_locate(void)
 {
-	int		dir, y1, x1, y2, x2;
+	int dir, y1, x1, y2, x2;
+	int wid, hgt;
+	char tmp_val[80];
+	char out_val[160];
 
-	char	tmp_val[80];
 
-	char	out_val[160];
-
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 	/* Start at current panel */
 	y2 = y1 = panel_row_min;
@@ -1094,8 +1096,8 @@ void do_cmd_locate(void)
 		/* Prepare to ask which way to look */
 		sprintf(out_val,
 		        "Map sector [%d(%02d),%d(%02d)], which is%s your sector.  Direction?",
-		        y2 / (map_hgt / 2), y2 % (map_hgt / 2),
-		        x2 / (map_wid / 2), x2 % (map_wid / 2), tmp_val);
+		        y2 / ((hgt - 2) / 2), y2 % ((hgt - 2) / 2),
+		        x2 / ((wid - 14) / 2), x2 % ((wid - 14) / 2), tmp_val);
 
 		/* Assume no direction */
 		dir = 0;

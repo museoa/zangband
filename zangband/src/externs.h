@@ -270,8 +270,6 @@ extern s16b max_panel_rows, max_panel_cols;
 extern s16b panel_row_min, panel_row_max;
 extern s16b panel_col_min, panel_col_max;
 extern s16b panel_col_prt, panel_row_prt;
-extern s16b map_wid;
-extern s16b map_hgt;
 extern byte *mp_a;
 extern char *mp_c;	
 #ifdef USE_TRANSPARENCY

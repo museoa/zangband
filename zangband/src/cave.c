@@ -1572,7 +1572,9 @@ void prt_map(void)
 
 	/* map bounds */
 	s16b	xmin, xmax, ymin, ymax;
-	
+
+	int wid, hgt;
+
 	/* Temp variables to speed up deletion loops */
 	s16b l1, l2, l3;
 	
@@ -1582,9 +1584,12 @@ void prt_map(void)
 #ifdef USE_TRANSPARENCY
 	byte *pta;
 	char *ptc;
-	
 #endif /* USE_TRANSPARENCY */	
-	
+
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
 	/* Access the cursor state */
 	(void)Term_get_cursor(&v);
 
@@ -1609,19 +1614,19 @@ void prt_map(void)
 		ymin = (wild_grid.y_min < panel_row_min) ? panel_row_min : wild_grid.y_min;
 		ymax = (wild_grid.y_max - 1 > panel_row_max) ? panel_row_max : wild_grid.y_max - 1;
 	}
-	
+
 	/* Bottom section of screen */
 	for (y = 1; y <= ymin - panel_row_prt; y++)
 	{
 		/* Erase the section */
-		Term_erase(13, y, map_wid);
+		Term_erase(13, y, wid - 14);
 	}
 	
 	/* Top section of screen */
-	for (y = ymax - panel_row_prt; y <= map_hgt; y++)
+	for (y = ymax - panel_row_prt; y <= hgt - 2; y++)
 	{
 		/* Erase the section */
-		Term_erase(13, y, map_wid);
+		Term_erase(13, y, wid - 14);
 	}
 	
 	/* Sides of screen */
