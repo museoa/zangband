@@ -6,26 +6,6 @@
 #include "angband.h"
 
 /*
- * Useful macros for appl_object_trigger()
- */
-#define LUA_VAR(A) \
-	#A, (A)
-#define LUA_VAR_NAMED(A, N) \
-	N, (A)
-#define LUA_RETURN(A) \
-	#A, &(A)
-#define LUA_RETURN_NAMED(A, N) \
-	N, &(A)
-#define LUA_OBJECT(A) \
-	#A, "object_type", (void *)(A)
-#define LUA_OBJECT_NAMED(A, N) \
-	N, "object_type", (void *)(A)
-#define LUA_MONSTER(A) \
-	#A, "monster_type", (void *)(A)
-#define LUA_MONSTER_NAMED(A, N) \
-	N, "monster_type", (void *)(A)
-
-/*
  * Initalize the scripting support
  */
 extern errr script_init(void);

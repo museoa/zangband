@@ -1792,7 +1792,7 @@ bool raise_dead(int x, int y, bool pet)
 		c_ptr = area(fx, fy);
 
 		/* Raise Corpses / Skeletons */
-		if (field_hook_special(c_ptr, FTYPE_CORPSE, pet))
+		if (field_script_special(c_ptr, FTYPE_CORPSE, "i", LUA_VAR(pet)))
 		{
 			if (player_has_los_grid(parea(fx, fy))) obvious = TRUE;
 		}

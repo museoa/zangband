@@ -2716,8 +2716,8 @@ bool summon_specific(int who, int x1, int y1, int req_lev, int type, bool group,
 /*
  * A "dangerous" function, creates a pet of the specified type
  */
-monster_type *summon_named_creature(int x1, int y1, int r_idx, bool slp, bool group_ok,
-                           bool pet)
+monster_type *summon_named_creature(int x1, int y1, int r_idx, bool slp,
+									 bool group_ok, bool pet)
 {
 	int i, x, y;
 
@@ -2752,6 +2752,23 @@ monster_type *summon_named_creature(int x1, int y1, int r_idx, bool slp, bool gr
 		/* Place it (allow groups) */
 		m_ptr = place_monster_aux(x, y, r_idx, slp, group_ok, FALSE, pet, TRUE);
 		if (m_ptr) break;
+	}
+
+	return (m_ptr);
+}
+
+/*
+ * Same as above, but set SM_CLONE,
+ * and assume there is only one monster created, which is awake.
+ */
+monster_type *summon_cloned_creature(int x1, int y1, int r_idx, bool pet)
+{
+	monster_type *m_ptr = summon_named_creature(x1, y1, r_idx, FALSE, FALSE, pet);
+
+	if (m_ptr)
+	{
+		/* Set the cloned flag, so no treasure is dropped */
+		m_ptr->smart |= SM_CLONED;
 	}
 
 	return (m_ptr);

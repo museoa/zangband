@@ -1037,12 +1037,14 @@ bool field_script_single(field_type *f_ptr, int action, cptr format, ...)
 	/* Point to the field */
 	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
     
-    /* Begin the Varargs Stuff */
-	va_start(vp, format);
-
 	/* Paranoia - Is there a function to call? */
 	if (t_ptr->action[action])
 	{
+		bool exists = TRUE;
+	
+		 /* Begin the Varargs Stuff */
+		va_start(vp, format);
+	
 		/* Get script to use */
 		script = quark_str(t_ptr->action[action]);
 	
@@ -1052,24 +1054,16 @@ bool field_script_single(field_type *f_ptr, int action, cptr format, ...)
 			/* The field wants to be deleted */
 			delete_field_ptr(f_ptr);
             
-            /* End the Varargs Stuff */
-			va_end(vp);
-
 			/* The field no longer exists */
-			return (FALSE);
+			exists = FALSE;
 		}
-		else
-		{
-        	/* End the Varargs Stuff */
-			va_end(vp);
-        
-			/* The field exists */
-			return (TRUE);
-		}
+		
+		/* End the Varargs Stuff */
+		va_end(vp);
+		
+		/* Does the field exist still? */
+		return (exists);
 	}
-    
-    /* End the Varargs Stuff */
-	va_end(vp);
 
 	/*
 	 * XXX XXX Is this logic correct?
@@ -1136,28 +1130,33 @@ void field_hook(cave_type *c_ptr, int action, ...)
  * in the specified list which match the required
  * field type.
  */
-bool field_hook_special(cave_type *c_ptr, u16b ftype, ...)
+bool field_script_special(cave_type *c_ptr, u16b ftype, cptr format, ...)
 {
 	field_type *f_ptr;
 	field_thaum *t_ptr;
 
 	bool deleted = FALSE;
+	
+	cptr script;
     
 	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
 		/* Point to the field */
 		t_ptr = &t_info[f_ptr->t_idx];
+		
+		/* Get script to use */
+		script = quark_str(t_ptr->action[FIELD_ACT_SPECIAL]);
 
 		/* Check for the right field + existance of a function to call */
-		if ((t_ptr->type == ftype) && (t_ptr->func[FIELD_ACT_SPECIAL]))
+		if ((t_ptr->type == ftype) && script)
 		{
 			va_list vp;
 		
 			/* Begin the Varargs Stuff */
-			va_start(vp, ftype);
+			va_start(vp, format);
 		
-			/* Call the action function */
-			if (t_ptr->func[FIELD_ACT_SPECIAL] (f_ptr, vp))
+			/* Call the action script */
+			if (apply_field_trigger(script, f_ptr, format, vp))
 			{
 				/* The field wants to be deleted */
 				delete_field_ptr(f_ptr);
@@ -1188,9 +1187,6 @@ field_type *field_script_find(cave_type *c_ptr, int action, cptr format, ...)
 	va_list vp;
 	cptr script;
     
-    /* Begin the Varargs Stuff */
-	va_start(vp, format);
-
 	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
 		/* Point to the field */
@@ -1201,6 +1197,9 @@ field_type *field_script_find(cave_type *c_ptr, int action, cptr format, ...)
 		
 		if (script)
 		{
+			/* Begin the Varargs Stuff */
+			va_start(vp, format);
+		
 			/* Call the action script */
 			if (apply_field_trigger(script, f_ptr, format, vp))
 			{
@@ -1217,13 +1216,9 @@ field_type *field_script_find(cave_type *c_ptr, int action, cptr format, ...)
 	}
 	FLD_ITT_END;
     
-	/* End the Varargs Stuff */
-	va_end(vp);
-
 	/* Found nothing */
 	return (NULL);
 }
-
 
 
 void process_fields(void)

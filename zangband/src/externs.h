@@ -515,6 +515,7 @@ extern bool summon_specific(int who, int x1, int y1, int lev, int type,
 							bool group, bool friendly, bool pet);
 extern monster_type *summon_named_creature(int x1, int y1, int r_idx, bool slp,
 								  bool group_ok, bool pet);
+extern monster_type *summon_cloned_creature(int x1, int y1, int r_idx, bool pet);
 extern monster_type *multiply_monster(int m_idx, bool clone, bool friendly, bool pet);
 extern void update_smart_learn(int m_idx, int what);
 extern monster_type *place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
@@ -1111,7 +1112,7 @@ extern field_type *place_field(int x, int y, s16b t_idx);
 extern bool field_hook_single(field_type *f_ptr, int action, ...);
 extern bool field_script_single(field_type *f_ptr, int action, cptr format, ...);
 extern void field_hook(cave_type *c_ptr, int action, ...);
-extern bool field_hook_special(cave_type *c_ptr, u16b t_idx, ...);
+extern bool field_script_special(cave_type *c_ptr, u16b t_idx, cptr format, ...);
 extern field_type *field_script_find(cave_type *c_ptr, int action, cptr format, ...);
 extern void process_fields(void);
 extern void test_field_data_integrity(void);

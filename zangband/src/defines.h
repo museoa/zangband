@@ -5069,3 +5069,18 @@ extern int PlayerUID;
 
 #define INVALID_CHOICE 255
 
+/*
+ * Useful macros for lua interface.
+ */
+#define LUA_VAR(A) \
+	#A, (A)
+#define LUA_VAR_NAMED(A, N) \
+	N, (A)
+#define LUA_RETURN(A) \
+	#A, &(A)
+#define LUA_RETURN_NAMED(A, N) \
+	N, &(A)
+#define LUA_OBJECT(A) \
+	#A, "object_type", (void *)(A)
+#define LUA_OBJECT_NAMED(A, N) \
+	N, "object_type", (void *)(A)

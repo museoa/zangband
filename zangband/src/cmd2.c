@@ -11,7 +11,6 @@
  */
 
 #include "angband.h"
-#include "script.h"
 
 /*
  * Go up one level
