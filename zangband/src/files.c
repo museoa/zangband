@@ -14,12 +14,6 @@
 
 
 /*
- * You may or may not want to use the following "#undef".
- */
-/* #undef _POSIX_SAVED_IDS */
-
-
-/*
  * Hack -- drop permissions
  */
 void safe_setuid_drop(void)
@@ -29,33 +23,36 @@ void safe_setuid_drop(void)
 
 # ifdef SAFE_SETUID
 
-#  ifdef SAFE_SETUID_POSIX
+#  ifdef HAVE_SETEGID
 
-	if (setuid(getuid()) != 0)
+	if (setegid(getgid()) != 0)
 	{
-		quit("setuid(): cannot set permissions correctly!");
+		quit("setegid(): cannot set permissions correctly!");
 	}
+ 
+#  else /* HAVE_SETEGID */
+
+#   ifdef SAFE_SETUID_POSIX
+
 	if (setgid(getgid()) != 0)
 	{
 		quit("setgid(): cannot set permissions correctly!");
 	}
+    
+#   else /* SAFE_SETUID_POSIX */
 
-#  else
-
-	if (setreuid(geteuid(), getuid()) != 0)
-	{
-		quit("setreuid(): cannot set permissions correctly!");
-	}
 	if (setregid(getegid(), getgid()) != 0)
 	{
 		quit("setregid(): cannot set permissions correctly!");
 	}
 
-#  endif
+#   endif /* SAFE_SETUID_POSIX */
 
-# endif
+#  endif /* HAVE_SETEGID */
 
-#endif
+# endif /* SAFE_SETUID */
+
+#endif /* SET_UID */
 
 }
 
@@ -70,29 +67,32 @@ void safe_setuid_grab(void)
 
 # ifdef SAFE_SETUID
 
-#  ifdef SAFE_SETUID_POSIX
+#  ifdef HAVE_SETEGID
 
-	if (setuid(player_euid) != 0)
+	if (setegid(player_egid) != 0)
 	{
-		quit("setuid(): cannot set permissions correctly!");
+		quit("setegid(): cannot set permissions correctly!");
 	}
+
+#  else /* HAVE_SETEGID */
+
+#   ifdef SAFE_SETUID_POSIX
+
 	if (setgid(player_egid) != 0)
 	{
 		quit("setgid(): cannot set permissions correctly!");
 	}
 
-#  else
+#   else /* SAFE_SETUID_POSIX */
 
-	if (setreuid(geteuid(), getuid()) != 0)
-	{
-		quit("setreuid(): cannot set permissions correctly!");
-	}
 	if (setregid(getegid(), getgid()) != 0)
 	{
 		quit("setregid(): cannot set permissions correctly!");
 	}
 
-#  endif /* SAFE_SETUID_POSIX */
+#   endif /* SAFE_SETUID_POSIX */
+
+#  endif /* HAVE_SETEGID */
 
 # endif /* SAFE_SETUID */
 
@@ -289,49 +289,52 @@ static const named_num gf_desc[] =
  * zero" will be used for the "stack" attr/char, and "feature zero" is
  * used for the "nothing" attr/char.
  *
- * Parse another file recursively, see below for details
+ * Parse another file recursively, see below for details.
  *   %:<filename>
  *
- * Specify the attr/char values for "monsters" by race index
+ * Specify the attr/char values for "monsters" by race index.
  *   R:<num>:<a>:<c>
  *
- * Specify the attr/char values for "objects" by kind index
+ * Specify the attr/char values for "objects" by kind index.
  *   K:<num>:<a>:<c>
  *
- * Specify the attr/char values for "features" by feature index
+ * Specify the attr/char values for "features" by feature index.
  *   F:<num>:<a>:<c>
  *
- * Specify the attr/char values for "fields" by field index
+ * Specify the attr/char values for "fields" by field index.
  *   T:<num>:<a>:<c>
  *
- * Specify the attr/char values for unaware "objects" by kind tval
+ * Specify the attr/char values for unaware "objects" by kind tval.
  *   U:<tv>:<a>:<c>
  *
- * Specify the attr/char values for inventory "objects" by kind tval
+ * Specify the attr/char values for inventory "objects" by kind tval.
  *   E:<tv>:<a>:<c>
  *
- * Define a macro action, given an encoded macro action
+ * Define a macro action, given an encoded macro action.
  *   A:<str>
  *
- * Create a normal macro, given an encoded macro trigger
+ * Create a normal macro, given an encoded macro trigger.
  *   P:<str>
  *
- * Create a command macro, given an encoded macro trigger
+ * Create a command macro, given an encoded macro trigger.
  *   C:<str>
  *
- * Create a keyset mapping
+ * Create a keyset mapping.
  *   S:<key>:<key>:<dir>
  *
- * Turn an option off, given its name
+ * Turn an option off, given its name.
  *   X:<str>
  *
- * Turn an option on, given its name
+ * Turn an option on, given its name.
  *   Y:<str>
  *
- * Specify visual information, given an index, and some data
+ * Specify visual information, given an index, and some data.
  *   V:<num>:<kv>:<rv>:<gv>:<bv>
  *
- * Specify the set of colors to use when drawing a zapped spell
+ * Specify colors for message-types.
+ *   M:<type>:<attr>
+ *
+ * Specify the set of colors to use when drawing a zapped spell.
  *   Z:<type>:<str>
  */
 errr process_pref_file_command(char *buf)
