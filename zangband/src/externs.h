@@ -768,6 +768,7 @@ extern bool deathray_monsters(void);
 extern bool charm_monster(int dir, int plev);
 extern bool control_one_undead(int dir, int plev);
 extern bool charm_animal(int dir, int plev);
+extern bool starlite(void);
 extern bool mindblast_monsters(int dam);
 extern void report_magics(void);
 extern bool teleport_swap(int dir);

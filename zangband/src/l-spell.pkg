@@ -214,6 +214,7 @@ extern void wall_breaker(void);
 extern bool confuse_monsters(int dam);
 extern bool charm_monsters(int dam);
 extern bool charm_animals(int dam);
+extern bool starlite(void);
 extern bool stun_monsters(int dam);
 extern bool stasis_monsters(int dam);
 extern bool banish_monsters(int dist);

@@ -4120,3 +4120,38 @@ bool charm_animal(int dir, int plev)
 	u16b flg = PROJECT_STOP | PROJECT_KILL;
 	return (project_hook(GF_CONTROL_ANIMAL, dir, plev, flg));
 }
+
+
+bool starlite(void)
+{
+	int k;
+	int num = damroll(5, 3);
+	int y, x;
+	int attempts;
+
+	cave_type *c_ptr;
+
+	for (k = 0; k < num; k++)
+	{
+		attempts = 1000;
+
+		while (attempts--)
+		{
+			scatter(&y, &x, p_ptr->py, p_ptr->px, 4);
+
+			/* paranoia */
+			if (!in_bounds2(y, x)) continue;
+
+			c_ptr = area(y, x);
+
+			if (!cave_floor_grid(c_ptr)) continue;
+
+			if ((y != p_ptr->py) || (x != p_ptr->px)) break;
+		}
+
+		(void)project(0, 0, y, x, damroll(6, 8), GF_LITE_WEAK,
+				  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_KILL));
+	}
+
+	return (TRUE);
+}
