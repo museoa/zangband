@@ -201,6 +201,9 @@ static void place_player_start(s32b *x, s32b *y, u16b this_town)
 	/* Hack - Reset player position to be on the stairs in town */
 	*x = place[this_town].x * 16 + wild_stairs_x;
 	*y = place[this_town].y * 16 + wild_stairs_y;
+
+	/* Set current town */
+	p_ptr->place_num = this_town;
 }
 
 
@@ -223,6 +226,11 @@ void select_town_name(char *name, int pop)
 		{
 			strnfmt(name, T_NAME_LEN + 1, "%sville", buf);
 		}
+		else
+		{
+			/* Simply copy it */
+			strnfmt(name, T_NAME_LEN + 1, "%s", buf);
+		}
 	}
 	else if (pop < T_SIZE_TOWN)
 	{
@@ -231,6 +239,11 @@ void select_town_name(char *name, int pop)
 		{
 			strnfmt(name, T_NAME_LEN + 1, "%s Dun", buf);
 		}
+				else
+		{
+			/* Simply copy it */
+			strnfmt(name, T_NAME_LEN + 1, "%s", buf);
+		}
 	}
 	else if (pop < T_SIZE_CITY)
 	{
@@ -238,6 +251,11 @@ void select_town_name(char *name, int pop)
 		if ((len < T_NAME_LEN - 3) && one_in_(2))
 		{
 			strnfmt(name, T_NAME_LEN + 1, "%ston", buf);
+		}
+				else
+		{
+			/* Simply copy it */
+			strnfmt(name, T_NAME_LEN + 1, "%s", buf);
 		}
 	}
 	else if (pop < T_SIZE_CASTLE)
@@ -259,6 +277,11 @@ void select_town_name(char *name, int pop)
 		{
 			strnfmt(name, T_NAME_LEN + 1, "%s Fort", buf);
 		}
+		else
+		{
+			/* Simply copy it */
+			strnfmt(name, T_NAME_LEN + 1, "%s", buf);
+		}
 	}
 	else
 	{
@@ -270,6 +293,11 @@ void select_town_name(char *name, int pop)
 		else if ((len < T_NAME_LEN - 5) && one_in_(2))
 		{
 			strnfmt(name, T_NAME_LEN + 1, "%s Keep", buf);
+		}
+		else
+		{
+			/* Simply copy it */
+			strnfmt(name, T_NAME_LEN + 1, "%s", buf);
 		}
 	}
 }
