@@ -806,7 +806,7 @@ void gamble_spin_wheel(void)
 			roll1);
 		prt(tmp_str, 13, 3);
 		prt("", 9, 0);
-		prt("*", 9, (3 * roll1 + 5));
+		prt("*", 9, (3 * roll1 + 2));
 
 		if (roll1 == choice) win = TRUE;
 		
