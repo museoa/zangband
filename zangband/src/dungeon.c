@@ -777,9 +777,6 @@ static bool item_tester_unsensed(const object_type *o_ptr)
 	
 	/* Cannot sense flavoured items */
 	if (k_ptr->flavor) return (FALSE);
-	
-	/* Check to see if we have sensed the item */
-	if (o_ptr->info & OB_SENSE) return (FALSE);
 
 	return (TRUE);
 }
