@@ -773,8 +773,6 @@ bool do_cmd_open_aux(int y, int x)
 
 	cave_type *c_ptr;
 	field_type *f_ptr;
-
-	bool more = FALSE;
 	
 	s16b fld_idx;
 
@@ -831,7 +829,7 @@ bool do_cmd_open_aux(int y, int x)
 			if (flush_failure) flush();
 
 			/* We may keep trying */
-			more = TRUE;
+			return (TRUE);
 		}
 	}
 
@@ -848,8 +846,8 @@ bool do_cmd_open_aux(int y, int x)
 		sound(SOUND_OPENDOOR);
 	}
 
-	/* Result */
-	return (more);
+	/* Done - no more to try. */
+	return (FALSE);
 }
 
 

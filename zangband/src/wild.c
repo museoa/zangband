@@ -67,7 +67,8 @@ void light_dark_block(blk_ptr block_ptr, u16b x, u16b y)
 				/* Darken "boring" features */
 				if (!(((c_ptr->feat >= FEAT_OPEN) &&
 				    (c_ptr->feat <= FEAT_MORE)) ||
-				    (c_ptr->feat == FEAT_CLOSED)))
+				    ((c_ptr->feat >= FEAT_CLOSED) && 
+					(c_ptr->feat <= FEAT_SHAL_LAVA))))
 				{
 					/* Forget the grid */
 					c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);

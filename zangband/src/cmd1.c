@@ -538,6 +538,12 @@ void search(void)
 
 					/* Pick a door */
 					place_closed_door(y, x);
+					
+					/* Notice this */
+					note_spot(y, x);
+					
+					/* Lite this */
+					lite_spot(y, x);
 
 					/* Disturb */
 					disturb(0, 0);
@@ -2407,7 +2413,11 @@ void move_player(int dir, int do_pickup)
 			else
 			{
 				/* Try to open a door if is there */
-				if (easy_open && do_cmd_open_aux(y, x)) return;
+				if (easy_open)
+				{
+					(void) do_cmd_open_aux(y, x);
+					return;
+				} 
 
 				msg_print("There is a closed door blocking your way.");
 

@@ -83,6 +83,29 @@ void excise_field_idx(int fld_idx)
 	}
 }
 
+/*
+ * Notice changes to a field
+ */
+void notice_field(field_type *f_ptr)
+{
+	int x = f_ptr->fx;
+	int y = f_ptr->fy;
+	
+	/* Refuse "illegal" locations */
+	if (in_bounds(y, x))
+	{
+		/* Can the player see the square? */
+		if (area(y, x)->info & CAVE_VIEW)
+		{		
+			/* Note the spot */
+			note_spot(y, x);
+		
+			/* Visual update */
+			lite_spot(y, x);
+		}
+	}
+}
+
 
 /*
  * Delete a dungeon field
@@ -1509,7 +1532,6 @@ void field_action_corpse_decay(s16b *field_ptr, void *nothing)
 		}
 	}
 
-
 	/* Delete the field */
 	delete_field_ptr(field_ptr);
 	return;
@@ -1655,14 +1677,9 @@ void field_action_corpse_init(s16b *field_ptr, void *input)
 		f_ptr->f_char += corpse_type(r_ptr->d_char);
 	}
 	
-	/* Redraw the square if visible */
-	if (area(f_ptr->fy, f_ptr->fx)->info & CAVE_VIEW)
-	{
-		/* Note the spot */
-		note_spot(f_ptr->fy, f_ptr->fx);
-		
-		lite_spot(f_ptr->fy, f_ptr->fx);
-	}
+	/* Notice the changes */
+	notice_field(f_ptr);
+	
 	return;
 }
 
@@ -1959,6 +1976,9 @@ void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2004,6 +2024,9 @@ void field_action_hit_trap_pit(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2039,6 +2062,9 @@ void field_action_hit_trap_spike(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2088,6 +2114,9 @@ void field_action_hit_trap_poison_pit(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2145,6 +2174,9 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2197,6 +2229,9 @@ void field_action_hit_trap_teleport(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2221,6 +2256,9 @@ void field_action_hit_trap_element(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2285,6 +2323,9 @@ void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2356,6 +2397,9 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2440,6 +2484,9 @@ void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2470,6 +2517,9 @@ void field_action_hit_trap_temp_stat(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2543,6 +2593,9 @@ void field_action_hit_trap_perm_stat(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2574,6 +2627,9 @@ void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2595,6 +2651,9 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2619,6 +2678,9 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2649,6 +2711,9 @@ void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2670,6 +2735,9 @@ void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2701,6 +2769,9 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2735,6 +2806,9 @@ void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2762,6 +2836,9 @@ void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2792,6 +2869,9 @@ void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2818,6 +2898,9 @@ void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2844,6 +2927,9 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2893,6 +2979,9 @@ void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2916,6 +3005,9 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
@@ -2943,6 +3035,9 @@ void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
 		
 		/* Message */
 		msg_print("You found a trap!");
+		
+		/* Notice the changes */
+		notice_field(f_ptr);
 	}
 
 	/* Disturb the player */
