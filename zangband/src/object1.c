@@ -841,7 +841,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 
 	u32b f1, f2, f3, f4;
 
-	cptr info[128], reclaim[128], temp;
+	cptr info[160], reclaim[160], temp;
 	int num_reclaim = 0;
 	
 	int wid, hgt;
@@ -1180,6 +1180,14 @@ bool identify_fully_aux(const object_type *o_ptr)
 	{
 		info[i++] = "It is especially deadly against natural creatures.";
 	}
+	if (f4 & (TR4_PARA_TOUCH))
+	{
+		info[i++] = "It paralyzes your foes.";
+	}
+	if (f4 & (TR4_PSI_CRIT))
+	{
+		info[i++] = "It uses psychic energy to strike great blows.";
+	}
 
 	if (f2 & (TR2_SUST_STR))
 	{
@@ -1221,6 +1229,14 @@ bool identify_fully_aux(const object_type *o_ptr)
 	if (f2 & (TR2_IM_COLD))
 	{
 		info[i++] = "It provides immunity to cold.";
+	}
+	if (f4 & (TR4_IM_LITE))
+	{
+		info[i++] = "It provides immunity to light.";
+	}
+	if (f4 & (TR4_IM_DARK))
+	{
+		info[i++] = "It provides immunity to darkness.";
 	}
 
 	if (f2 & (TR2_THROW))
@@ -1344,6 +1360,14 @@ bool identify_fully_aux(const object_type *o_ptr)
 	{
 		info[i++] = "It produces an electric sheath.";
 	}
+	if (f4 & (TR4_SH_ACID))
+	{
+		info[i++] = "It produces an acidic sheath.";
+	}
+	if (f4 & (TR4_SH_COLD))
+	{
+		info[i++] = "It produces a freezing sheath.";
+	}
 	if (f3 & (TR3_NO_MAGIC))
 	{
 		info[i++] = "It produces an anti-magic shell.";
@@ -1373,10 +1397,97 @@ bool identify_fully_aux(const object_type *o_ptr)
 	{
 		info[i++] = "It aggravates nearby creatures.";
 	}
+	if (f4 & (TR4_AUTO_CURSE))
+	{
+		info[i++] = "It becomes cursed randomly.";
+	}
+	if (f4 & (TR4_DRAIN_STATS))
+	{
+		info[i++] = "It drains your stats.";
+	}
+	if (f4 & (TR4_CANT_EAT))
+	{
+		info[i++] = "It makes you unable to eat normal food.";
+	}
+	if (f4 & (TR4_SLOW_HEAL))
+	{
+		info[i++] = "It slows your healing.";
+	}
 
 	if (f3 & TR3_BLESSED)
 	{
 		info[i++] = "It has been blessed by the gods.";
+	}
+
+	if (f4 & TR4_PROT_ANIMAL)
+	{
+		info[i++] = "It provides protection from natural creatures.";
+	}
+	if (f4 & TR4_PROT_EVIL)
+	{
+		info[i++] = "It provides protection from evil monsters.";
+	}
+	if (f4 & TR4_PROT_UNDEAD)
+	{
+		info[i++] = "It provides protection from the undead.";
+	}
+	if (f4 & TR4_PROT_DEMON)
+	{
+		info[i++] = "It provides protection from demons.";
+	}
+	if (f4 & TR4_PROT_ORC)
+	{
+		info[i++] = "It provides protection from orcs.";
+	}
+	if (f4 & TR4_PROT_TROLL)
+	{
+		info[i++] = "It provides protection from trolls.";
+	}
+	if (f4 & TR4_PROT_GIANT)
+	{
+		info[i++] = "It provides protection from giants.";
+	}
+	if (f4 & TR4_PROT_DRAGON)
+	{
+		info[i++] = "It provides protection from dragons.";
+	}
+
+	if (f4 & TR4_MUTATE)
+	{
+		info[i++] = "It causes mutations.";
+	}
+	if (f4 & TR4_PATRON)
+	{
+		info[i++] = "It attracts the attention of chaos gods.";
+	}
+	if (f4 & TR4_STRANGE_LUCK)
+	{
+		info[i++] = "It warps fate around it.";
+	}
+
+	if (f4 & TR4_HURT_ACID)
+	{
+		info[i++] = "It makes you vulnerable to acid.";
+	}
+	if (f4 & TR4_HURT_ELEC)
+	{
+		info[i++] = "It makes you vulnerable to lightning.";
+	}
+	if (f4 & TR4_HURT_FIRE)
+	{
+		info[i++] = "It makes you vulnerable to fire.";
+	}
+	if (f4 & TR4_HURT_COLD)
+	{
+		info[i++] = "It makes you vulnerable to frost.";
+	}
+	if (f4 & TR4_HURT_LITE)
+	{
+		info[i++] = "It makes you vulnerable to bright light.";
+	}
+	if (f4 & TR4_HURT_DARK)
+	{
+		info[i++] = "It makes you vulnerable to darkness.";
 	}
 
 	if (cursed_p(o_ptr))
