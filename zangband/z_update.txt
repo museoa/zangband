@@ -11,14 +11,43 @@ Changes since 2.5.0
 -Fixed a bug that messed up objects on the floor when rerolling them
  in debug mode.
 -Fixed the vanilla town bug where the stores / home were not saved.
+-Fixed a problem withthe 'Cheat Death' option.
+-Fixed a buffer-overrun with long notes.
+-Fixed an error with fraction monster hit points.
+-Fixed a problem with life ratings and racial intrinsics being
+ mixed up in the self-knowledge scrren.
+-Fixed a problem with generating full monster spoilers.
+-Added some monster AI optimizations from standard Angband.
+-Corrected some silly messages when failing trump summonng spells.
+-Mindcrafters can no longer get the 'viscous blow' effect when failing
+ to use their powers.
 -Reduced the multiplier for the throwing mutation it was way too
  powerful when combined with some items.
+-Autoscummer cut-offs have been adjusted to reflect the new object and
+ monster distributions.
+-The monster health bar is now corectly updated when the monster wakes
+ up.
 -Changed the prices of a few objects.
+-Mushrooms of Cure Serious Wounds now heal the same amount of hit
+ points as the equivalent potion.
+-Toned down Arch Viles and made Pink Horrors deeper.
 -Added a graphical overhead-map of the current level or wilderness area
  to the Windows version.
--Fixed a buffer-overrun with long notes.
+-The large wilderness map can now be scrolled.
+-Towns are no longer concentrated in one corner of the wilderness.
+-Ocean is now very deep water.
+-You can now clear Jungle with 'ctrl-direction'.
+-Monster pits and nests are slightly more common and their intrinsic
+ depths have been adjusted for the new monster distribution.
 -Stopped pre-emptive tunnel completion when the tunnel meets the caved
  in regions with trees on first level.
+-Fixed the problem with main-gcu in graphics mode.  Use "-g" to get the
+ graphical walls.
+-Changed ascii dynamic lighting for red and blue - lava and water
+ should look better now.
+-Transparency now works in XAW mode.
+-Added gamma correction for -X11.
+
 
 
 ZAngband 2.5.0:
