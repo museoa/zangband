@@ -8164,10 +8164,10 @@ const mutation_type race_powers[MAX_RACE_POWERS] =
 
 	{
 	    RACE_HALF_TROLL,
-	    "You can conquer your fears.",
+	    "You can drive yourself into a berserk frenzy.",
 	    "(nothing)",
 	    "(nothing)",
-	    "Remove fear",
+	    "Berserk",
 	    10, 12, A_WIS, 9,
 	    0
 	},
