@@ -232,7 +232,7 @@ changes (and bug fixes) can be found at the Official Angband Home Page.
     an underlying keyset
     refueling torches
     better monster memory
-    nicer targetting mode
+    nicer targeting mode
     object stacking
     the recall window
     the choice window
@@ -260,7 +260,7 @@ changes (and bug fixes) can be found at the Official Angband Home Page.
     optimized object description code
     new keypress input routines
     actual object discounts
-    fractional (assymptotic) speed
+    fractional (asymptotic) speed
     postponing updates/redraws
     run-time price determination
     better wizard commands
@@ -279,7 +279,7 @@ changes (and bug fixes) can be found at the Official Angband Home Page.
     new monster spell attacks
     some new store owners
     run-time skill computation
-    player kills vs anscestor kills
+    player kills vs ancestor kills
     better room illumination code
     better group monster code
     table access through pointers
@@ -301,7 +301,7 @@ relation to Rogue.  So I thought I would just post some text on the
 early days of Moria.
 
 First of all, yes, I really am the Robert Koeneke who wrote the first
-Moria.  I had a lot of mail accussing me of pulling their leg and
+Moria.  I had a lot of mail accusing me of pulling their leg and
 such.  I just recently connected to Internet (yes, I work for a
 company in the dark ages where Internet is concerned) and 
 was real surprised to find Moria in the news groups...  Angband was an
@@ -369,7 +369,7 @@ used to win...
 
 Around 1985 I started sending out source to other universities.  Just
 before a OU / Texas football clash, I was asked to send a copy to the
-Univeristy of Texas...  I couldn't resist...  I modified it so that
+University of Texas...  I couldn't resist...  I modified it so that
 the begger on the town level was 'An OU football fan' and they moved
 at maximum rate.  They also multiplied at maximum rate...  So the
 first step you took and woke one up, it crossed the floor increasing
@@ -382,7 +382,7 @@ Airlines (and yes, I still work there).  Moria 5.0 was a complete
 rewrite, and contained many neat enhancements, features, you name it.
 It had water, streams, lakes, pools, with water monsters.  It had
 'mysterious orbs' which could be carried like torches for light but
-also gave off magical aura's (like protection from fire, or aggrivate
+also gave off magical aura's (like protection from fire, or aggravate
 monster...).  It had new weapons and treasures...  I left it with the
 student assistants at OU to be finished, but I guess it soon died on
 the vine.  As far as I know, that source was lost...
@@ -478,4 +478,8 @@ Angband Version 2.6   :  9/04/94
 
 Angband Version 2.7   :  1/1/95  Ben Harrison
 
-
+--
+Original   : (??)
+Updated    : (??)
+Updated    : Zangband DevTeam
+Last update: November 16, 1999

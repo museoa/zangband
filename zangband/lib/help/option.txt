@@ -3,7 +3,7 @@
 Most of the "options" are accessible through the '=' command, which provides
 an interface to the various "sets" of options available to the player.
 
-In the decriptions below, each option is listed as the textual summary
+In the descriptions below, each option is listed as the textual summary
 which is shown on the "options" screen, plus the internal name of the
 option in brackets, followed by a textual description of the option.
 
@@ -72,7 +72,7 @@ Show labels in object lists    [show_labels]
     or "wearing" (in a given location).  After you have played for a while,
     this information is no longer useful, and can be annoying.
     Note that in Zangband 2.1.0 and later this option no longer controls
-    the "plain flavoured object descriptions": a separate option for them
+    the "plain flavored object descriptions": a separate option for them
     has been added under "Zangband Options".
 
 Show weights in object lists    [show_weights]
@@ -307,7 +307,7 @@ Flush output before every command    [fresh_before]
     This option forces the game to flush all output before every command.
     This will give you maximal information, but may slow down the game
     somewhat.  Note that this option is only useful when using macros,
-    resting, running, or repeating commands, since the outout is always
+    resting, running, or repeating commands, since the output is always
     flushed when the game is waiting for a keypress from the user.
     
 Flush output after every command    [fresh_after]
@@ -647,10 +647,9 @@ and "class" stat bonuses to be applied as "equipment" bonuses.  This usually
 makes the character harder at the beginning of the game, but easier later on,
 since the stats are no longer limited to a "natural" value of "18/100".
 
----
-created by Ben Harrison
-updated for ZAngband 2.1.* by Topi Ylinen
-updated for Zangband 2.2.* by Robert Ruehlmann
-
-Last updated: May 31th, 1999
-
+--
+Original   : Ben Harrison
+Updated    : Zangband 2.1.* by Topi Ylinen
+Updated    : Zangband 2.2.0 through 2.2.6c by Robert Ruehlman
+Updated    : Zangband DevTeam
+Last update: November 16, 1999

@@ -1,7 +1,7 @@
 === The Dungeon ===
 
 
-After you have created your character, you will begin your Angband adventure.
+After you have created your character, you will begin your Zangband adventure.
 Symbols appearing on your screen will represent the dungeon's walls, floor,
 objects, features, and creatures lurking about.  In order to direct your
 character through his adventure, you will enter single character commands
@@ -31,7 +31,7 @@ something you are more comfortable with.
                 Features that do not block line of sight
  
   .   A floor space                   1   Entrance to General Store
-  .   A trap (hidden)                 2   Entrance to Armoury
+  .   A trap (hidden)                 2   Entrance to Armory
   ^   A trap (known)                  3   Entrance to Weapon Smith
   ;   A glyph of warding              4   Entrance to Temple
   '   An open door                    5   Entrance to Alchemy Shop
@@ -55,9 +55,9 @@ something you are more comfortable with.
   ,   A mushroom (or food)            \   A hafted weapon
   -   A wand or rod                   }   A sling, bow, or x-bow
   _   A staff                         {   A shot, arrow, or bolt
-  =   A ring                          (   Soft armour
-  "   An amulet                       [   Hard armour
-  $   Gold or gems                    ]   Misc. armour
+  =   A ring                          (   Soft armor
+  "   An amulet                       [   Hard armor
+  $   Gold or gems                    ]   Misc. armor
   ~   Lites, Tools, Chests, etc       )   A shield
   ~   Junk, Sticks, Skeletons, etc    &   (unused)
  
@@ -81,7 +81,7 @@ something you are more comfortable with.
             n   Naga                N   (unused)
             o   Orc                 O   Ogre
             p   Human               P   Giant Human(oid)
-            q   Quadroped           Q   Quylthulg
+            q   Quadruped           Q   Quylthulg
             r   Rodent              R   Reptile/Amphibian
             s   Skeleton            S   Spider/Scorpion/Tick
             t   Townsperson         T   Troll
@@ -179,8 +179,8 @@ The General Store ("1")
      oil, shovels, picks, and spikes.  All of these items and some others
      can be sold back to the General store for money.
 
-The Armoury ("2")
-     The Armoury is where the town's armour is fashioned.  All sorts of
+The Armory ("2")
+     The Armory is where the town's armor is fashioned.  All sorts of
      protective gear may be bought and sold here.
 
 The Weaponsmith's Shop ("3")
@@ -248,7 +248,7 @@ torch or lamp burns fuel as it is used, and once it is out of fuel, it stops
 supplying light.  You will be warned as the light approaches this point.
 You may use the "Fuel" command ("F") to refuel your lantern (with flasks of
 oil) or your torch (with other torches), so it is a good idea to carry extra
-torches or flasks of oil, as appropriate.  There are rumours of objects of
+torches or flasks of oil, as appropriate.  There are rumors of objects of
 exceptional power which glow with their own never-ending light.
 
 
@@ -297,10 +297,11 @@ It acts in two manners, depending upon  your current  location.  If read
 within the dungeon, it will teleport you back to town.  If read in town, it
 will teleport you back down to the deepest level of the dungeon which your
 character has previously been on.  This makes the scroll very useful for
-getting back to the deeper levels of Angband.  Once the scroll has been
+getting back to the deeper levels of Zangband.  Once the scroll has been
 read it takes a while for the spell to act, so don't expect it to save you
 in a crisis.  Reading a second scroll before the first has had a chance to
 take effect will cancel both scrolls.
+
 Since an accidental dive to a new depth (via a trapdoor, for example), may
 result in the Word of Recall dungeon depth being 'broken', so to speak
 (meaning that the next Word of Recall in town will take you back deeper
@@ -357,7 +358,7 @@ needed.
 If you wear or wield a cursed item, you will immediately feel something
 wrong.  The item will also be inscribed "cursed".
 
-Skopkeepers will refuse to buy any known cursed item.
+Shopkeepers will refuse to buy any known cursed item.
 
 
 === Mining ===
@@ -483,3 +484,9 @@ questions about both game play and game design, and you can email bug
 reports and such to (benh@phial.com).  Be sure to include the version
 number you are playing in any bug reports.  Zangband specific bug reports
 should be sent to (rr9@angband.org).
+
+--
+Original   : (??)
+Updated    : (??)
+Updated    : Zangband DevTeam
+Last update: November 16, 1999
