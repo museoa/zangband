@@ -1137,7 +1137,7 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows,
 
 	/* Effect of damage dice */
 	maxdam = mindam * (o_ptr->ds * o_ptr->dd);
-	mindam *= o_ptr->ds;
+	mindam *= o_ptr->dd;
 
 	/* number of blows */
 	maxdam *= numblows;
