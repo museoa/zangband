@@ -567,7 +567,14 @@ errr process_pref_file_command(char *buf)
 				option_info[i].o_val = FALSE;
 
 				/* Save the change */
-				init_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+				if (character_generated)
+				{
+					init_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+				}
+				else
+				{
+					init_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+				}
 
 				return (0);
 			}
@@ -589,7 +596,14 @@ errr process_pref_file_command(char *buf)
 				option_info[i].o_val = TRUE;
 
 				/* Save the change */
-				init_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+				if (character_generated)
+				{
+					init_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+				}
+				else
+				{
+					init_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+				}
 
 				return (0);
 			}
