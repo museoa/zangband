@@ -4010,7 +4010,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 					{
 						msg_print("You're not as powerful as you used to be...");
 
-						for (k = 0; k < 6; k++)
+						for (k = 0; k < A_MAX; k++)
 						{
 							p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
 							if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;

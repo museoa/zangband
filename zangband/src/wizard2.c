@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: wizard2.c */
 
 /* Purpose: Wizard commands */
@@ -303,7 +302,7 @@ static void do_cmd_wiz_change_aux(void)
 
 
 	/* Query the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		/* Prompt */
 		sprintf(ppp, "%s (3-118): ", stat_names[i]);

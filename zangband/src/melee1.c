@@ -1331,7 +1331,7 @@ bool make_attack_normal(int m_idx)
 							{
 								msg_print("You're not as powerful as you used to be...");
 
-								for (k = 0; k < 6; k++)
+								for (k = 0; k < A_MAX; k++)
 								{
 									p_ptr->stat_cur[k] = (p_ptr->stat_cur[k] * 3) / 4;
 									if (p_ptr->stat_cur[k] < 3) p_ptr->stat_cur[k] = 3;

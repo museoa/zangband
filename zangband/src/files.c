@@ -2050,7 +2050,7 @@ static void display_player_stat_info(void)
 	c_put_str(TERM_YELLOW, "Currnt", row-1, stat_col+31);
 
 	/* Display the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		/* Calculate equipment adjustment */
 		e_adj = 0;
@@ -2121,7 +2121,7 @@ static void display_player_stat_info(void)
 		object_flags_known(o_ptr, &f1, &f2, &f3);
 
 		/* Initialize color based of sign of pval. */
-		for (stat = 0; stat < 6; stat++)
+		for (stat = 0; stat < A_MAX; stat++)
 		{
 			/* Default */
 			a = TERM_SLATE;
@@ -2177,7 +2177,7 @@ static void display_player_stat_info(void)
 	player_flags(&f1, &f2, &f3);
 
 	/* Check stats */
-	for (stat = 0; stat < 6; stat++)
+	for (stat = 0; stat < A_MAX; stat++)
 	{
 		/* Default */
 		a = TERM_SLATE;
@@ -2325,7 +2325,7 @@ static void display_player_top(void)
 	prt_num("Social Class", (int)p_ptr->sc , 5, COL_AGE, TERM_L_BLUE, 3);
 
 	/* Display the stats */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
 		/* Special treatment of "injured" stats */
 		if (p_ptr->stat_cur[i] < p_ptr->stat_max[i])

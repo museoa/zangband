@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: birth.c */
 
 /* Purpose: create a player character */
@@ -44,7 +43,7 @@ struct birther
 
 	s32b au;
 
-	s16b stat[6];
+	s16b stat[A_MAX];
 
 	char history[4][60];
 
@@ -2093,6 +2092,7 @@ static bool get_player_class(void)
 	return TRUE;
 }
 
+
 /*
  * Helper function for 'player_birth()'.
  *
@@ -2370,6 +2370,8 @@ static bool player_birth_aux_1(void)
 	/* Done */
 	return (TRUE);
 }
+
+
 /*
  * Initial stat costs (initial stats always range from 10 to 18 inclusive).
  */
@@ -2992,6 +2994,8 @@ static bool player_birth_aux(void)
 	/* Accept */
 	return (TRUE);
 }
+
+
 /*
  * Create a new character.
  *
