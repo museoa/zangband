@@ -2049,8 +2049,6 @@ static void frac_block(void)
 	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
 	size = WILD_BLOCK_SIZE;
 
-	grd = 4 * 256;
-
 	/* Initialize the step sizes */
 	lstep = hstep = size * 256;
 	size = size * 256;
@@ -2800,7 +2798,8 @@ static void create_hgt_map(void)
 		wild_temp_dist[i] = 0;
 	}
 
-	grd = 4 * 16;
+	/* Set maximum correlation length to be 256 squares */
+	grd = 16 * 16;
 
 	/* Set the corner values just in case grd > size. */
 	store_hgtmap(0, 0, rand_int(size));
@@ -2961,7 +2960,8 @@ static void create_pop_map(u16b sea)
 		wild_temp_dist[i] = 0;
 	}
 
-	grd = 4 * 16;
+	/* Set maximum correlation length to be 256 squares */
+	grd = 16 * 16;
 
 	/* Set the corner values just in case grd > size. */
 	store_popmap(0, 0, rand_int(size), sea);
@@ -3122,7 +3122,8 @@ static void create_law_map(u16b sea)
 		wild_temp_dist[i] = 0;
 	}
 
-	grd = 4 * 16;
+	/* Set maximum correlation length to be 256 squares */
+	grd = 16 * 16;
 
 	/* Set the corner values just in case grd > size. */
 	store_lawmap(0, 0, rand_int(size), sea);
@@ -3415,7 +3416,12 @@ void create_wilderness(void)
 
 	/* Fix location of grid */
 
-	/* Hack - set the coords to crazy values so move_wild() works. */
+	/* 
+	 * Hack - set the coords to crazy values so move_wild() works 
+	 * when change_level is called to make the player actually enter the
+	 * new wilderness.
+	 */ 
+	 
 	wild_grid.x = max_wild + 1;
 	wild_grid.y = max_wild + 1;
 
