@@ -624,10 +624,8 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_FOOD: /* food */
-			tmp = MIN(p_ptr->food,PY_FOOD_MAX);
 			Tcl_SetStringObj(resultPtr,
-				format("%d %d %f", p_ptr->food, PY_FOOD_MAX,
-				(double) tmp / PY_FOOD_MAX), -1);
+				format("%d %d", p_ptr->food, PY_FOOD_MAX), -1);
 			break;
 
 		case IDX_GOLD: /* gold */
@@ -640,8 +638,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 		case IDX_HITPOINTS: /* hitpoints */
 			Tcl_SetStringObj(resultPtr,
-				format("%d %d %f", p_ptr->chp, p_ptr->mhp,
-				(double) p_ptr->chp / p_ptr->mhp), -1);
+				format("%d %d", p_ptr->chp, p_ptr->mhp), -1);
 			break;
 
 		case IDX_INFRAVISION: /* infravision */
@@ -653,10 +650,8 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_MANA: /* mana */
-			if (p_ptr->msp) pct = (double) p_ptr->csp / p_ptr->msp;
-			else pct = 0;
 			Tcl_SetStringObj(resultPtr,
-				format("%d %d %f", p_ptr->csp, p_ptr->msp, pct), -1);
+				format("%d %d", p_ptr->csp, p_ptr->msp), -1);
 			break;
 
 	    case IDX_MAX_DEPTH: /* max_depth */
