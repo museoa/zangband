@@ -37,7 +37,7 @@ static const s16b roomdep[] =
 	10,	/* 12 = Crypts (22x22) */
 	5, /* 13 = Large with feature (50x36) */
 	3, /* 14 = Large version 2 (33x11) */
-	3, /* 15 = Parallelagram room (37x15) */
+	3, /* 15 = Parallelogram room (37x15) */
 };
 
 
@@ -247,7 +247,7 @@ static bool room_alloc(int x, int y, bool crowded, int bx0, int by0, int *xx,
  *  12 -- crypts
  *  13 -- Large with feature
  *  14 -- Large version 2
- *  15 -- Parallelagram room
+ *  15 -- Parallelogram room
  */
 
 
@@ -4153,7 +4153,7 @@ static void build_type14(int bx0, int by0)
 
 
 /*
- * Type 15 -- Parallelagram Shaped Rooms
+ * Type 15 -- Parallelogram Shaped Rooms
  */
 static void build_type15(int bx0, int by0)
 {
