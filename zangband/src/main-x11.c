@@ -2874,6 +2874,22 @@ errr init_x11(int argc, char *argv[])
 				
 				ANGBAND_GRAF = "old";
 			}
+			else
+			{
+				/* Try 8x8 file. */
+				/* Build the name of the "graf" file */
+				path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
+	
+				/* Use graphics if bitmap file exists */
+				if (0 == fd_close(fd_open(filename, O_RDONLY)))
+				{
+					/* Use graphics */
+					use_graphics = TRUE;
+					size = 8;
+				
+					ANGBAND_GRAF = "old";
+				}
+			}
 		}
 	}
 
@@ -2916,7 +2932,56 @@ errr init_x11(int argc, char *argv[])
 		if (!fnt_name) fnt_name = getenv("ANGBAND_X11_FONT");
 
 		/* No environment variables, use default font */
-		if (!fnt_name) fnt_name = DEFAULT_X11_FONT_SCREEN;
+		if (!fnt_name)
+		{
+			switch (i)
+			{
+				case 0:
+				{
+					fnt_name = DEFAULT_X11_FONT_0;
+				}
+				break;
+				case 1:
+				{
+					fnt_name = DEFAULT_X11_FONT_1;
+				}
+				break;
+				case 2:
+				{
+					fnt_name = DEFAULT_X11_FONT_2;
+				}
+				break;
+				case 3:
+				{
+					fnt_name = DEFAULT_X11_FONT_3;
+				}
+				break;
+				case 4:
+				{
+					fnt_name = DEFAULT_X11_FONT_4;
+				}
+				break;
+				case 5:
+				{
+					fnt_name = DEFAULT_X11_FONT_5;
+				}
+				break;
+				case 6:
+				{
+					fnt_name = DEFAULT_X11_FONT_6;
+				}
+				break;
+				case 7:
+				{
+					fnt_name = DEFAULT_X11_FONT_7;
+				}
+				break;				
+				default:
+				{
+					fnt_name = DEFAULT_X11_FONT;
+				}
+			}
+		}
 
 		/* Initialize the term_data */
 		term_data_init(td, TRUE, name, fnt_name);
