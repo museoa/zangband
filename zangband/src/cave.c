@@ -776,12 +776,12 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 	/* Feature code */
 	feat = c_ptr->feat;
-
+	
 	/* Apply mimic field */
 	feat = f_info[feat].mimic;
-
+			
 	/* Hack - Non LOS blocking terrains */
-	if (!(feat & 20))
+	if (cave_floor_grid(c_ptr))
 	{
 		/* Memorized (or visible) floor */
 		if   ((c_ptr->info & CAVE_MARK) ||
@@ -894,7 +894,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 		{
 			/* Access feature */
 			f_ptr = &f_info[feat];
-
+			
 			/* Normal char */
 			c = f_ptr->x_char;
 
@@ -992,12 +992,19 @@ void map_info(int y, int x, byte *ap, char *cp)
 			}
 		}
 
-		/* Unknown */
+		/* "Simple Lighting" */
 		else
 		{
-			/* Access darkness */
-			f_ptr = &f_info[FEAT_NONE];
-
+			/* Access feature */
+			f_ptr = &f_info[feat];
+				
+			/* Handle "blind" */
+			if ((p_ptr->blind) || !(c_ptr->info & CAVE_MARK))
+			{
+				/* Access darkness */
+				f_ptr = &f_info[FEAT_NONE];
+			}
+			
 			/* Normal attr */
 			a = f_ptr->x_attr;
 
