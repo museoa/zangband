@@ -1749,7 +1749,11 @@ void object_absorb(object_type *o_ptr, const object_type *j_ptr)
 	o_ptr->kn_flags3 |= j_ptr->kn_flags3;
 
 	/* Hack -- blend "inscriptions" */
-	if (j_ptr->inscription) o_ptr->inscription = j_ptr->inscription;
+    if (j_ptr->inscription)
+    {
+        o_ptr->inscription = j_ptr->inscription;
+        quark_dup(j_ptr->inscription);
+    }
 
 	/* Hack -- blend "feelings" */
 	if (j_ptr->feeling) o_ptr->feeling = j_ptr->feeling;
