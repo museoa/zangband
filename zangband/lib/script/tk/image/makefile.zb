@@ -1,14 +1,3 @@
 ## makefile.zb
 
-files += $(addprefix lib/script/tk/image/,\
-	button-help.gif cha.gif ms-back.gif open.gif town32.gif \
-	ac.gif button-options.gif checked.gif ms-book-closed.gif \
-	pwrdLogo175.gif unchecked.gif angbandtk.ico button-potion.gif \
-	const.gif ms-book-open.gif save.gif wis.gif au.gif \
-	button-rod.gif dex.gif ms-help-page.gif sound.gif \
-	button-activate.gif button-scroll.gif exp.gif ms-hide.gif \
-	speed.gif button-book.gif button-staff.gif int.gif \
-	ms-next.gif str.gif button-down.gif button-up.gif level.gif \
-	ms-refresh.gif town16.gif button-food.gif button-wand.gif \
-	look.gif ms-show.gif town24.gif\
-	)
+files += lib/script/tk/image/*.gif lib/script/tk/image/angbandtk.ico
