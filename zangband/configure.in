@@ -70,6 +70,25 @@ AC_SEARCH_LIBS([XCreateImage], [X11],
 	AC_DEFINE(USE_X11, 1, [Use basic X11 port])
 	AC_DEFINE(USE_XPJ, 1, [Use X11 projected port]))
 
+# Some or all of these libraries must be included before -lXaw
+
+# FIXME: Replace `main' with a function in `-lXext':
+AC_CHECK_LIB([Xext], [main])
+# FIXME: Replace `main' with a function in `-lXm':
+AC_CHECK_LIB([Xm], [main])
+# FIXME: Replace `main' with a function in `-lXmu':
+AC_CHECK_LIB([Xmu], [main])
+# FIXME: Replace `main' with a function in `-lXt':
+AC_CHECK_LIB([Xt], [main])
+# FIXME: Replace `main' with a function in `-lSM':
+AC_CHECK_LIB([SM], [main])
+# FIXME: Replace `main' with a function in '-lXpm':
+AC_CHECK_LIB([Xpm], [main])
+# FIXME: Replace `main' with a function in `-lGn':
+AC_CHECK_LIB([Gn], [main])
+# FIXME: Replace `main' with a function in `-lICE':
+AC_CHECK_LIB([ICE], [main])
+
 AC_SEARCH_LIBS([XawInitializeWidgetSet], [Xaw],
 	AC_DEFINE(USE_XAW, 1, [Use xaw port]))
 
@@ -127,20 +146,6 @@ AC_CHECK_LIB([alleg], [main],
 	AC_DEFINE(USE_DOS, 1, [Use graphical DOS port])
 	AC_DEFINE(USE_BACKGROUND, 1, [Background support for DOS port]))
 
-# FIXME: Replace `main' with a function in `-lGn':
-AC_CHECK_LIB([Gn], [main])
-# FIXME: Replace `main' with a function in `-lICE':
-AC_CHECK_LIB([ICE], [main])
-# FIXME: Replace `main' with a function in `-lSM':
-AC_CHECK_LIB([SM], [main])
-# FIXME: Replace `main' with a function in `-lXext':
-AC_CHECK_LIB([Xext], [main])
-# FIXME: Replace `main' with a function in `-lXm':
-AC_CHECK_LIB([Xm], [main])
-# FIXME: Replace `main' with a function in `-lXmu':
-AC_CHECK_LIB([Xmu], [main])
-# FIXME: Replace `main' with a function in `-lXt':
-AC_CHECK_LIB([Xt], [main])
 # FIXME: Replace `main' with a function in `-lbsd':
 AC_CHECK_LIB([bsd], [main])
 # FIXME: Replace `main' with a function in `-lcposix':
