@@ -1900,7 +1900,8 @@ static bool target_set_accept(int x, int y)
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
 
-	s16b this_o_idx, next_o_idx = 0;
+	object_type *o_ptr;
+
 	s16b this_f_idx, next_f_idx = 0;
 
 	byte feat;
@@ -1929,19 +1930,12 @@ static bool target_set_accept(int x, int y)
 	}
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Memorized object */
 		if (o_ptr->marked) return (TRUE);
 	}
+	OBJ_ITT_END;
 
 	/* Scan all fields in the grid */
 	for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
@@ -2073,7 +2067,6 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 	cave_type *c_ptr = area(x, y);
 	pcave_type *pc_ptr = parea(x, y);
 
-	s16b this_o_idx, next_o_idx = 0;
 	s16b *this_f_ptr, *next_f_ptr = NULL;
 
 	cptr s1, s2, s3;
@@ -2086,6 +2079,10 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 	int query;
 
 	char out_val[512];
+
+	char o_name[256];
+
+	object_type *o_ptr;
 
 
 	/* Repeat forever */
@@ -2262,19 +2259,8 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 					s2 = "carrying ";
 
 					/* Scan all objects being carried */
-					for (this_o_idx = m_ptr->hold_o_idx; this_o_idx;
-						 this_o_idx = next_o_idx)
+					OBJ_ITT_START (m_ptr->hold_o_idx, o_ptr)
 					{
-						char o_name[256];
-
-						object_type *o_ptr;
-
-						/* Acquire object */
-						o_ptr = &o_list[this_o_idx];
-
-						/* Acquire next object */
-						next_o_idx = o_ptr->next_o_idx;
-
 						/* Obtain an object description */
 						object_desc(o_name, o_ptr, TRUE, 3, 256);
 
@@ -2287,17 +2273,21 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 
 						/* Always stop at "normal" keys */
 						if ((query != '\r') && (query != '\n')
-							&& (query != ' ')) break;
+							&& (query != ' '))
+						{
+							return (query);
+						}
 
 						/* Sometimes stop at "space" key */
-						if ((query == ' ') && !(mode & (TARGET_LOOK))) break;
+						if ((query == ' ') && !(mode & (TARGET_LOOK)))
+						{
+							return (query);
+						}
 
 						/* Change the intro */
 						s2 = "also carrying ";
 					}
-
-					/* Double break */
-					if (this_o_idx) break;
+					OBJ_ITT_END;
 
 					/* Use a preposition */
 					s2 = "on ";
@@ -2379,16 +2369,8 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 		}
 
 		/* Scan all objects in the grid */
-		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 		{
-			object_type *o_ptr;
-
-			/* Acquire object */
-			o_ptr = &o_list[this_o_idx];
-
-			/* Acquire next object */
-			next_o_idx = o_ptr->next_o_idx;
-
 			/* Describe it */
 			if (o_ptr->marked)
 			{
@@ -2407,10 +2389,16 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				query = inkey();
 
 				/* Always stop at "normal" keys */
-				if ((query != '\r') && (query != '\n') && (query != ' ')) break;
+				if ((query != '\r') && (query != '\n') && (query != ' '))
+				{
+					return (query);
+				}
 
 				/* Sometimes stop at "space" key */
-				if ((query == ' ') && !(mode & TARGET_LOOK)) break;
+				if ((query == ' ') && !(mode & TARGET_LOOK))
+				{
+					return (query);
+				}
 
 				/* Change the intro */
 				s1 = "It is ";
@@ -2422,9 +2410,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				s2 = "on ";
 			}
 		}
-
-		/* Double break */
-		if (this_o_idx) break;
+		OBJ_ITT_END;
 
 		/* Scan all fields in the grid */
 		for (this_f_ptr = &c_ptr->fld_idx; *this_f_ptr; this_f_ptr = next_f_ptr)

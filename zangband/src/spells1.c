@@ -579,8 +579,6 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 {
 	cave_type *c_ptr = area(x, y);
 
-	s16b this_o_idx, next_o_idx = 0;
-
 	bool obvious = FALSE;
 	bool known = player_can_see_bold(x, y);
 
@@ -591,6 +589,15 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 	int k_idx = 0;
 	bool is_potion = FALSE;
 
+	object_type *o_ptr;
+
+	bool is_art = FALSE;
+	bool ignore = FALSE;
+	bool plural = FALSE;
+	bool do_kill = FALSE;
+
+	cptr note_kill = NULL;
+
 
 	/* XXX XXX XXX */
 	who = who ? who : 0;
@@ -600,23 +607,8 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		bool is_art = FALSE;
-		bool ignore = FALSE;
-		bool plural = FALSE;
-		bool do_kill = FALSE;
-
-		cptr note_kill = NULL;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Extract the flags */
 		object_flags(o_ptr, &f1, &f2, &f3);
 
@@ -841,7 +833,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 
 
 				/* Delete the object */
-				delete_object_idx(this_o_idx);
+				OBJ_DEL_CURRENT;
 
 				/* Potions produce effects when 'shattered' */
 				if (is_potion)
@@ -854,6 +846,7 @@ static bool project_o(int who, int r, int x, int y, int dam, int typ)
 			}
 		}
 	}
+	OBJ_ITT_END;
 
 	/* Return "Anything seen?" */
 	return (obvious);

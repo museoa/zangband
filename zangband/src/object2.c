@@ -21,10 +21,11 @@ void excise_object_idx(int o_idx)
 {
 	object_type *j_ptr;
 
-	s16b this_o_idx, next_o_idx = 0;
+	object_type *o_ptr;
+	monster_type *m_ptr;
+	cave_type *c_ptr;
 
-	s16b prev_o_idx = 0;
-
+	s16b *target;
 
 	/* Object */
 	j_ptr = &o_list[o_idx];
@@ -32,62 +33,13 @@ void excise_object_idx(int o_idx)
 	/* Monster */
 	if (j_ptr->held_m_idx)
 	{
-		monster_type *m_ptr;
-
 		/* Monster */
 		m_ptr = &m_list[j_ptr->held_m_idx];
 
-		/* Scan all objects in the grid */
-		for (this_o_idx = m_ptr->hold_o_idx; this_o_idx;
-			 this_o_idx = next_o_idx)
-		{
-			object_type *o_ptr;
-
-			/* Acquire object */
-			o_ptr = &o_list[this_o_idx];
-
-			/* Acquire next object */
-			next_o_idx = o_ptr->next_o_idx;
-
-			/* Done */
-			if (this_o_idx == o_idx)
-			{
-				/* No previous */
-				if (prev_o_idx == 0)
-				{
-					/* Remove from list */
-					m_ptr->hold_o_idx = next_o_idx;
-				}
-
-				/* Real previous */
-				else
-				{
-					object_type *k_ptr;
-
-					/* Previous object */
-					k_ptr = &o_list[prev_o_idx];
-
-					/* Remove from list */
-					k_ptr->next_o_idx = next_o_idx;
-				}
-
-				/* Forget next pointer */
-				o_ptr->next_o_idx = 0;
-
-				/* Done */
-				break;
-			}
-
-			/* Save prev_o_idx */
-			prev_o_idx = this_o_idx;
-		}
+		target = &m_ptr->hold_o_idx;
 	}
-
-	/* Dungeon */
 	else
 	{
-		cave_type *c_ptr;
-
 		int y = j_ptr->iy;
 		int x = j_ptr->ix;
 
@@ -97,50 +49,43 @@ void excise_object_idx(int o_idx)
 		/* Grid */
 		c_ptr = area(x, y);
 
-		/* Scan all objects in the grid */
-		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+		target = &c_ptr->o_idx;
+	}
+
+	/* Reuse j_ptr as the previous object in the list */
+	j_ptr = NULL;
+
+	/* Scan all objects in the list */
+	OBJ_ITT_START (*target, o_ptr)
+	{
+		/* Hack - Done? */
+		if (_this_o_idx == o_idx)
 		{
-			object_type *o_ptr;
-
-			/* Acquire object */
-			o_ptr = &o_list[this_o_idx];
-
-			/* Acquire next object */
-			next_o_idx = o_ptr->next_o_idx;
-
-			/* Done */
-			if (this_o_idx == o_idx)
+			/* No previous */
+			if (!j_ptr)
 			{
-				/* No previous */
-				if (prev_o_idx == 0)
-				{
-					/* Remove from list */
-					c_ptr->o_idx = next_o_idx;
-				}
-
-				/* Real previous */
-				else
-				{
-					object_type *k_ptr;
-
-					/* Previous object */
-					k_ptr = &o_list[prev_o_idx];
-
-					/* Remove from list */
-					k_ptr->next_o_idx = next_o_idx;
-				}
-
-				/* Forget next pointer */
-				o_ptr->next_o_idx = 0;
-
-				/* Done */
-				break;
+				/* Remove from list */
+				*target = o_ptr->next_o_idx;
 			}
 
-			/* Save prev_o_idx */
-			prev_o_idx = this_o_idx;
+			/* Real previous */
+			else
+			{
+				/* Remove from list */
+				j_ptr->next_o_idx = o_ptr->next_o_idx;
+			}
+
+			/* Forget next pointer */
+			o_ptr->next_o_idx = 0;
+
+			/* Done */
+			break;
 		}
+
+		/* Save previous object */
+		j_ptr = o_ptr;
 	}
+	OBJ_ITT_END;
 }
 
 
@@ -186,34 +131,14 @@ void delete_object(int x, int y)
 {
 	cave_type *c_ptr;
 
-	s16b this_o_idx, next_o_idx = 0;
-
 	/* Refuse "illegal" locations */
 	if (!in_bounds(x, y)) return;
 
 	/* Grid */
 	c_ptr = area(x, y);
 
-	/* Scan all objects in the grid */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
-		/* Wipe the object */
-		object_wipe(o_ptr);
-
-		/* Count objects */
-		o_cnt--;
-	}
-
-	/* Objects are gone */
-	c_ptr->o_idx = 0;
+	/* Delete the objects */
+	delete_object_location(c_ptr);
 
 	/* Visual update */
 	lite_spot(x, y);
@@ -225,25 +150,18 @@ void delete_object(int x, int y)
  */
 void delete_object_location(cave_type *c_ptr)
 {
-	s16b this_o_idx, next_o_idx = 0;
+	object_type *o_ptr;
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Wipe the object */
 		object_wipe(o_ptr);
 
 		/* Count objects */
 		o_cnt--;
 	}
+	OBJ_ITT_END;
 
 	/* Objects are gone */
 	c_ptr->o_idx = 0;
@@ -4542,9 +4460,8 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 
 	s16b o_idx = 0;
 
-	s16b this_o_idx, next_o_idx = 0;
-
 	cave_type *c_ptr;
+	object_type *o_ptr;
 
 	char o_name[256];
 
@@ -4630,22 +4547,15 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 			k = 0;
 
 			/* Scan objects in that grid */
-			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+			OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 			{
-				object_type *o_ptr;
-
-				/* Acquire object */
-				o_ptr = &o_list[this_o_idx];
-
-				/* Acquire next object */
-				next_o_idx = o_ptr->next_o_idx;
-
 				/* Check for possible combination */
 				if (object_similar(o_ptr, j_ptr)) comb = TRUE;
 
 				/* Count objects */
 				k++;
 			}
+			OBJ_ITT_END;
 
 			/* Add new object */
 			if (!comb) k++;
@@ -4780,24 +4690,16 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 	}
 
 	/* Scan objects in that grid for combination */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Check for combination */
 		if (object_similar(o_ptr, j_ptr))
 		{
 			/* Combine the items */
 			object_absorb(o_ptr, j_ptr);
 
-			/* Get the pointer to the stack */
-			o_idx = this_o_idx;
+			/* Hack - Get the pointer to the stack */
+			o_idx = _this_o_idx;
 
 			/* Success */
 			done = TRUE;
@@ -4806,6 +4708,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 			break;
 		}
 	}
+	OBJ_ITT_END;
 
 	/* Get new object */
 	if (!done) o_idx = o_pop();

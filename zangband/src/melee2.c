@@ -2426,9 +2426,9 @@ static void take_move(int m_idx, int *mm)
 		/* Creature has been allowed move */
 		if (do_move)
 		{
-			s16b this_o_idx, next_o_idx;
-
 			cave_type *old_ptr = area(ox, oy);
+
+			object_type *o_ptr;
 
 			/* Take a turn */
 			do_turn = TRUE;
@@ -2500,16 +2500,8 @@ static void take_move(int m_idx, int *mm)
 			}
 
 			/* Scan all objects in the grid */
-			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+			OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 			{
-				object_type *o_ptr;
-
-				/* Acquire object */
-				o_ptr = &o_list[this_o_idx];
-
-				/* Acquire next object */
-				next_o_idx = o_ptr->next_o_idx;
-
 				/* Skip gold */
 				if (o_ptr->tval == TV_GOLD) continue;
 
@@ -2584,8 +2576,8 @@ static void take_move(int m_idx, int *mm)
 							msg_format("%^s picks up %s.", m_name, o_name);
 						}
 
-						/* Excise the object */
-						excise_object_idx(this_o_idx);
+						/* Hack Excise the object */
+						excise_object_idx(_this_o_idx);
 
 						/* Forget mark */
 						o_ptr->marked = FALSE;
@@ -2603,7 +2595,7 @@ static void take_move(int m_idx, int *mm)
 						o_ptr->next_o_idx = m_ptr->hold_o_idx;
 
 						/* Carry object */
-						m_ptr->hold_o_idx = this_o_idx;
+						m_ptr->hold_o_idx = _this_o_idx;
 					}
 
 					/* Destroy the item if not a pet */
@@ -2620,9 +2612,10 @@ static void take_move(int m_idx, int *mm)
 						}
 
 						/* Delete the object */
-						delete_object_idx(this_o_idx);
+						OBJ_DEL_CURRENT;
 					}
 				}
+				OBJ_ITT_END;
 			}
 		}
 

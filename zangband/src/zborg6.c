@@ -3522,7 +3522,7 @@ bool borg_caution(void)
 			borg_note(format
 					  ("# Retreating to %d,%d (distance %d) via %d,%d (%d > %d)",
 					   b_y, b_x, b_r, g_y, g_x, p,
-					   	borg_danger(g_x, g_y, 2, TRUE)));
+					   borg_danger(g_x, g_y, 2, TRUE)));
 
 			/* Strategic retreat */
 			borg_keypress(I2D(b_d));
@@ -13601,7 +13601,7 @@ bool borg_flow_town_exit(int why)
 {
 	/* Clear the flow codes */
 	borg_flow_clear();
-	
+
 	/* Do something here */
 
 /* This routine can be used to flow to any town special

@@ -3884,6 +3884,29 @@
 
 
 /*
+ * Iterate over the objects in a list
+ */
+#define OBJ_ITT_START(OSTART, O) \
+	{ \
+		s16b _this_o_idx, _next_o_idx = 0; \
+		\
+		for ( _this_o_idx = (OSTART); _this_o_idx; _this_o_idx = _next_o_idx) \
+		{ \
+			(O) = &o_list[_this_o_idx];\
+			\
+			_next_o_idx = (O)->next_o_idx;
+
+#define OBJ_ITT_END \
+		} \
+	}
+/*
+ * Delete the current object we are scanning
+ */
+#define OBJ_DEL_CURRENT \
+	delete_object_idx(_this_o_idx)
+
+
+/*
  * Determines if a map location is currently "on screen" -RAK-
  */
 #define panel_contains(X,Y) \

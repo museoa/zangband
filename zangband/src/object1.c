@@ -2918,9 +2918,9 @@ static int get_tag(int *cp, char tag)
  */
 bool scan_floor(int *items, int *item_num, int x, int y, int mode)
 {
-	int this_o_idx, next_o_idx;
-
 	int num = 0;
+
+	object_type *o_ptr;
 
 	(*item_num) = 0;
 
@@ -2928,24 +2928,16 @@ bool scan_floor(int *items, int *item_num, int x, int y, int mode)
 	if (!in_bounds(x, y)) return (FALSE);
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = area(x, y)->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (area(x, y)->o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Item tester */
 		if ((mode & 0x01) && !item_tester_okay(o_ptr)) continue;
 
 		/* Marked */
 		if ((mode & 0x02) && !o_ptr->marked) continue;
 
-		/* Accept this item */
-		items[num++] = this_o_idx;
+		/* Hack - Accept this item */
+		items[num++] = _this_o_idx;
 
 		/* Only one */
 		if (mode & 0x04) break;
@@ -2953,6 +2945,7 @@ bool scan_floor(int *items, int *item_num, int x, int y, int mode)
 		/* XXX Hack -- Enforce limit */
 		if (num == 23) break;
 	}
+	OBJ_ITT_END;
 
 	/* Number of items */
 	(*item_num) = num;

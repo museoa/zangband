@@ -916,15 +916,15 @@ void borg_note(cptr what)
 
 
 	/* Log the message */
-    borg_info(what);
+	borg_info(what);
 
 
-    /* Mega-Hack -- Check against the search string */
-    if (borg_match[0] && strstr(what, borg_match))
-    {
-        /* Clean cancel */
-        borg_cancel = TRUE;
-    }
+	/* Mega-Hack -- Check against the search string */
+	if (borg_match[0] && strstr(what, borg_match))
+	{
+		/* Clean cancel */
+		borg_cancel = TRUE;
+	}
 
 	/* Mega-Hack -- Check against the swap loops */
 	if (strstr(what, "Best Combo"))

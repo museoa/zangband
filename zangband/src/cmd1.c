@@ -474,11 +474,8 @@ void search(void)
 	 */
 	int tx, ty;
 
-
-	s16b this_o_idx, next_o_idx = 0;
-
 	cave_type *c_ptr;
-
+	object_type *o_ptr;
 
 	/* Start with base search ability */
 	chance = p_ptr->skill_sns;
@@ -540,17 +537,8 @@ void search(void)
 				}
 
 				/* Scan all objects in the grid */
-				for (this_o_idx = c_ptr->o_idx; this_o_idx;
-					 this_o_idx = next_o_idx)
+				OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 				{
-					object_type *o_ptr;
-
-					/* Acquire object */
-					o_ptr = &o_list[this_o_idx];
-
-					/* Acquire next object */
-					next_o_idx = o_ptr->next_o_idx;
-
 					/* Skip non-chests */
 					if (o_ptr->tval != TV_CHEST) continue;
 
@@ -570,6 +558,7 @@ void search(void)
 						disturb(FALSE);
 					}
 				}
+				OBJ_ITT_END;
 			}
 		}
 	}
@@ -655,12 +644,11 @@ void carry(int pickup)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
-	s16b this_o_idx, next_o_idx;
-
 	char o_name[256];
 	object_type *o_ptr;
 
-	int floor_num = 0, floor_list[23], floor_o_idx = 0;
+	int floor_num = 0, floor_list[23];
+	int this_o_idx, floor_o_idx = 0;
 
 	int can_pickup = 0;
 
@@ -680,18 +668,10 @@ void carry(int pickup)
 	handle_stuff();
 
 	/* Scan the pile of objects */
-	for (this_o_idx = area(px, py)->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (area(px, py)->o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Access the object */
-		o_ptr = &o_list[this_o_idx];
-
 		/* Describe the object */
 		object_desc(o_name, o_ptr, TRUE, 3, 256);
-
-		/* Access the next object */
-		next_o_idx = o_ptr->next_o_idx;
 
 		/* Hack -- disturb */
 		disturb(FALSE);
@@ -715,7 +695,7 @@ void carry(int pickup)
 			p_ptr->window |= (PW_PLAYER);
 
 			/* Delete the gold */
-			delete_object_idx(this_o_idx);
+			OBJ_DEL_CURRENT;
 
 			/* Check the next object */
 			continue;
@@ -724,8 +704,8 @@ void carry(int pickup)
 		/* Test for auto-pickup */
 		if (auto_pickup_okay(o_ptr))
 		{
-			/* Pick up the object */
-			py_pickup_aux(this_o_idx);
+			/* Hack - Pick up the object */
+			py_pickup_aux(_this_o_idx);
 
 			/* Check the next object */
 			continue;
@@ -778,8 +758,8 @@ void carry(int pickup)
 
 					if ((i == 'Y') || (i == 'y'))
 					{
-						/* Pick up the object */
-						py_pickup_aux(this_o_idx);
+						/* Hack - Pick up the object */
+						py_pickup_aux(_this_o_idx);
 					}
 
 					if ((i == 'K') || (i == 'k'))
@@ -787,7 +767,7 @@ void carry(int pickup)
 						/* Physically try to destroy the item */
 						if (destroy_item_aux(o_ptr, o_ptr->number))
 						{
-							delete_object_idx(this_o_idx);
+							OBJ_DEL_CURRENT;
 						}
 					}
 				}
@@ -795,8 +775,8 @@ void carry(int pickup)
 				/* Attempt to pick up an object. */
 				else
 				{
-					/* Pick up the object */
-					py_pickup_aux(this_o_idx);
+					/* Hack - Pick up the object */
+					py_pickup_aux(_this_o_idx);
 				}
 			}
 
@@ -811,15 +791,16 @@ void carry(int pickup)
 			can_pickup++;
 		}
 
-		/* Remember this object index */
-		floor_list[floor_num] = this_o_idx;
+		/* hack - Remember this object index */
+		floor_list[floor_num] = _this_o_idx;
 
 		/* Count non-gold objects */
 		if (floor_num != 22) floor_num++;
 
-		/* Remember this index */
-		floor_o_idx = this_o_idx;
+		/* Hack - Remember this index */
+		floor_o_idx = _this_o_idx;
 	}
+	OBJ_ITT_END;
 
 	/* There are no non-gold objects (or easy floor patch is off) */
 	if (!floor_num) return;
@@ -885,7 +866,7 @@ void carry(int pickup)
 		this_o_idx = floor_o_idx;
 
 		/* Access the object */
-		o_ptr = &o_list[this_o_idx];
+		o_ptr = &o_list[floor_o_idx];
 
 		/* Hack -- query every object */
 		if (carry_query_flag)
@@ -920,7 +901,7 @@ void carry(int pickup)
 			if ((i == 'Y') || (i == 'y'))
 			{
 				/* Pick up the object */
-				py_pickup_aux(this_o_idx);
+				py_pickup_aux(floor_o_idx);
 			}
 
 			if ((i == 'K') || (i == 'k'))
@@ -928,7 +909,7 @@ void carry(int pickup)
 				/* Physically try to destroy the item */
 				if (destroy_item_aux(o_ptr, o_ptr->number))
 				{
-					delete_object_idx(this_o_idx);
+					delete_object_idx(floor_o_idx);
 				}
 			}
 
@@ -2989,6 +2970,8 @@ static bool run_test(void)
 	int i, max, inv;
 	int option = 0, option2 = 0;
 
+	object_type *o_ptr;
+
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
 
@@ -3006,9 +2989,6 @@ static bool run_test(void)
 	/* Look at every newly adjacent square. */
 	for (i = -max; i <= max; i++)
 	{
-		s16b this_o_idx, next_o_idx = 0;
-
-
 		/* New direction */
 		new_dir = cycle[chome[prev_dir] + i];
 
@@ -3033,19 +3013,12 @@ static bool run_test(void)
 		}
 
 		/* Visible objects abort running */
-		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 		{
-			object_type *o_ptr;
-
-			/* Acquire object */
-			o_ptr = &o_list[this_o_idx];
-
-			/* Acquire next object */
-			next_o_idx = o_ptr->next_o_idx;
-
 			/* Visible object */
 			if (o_ptr->marked) return (TRUE);
 		}
+		OBJ_ITT_END;
 
 		/* Visible traps abort running */
 		if (is_visible_trap(c_ptr)) return TRUE;

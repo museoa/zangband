@@ -4237,24 +4237,24 @@ void do_cmd_borg(void)
 			/* Hack -- grab permissions */
 			safe_setuid_grab();
 			break;
-        }
+		}
 
-        case 's':
-        case 'S':
-        {
-            /* Activate a search string */
+		case 's':
+		case 'S':
+		{
+			/* Activate a search string */
 
-            /* Get the new search string (or cancel the matching) */
-            if (!get_string("Borg Match String: ", borg_match, 70))
-            {
-                /* Cancel it */
-                strcpy(borg_match, "");
+			/* Get the new search string (or cancel the matching) */
+			if (!get_string("Borg Match String: ", borg_match, 70))
+			{
+				/* Cancel it */
+				strcpy(borg_match, "");
 
-                /* Message */
-                msg_print("Borg Match String de-activated.");
-            }
-            break;
-        }
+				/* Message */
+				msg_print("Borg Match String de-activated.");
+			}
+			break;
+		}
 
 		case 'g':
 		case 'G':

@@ -555,7 +555,7 @@ static void wr_item(const object_type *o_ptr)
 	wr_u32b(o_ptr->flags1);
 	wr_u32b(o_ptr->flags2);
 	wr_u32b(o_ptr->flags3);
-	
+
 	/* Next object in list */
 	wr_s16b(o_ptr->next_o_idx);
 

@@ -214,26 +214,18 @@ static s16b chest_check(int x, int y)
 {
 	cave_type *c_ptr = area(x, y);
 
-	s16b this_o_idx, next_o_idx;
-
+	object_type *o_ptr;
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Skip unknown chests XXX XXX */
 		/* if (!o_ptr->marked) continue; */
 
 		/* Check for chest */
-		if (o_ptr->tval == TV_CHEST) return (this_o_idx);
+		if (o_ptr->tval == TV_CHEST) return (_this_o_idx);
 	}
+	OBJ_ITT_END;
 
 	/* No chest */
 	return (0);

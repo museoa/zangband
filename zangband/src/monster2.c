@@ -91,8 +91,7 @@ void delete_monster_idx(int i)
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-	s16b this_o_idx, next_o_idx = 0;
-
+	object_type *o_ptr;
 
 	/* Get location */
 	y = m_ptr->fy;
@@ -125,23 +124,15 @@ void delete_monster_idx(int i)
 	}
 
 	/* Delete objects */
-	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (m_ptr->hold_o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Hack -- efficiency */
 		o_ptr->held_m_idx = 0;
 
 		/* Delete the object */
-		delete_object_idx(this_o_idx);
+		OBJ_DEL_CURRENT;
 	}
-
+	OBJ_ITT_END;
 
 	/* Wipe the Monster */
 	(void)WIPE(m_ptr, monster_type);
@@ -183,7 +174,7 @@ static void compact_monsters_aux(int i1, int i2)
 
 	monster_type *m_ptr;
 
-	s16b this_o_idx, next_o_idx = 0;
+	object_type *o_ptr;
 
 
 	/* Do nothing */
@@ -204,19 +195,12 @@ static void compact_monsters_aux(int i1, int i2)
 	c_ptr->m_idx = i2;
 
 	/* Repair objects being carried by monster */
-	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (m_ptr->hold_o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Reset monster pointer */
 		o_ptr->held_m_idx = i2;
 	}
+	OBJ_ITT_END;
 
 	/* Hack -- Update the target */
 	if (p_ptr->target_who == i1) p_ptr->target_who = i2;
@@ -3057,21 +3041,14 @@ void update_smart_learn(int m_idx, int what)
  */
 void monster_drop_carried_objects(monster_type *m_ptr)
 {
-	s16b this_o_idx, next_o_idx = 0;
 	object_type forge;
 	object_type *o_ptr;
 	object_type *q_ptr;
 
 
 	/* Drop objects being carried */
-	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (m_ptr->hold_o_idx, o_ptr)
 	{
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Paranoia */
 		o_ptr->held_m_idx = 0;
 
@@ -3082,11 +3059,12 @@ void monster_drop_carried_objects(monster_type *m_ptr)
 		object_copy(q_ptr, o_ptr);
 
 		/* Delete the object */
-		delete_object_idx(this_o_idx);
+		OBJ_DEL_CURRENT;
 
 		/* Drop it */
 		(void)drop_near(q_ptr, -1, m_ptr->fx, m_ptr->fy);
 	}
+	OBJ_ITT_END;
 
 	/* Forget objects */
 	m_ptr->hold_o_idx = 0;

@@ -297,7 +297,7 @@ static bool is_direct_projectable(int x1, int y1)
 	int xx, yy;
 
 	int ax, ay, sx, sy;
-	
+
 	int slope = 0, sq = 0;
 
 	cave_type *c_ptr;
@@ -449,7 +449,7 @@ void mmove_init(int x1, int y1, int x2, int y2)
 			/* Set the direct route */
 			mmove_slope = (p_slope_min[ax][ay] + p_slope_max[ax][ay]) / 2;
 			mmove_sq = 0;
-			
+
 			/* Done */
 			return;
 		}
@@ -499,11 +499,11 @@ void mmove_init(int x1, int y1, int x2, int y2)
 			/* Set the direct route */
 			mmove_slope = (p_slope_min[ay][ax] + p_slope_max[ay][ax]) / 2;
 			mmove_sq = 0;
-			
+
 			/* Done */
 			return;
 		}
-	
+
 		/* Look up the slope to use */
 		mmove_slope = p_slope_min[ay][ax];
 
@@ -1031,25 +1031,18 @@ bool no_lite(void)
  */
 bool cave_valid_grid(const cave_type *c_ptr)
 {
-	s16b this_o_idx, next_o_idx = 0;
+	object_type *o_ptr;
 
 	/* Forbid perma-grids */
 	if (cave_perma_grid(c_ptr)) return (FALSE);
 
 	/* Check objects */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
-		object_type *o_ptr;
-
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Forbid artifact grids */
 		if (o_ptr->flags3 & TR3_INSTA_ART) return (FALSE);
 	}
+	OBJ_ITT_END;
 
 	/* Accept */
 	return (TRUE);
@@ -1687,8 +1680,6 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
 
 	field_type *fld_ptr;
 
-	s16b this_o_idx, next_o_idx;
-
 	s16b this_f_idx, next_f_idx;
 
 	byte feat;
@@ -1971,14 +1962,8 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
 	}
 
 	/* Objects */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+	OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 	{
-		/* Acquire object */
-		o_ptr = &o_list[this_o_idx];
-
-		/* Acquire next object */
-		next_o_idx = o_ptr->next_o_idx;
-
 		/* Memorized objects */
 		if (o_ptr->marked)
 		{
@@ -1995,6 +1980,7 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
 			break;
 		}
 	}
+	OBJ_ITT_END;
 
 	/* Hack -- fake monochrome */
 	if (fake_monochrome)
@@ -2084,10 +2070,11 @@ void note_spot(int x, int y)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
+	object_type *o_ptr;
+
 	cave_type *c_ptr = area(x, y);
 	pcave_type *pc_ptr = parea(x, y);
 
-	s16b this_o_idx, next_o_idx = 0;
 	s16b this_f_idx, next_f_idx = 0;
 
 	/* Is it lit + in view + player is not blind? */
@@ -2125,16 +2112,12 @@ void note_spot(int x, int y)
 		remember_grid(c_ptr, pc_ptr);
 
 		/* Hack -- memorize objects */
-		for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 		{
-			object_type *o_ptr = &o_list[this_o_idx];
-
-			/* Acquire next object */
-			next_o_idx = o_ptr->next_o_idx;
-
 			/* Memorize objects */
 			o_ptr->marked = TRUE;
 		}
+		OBJ_ITT_END;
 
 		/* Hack -- memorize fields */
 		for (this_f_idx = c_ptr->fld_idx; this_f_idx; this_f_idx = next_f_idx)
@@ -3884,6 +3867,8 @@ void update_view(void)
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
+	object_type *o_ptr;
+
 	cave_type *c_ptr;
 	pcave_type *pc_ptr;
 
@@ -3891,7 +3876,6 @@ void update_view(void)
 
 	int x, y, i, o2;
 
-	s16b this_o_idx, next_o_idx = 0;
 	s16b this_f_idx, next_f_idx = 0;
 
 	/* Light radius */
@@ -4164,16 +4148,12 @@ void update_view(void)
 
 
 			/* Show the objects */
-			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
+			OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 			{
-				object_type *o_ptr = &o_list[this_o_idx];
-
-				/* Acquire next object */
-				next_o_idx = o_ptr->next_o_idx;
-
 				/* Memorize objects */
 				o_ptr->marked = TRUE;
 			}
+			OBJ_ITT_END;
 
 			/* Show the fields */
 			for (this_f_idx = c_ptr->fld_idx; this_f_idx;

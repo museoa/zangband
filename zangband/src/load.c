@@ -396,7 +396,7 @@ static void rd_item(object_type *o_ptr)
 			o_ptr->flags3 |= TR3_LITE;
 		}
 	}
-	
+
 	if (sf_version > 30)
 	{
 		/* Link to next object in the list */
@@ -723,7 +723,7 @@ static void rd_monster(monster_type *m_ptr)
 		rd_u32b(&m_ptr->smart);
 	else
 		m_ptr->smart = 0;
-	
+
 	if (sf_version < 31)
 	{
 		rd_byte(&tmp8u);

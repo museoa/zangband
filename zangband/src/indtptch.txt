@@ -6,13 +6,13 @@ Only in indent-2.2.7/src/: comments.o
 Only in indent-2.2.7/src/: globs.o
 diff -u indent-2.2.7.bak/src/gperf.c indent-2.2.7/src/gperf.c
 --- indent-2.2.7.bak/src/gperf.c	Mon Dec 17 20:07:45 2001
-+++ indent-2.2.7/src/gperf.c	Tue Feb  5 20:03:14 2002
++++ indent-2.2.7/src/gperf.c	Mon Feb 18 20:37:24 2002
 @@ -1,12 +1,12 @@
  /* C code produced by gperf version 2.7.2 */
  /* Command-line: gperf -D -c -l -p -t -T -g -j1 -o -K rwd -N is_reserved indent.gperf  */
  
 -#define TOTAL_KEYWORDS 32
-+#define TOTAL_KEYWORDS 33
++#define TOTAL_KEYWORDS 34
  #define MIN_WORD_LENGTH 2
 -#define MAX_WORD_LENGTH 8
 -#define MIN_HASH_VALUE 3
@@ -62,9 +62,9 @@ diff -u indent-2.2.7.bak/src/gperf.c indent-2.2.7/src/gperf.c
 +      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
 +      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
 +      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
-+      56, 56, 56, 56, 56, 56, 56, 20, 56, 56,
++      56, 56, 56, 56, 56, 56, 56, 19, 56, 20,
 +      56, 56, 56, 56,  0, 56, 56, 56, 56, 56,
-+      56, 56, 56, 56, 56, 56, 56, 56, 27, 16,
++      56, 56, 56, 56, 56, 56, 56, 56, 30, 16,
 +       1,  0,  7, 23,  3, 21, 56,  0,  7,  2,
 +      17, 28, 56, 56,  5,  4,  0,  7, 14,  0,
 +      56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
@@ -93,7 +93,7 @@ diff -u indent-2.2.7.bak/src/gperf.c indent-2.2.7/src/gperf.c
 -       2,  4,  6,  5
 +       4,  5,  4,  6,  7,  5,  6,  6,  5,  6,  7,  3,  8,  6,
 +       8,  4,  4,  5,  8,  6,  3,  4,  6,  6,  6,  5,  2,  2,
-+       5, 13,  4,  6,  4
++      13, 13,  4,  5,  6,  4
      };
    static struct templ wordlist[] =
      {
@@ -101,7 +101,7 @@ diff -u indent-2.2.7.bak/src/gperf.c indent-2.2.7/src/gperf.c
        {"else", rw_sp_else,},
        {"while", rw_sp_paren,},
        {"enum", rw_enum,},
-@@ -77,36 +76,39 @@
+@@ -77,36 +76,40 @@
        {"short", rw_decl,},
        {"struct", rw_struct_like,},
        {"signed", rw_decl,},
@@ -136,9 +136,10 @@ diff -u indent-2.2.7.bak/src/gperf.c indent-2.2.7/src/gperf.c
 +      {"union", rw_struct_like,},
        {"if", rw_sp_paren,},
 +      {"do", rw_sp_nparen,},
-+      {"break", rw_break,},
 +      {"MAP_ITT_START", rw_sp_paren,},
++      {"OBJ_ITT_START", rw_sp_paren,},
        {"long", rw_decl,},
++      {"break", rw_break,},
        {"global", rw_decl,},
 -      {"union", rw_struct_like,}
 +      {"goto", rw_break,}
@@ -151,8 +152,8 @@ diff -u indent-2.2.7.bak/src/gperf.c indent-2.2.7/src/gperf.c
 -      25, 26, 27, 28, 29, -1, 30, 31
 +      -1, -1, -1, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9,
 +      10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-+      24, 25, 26, 27, 28, 29, 30, -1, 31, -1, -1, -1, -1, -1,
-+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 32
++      24, 25, 26, 27, 28, 29, 30, 31, 32, -1, -1, -1, -1, -1,
++      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 33
      };
  
    if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
@@ -239,12 +240,13 @@ diff -u indent-2.2.7.bak/src/indent.c indent-2.2.7/src/indent.c
  							   on line with '{' */
 diff -u indent-2.2.7.bak/src/indent.gperf indent-2.2.7/src/indent.gperf
 --- indent-2.2.7.bak/src/indent.gperf	Tue Oct 16 19:23:49 2001
-+++ indent-2.2.7/src/indent.gperf	Tue Feb  5 19:59:21 2002
-@@ -31,4 +31,5 @@
++++ indent-2.2.7/src/indent.gperf	Mon Feb 18 20:36:56 2002
+@@ -31,4 +31,6 @@
  for, rw_sp_paren,
  else, rw_sp_else,
  do, rw_sp_nparen,
 +MAP_ITT_START, rw_sp_paren,
++OBJ_ITT_START, rw_sp_paren,
  sizeof, rw_sizeof,
 Only in indent-2.2.7/src/: indent.o
 diff -u indent-2.2.7.bak/src/io.c indent-2.2.7/src/io.c

@@ -893,7 +893,7 @@ extern u16b borg_step;	/* Step count (if any) */
 /*
  * Status message search string
  */
-extern char borg_match[128];  /* Search string */
+extern char borg_match[128];	/* Search string */
 
 
 /*

@@ -674,7 +674,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 {
 	term_map map;
 
-	int fld_idx, next_f_idx, o_idx, next_o_idx;
+	int fld_idx, next_f_idx;
 
 	monster_type *m_ptr;
 	object_type *o_ptr;
@@ -773,14 +773,8 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 			}
 		}
 
-		for (o_idx = c_ptr->o_idx; o_idx; o_idx = next_o_idx)
+		OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 		{
-			/* Acquire object */
-			o_ptr = &o_list[o_idx];
-
-			/* Acquire next object */
-			next_o_idx = o_ptr->next_o_idx;
-
 			/* Memorized objects */
 			if (o_ptr->marked)
 			{
@@ -805,6 +799,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 				break;
 			}
 		}
+		OBJ_ITT_END;
 	}
 	else
 	{
