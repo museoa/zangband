@@ -318,6 +318,14 @@ static void game_usage(void)
 #ifdef USE_VME
 	puts("  -mvme    To use VME (VAX/ESA)");
 #endif /* USE_VME */
+
+#ifdef USE_GTK
+	puts("  -mgtk    To use GTK toolkit");
+	puts("  --       Sub options");
+	/* puts("  -- -d    Set display name"); */
+	/* puts("  -- -s    Turn off smoothscaling graphics"); */
+	puts("  -- -n#   Number of terms to use");
+#endif /* USE_VME */
 				
 	/* Actually abort the process */
 	quit(NULL);
@@ -619,6 +627,20 @@ int main(int argc, char *argv[])
 		if (0 == init_xpj(argc, argv))
 		{
 			ANGBAND_SYS = "xpj";
+			done = TRUE;
+		}
+	}
+#endif
+
+
+#ifdef USE_GTK
+	/* Attempt to use the "main-gtk.c" support */
+	if (!done && (!mstr || (streq(mstr, "gtk"))))
+	{
+		if (0 == init_gtk(argc, argv))
+		{
+			/* Mega-hack */
+			ANGBAND_SYS = "x11";
 			done = TRUE;
 		}
 	}
