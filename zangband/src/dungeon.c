@@ -81,7 +81,7 @@ static byte value_check_aux2(const object_type *o_ptr)
 	if (cursed_p(o_ptr)) return FEEL_CURSED;
 
 	/* Broken items (all of them) */
-	if (!o_ptr->cost) return FEEL_BROKEN;
+	if (o_ptr->cost <= 0) return FEEL_BROKEN;
 
 	/* Artifacts -- except cursed/broken ones */
 	if (FLAG(o_ptr, TR_INSTA_ART)) return FEEL_GOOD;
