@@ -1215,15 +1215,22 @@ void map_info(int y, int x, byte *ap, char *cp)
 		if ((fld_ptr->info & (FIELD_INFO_MARK | FIELD_INFO_VIS)) ==
 			 (FIELD_INFO_MARK | FIELD_INFO_VIS))
 		{
-
 			/* Which display level to use? */
 			if (fld_ptr->info & FIELD_INFO_FEAT)
 			{
 				/* Terrain level */
 
-				/* Normal char */
-				c = fld_ptr->f_char;
-
+				if (use_transparency && (fld_ptr->info & (FIELD_INFO_TRANS)))
+				{
+					/* Take into account dynamic lighting. */
+					c += fld_ptr->f_char - f_ptr->x_char; 
+				}
+				else
+				{
+					/* Normal char */
+					c = fld_ptr->f_char;
+				}
+				
 				/* Normal attr */
 				a = fld_ptr->f_attr;
 			}

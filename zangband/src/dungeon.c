@@ -4118,9 +4118,6 @@ void play_game(bool new_game)
 	/* Initialize field info */
 	if (init_t_info()) quit("Cannot initialize fields");
 	
-	/* Reset the visual mappings */
-	reset_visuals();
-	
 	/* Attempt to load */
 	if (!load_player())
 	{
@@ -4232,6 +4229,8 @@ void play_game(bool new_game)
 		seed_town = 0;
 	}
 
+	/* Reset the visual mappings */
+	reset_visuals();
 	
 	/* Normal machine (process player name) */
 	if (savefile[0])

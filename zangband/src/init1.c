@@ -612,7 +612,7 @@ static cptr t_info_flags[] =
 	"FEAT",
 	"VIS",
 	"MARK",
-	"RAND",
+	"TRANS",
 	"NO_LOOK",
 	"NFT_LOOK",
 	"MERGE",
