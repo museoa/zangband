@@ -4922,13 +4922,10 @@ s16b *look_up_list(object_type *o_ptr)
 	{
 		if (o_ptr == j_ptr) return (&c_ptr->o_idx);
 	}
-	OBJ_ITT_END;
+    OBJ_ITT_END;
 
-	/* Failure - the object is inconsistant */
-	quit("Failed to look up object.");
-
-	/* Quiet a warning - in gcc marking quit() 'noreturn' would also work */
-	return (0);
+    /* Not here, so it must be an equipment item */
+    return (NULL);
 }
 
 /*
@@ -5077,7 +5074,7 @@ object_type *item_split(object_type *o_ptr, int num)
 	object_type *q_ptr = &temp_object;
 
 	/* Paranoia */
-	if (o_ptr->number > num) num = o_ptr->number;
+	if (o_ptr->number < num) num = o_ptr->number;
 
 	/* Obtain a local object */
 	object_copy(q_ptr, o_ptr);
