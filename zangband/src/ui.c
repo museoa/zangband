@@ -1470,18 +1470,21 @@ bool get_check(cptr prompt, ...)
 		i = inkey();
 		if (quick_messages) break;
 		if (i == ESCAPE) break;
-		if (strchr("YyNn", i)) break;
+		if (strchr("YyNn\n\r", i)) break;
 		bell("Illegal response to a 'yes/no' question!");
 	}
 
 	/* Erase the prompt */
 	clear_msg();
 
-	/* Normal negation */
-	if ((i != 'Y') && (i != 'y')) return (FALSE);
-
-	/* Success */
-	return (TRUE);
+	/* Success? */
+	switch (i)
+	{
+		case 'y': case 'Y': case '\n': case '\r':
+			return (TRUE);
+		default:
+			return (FALSE);
+	}
 }
 
 
