@@ -6186,7 +6186,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 0, NULL,					"Number 48" },
 	{FALSE, 0, NULL,					"Number 49" },
 	{FALSE, 0, NULL,					"Number 50" },
-	{FALSE, 4, "avoid_other",			"Avoid processing special colors" },
+	{FALSE, 0, NULL,					"Number 51" },
 	{TRUE,  4, "flush_failure",			"Flush input on various failures" },
 	{FALSE, 4, "flush_disturb",			"Flush input whenever disturbed" },
 	{FALSE, 0, NULL,					"Number 54" },

@@ -1623,9 +1623,7 @@ static void variable_player_graph(byte *a, char *c)
  * the color of whatever is under them, and "CHAR_CLEAR", which means that
  * they take the symbol of whatever is under them.  Technically, the flag
  * "CHAR_MIMIC" is supposed to indicate that a monster looks strange when
- * examined, but this flag is currently ignored.  All of these flags are
- * ignored if the "avoid_other" option is set, since checking for these
- * conditions is expensive and annoying on some systems.
+ * examined, but this flag is currently ignored.
  *
  * Note the effects of hallucination.  Objects always appear as random
  * "objects", monsters as random "monsters", and normal grids occasionally
@@ -1813,7 +1811,7 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp,
 			}
 
 			/* Ignore weird codes + graphics */
-			if ((a & 0x80) || (avoid_other))
+			if (a & 0x80)
 			{
 				/* Do nothing */
 			}
