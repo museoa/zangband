@@ -2793,8 +2793,6 @@ static bool verify(cptr prompt, object_type *o_ptr)
 
 /*
  * Hack -- allow user to "prevent" certain choices
- *
- * The item can be negative to mean "item on floor".
  */
 static bool get_item_allow(object_type *o_ptr)
 {
@@ -3528,6 +3526,9 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 					/* Scan all objects in the grid */
 					OBJ_ITT_START (c_ptr->o_idx, o_ptr)
 					{
+						/* Valid items only */
+						if (!item_tester_okay(q_ptr)) continue;
+					
 						/* Allow player to "refuse" certain actions */
 						if (!get_item_allow(o_ptr)) continue;
 
