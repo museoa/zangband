@@ -285,56 +285,162 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	Rand_quick = FALSE;
 }
 
-
-/* 
- * Allocate a block in the cache.
- * First check to see if the block already exists.
- * If not - make room and create it.
- */
-static blk_ptr allocate_block(int x,int y)
+/* Allocate all grids around player */
+void allocate_all(void)
 {
-	int n;
+	int x, y;
+	blk_ptr block_ptr;
 	
-	#if 0
-	/* See if block is in cache */
-	for (i = 0; i < wild_grid.cache_count; i++)
+	/* Allocate blocks around player */
+	for(x = 0; x < WILD_GRID_SIZE; x++)
 	{
-		if((wild_cache[i].x == x) && (wild_cache[i].y == y))
+		for(y = 0; y < WILD_GRID_SIZE; y++)
 		{
-			return wild_cache[i].block_ptr;
+			/* The block to use */
+			block_ptr = wild_cache[x  + WILD_GRID_SIZE * y];
+						
+			/* Delete the block */
+			del_block(block_ptr);
+			
+			/* Link to the grid */
+			wild_grid.block_ptr[y][x] = block_ptr;
+	
+			/* Make the new block */
+			gen_block(x + wild_grid.x, y + wild_grid.y, block_ptr);
+		}	
+	}
+}	
+
+/*
+ * The following four functions shift the visible
+ * section of the wilderness by 16 units.  This is
+ * done by scrolling the grid of pointers.
+ */
+
+void shift_down(void)
+{
+	int i, j;
+	blk_ptr block_ptr;
+	
+	for (i = 0; i < WILD_GRID_SIZE; i++)
+	{		
+		/* The block on the edge */
+		block_ptr = wild_grid.block_ptr[0][i];
+		
+		/* Delete the block */
+		del_block(block_ptr);
+		
+		/* Scroll pointers */
+		for (j = 1; j < WILD_GRID_SIZE; j++)
+		{
+			wild_grid.block_ptr[j-1][i] =
+				wild_grid.block_ptr[j][i];		
+		}
+		
+		/* Connect new grid to wilderness */
+		wild_grid.block_ptr[WILD_GRID_SIZE - 1][i] = block_ptr;
+		
+		/* Make the new block */
+		gen_block(i + wild_grid.x,
+			WILD_GRID_SIZE - 1 + wild_grid.y, block_ptr);
+	}
+}
+
+void shift_up(void)
+{
+	int i, j;
+	blk_ptr block_ptr;
+	
+	for (i = 0; i < WILD_GRID_SIZE; i++)
+	{		
+		/* The block on the edge */
+		block_ptr = wild_grid.block_ptr[WILD_GRID_SIZE - 1][i];
+		
+		/* Delete the block */
+		del_block(block_ptr);
+		
+		/* Scroll pointers */
+		for (j = WILD_GRID_SIZE - 1; j > 0; j--)
+		{
+			wild_grid.block_ptr[j][i] =
+				wild_grid.block_ptr[j-1][i];		
+		}
+			
+		/* Connect new grid to wilderness */
+		wild_grid.block_ptr[0][i] = block_ptr;
+		
+		/* Make the new block */
+		gen_block(i + wild_grid.x, wild_grid.y, block_ptr);	
+	}
+}
+
+void shift_right(void)
+{
+int i, j;
+	blk_ptr block_ptr;
+	
+	for (j = 0; j < WILD_GRID_SIZE; j++)
+	{		
+		/* The block on the edge */
+		block_ptr = wild_grid.block_ptr[j][0];
+		
+		/* Delete the block */
+		del_block(block_ptr);
+		
+		/* Scroll pointers */
+		for (i = 1; i < WILD_GRID_SIZE; i++)
+		{
+			wild_grid.block_ptr[j][i-1] =
+				wild_grid.block_ptr[j][i];		
 		}
 	
+		/* Connect new grid to wilderness */
+		wild_grid.block_ptr[j][WILD_GRID_SIZE - 1] = block_ptr;
+		
+		/* Make the new block */
+		gen_block(WILD_GRID_SIZE - 1 + wild_grid.x,
+			j + wild_grid.y, block_ptr);	
 	}
+}
+
+void shift_left(void)
+{
+int i, j;
+	blk_ptr block_ptr;
 	
-	#endif
-	
-	n = x - wild_grid.x + WILD_GRID_SIZE * (y - wild_grid.y);
-	
-	/* Delete the block */
-	del_block(wild_cache[n].block_ptr);
-	
-	/* Make the new block */
-	gen_block(x, y, wild_cache[n].block_ptr);
+	for (j = 0; j < WILD_GRID_SIZE; j++)
+	{		
+		/* The block on the edge */
+		block_ptr = wild_grid.block_ptr[j][WILD_GRID_SIZE - 1];
 		
-	/* Store where the block is */
-	wild_cache[n].x = x;
-	wild_cache[n].y = y;
-	/* Done */
+		/* Delete the block */
+		del_block(block_ptr);
 		
-	return wild_cache[n].block_ptr;
+		/* Scroll pointers */
+		for (i = WILD_GRID_SIZE - 1; i > 0; i--)
+		{
+			wild_grid.block_ptr[j][i] =
+				wild_grid.block_ptr[j][i-1];		
+		}
+	
+		/* Connect new grid to wilderness */
+		wild_grid.block_ptr[j][0] = block_ptr;
+	
+		/* Make the new block */
+		gen_block(wild_grid.x, j + wild_grid.y, block_ptr);	
+	}
 }
 
 /* 
  * Centre grid of wilderness blocks around player.
  * This must be called after the player moves in the wilderness.
- * Note that this can be optimised much better.
  * If the player is just walking around, all that needs to be done is
  * to scroll the grid of pointers - not recalculate them all.
  * However, when the player teleports, things have to stay as is.
  */
 void move_wild(void)
 {
-	int x, y;
+	int x, y, dx, dy;
 	
 	/* Get upper left hand block in grid. */
 	
@@ -353,6 +459,9 @@ void move_wild(void)
 	 * If so, the grid doesn't need to move.
 	 */
 	if ((x == wild_grid.x) && (y == wild_grid.y)) return;
+	
+	dx = x - wild_grid.x;
+	dy = y - wild_grid.y;
 	 
 	/* Store in upper left hand corner. */
 	wild_grid.x = x;
@@ -365,15 +474,34 @@ void move_wild(void)
 	wild_grid.x_max = (x+WILD_GRID_SIZE)<<4;
 	wild_grid.x_min = x<<4;
 	
-	/* Allocate blocks around player */
-	for(x = 0; x < WILD_GRID_SIZE; x++)
+	
+	/* Shift in only a small discrepency */
+	if (abs(dy) == 1)
 	{
-		for(y = 0; y < WILD_GRID_SIZE; y++)
-		{
-			/* Allocate block and link to the grid */
-			wild_grid.block_ptr[y][x] =
-				allocate_block(x + wild_grid.x, y + wild_grid.y);	
-		}	
+		if (dy == 1) shift_down();
+		else shift_up();	
+	}
+	else if (dy)
+	{
+		/* Too large of a shift */
+		allocate_all();
+		return;
+	}
+	
+	/* Shift in only a small discrepency */
+	if (abs(dx) == 1)
+	{
+		if (dx == 1) shift_right();
+		else shift_left();
+		
+		/* Done */
+		return;
+	}
+	
+	if (dx)
+	{
+		/* Too big of a jump */
+		allocate_all();
 	}
 }
 

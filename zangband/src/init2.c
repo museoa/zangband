@@ -2575,12 +2575,12 @@ static errr init_other(void)
 	for (i = 0; i < WILD_BLOCKS ; i++)
 	{
 		/* Allocate block */
-		C_MAKE(wild_cache[i].block_ptr, WILD_BLOCK_SIZE, cave_tp_ptr);
+		C_MAKE(wild_cache[i], WILD_BLOCK_SIZE, cave_tp_ptr);
 		
 		/* Allocate rows of a block */
 		for (j = 0; j < WILD_BLOCK_SIZE ; j++)
 		{
-			C_MAKE(wild_cache[i].block_ptr[j], WILD_BLOCK_SIZE, cave_type);
+			C_MAKE(wild_cache[i][j], WILD_BLOCK_SIZE, cave_type);
 		}
 	}
 	

@@ -657,7 +657,7 @@ bool (*in_bounds2)(int, int);
 u16b *temp_block[WILD_BLOCK_SIZE+1];
 
 /* cache of blocks near the player */
-wild_cache_type wild_cache[WILD_BLOCKS];
+cave_type **wild_cache[WILD_BLOCKS];
 
 /* grid of blocks around the player */
 wild_grid_type wild_grid;

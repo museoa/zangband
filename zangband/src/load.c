@@ -2637,7 +2637,7 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
  */	
 static void load_wild_data(void)
 {
-	int i, j, n;
+	int i, j;
 	
 	/* Load bounds */
 	rd_u16b(&wild_grid.y_max);
@@ -2678,8 +2678,8 @@ static void load_wild_data(void)
 		for(j = 0; j < WILD_GRID_SIZE; j++)
 		{
 			/* Allocate block and link to the grid */
-			n = i + WILD_GRID_SIZE * j;
-			wild_grid.block_ptr[j][i] = wild_cache[n].block_ptr;	
+			wild_grid.block_ptr[j][i] = 
+				wild_cache[i + WILD_GRID_SIZE * j];	
 		}	
 	}
 }

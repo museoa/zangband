@@ -479,22 +479,6 @@ typedef cave_type **blk_ptr;
 
 typedef cave_type *cave_tp_ptr;
 
-
-
-/* wilderness cache of blocks */
-
-typedef struct wild_cache_type wild_cache_type;
-
-struct wild_cache_type
-{
-	/* pointer to block */
-	blk_ptr block_ptr;
-		
-	/* location in wilderness div 16 */
-	byte x;
-	byte y;
-};
-
 /* Grid of blocks around the player. */
 
 typedef struct wild_grid_type wild_grid_type;
