@@ -4240,7 +4240,7 @@ void update_mon_lite(void)
 			}
 
 			/* East of the monster */
-			if (in_boundsp(fx + 1, fy) && cave_floor_grid(area(fx + 1, fx)))
+			if (in_boundsp(fx + 1, fy) && cave_floor_grid(area(fx + 1, fy)))
 			{
 				mon_lite_hack(fx + 2, fy + 1);
 				mon_lite_hack(fx + 2, fy);
