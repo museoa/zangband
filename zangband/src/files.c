@@ -4451,6 +4451,7 @@ static void show_info(void)
 		/* Aware and Known */
 		object_aware(o_ptr);
 		object_known(o_ptr);
+		o_ptr->ident |= IDENT_MENTAL;
 	}
 
 	for (i = 1; i < max_towns; i++)
@@ -4468,6 +4469,7 @@ static void show_info(void)
 			/* Aware and Known */
 			object_aware(o_ptr);
 			object_known(o_ptr);
+			o_ptr->ident |= IDENT_MENTAL;
 		}
 	}
 
