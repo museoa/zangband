@@ -84,7 +84,7 @@ W:150:7:100
 I:TEMP | FEAT | VIS
 D:0:0:0:0:0:0:0:0
 F:0,field_action_corpse_init
-F:13,field_action_corpse_decay
+F:12,field_action_corpse_look | 13,field_action_corpse_decay
 F:15,field_action_corpse_raise
 
 # Skeleton
@@ -94,7 +94,7 @@ W:150:7:100
 I:TEMP | FEAT | VIS
 D:0:0:0:0:0:0:0:0
 F:0,field_action_corpse_init
-F:13,field_action_corpse_decay
+F:12,field_action_corpse_look | 13,field_action_corpse_decay
 F:15,field_action_corpse_raise
 
 # Trapdoor
