@@ -171,7 +171,7 @@ extern void frac_block(void);
 
 /* quest.c */
 extern void pick_wild_quest(int *xsize, int *ysize, byte *flags);
-extern bool quest_blank(int x, int y, int xsize, int ysize, int town_count,
+extern bool quest_blank(int x, int y, int xsize, int ysize, int town_num,
 	 byte flags);
 extern bool create_quest(int x, int y, int town_num);
 extern void draw_quest(u16b town_num);

@@ -1372,11 +1372,11 @@ void pick_wild_quest(int *xsize, int *ysize, byte *flags)
  * Look to see if a wilderness block is able to have
  * a quest overlayed on top.
  */
-bool quest_blank(int x, int y, int xsize, int ysize, int town_count, byte flags)
+bool quest_blank(int x, int y, int xsize, int ysize, int town_num, byte flags)
 {
 	int i, j;
 	wild_gen2_type *w_ptr;
-	place_type *pl_ptr = &town[town_count];
+	place_type *pl_ptr = &town[town_num];
 
 	/* Hack - Population check */
 	if (randint0(256) > wild[y][x].trans.pop_map) return (FALSE);
@@ -1422,7 +1422,7 @@ bool quest_blank(int x, int y, int xsize, int ysize, int town_count, byte flags)
 	}
 
 	/* Look to see if another town / quest is too close */
-	for (i = 1; i < town_count; i++)
+	for (i = 1; i < town_num; i++)
 	{
 		if (distance(town[i].x, town[i].y, x, y) < QUEST_MIN_DIST)
 		{

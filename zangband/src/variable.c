@@ -515,7 +515,7 @@ region_info *ri_list;
 /*
  * Number of towns used.
  */
-u16b town_count;
+u16b place_count;
 
 /*
  * Places in the wilderness [z_info->wp_max]

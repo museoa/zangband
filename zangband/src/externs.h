@@ -226,7 +226,7 @@ extern monster_type *m_list;
 extern field_type *fld_list;
 extern region_type *rg_list;
 extern region_info *ri_list;
-extern u16b town_count;
+extern u16b place_count;
 extern place_type *town;
 extern object_type *inventory;
 extern s16b alloc_kind_size;

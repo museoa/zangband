@@ -3129,16 +3129,16 @@ static errr rd_savefile_new_aux(void)
 	if (!z_older_than(2, 1, 3))
 	{
 		rd_u16b(&tmp16u);
-		town_count = tmp16u;
+		place_count = tmp16u;
 	}
 	else
 	{
 		/* Only one town */
-		town_count = 2;
+		place_count = 2;
 	}
 
 	/* Paranoia */
-	if (town_count > z_info->wp_max)
+	if (place_count > z_info->wp_max)
 	{
 		note("Error - increase number of towns in misc.txt");
 			return (33);
@@ -3152,7 +3152,7 @@ static errr rd_savefile_new_aux(void)
 		/* Read the stores */
 		rd_u16b(&tmp16u);
 		
-		for (i = 1; i < town_count; i++)
+		for (i = 1; i < place_count; i++)
 		{
 			town[i].numstores = tmp16u;
 		
@@ -3180,7 +3180,7 @@ static errr rd_savefile_new_aux(void)
 	else
 	{
 		/* Get the town data */
-		for (i = 1; i < town_count; i++)
+		for (i = 1; i < place_count; i++)
 		{
 			/* RNG seed */
 			rd_u32b(&town[i].seed);

@@ -909,7 +909,7 @@ static bool create_city(int x, int y, int town_num)
  * Look to see if a wilderness block is able to have
  * a town overlayed on top.
  */
-static bool town_blank(int x, int y, int xsize, int ysize, int town_count)
+static bool town_blank(int x, int y, int xsize, int ysize, int town_num)
 {
 	int i, j;
 	wild_gen2_type *w_ptr;
@@ -944,7 +944,7 @@ static bool town_blank(int x, int y, int xsize, int ysize, int town_count)
 
 
 	/* Look to see if another town is too close */
-	for (i = 1; i < town_count; i++)
+	for (i = 1; i < town_num; i++)
 	{
 		if (distance(town[i].x, town[i].y, x, y) < TOWN_MIN_DIST)
 		{
@@ -1458,12 +1458,12 @@ void init_towns(int xx, int yy)
 	u16b best_town = 0, town_value = 0;
 
 	/* No towns yet */
-	town_count = 1;
+	place_count = 1;
 
 	/*
 	 * Try to add z_info->wp_max towns.
 	 */
-	while (town_count < z_info->wp_max)
+	while (place_count < z_info->wp_max)
 	{
 		if (first_try)
 		{
@@ -1481,16 +1481,16 @@ void init_towns(int xx, int yy)
 			y = randint0(max_wild);
 		}
 		
-		if (town_count < z_info->wp_max / TOWN_FRACTION)
+		if (place_count < z_info->wp_max / TOWN_FRACTION)
 		{
 			/*
 			 * See if a city will fit.
 			 * (Need a 8x8 block free.)
 			 */
-			if (!town_blank(x, y, 8, 8, town_count)) continue;
+			if (!town_blank(x, y, 8, 8, place_count)) continue;
 
 			/* Generate it */
-			if (create_city(x, y, town_count))
+			if (create_city(x, y, place_count))
 			{
 				w_ptr = &wild[y][x].trans;
 
@@ -1498,13 +1498,13 @@ void init_towns(int xx, int yy)
 				if (w_ptr->law_map > town_value)
 				{
 					/* Check to see if the town has stairs */
-					for (i = 0; i < town[town_count].numstores; i++)
+					for (i = 0; i < town[place_count].numstores; i++)
 					{
-						if (town[town_count].store[i].type == BUILD_STAIRS)
+						if (town[place_count].store[i].type == BUILD_STAIRS)
 						{
 							/* Save this town */
 							town_value = w_ptr->law_map;
-							best_town = town_count;
+							best_town = place_count;
 
 							/* Done */
 							break;
@@ -1527,15 +1527,15 @@ void init_towns(int xx, int yy)
 			pick_wild_quest(&xsize, &ysize, &flags);
 			
 			/* See if a quest will fit */
-			if (!quest_blank(x, y, xsize, ysize, town_count, flags)) continue;
+			if (!quest_blank(x, y, xsize, ysize, place_count, flags)) continue;
 			
 			/* Build it */
-			if (!create_quest(x, y, town_count)) continue;
+			if (!create_quest(x, y, place_count)) continue;
 		}
 		
 
-		/* Increment number of towns / quests */
-		town_count++;
+		/* Increment number of places */
+		place_count++;
 	}
 	
 	/* Hack - the starting town uses pre-defined stores */
@@ -1757,7 +1757,7 @@ void init_vanilla_town(void)
 	place_player_start(&p_ptr->wilderness_x, &p_ptr->wilderness_y, 1);
 
 	/* One town + 1 for bounds*/
-	town_count = 2;
+	place_count = 2;
 	
 	/* Hack - set global region back to wilderness value */
 	set_region(0);

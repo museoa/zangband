@@ -1750,7 +1750,7 @@ static void create_roads(void)
 
 
 	/* Find number of linkable towns */
-	for (i = 1; i < town_count; i++)
+	for (i = 1; i < place_count; i++)
 	{
 		if (is_road_town(i))
 		{
@@ -1773,7 +1773,7 @@ static void create_roads(void)
 	/* Fill the lookup table */
 	towns = 0;
 
-	for (i = 1; i < town_count; i++)
+	for (i = 1; i < place_count; i++)
 	{
 		if (is_road_town(i))
 		{
