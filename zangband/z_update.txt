@@ -18,6 +18,8 @@ ZAngband 2.7.0:
 - Updated the init code to the Angband 2.9.3 codebase.
 - Zangband handles file permissions like Angband.
 - Updated the mac, windows and dos ports to use the latest files.
+- Updated the gtk port to use pelpels menu code.
+- The newgame command line flag now works properly with the gtk port.
 - Removed many magic numbers from the sourcecode.
 - The chaos patron big heal reward now restores stats and then heals
   to ensure full heal like the potion of life.
@@ -64,14 +66,23 @@ ZAngband 2.7.0:
   the more natural (x,y) form.
 - The 'use all linux ports' option in makefile.std works now.
 - Added more lines to mondeath.txt and monspeak.txt
-- Updated the gtk port to use pelpels menu code.  It still seems to have
-  problems when transparency is turned on.
 - Decreased the xp for the plain gold ring, stopping score overflow.
 - Fixed problem when trying to destroy closed doors with GF_KILL_WALL.
 - Made the word of recall scroll more common in the shops and dungeon.
 - Fixed the road-making code so that it connects to town gates.
 - Fixed problems with spectres, doors, and the easy_open option.
 - Fixed the bug with monsters not being able to bash doors.
+- Fixed the bug with exiting item creation in debug mode early.
+- Added four new ego types for lites.  Lites deliberately have easy_know.
+- Replaced some artifacts with others from gumband.  Other artifacts
+  were renamed to be more in theme.
+- The phial is deeper in the dungeon, now that there are ego lites.
+- The inventory and equipment screens now support bigscreen.
+- The inventory, equipment and floor menu boxes now support bigscreen.
+- Some of the racial activation names were too long.
+- Searching is renamed to "sensing", and now has an additional affect on
+  psuedo-id rate.
+
 
 ZAngband 2.6.2:
 - Made potions of restore life levels more common.
