@@ -2105,6 +2105,17 @@ static errr draw_rect_t1(int x, int y, term_data *td, int xp, int yp)
 				xt[PJ_WALLB] = tc & 0x3F;
 				yt[PJ_WALLB] = ta & 0x7F;
 			}
+			
+			/* Hack - check for "blank floor" */
+			if ((mask & PJ_T_FLOOR1) && (!xt[PJ_FLOOR1]) && (!yt[PJ_FLOOR1]))
+			{
+				mask &= ~(PJ_T_FLOOR1);
+			}
+			
+			if ((mask & PJ_T_FLOOR2) && (!xt[PJ_FLOOR2]) && (!yt[PJ_FLOOR2]))
+			{
+				mask &= ~(PJ_T_FLOOR2);
+			}
 		}
 		
 		/* Are we overlaying anything? */
@@ -2288,6 +2299,12 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 			yt[PJ_TOP2] = ta & 0x7F;
 			xt[PJ_TOP_T2] = tc & 0x3F;
 			yt[PJ_TOP_T2] = ta & 0x7F;
+			
+			/* Hack - check for "blank floor" */
+			if ((mask & PJ_T_FLOOR1) && (!xt[PJ_FLOOR1]) && (!yt[PJ_FLOOR1]))
+			{
+				mask &= ~(PJ_T_FLOOR1);
+			}
 		}
 		
 		/* Are we overlaying anything? */
@@ -2318,6 +2335,12 @@ static errr draw_rect_t2(int x, int y, term_data *td, int xp, int yp)
 			yt[PJ_TOP1] = ta & 0x7F;
 			xt[PJ_TOP_T1] = tc & 0x3F;
 			yt[PJ_TOP_T1] = ta & 0x7F;
+			
+			/* Hack - check for "blank floor" */
+			if ((mask & PJ_T_FLOOR1) && (!xt[PJ_FLOOR1]) && (!yt[PJ_FLOOR1]))
+			{
+				mask &= ~(PJ_T_FLOOR1);
+			}
 			
 			if (mask & PJ_T_WALL2)
 			{
