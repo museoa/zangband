@@ -2180,12 +2180,6 @@ void aggravate_monsters(int who)
 				m_ptr->mspeed = r_ptr->speed + 10;
 				speed = TRUE;
 			}
-
-			/* Friendly monster may get angry (50% chance) */
-			if (!is_hostile(m_ptr) && (randint(2) == 1))
-			{
-				set_hostile(m_ptr);
-			}
 		}
 	}
 
