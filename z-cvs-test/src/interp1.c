@@ -3489,7 +3489,6 @@ static CommandInit commandInit[] = {
 		{1, "floor", 0, 0, NULL, objcmd_floor, (ClientData) 0},
 		{1, "system", 0, 0, NULL, objcmd_system, (ClientData) 0},
 		{1, "keycount", 0, 0, NULL, objcmd_keycount, (ClientData) 0},
-		{1, "building", 0, 0, NULL, objcmd_building, (ClientData) 0},
 		{1, "mindcraft", 0, 0, NULL, objcmd_mindcraft, (ClientData) 0},
 		{1, "power", 0, 0, NULL, objcmd_power, (ClientData) 0},
 	{0, "menuentrystate", 0, 0, NULL, objcmd_menuentrystate, (ClientData) 0},
