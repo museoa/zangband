@@ -1156,6 +1156,9 @@ static errr rd_store(int town_number, int store_number)
 	if (num) 
 	{
 		(void) allocate_store(st_ptr);
+		
+		/* Save store type */
+		st_ptr->type = store_number;
 	}
 
 	/* Read the items */
@@ -2727,8 +2730,6 @@ static errr rd_dungeon(void)
 
 	/* Header info */
 	rd_s16b(&dun_level);
-	
-	change_level(dun_level);
 
 	/* Set the base level for old versions */
 	base_level = dun_level;
@@ -2747,6 +2748,8 @@ static errr rd_dungeon(void)
 	rd_s16b(&max_panel_rows);
 	rd_s16b(&max_panel_cols);
 
+	/* There is no town stored in cave[][] */
+	set_no_town();
 	
 	/* Old method */
 	if (older_than(2, 8, 0))
@@ -2755,43 +2758,56 @@ static errr rd_dungeon(void)
 	}
 	else if (sf_version<7)
 	{
+		/* Hack - do not load data into wilderness */
+		change_level(1);
+		
 		/* Load dungeon map*/
 		load_map(cur_hgt, 0, cur_wid, 0);
-		
-		create_wilderness();	
 	}
 	else
 	{
 		/* Load wilderness data */	
 		load_wild_data();
 		
+		if(dun_level)
+		{
+			change_level(1);
+			
+			/* Load dungeon map*/
+			load_map(cur_hgt, 0, cur_wid, 0);	
+		
+			/* Set pointers to wilderness - but do not make towns */
+			change_level(0);
+			
+			/* Load wilderness map*/
+			load_map(wild_grid.y_max, wild_grid.y_min,			  			   wild_grid.x_max, wild_grid.x_min);			
+		}
+		else
+		{
+			/* Hack - move to level without creating it */
+			dun_level = 1;
+			change_level(0);
+			
+			/* Load the wilderness */			
+			load_map(wild_grid.y_max, wild_grid.y_min,
+			   wild_grid.x_max, wild_grid.x_min);
+			   
+			/* Reset level */
+			dun_level = 0;	
+		}
+		
+				
 		if (sf_version<8)
 		{
 			create_wilderness();
 		}
-		
-		if(dun_level)
-		{
-			/* Load dungeon map*/
-			load_map(cur_hgt, 0, cur_wid, 0);	
-		
-			/* Load wilderness map*/
-			change_level(0); 
-			load_map(wild_grid.y_max, wild_grid.y_min,
-			   wild_grid.x_max, wild_grid.x_min);
-			change_level(dun_level);
-		}
-		else
-		{
-			load_map(wild_grid.y_max, wild_grid.y_min,
-			   wild_grid.x_max, wild_grid.x_min);	
-		}
 	}
-
-	/*change_level(dun_level);*/
-
-	/* There is no town stored in cave[][] */
-	set_no_town();
+	
+	if (sf_version > 6)
+	{	
+		/* Allocate all the blocks */
+		change_level(dun_level);
+	}
 	
 	/*** Objects ***/
 
@@ -2928,6 +2944,14 @@ static errr rd_dungeon(void)
 	{
 		/* The dungeon is ready */
 		character_dungeon = TRUE;
+	}
+
+	/* Hack - make new level only after objects + monsters are loaded */ 
+	if (sf_version < 7)
+	{		
+		create_wilderness();
+		
+		change_level(dun_level);
 	}
 
 	/* Success */

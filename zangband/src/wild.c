@@ -148,7 +148,10 @@ void change_level(int level)
 		 * Allocate blocks around player - only has effect if
 		 * old game is loaded in the dungeon.
 		 */
-		move_wild();
+		if (!dun_level)
+		{
+			move_wild();
+		}
 	}
 	else
 	{
@@ -1028,6 +1031,11 @@ void create_wilderness(void)
 		/* Assume illegal panel */
 		panel_row = max_panel_rows;
 		panel_col = max_panel_cols;
+		
+		/* Hack - delete all items / monsters in wilderness */
+		
+		wipe_o_list();
+		wipe_m_list();
 	}
 	
 	max_wild_y = WILD_SIZE*16;
@@ -1047,10 +1055,4 @@ void create_wilderness(void)
 	
 	/* Refresh random number seed */
 	wild_grid.wild_seed = rand_int(0x10000000);
-	
-	if (!dun_level)
-	{
-		/* Allocate blocks around player */
-		move_wild();
-	}
 }
