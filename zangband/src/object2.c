@@ -2051,9 +2051,14 @@ static void init_ego_item(object_type *o_ptr, byte ego)
 		if (e_ptr->max_to_a) o_ptr->to_a += randint1(e_ptr->max_to_a);
 
 		/* Hack -- obtain pval */
-		if ((e_ptr->max_pval) && (!o_ptr->pval))
+		if ((e_ptr->max_pval) && ((!o_ptr->pval) || k_info[o_ptr->k_idx].pval))
 		{
-			o_ptr->pval = randint1(e_ptr->max_pval);
+			/*
+			 * Add the ego pval only if object has no pval, or normally
+			 * has a pval - in which case the bonus should be added.
+			 * (Eg with diggers)
+			 */
+			o_ptr->pval += randint1(e_ptr->max_pval);
 		}
 	}
 
