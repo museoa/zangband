@@ -123,7 +123,7 @@ static void do_cmd_summon_horde(void)
 
 		c_ptr = area(wy, wx);
 		if (cave_naked_grid(c_ptr)) break;
-		
+
 		/* Not under the player */
 		if ((wy == py) && (wx == px)) break;
 	}
@@ -181,10 +181,10 @@ static void prt_alloc(object_type *o_ptr, int row, int col, u32b monte)
 	(void)C_WIPE(rarity, MAX_DEPTH, u32b);
 	(void)C_WIPE(total, MAX_DEPTH, u32b);
 	(void)C_WIPE(display, 20, u32b);
-	
+
 	msg_print(NULL);
 	prt("Calculating probability distribution - please wait.", 0, 0);
-	
+
 	/* Refresh */
 	Term_fresh();
 
@@ -195,7 +195,7 @@ static void prt_alloc(object_type *o_ptr, int row, int col, u32b monte)
 		{
 			if (get_obj_num(i, 0) == kind) rarity[i]++;
 		}
-		
+
 		total[i] = monte;
 	}
 
@@ -510,7 +510,7 @@ static void wiz_display_item(object_type *o_ptr)
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3);
-	
+
 	/* Clear the screen */
 	for (i = 1; i <= 23; i++) prt("", i, j - 2);
 
@@ -831,8 +831,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 				q_ptr->activate = 0;
 				q_ptr->xtra_name = 0;
 			}
-			
-			changed = FALSE;
+
 			break;
 		}
 
@@ -877,7 +876,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 			case 's': case 'S':
 			{
 				object_prep(q_ptr, o_ptr->k_idx);
-				
+
 				/* Make a random artifact */
 				create_artifact(q_ptr, FALSE);
 				break;
@@ -922,11 +921,11 @@ static void wiz_statistics(object_type *o_ptr)
 
 	cptr p = "Enter number of items to roll: ";
 	char tmp_val[80];
-	
+
 	sprintf(tmp_val, "%ld", test_roll);
 	if (get_string(p, tmp_val, 10)) test_roll = atol(tmp_val);
 	test_roll = MAX(1, test_roll);
-	
+
 	/* Display the rarity graph */
 	prt_alloc(o_ptr, 2, 0, test_roll);
 }
@@ -960,7 +959,7 @@ static void wiz_quantity_item(object_type *o_ptr)
 		/* Paranoia */
 		if (tmp_int < 1) tmp_int = 1;
 		if (tmp_int > 99) tmp_int = 99;
-		
+
 		/* Add the weight */
 		p_ptr->total_weight += ((tmp_int - o_ptr->number) * o_ptr->weight);
 
@@ -993,7 +992,7 @@ static void do_cmd_wiz_play(void)
 
 	char ch;
 
-	bool changed;
+	bool changed = FALSE;
 
 	cptr q, s;
 
@@ -1013,10 +1012,6 @@ static void do_cmd_wiz_play(void)
 	{
 		o_ptr = &o_list[0 - item];
 	}
-
-
-	/* The item was not changed */
-	changed = FALSE;
 
 
 	/* Save the screen */
@@ -1040,11 +1035,10 @@ static void do_cmd_wiz_play(void)
 	{
 		/* Display the item */
 		wiz_display_item(q_ptr);
-	
+
 		/* Get choice */
 		if (!get_com("[a]ccept [s]tatistics [r]eroll [t]weak [q]uantity? ", &ch))
 		{
-			changed = FALSE;
 			break;
 		}
 
@@ -1156,23 +1150,23 @@ static void wiz_create_item(void)
 		for (i = 1; i < max_a_idx; i++)
 		{
 			artifact_type *a_ptr = &a_info[i];
-			
+
 			/* Skip "empty" artifacts */
 			if (!a_ptr->name) continue;
-			
+
 			if ((a_ptr->tval == k_ptr->tval) && (a_ptr->sval == k_ptr->sval))
 			{
 				/* found it */
 				create_named_art(i, py, px);
-				
+
 #ifdef USE_SCRIPT
 				q_ptr->python = object_create_callback(q_ptr);
 #endif /* USE_SCRIPT */
-				
+
 				/* All done */
 				msg_print("Allocated.");
-				
-				return;		
+
+				return;
 			}
 		}
 	}
@@ -1416,7 +1410,7 @@ static void do_cmd_wiz_zap(void)
 		/* Delete nearby monsters */
 		if (m_ptr->cdis <= MAX_SIGHT) delete_monster_idx(i);
 	}
-	
+
 	/* Update some things */
 	p_ptr->update |= (PU_MON_LITE);
 }
@@ -1440,7 +1434,7 @@ static void do_cmd_wiz_zap_all(void)
 		/* Delete this monster */
 		delete_monster_idx(i);
 	}
-	
+
 	/* Update some things */
 	p_ptr->update |= (PU_MON_LITE);
 }

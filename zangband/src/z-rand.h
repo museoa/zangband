@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: z-rand.h */
 
 #ifndef INCLUDED_Z_RAND_H
@@ -54,10 +53,33 @@
  */
 #define randint1(M) \
 	(randint0(M) + 1)
-	
+
+
+/*
+ * Generates a random long integer X where O<=X<M.
+ * The integer X falls along a uniform distribution.
+ * For example, if M is 100, you get "percentile dice"
+ *
+ * The same as randint0().
+ */
+#define rand_int(M) \
+	((s32b)(Rand_div(M)))
+
+
+/*
+ * Generates a random long integer X where 1<=X<=M.
+ *
+ * Note that the behaviour for M < 1 is undefined.
+ *
+ * The same as randint1().
+ */
+#define randint(M) \
+	(rand_int(M) + 1)
+
 
 #define one_in_(X) \
 	(randint0(X) == 0)
+
 
 /*
  * Evaluate to TRUE "S" percent of the time

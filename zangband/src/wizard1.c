@@ -619,7 +619,6 @@ typedef struct
  * various magical powers. The "ignore X" traits are not noted since
  * all artifacts ignore "normal" destruction.
  */
-
 typedef struct
 {
 	/* "The Longsword Dragonsmiter (6d4) (+20, +25)" */
@@ -644,10 +643,10 @@ typedef struct
 	cptr sustains[N_ELEMENTS(sustain_flags_desc)  - 1 + 1];
 
 	/* A list of various magical qualities an object may have */
-	cptr misc_magic[N_ELEMENTS(misc_flags2_desc) + N_ELEMENTS(misc_flags3_desc)
-			+ 1       /* Permanent Light */
-			+ 1       /* type of curse */
-			+ 1];     /* sentinel NULL */
+	cptr misc_magic[N_ELEMENTS(misc_flags2_desc) + N_ELEMENTS(misc_flags3_desc) +
+			1 +      /* Permanent Light */
+			1 +      /* type of curse */
+			1];     /* sentinel NULL */
 
 	/* A string describing an artifact's activation */
 	cptr activation;
@@ -937,10 +936,10 @@ static void analyze_misc_magic (object_type *o_ptr, cptr *misc_list)
 static void analyze_misc (object_type *o_ptr, char *misc_desc)
 {
 	artifact_type *a_ptr;
-	
+
 	/* Only look at artifacts */
 	if (o_ptr->activate < 128) return;
-	
+
 	a_ptr = &a_info[o_ptr->activate - 128];
 
 	sprintf(misc_desc, "Level %u, Rarity %u, %d.%d lbs, %ld Gold",
@@ -1201,10 +1200,10 @@ static bool make_fake_artifact(object_type *o_ptr, int a_idx)
 	o_ptr->to_h = a_ptr->to_h;
 	o_ptr->to_d = a_ptr->to_d;
 	o_ptr->weight = a_ptr->weight;
-	
+
 	/* Do not make another one */
 	a_ptr->cur_num = 1;
-		
+
 	/* Save the inscription */
 	o_ptr->xtra_name = quark_add(a_name + a_ptr->name);
 

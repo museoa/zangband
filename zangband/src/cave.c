@@ -64,7 +64,7 @@ bool is_trap(cave_type *c_ptr)
  */
 bool is_visible_trap(cave_type *c_ptr)
 {
-	return (*field_first_known(&c_ptr->fld_idx, FTYPE_TRAP) != 0 );
+	return (*field_first_known(&c_ptr->fld_idx, FTYPE_TRAP) != 0);
 }
 
 
@@ -1457,7 +1457,7 @@ void note_spot(int y, int x)
 			}
 		}
 	}
-	
+
 	/* Light the spot, now that we have noticed the changes. */
 	lite_spot(y, x);
 }
@@ -1948,7 +1948,7 @@ void display_map(int *cy, int *cx)
 	Term_get_size(&wid, &hgt);
 	hgt -= 2;
 	wid -= 14;
-	
+
 
 
 	/* Disable lighting effects */
@@ -2079,14 +2079,14 @@ void display_map(int *cy, int *cx)
 	{
 		yrat = max_hgt - min_hgt;
 		xrat = max_wid - min_wid;
-	
+
 		/* Get scaling factors */
 		yfactor = ((yrat / hgt < 4) && (yrat > hgt)) ? 10 : 1;
 		xfactor = ((xrat / wid < 4) && (xrat > wid)) ? 10 : 1;
-	
+
 		yrat = (yrat * yfactor + hgt - 1) / hgt;
 		xrat = (xrat * xfactor + wid - 1) / wid;
-		
+
 		/* Player location in dungeon */
 		(*cy) = py * yfactor / yrat + ROW_MAP;
 		(*cx) = px * xfactor / xrat + COL_MAP;
@@ -2926,7 +2926,7 @@ errr vinfo_init(void)
 
 
 	/* Kill hack */
-	KILL(hack, vinfo_hack);
+	FREE(hack, vinfo_hack);
 
 
 	/* Success */
@@ -3364,7 +3364,7 @@ void update_view(void)
 		info = c_ptr->info;
 
 		/* Clear "CAVE_TEMP" and "CAVE_XTRA" flags */
-		info &= ~(CAVE_TEMP | CAVE_XTRA );
+		info &= ~(CAVE_TEMP | CAVE_XTRA);
 
 		/* Was "CAVE_VIEW", is now not "CAVE_VIEW" */
 		if (!(info & (CAVE_VIEW)))
@@ -3419,7 +3419,7 @@ static void mon_lite_hack(int y, int x)
 	c_ptr->info |= CAVE_MNLT;
 }
 
- 
+
 
 
 /*
@@ -3440,7 +3440,7 @@ void update_mon_lite(void)
 	s16b fx, fy;
 
 	s16b end_temp;
-	
+
 	/* Blindness check */
 	if (p_ptr->blind)
 	{
@@ -3449,20 +3449,20 @@ void update_mon_lite(void)
 		{
 			fx = lite_x[i];
 			fy = lite_y[i];
-			
+
 			/* Point to grid */
 			c_ptr = area(fy, fx);
 
 			/* Clear monster illumination flag */
 			c_ptr->info &= ~(CAVE_MNLT);
-			
+
 			/* It is now unlit */
 			note_spot(fy, fx);
 		}
-		
+
 		/* Clear the lit list */
 		lite_n = 0;
-		
+
 		/* Done */
 		return;
 	}
@@ -4338,9 +4338,6 @@ void object_kind_track(int k_idx)
  */
 void disturb(int stop_search, int unused_flag)
 {
-	/* Unused */
-	unused_flag = unused_flag;
-
 	/* Cancel repeated commands */
 	if (p_ptr->command_rep)
 	{
