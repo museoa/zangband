@@ -4633,7 +4633,7 @@ static void build_type20(int bx0, int by0)
 static void build_type21(int bx0, int by0)
 {
 	int y1, x1;
-	int y2, x2, yval, xval;
+	int y2, yval, xval;
 	bool light;
 		
 	int i;
@@ -4648,7 +4648,6 @@ static void build_type21(int bx0, int by0)
 	y1 = yval - 4;
 	y2 = yval + 4;
 	x1 = xval - 11;
-	x2 = xval + 11;
 	
 	
 	/* Generate new room */
