@@ -2939,7 +2939,8 @@ void do_cmd_cast(void)
  */
 void do_cmd_pray(void)
 {
-	msg_print("Praying is not used in Zangband. Use magic spell casting instead.");
+	msg_format("Praying is not used in %s. Use magic spell casting instead.",
+	           VERSION_NAME);
 }
 
 

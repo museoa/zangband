@@ -2690,14 +2690,8 @@ errr file_character(cptr name, bool full)
 	}
 
 
-#ifndef FAKE_VERSION
-	/* Begin dump */
-	fprintf(fff, "  [Zangband %d.%d.%d Character Dump]\n\n",
-			  VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
-#else
-	fprintf(fff, "  [Zangband %d.%d.%d Character Dump]\n\n",
-			  FAKE_VER_MAJOR, FAKE_VER_MINOR, FAKE_VER_PATCH);
-#endif
+	fprintf(fff, "  [%s %s Character Dump]\n\n",
+	        VERSION_NAME, VERSION_STRING);
 
 	/* Display player */
 	display_player(DISPLAY_PLAYER_STANDARD);
@@ -3306,8 +3300,8 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 
 		/* Show a general "title" */
-		prt(format("[ZAngband %d.%d.%d, %s, Line %d/%d]",
-		           FAKE_VER_MAJOR, FAKE_VER_MINOR, FAKE_VER_PATCH,
+		prt(format("[%s %s, %s, Line %d/%d]",
+		           VERSION_NAME, VERSION_STRING,
 		           caption, line, size), 0, 0);
 
 		/* Prompt -- with menu */

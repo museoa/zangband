@@ -1075,7 +1075,7 @@ void do_cmd_options(byte flags)
 		Term_clear();
 
 		/* Why are we here */
-		prt("Angband options", 2, 0);
+		prt(format("%s options", VERSION_NAME), 2, 0);
 
 		/* Give some choices */
 		prt("(1) User Interface Options", 4, 5);
@@ -2841,16 +2841,8 @@ void do_cmd_note(void)
  */
 void do_cmd_version(void)
 {
-
 	/* Silly message */
-#ifndef FAKE_VERSION
-	msg_format("You are playing Angband %d.%d.%d.",
-	           VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
-#else
-	msg_format("You are playing Zangband %d.%d.%d.",
-	            FAKE_VER_MAJOR, FAKE_VER_MINOR, FAKE_VER_PATCH);
-#endif
-
+	msg_format("You are playing %s %s.", VERSION_NAME, VERSION_STRING);
 }
 
 
