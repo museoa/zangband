@@ -1527,6 +1527,21 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		give_activation_power(o_ptr, artifact_bias);
 	}
 
+	if (o_ptr->dd && o_ptr->ds)
+	{
+		while (randint0(10L * o_ptr->dd * o_ptr->ds) == 0)
+		{
+			o_ptr->dd++;
+		}
+
+		/* Hack -- Lower the damage dice */
+		if (o_ptr->dd > 9)
+		{
+			o_ptr->dd = 9;
+		}
+	}
+
+
 	if (o_ptr->tval >= TV_BOOTS)
 	{
 		if (a_cursed) power_level = 0;
