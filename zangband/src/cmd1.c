@@ -949,11 +949,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 			msgf("You are suddenly very hot!");
 
-			if (p_ptr->flags4 & (TR4_HURT_FIRE)) aura_damage *= 2;
-			if (p_ptr->tim.oppose_fire) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->flags2 & (TR2_RES_FIRE)) aura_damage = (aura_damage + 2) / 3;
-
-			take_hit(aura_damage, aura_dam);
+			take_hit(resist(aura_damage, res_fire_lvl), aura_dam);
 			r_ptr->r_flags2 |= RF2_AURA_FIRE;
 			handle_stuff();
 		}
@@ -973,11 +969,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 
 			msgf("You are suddenly very cold!");
 
-			if (p_ptr->flags4 & (TR4_HURT_COLD)) aura_damage *= 2;
-			if (p_ptr->tim.oppose_cold) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->flags2 & (TR2_RES_COLD)) aura_damage = (aura_damage + 2) / 3;
-
-			take_hit(aura_damage, aura_dam);
+			take_hit(resist(aura_damage, res_cold_lvl), aura_dam);
 			r_ptr->r_flags3 |= RF3_AURA_COLD;
 			handle_stuff();
 		}
@@ -994,12 +986,8 @@ static void touch_zap_player(const monster_type *m_ptr)
 			/* Hack -- Get the "died from" name */
 			monster_desc(aura_dam, m_ptr, 0x88, 80);
 
-			if (p_ptr->flags4 & (TR4_HURT_ELEC)) aura_damage *= 2;
-			if (p_ptr->tim.oppose_elec) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->flags2 & (TR2_RES_ELEC)) aura_damage = (aura_damage + 2) / 3;
-
 			msgf("You get zapped!");
-			take_hit(aura_damage, aura_dam);
+			take_hit(resist(aura_damage, res_elec_lvl), aura_dam);
 			r_ptr->r_flags2 |= RF2_AURA_ELEC;
 			handle_stuff();
 		}

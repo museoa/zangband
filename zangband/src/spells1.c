@@ -3213,18 +3213,17 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 		case GF_POIS:
 		{
 			if (fuzzy) msgf("You are hit by poison!");
-			if (p_ptr->flags2 & (TR2_RES_POIS)) dam = (dam + 2) / 3;
-			if (p_ptr->tim.oppose_pois) dam = (dam + 2) / 3;
+			
+			dam = resist(dam, res_pois_lvl);
 
-			if ((!(p_ptr->tim.oppose_pois || (p_ptr->flags2 & (TR2_RES_POIS)))) &&
-				one_in_(HURT_CHANCE))
+			if (res_pois_lvl() && one_in_(HURT_CHANCE))
 			{
 				(void)do_dec_stat(A_CON);
 			}
 
 			take_hit(dam, killer);
 
-			if (!((p_ptr->flags2 & (TR2_RES_POIS)) || p_ptr->tim.oppose_pois))
+			if (res_pois_lvl())
 			{
 				(void)inc_poisoned(randint0(dam) + 10);
 			}
@@ -3238,7 +3237,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			if (p_ptr->flags2 & (TR2_RES_POIS)) dam = (2 * dam + 2) / 5;
 			if (p_ptr->tim.oppose_pois) dam = (2 * dam + 2) / 5;
 			take_hit(dam, killer);
-			if (!((p_ptr->flags2 & (TR2_RES_POIS)) || p_ptr->tim.oppose_pois))
+			if (res_pois_lvl())
 			{
 				(void)inc_poisoned(randint0(dam) + 10);
 
@@ -3313,8 +3312,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				(void)inc_stun(randint1((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
 			}
 
-			if (!((p_ptr->flags2 & (TR2_RES_FIRE)) ||
-				  p_ptr->tim.oppose_fire || (p_ptr->flags2 & (TR2_IM_FIRE))))
+			if (res_acid_lvl() < 9)
 			{
 				(void)inven_damage(set_acid_destroy, 3);
 			}

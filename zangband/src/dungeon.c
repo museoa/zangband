@@ -1056,14 +1056,9 @@ static void process_world(void)
 		}
 	}
 
-	if ((c_ptr->feat == FEAT_SHAL_LAVA) &&
-		!p_ptr->tim.invuln && !(p_ptr->flags2 & (TR2_IM_FIRE)) &&
-		!(p_ptr->flags3 & (TR3_FEATHER)))
+	if ((c_ptr->feat == FEAT_SHAL_LAVA) && !(p_ptr->flags3 & (TR3_FEATHER)))
 	{
-		int damage = p_ptr->lev;
-
-		if (p_ptr->flags2 & (TR2_RES_FIRE)) damage = damage / 3;
-		if (p_ptr->tim.oppose_fire) damage = damage / 3;
+		int damage = resist(p_ptr->lev, res_fire_lvl);
 
 		if (damage)
 		{
@@ -1074,15 +1069,11 @@ static void process_world(void)
 		}
 	}
 
-	else if ((c_ptr->feat == FEAT_DEEP_LAVA) &&
-			 !p_ptr->tim.invuln && !(p_ptr->flags2 & (TR2_IM_FIRE)))
+	else if (c_ptr->feat == FEAT_DEEP_LAVA)
 	{
-		int damage = p_ptr->lev * 2;
+		int damage = resist(p_ptr->lev * 2, res_fire_lvl);
 		cptr message;
 		cptr hit_from;
-
-		if (p_ptr->flags2 & (TR2_RES_FIRE)) damage = damage / 3;
-		if (p_ptr->tim.oppose_fire) damage = damage / 3;
 
 		if (p_ptr->flags3 & (TR3_FEATHER))
 		{
@@ -1107,14 +1098,9 @@ static void process_world(void)
 		}
 	}
 
-	if ((c_ptr->feat == FEAT_SHAL_ACID) &&
-		!p_ptr->tim.invuln && !(p_ptr->flags2 & (TR2_IM_ACID)) &&
-		!(p_ptr->flags3 & (TR3_FEATHER)))
+	if ((c_ptr->feat == FEAT_SHAL_ACID) && !(p_ptr->flags3 & (TR3_FEATHER)))
 	{
-		int damage = p_ptr->lev;
-
-		if (p_ptr->flags2 & (TR2_RES_ACID)) damage = damage / 3;
-		if (p_ptr->tim.oppose_acid) damage = damage / 3;
+		int damage = resist(p_ptr->lev, res_acid_lvl);
 
 		if (damage)
 		{
@@ -1125,15 +1111,11 @@ static void process_world(void)
 		}
 	}
 
-	else if ((c_ptr->feat == FEAT_DEEP_ACID) &&
-			 !p_ptr->tim.invuln && !(p_ptr->flags2 & (TR2_IM_ACID)))
+	else if (c_ptr->feat == FEAT_DEEP_ACID)
 	{
-		int damage = p_ptr->lev * 2;
+		int damage = resist(p_ptr->lev * 2, res_acid_lvl);
 		cptr message;
 		cptr hit_from;
-
-		if (p_ptr->flags2 & (TR2_RES_ACID)) damage = damage / 3;
-		if (p_ptr->tim.oppose_acid) damage = damage / 3;
 
 		if (p_ptr->flags3 & (TR3_FEATHER))
 		{
@@ -1158,11 +1140,9 @@ static void process_world(void)
 		}
 	}
 
-	if ((c_ptr->feat == FEAT_SHAL_SWAMP) &&
-		!p_ptr->tim.invuln && !(p_ptr->flags2 & (TR2_RES_POIS)) &&
-		!(p_ptr->flags3 & (TR3_FEATHER)))
+	if ((c_ptr->feat == FEAT_SHAL_SWAMP) &&	!(p_ptr->flags3 & (TR3_FEATHER)))
 	{
-		int damage = p_ptr->lev;
+		int damage = resist(p_ptr->lev, res_pois_lvl);
 
 		if (p_ptr->tim.oppose_pois) damage = damage / 3;
 
@@ -1180,9 +1160,6 @@ static void process_world(void)
 		int damage = p_ptr->lev * 2;
 		cptr message;
 		cptr hit_from;
-
-		if (p_ptr->flags2 & (TR2_RES_POIS)) damage = damage / 3;
-		if (p_ptr->tim.oppose_pois) damage = damage / 3;
 
 		if (p_ptr->flags3 & (TR3_FEATHER))
 		{

@@ -1505,6 +1505,302 @@ bool inc_oppose_pois(int v)
 
 
 /*
+ * Helper functions to test resistance status for the various elements
+ *
+ *
+ * These return a value from 0 to 18 standing for how much damage
+ * you will receive.
+ *
+ * 0 is immunity.
+ * 1 is double resistance.
+ * 3 is normal resistance.
+ * 9 is no resistance.
+ * 18 is succeptibility to.
+ *
+ * Other combinations such as 2 and 6 are also possible.
+ *
+ * XXX XXX Should these "magic numbers" have #defines?
+ */
+
+/*
+ * Acid resist level
+ */
+byte res_acid_lvl(void)
+{
+	byte level = 9;
+	
+	if (p_ptr->tim.invuln) return (0);
+	if (p_ptr->flags2 & TR2_IM_ACID) return (0);
+	if (p_ptr->flags2 & TR2_RES_ACID) level /= 3;
+	if (p_ptr->tim.oppose_acid) level /= 3;
+	if (p_ptr->flags4 & TR4_HURT_ACID) level *= 2;
+
+	return (level);
+}
+
+/*
+ * Electricity resist level
+ */
+byte res_elec_lvl(void)
+{
+	byte level = 9;
+	
+	if (p_ptr->tim.invuln) return (0);
+	if (p_ptr->flags2 & TR2_IM_ELEC) return (0);
+	if (p_ptr->flags2 & TR2_RES_ELEC) level /= 3;
+	if (p_ptr->tim.oppose_elec) level /= 3;
+	if (p_ptr->flags4 & TR4_HURT_ELEC) level *= 2;
+
+	return (level);
+}
+
+/*
+ * Fire resist level
+ */
+byte res_fire_lvl(void)
+{
+	byte level = 9;
+	
+	if (p_ptr->tim.invuln) return (0);
+	if (p_ptr->flags2 & TR2_IM_FIRE) return (0);
+	if (p_ptr->flags2 & TR2_RES_FIRE) level /= 3;
+	if (p_ptr->tim.oppose_fire) level /= 3;
+	if (p_ptr->flags4 & TR4_HURT_FIRE) level *= 2;
+
+	return (level);
+}
+
+/*
+ * Cold resist level
+ */
+byte res_cold_lvl(void)
+{
+	byte level = 9;
+	
+	if (p_ptr->tim.invuln) return (0);
+	if (p_ptr->flags2 & TR2_IM_COLD) return (0);
+	if (p_ptr->flags2 & TR2_RES_COLD) level /= 3;
+	if (p_ptr->tim.oppose_cold) level /= 3;
+	if (p_ptr->flags4 & TR4_HURT_COLD) level *= 2;
+
+	return (level);
+}
+
+/*
+ * Poison resist level
+ */
+byte res_pois_lvl(void)
+{
+	byte level = 9;
+	
+	if (p_ptr->tim.invuln) return (0);
+	if (p_ptr->flags2 & TR2_RES_POIS) return(0);
+	if (p_ptr->tim.oppose_pois) return(0);
+
+	return (level);
+}
+
+/*
+ * Apply resistance to damage
+ */
+int resist(int dam, byte (*f_func) (void))
+{
+	/* Use the function we were passed, and round up the damage */
+	return ((dam * f_func() + 8) / 9);
+}
+
+
+/*
+ * Acid has hit the player, attempt to affect some armor.
+ *
+ * Note that the "base armor" of an object never changes.
+ *
+ * If any armor is damaged (or resists), the player takes less damage.
+ */
+static int minus_ac(void)
+{
+	object_type *o_ptr = NULL;
+	char o_name[256];
+
+
+	/* Pick a (possibly empty) inventory slot */
+	switch (randint1(6))
+	{
+		case 1:
+		{
+			o_ptr = &p_ptr->equipment[EQUIP_BODY];
+			break;
+		}
+		case 2:
+		{
+			o_ptr = &p_ptr->equipment[EQUIP_ARM];
+			break;
+		}
+		case 3:
+		{
+			o_ptr = &p_ptr->equipment[EQUIP_OUTER];
+			break;
+		}
+		case 4:
+		{
+			o_ptr = &p_ptr->equipment[EQUIP_HANDS];
+			break;
+		}
+		case 5:
+		{
+			o_ptr = &p_ptr->equipment[EQUIP_HEAD];
+			break;
+		}
+		case 6:
+		{
+			o_ptr = &p_ptr->equipment[EQUIP_FEET];
+			break;
+		}
+	}
+
+	/* Nothing to damage */
+	if (!o_ptr->k_idx) return (FALSE);
+
+	/* No damage left to be done */
+	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
+
+
+	/* Describe */
+	object_desc(o_name, o_ptr, FALSE, 0, 256);
+
+	/* Object resists */
+	if (o_ptr->flags3 & TR3_IGNORE_ACID)
+	{
+		msgf("Your %s is unaffected!", o_name);
+
+		return (TRUE);
+	}
+
+	/* Message */
+	msgf("Your %s is damaged!", o_name);
+
+	/* Damage the item */
+	o_ptr->to_a--;
+
+	/* Calculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_EQUIP | PW_PLAYER);
+
+	/* Item was damaged */
+	return (TRUE);
+}
+
+
+/*
+ * Hurt the player with Acid
+ */
+void acid_dam(int dam, cptr kb_str)
+{
+	int inv;
+	
+	dam = resist(dam, res_acid_lvl);
+
+	/* Total Immunity? */
+	if (dam <= 0) return;
+
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+
+	if ((res_acid_lvl() > 3) && one_in_(HURT_CHANCE))
+		(void)do_dec_stat(A_CHR);
+
+	/* If any armor gets hit, defend the player */
+	if (minus_ac()) dam = (dam + 1) / 2;
+
+	/* Take damage */
+	take_hit(dam, kb_str);
+
+	/* Inventory damage */
+	if (res_acid_lvl() > 3)
+		(void)inven_damage(set_acid_destroy, inv);
+}
+
+
+/*
+ * Hurt the player with electricity
+ */
+void elec_dam(int dam, cptr kb_str)
+{
+	int inv;
+	
+	dam = resist(dam, res_elec_lvl);
+
+	/* Total immunity */
+	if (dam <= 0) return;
+
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+
+	if ((res_elec_lvl() > 3) && one_in_(HURT_CHANCE))
+		(void)do_dec_stat(A_DEX);
+
+	/* Take damage */
+	take_hit(dam, kb_str);
+
+	/* Inventory damage */
+	if (res_acid_lvl() > 3)
+		(void)inven_damage(set_elec_destroy, inv);
+}
+
+
+/*
+ * Hurt the player with Fire
+ */
+void fire_dam(int dam, cptr kb_str)
+{
+	int inv;
+	
+	dam = resist(dam, res_fire_lvl);
+
+	/* Totally immune? */
+	if (dam <= 0) return;
+
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+
+	if ((res_fire_lvl() > 3) && one_in_(HURT_CHANCE))
+		(void)do_dec_stat(A_STR);
+
+	/* Take damage */
+	take_hit(dam, kb_str);
+
+	/* Inventory damage */
+	if (res_fire_lvl() > 3)
+		(void)inven_damage(set_fire_destroy, inv);
+}
+
+
+/*
+ * Hurt the player with Cold
+ */
+void cold_dam(int dam, cptr kb_str)
+{
+	int inv;
+	
+	dam = resist(dam, res_cold_lvl);
+
+	/* Total immunity? */
+	if (dam <= 0) return;
+
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+
+	if ((res_cold_lvl() > 3) && one_in_(HURT_CHANCE))
+		(void)do_dec_stat(A_STR);
+
+	/* Take damage */
+	take_hit(dam, kb_str);
+
+	/* Inventory damage */
+	if (res_cold_lvl() > 3)
+		(void)inven_damage(set_cold_destroy, inv);
+}
+
+
+/*
  * Set "p_ptr->stun", notice observable changes
  *
  * Note the special code to only notice "range" changes.

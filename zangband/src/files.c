@@ -1811,7 +1811,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 	}
 
 	/* Mutations */
-	if (p_ptr->muta3)
+	if (p_ptr->muta1)
 	{
 		if (p_ptr->muta1 & MUT1_VAMPIRISM)
 		{
@@ -1833,7 +1833,10 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 		{
 			(*f4) |= TR4_CANT_EAT;
 		}
-		
+	}
+	
+	if (p_ptr->muta2)
+	{
 		if (p_ptr->muta2 & MUT2_BEAK)
 		{
 			(*f4) |= TR4_CANT_EAT;
@@ -1843,7 +1846,10 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 		{
 			(*f2) &= ~(TR2_RES_FEAR);
 		}
+	}
 
+	if (p_ptr->muta3)
+	{
 		if (p_ptr->muta3 & MUT3_HYPER_INT)
 		{
 			(*f4) |= TR4_HURT_ELEC;
@@ -1913,6 +1919,12 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 		if (p_ptr->muta3 & MUT3_MOTION)
 		{
 			(*f2) |= TR2_FREE_ACT;
+		}
+		
+		if (p_ptr->muta3 & MUT3_VULN_ELEM)
+		{
+			(*f4) |= TR4_HURT_ACID | TR4_HURT_ELEC |
+					 TR4_HURT_FIRE | TR4_HURT_COLD;
 		}
 	}
 }
