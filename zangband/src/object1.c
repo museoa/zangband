@@ -2396,7 +2396,7 @@ void display_equip(void)
 		if (show_weights && o_ptr->weight)
 		{
 			int wgt = o_ptr->weight * o_ptr->number;
-			int col = (show_labels ? wid - 28 : wid - 19);
+			int col = (show_labels ? wid - 28 : wid - 9);
 			sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
 			Term_putstr(col, i, -1, TERM_WHITE, tmp_val);
 		}
