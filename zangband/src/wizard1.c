@@ -1204,7 +1204,7 @@ static bool make_fake_artifact(object_type *o_ptr, int a_idx)
 	o_ptr->weight = a_ptr->weight;
 
 	/* Mega-Hack -- set activation */
-	o_ptr->activate = i + 128;
+	o_ptr->activate = a_idx + 128;
 
 	/* Do not make another one */
 	a_ptr->cur_num = 1;
