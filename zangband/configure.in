@@ -5,7 +5,7 @@ dnl the source distribution is installed correctly.
 AC_INIT(src/main.c)
 
 dnl write the resulting #defines into a header file
-AM_CONFIG_HEADER(src/autoconf.h)
+AC_CONFIG_HEADERS([src/autoconf.h])
 
 dnl default option
 GAMEGROUP="games"
@@ -97,6 +97,18 @@ else
 
   dnl Check for the Athena widget set
   AC_CHECK_LIB(Xaw, XawInitializeWidgetSet, [AC_DEFINE(USE_XAW, 1, [XAW port]) LIBS="$LIBS -lXaw"])
+  
+  dnl Check for the gtk widget set
+  AC_CHECK_PROG(GTK, gtk-config, "true", "false")
+  
+  if test "$GTK" != "false"; then
+     CFLAGS="$CFLAGS `gtk-config --cflags`"
+     LIBS="$LIBS `gtk-config --libs`"
+	 AC_TRY_COMPILE([#include "gtk/gtk.h"],[GtkWidget x;],
+     [
+	   AC_DEFINE(USE_GTK, 1, [Gtk port])
+     ])
+  fi
   
   
   dnl We need to check in lots of places for the tk port. :-/
