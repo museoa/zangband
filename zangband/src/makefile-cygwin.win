@@ -15,11 +15,8 @@
 # and 'USE_SOUND'. (Note that I have not as yet got sound and
 # graphics working)
 #
-# In main-win.c, comment out lines 835 through 838 ie.
-# 835:  else if (mkdir(s)) 
-# 836:  {
-# 837:          quit_fmt("Unable to create directory:\n%s", s);
-# 838:  }
+# In main-win.c, comment out lines 245
+# 245:  #include <mmsystems.h> 
 #
 # In main-win.c, comment out lines 3917 and 3918 ie.
 # 3917: if (infGraph.hPalette) DeleteObject(infGraph.hPalette);
