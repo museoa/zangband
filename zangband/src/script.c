@@ -540,7 +540,7 @@ void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 	/* Paranoia */
 	if (!success)
 	{
-		msgf("Script for object: %v failed.", OBJECT_FMT(o_ptr, FALSE, 3));
+		msgf("Script for object: %v failed.", OBJECT_STORE_FMT(o_ptr, FALSE, 3));
 	}
 }
 
