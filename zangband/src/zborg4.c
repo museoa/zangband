@@ -864,7 +864,6 @@ static void borg_notice_weapon(int hold, int extra_blows)
 
 		/* Boost digging skill by weapon weight */
 		borg_skill[BI_DIG] += (l_ptr->weight / 10);
-
 	}
 
 	/* priest weapon penalty for non-blessed edged weapons */
@@ -2468,6 +2467,103 @@ static void borg_notice_home_clear(void)
 
 
 /*
+ * Notice flags on item
+ */
+static void borg_notice_home_flags(list_item *l_ptr)
+{
+	if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) num_slow_digest += l_ptr->number;
+	if (l_ptr->kn_flags3 & TR3_REGEN) num_regenerate += l_ptr->number;
+	if (l_ptr->kn_flags3 & TR3_TELEPATHY) num_telepathy += l_ptr->number;
+	if (l_ptr->kn_flags3 & TR3_SEE_INVIS) num_see_inv += l_ptr->number;
+	if (l_ptr->kn_flags3 & TR3_FEATHER) num_ffall += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_FREE_ACT) num_free_act += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) num_hold_life += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_IM_FIRE)
+	{
+		num_immune_fire += l_ptr->number;
+		num_resist_fire += l_ptr->number;
+	}
+	if (l_ptr->kn_flags2 & TR2_IM_ACID)
+	{
+		num_immune_acid += l_ptr->number;
+		num_resist_acid += l_ptr->number;
+	}
+	if (l_ptr->kn_flags2 & TR2_IM_COLD)
+	{
+		num_immune_cold += l_ptr->number;
+		num_resist_cold += l_ptr->number;
+	}
+	if (l_ptr->kn_flags2 & TR2_IM_ELEC)
+	{
+		num_immune_elec += l_ptr->number;
+		num_resist_elec += l_ptr->number;
+	}
+	if (l_ptr->kn_flags2 & TR2_RES_ACID) num_resist_acid += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_ELEC) num_resist_elec += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_FIRE) num_resist_fire += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_COLD) num_resist_cold += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_POIS) num_resist_pois += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_SOUND) num_resist_sound += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_LITE) num_resist_lite += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_DARK) num_resist_dark += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_CHAOS) num_resist_chaos += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_CONF) num_resist_conf += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_DISEN) num_resist_disen += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_SHARDS) num_resist_shard += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_NEXUS) num_resist_nexus += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_BLIND) num_resist_blind += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_RES_NETHER) num_resist_neth += l_ptr->number;
+
+	/* Count Sustains */
+	if (l_ptr->kn_flags2 & TR2_SUST_STR) num_sustain_str += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_SUST_INT) num_sustain_str += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_SUST_WIS) num_sustain_str += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_SUST_DEX) num_sustain_str += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_SUST_CON) num_sustain_str += l_ptr->number;
+	if (l_ptr->kn_flags2 & TR2_SUST_STR &&
+		l_ptr->kn_flags2 & TR2_SUST_INT &&
+		l_ptr->kn_flags2 & TR2_SUST_WIS &&
+		l_ptr->kn_flags2 & TR2_SUST_DEX &&
+		l_ptr->kn_flags2 & TR2_SUST_CON) num_sustain_all += l_ptr->number;
+
+	/* count up bonus to stats */
+	if (l_ptr->kn_flags1 & TR1_STR)
+	{
+		if (l_ptr->tval != TV_RING)
+			home_stat_add[A_STR] += l_ptr->pval * l_ptr->number;
+	}
+	if (l_ptr->kn_flags1 & TR1_INT)
+	{
+		if (l_ptr->tval != TV_RING)
+			home_stat_add[A_INT] += l_ptr->pval * l_ptr->number;
+	}
+	if (l_ptr->kn_flags1 & TR1_WIS)
+	{
+		if (l_ptr->tval != TV_RING)
+			home_stat_add[A_WIS] += l_ptr->pval * l_ptr->number;
+	}
+	if (l_ptr->kn_flags1 & TR1_DEX)
+	{
+		if (l_ptr->tval != TV_RING)
+			home_stat_add[A_DEX] += l_ptr->pval * l_ptr->number;
+	}
+	if (l_ptr->kn_flags1 & TR1_CON)
+	{
+		if (l_ptr->tval != TV_RING)
+			home_stat_add[A_CON] += l_ptr->pval * l_ptr->number;
+	}
+	if (l_ptr->kn_flags1 & TR1_CHR)
+	{
+		if (l_ptr->tval != TV_RING)
+			home_stat_add[A_CHR] += l_ptr->pval * l_ptr->number;
+	}
+
+	/* count up bonus to speed */
+	if (l_ptr->kn_flags1 & TR1_SPEED) num_speed += l_ptr->pval * l_ptr->number;
+}
+
+
+/*
  * This checks for duplicate items in the home
  */
 static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
@@ -2518,6 +2614,505 @@ static void borg_notice_home_dupe(list_item *l_ptr, bool check_sval, int i)
 	num_duplicate_items += dupe_count;
 }
 
+/*
+ * Examine weapons in the home
+ */
+static void borg_notice_home_weapon(list_item *l_ptr)
+{
+	s16b num_blow;
+	
+	int str_index, dex_index;
+	int num = 0, wgt = 0, mul = 0, div = 0;
+
+	num_weapons += l_ptr->number;
+
+	/* apw most edged weapons hurt magic for priests */
+	if (borg_class == CLASS_PRIEST)
+	{
+		/* Penalize non-blessed edged weapons */
+		if (((l_ptr->tval == TV_SWORD) || (l_ptr->tval == TV_POLEARM))
+			&& (!(l_ptr->kn_flags3 & TR3_BLESSED)))
+		{
+			num_edged_weapon += l_ptr->number;
+		}
+	}
+
+
+	/*
+	 * NOTE:  This damage does not take slays into account.
+	 * It is just a rough estimate to make sure the glave of pain
+	 * is kept if it is found.
+	 * It is hard to hold a heavy weapon.
+	 */
+	num_blow = 1;
+
+	if (adj_str_hold[my_stat_ind[A_STR]] >= l_ptr->weight / 10)
+	{
+
+		/* Analyze the class */
+		switch (borg_class)
+		{
+			case CLASS_WARRIOR:
+			{
+				/* Warrior */
+				num = 5;
+				wgt = 30;
+				mul = 5;
+				break;
+			}
+
+			case CLASS_MAGE:
+			case CLASS_HIGH_MAGE:
+			{
+				/* Mage */
+				num = 2;
+				wgt = 40;
+				mul = 2;
+				break;
+			}
+
+			case CLASS_PRIEST:
+			case CLASS_MINDCRAFTER:
+			{
+				/* Priest, Mindcrafter */
+				num = 4;
+				wgt = 35;
+				mul = 3;
+				break;
+			}
+
+			case CLASS_ROGUE:
+			{
+				/* Rogue */
+				num = 4;
+				wgt = 30;
+				mul = 3;
+				break;
+			}
+
+			case CLASS_RANGER:
+			{
+				/* Ranger */
+				num = 4;
+				wgt = 35;
+				mul = 4;
+				break;
+			}
+
+			case CLASS_PALADIN:
+			{
+				/* Paladin */
+				num = 4;
+				wgt = 30;
+				mul = 4;
+				break;
+			}
+
+			case CLASS_WARRIOR_MAGE:
+			{
+				/* Warrior-Mage */
+				num = 4;
+				wgt = 35;
+				mul = 3;
+				break;
+			}
+
+			case CLASS_CHAOS_WARRIOR:
+			{
+				/* Chaos Warrior */
+				num = 4;
+				wgt = 30;
+				mul = 4;
+				break;
+			}
+
+			case CLASS_MONK:
+			{
+				/* Monk */
+				num = ((p_ptr->lev < 40) ? 2 : 3);
+				wgt = 40;
+				mul = 4;
+				break;
+			}
+		}
+
+		/* Enforce a minimum "weight" */
+		div = ((l_ptr->weight < wgt) ? wgt : l_ptr->weight);
+
+		/* Access the strength vs weight */
+		str_index = (adj_str_blow[my_stat_ind[A_STR]] * mul / div);
+
+		/* Maximal value */
+		if (str_index > 11) str_index = 11;
+
+		/* Index by dexterity */
+		dex_index = (adj_dex_blow[my_stat_ind[A_DEX]]);
+
+		/* Maximal value */
+		if (dex_index > 11) dex_index = 11;
+
+		/* Use the blows table */
+		num_blow = blows_table[str_index][dex_index];
+
+		/* Maximal value */
+		if (num_blow > num) num_blow = num;
+	}
+
+	/* Require at least one blow */
+	if (num_blow < 1) num_blow = 1;
+
+	if (l_ptr->kn_flags1 & TR1_BLOWS) num_blow += l_ptr->pval;
+
+	num_blow *= l_ptr->number;
+
+	if (l_ptr->to_d > 8 || borg_skill[BI_CLEVEL] < 15)
+	{
+		home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
+								   (borg_skill[BI_TODAM] +
+									l_ptr->to_d));
+	}
+	else
+	{
+		home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
+								   (borg_skill[BI_TODAM] + 8));
+	}
+}
+
+/*
+ * Examine potions in the home
+ */
+static void borg_notice_home_potion(list_item *l_ptr)
+{
+	/* Analyze */
+	switch (k_info[l_ptr->k_idx].sval)
+	{
+		case SV_POTION_CURE_CRITICAL:
+		{
+			num_cure_critical += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_CURE_SERIOUS:
+		{
+			num_cure_serious += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RESIST_HEAT:
+		{
+			num_pot_rheat += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RESIST_COLD:
+		{
+			num_pot_rcold += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RES_STR:
+		{
+			num_fix_stat[A_STR] += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RES_INT:
+		{
+			num_fix_stat[A_INT] += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RES_WIS:
+		{
+			num_fix_stat[A_WIS] += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RES_DEX:
+		{
+			num_fix_stat[A_DEX] += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RES_CON:
+		{
+			num_fix_stat[A_CON] += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RES_CHR:
+		{
+			num_fix_stat[A_CHR] += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RESTORE_EXP:
+		{
+			num_fix_exp += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RESTORE_MANA:
+		{
+			num_mana += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_HEALING:
+		{
+			num_heal += l_ptr->number;
+			num_heal_true += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_STAR_HEALING:
+		{
+			num_ez_heal += l_ptr->number;
+			num_ez_heal_true += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_LIFE:
+		{
+			num_ez_heal += l_ptr->number;
+			num_ez_heal_true += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_BERSERK_STRENGTH:
+		{
+			num_berserk += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_SPEED:
+		{
+			num_speed += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_INVULNERABILITY:
+		{
+			num_goi_pot += l_ptr->number;
+			break;
+		}
+
+		case SV_POTION_RESISTANCE:
+		{
+			num_resist_pot += l_ptr->number;
+			break;
+		}
+	}
+}
+
+/*
+ * Examine scrolls in the home
+ */
+static void borg_notice_home_scroll(list_item *l_ptr)
+{
+	/* Analyze the scroll */
+	switch (k_info[l_ptr->k_idx].sval)
+	{
+		case SV_SCROLL_IDENTIFY:
+		{
+			num_ident += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_STAR_IDENTIFY:
+		{
+			num_star_ident += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_PHASE_DOOR:
+		{
+			num_phase += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_TELEPORT:
+		{
+			num_escape += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_WORD_OF_RECALL:
+		{
+			num_recall += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_ENCHANT_ARMOR:
+		{
+			num_enchant_to_a += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
+		{
+			num_enchant_to_h += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
+		{
+			num_enchant_to_d += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_PROTECTION_FROM_EVIL:
+		{
+			num_pfe += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_RUNE_OF_PROTECTION:
+		{
+			num_glyph += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_TELEPORT_LEVEL:
+		{
+			num_teleport_level += l_ptr->number;
+			break;
+		}
+
+		case SV_SCROLL_SATISFY_HUNGER:
+		{
+			num_food += l_ptr->number;
+			break;
+		}
+	}
+}
+
+/*
+ * Include effects of spells on home items
+ */
+static void borg_notice_home_spells(void)
+{
+	/* Handle "satisfy hunger" -> infinite food */
+	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 10) ||
+		borg_spell_legal_fail(REALM_LIFE, 0, 7, 10) ||
+		borg_spell_legal_fail(REALM_ARCANE, 2, 7, 10) ||
+		borg_spell_legal_fail(REALM_NATURE, 0, 3, 10))
+	{
+		num_food += 1000;
+	}
+
+	/* Handle "identify" -> infinite identifies */
+	if (borg_spell_legal(REALM_SORCERY, 1, 1) ||
+		borg_spell_legal(REALM_ARCANE, 3, 2))
+	{
+		num_ident += 1000;
+	}
+	/* Handle "enchant weapon" */
+	if (borg_spell_legal_fail(REALM_SORCERY, 3, 4, 40))
+	{
+		num_enchant_to_h += 1000;
+		num_enchant_to_d += 1000;
+	}
+
+	/* apw Handle "protection from evil" */
+	if (borg_spell_legal(REALM_LIFE, 1, 5))
+	{
+		num_pfe += 1000;
+	}
+
+	/* apw Handle "rune of protection" glyph */
+	if (borg_spell_legal(REALM_LIFE, 1, 7) ||
+		borg_spell_legal(REALM_LIFE, 2, 7))
+	{
+		num_glyph += 1000;
+	}
+
+	/* handle restore */
+
+	/* Handle recall */
+	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
+		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
+		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
+		(borg_skill[BI_CDEPTH] == 100 &&
+			(borg_spell_legal(REALM_LIFE, 3, 6) ||
+			borg_spell_legal(REALM_SORCERY, 2, 7) ||
+			borg_spell_legal(REALM_TRUMP, 1, 6))))
+	{
+		num_recall += 1000;
+	}
+
+	/* Handle teleport_level */
+	if (borg_spell_legal_fail(REALM_SORCERY, 2, 6, 40) ||
+		borg_spell_legal_fail(REALM_TRUMP, 1, 5, 40))
+	{
+		num_teleport_level += 1000;
+	}
+}
+
+
+/*
+ * Innate abilities of the player can affect home item choice
+ */
+static void borg_notice_home_player(void)
+{
+	u32b f1, f2, f3;
+
+	/* Hack -- No need for stat repair */
+	if (borg_skill[BI_SSTR]) num_fix_stat[A_STR] += 1000;
+	if (borg_skill[BI_SINT]) num_fix_stat[A_INT] += 1000;
+	if (borg_skill[BI_SWIS]) num_fix_stat[A_WIS] += 1000;
+	if (borg_skill[BI_SDEX]) num_fix_stat[A_DEX] += 1000;
+	if (borg_skill[BI_SCON]) num_fix_stat[A_CON] += 1000;
+	if (borg_skill[BI_SCHR]) num_fix_stat[A_CHR] += 1000;
+
+	/* Extract the player flags */
+	player_flags(&f1, &f2, &f3);
+
+	/* Good flags */
+	if (f3 & (TR3_SLOW_DIGEST)) num_slow_digest = TRUE;
+	if (f3 & (TR3_FEATHER)) num_ffall = TRUE;
+	if (f3 & (TR3_LITE)) num_lite = TRUE;
+	if (f3 & (TR3_REGEN)) num_regenerate = TRUE;
+	if (f3 & (TR3_TELEPATHY)) num_telepathy = TRUE;
+	if (f3 & (TR3_SEE_INVIS)) num_see_inv = TRUE;
+	if (f2 & (TR2_FREE_ACT)) num_free_act = TRUE;
+	if (f2 & (TR2_HOLD_LIFE)) num_hold_life = TRUE;
+
+	/* Weird flags */
+
+	/* Bad flags */
+
+	/* Immunity flags */
+	if (f2 & (TR2_IM_FIRE)) num_immune_fire = TRUE;
+	if (f2 & (TR2_IM_ACID)) num_immune_acid = TRUE;
+	if (f2 & (TR2_IM_COLD)) num_immune_cold = TRUE;
+	if (f2 & (TR2_IM_ELEC)) num_immune_elec = TRUE;
+
+	/* Resistance flags */
+	if (f2 & (TR2_RES_ACID)) num_resist_acid = TRUE;
+	if (f2 & (TR2_RES_ELEC)) num_resist_elec = TRUE;
+	if (f2 & (TR2_RES_FIRE)) num_resist_fire = TRUE;
+	if (f2 & (TR2_RES_COLD)) num_resist_cold = TRUE;
+	if (f2 & (TR2_RES_POIS)) num_resist_pois = TRUE;
+	if (f2 & (TR2_RES_LITE)) num_resist_lite = TRUE;
+	if (f2 & (TR2_RES_DARK)) num_resist_dark = TRUE;
+	if (f2 & (TR2_RES_BLIND)) num_resist_blind = TRUE;
+	if (f2 & (TR2_RES_CONF)) num_resist_conf = TRUE;
+	if (f2 & (TR2_RES_SOUND)) num_resist_sound = TRUE;
+	if (f2 & (TR2_RES_SHARDS)) num_resist_shard = TRUE;
+	if (f2 & (TR2_RES_NEXUS)) num_resist_nexus = TRUE;
+	if (f2 & (TR2_RES_NETHER)) num_resist_neth = TRUE;
+	if (f2 & (TR2_RES_CHAOS)) num_resist_chaos = TRUE;
+	if (f2 & (TR2_RES_DISEN)) num_resist_disen = TRUE;
+
+	/* Sustain flags */
+	if (f2 & (TR2_SUST_STR)) num_sustain_str = TRUE;
+	if (f2 & (TR2_SUST_INT)) num_sustain_int = TRUE;
+	if (f2 & (TR2_SUST_WIS)) num_sustain_wis = TRUE;
+	if (f2 & (TR2_SUST_DEX)) num_sustain_dex = TRUE;
+	if (f2 & (TR2_SUST_CON)) num_sustain_con = TRUE;
+}
+
 
 /*
  * Helper function -- notice the home inventory
@@ -2527,8 +3122,6 @@ static void borg_notice_home_aux(void)
 	int i;
 
 	list_item *l_ptr;
-
-	u32b f1, f2, f3;
 
 	/*** Process the inventory ***/
 
@@ -2542,96 +3135,10 @@ static void borg_notice_home_aux(void)
 
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
+		
+		/* Notice item flags */
+		borg_notice_home_flags(l_ptr);
 
-		if (l_ptr->kn_flags3 & TR3_SLOW_DIGEST) num_slow_digest += l_ptr->number;
-		if (l_ptr->kn_flags3 & TR3_REGEN) num_regenerate += l_ptr->number;
-		if (l_ptr->kn_flags3 & TR3_TELEPATHY) num_telepathy += l_ptr->number;
-		if (l_ptr->kn_flags3 & TR3_SEE_INVIS) num_see_inv += l_ptr->number;
-		if (l_ptr->kn_flags3 & TR3_FEATHER) num_ffall += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_FREE_ACT) num_free_act += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_HOLD_LIFE) num_hold_life += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_IM_FIRE)
-		{
-			num_immune_fire += l_ptr->number;
-			num_resist_fire += l_ptr->number;
-		}
-		if (l_ptr->kn_flags2 & TR2_IM_ACID)
-		{
-			num_immune_acid += l_ptr->number;
-			num_resist_acid += l_ptr->number;
-		}
-		if (l_ptr->kn_flags2 & TR2_IM_COLD)
-		{
-			num_immune_cold += l_ptr->number;
-			num_resist_cold += l_ptr->number;
-		}
-		if (l_ptr->kn_flags2 & TR2_IM_ELEC)
-		{
-			num_immune_elec += l_ptr->number;
-			num_resist_elec += l_ptr->number;
-		}
-		if (l_ptr->kn_flags2 & TR2_RES_ACID) num_resist_acid += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_ELEC) num_resist_elec += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_FIRE) num_resist_fire += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_COLD) num_resist_cold += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_POIS) num_resist_pois += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_SOUND) num_resist_sound += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_LITE) num_resist_lite += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_DARK) num_resist_dark += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_CHAOS) num_resist_chaos += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_CONF) num_resist_conf += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_DISEN) num_resist_disen += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_SHARDS) num_resist_shard += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_NEXUS) num_resist_nexus += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_BLIND) num_resist_blind += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_RES_NETHER) num_resist_neth += l_ptr->number;
-
-		/* Count Sustains */
-		if (l_ptr->kn_flags2 & TR2_SUST_STR) num_sustain_str += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_SUST_INT) num_sustain_str += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_SUST_WIS) num_sustain_str += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_SUST_DEX) num_sustain_str += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_SUST_CON) num_sustain_str += l_ptr->number;
-		if (l_ptr->kn_flags2 & TR2_SUST_STR &&
-			l_ptr->kn_flags2 & TR2_SUST_INT &&
-			l_ptr->kn_flags2 & TR2_SUST_WIS &&
-			l_ptr->kn_flags2 & TR2_SUST_DEX &&
-			l_ptr->kn_flags2 & TR2_SUST_CON) num_sustain_all += l_ptr->number;
-
-		/* count up bonus to stats */
-		if (l_ptr->kn_flags1 & TR1_STR)
-		{
-			if (l_ptr->tval != TV_RING)
-				home_stat_add[A_STR] += l_ptr->pval * l_ptr->number;
-		}
-		if (l_ptr->kn_flags1 & TR1_INT)
-		{
-			if (l_ptr->tval != TV_RING)
-				home_stat_add[A_INT] += l_ptr->pval * l_ptr->number;
-		}
-		if (l_ptr->kn_flags1 & TR1_WIS)
-		{
-			if (l_ptr->tval != TV_RING)
-				home_stat_add[A_WIS] += l_ptr->pval * l_ptr->number;
-		}
-		if (l_ptr->kn_flags1 & TR1_DEX)
-		{
-			if (l_ptr->tval != TV_RING)
-				home_stat_add[A_DEX] += l_ptr->pval * l_ptr->number;
-		}
-		if (l_ptr->kn_flags1 & TR1_CON)
-		{
-			if (l_ptr->tval != TV_RING)
-				home_stat_add[A_CON] += l_ptr->pval * l_ptr->number;
-		}
-		if (l_ptr->kn_flags1 & TR1_CHR)
-		{
-			if (l_ptr->tval != TV_RING)
-				home_stat_add[A_CHR] += l_ptr->pval * l_ptr->number;
-		}
-
-		/* count up bonus to speed */
-		if (l_ptr->kn_flags1 & TR1_SPEED) num_speed += l_ptr->pval * l_ptr->number;
 
 		/* Analyze the item */
 		switch (l_ptr->tval)
@@ -2733,162 +3240,8 @@ static void borg_notice_home_aux(void)
 			case TV_HAFTED:
 			case TV_DIGGING:
 			{
-				s16b num_blow;
-
-				num_weapons += l_ptr->number;
-				
-				/* apw most edged weapons hurt magic for priests */
-				if (borg_class == CLASS_PRIEST)
-				{
-					/* Penalize non-blessed edged weapons */
-					if (((l_ptr->tval == TV_SWORD) || (l_ptr->tval == TV_POLEARM))
-						&& (!(l_ptr->kn_flags3 & TR3_BLESSED)))
-					{
-						num_edged_weapon += l_ptr->number;
-					}
-				}
-
-
-				/*
-				 * NOTE:  This damage does not take slays into account.
-				 * It is just a rough estimate to make sure the glave of pain
-				 * is kept if it is found.
-				 * It is hard to hold a heavy weapon.
-				 */
-				num_blow = 1;
-				
-				if (adj_str_hold[my_stat_ind[A_STR]] >= l_ptr->weight / 10)
-				{
-					int str_index, dex_index;
-					int num = 0, wgt = 0, mul = 0, div = 0;
-
-					/* Analyze the class */
-					switch (borg_class)
-					{
-						case CLASS_WARRIOR:
-						{
-							/* Warrior */
-							num = 5;
-							wgt = 30;
-							mul = 5;
-							break;
-						}
-
-						case CLASS_MAGE:
-						case CLASS_HIGH_MAGE:
-						{
-							/* Mage */
-							num = 2;
-							wgt = 40;
-							mul = 2;
-							break;
-						}
-
-						case CLASS_PRIEST:
-						case CLASS_MINDCRAFTER:
-						{
-							/* Priest, Mindcrafter */
-							num = 4;
-							wgt = 35;
-							mul = 3;
-							break;
-						}
-
-						case CLASS_ROGUE:
-						{
-							/* Rogue */
-							num = 4;
-							wgt = 30;
-							mul = 3;
-							break;
-						}
-
-						case CLASS_RANGER:
-						{
-							/* Ranger */
-							num = 4;
-							wgt = 35;
-							mul = 4;
-							break;
-						}
-
-						case CLASS_PALADIN:
-						{
-							/* Paladin */
-							num = 4;
-							wgt = 30;
-							mul = 4;
-							break;
-						}
-
-						case CLASS_WARRIOR_MAGE:
-						{
-							/* Warrior-Mage */
-							num = 4;
-							wgt = 35;
-							mul = 3;
-							break;
-						}
-
-						case CLASS_CHAOS_WARRIOR:
-						{
-							/* Chaos Warrior */
-							num = 4;
-							wgt = 30;
-							mul = 4;
-							break;
-						}
-
-						case CLASS_MONK:
-						{
-							/* Monk */
-							num = ((p_ptr->lev < 40) ? 2 : 3);
-							wgt = 40;
-							mul = 4;
-							break;
-						}
-					}
-
-					/* Enforce a minimum "weight" */
-					div = ((l_ptr->weight < wgt) ? wgt : l_ptr->weight);
-
-					/* Access the strength vs weight */
-					str_index = (adj_str_blow[my_stat_ind[A_STR]] * mul / div);
-
-					/* Maximal value */
-					if (str_index > 11) str_index = 11;
-
-					/* Index by dexterity */
-					dex_index = (adj_dex_blow[my_stat_ind[A_DEX]]);
-
-					/* Maximal value */
-					if (dex_index > 11) dex_index = 11;
-
-					/* Use the blows table */
-					num_blow = blows_table[str_index][dex_index];
-
-					/* Maximal value */
-					if (num_blow > num) num_blow = num;
-
-				}
-
-				/* Require at least one blow */
-				if (num_blow < 1) num_blow = 1;
-
-				if (l_ptr->kn_flags1 & TR1_BLOWS) num_blow += l_ptr->pval;
-
-				num_blow *= l_ptr->number;
-				if (l_ptr->to_d > 8 || borg_skill[BI_CLEVEL] < 15)
-				{
-					home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
-											   (borg_skill[BI_TODAM] +
-												l_ptr->to_d));
-				}
-				else
-				{
-					home_damage += num_blow * (l_ptr->dd * l_ptr->ds +
-											   (borg_skill[BI_TODAM] + 8));
-				}
+				/* Look at weapon information */
+				borg_notice_home_weapon(l_ptr);
 
 				/* see if this item is a duplicate */
 				borg_notice_home_dupe(l_ptr, FALSE, i);
@@ -3037,127 +3390,7 @@ static void borg_notice_home_aux(void)
 			case TV_POTION:
 			{
 				/* Potions */
-
-				/* Analyze */
-				switch (k_info[l_ptr->k_idx].sval)
-				{
-					case SV_POTION_CURE_CRITICAL:
-					{
-						num_cure_critical += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_CURE_SERIOUS:
-					{
-						num_cure_serious += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RESIST_HEAT:
-					{
-						num_pot_rheat += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RESIST_COLD:
-					{
-						num_pot_rcold += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RES_STR:
-					{
-						num_fix_stat[A_STR] += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RES_INT:
-					{
-						num_fix_stat[A_INT] += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RES_WIS:
-					{
-						num_fix_stat[A_WIS] += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RES_DEX:
-					{
-						num_fix_stat[A_DEX] += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RES_CON:
-					{
-						num_fix_stat[A_CON] += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RES_CHR:
-					{
-						num_fix_stat[A_CHR] += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RESTORE_EXP:
-					{
-						num_fix_exp += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RESTORE_MANA:
-					{
-						num_mana += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_HEALING:
-					{
-						num_heal += l_ptr->number;
-						num_heal_true += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_STAR_HEALING:
-					{
-						num_ez_heal += l_ptr->number;
-						num_ez_heal_true += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_LIFE:
-					{
-						num_ez_heal += l_ptr->number;
-						num_ez_heal_true += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_BERSERK_STRENGTH:
-					{
-						num_berserk += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_SPEED:
-					{
-						num_speed += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_INVULNERABILITY:
-					{
-						num_goi_pot += l_ptr->number;
-						break;
-					}
-
-					case SV_POTION_RESISTANCE:
-					{
-						num_resist_pot += l_ptr->number;
-						break;
-					}
-				}
+				borg_notice_home_potion(l_ptr);
 
 				break;
 			}
@@ -3166,83 +3399,8 @@ static void borg_notice_home_aux(void)
 			case TV_SCROLL:
 			{
 				/* Scrolls */
-
-				/* Analyze the scroll */
-				switch (k_info[l_ptr->k_idx].sval)
-				{
-					case SV_SCROLL_IDENTIFY:
-					{
-						num_ident += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_STAR_IDENTIFY:
-					{
-						num_star_ident += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_PHASE_DOOR:
-					{
-						num_phase += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_TELEPORT:
-					{
-						num_escape += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_WORD_OF_RECALL:
-					{
-						num_recall += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_ENCHANT_ARMOR:
-					{
-						num_enchant_to_a += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
-					{
-						num_enchant_to_h += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
-					{
-						num_enchant_to_d += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_PROTECTION_FROM_EVIL:
-					{
-						num_pfe += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_RUNE_OF_PROTECTION:
-					{
-						num_glyph += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_TELEPORT_LEVEL:
-					{
-						num_teleport_level += l_ptr->number;
-						break;
-					}
-
-					case SV_SCROLL_SATISFY_HUNGER:
-					{
-						num_food += l_ptr->number;
-						break;
-					}
-				}
-
+				borg_notice_home_scroll(l_ptr);
+				
 				break;
 			}
 
@@ -3324,121 +3482,10 @@ static void borg_notice_home_aux(void)
 
 
 	/*** Process the Spells and Prayers ***/
+	borg_notice_home_spells();
 
-	/* Handle "satisfy hunger" -> infinite food */
-	if (borg_spell_legal_fail(REALM_SORCERY, 2, 0, 10) ||
-		borg_spell_legal_fail(REALM_LIFE, 0, 7, 10) ||
-		borg_spell_legal_fail(REALM_ARCANE, 2, 7, 10) ||
-		borg_spell_legal_fail(REALM_NATURE, 0, 3, 10))
-	{
-		num_food += 1000;
-	}
-
-	/* Handle "identify" -> infinite identifies */
-	if (borg_spell_legal(REALM_SORCERY, 1, 1) ||
-		borg_spell_legal(REALM_ARCANE, 3, 2))
-	{
-		num_ident += 1000;
-	}
-	/* Handle "enchant weapon" */
-	if (borg_spell_legal_fail(REALM_SORCERY, 3, 4, 40))
-	{
-		num_enchant_to_h += 1000;
-		num_enchant_to_d += 1000;
-	}
-
-	/* apw Handle "protection from evil" */
-	if (borg_spell_legal(REALM_LIFE, 1, 5))
-	{
-		num_pfe += 1000;
-	}
-
-	/* apw Handle "rune of protection" glyph */
-	if (borg_spell_legal(REALM_LIFE, 1, 7) ||
-		borg_spell_legal(REALM_LIFE, 2, 7))
-	{
-		num_glyph += 1000;
-	}
-
-	/* handle restore */
-
-	/* Handle recall */
-	if (borg_spell_legal_fail(REALM_ARCANE, 3, 6, 40) ||
-		borg_spell_legal_fail(REALM_SORCERY, 2, 7, 40) ||
-		borg_spell_legal_fail(REALM_TRUMP, 1, 6, 40) ||
-		(borg_skill[BI_CDEPTH] == 100 &&
-			(borg_spell_legal(REALM_LIFE, 3, 6) ||
-			borg_spell_legal(REALM_SORCERY, 2, 7) ||
-			borg_spell_legal(REALM_TRUMP, 1, 6))))
-	{
-		num_recall += 1000;
-	}
-
-	/* Handle teleport_level */
-	if (borg_spell_legal_fail(REALM_SORCERY, 2, 6, 40) ||
-		borg_spell_legal_fail(REALM_TRUMP, 1, 5, 40))
-	{
-		num_teleport_level += 1000;
-	}
-
-
-	/*** Process the Needs ***/
-
-	/* Hack -- No need for stat repair */
-	if (borg_skill[BI_SSTR]) num_fix_stat[A_STR] += 1000;
-	if (borg_skill[BI_SINT]) num_fix_stat[A_INT] += 1000;
-	if (borg_skill[BI_SWIS]) num_fix_stat[A_WIS] += 1000;
-	if (borg_skill[BI_SDEX]) num_fix_stat[A_DEX] += 1000;
-	if (borg_skill[BI_SCON]) num_fix_stat[A_CON] += 1000;
-	if (borg_skill[BI_SCHR]) num_fix_stat[A_CHR] += 1000;
-
-	/* Extract the player flags */
-	player_flags(&f1, &f2, &f3);
-
-	/* Good flags */
-	if (f3 & (TR3_SLOW_DIGEST)) num_slow_digest = TRUE;
-	if (f3 & (TR3_FEATHER)) num_ffall = TRUE;
-	if (f3 & (TR3_LITE)) num_lite = TRUE;
-	if (f3 & (TR3_REGEN)) num_regenerate = TRUE;
-	if (f3 & (TR3_TELEPATHY)) num_telepathy = TRUE;
-	if (f3 & (TR3_SEE_INVIS)) num_see_inv = TRUE;
-	if (f2 & (TR2_FREE_ACT)) num_free_act = TRUE;
-	if (f2 & (TR2_HOLD_LIFE)) num_hold_life = TRUE;
-
-	/* Weird flags */
-
-	/* Bad flags */
-
-	/* Immunity flags */
-	if (f2 & (TR2_IM_FIRE)) num_immune_fire = TRUE;
-	if (f2 & (TR2_IM_ACID)) num_immune_acid = TRUE;
-	if (f2 & (TR2_IM_COLD)) num_immune_cold = TRUE;
-	if (f2 & (TR2_IM_ELEC)) num_immune_elec = TRUE;
-
-	/* Resistance flags */
-	if (f2 & (TR2_RES_ACID)) num_resist_acid = TRUE;
-	if (f2 & (TR2_RES_ELEC)) num_resist_elec = TRUE;
-	if (f2 & (TR2_RES_FIRE)) num_resist_fire = TRUE;
-	if (f2 & (TR2_RES_COLD)) num_resist_cold = TRUE;
-	if (f2 & (TR2_RES_POIS)) num_resist_pois = TRUE;
-	if (f2 & (TR2_RES_LITE)) num_resist_lite = TRUE;
-	if (f2 & (TR2_RES_DARK)) num_resist_dark = TRUE;
-	if (f2 & (TR2_RES_BLIND)) num_resist_blind = TRUE;
-	if (f2 & (TR2_RES_CONF)) num_resist_conf = TRUE;
-	if (f2 & (TR2_RES_SOUND)) num_resist_sound = TRUE;
-	if (f2 & (TR2_RES_SHARDS)) num_resist_shard = TRUE;
-	if (f2 & (TR2_RES_NEXUS)) num_resist_nexus = TRUE;
-	if (f2 & (TR2_RES_NETHER)) num_resist_neth = TRUE;
-	if (f2 & (TR2_RES_CHAOS)) num_resist_chaos = TRUE;
-	if (f2 & (TR2_RES_DISEN)) num_resist_disen = TRUE;
-
-	/* Sustain flags */
-	if (f2 & (TR2_SUST_STR)) num_sustain_str = TRUE;
-	if (f2 & (TR2_SUST_INT)) num_sustain_int = TRUE;
-	if (f2 & (TR2_SUST_WIS)) num_sustain_wis = TRUE;
-	if (f2 & (TR2_SUST_DEX)) num_sustain_dex = TRUE;
-	if (f2 & (TR2_SUST_CON)) num_sustain_con = TRUE;
-
+	/*** Process the player abilities ***/
+	borg_notice_home_player();
 }
 
 
