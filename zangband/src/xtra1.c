@@ -2062,6 +2062,16 @@ static void calc_torch(void)
 		/* Reduce the lite radius if needed */
 		if (p_ptr->cur_lite > 1) p_ptr->cur_lite = 1;
 	}
+	
+	/*
+	 * Hack - blindness gives a torch radius of zero.
+	 * This speeds up the map_info() function.
+	 */
+	if (p_ptr->blind)
+	{
+		/* No light */
+		p_ptr->cur_lite = 0;
+	}
 
 	/* Notice changes in the "lite radius" */
 	if (p_ptr->old_lite != p_ptr->cur_lite)

@@ -62,8 +62,8 @@ bool set_blind(int v)
 	/* Disturb */
 	if (disturb_state) disturb(0, 0);
 
-	/* Fully update the visuals */
-	p_ptr->update |= (PU_UN_VIEW | PU_VIEW | PU_MONSTERS);
+	/* Fully update the visuals - hack set torch to be radius 0 */
+	p_ptr->update |= (PU_UN_VIEW | PU_VIEW | PU_MONSTERS | PU_TORCH);
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);
