@@ -1692,6 +1692,10 @@ static void draw_dun_cave(void)
 	/* Add stairs */
 	set_feat_bold(xsize / 2, ysize / 2, FEAT_MORE);
 
+	/* XXX XXX XXX Hack - make sure we have the correct sized region later on */
+	set_feat_bold(xsize, ysize, FEAT_DIRT);
+
+
 	/* Add monsters */
 	entrance_monsters(xsize, ysize);
 }
