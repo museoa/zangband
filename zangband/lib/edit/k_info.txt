@@ -656,7 +656,7 @@ F:SHOW_MODS
 N:78:& Arrow~
 G:{:U
 I:17:1:0
-W:3:0:2:1
+W:3:0:2:5
 A:10/1:25/1
 P:0:3d5:0:0:0
 F:SHOW_MODS
@@ -1510,8 +1510,8 @@ A:5/1:10/1
 
 N:195:& Sheaf Arrow~
 G:{:o
-I:17:1:0
-W:10:0:4:3
+I:17:2:0
+W:10:0:4:10
 A:10/4:20/2:30/1:50/1
 P:0:4d5:0:0:0
 F:SHOW_MODS
@@ -2193,7 +2193,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 N:293:& Flight Arrow~
 G:{:y
-I:17:1:0
+I:17:0:0
 W:3:0:1:1
 A:3/2:10/2
 P:0:2d5:0:0:0
