@@ -146,29 +146,21 @@ static void Widget_EventuallyRedraw(Widget *widgetPtr)
 /*
  * Draw a blank square at this 'unkown' location
  */
-static void DrawBlank(int x, int y, BitmapPtr bitmapPtr)
+static void DrawBlank(int x, int y, Widget *widgetPtr)
 {
-	int pitch = bitmapPtr->pitch;
-	int bypp = bitmapPtr->pixelSize;
-	t_icon_data *iconDataPtr;
-	IconPtr srcPtr, dstPtr;
+	BitmapPtr bitmapPtr = widgetPtr->bitmap;
+	IconPtr dstPtr;
 	int y2;
-	int length;
-	
-	/* Access the "blank" icon data */
-	iconDataPtr = &g_icon_data[ICON_TYPE_BLANK];
-	length = iconDataPtr->width * bypp;
-	srcPtr = iconDataPtr->icon_data;
-	
+	int length = widgetPtr->gwidth * bitmapPtr->pixelSize;
+		
 	/* Get the address of where to write the data in the bitmap */
-	dstPtr = bitmapPtr->pixelPtr + x * bypp + y * pitch;
+	dstPtr = bitmapPtr->pixelPtr + x * bitmapPtr->pixelSize + y * bitmapPtr->pitch;
 	
-	/* Write the icon data */
-	for (y2 = 0; y2 < g_icon_size; y2++)
+	/* Clear the area */
+	for (y2 = 0; y2 < widgetPtr->gheight; y2++)
 	{
-		memcpy(dstPtr, srcPtr, length);
-		srcPtr += length;
-		dstPtr += pitch;
+		C_WIPE(dstPtr, length, byte);
+		dstPtr += bitmapPtr->pitch;
 	}
 }
 
@@ -350,7 +342,7 @@ static void widget_draw_all(Widget *widgetPtr)
 				{
 					
 					/* Just "erase" this spot */
-					DrawBlank(xp, yp, widgetPtr->bitmap);
+					DrawBlank(xp, yp, widgetPtr);
 				}
 				
 				continue;
