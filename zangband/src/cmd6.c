@@ -325,9 +325,6 @@ void do_cmd_quaff_potion(void)
  */
 static void do_cmd_read_scroll_aux(int item)
 {
-	int py = p_ptr->py;
-	int px = p_ptr->px;
-
 	bool ident, used_up;
 	object_type *o_ptr;
 
