@@ -1650,17 +1650,20 @@ F:INT | HIDE_TYPE |
 F:SLAY_ANIMAL | BRAND_FIRE | RES_FIRE | SHOW_MODS | LITE | INSTA_ART
 
 
-# The Quarterstaff 'Eriril'
+# The Quarterstaff 'Eriril' -> of the Wandering Wizard
 
-N:119:'Eriril'
-I:21:3:4
+N:119:of the Wandering Wizard
+I:21:3:2
 W:35:18:150:20000
 P:0:1d18:3:5:0
-F:INT | WIS | HIDE_TYPE |
-F:SLAY_EVIL | RES_LITE | LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | INSTA_ART
+F:INT | SP | HIDE_TYPE |
+F:RES_DARK | RES_LITE | LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | INSTA_ART
 L:USE:	msgf("Your quarterstaff glows yellow...")
 L:USE:	if ident_spell() then object.timeout = 10 end
 L:DESC:	return "identify every 10 turns"
+D:This quarterstaff has been owned by many different mages. Each owner
+D:has become a noteworthy mage, but none has kept the staff, choosing 
+D:to instead pass it to a new keeper.
 
 
 # The Quarterstaff of Olorin -> Gandalf
