@@ -113,10 +113,21 @@ distcheck: dist
 	-rm -rf temp2
 	-rm -rf $(DESTDIR)
 
+VER_MAJOR := `grep "\#define VER_MAJOR" src/defines.h | sed s/\#define\ VER_MAJOR\ //`
+VER_MINOR := `grep "\#define VER_MINOR" src/defines.h | sed s/\#define\ VER_MINOR\ //`
+VER_PATCH := `grep "\#define VER_PATCH" src/defines.h | sed s/\#define\ VER_PATCH\ //`
+VER_EXTRA := `grep "\#define VER_EXTRA" src/defines.h | sed s/\#define\ VER_EXTRA\ /pre/`
+ifeq ($(VER_EXTRA), pre)
+	VER_EXTRA :=
+endif
+
+VERSION := $(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)$(VER_EXTRA)
+
+
 distgz: dist
 	cd $(datadir)/games && tar -cvf zangband.tar zangband
-	mv $(datadir)/games/zangband.tar ./
-	gzip -9 zangband.tar
+	mv $(datadir)/games/zangband.tar ./zangband$(VERSION).tar
+	gzip -9 zangband.$(VERSION).tar
 	-rm -rf $(DESTDIR)
 
 clean:
