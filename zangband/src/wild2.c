@@ -2267,6 +2267,8 @@ static void del_block(int x, int y)
 	blk_ptr block_ptr;
 	int xx, yy;
 	int m_idx;
+	
+	if (!wild_refcount[y][x]) quit("Dead wilderness cache!");
 
 	/* Decrement refcount */
 	wild_refcount[y][x]--;
@@ -2439,8 +2441,6 @@ void move_wild(void)
 	p_ptr->old_wild_y = y;	
 }
 
-#if 0
-
 /*
  * Lighten / Darken Wilderness
  */
@@ -2454,13 +2454,11 @@ static void day_night(void)
 		for (x = 0; x < WILD_VIEW; x++)
 		{
 			/* Light or darken wilderness block */
-			light_dark_block(x + min_wid / WILD_BLOCK_SIZE,
-			                 y + min_hgt / WILD_BLOCK_SIZE);
+			light_dark_block(x + p_ptr->old_wild_x, y + p_ptr->old_wild_y);
 		}
 	}
 }
 
-#endif /* 0 */
 
 /*
  * Access the old cave array.
@@ -2575,6 +2573,8 @@ static void del_wild_cache(void)
 	int x = p_ptr->old_wild_x, y = p_ptr->old_wild_y;
 	int i, j;
 		
+	if (!wc_cnt) quit("Deleting empty wilderness cache!");
+	
 	/* Deallocate blocks around player */
 	for (i = 0; i < WILD_VIEW; i++)
 	{
@@ -2619,13 +2619,13 @@ void change_level(int level)
 		in_bounds = in_bounds_wild;
 		in_bounds2 = in_bounds_wild;
 		in_boundsp = in_bounds_wild_player;
+
 #if 0
 		if (p_ptr->depth == 0)
 		{
 			/* Lighten / darken wilderness */
 			day_night();
 		}
-
 #endif /* 0 */
 
 		/* Initialise the boundary */
@@ -2638,7 +2638,17 @@ void change_level(int level)
 		 * Restore the outside town if it exists
 		 * This is mainly done to reinit the fields
 		 */
-		if (switched) init_wild_cache();
+		if (switched)
+		{
+			init_wild_cache();
+		}
+		else
+		{
+			/* Mega-hack - redo everything */
+			del_wild_cache();
+			init_wild_cache();
+		
+		}
 	}
 	else
 	{

@@ -159,11 +159,13 @@ static void place_player_start(s32b *x, s32b *y, u16b this_town)
 {
 	int tempx, tempy;
 	
-	tempx = (int) town[this_town].x;
-	tempy = (int) town[this_town].y;
+	tempx = (int) town[this_town].x + wild_stairs_x / 16;
+	tempy = (int) town[this_town].y + wild_stairs_y / 16;
 	
 	/* Get corner of visible region */
 	shift_in_bounds(&tempx, &tempy);
+	
+	assert(!wc_cnt);
 	
 	/* Set corner of visible region */
 	p_ptr->old_wild_x = tempx;
@@ -3931,34 +3933,10 @@ static void wild_done(void)
 
 	map_panel_size();
 
-	/* Hack - delete all items / monsters / fields in wilderness */
-	wipe_o_list();
-	wipe_m_list();
-	wipe_f_list();
-#if 0
-	/* hack */
-	p_ptr->depth = 1;
-
-	/* Not in dungeon yet */
-	character_dungeon = FALSE;
-
-	/* Change to the wilderness - but do not light anything yet.*/
-	change_level(0);
-
-	/* Change back to inside wilderness */
-	p_ptr->depth = 0;
-
-	/* Refresh random number seed */
-	wild_seed = randint0(0x10000000);
-
-	/* Make the wilderness block cache. */
-	move_wild();
-#endif /* 0 */
-
 	/* Refresh random number seed */
 	wild_seed = randint0(0x10000000);
 	
-	/* Not in dungeon yet */
+	/* We now are in the wilderness */
 	character_dungeon = TRUE;
 	
 	/* Change back to inside wilderness */
@@ -4001,7 +3979,11 @@ void create_wilderness(void)
 	long hgt_scale, pop_scale, law_scale;
 
 	wild_type *w_ptr;
-
+	
+	/* Delete everything in wilderness */
+	wipe_o_list();
+	wipe_m_list();
+	wipe_f_list();
 
 	/* Test wilderness generation information */
 	test_wild_data();

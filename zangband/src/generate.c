@@ -1000,8 +1000,8 @@ void map_panel_size(void)
 	else
 	{
 		/* Determine number of panels (wilderness) */
-		max_panel_rows = max_wild * 16;
-		max_panel_cols = max_wild * 16;
+		max_panel_rows = max_wild * WILD_BLOCK_SIZE;
+		max_panel_cols = max_wild * WILD_BLOCK_SIZE;
 	}
 
 	/* Assume illegal panel */
