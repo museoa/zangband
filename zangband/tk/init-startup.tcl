@@ -117,54 +117,9 @@ proc Source {args} {
 	if {![file exists $path]} {
 		error "file not found:\n $args, $path"
 	}
-	if {[Global tclCompiler]} {
-		set path [TbcCompile $args]
-	}
 	uplevel #0 source $path
 
 	return
-}
-
-# TbcCompile --
-#
-#	Use the Tcl compiler.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc TbcCompile {path} {
-
-	# Put the output files into a subdirectory
-	set dir [file join [file dirname $path] .tbc]
-	set path2 [file join $dir [file tail $path].tbc]
-
-	# The .tbc file exists
-	if {[file exists $path2]} {
-
-		set mtime [file mtime $path]
-		set mtime2 [file mtime $path2]
-
-		# If the .tbc file is newer, use it
-		if {$mtime <= $mtime2} {
-
-			# Return the location of the compiled file
-			return $path2
-		}
-	}
-
-	# Create the output directory if needed
-	if {![file exists $dir]} {
-		file mkdir $dir
-	}
-
-	# Compile the file
-	::compiler::compile $path $path2
-
-	# Return the location of the compiled file
-	return $path2
 }
 
 # LongName --
@@ -583,66 +538,10 @@ proc angband_initialized {} {
 	Source config.tcl
 	NSConfig::InitModule
 
-	# Now process other command-line options
-	HandleArgv
-
 	return
 }
 
-# HandleArgv --
-#
-#	Process command-line arguments.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
 
-proc HandleArgv {} {
-
-	global argc
-	global argv
-
-	# Assume no savefile
-	set savefile ""
-
-	for {set i 0} {$i < $argc} {incr i} {
-		set arg [lindex $argv $i]
-		switch -- $arg {
-			-icon-prefix {
-				set prefix [lindex $argv [incr i]]
-				set exists 0
-				foreach {prefix1 desc} $NSConfig::Priv(config) {
-					if {[string equal $prefix $prefix1]} {
-						set exists 1
-					}
-				}
-				if {$exists} {
-					NSConfig::SetPrefix $prefix
-				}
-			}
-			-savefile {
-				set savefile [lindex $argv [incr i]]
-			}
-			default {
-			}
-		}
-	}
-
-	if {[string length $savefile]} {
-		if {[file exists $savefile]} {
-			# Note: Want this done in the global namespace, because
-			# currently angtk_eval_file() uses the current namespace.
-			# Note: This must be "after idle", otherwise you get the
-			# "DeleteInterpProc called with active evals" error when
-			# quitting. i.e., you can't call it directly
-			after idle angband game open [list $savefile]
-		}
-	}
-
-	return
-}
 
 # Because init-other.tcl isn't called before Angband starts calling
 # "angband_xxx", I must set a dummy proc's here.
@@ -927,16 +826,6 @@ proc NSInitStartup::InitStartup {} {
 	# Also, "package require Tk" doesn't scan external packages.
 	catch {package require no-such-package}
 	
-	### Use "file attributes $path -longname" instead!
-	# package require Cxrlwin
-
-	# If the Tcl compiler (from TclPro) is available, use it
-	Global tclCompiler [expr {[lsearch -exact [package names] compiler] != -1}]
-Global tclCompiler 0
-	if {[Global tclCompiler]} {
-		package require compiler
-	}
-
 	if {$Angband(platform) == "windows"} {
 		# Set the default window icon
 		if {[string compare 8.3.3 [info patchlevel]] >= 0} {

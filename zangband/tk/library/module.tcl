@@ -83,11 +83,7 @@ proc NSModule::LoadIfNeeded {module} {
 	}
 
 	# Source the file
-	if {[Global tclCompiler]} {
-		uplevel #0 source [list [TbcCompile $Priv(source,$module)]]
-	} else {
-		uplevel #0 source [list $Priv(source,$module)]
-	}
+	uplevel #0 source [list $Priv(source,$module)]
 
 	# Init the module
 	${module}::InitModule
