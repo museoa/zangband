@@ -677,7 +677,7 @@ N:65:Sheildsman
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
-D:1:1:50:0:100:0:0:8
+D:1:1:25:0:100:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isshield_tester
 
@@ -779,3 +779,193 @@ I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:62
 F:2,field_action_door_store
 F:19,field_action_isnonsword_tester
+
+# Ammunition
+N:77:Ammunition Supplies
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:1:50:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isammo_tester
+
+# Ammunition
+N:78:Powerful Ammunition Supplies
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isammo_tester
+
+# Ammunition
+N:79:Deadly Ammunition Supplies
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:24
+F:2,field_action_door_store
+F:19,field_action_isammo_tester
+
+# Fletcher
+N:80:Fletcher
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:1:50:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isfletcher_tester
+
+# Fletcher
+N:81:Advanced Fletcher
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isfletcher_tester
+
+# Fletcher
+N:82:Expert Fletcher
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:36
+F:2,field_action_door_store
+F:19,field_action_isfletcher_tester
+
+# Fletcher
+N:83:Rare Fletcher
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:100:0:100:0:0:62
+F:2,field_action_door_store
+F:19,field_action_isfletcher_tester
+
+# Warrior Hall
+N:84:Warrior Hall
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:1:20:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isweaparmour_tester
+
+# Warrior Hall
+N:85:Advanced Warrior Hall
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:50:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isweaparmour_tester
+
+# Warrior Hall
+N:86:Expert Warrior Hall
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:75:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isweaparmour_tester
+
+# Warrior Hall
+N:87:Arcane Warrior Hall
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:75:127:0:100:0:0:24
+F:2,field_action_door_store
+F:19,field_action_isweaparmour_tester
+
+# Warrior Hall
+N:88:Obscure Warrior Hall
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:42
+F:2,field_action_door_store
+F:19,field_action_isweaparmour_tester
+
+# Warrior Hall
+N:89:Rare Warrior Hall
+G:3:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:50:100:0:100:0:0:62
+F:2,field_action_door_store
+F:19,field_action_isweaparmour_tester
+
+# Clothes Store
+N:90:Clothes Store
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:1:20:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isclothes_tester
+
+# Clothes Store
+N:91:Expensive Clothes Store
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:2:20:50:0:100:0:0:24
+F:2,field_action_door_store
+F:19,field_action_isclothes_tester
+
+# Heavy Armoury
+N:92:Heavy Armoury
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:1:25:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isphardarmour_tester
+
+# Heavy Armoury
+N:93:Advanced Heavy Armoury
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:1:50:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isphardarmour_tester
+
+# Heavy Armoury
+N:94:Expert Heavy Armoury
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:50:75:0:100:0:0:8
+F:2,field_action_door_store
+F:19,field_action_isphardarmour_tester
+
+# Heavy Armoury
+N:95:Arcane Heavy Armoury
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:75:127:0:100:0:0:42
+F:2,field_action_door_store
+F:19,field_action_isphardarmour_tester
+
+# Heavy Armoury
+N:96:Obscure Heavy Armoury
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:50:100:0:100:0:0:26
+F:2,field_action_door_store
+F:19,field_action_isphardarmour_tester
+
+# Heavy Armoury
+N:97:Rare Heavy Armoury
+G:2:w
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:1:50:100:0:100:0:0:62
+F:2,field_action_door_store
+F:19,field_action_isphardarmour_tester
+
