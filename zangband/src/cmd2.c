@@ -2497,6 +2497,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	int dir;
 	int j, y, x, ny, nx, ty, tx;
 
+	int sl = 0, sq = 0;
+
 	int armour, bonus, chance, total_deadliness;
 
 	int sleeping_bonus = 0;
@@ -2616,6 +2618,9 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	/* Base range */
 	tdis = 5 + 5 * tmul;
 
+	/* Paranoia */
+	if (tdis > MAX_RANGE) tdis = MAX_RANGE;
+
 	/* Take a (partial) turn - note strange formula. */
 	
 	/* The real number of shots per round is (1 + n)/2 */
@@ -2671,7 +2676,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		/* Calculate the new location (see "project()") */
 		ny = y;
 		nx = x;
-		mmove2(&ny, &nx, py, px, ty, tx);
+		mmove2(&ny, &nx, py, px, ty, tx, &sl, &sq);
 
 		/* Stopped by wilderness boundary */
 		if (!in_bounds2(ny, nx)) break;
@@ -2950,6 +2955,7 @@ void do_cmd_throw_aux(int mult)
 
 	int dir, item;
 	int y, x, ny, nx, ty, tx;
+	int sl = 0, sq = 0;
 	int chance, chance2, tdis;
 	int breakage;
 	int mul, div;
@@ -3057,6 +3063,9 @@ void do_cmd_throw_aux(int mult)
 	/* Max distance of 10-18 */
 	if (tdis > mul) tdis = mul;
 
+	/* Paranoia */
+	if (tdis > MAX_RANGE) tdis = MAX_RANGE;
+
 	/* Chance of hitting.  Other thrown objects are easier to use, but
 	 * only throwing weapons take advantage of bonuses to Skill from
 	 * other items. -LM-
@@ -3100,7 +3109,7 @@ void do_cmd_throw_aux(int mult)
 		/* Calculate the new location (see "project()") */
 		ny = y;
 		nx = x;
-		mmove2(&ny, &nx, py, px, ty, tx);
+		mmove2(&ny, &nx, py, px, ty, tx, &sl, &sq);
 
 		/* Stopped by wilderness boundary */
 		if (!in_bounds2(ny, nx))

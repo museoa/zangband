@@ -357,7 +357,8 @@ extern void map_area(void);
 extern void wiz_lite(void);
 extern void wiz_dark(void);
 extern void cave_set_feat(int y, int x, int feat);
-extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
+extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope,
+	 int *sq);
 extern bool projectable(int y1, int x1, int y2, int x2);
 extern void scatter(int *yp, int *xp, int y, int x, int d);
 extern void health_track(int m_idx);

@@ -205,6 +205,256 @@ bool los(int y1, int x1, int y2, int x2)
 
 
 /*
+ * Calculate incremental motion
+ *
+ * The current position is updated.
+ *
+ * (x,y) encodes the current location.
+ * slope and sq encodes the current square along the flight path.
+ * Set sq to be zero to initialise the routine.
+ *
+ * This routine is very similar to los() except that we can use it
+ * to return partial results.
+ */
+void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope, int *sq)
+{
+	int temp;
+	
+	int xx, yy;
+	
+	int dx, dy, ax, ay, sx, sy, dist;
+	
+	cave_type *c_ptr;
+
+	/* Paranoia - degenerate case */
+	if ((x1 == x2) && (y1 == y2))
+	{
+		*x = x1;
+		*y = y2;
+		
+		return;
+	}
+
+	/* Extract the offset */
+	dy = y2 - y1;
+	dx = x2 - x1;
+	
+	/*
+	 * We only work for points that are less than MAX_SIGHT appart.
+	 * Note that MAX_RANGE < MAX_SIGHT
+	 */
+	dist = distance(y1, x1, y2, x2);
+	
+	if (dist > MAX_RANGE)
+	{
+		dx = (dx * MAX_RANGE) / dist;
+		dy = (dy * MAX_RANGE) / dist;
+	}
+	
+	/* Extract the absolute offset */
+	ay = ABS(dy);
+	ax = ABS(dx);
+	
+	/* Extract some signs */
+	sx = (dx < 0) ? -1 : 1;
+	sy = (dy < 0) ? -1 : 1;
+
+
+	/* Do we need to initialise? */
+	if (!(*sq))
+	{
+		/*
+		 * Start at the first square in the list.
+		 * This is a square adjacent to (x1,y1)
+		 */
+		
+		/* sq is already zero at this point. */
+	
+		/* Hack - we need to stick to one octant */
+		if (ay < ax)
+		{
+			/* Look up the slope to use */
+			*slope = p_slope_min[ax][ay];
+	
+			while (*slope <= p_slope_max[ax][ay])
+			{
+				xx = x1 + sx * project_data[*slope][*sq].x;
+				yy = y1 + sy * project_data[*slope][*sq].y;
+		
+				/* Done? */
+				if ((xx == x1 + dx) && (yy == y1 + dy)) break;
+		
+				c_ptr = area(yy, xx);
+			
+				if (cave_floor_grid(c_ptr))
+				{
+					/* Advance along ray */
+					(*sq)++;
+				}
+				else
+				{
+					/* Advance to the best position we have not looked at yet */
+					temp = project_data[*slope][*sq].slope;
+					*sq = project_data[*slope][*sq].square;
+					*slope = temp;
+				}
+			}
+			
+			/* No match? */
+			if (*slope > p_slope_max[ax][ay])
+			{
+				*slope = (p_slope_min[ax][ay] + p_slope_max[ax][ay]) / 2;
+			}
+		}
+		else
+		{
+			/* Look up the slope to use */
+			*slope = p_slope_min[ay][ax];
+	
+			while (*slope <= p_slope_max[ay][ax])
+			{
+				/* Note that the data offsets have x,y swapped */
+				xx = x1 + sx * project_data[*slope][*sq].y;
+				yy = y1 + sy * project_data[*slope][*sq].x;
+		
+				/* Done? */
+				if ((xx == x1 + dx) && (yy == y1 + dy)) break;
+		
+				c_ptr = area(yy, xx);
+		
+				if (cave_floor_grid(c_ptr))
+				{
+					/* Advance along ray */
+					(*sq)++;
+				}
+				else
+				{
+					/* Advance to the best position we have not looked at yet */
+					temp = project_data[*slope][*sq].slope;
+					*sq = project_data[*slope][*sq].square;
+					*slope = temp;
+				}
+			}
+			
+			/* No match? */
+			if (*slope > p_slope_max[ay][ax])
+			{
+				*slope = (p_slope_min[ay][ax] + p_slope_max[ay][ax]) / 2;
+			}
+		}
+	
+		/*
+		 * Reset to start.
+		 *
+		 * Square zero is the the first square along the path.
+		 * It is not the starting square
+		 */
+		*sq = 0;
+	}
+	else
+	{
+		/* Paranoia - square number is too large */
+		if (*sq >= slope_count[*slope])
+		{
+			*sq = slope_count[*slope] - 1;
+		}
+	}
+
+	if (ay < ax)
+	{
+		/* Work out square to return */
+		*x = x1 + sx * project_data[*slope][*sq].x;
+		*y = y1 + sy * project_data[*slope][*sq].y;
+	}
+	else
+	{
+		/* Work out square to return */
+		*x = x1 + sx * project_data[*slope][*sq].y;
+		*y = y1 + sy * project_data[*slope][*sq].x;
+	}
+	
+	/* Next square, next time. */
+	(*sq)++;
+}
+
+
+/*
+ * Determine if a bolt spell cast from (y1,x1) to (y2,x2) will arrive
+ * at the final destination, assuming no monster gets in the way.
+ *
+ * This is slightly (but significantly) different from "los(y1,x1,y2,x2)".
+ */
+bool projectable(int y1, int x1, int y2, int x2)
+{
+	int y, x;
+
+	int grid_n = 0;
+	coord grid_g[512];
+
+	/* Check the projection path */
+	grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, 0);
+
+	/* No grid is ever projectable from itself */
+	if (!grid_n) return (FALSE);
+
+	/* Final grid */
+	y = grid_g[grid_n - 1].y;
+	x = grid_g[grid_n - 1].x;
+
+	/* May not end in an unrequested grid */
+	if ((y != y2) || (x != x2)) return (FALSE);
+
+	/* Assume okay */
+	return (TRUE);
+}
+
+
+/*
+ * Standard "find me a location" function
+ *
+ * Obtains a legal location within the given distance of the initial
+ * location, and with "los()" from the source to destination location.
+ *
+ * This function is often called from inside a loop which searches for
+ * locations while increasing the "d" distance.
+ */
+void scatter(int *yp, int *xp, int y, int x, int d)
+{
+	int nx = 0, ny = 0;
+
+	int c = 0;
+
+	/* Pick a location */
+	while (c++ < 1000)
+	{
+		/* Pick a new location */
+		ny = rand_spread(y, d);
+		nx = rand_spread(x, d);
+
+		/* Ignore annoying locations */
+		if (!in_bounds(ny, nx)) continue;
+
+		/* Ignore excessively distant locations */
+		if ((d > 1) && (distance(y, x, ny, nx) > d)) continue;
+
+		/* Require line of sight */
+		if (los(y, x, ny, nx)) break;
+	}
+
+	if (c > 999)
+	{
+		ny = y;
+		nx = x;
+	}
+
+	/* Save the location */
+	(*yp) = ny;
+	(*xp) = nx;
+}
+
+
+
+/*
  * Can the player "see" the given grid in detail?
  *
  * He must have vision, illumination, and line of sight.
@@ -4249,132 +4499,6 @@ void cave_set_feat(int y, int x, int feat)
 	note_spot(y, x);
 }
 
-
-/*
- * Calculate incremental motion
- * Assumes that (*x, *y) lies on the path from (x1, y1) to (x2, y2).
- */
-void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
-{
-	int shift;
-
-	/* Assume horizontal movement */
-	int *max = x, *min = y;
-	int min1 = y1, min2 = y2;
-	int max1 = x1, max2 = x2;
-	int dmin, dmax;
-
-	/* Extract the distance travelled */
-	int dy = ABS(*y - y1);
-	int dx = ABS(*x - x1);
-
-	/* Number of steps */
-	int dist = MAX(dy, dx) + 1;
-
-	/* Calculate the total distance along each axis */
-	dy = ABS(y2 - y1);
-	dx = ABS(x2 - x1);
-
-	/* No motion */
-	if (!dy && !dx) return;
-
-	/* Vertical movement */
-	if (dy > dx)
-	{
-		max = y; min = x;
-		min1 = x1; min2 = x2;
-		max1 = y1; max2 = y2;
-		dmin = dx; dmax = dy;
-	}
-	else
-	{
-		dmin = dy; dmax = dx;
-	}
-
-	/* Extract a shift factor */
-	shift = (dist * dmin + (dmax - 1) / 2) / dmax;
-
-	/* Sometimes move along the minor axis */
-	(*min) = min1 + ((min2 < min1) ? -shift : shift);
-
-	/* Always move along major axis */
-	(*max) = max1 + ((max2 < max1) ? -dist : dist);
-}
-
-
-/*
- * Determine if a bolt spell cast from (y1,x1) to (y2,x2) will arrive
- * at the final destination, assuming no monster gets in the way.
- *
- * This is slightly (but significantly) different from "los(y1,x1,y2,x2)".
- */
-bool projectable(int y1, int x1, int y2, int x2)
-{
-	int y, x;
-
-	int grid_n = 0;
-	coord grid_g[512];
-
-	/* Check the projection path */
-	grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, 0);
-
-	/* No grid is ever projectable from itself */
-	if (!grid_n) return (FALSE);
-
-	/* Final grid */
-	y = grid_g[grid_n - 1].y;
-	x = grid_g[grid_n - 1].x;
-
-	/* May not end in an unrequested grid */
-	if ((y != y2) || (x != x2)) return (FALSE);
-
-	/* Assume okay */
-	return (TRUE);
-}
-
-
-/*
- * Standard "find me a location" function
- *
- * Obtains a legal location within the given distance of the initial
- * location, and with "los()" from the source to destination location.
- *
- * This function is often called from inside a loop which searches for
- * locations while increasing the "d" distance.
- */
-void scatter(int *yp, int *xp, int y, int x, int d)
-{
-	int nx = 0, ny = 0;
-
-	int c = 0;
-
-	/* Pick a location */
-	while (c++ < 1000)
-	{
-		/* Pick a new location */
-		ny = rand_spread(y, d);
-		nx = rand_spread(x, d);
-
-		/* Ignore annoying locations */
-		if (!in_bounds(ny, nx)) continue;
-
-		/* Ignore excessively distant locations */
-		if ((d > 1) && (distance(y, x, ny, nx) > d)) continue;
-
-		/* Require line of sight */
-		if (los(y, x, ny, nx)) break;
-	}
-
-	if (c > 999)
-	{
-		ny = y;
-		nx = x;
-	}
-
-	/* Save the location */
-	(*yp) = ny;
-	(*xp) = nx;
-}
 
 
 /*

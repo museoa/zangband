@@ -5226,6 +5226,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 			int brad = 0;
 			int bdis = 0;
 			int cdis;
+			int sl = 0;
+			int sq = 0;
 
 			/* Not done yet */
 			bool done = FALSE;
@@ -5279,7 +5281,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				}
 
 				/* Ripple outwards */
-				mmove2(&by, &bx, y1, x1, y2, x2);
+				mmove2(&by, &bx, y1, x1, y2, x2, &sl, &sq);
 
 				/* Find the next ripple */
 				bdis++;

@@ -713,7 +713,7 @@
  */
 #define MAX_DETECT		30		/* Maximum detection range */
 #define MAX_SIGHT       20      /* Maximum view distance */
-#define MAX_RANGE       18      /* Maximum range (spells, etc) */
+#define MAX_RANGE       18      /* Maximum range (spells, etc) < MAX_SIGHT */
 
 
 
