@@ -1414,7 +1414,6 @@ int struct_match_monster_race(Tcl_Interp *interp, StructType *typePtr,
 	monster_race *r_ptr, int r_idx)
 {
 	struct t_match_monster_race *data = &match_monster_race;
-	DECLARE_LORE(l_ptr) = AT_LORE(r_idx);
 	u32b flags[10];
 	int i;
 
@@ -1438,7 +1437,7 @@ int struct_match_monster_race(Tcl_Interp *interp, StructType *typePtr,
 	}
 	if (data->request_known)
 	{
-		if ((cheat_know || l_ptr->LF(sights)) != data->match_known)
+		if ((cheat_know || r_ptr->r_sights) != data->match_known)
 			return 1;
 	}
 	if (data->request_name)

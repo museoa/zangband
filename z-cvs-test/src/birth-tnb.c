@@ -1546,7 +1546,7 @@ static void player_wipe(void)
 		if (r_ptr->flags3 & RF3_UNIQUE_7)
 			r_ptr->max_num = 7;
 
-		LORE_NTH(i).LF(pkills) = 0;
+		r_info[i].r_pkills = 0;
 	}
 
 	/* Hack -- Well fed player */

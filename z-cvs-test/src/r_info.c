@@ -38,7 +38,7 @@ static bool know_armour(int r_idx)
 
 	s32b level = r_ptr->level;
 
-	s32b kills = LORE_NTH(r_idx).LF(tkills);
+	s32b kills = r_ptr->r_tkills;
 
 	/* Normal monsters */
 	if (kills > 304 / (4 + level)) return (TRUE);
@@ -65,7 +65,7 @@ static bool know_damage(int r_idx, int i)
 
 	s32b level = r_ptr->level;
 
-	s32b a = LORE_NTH(r_idx).LF(blows)[i];
+	s32b a = r_ptr->r_blows[i];
 
 	s32b d1 = r_ptr->blow[i].d_dice;
 	s32b d2 = r_ptr->blow[i].d_side;
@@ -122,7 +122,6 @@ static void roff2fmt(cptr fmt, ...)
 long angtk_roff(int r_idx, char *buffer)
 {
 	monster_race *r_ptr;
-	DECLARE_LORE(l_ptr);
 
 	bool old = FALSE;
 	bool sin = FALSE;
@@ -146,7 +145,7 @@ long angtk_roff(int r_idx, char *buffer)
 	int vn = 0;
 	cptr vp[64];
 
-	LORE_TYPE save_mem;
+	monster_race save_mem;
 
 	long i, j;
 
@@ -157,7 +156,6 @@ long angtk_roff(int r_idx, char *buffer)
 
 	/* Access the race and lore */
 	r_ptr = &r_info[r_idx];
-	l_ptr = &LORE_NTH(r_idx);
 
 	/* Cheat -- know everything */
 	if (cheat_know)
@@ -165,13 +163,13 @@ long angtk_roff(int r_idx, char *buffer)
 		/* XXX XXX XXX */
 
 		/* Hack -- save memory */
-		COPY(&save_mem, l_ptr, LORE_TYPE);
+		COPY(&save_mem, r_ptr, monster_race);
 
 		/* Hack -- Maximal kills */
-		l_ptr->LF(tkills) = MAX_SHORT;
+		r_ptr->r_tkills = MAX_SHORT;
 
 		/* Hack -- Maximal info */
-		l_ptr->LF(wake) = l_ptr->LF(ignore) = MAX_UCHAR;
+		r_ptr->r_wake = r_ptr->r_ignore = MAX_UCHAR;
 
 		/* Observe "maximal" attacks */
 		for (m = 0; m < 4; m++)
@@ -180,12 +178,12 @@ long angtk_roff(int r_idx, char *buffer)
 			if (r_ptr->blow[m].effect || r_ptr->blow[m].method)
 			{
 				/* Hack -- maximal observations */
-				l_ptr->LF(blows[m]) = MAX_UCHAR;
+				r_ptr->r_blows[m] = MAX_UCHAR;
 			}
 		}
 
 		/* Hack -- maximal drops */
-		l_ptr->LF(drop_gold) = l_ptr->LF(drop_item) =
+		r_ptr->r_drop_gold = r_ptr->r_drop_item =
 		(((r_ptr->flags1 & (RF1_DROP_4D2)) ? 8 : 0) +
 		 ((r_ptr->flags1 & (RF1_DROP_3D2)) ? 6 : 0) +
 		 ((r_ptr->flags1 & (RF1_DROP_2D2)) ? 4 : 0) +
@@ -194,20 +192,20 @@ long angtk_roff(int r_idx, char *buffer)
 		 ((r_ptr->flags1 & (RF1_DROP_60))  ? 1 : 0));
 
 		/* Hack -- but only "valid" drops */
-		if (r_ptr->flags1 & (RF1_ONLY_GOLD)) l_ptr->LF(drop_item) = 0;
-		if (r_ptr->flags1 & (RF1_ONLY_ITEM)) l_ptr->LF(drop_gold) = 0;
+		if (r_ptr->flags1 & (RF1_ONLY_GOLD)) r_ptr->r_drop_item = 0;
+		if (r_ptr->flags1 & (RF1_ONLY_ITEM)) r_ptr->r_drop_gold = 0;
 
 		/* Hack -- observe many spells */
-		l_ptr->LF(cast_inate) = MAX_UCHAR;
-		l_ptr->LF(cast_spell) = MAX_UCHAR;
+		r_ptr->r_cast_inate = MAX_UCHAR;
+		r_ptr->r_cast_spell = MAX_UCHAR;
 
 		/* Hack -- know all the flags */
-		l_ptr->LF(flags1) = r_ptr->flags1;
-		l_ptr->LF(flags2) = r_ptr->flags2;
-		l_ptr->LF(flags3) = r_ptr->flags3;
-		l_ptr->LF(flags4) = r_ptr->flags4;
-		l_ptr->LF(flags5) = r_ptr->flags5;
-		l_ptr->LF(flags6) = r_ptr->flags6;
+		r_ptr->r_flags1 = r_ptr->flags1;
+		r_ptr->r_flags2 = r_ptr->flags2;
+		r_ptr->r_flags3 = r_ptr->flags3;
+		r_ptr->r_flags4 = r_ptr->flags4;
+		r_ptr->r_flags5 = r_ptr->flags5;
+		r_ptr->r_flags6 = r_ptr->flags6;
 	}
 
 
@@ -217,12 +215,12 @@ long angtk_roff(int r_idx, char *buffer)
 
 
 	/* Obtain a copy of the "known" flags */
-	flags1 = (r_ptr->flags1 & l_ptr->LF(flags1));
-	flags2 = (r_ptr->flags2 & l_ptr->LF(flags2));
-	flags3 = (r_ptr->flags3 & l_ptr->LF(flags3));
-	flags4 = (r_ptr->flags4 & l_ptr->LF(flags4));
-	flags5 = (r_ptr->flags5 & l_ptr->LF(flags5));
-	flags6 = (r_ptr->flags6 & l_ptr->LF(flags6));
+	flags1 = (r_ptr->flags1 & r_ptr->r_flags1);
+	flags2 = (r_ptr->flags2 & r_ptr->r_flags2);
+	flags3 = (r_ptr->flags3 & r_ptr->r_flags3);
+	flags4 = (r_ptr->flags4 & r_ptr->r_flags4);
+	flags5 = (r_ptr->flags5 & r_ptr->r_flags5);
+	flags6 = (r_ptr->flags6 & r_ptr->r_flags6);
 
 
 	/* Assume some "obvious" flags */
@@ -238,7 +236,7 @@ long angtk_roff(int r_idx, char *buffer)
 	if (r_ptr->flags1 & (RF1_ESCORTS)) flags1 |= (RF1_ESCORTS);
 
 	/* Killing a monster reveals some properties */
-	if (l_ptr->LF(tkills))
+	if (r_ptr->r_tkills)
 	{
 		/* Know "race" flags */
 		if (r_ptr->flags3 & (RF3_ORC)) flags3 |= (RF3_ORC);
@@ -274,24 +272,24 @@ long angtk_roff(int r_idx, char *buffer)
 		bool dead = (r_ptr->max_num == 0) ? TRUE : FALSE;
 
 		/* We've been killed... */
-		if (l_ptr->LF(deaths))
+		if (r_ptr->r_deaths)
 		{
 			/* Killed ancestors */
 			roff2fmt("%^s has slain %d of your ancestors",
-				wd_he[msex], l_ptr->LF(deaths));
+				wd_he[msex], r_ptr->r_deaths);
 
 			/* But we've also killed it */
 			if (dead)
 			{
 				roff2fmt(", but you have avenged %s!  ",
-					plural(l_ptr->LF(deaths), "him", "them"));
+					plural(r_ptr->r_deaths, "him", "them"));
 			}
 
 			/* Unavenged (ever) */
 			else
 			{
 				roff2fmt(", who %s unavenged.  ",
-					plural(l_ptr->LF(deaths), "remains", "remain"));
+					plural(r_ptr->r_deaths, "remains", "remain"));
 			}
 		}
 
@@ -303,27 +301,27 @@ long angtk_roff(int r_idx, char *buffer)
 	}
 
 	/* Not unique, but killed us */
-	else if (l_ptr->LF(deaths))
+	else if (r_ptr->r_deaths)
 	{
 		/* Dead ancestors */
 		roff2fmt(
 			"%d of your ancestors %s been killed by this creature, ",
-			l_ptr->LF(deaths), plural(l_ptr->LF(deaths), "has", "have"));
+			r_ptr->r_deaths, plural(r_ptr->r_deaths, "has", "have"));
 
 		/* Some kills this life */
-		if (l_ptr->LF(pkills))
+		if (r_ptr->r_pkills)
 		{
 			roff2fmt(
 				"and you have exterminated at least %d of the creatures.  ",
-			    l_ptr->LF(pkills));
+			    r_ptr->r_pkills);
 		}
 
 		/* Some kills past lives */
-		else if (l_ptr->LF(tkills))
+		else if (r_ptr->r_tkills)
 		{
 			roff2fmt(
 				"and %s have exterminated at least %d of the creatures.  ",
-			    "your ancestors", l_ptr->LF(tkills));
+			    "your ancestors", r_ptr->r_tkills);
 		}
 
 		/* No kills */
@@ -339,19 +337,19 @@ long angtk_roff(int r_idx, char *buffer)
 	else
 	{
 		/* Killed some this life */
-		if (l_ptr->LF(pkills))
+		if (r_ptr->r_pkills)
 		{
 			roff2fmt(
 				"You have killed at least %d of these creatures.  ",
-			    l_ptr->LF(pkills));
+			    r_ptr->r_pkills);
 		}
 
 		/* Killed some last life */
-		else if (l_ptr->LF(tkills))
+		else if (r_ptr->r_tkills)
 		{
 			roff2fmt(
 				"Your ancestors have killed at least %d of these creatures.  ",
-			    l_ptr->LF(tkills));
+			    r_ptr->r_tkills);
 		}
 
 		/* Killed none */
@@ -422,7 +420,7 @@ long angtk_roff(int r_idx, char *buffer)
 		roff2fmt("%^s lives in the town", wd_he[msex]);
 		old = TRUE;
 	}
-	else if (l_ptr->LF(tkills))
+	else if (r_ptr->r_tkills)
 	{
 		if (depth_in_feet)
 		{
@@ -524,7 +522,7 @@ long angtk_roff(int r_idx, char *buffer)
 
 
 	/* Describe experience if known */
-	if (l_ptr->LF(tkills))
+	if (r_ptr->r_tkills)
 	{
 		/* Introduction */
 		if (flags1 & (RF1_UNIQUE))
@@ -818,7 +816,7 @@ long angtk_roff(int r_idx, char *buffer)
 	if (breath || magic)
 	{
 		/* Total casting */
-		m = l_ptr->LF(cast_inate) + l_ptr->LF(cast_spell);
+		m = r_ptr->r_cast_inate + r_ptr->r_cast_spell;
 
 		/* Average frequency */
 		n = (r_ptr->freq_inate + r_ptr->freq_spell) / 2;
@@ -1060,9 +1058,9 @@ long angtk_roff(int r_idx, char *buffer)
 
 
 	/* Do we know how aware it is? */
-	if ((((int)l_ptr->LF(wake) * (int)l_ptr->LF(wake)) > r_ptr->sleep) ||
-	    (l_ptr->LF(ignore) == MAX_UCHAR) ||
-	    ((r_ptr->sleep == 0) && (l_ptr->LF(tkills) >= 10)))
+	if ((((int)r_ptr->r_wake * (int)r_ptr->r_wake) > r_ptr->sleep) ||
+	    (r_ptr->r_ignore == MAX_UCHAR) ||
+	    ((r_ptr->sleep == 0) && (r_ptr->r_tkills >= 10)))
 	{
 		cptr act;
 
@@ -1118,7 +1116,7 @@ long angtk_roff(int r_idx, char *buffer)
 
 
 	/* Drops gold and/or items */
-	if (l_ptr->LF(drop_gold) || l_ptr->LF(drop_item))
+	if (r_ptr->r_drop_gold || r_ptr->r_drop_item)
 	{
 		/* No "n" needed */
 		sin = FALSE;
@@ -1127,7 +1125,7 @@ long angtk_roff(int r_idx, char *buffer)
 		roff2fmt("%^s may carry", wd_he[msex]);
 
 		/* Count maximum drop */
-		n = MAX(l_ptr->LF(drop_gold), l_ptr->LF(drop_item));
+		n = MAX(r_ptr->r_drop_gold, r_ptr->r_drop_item);
 
 		/* One drop (may need an "n") */
 		if (n == 1)
@@ -1170,7 +1168,7 @@ long angtk_roff(int r_idx, char *buffer)
 
 
 		/* Objects */
-		if (l_ptr->LF(drop_item))
+		if (r_ptr->r_drop_item)
 		{
 			/* Handle singular "an" */
 			if (sin) roff2("n");
@@ -1186,7 +1184,7 @@ long angtk_roff(int r_idx, char *buffer)
 		}
 
 		/* Treasures */
-		if (l_ptr->LF(drop_gold))
+		if (r_ptr->r_drop_gold)
 		{
 			/* Cancel prefix */
 			if (!p) sin = FALSE;
@@ -1213,7 +1211,7 @@ long angtk_roff(int r_idx, char *buffer)
 		if (!r_ptr->blow[m].method) continue;
 
 		/* Count known attacks */
-		if (l_ptr->LF(blows)[m]) n++;
+		if (r_ptr->r_blows[m]) n++;
 	}
 
 	/* Examine (and count) the actual attacks */
@@ -1225,7 +1223,7 @@ long angtk_roff(int r_idx, char *buffer)
 		if (!r_ptr->blow[m].method) continue;
 
 		/* Skip unknown attacks */
-		if (!l_ptr->LF(blows)[m]) continue;
+		if (!r_ptr->r_blows[m]) continue;
 
 
 		/* Extract the attack info */
@@ -1373,7 +1371,7 @@ long angtk_roff(int r_idx, char *buffer)
 	 * Notice "Quest" monsters, but only if you
 	 * already encountered the monster.
 	 */
-	if ((flags1 & RF1_QUESTOR) && (l_ptr->LF(sights)))
+	if ((flags1 & RF1_QUESTOR) && (r_ptr->r_sights))
 	{
 		roff2("You feel an intense desire to kill this monster...  ");
 	}
@@ -1382,7 +1380,7 @@ long angtk_roff(int r_idx, char *buffer)
 	if (cheat_know)
 	{
 		/* Hack -- restore memory */
-		COPY(l_ptr, &save_mem, LORE_TYPE);
+		COPY(r_ptr, &save_mem, monster_race);
 	}
 
 	n = s_buffer - buffer;

@@ -17,18 +17,6 @@
 #error "you must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
 #endif /* */
 
-/*
- * Angband, KAngband and OAngband have monster_lore, while
- * ZAngband has monster_race. In addition, OAngband has
- * removed the "r_" prefix before field names.
- */
-
-#define LORE_NTH(n) r_info[n]
-#define LORE_TYPE monster_race
-#define LF(f) r_##f
-#define DECLARE_LORE(v) LORE_TYPE *v
-#define AT_LORE(n) &LORE_NTH(n)
-
 #define ART_CURNUM(a) a->cur_num
 
 
