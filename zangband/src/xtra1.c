@@ -1343,6 +1343,10 @@ static void fix_overhead(void)
 		/* Activate */
 		Term_activate(angband_term[j]);
 
+		/* No offset from player */
+		cx = 0;
+		cy = 0;
+		
 		/* Redraw map */
 		display_map(&cy, &cx);
 

@@ -375,16 +375,6 @@ bool los(int y1, int x1, int y2, int x2)
  *
  * This extra check is expensive, but it provides a more "correct" semantics.
  *
- * Note that we should not run this check on walls which are "outer walls" of
- * the dungeon, or we will induce a memory fault, but actually verifying all
- * of the locations would be extremely expensive.
- *
- * Thus, to speed up the function, we assume that all "perma-walls" which are
- * "CAVE_GLOW" are "illuminated" from all sides.  This is correct for all cases
- * except "vaults" and the "buildings" in town.  But the town is a hack anyway,
- * and the player has more important things on his mind when he is attacking a
- * monster vault.  It is annoying, but an extremely important optimization.
- *
  * Note that "glowing walls" are only considered to be "illuminated" if the
  * grid which is next to the wall in the direction of the player is also a
  * "glowing" grid.  This prevents the player from being able to "see" the
@@ -748,16 +738,6 @@ static byte lighting_colours[16][2] =
  * various "special" pictures in some versions, and certain situations,
  * such as "multi-hued" or "clear" monsters, cause the attr/char codes
  * to be "scrambled" in various ways.
- *
- * Note that eventually we may use the "&" symbol for embedded treasure,
- * and use the "*" symbol to indicate multiple objects, though this will
- * have to wait for Angband 2.8.0 or later.  Note that currently, this
- * is not important, since only one object or terrain feature is allowed
- * in each grid.  If needed, "k_info[0]" will hold the "stack" attr/char.
- *
- * Note the assumption that doing "x_ptr = &x_info[x]" plus a few of
- * "x_ptr->xxx", is quicker than "x_info[x].xxx", if this is incorrect
- * then a whole lot of code should be changed...  XXX XXX
  */
 #ifdef USE_TRANSPARENCY
 void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp)
@@ -1227,11 +1207,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 								a = TERM_VIOLET;
 							break;
 						case CLASS_CHAOS_WARRIOR:
-							do
-							{
-								a = randint(15);
-							}
-							while (a == TERM_DARK);
+							a = rand_int(14) + 1;
 							break;
 						case CLASS_MAGE:
 						case CLASS_HIGH_MAGE:
@@ -1953,6 +1929,11 @@ static int priority_tunnel(int y, int x)
  * Note the use of a specialized "priority" function to allow this
  * function to work with any graphic attr/char mappings, and the
  * attempts to optimize this function where possible.
+ *
+ * cx and cy are offsets from the position of the player.  This
+ * allows the map to be shifted around - but only works in the
+ * wilderness.  cx and cy return the position of the player on the
+ * possibly shifted map.
  */
 void display_map(int *cy, int *cx)
 {
@@ -2005,8 +1986,8 @@ void display_map(int *cy, int *cx)
 		/* Plot wilderness */
 
 		/* work out coords of player in wilderness */
-		x = px / 16;
-		y = py / 16;
+		x = px / 16 + *cx;
+		y = py / 16 + *cy;
 
 		/* recenter */
 		x = x - SCREEN_WID / 2;
@@ -2153,8 +2134,8 @@ void display_map(int *cy, int *cx)
 	if (!dun_level)
 	{
 		/* Player location in wilderness */
-		(*cy) = py / 16 - y + 1 + ROW_MAP;
-		(*cx) = px / 16 - x + 1 + COL_MAP;
+		(*cy) += py / 16 - y + 1 + ROW_MAP;
+		(*cx) += px / 16 - x + 1 + COL_MAP;
 	}
 	else
 	{
@@ -2192,18 +2173,71 @@ void do_cmd_view_map(void)
 
 	/* Clear the screen */
 	Term_clear();
+	
+	if(dun_level)
+	{
+		/* In the dungeon - All we have to do is display the map */
+		
+		/* No offset from player */
+		cx = 0;
+		cy = 0;
+		
+		/* Display the map */
+		display_map(&cy, &cx);
 
-	/* Display the map */
-	display_map(&cy, &cx);
+		/* Wait for it */
+		put_str("Hit any key to continue", 23, 35);
 
-	/* Wait for it */
-	put_str("Hit any key to continue", 23, 35);
+		/* Hilite the player */
+		move_cursor(cy, cx);
 
-	/* Hilite the player */
-	move_cursor(cy, cx);
-
-	/* Get any key */
-	inkey();
+		/* Get any key */
+		inkey();
+	}
+	else
+	{
+		/* Offset from player */
+		int x, y;
+		
+		/* Direction */
+		int d;
+		
+		/* No offset yet */
+		x = 0;
+		y = 0;
+		
+		/* In the wilderness - Display the map + move it around */
+		
+		while(TRUE)
+		{
+			/* Reset offset of map */
+			cx = x;
+			cy = y;
+			
+			display_map(&cy, &cx);
+			
+			/* Wait for it */
+			put_str("Move around, or hit any other key to continue", 23, 25);
+			
+			/* Hilite the player */
+			move_cursor(cy, cx);
+			
+			/* Get a response */
+			d = get_keymap_dir(inkey());
+			
+			/* Done if not a direction */
+			if (!d) break;
+			
+			x += ddx[d];
+			y += ddy[d];
+			
+			/* Bounds checking */
+			if (x + px / 16 < 0) x = -px / 16;
+			if (y + py / 16 < 0) y = -py / 16;
+			if (x + px / 16 > max_wild - 2) x = max_wild - px / 16 - 2;
+			if (y + py / 16 > max_wild - 2) y = max_wild - py / 16 - 2;
+		}
+	}
 
 	/* Restore the screen */
 	screen_load();
