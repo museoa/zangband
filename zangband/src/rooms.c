@@ -28,14 +28,14 @@ static s16b roomdep[] =
 	 1, /* 2  = Overlapping (33x11) */
 	 3, /* 3  = Crossed (33x11) */
 	 3, /* 4  = Large (33x11) */
-	 5, /* 5  = Monster nest (33x11) */
-	 5, /* 6  = Monster pit (33x11) */
-	 5, /* 7  = Lesser vault (33x22) */
-	10, /* 8  = Greater vault (66x44) */
-	 3, /* 9  = Fractal cave (42x24) */
-	 5, /* 10 = Random vault (44x22) */
-	 1, /* 11 = Circular rooms (22x22) */
-	 3, /* 12 = Crypts (22x22) */
+	10, /* 5  = Monster nest (33x11) */
+	10, /* 6  = Monster pit (33x11) */
+	10, /* 7  = Lesser vault (33x22) */
+	20, /* 8  = Greater vault (66x44) */
+	 5, /* 9  = Fractal cave (42x24) */
+	10, /* 10 = Random vault (44x22) */
+	 3, /* 11 = Circular rooms (22x22) */
+	10, /* 12 = Crypts (22x22) */
 };
 
 
