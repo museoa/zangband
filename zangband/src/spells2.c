@@ -1421,6 +1421,130 @@ bool detect_monsters_evil(void)
 }
 
 
+/*
+ * Detect all "nonliving", "undead" or "demonic" monsters in range
+ */
+bool detect_monsters_nonliving(void)
+{
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
+	int     i, y, x;
+	bool    flag = FALSE;
+
+	/* Scan monsters */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Location */
+		y = m_ptr->fy;
+		x = m_ptr->fx;
+
+		/* Only detect monsters in range */
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
+
+		/* Detect non-living monsters */
+		if (!monster_living(r_ptr))
+		{
+			/* Update monster recall window */
+			if (p_ptr->monster_race_idx == m_ptr->r_idx)
+			{
+				/* Window stuff */
+				p_ptr->window |= (PW_MONSTER);
+			}
+
+			/* Repair visibility later */
+			repair_monsters = TRUE;
+
+			/* Hack -- Detect monster */
+			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
+
+			/* Update the monster */
+			update_mon(i, FALSE);
+
+			/* Detect */
+			flag = TRUE;
+		}
+	}
+
+	/* Describe */
+	if (flag)
+	{
+		/* Describe result */
+		msg_print("You sense the presence of unnatural beings!");
+	}
+
+	/* Result */
+	return (flag);
+}
+
+
+/*
+ * Detect all "living" monsters in range
+ */
+bool detect_monsters_living(void)
+{
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
+	int     i, y, x;
+	bool    flag = FALSE;
+
+	/* Scan monsters */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Location */
+		y = m_ptr->fy;
+		x = m_ptr->fx;
+
+		/* Only detect monsters in range */
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
+
+		/* Detect living monsters */
+		if (monster_living(r_ptr))
+		{
+			/* Update monster recall window */
+			if (p_ptr->monster_race_idx == m_ptr->r_idx)
+			{
+				/* Window stuff */
+				p_ptr->window |= (PW_MONSTER);
+			}
+
+			/* Repair visibility later */
+			repair_monsters = TRUE;
+
+			/* Hack -- Detect monster */
+			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
+
+			/* Update the monster */
+			update_mon(i, FALSE);
+
+			/* Detect */
+			flag = TRUE;
+		}
+	}
+
+	/* Describe */
+	if (flag)
+	{
+		/* Describe result */
+		msg_print("You sense the presence of natural beings!");
+	}
+
+	/* Result */
+	return (flag);
+}
 
 
 /*
@@ -3882,69 +4006,6 @@ void wall_breaker(void)
 					  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 		}
 	}
-}
-
-
-/*
- * Detect all "nonliving", "undead" or "demonic" monsters in range
- */
-bool detect_monsters_nonliving(void)
-{
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	int     i, y, x;
-	bool    flag = FALSE;
-
-	/* Scan monsters */
-	for (i = 1; i < m_max; i++)
-	{
-		monster_type *m_ptr = &m_list[i];
-		monster_race *r_ptr = &r_info[m_ptr->r_idx];
-
-		/* Skip dead monsters */
-		if (!m_ptr->r_idx) continue;
-
-		/* Location */
-		y = m_ptr->fy;
-		x = m_ptr->fx;
-
-		/* Only detect monsters in range */
-		if (distance(px, py, x, y) > MAX_DETECT) continue;
-
-		/* Detect non-living monsters */
-		if (!monster_living(r_ptr))
-		{
-			/* Update monster recall window */
-			if (p_ptr->monster_race_idx == m_ptr->r_idx)
-			{
-				/* Window stuff */
-				p_ptr->window |= (PW_MONSTER);
-			}
-
-			/* Repair visibility later */
-			repair_monsters = TRUE;
-
-			/* Hack -- Detect monster */
-			m_ptr->mflag |= (MFLAG_MARK | MFLAG_SHOW);
-
-			/* Update the monster */
-			update_mon(i, FALSE);
-
-			/* Detect */
-			flag = TRUE;
-		}
-	}
-
-	/* Describe */
-	if (flag)
-	{
-		/* Describe result */
-		msg_print("You sense the presence of unnatural beings!");
-	}
-
-	/* Result */
-	return (flag);
 }
 
 

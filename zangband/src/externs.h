@@ -732,6 +732,7 @@ extern bool detect_monsters_evil(void);
 extern bool detect_monsters_xxx(u32b match_flag);
 extern bool detect_monsters_string(cptr);
 extern bool detect_monsters_nonliving(void);
+extern bool detect_monsters_living(void);
 extern bool detect_all(void);
 extern bool wall_stone(void);
 extern bool speed_monsters(void);

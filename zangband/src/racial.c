@@ -600,7 +600,15 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			}
 		        case RACE_GHOUL:
 			{
-				eat_corpse();
+				if (mut_ptr->level == 30)
+				{
+					/* Sense living */
+					(void)detect_monsters_living();
+				}
+				else
+				{
+					eat_corpse();
+				}
 				break;
 			}
 			default:

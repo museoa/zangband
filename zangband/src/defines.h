@@ -473,7 +473,7 @@
 /*
  * The racial powers
  */
-#define MAX_RACE_POWERS		27
+#define MAX_RACE_POWERS		28
 
 
 /* Monk martial arts... */

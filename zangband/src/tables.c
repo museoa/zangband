@@ -8264,6 +8264,16 @@ const mutation_type race_powers[MAX_RACE_POWERS] =
 	    "Eat corpse/skeleton",
 	    1, 0, A_CON, 0,
 		0
+	},
+	
+	{
+            RACE_GHOUL,
+	    "You can sense living creatures.",
+	    "(nothing)",
+	    "(nothing)",
+	    "Sense living",
+	    30, 10, A_WIS, 12,
+		0
 	}
 };    
 
