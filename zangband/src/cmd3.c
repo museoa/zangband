@@ -141,6 +141,9 @@ void do_cmd_wield(void)
 		msgf("The %v you are %s appears to be cursed.",
 			 OBJECT_FMT(o_ptr, FALSE, 0), describe_use(slot));
 
+		/* Set the knowledge flag for the player */
+		o_ptr->kn_flags[2] |= TR2_CURSED;
+
 		/* Cancel the command */
 		return;
 	}
@@ -264,6 +267,9 @@ void do_cmd_takeoff(void)
 		/* Oops */
 		msgf("Hmmm, it seems to be cursed.");
 
+		/* Set the knowledge flag for the player */
+		o_ptr->kn_flags[2] |= TR2_CURSED;
+
 		/* Nope */
 		return;
 	}
@@ -303,6 +309,9 @@ void do_cmd_drop(void)
 	{
 		/* Oops */
 		msgf("Hmmm, it seems to be cursed.");
+
+		/* Set the knowledge flag for the player */
+		o_ptr->kn_flags[2] |= TR2_CURSED;
 
 		/* Nope */
 		return;

@@ -2808,6 +2808,9 @@ void do_cmd_throw_aux(int mult)
 		/* Oops */
 		msgf("Hmmm, it seems to be cursed.");
 
+		/* Set the knowledge flag for the player */
+		o_ptr->kn_flags[2] |= TR2_CURSED;
+
 		/* Nope */
 		return;
 	}
