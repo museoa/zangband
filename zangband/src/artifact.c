@@ -2681,7 +2681,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_SUMMON_ELEMENTAL:
 		{
-			bool pet = one_in_(3);
+			bool pet = !one_in_(3);
 			bool group = !(pet && (plev < 50));
 
 			if (summon_specific
@@ -2702,7 +2702,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_SUMMON_DEMON:
 		{
-			bool pet = one_in_(3);
+			bool pet = !one_in_(3);
 			bool group = !(pet && (plev < 50));
 
 			if (summon_specific
@@ -2724,7 +2724,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_SUMMON_UNDEAD:
 		{
-			bool pet = one_in_(3);
+			bool pet = !one_in_(3);
 			bool group;
 			int type;
 
