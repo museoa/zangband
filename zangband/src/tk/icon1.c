@@ -32,7 +32,6 @@ byte *g_feat_flag = NULL;
 t_darken g_darken[3];
 TintTable g_yellow;
 t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
-t_assign *g_assignshape[GRID_SHAPE_MAX] = {NULL};
 bool g_icon_map_changed = FALSE;
 int g_torchlite; /* Use 4 levels of torch lite */
 int *g_image_monster, *g_image_object;

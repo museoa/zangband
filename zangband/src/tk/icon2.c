@@ -1189,84 +1189,6 @@ static int objcmd_effect_names(ClientData clientData, Tcl_Interp *interp, int ob
 
 cptr keyword_feat_lite[] = {"none", "icon", "tint", NULL};
 
-static int FeatFromObj(Tcl_Interp *interp, Tcl_Obj *objPtr, int *f_idx)
-{
-	/* Get the f_info[] index */
-	if (Tcl_GetIntFromObj(interp, objPtr, f_idx) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Verify the feature index */
-	if ((*f_idx < 0) || (*f_idx >= z_info->f_max))
-	{
-		/* Get the interpreter result object */
-		Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-
-		/* Set the error */
-		Tcl_SetStringObj(resultPtr,
-			format("bad f_info index \"%d\": must be between 0 and %d",
-			*f_idx, z_info->f_max - 1), -1);
-	
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Success */
-	return TCL_OK;
-}
-
-/*
- * (feature) assignshape f_idx shape ?assign?
- */
-static int objcmd_feature_assignshape(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	int shape;
-	char *t;
-	int f_idx;
-	t_assign assign;
-
-	/* Get the f_info[] index */
-	if (FeatFromObj(interp, objV[1], &f_idx) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) keyword_wall,
-		(char *) "shape", 0, &shape) != TCL_OK)
-	{
-		return TCL_ERROR;
-    }
-
-    if (objC == 3)
-    {
-		char buf[128];
-		(void) assign_print(buf, &g_assignshape[shape][f_idx]);
-		Tcl_SetResult(interp, buf, TCL_VOLATILE);
-		return TCL_OK;
-    }
-
-	t = Tcl_GetString(objV[3]);
-	if (assign_parse(interp, &assign, t) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if (objC == 5)
-		g_assignshape[shape][z_info->f_max + f_idx] = assign;
-	else
-		g_assignshape[shape][f_idx] = assign;
-	g_icon_map_changed = TRUE;
-
-	return TCL_OK;
-}
-
-
 /*
  * (feature) torchlite ?boolean?
  */
@@ -2177,7 +2099,6 @@ CommandInit assignCmdInit[] = {
 		{1, "groups", 1, 1, NULL, objcmd_effect_groups, (ClientData) 0},
 		{1, "names", 2, 2, "group", objcmd_effect_names, (ClientData) 0},
 	{0, "feature", 0, 0, NULL, NULL, (ClientData) 0},
-		{1, "assignshape", 3, 5, "f_idx shape ?assign? ?hack?", objcmd_feature_assignshape, (ClientData) 0},
 		{1, "lighting", 3, 0, "-radius r ?option? ?value? ?option value ...?", objcmd_lighting, (ClientData) 0},
 		{1, "torch", 1, 2, "paletteIndex opacity", objcmd_feature_torch, (ClientData) 0},
 		{1, "torchlite", 1, 2, "?boolean?", objcmd_feature_torchlite, (ClientData) 0},
@@ -2412,16 +2333,6 @@ void init_icons(int size, int depth)
 		g_feat_lite[i] = FT_LIGHT_NONE;
 	}
 	g_assign[ASSIGN_FEATURE].assign[FEAT_NONE].icon.type = ICON_TYPE_NONE;
-
-	for (i = 0; i < GRID_SHAPE_MAX; i++)
-	{
-		int j;
-		C_MAKE(g_assignshape[i], z_info->f_max * 2, t_assign);
-		for (j = 0; j < z_info->f_max * 2; j++)
-		{
-			g_assignshape[i][j] = assign;
-		}
-	}
 
 	/* Array of alternates */
 	g_alternate = Array_New(1, sizeof(t_alternate));
