@@ -2600,13 +2600,10 @@ int Icon_Init(Tcl_Interp *interp, int size, int depth)
 	return TCL_OK;
 }
 
-void Icon_Exit(Tcl_Interp *interp)
+void Icon_Exit(void)
 {
 	int i;
 	
-	/* Hack - ignore parameter */
-	(void) interp;
-
 	if (g_icon_size == 0) return;
 
 	/* Check each icon type */

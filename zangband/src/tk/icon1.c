@@ -576,11 +576,3 @@ void angtk_flavor_init(int *max, byte **attr)
 	(void) init_flavor_aux(n, "wand", TV_WAND,  max[n], attr[n]);
 }
 
-/*
- * Clean up the icon environment
- */
-void free_icons(void)
-{
-	/* Make sure Tk fonts are freed or else */
-	Icon_Exit(g_interp);
-}

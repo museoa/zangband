@@ -88,7 +88,6 @@ extern int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 
 extern void Icon_AddType(t_icon_data *data);
 extern int Icon_Init(Tcl_Interp *interp, int size, int depth);
-extern void Icon_Exit(Tcl_Interp *interp);
 extern int Icon_Validate(Tcl_Interp *interp, char *typeName, int index, int ascii,
 	IconSpec *specPtr);
 extern int Icon_ParseArgs(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[],

@@ -135,7 +135,7 @@ extern void get_grid_info(int y, int x, t_grid *gridPtr);
 
 extern void angtk_image_reset(void);
 extern void set_grid_assign(int y, int x);
-extern void free_icons(void);
+extern void Icon_Exit(void);
 extern void init_palette(void);
 
 /* widget.c */
