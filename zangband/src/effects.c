@@ -1058,27 +1058,23 @@ static bool set_tim_esp(int v)
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 
-	/* Don't notice if we have permanent telepathy */
-	if (!(FLAG(p_ptr, TR_TELEPATHY)))
+	/* Open */
+	if (v)
 	{
-		/* Open */
-		if (v)
+		if (!p_ptr->tim.esp)
 		{
-			if (!p_ptr->tim.esp)
-			{
-				msgf("You feel your consciousness expand!");
-				notice = TRUE;
-			}
+			msgf("You feel your consciousness expand!");
+			notice = TRUE;
 		}
+	}
 
-		/* Shut */
-		else
+	/* Shut */
+	else
+	{
+		if (p_ptr->tim.esp)
 		{
-			if (p_ptr->tim.esp)
-			{
-				msgf("Your consciousness contracts again.");
-				notice = TRUE;
-			}
+			msgf("Your consciousness contracts again.");
+			notice = TRUE;
 		}
 	}
 
@@ -1100,12 +1096,6 @@ static bool set_tim_esp(int v)
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
 	
-	/* Fully update the view */
-	p_ptr->update |= (PU_VIEW);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 

@@ -1459,9 +1459,19 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 	u16b r_idx = ((u16b)f_ptr->data[1]) * 256 + f_ptr->data[2];
 
 	monster_type *m_ptr;
-
+	
+	bool visible = FALSE;
+	
 	/* Hack - ignore 'vp' */
 	(void) vp;
+	
+	/* Is it visible? */
+	if (in_boundsp(f_ptr->fx, f_ptr->fy))
+	{
+		pcave_type *pc_ptr = parea(f_ptr->fx, f_ptr->fy);
+		
+		if (player_has_los_grid(pc_ptr)) visible = TRUE;
+	}
 	
 	if (ironman_nightmare)
 	{
@@ -1470,7 +1480,7 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 								  r_idx, FALSE, FALSE, FALSE);
 		if (m_ptr)
 		{
-			if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
+			if (visible)
 			{
 				if (disturb_minor) msgf("The %s rises.", t_ptr->name);
 			}
@@ -1480,7 +1490,7 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 		}
 
 		/* Paranoia */
-		else if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
+		else if (visible)
 		{
 			/* Let player know what happened. */
 			if (disturb_minor) msgf("The %s decays.", t_ptr->name);
@@ -1489,7 +1499,7 @@ bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
 	}
 	else
 	{
-		if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
+		if (visible)
 		{
 			/* Let player know what happened. */
 			if (disturb_minor) msgf("The %s decays.", t_ptr->name);
