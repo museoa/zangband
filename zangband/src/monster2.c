@@ -2084,7 +2084,7 @@ static bool place_monster_okay(int r_idx)
  * the "get_mon_num()" function to "legal" escort types.
  */
 bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
-                       bool friendly, bool pet)
+                       bool friendly, bool pet, bool summon)
 {
 	int i;
 	monster_race *r_ptr = &r_info[r_idx];
@@ -2134,8 +2134,13 @@ bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
 
 			/* Prepare allocation table */
 			get_mon_num_prep(place_monster_okay);
-			(void) filter_mon_loc(nx, ny);
-
+			
+			/* Default to filtering out monsters not normally on this dungeon */
+			if (!summon)
+			{
+				(void) filter_mon_loc(nx, ny);
+			}
+			
 			/* Pick a random race */
 			z = get_mon_num(r_ptr->level);
 
@@ -2182,7 +2187,7 @@ bool place_monster(int x, int y, bool slp, bool grp, int delta_level)
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster */
-	if (place_monster_aux(x, y, r_idx, slp, grp, FALSE, FALSE)) return (TRUE);
+	if (place_monster_aux(x, y, r_idx, slp, grp, FALSE, FALSE, FALSE)) return (TRUE);
 
 	/* Oops */
 	return (FALSE);
@@ -2228,7 +2233,7 @@ bool alloc_horde(int x, int y)
 	while (--attempts)
 	{
 		/* Attempt to place the monster */
-		if (place_monster_aux(x, y, r_idx, FALSE, FALSE, FALSE, FALSE)) break;
+		if (place_monster_aux(x, y, r_idx, FALSE, FALSE, FALSE, FALSE, FALSE)) break;
 	}
 
 	if (attempts < 1) return FALSE;
@@ -2697,7 +2702,7 @@ bool summon_specific(int who, int x1, int y1, int req_lev, int type, bool group,
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-	if (!place_monster_aux(x, y, r_idx, FALSE, group, friendly, pet))
+	if (!place_monster_aux(x, y, r_idx, FALSE, group, friendly, pet, TRUE))
 		return (FALSE);
 
 	/* Success */
@@ -2741,7 +2746,7 @@ bool summon_named_creature(int x1, int y1, int r_idx, bool slp, bool group_ok,
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* Place it (allow groups) */
-		if (place_monster_aux(x, y, r_idx, slp, group_ok, FALSE, pet))
+		if (place_monster_aux(x, y, r_idx, slp, group_ok, FALSE, pet, TRUE))
 		{
 			success = TRUE;
 			break;
@@ -2787,7 +2792,7 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
 
 		/* Create a new monster (awake, no groups) */
 		result =
-			place_monster_aux(x, y, m_ptr->r_idx, FALSE, FALSE, friendly, pet);
+			place_monster_aux(x, y, m_ptr->r_idx, FALSE, FALSE, friendly, pet, TRUE);
 
 		/* Done */
 		break;

@@ -1628,7 +1628,7 @@ static void build_type5(int bx0, int by0)
 			int r_idx = what[randint0(64)];
 
 			/* Place that "random" monster (no groups) */
-			(void)place_monster_aux(x, y, r_idx, FALSE, FALSE, FALSE, FALSE);
+			(void)place_monster_aux(x, y, r_idx, FALSE, FALSE, FALSE, FALSE, TRUE);
 		}
 	}
 
@@ -1913,7 +1913,7 @@ static void build_type6(int bx0, int by0)
 
 			/* And place the monster */
 			place_monster_aux(x + in_x1, y + in_y1, what[power[y][x]], FALSE,
-							  FALSE, FALSE, FALSE);
+							  FALSE, FALSE, FALSE, TRUE);
 		}
 	}
 

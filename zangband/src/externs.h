@@ -510,7 +510,7 @@ extern void update_mon(int m_idx, bool full);
 extern void update_monsters(bool full);
 extern bool test_monster_square(cave_type *c_ptr, monster_race *r_ptr);
 extern bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
-							  bool friendly, bool pet);
+							  bool friendly, bool pet, bool summon);
 extern bool place_monster(int x, int y, bool slp, bool grp, int deltalevel);
 extern bool alloc_horde(int x, int y);
 extern bool alloc_monster(int dis, bool slp);

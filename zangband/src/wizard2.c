@@ -1378,7 +1378,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 		if ((x == px) && (y == py)) continue;
 
 		/* Place it (allow groups) */
-		if (place_monster_aux(x, y, r_idx, slp, TRUE, FALSE, FALSE)) break;
+		if (place_monster_aux(x, y, r_idx, slp, TRUE, FALSE, FALSE, TRUE)) break;
 	}
 }
 

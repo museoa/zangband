@@ -4500,7 +4500,7 @@ bool polymorph_monster(int x, int y)
 		delete_monster_idx(c_ptr->m_idx);
 
 		/* Create a new monster (no groups) */
-		if (place_monster_aux(x, y, new_r_idx, FALSE, FALSE, friendly, pet))
+		if (place_monster_aux(x, y, new_r_idx, FALSE, FALSE, friendly, pet, TRUE))
 		{
 			/* Success */
 			polymorphed = TRUE;
@@ -4509,7 +4509,7 @@ bool polymorph_monster(int x, int y)
 		{
 			/* Placing the new monster failed - use the old. */
 			(void)place_monster_aux(x, y, old_r_idx, FALSE, FALSE, friendly,
-									pet);
+									pet, TRUE);
 		}
 	}
 

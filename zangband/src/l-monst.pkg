@@ -559,7 +559,6 @@ extern void lore_treasure(int m_idx, int num_item, int num_gold);
 extern void update_mon_vis(u16b r_idx, int increment);
 extern void update_mon(int m_idx, bool full);
 extern void update_monsters(bool full);
-extern bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp, bool friendly, bool pet);
 extern bool place_monster(int x, int y, bool slp, bool grp, int deltalevel);
 extern bool alloc_horde(int x, int y);
 extern bool alloc_monster(int dis, bool slp);
