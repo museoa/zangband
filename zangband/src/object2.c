@@ -715,7 +715,7 @@ s16b get_obj_num(int level, int min_level)
 		value1 -= table[i].prob2;
 
 		/* A match? */
-		if (value1 <= 0L) break;
+		if (value1 < 0L) break;
 	}
 
 	/* Result */
