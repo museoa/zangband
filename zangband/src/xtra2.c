@@ -1005,7 +1005,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 					msg_format("%^s says: %s", m_name, line_got);
 			}
 
-			if ((randint(REWARD_CHANCE) == 1) &&
+			if ((r_ptr->flags1 & RF1_UNIQUE) && (randint(REWARD_CHANCE) == 1) &&
 			    !(r_ptr->flags7 & RF7_FRIENDLY))
 			{
 				if (!get_rnd_line("crime.txt", m_ptr->r_idx, line_got))
