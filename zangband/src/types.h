@@ -1491,8 +1491,8 @@ struct player_type
 	s16b num_fire;		/* Number of shots */
 
 	byte ammo_mult;		/* Ammo multiplier */
-
 	byte ammo_tval;		/* Ammo variety */
+	byte bow_energy;	/* shooter speed */
 
 	s16b pspeed;		/* Current speed */
 

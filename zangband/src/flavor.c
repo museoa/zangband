@@ -834,10 +834,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 	u32b            f1, f2, f3;
 
-	object_type	*bow_ptr;
-
-	/* describe what type of ammo item is. (0=none) */
-	byte		ammotype = 0;
+	object_type	*bow_ptr;	
 
 	/* damage dice, damage sides, damage bonus, energy */
 	int		dd, ds, db, energy_use;
@@ -1419,14 +1416,6 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		t = object_desc_num(t, o_ptr->ds);
 		t = object_desc_chr(t, p2);
 
-		/* Set ammotype - used later to show avg damages */
-		if (o_ptr->tval == TV_SHOT)
-			ammotype = 1;
-		if (o_ptr->tval == TV_ARROW)
-			ammotype = 2;
-		if (o_ptr->tval == TV_BOLT)
-			ammotype = 3;
-
 		/* All done */
 		break;
 
@@ -1521,12 +1510,7 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 	bow_ptr = &inventory[INVEN_BOW];
 
 	/* if have a firing weapon + ammo matches bow */
-	if (bow_ptr->k_idx &&
-	    (((bow_ptr->sval == SV_SLING) && (ammotype == 1)) ||
-		 (((bow_ptr->sval == SV_SHORT_BOW) ||
-	     (bow_ptr->sval == SV_LONG_BOW)) && (ammotype == 2)) ||
-	     (((bow_ptr->sval == SV_LIGHT_XBOW) ||
-	     (bow_ptr->sval == SV_HEAVY_XBOW)) && (ammotype == 3))))
+	if (bow_ptr->k_idx && (p_ptr->ammo_tval == o_ptr->tval))
 	{
 		/* See if the bow is "known" - then set damage bonus */
 		if (object_known_p(bow_ptr))
@@ -1556,70 +1540,10 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 
 		/* effect of damage dice x2 */
 		avgdam *= dd * (ds + 1);
-
-		/* Stop compiler warnings */
-		energy_use = 100;
-		tmul = 1;
-
-		/* Analyze the launcher */
-		switch (bow_ptr->sval)
-		{
-			/* Sling and ammo */
-			case SV_SLING:
-			{
-				tmul = 2;
-				energy_use = 50;
-				break;
-			}
-
-			/* Short Bow and Arrow */
-			case SV_SHORT_BOW:
-			{
-				tmul = 2;
-				energy_use = 100;
-				break;
-			}
-
-			/* Long Bow and Arrow */
-			case SV_LONG_BOW:
-			{
-				if (p_ptr->stat_use[A_STR] >= 16)
-				{
-					tmul = 3;
-				}
-				else
-				{
-					/* weak players cannot use a longbow well */
-					tmul = 2;
-				}
-				energy_use = 100;
-				break;
-			}
-
-			/* Light Crossbow and Bolt */
-			case SV_LIGHT_XBOW:
-			{
-				tmul = 4;
-				energy_use = 120;
-				break;
-			}
-
-			/* Heavy Crossbow and Bolt */
-			case SV_HEAVY_XBOW:
-			{
-				tmul = 5;
-				if (p_ptr->stat_use[A_DEX] >= 16)
-				{
-					energy_use = 150;
-				}
-				else
-				{
-					/* players with low dex will take longer to load */
-					energy_use = 200;
-				}
-			break;
-			}
-		}
+		
+		/* Bow properties */
+		energy_use = p_ptr->bow_energy;
+		tmul = p_ptr->ammo_mult;
 
 		/* Get extra "power" from "extra might" */
 		if (p_ptr->xtra_might) tmul++;

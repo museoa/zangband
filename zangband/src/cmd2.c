@@ -2604,68 +2604,9 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	bonus = (p_ptr->to_h + i_ptr->to_h + j_ptr->to_h);
 	chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
-	/* Assume a base multiplier */
-	tmul = 1;
-
-	/* Analyze the launcher */
-	switch (j_ptr->sval)
-	{
-		/* Sling and ammo */
-		case SV_SLING:
-		{
-			tmul = 2;
-			p_ptr->energy_use = 50;
-			break;
-		}
-
-		/* Short Bow and Arrow */
-		case SV_SHORT_BOW:
-		{
-			tmul = 2;
-			p_ptr->energy_use = 100;
-			break;
-		}
-
-		/* Long Bow and Arrow */
-		case SV_LONG_BOW:
-		{
-			if (p_ptr->stat_use[A_STR] >= 16)
-			{
-				tmul = 3;
-			}
-			else
-			{
-				/* weak players cannot use a longbow well */
-				tmul = 2;
-			}
-			p_ptr->energy_use = 100;
-			break;
-		}
-
-		/* Light Crossbow and Bolt */
-		case SV_LIGHT_XBOW:
-		{
-			tmul = 4;
-			p_ptr->energy_use = 120;
-			break;
-		}
-
-		/* Heavy Crossbow and Bolt */
-		case SV_HEAVY_XBOW:
-		{
-			tmul = 5;
-			if (p_ptr->stat_use[A_DEX] >= 16)
-			{
-				p_ptr->energy_use = 150;
-			}
-			else
-			{
-				/* players with low dex will take longer to load */
-				p_ptr->energy_use = 200;
-			}
-			break;
-		}
-	}
+	/* Shooter properties */
+	p_ptr->energy_use = p_ptr->bow_energy;
+	tmul = p_ptr->ammo_mult;
 
 	/* Get extra "power" from "extra might" */
 	if (p_ptr->xtra_might) tmul++;

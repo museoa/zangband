@@ -1336,7 +1336,7 @@ static void display_player_abilities(void)
 	int         muta_att = 0;
 	long		avgdam;
 	u32b            f1, f2, f3;
-	int		energy_fire = 100;
+	int		energy_fire;
 	int		shots, shot_frac;
 
 	object_type		*o_ptr;
@@ -1357,56 +1357,16 @@ static void display_player_abilities(void)
 	tmp = p_ptr->to_h + o_ptr->to_h;
 	xthb = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
 
-	/* If the player is wielding one? */
+	/* Is the player is wielding a shooter? */
 	if (o_ptr->k_idx)
 	{
-		/* Analyze the launcher */
-		switch (o_ptr->sval)
-		{
-			/* Sling and ammo */
-			case SV_SLING:
-			{
-				energy_fire = 50;
-				break;
-			}
-
-			/* Short Bow and Arrow */
-			case SV_SHORT_BOW:
-			{
-				energy_fire = 100;
-				break;
-			}
-
-			/* Long Bow and Arrow */
-			case SV_LONG_BOW:
-			{
-				energy_fire = 100;
-				break;
-			}
-
-			/* Light Crossbow and Bolt */
-			case SV_LIGHT_XBOW:
-			{
-				energy_fire = 120;
-				break;
-			}
-
-			/* Heavy Crossbow and Bolt */
-			case SV_HEAVY_XBOW:
-			{
-				if (p_ptr->stat_use[A_DEX] >= 16)
-				{
-					energy_fire = 150;
-				}
-				else
-				{
-					/* players with low dex will take longer to load */
-					energy_fire = 200;
-				}
-			}
-			break;
-		}
+		energy_fire = p_ptr->bow_energy;
 	}
+	else
+	{
+		energy_fire = 100;
+	}
+	
 	/* Calculate shots per round  - note "strange" formula. */
 
 	/* The real number of shots per round is (1 + n)/2 */
@@ -1419,9 +1379,9 @@ static void display_player_abilities(void)
 	dambonus = p_ptr->dis_to_d;
 	if (object_known_p(o_ptr)) dambonus += o_ptr->to_d;
 	damdice = o_ptr->dd;
-	damsides = o_ptr->ds;   /* dam += (o_ptr->dd * (o_ptr->ds + 1)) >> 1; */
+	damsides = o_ptr->ds;
 	blows = p_ptr->num_blow;
-	/* dam *= p_ptr->num_blow; */
+	
 
 	/* Basic abilities */
 

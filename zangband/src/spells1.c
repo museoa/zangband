@@ -3210,7 +3210,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 				}
 				else
 				{
-					mon_fight = TRUE;
+					p_ptr->mon_fight = TRUE;
 				}
 			}
 
@@ -3278,7 +3278,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			}
 			else
 			{
-				mon_fight = TRUE;
+				p_ptr->mon_fight = TRUE;
 			}
 
 			/* Anger monsters */

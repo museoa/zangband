@@ -3124,20 +3124,58 @@ void calc_bonuses(void)
 			case SV_SLING:
 			{
 				p_ptr->ammo_tval = TV_SHOT;
+				p_ptr->ammo_mult = 2;
+				p_ptr->bow_energy = 50;
 				break;
 			}
 
 			case SV_SHORT_BOW:
+			{
+				p_ptr->ammo_tval = TV_ARROW;
+				p_ptr->ammo_mult = 2;
+				p_ptr->bow_energy = 100;
+				break;
+			}
 			case SV_LONG_BOW:
 			{
 				p_ptr->ammo_tval = TV_ARROW;
+				
+				if (p_ptr->stat_use[A_STR] >= 16)
+				{
+					p_ptr->ammo_mult = 3;
+				}
+				else
+				{
+					/* weak players cannot use a longbow well */
+					p_ptr->ammo_mult = 2;
+				}
+				
+				p_ptr->bow_energy = 100;
 				break;
 			}
 
 			case SV_LIGHT_XBOW:
+			{
+				p_ptr->ammo_tval = TV_BOLT;
+				p_ptr->ammo_mult = 4;
+				p_ptr->bow_energy = 120;
+				break;
+			}
+			
 			case SV_HEAVY_XBOW:
 			{
 				p_ptr->ammo_tval = TV_BOLT;
+				
+				p_ptr->ammo_mult = 5;
+				if (p_ptr->stat_use[A_DEX] >= 16)
+				{
+					p_ptr->bow_energy = 150;
+				}
+				else
+				{
+					/* players with low dex will take longer to load */
+					p_ptr->bow_energy = 200;
+				}
 				break;
 			}
 		}
