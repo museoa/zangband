@@ -26,34 +26,6 @@ char *memset(char *s, int c, huge n)
 
 #endif
 
-
-#if 0
-#ifndef HAS_STRICMP
-
-/*
- * For those systems that don't have "stricmp()"
- *
- * Compare the two strings "a" and "b" ala "strcmp()" ignoring case.
- */
-int stricmp(cptr a, cptr b)
-{
-	cptr s1, s2;
-	char z1, z2;
-
-	/* Scan the strings */
-	for (s1 = a, s2 = b; TRUE; s1++, s2++)
-	{
-		z1 = FORCEUPPER(*s1);
-		z2 = FORCEUPPER(*s2);
-		if (z1 < z2) return (-1);
-		if (z1 > z2) return (1);
-		if (!z1) return (0);
-	}
-}
-
-#endif /* HAS_STRICMP */
-#endif /* 0 */
-
 #ifdef SET_UID
 
 # ifndef HAS_USLEEP
@@ -3746,7 +3718,8 @@ void build_gamma_table(int gamma)
 			 * divided by 256*256 each itteration, to get back to
 			 * the original power series.
 			 */
-			diff = (((diff / 256) * gamma_helper[i]) * (gamma - 256)) / (256 * n);
+			diff = (((diff / 256) * gamma_helper[i]) *
+				 (gamma - 256)) / (256 * n);
 		}
 
 		/*
