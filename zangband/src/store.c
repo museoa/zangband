@@ -2833,7 +2833,7 @@ static void store_sell(int *store_top)
 			/* Describe the result (in message buffer) */
 			msg_format("You sold %s for %ld gold.", o_name, (long)price);
 
-			if (!((o_ptr->tval == TV_FIGURINE) && (value > 0)))
+			if (!((q_ptr->tval == TV_FIGURINE) && (value > 0)))
 			{
 				/* 
 				 * Analyze the prices (and comment verbally)
@@ -2842,8 +2842,11 @@ static void store_sell(int *store_top)
 				purchase_analyze(price, value, dummy);
 			}
 
-			/* Reset timeouts of the sold items */
-			q_ptr->timeout = 0;
+			if (q_ptr->tval != TV_LITE)
+			{
+				/* Reset timeouts of the sold items */
+				q_ptr->timeout = 0;
+			}
 			
 			if (q_ptr->tval == TV_WAND)
 			{
