@@ -2634,8 +2634,8 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 	/* Boundaries are walls */
 	cave[fill_data.ymin][fill_data.xmin].feat = maxsize;
 	cave[fill_data.ymax][fill_data.xmin].feat = maxsize;
-	cave[fill_data.ymin][fill_data.xmin].feat = maxsize;
-	cave[fill_data.ymax][fill_data.xmin].feat = maxsize;
+	cave[fill_data.ymin][fill_data.xmax].feat = maxsize;
+	cave[fill_data.ymax][fill_data.xmax].feat = maxsize;
 
 	/* Set the middle square to be an open area. */
 	cave[y0][x0].feat = 0;
@@ -2675,7 +2675,7 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 				jj = j / 256 + fill_data.ymin;
 				
 				/* Test square */
-				if (cave[ii][jj].feat != 255)
+				if (cave[jj][ii].feat != 255)
 				{				
 					if (xhstep2 > grd)
 					{
@@ -2705,7 +2705,7 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 				jj = j / 256 + fill_data.ymin;
 				
 				/* Test square */
-				if (cave[ii][jj].feat != 255)
+				if (cave[jj][ii].feat != 255)
 				{
 					if (xhstep2 > grd)
 					{
@@ -2734,7 +2734,7 @@ static void generate_hmap(int y0, int x0, int xsiz, int ysiz, int grd, int roug,
 				jj = j / 256 + fill_data.ymin;
 				
 				/* Test square */
-				if (cave[ii][jj].feat != 255)
+				if (cave[jj][ii].feat != 255)
 				{				
 					if (xhstep2 > grd)
 					{
@@ -3574,7 +3574,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 			x = randint(xsize - 3) + 1;
 			y = randint(ysize - 3) + 1;
 
-			for (j = 0; j < i; j++);
+			for (j = 0; j < i; j++)
 			{
 				/* rough test to see if there is an overlap */
 				if ((x == center[j].x) || (y == center[j].y)) done = FALSE;
