@@ -281,11 +281,11 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2, int *slope, int *sq)
 	 */
 	dist = distance(y1, x1, y2, x2);
 	
-	if (dist > MAX_RANGE)
+	if (dist > MAX_SIGHT)
 	{
 		/* Rescale */
-		dx = (dx * MAX_RANGE) / dist;
-		dy = (dy * MAX_RANGE) / dist;
+		dx = (dx * MAX_SIGHT) / dist;
+		dy = (dy * MAX_SIGHT) / dist;
 	}
 	
 	/* Extract the absolute offset */
@@ -578,11 +578,11 @@ sint project_path(coord *gp, int y1, int x1, int y2, int x2, u16b flg)
 	 */
 	dist = distance(y1, x1, y2, x2);
 	
-	if (dist > MAX_RANGE)
+	if (dist > MAX_SIGHT)
 	{
 		/* Rescale */
-		dx = (dx * MAX_RANGE) / dist;
-		dy = (dy * MAX_RANGE) / dist;
+		dx = (dx * MAX_SIGHT) / dist;
+		dy = (dy * MAX_SIGHT) / dist;
 	}
 	
 	/* Extract the absolute offset */
