@@ -2314,9 +2314,6 @@ static errr rd_dungeon(void)
 	/* Hack - make new level only after objects + monsters are loaded */
 	if (sf_version < VERSION_CHANGE_WILD)
 	{
-		/* enter the level */
-		change_level(p_ptr->depth);
-		
 		if (p_ptr->depth)
 		{
 			/* Restore the bounds */
@@ -2331,6 +2328,9 @@ static errr rd_dungeon(void)
 			wipe_m_list();
 			wipe_o_list();
 		}
+		
+		/* enter the level */
+		change_level(p_ptr->depth);
 	}
 	
 	/* 
@@ -3029,13 +3029,13 @@ static errr rd_savefile_new_aux(void)
 		/* Read the stores */
 		rd_u16b(&tmp16u);
 		
-		town[i].numstores = tmp16u;
-		
-		/* Allocate the stores */
-		C_MAKE(town[i].store, town[i].numstores, store_type);
-		
 		for (i = 1; i < town_count; i++)
 		{
+			town[i].numstores = tmp16u;
+		
+			/* Allocate the stores */
+			C_MAKE(town[i].store, town[i].numstores, store_type);
+			
 			/* HACK - ignore the empty towns */
 			if (z_older_than(2, 2, 3) && (i >= 6))
 			{
