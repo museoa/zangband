@@ -189,7 +189,7 @@ static s32b price_item(object_type *o_ptr, bool flip)
 
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
-	int greed = ot_ptr->min_inflate;
+	int greed = ot_ptr->greed;
 
 	/* Get the value of one of the items */
 	price = object_value(o_ptr);

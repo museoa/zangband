@@ -1659,12 +1659,7 @@ struct owner_type
 
 	s16b max_cost;	/* Purse limit / 100 */
 
-	byte max_inflate;	/* Inflation (max) */
-	byte min_inflate;	/* Inflation (min) */
-
-	byte haggle_per;	/* Haggle unit */
-
-	byte insult_max;	/* Insult limit */
+	byte greed;	/* Greed level */
 
 	byte owner_race;	/* Owner race */
 };
