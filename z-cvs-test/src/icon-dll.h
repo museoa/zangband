@@ -15,11 +15,6 @@
 
 #include <tk.h>
 
-#if !defined(PLATFORM_MAC) && !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
-#error "you must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
-#endif /* */
-
-
 typedef struct IconSpec {
 	int type;
 	int index;

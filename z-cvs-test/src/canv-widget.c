@@ -63,15 +63,11 @@ static char *Assign_PrintProc _ANSI_ARGS_((
 			    char *widgRec, int offset,
 			    Tcl_FreeProc **freeProcPtr));
 
-#if TK_MINOR_VERSION >= 3
-
 static Tk_CustomOption stateOption = {
     (Tk_OptionParseProc *) TkStateParseProc,
     TkStatePrintProc,
     (ClientData) 2
 };
-
-#endif /* 8.3 */
 
 static Tk_CustomOption tagsOption = {
 	Tk_CanvasTagsParseProc,
@@ -102,11 +98,9 @@ static Tk_ConfigSpec configSpecs[] = {
     {TK_CONFIG_CUSTOM, "-assignbg", NULL, NULL,
 	 NULL, Tk_Offset(WidgetItem, assignbg), TK_CONFIG_USER_BIT,
 	 &assignOption},
-#if TK_MINOR_VERSION >= 3
     {TK_CONFIG_CUSTOM, "-state", NULL, NULL,
 	 NULL, Tk_Offset(Tk_Item, state), TK_CONFIG_NULL_OK,
 	 &stateOption},
-#endif /* 8.3 */
     {TK_CONFIG_CUSTOM, "-tags", NULL, NULL,
 	 NULL, 0, TK_CONFIG_NULL_OK, &tagsOption},
     {TK_CONFIG_END, NULL, NULL, NULL,
@@ -119,7 +113,6 @@ static double		WidgetToPoint _ANSI_ARGS_((Tk_Canvas canvas,
 			    Tk_Item *itemPtr, double *coordPtr));
 static void		ComputeWidgetBbox _ANSI_ARGS_((Tk_Canvas canvas,
 			    WidgetItem *widgetPtr));
-#if TK_MINOR_VERSION >= 3
 static int WidgetCoords _ANSI_ARGS_((Tcl_Interp *interp,
 	Tk_Canvas canvas, Tk_Item *itemPtr, int argc,
 	Tcl_Obj *CONST argv[]));
@@ -129,17 +122,6 @@ static int CreateWidget _ANSI_ARGS_((Tcl_Interp *interp,
 static int ConfigureWidget _ANSI_ARGS_((Tcl_Interp *interp,
 	Tk_Canvas canvas, Tk_Item *itemPtr, int argc,
 	Tcl_Obj *CONST argv[], int flags));
-#else /* not 8.3 */
-static int		WidgetCoords _ANSI_ARGS_((Tcl_Interp *interp,
-			    Tk_Canvas canvas, Tk_Item *itemPtr, int argc,
-			    char **argv));
-static int		ConfigureWidget _ANSI_ARGS_((Tcl_Interp *interp,
-			    Tk_Canvas canvas, Tk_Item *itemPtr, int argc,
-			    char **argv, int flags));
-static int		CreateWidget _ANSI_ARGS_((Tcl_Interp *interp,
-			    Tk_Canvas canvas, struct Tk_Item *itemPtr,
-			    int argc, char **argv));
-#endif /* not 8.3 */
 static void		DeleteWidget _ANSI_ARGS_((Tk_Canvas canvas,
 			    Tk_Item *itemPtr, Display *display));
 static void		DisplayWidget _ANSI_ARGS_((Tk_Canvas canvas,
@@ -160,11 +142,7 @@ Tk_ItemType WidgetType = {
     WidgetCoords,					/* coordProc */
     DeleteWidget,					/* deleteProc */
     DisplayWidget,					/* displayProc */
-#if TK_MINOR_VERSION >= 3
     TK_CONFIG_OBJS,					/* flags */
-#else /* not 8.3 */
-    0,								/* alwaysRedraw */
-#endif /* not 8.3 */
     WidgetToPoint,					/* pointProc */
     WidgetToArea,					/* areaProc */
     NULL,							/* postscriptProc */
@@ -185,11 +163,7 @@ CreateWidget(
     Tk_Item *itemPtr,			/* Record to hold new item;  header
 								 * has been initialized by caller. */
     int argc,					/* Number of arguments in argv. */
-#if TK_MINOR_VERSION >= 3
 	Tcl_Obj *CONST argv[]		/* Arguments describing item. */
-#else /* not 8.3 */
-    char **argv 				/* Arguments describing item. */
-#endif /* not 8.3 */
 )
 {
     WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
@@ -227,21 +201,12 @@ CreateWidget(
      * Process the arguments to fill in the item record.
      */
 
-#if TK_MINOR_VERSION >= 3
     if ((Tk_CanvasGetCoordFromObj(interp, canvas, argv[0], &widgetPtr->x) != TCL_OK)
 	    || (Tk_CanvasGetCoordFromObj(interp, canvas, argv[1], &widgetPtr->y)
 		!= TCL_OK))
 	{
 		return TCL_ERROR;
     }
-#else /* not 8.3 */
-    if ((Tk_CanvasGetCoord(interp, canvas, argv[0], &widgetPtr->x) != TCL_OK)
-	    || (Tk_CanvasGetCoord(interp, canvas, argv[1], &widgetPtr->y)
-		!= TCL_OK))
-	{
-		return TCL_ERROR;
-    }
-#endif /* not 8.3 */
 
     if (ConfigureWidget(interp, canvas, itemPtr, argc-2, argv+2, 0) != TCL_OK)
     {
@@ -260,13 +225,8 @@ WidgetCoords(
 								 * read or modified. */
     int argc,					/* Number of coordinates supplied in
 								 * argv. */
-#if TK_MINOR_VERSION >= 3
 	Tcl_Obj *CONST argv[] 		/* Array of coordinates: x1, y1,
 								 * x2, y2, ... */
-#else /* not 8.3 */
-    char **argv 				/* Array of coordinates: x1, y1,
-								 * x2, y2, ... */
-#endif /* not 8.3 */
 )
 {
     WidgetItem *widgetPtr = (WidgetItem *) itemPtr;
@@ -280,7 +240,6 @@ WidgetCoords(
     }
     else if (argc == 2)
     {
-#if TK_MINOR_VERSION >= 3
 		if ((Tk_CanvasGetCoordFromObj(interp, canvas, argv[0], &widgetPtr->x)
 			!= TCL_OK)
 			|| (Tk_CanvasGetCoordFromObj(interp, canvas, argv[1],
@@ -288,14 +247,6 @@ WidgetCoords(
 		{
 		    return TCL_ERROR;
 		}
-#else /* not 8.3 */
-		if ((Tk_CanvasGetCoord(interp, canvas, argv[0], &widgetPtr->x) != TCL_OK)
-			|| (Tk_CanvasGetCoord(interp, canvas, argv[1],
-			    &widgetPtr->y) != TCL_OK))
-		{
-		    return TCL_ERROR;
-		}
-#endif /* not 8.3 */
 		ComputeWidgetBbox(canvas, widgetPtr);
     }
     else
@@ -313,11 +264,7 @@ ConfigureWidget(
     Tk_Canvas canvas,		/* Canvas containing itemPtr. */
     Tk_Item *itemPtr,		/* Widget item to reconfigure. */
     int argc,				/* Number of elements in argv.  */
-#if TK_MINOR_VERSION >= 3
     Tcl_Obj *CONST argv[],	/* Arguments describing things to configure. */
-#else /* not 8.3 */
-    char **argv,			/* Arguments describing things to configure. */
-#endif /* not 8.3 */
     int flags 				/* Flags to pass to Tk_ConfigureWidget. */
 )
 {
@@ -327,13 +274,8 @@ ConfigureWidget(
     IconSpec iconSpec;
 
     tkwin = Tk_CanvasTkwin(canvas);
-#if TK_MINOR_VERSION >= 3
     if (Tk_ConfigureWidget(interp, tkwin, configSpecs, argc,
 	    (char **) argv, (char *) widgetPtr, flags | TK_CONFIG_OBJS) != TCL_OK)
-#else /* not 8.3 */
-    if (Tk_ConfigureWidget(interp, tkwin, configSpecs, argc,
-	    argv, (char *) widgetPtr, flags) != TCL_OK)
-#endif /* not 8.3 */
 	{
 		return TCL_ERROR;
     }
@@ -386,26 +328,22 @@ ComputeWidgetBbox(
 {
 	int x, y;
 	int borderSize = 0;
-#if TK_MINOR_VERSION >= 3
     Tk_State state = widgetPtr->header.state;
 
 	if(state == TK_STATE_NULL)
 	{
 		state = ((TkCanvas *) canvas)->canvas_state;
 	}
-#endif /* 8.3 */
 
     x = (int) (widgetPtr->x + ((widgetPtr->x >= 0) ? 0.5 : - 0.5));
     y = (int) (widgetPtr->y + ((widgetPtr->y >= 0) ? 0.5 : - 0.5));
 
-#if TK_MINOR_VERSION >= 3
 	if (state == TK_STATE_HIDDEN)
 	{
 		widgetPtr->header.x1 = widgetPtr->header.x2 = x;
 		widgetPtr->header.y1 = widgetPtr->header.y2 = y;
 		return;
 	}
-#endif /* 8.3 */
 
 	switch (widgetPtr->anchor)
 	{

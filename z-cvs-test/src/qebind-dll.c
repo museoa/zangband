@@ -28,7 +28,6 @@
  * string, just like the usual "bind" command. Bindings are not automatically
  * deleted when a widget is destroyed.
  */
-
 #include <ctype.h>
 #include <string.h>
 #include <tcl.h>

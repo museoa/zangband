@@ -22,18 +22,12 @@
 extern int objcmd_fontdesc(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
 
-#if TK_MINOR_VERSION >= 2
 extern int objcmd_menuentrystate(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
 extern int objcmd_photo_get(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
 extern int objcmd_photo_mask(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
-#endif /* Tk 8.2 or 8.3 */
-#if TK_MINOR_VERSION == 2
-extern int objcmd_photo_copy(ClientData clientData, Tcl_Interp *interp,
-	int objc, Tcl_Obj *CONST objv[]);
-#endif /* Tk 8.2 */
 
 /* d_attr characters */
 char *g_attr_str = "dwsorgbuDWvyRGBU";
@@ -3498,14 +3492,9 @@ static CommandInit commandInit[] = {
 		{1, "building", 0, 0, NULL, objcmd_building, (ClientData) 0},
 		{1, "mindcraft", 0, 0, NULL, objcmd_mindcraft, (ClientData) 0},
 		{1, "power", 0, 0, NULL, objcmd_power, (ClientData) 0},
-#if TK_MINOR_VERSION >= 2
 	{0, "menuentrystate", 0, 0, NULL, objcmd_menuentrystate, (ClientData) 0},
 	{0, "photoget", 0, 0, NULL, objcmd_photo_get, (ClientData) 0},
 	{0, "photomask", 2, 3, "imageDst ?imageMask?", objcmd_photo_mask, (ClientData) 0},
-#endif /* Tk 8.2 or 8.3 */
-#if TK_MINOR_VERSION == 2
-	{0, "photocopy", 7, 7, "imageSrc imageDst srcX srcY width height", objcmd_photo_copy, (ClientData) 0},
-#endif /* Tk 8.2 */
 	{0, "fontdesc", 2, 2, "font", objcmd_fontdesc, (ClientData) 0},
 	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };

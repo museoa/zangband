@@ -13,8 +13,17 @@
 #ifndef _INCLUDE_TNB_H_
 #define _INCLUDE_TNB_H_
 
+#include <tk.h>
+
 #if !defined(PLATFORM_MAC) && !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
-#error "you must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
+#error "You must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
+#endif /* */
+
+#if (TK_MINOR_VERSION != 3)
+#error "(1) You must use tcl/tk version 8.3.3"
+#endif /* */
+#if (TK_RELEASE_SERIAL < 3)
+#error "(2) You must use tcl/tk version 8.3.3"
 #endif /* */
 
 
