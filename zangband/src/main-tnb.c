@@ -59,6 +59,105 @@ static void validate_dir(cptr s)
 	}
 }
 
+
+int
+objcmd_term_attr(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+	CommandInfo *infoCmd = (CommandInfo *) clientData;
+	int objC = objc - infoCmd->depth;
+	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
+
+	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
+	
+	byte attr;
+	
+	int x, y;
+
+	/* Required number of arguments */
+    if (objC != 3)
+    {
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "x y");
+		return TCL_ERROR;
+    }
+	
+	plog("here");
+
+	if (Tcl_GetIntFromObj(interp, objV[1], &x) != TCL_OK)
+	{
+		return TCL_ERROR;
+	}
+	
+	if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
+	{
+		return TCL_ERROR;
+	}
+	
+	plog_fmt("(%d,%d)\n", x, y); 
+	
+	/* Paranoia */
+	if ((x >= 80) || (x < 0)) return TCL_ERROR;
+	if ((y >= 24) || (y < 0)) return TCL_ERROR;
+	
+	/* Get the term information */
+	attr = data.scr->a[y][x];
+	
+	/* Store into the result */
+	Tcl_SetIntObj(resultPtr, attr);
+
+	return TCL_OK;
+}
+
+
+int
+objcmd_term_char(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+	CommandInfo *infoCmd = (CommandInfo *) clientData;
+	int objC = objc - infoCmd->depth;
+	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
+
+	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
+	
+	char c;
+	
+	static char hack_string[2] = "1\0";
+	
+	int x, y;
+	
+	/* Required number of arguments */
+    if (objC != 3)
+    {
+		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "x y");
+		return TCL_ERROR;
+    }
+	
+	if (Tcl_GetIntFromObj(interp, objV[1], &x) != TCL_OK)
+	{
+		quit("Ouch1");
+		return TCL_ERROR;
+	}
+	
+	if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
+	{
+		quit("Ouch2");
+		return TCL_ERROR;
+	}
+	
+	/* Paranoia */
+	if ((x >= 80) || (x < 0)) return TCL_ERROR;
+	if ((y >= 25) || (y < 0)) return TCL_ERROR;
+	
+	/* Get the term information */
+	c = data.scr->c[y][x];
+	
+	/* Store into the result */
+	hack_string[0] = c;
+	Tcl_SetStringObj(resultPtr, hack_string, -1);
+
+	return TCL_OK;
+}
+
+
+
 static errr Term_user_tnb(int n)
 {
 	/* Hack - ignore parameters for now */
@@ -105,6 +204,9 @@ static errr Term_xtra_tnb_event(int v)
 static errr Term_xtra_tnb_flush(void)
 {
 	int flags = TCL_ALL_EVENTS | TCL_DONT_WAIT;
+	
+	/* Hack - redraw everything */
+	angtk_eval("NSTerm::Redraw", NULL);
 
 	while (Tcl_DoOneEvent(flags)) ;
 
@@ -227,7 +329,7 @@ static errr Term_xtra_tnb(int n, int v)
 			int flags = TCL_WINDOW_EVENTS | TCL_IDLE_EVENTS | TCL_DONT_WAIT;
 
 			Bind_Generic(EVENT_TERM, KEYWORD_TERM_FRESH + 1);
-
+			
 			while (Tcl_DoOneEvent(flags) != 0)
 				;
 
@@ -351,8 +453,6 @@ static void hook_quit(cptr str)
 	TclTk_Exit(g_interp);
 	
 	cleanup_angband();
-
-	exit(0);
 }
 
 #ifdef PLATFORM_X11
@@ -362,8 +462,6 @@ static void hook_quit(cptr str)
  */
 int init_tnb(int argc, char **argv)
 {
-	char *t;
-	
 	ANGBAND_DIR_TK = DEFAULT_TK_PATH;
 
 	/* Validate the "tk" directory */
@@ -390,7 +488,7 @@ int init_tnb(int argc, char **argv)
 
 	/* Initialize */
 	angtk_init();
-#if 0
+	
 	/* Initialize */
 	init_angband();
 
@@ -399,12 +497,14 @@ int init_tnb(int argc, char **argv)
 
 	/* Program is intialized */
 	angtk_angband_initialized();
-#endif /* 0 */
+
+#if 0
 	while (TRUE)
 	{
 	while (Tcl_DoOneEvent(TRUE) != 0)
 				;
 	}
+#endif /* 0 */
 	
 	/* Paranoia */
 	return (0);

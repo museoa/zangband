@@ -2144,11 +2144,6 @@ void angtk_eval(cptr command, ...)
 	Tcl_Obj *objv[40];
 	int i, result;
 
-#if 0
-	/* Oops. Tcl isn't initialized yet */
-	if (!Tcl_Initialized) return;
-#endif
-
 	/* Start processing variable argument list */
 	va_start(vp, command);
 
@@ -2249,7 +2244,7 @@ void angtk_display_info(char *title, char **info, int count)
 	/* Paranoia */
 	if (count > 256)
 	{
-		plog_fmt("angtk_display_info(): too many strings");
+		plog("angtk_display_info(): too many strings");
 		count = 256;
 	}
 
@@ -2341,6 +2336,9 @@ static CommandInit commandInit[] = {
 	{0, "photoget", 0, 0, NULL, objcmd_photo_get, (ClientData) 0},
 	{0, "photomask", 2, 3, "imageDst ?imageMask?", objcmd_photo_mask, (ClientData) 0},
 	{0, "fontdesc", 2, 2, "font", objcmd_fontdesc, (ClientData) 0},
+	{0, "term_window", 0, 0, NULL, NULL, (ClientData) 0},
+		{1, "char", 3, 3, "x y???", objcmd_term_char, (ClientData) 0},
+		{1, "attr", 3, 3, "x y", objcmd_term_attr, (ClientData) 0},
 	{0, NULL, 0, 0, NULL, NULL, (ClientData) 0}
 };
 
@@ -2377,7 +2375,15 @@ void angtk_init(void)
 
 	/* Standard color palette */
 	init_palette();
-
+#if 0	
+	/* Testing */
+	path_build(path, 1024, ANGBAND_DIR_TK, "term.tcl");
+	if (angtk_eval_file(path) == TCL_ERROR)
+	{
+		HandleError();
+	}
+#endif /* 0 */
+	
 	/* Source the "startup script" */
 	path_build(path, 1024, ANGBAND_DIR_TK, "init-startup.tcl");
 	if (angtk_eval_file(path) == TCL_ERROR)

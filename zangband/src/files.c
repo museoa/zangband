@@ -1305,9 +1305,9 @@ errr check_load_init(void)
 /*
  * Print number with header at given row, column
  */
-static void prt_num(int col, int row, cptr header, s32b num, int wid)
+static void prt_num(int col, int row, cptr header, long num, int wid)
 {
-	put_fstr(col, row, "%s   %*ld", header, wid, (long)num);
+	put_fstr(col, row, "%s   %*ld", header, wid, num);
 }
 
 

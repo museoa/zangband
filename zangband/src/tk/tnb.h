@@ -510,7 +510,7 @@ extern void Plat_SyncDisplay(Display *display);
 	extern int objcmd_##N _ANSI_ARGS_((ClientData clientData, \
 		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]))
 
-DECLARE_TK_HOOK(angband);
+/* DECLARE_TK_HOOK(angband); */
 DECLARE_TK_HOOK(player);
 DECLARE_TK_HOOK(power);
 DECLARE_TK_HOOK(setting);
@@ -538,5 +538,6 @@ DECLARE_TK_HOOK(photo_get);
 DECLARE_TK_HOOK(photo_mask);
 DECLARE_TK_HOOK(equipinfo);
 DECLARE_TK_HOOK(inveninfo);
-
+DECLARE_TK_HOOK(term_char);
+DECLARE_TK_HOOK(term_attr);
 #endif /* _INCLUDE_TNB_H_ */
