@@ -34,95 +34,11 @@ int tnb_tile_y;
 
 char tnb_tile_file[1024];
 
-
-int
-objcmd_term_attr(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+void tnb_get_term(int x, int y, byte *a, char *c)
 {
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	
-	byte attr;
-	
-	int x, y;
-
-	/* Required number of arguments */
-    if (objC != 3)
-    {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "x y");
-		return TCL_ERROR;
-    }
-
-	if (Tcl_GetIntFromObj(interp, objV[1], &x) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-	
-	if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-	
-	/* Paranoia */
-	if ((x >= 80) || (x < 0)) return TCL_ERROR;
-	if ((y >= 24) || (y < 0)) return TCL_ERROR;
-	
 	/* Get the term information */
-	attr = data.scr->a[y][x];
-	
-	/* Store into the result */
-	Tcl_SetIntObj(resultPtr, attr);
-
-	return TCL_OK;
-}
-
-
-int
-objcmd_term_char(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-
-	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
-	
-	char c;
-	
-	static char hack_string[2] = "1\0";
-	
-	int x, y;
-	
-	/* Required number of arguments */
-    if (objC != 3)
-    {
-		Tcl_WrongNumArgs(interp, infoCmd->depth + 1, objv, (char *) "x y");
-		return TCL_ERROR;
-    }
-	
-	if (Tcl_GetIntFromObj(interp, objV[1], &x) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-	
-	if (Tcl_GetIntFromObj(interp, objV[2], &y) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-	
-	/* Paranoia */
-	if ((x >= 80) || (x < 0)) return TCL_ERROR;
-	if ((y >= 25) || (y < 0)) return TCL_ERROR;
-	
-	/* Get the term information */
-	c = data.scr->c[y][x];
-	
-	/* Store into the result */
-	hack_string[0] = c;
-	Tcl_SetStringObj(resultPtr, hack_string, -1);
-
-	return TCL_OK;
+	*a = data.scr->a[y][x];
+	*c = data.scr->c[y][x];
 }
 
 static errr Term_user_tnb(int n)
@@ -172,9 +88,6 @@ static errr Term_xtra_tnb_flush(void)
 {
 	int flags = TCL_ALL_EVENTS | TCL_DONT_WAIT;
 	
-	/* Hack - redraw everything */
-	angtk_eval("NSTerm::Redraw", NULL);
-
 	while (Tcl_DoOneEvent(flags)) ;
 
 	/* Success */
@@ -407,11 +320,14 @@ static void hook_quit(cptr str)
 	(void) str;
 
 	Icon_Exit();
-
+	
+	/* cleanup_angband(); */
+	
 	/* Cleanup Tcl and Tk */
 	Tcl_DeleteInterp(g_interp);
 	
-	cleanup_angband();
+	/* Hack - no longer hook tcl memory routines */
+	rnfree_aux = NULL;
 }
 
 /*
