@@ -1325,3 +1325,11 @@ I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
 D:0:0:25:0:0:0:100:8
 F:2,field_action_door_store
 F:19,field_action_isfood_tester
+
+N:138:Library
+G:9:b
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_MAGIC | NO_OBJECT | PERM
+D:6:100:0:0:0:0:0:0
+F:2,field_action_door_build
+F:18,field_action_library1 | 19,field_action_library2
