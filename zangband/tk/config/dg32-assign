@@ -6,7 +6,6 @@ Type none
 Type blank
 Type default
 Type armor
-Type effects
 Type food
 Type classm
 Type humans
@@ -1474,85 +1473,4 @@ One 565 2 13 16
 One 566 0 43
 One 578 2 10 45
 
-Group ball
-Effect arrow 4 70
-Effect missile 4 70
-Effect mana 4 67
-Effect light_weak 4 66
-Effect dark_weak 4 71
-Effect water 4 62
-Effect plasma 4 68
-Effect meteor 4 70
-Effect ice 4 69
-Effect gravity 4 86
-Effect inertia 4 86
-Effect force 4 86
-Effect time 4 86
-Effect acid 4 61
-Effect electricity 4 66
-Effect fire 4 60
-Effect cold 4 63
-Effect poison 4 61
-Effect light 4 66
-Effect dark 4 71
-Effect confusion 4 86
-Effect sound 4 70
-Effect shard 4 64
-Effect nexus 4 86
-Effect nether 4 71
-Effect chaos 4 67
-Effect disenchant 4 86
-Effect rocket 4 76
-Effect nuke 4 77
-Effect death_ray 4 71
-Effect holy_fire 4 102
-Effect hell_fire 4 96
-Effect disintegrate 4 86
-Effect psi 4 86
-Effect psi_drain 4 86
-Effect telekenesis 4 86
-Effect domination 4 86
-
-Group bolt
-Effect arrow 4 0
-Effect missile 4 0
-Effect mana 4 32
-Effect light_weak 4 28
-Effect dark_weak 4 8
-Effect water 4 20
-Effect plasma 4 40
-Effect meteor 4 4
-Effect ice 4 24
-Effect gravity 4 44
-Effect inertia 4 44
-Effect force 4 44
-Effect time 4 44
-Effect acid 4 16
-Effect electricity 4 36
-Effect fire 4 12
-Effect cold 4 24
-Effect poison 4 16
-Effect light 4 28
-Effect dark 4 8
-Effect confusion 4 44
-Effect sound 4 4
-Effect shard 4 40
-Effect nexus 4 44
-Effect nether 4 8
-Effect chaos 4 32
-Effect disenchant 4 44
-Effect rocket 4 44
-Effect nuke 4 44
-Effect death_ray 4 44
-Effect holy_fire 4 12
-Effect hell_fire 4 40
-Effect disintegrate 4 44
-Effect psi 4 44
-Effect psi_drain 4 44
-Effect telekenesis 4 44
-Effect domination 4 44
-
-Group ammo
-Effect arrow 4 108
-Effect bolt 4 116
 
