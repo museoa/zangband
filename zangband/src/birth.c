@@ -1897,6 +1897,9 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 		/* Invalid input */
 		bell();
 	}
+	
+	/* Paranoia: This should never execute */
+	return (255);
 }
 
 /*
