@@ -2775,24 +2775,21 @@ errr init_xpj(int argc, char *argv[])
 	/* Activate the "Angband" window screen */
 	Term_activate(&data[0].t);
 
-	/* Try graphics */
-	if (arg_graphics)
+	/* Try the "16x16.bmp" file */
+	path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");
+
+	/* Use the "16x16.bmp" file if it exists */
+	if (0 == fd_close(fd_open(filename, O_RDONLY)))
 	{
-		/* Try the "16x16.bmp" file */
-		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");
+		/* Use graphics */
+		use_graphics = TRUE;
+		arg_graphics = TRUE;
 
-		/* Use the "16x16.bmp" file if it exists */
-		if (0 == fd_close(fd_open(filename, O_RDONLY)))
-		{
-			/* Use graphics */
-			use_graphics = TRUE;
+		use_transparency = TRUE;
 
-			use_transparency = TRUE;
+		pict_wid = pict_hgt = 16;
 
-			pict_wid = pict_hgt = 16;
-
-			ANGBAND_GRAF = "new";
-		}
+		ANGBAND_GRAF = "new";
 	}
 
 	/* Load graphics */
@@ -2886,7 +2883,10 @@ errr init_xpj(int argc, char *argv[])
 		}
 		/* Free tiles_raw? XXX XXX */
 	}
-
+	else
+	{
+		quit("Could not initialise graphics!");
+	}
 
 	/*
 	 * Precalculate the tables used to draw the tiles
