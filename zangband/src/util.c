@@ -2655,6 +2655,8 @@ void set_message_type(char *buf, uint max, cptr fmt, va_list *vp)
 void msgf(cptr fmt, ...)
 {
 	va_list vp;
+	
+	int i;
 
 	char buf[1024];
 	
@@ -2671,6 +2673,13 @@ void msgf(cptr fmt, ...)
 	va_end(vp);
 	
 	sound(current_message_type);
+
+	/* Clean the string of '\n' characters */
+	for (i = 0; buf[i]; i++)
+	{
+		/* Erase carriage returns */
+		if (buf[i] == '\n') buf[i] = ' ';
+	}
 	
 	/* Display */
 	msg_print_aux(current_message_type, buf);

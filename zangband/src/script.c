@@ -282,7 +282,7 @@ static const struct luaL_reg intMathLib[] =
  * The value returned for string arguments is always made with string_make() 
  * and should be freed with string_free() when no longer needed. 
  */
-static void call_lua_hook(cptr script, cptr format, va_list vp)
+static bool call_lua_hook(cptr script, cptr format, va_list vp)
 {
 	int i, status;
 	cptr vars[20];
@@ -290,6 +290,8 @@ static void call_lua_hook(cptr script, cptr format, va_list vp)
 	int first_return = 0;
 
 	int oldtop = lua_gettop(L);
+
+	bool success;
 
 	for (i = 0; format[i] && i < 20; i++)
 	{
@@ -449,11 +451,14 @@ static void call_lua_hook(cptr script, cptr format, va_list vp)
 		}
 
 		lua_settop(L, oldtop);
+
+		/* Worked */
+		success = TRUE;
 	}
 	else
 	{
 		/* We failed */
-		msgf("Script failed: %s", script);
+		success = FALSE;
 	}
 	
 	/* Clear variables */
@@ -470,6 +475,9 @@ static void call_lua_hook(cptr script, cptr format, va_list vp)
 			break;
 		}
 	}
+	
+	/* Done */
+	return (success);
 }
 
 /*
@@ -502,6 +510,8 @@ void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
 	cptr script = NULL;
+	
+	bool success;
 
 	if (o_ptr->trigger[trigger_id])
 		script = quark_str(o_ptr->trigger[trigger_id]);
@@ -518,7 +528,7 @@ void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 	/* Begin the Varargs Stuff */
 	va_start(vp, format);
 	
-	call_lua_hook(script, format, vp);
+	success = call_lua_hook(script, format, vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -526,6 +536,12 @@ void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 	/* Clear globals */
 	lua_pushnil(L); lua_setglobal(L, "trigger_id");
 	lua_pushnil(L); lua_setglobal(L, "object");
+	
+	/* Paranoia */
+	if (!success)
+	{
+		msgf("Script for object: %v failed.", OBJECT_FMT(o_ptr, FALSE, 3));
+	}
 }
 
 /*
