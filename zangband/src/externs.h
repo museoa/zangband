@@ -1251,6 +1251,7 @@ extern void screen_load(void);
 extern void c_put_str(byte attr, cptr str, int col, int row);
 extern void put_str(cptr str, int col, int row);
 extern void put_cstr(cptr str, int col, int row);
+extern void put_fstr(int col, int row, cptr str, ...);
 extern void c_prt(byte attr, cptr str, int col, int row);
 extern void prt(cptr str, int col, int row);
 extern void c_roff(byte attr, cptr str);

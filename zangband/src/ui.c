@@ -419,6 +419,27 @@ void put_cstr(cptr str, int col, int row)
 	}
 }
 
+/*
+ * Put a string with formatting information at a given location
+ */
+void put_fstr(int col, int row, cptr str, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, str);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, str, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	put_cstr(buf, col, row);
+}
 
 /*
  * Display a string on the screen using an attribute, and clear
