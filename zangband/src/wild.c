@@ -15,12 +15,14 @@
 #include "angband.h"
 
 
-
-
-/* Code fragment that lights / darkens old wilderness */
-
-#if 0
-
+/* Lighten / Darken Wilderness */
+static void day_night(void)
+{	
+	bool daytime;
+	
+	int x, y;
+	cave_type *c_ptr;
+	
 	/* Day time */
 	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
 		daytime = TRUE;
@@ -28,12 +30,12 @@
 		daytime = FALSE;
 
 	/* Light up or darken the area */
-	for (y = 0; y < cur_hgt; y++)
+	for (y = wild_grid.y_min; y < wild_grid.y_max; y++)
 	{
-		for (x = 0; x < cur_wid; x++)
+		for (x = wild_grid.x_min; x < wild_grid.x_max; x++)
 		{
 			/* Get the cave grid */
-			c_ptr = &cave[y][x];
+			c_ptr = area(y,x);
 
 			if (daytime)
 			{
@@ -47,16 +49,23 @@
 			{
 				/* Darken "boring" features */
 				if ((c_ptr->feat <= FEAT_INVIS) ||
-				    ((c_ptr->feat >= FEAT_DEEP_WATER) &&
-					(c_ptr->feat <= FEAT_TREES)))
+				    (c_ptr->feat >= FEAT_DEEP_WATER))
 				{
 					/* Forget the grid */
 					c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
 				}
+				else
+				{
+					/* Assume lit */
+					c_ptr->info |= (CAVE_GLOW);
+
+					/* Hack -- Memorize lit grids if allowed */
+					if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
+				}
 			}
 		}
 	}
-#endif
+}
 
 
 /* Town currently stored in cave[][] */
@@ -151,7 +160,11 @@ void change_level(int level)
 		if (!dun_level)
 		{
 			move_wild();
+			
+			/* Lighten / darken wilderness */
+			day_night();
 		}
+			
 	}
 	else
 	{
@@ -2202,7 +2215,7 @@ static void make_wild_sea(blk_ptr block_ptr,int sea_type)
 		{
 			block_ptr[j][i].feat = pick_feat(FEAT_SHAL_WATER, FEAT_DEEP_WATER,
 					FEAT_OCEAN_WATER, FEAT_NONE, 0, 10, 20, 40, sea_type);
-			block_ptr[j][i].info = CAVE_GLOW|CAVE_MARK;
+			block_ptr[j][i].info = 0;
 		}
 	}
 }
@@ -2237,12 +2250,64 @@ static void make_wild_01(blk_ptr block_ptr, byte *data)
 			new_feat = pick_feat(data[0], data[2], data[4], data[6],
 				data[1], data[3], data[5], data[7], element);
 			
-			block_ptr[j][i].info = CAVE_GLOW|CAVE_MARK;
 			block_ptr[j][i].feat = new_feat;
+			block_ptr[j][i].info = 0;
 		}
 	}
 }
 
+
+/* Lighten / Darken new block depending on Day/ Night */
+void light_dark_block(blk_ptr block_ptr)
+{
+	int i, j;
+	
+	bool daytime;
+	cave_type *c_ptr;
+	
+	/* Day time */
+	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
+		daytime = TRUE;
+	else
+		daytime = FALSE;
+
+	/* Light up or darken the area */
+	for (j = 0; j < WILD_BLOCK_SIZE; j++)
+	{
+		for (i = 0; i < WILD_BLOCK_SIZE; i++)
+		{
+			/* Get the cave grid */
+			c_ptr = &block_ptr[j][i];
+
+			if (daytime)
+			{
+				/* Assume lit */
+				c_ptr->info |= (CAVE_GLOW);
+
+				/* Hack -- Memorize lit grids if allowed */
+				if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
+			}
+			else
+			{
+				/* Darken "boring" features */
+				if ((c_ptr->feat <= FEAT_INVIS) ||
+				    (c_ptr->feat >= FEAT_DEEP_WATER))
+				{
+					/* Forget the grid */
+					c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
+				}
+				else
+				{
+					/* Assume lit */
+					c_ptr->info |= (CAVE_GLOW);
+
+					/* Hack -- Memorize lit grids if allowed */
+					if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
+				}
+			}
+		}
+	}
+}
 
 /* Make a new block based on the terrain type */
 static void gen_block(int x, int y, blk_ptr block_ptr)
@@ -2319,6 +2384,9 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 		/* overlay town on wilderness */
 		overlay_town(y, x, w_town, block_ptr);
 	}
+
+	/* Day / Night - lighten or darken the new block */
+	light_dark_block(block_ptr);
 
 	/* Set the monster generation level */
 
@@ -3103,8 +3171,6 @@ void create_wilderness(void)
 		
 	/* The sea covers 1/3 of the wilderness */
 	sea_level = hgt_min + (hgt_max - hgt_min) / 3;
-	
-	msg_format("min, max, sea %d,%d,%d", hgt_min, hgt_max, sea_level);
 	
 	/* create "population density" information */
 	create_pop_map(sea_level);

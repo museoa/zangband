@@ -866,10 +866,8 @@ static void process_world(void)
 	bool cave_no_regen = FALSE;
 	int upkeep_factor = 0;
 
-#if 0
 	cave_type *c_ptr;
 	int x, y;
-#endif
 
 	object_type *o_ptr;
 	u32b f1 = 0 , f2 = 0 , f3 = 0;
@@ -933,10 +931,6 @@ static void process_world(void)
 
 	/*** Handle the wilderness/town (sunshine) ***/
 
-
-/*Hack - turn off night/ day until wilderness code is done properly*/
-#if 0
-
 	/* While in town/wilderness */
 	if (!dun_level && !p_ptr->inside_quest)
 	{
@@ -955,9 +949,9 @@ static void process_world(void)
 				msg_print("The sun has risen.");
 
 				/* Hack -- Scan the town */
-				for (y = 0; y < cur_hgt; y++)
+				for (y = wild_grid.y_min; y <  wild_grid.y_max; y++)
 				{
-					for (x = 0; x < cur_wid; x++)
+					for (x = wild_grid.x_min; x <  wild_grid.x_max; x++)
 					{
 						/* Get the cave grid */
 						c_ptr = area(y,x);
@@ -981,21 +975,31 @@ static void process_world(void)
 				msg_print("The sun has fallen.");
 
 				/* Hack -- Scan the town */
-				for (y = 0; y < cur_hgt; y++)
+				for (y = wild_grid.y_min; y <  wild_grid.y_max; y++)
 				{
-					for (x = 0; x < cur_wid; x++)
+					for (x = wild_grid.x_min; x <  wild_grid.x_max; x++)
 					{
 						/* Get the cave grid */
 						c_ptr = area(y,x);
 
 						/* Darken "boring" features */
 						if ((c_ptr->feat <= FEAT_INVIS) ||
-						    ((c_ptr->feat >= FEAT_DEEP_WATER) &&
-							(c_ptr->feat <= FEAT_TREES)))
+						    (c_ptr->feat >= FEAT_DEEP_WATER))
 						{
 							/* Forget the grid */
 							c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
 
+							/* Hack -- Notice spot */
+							note_spot(y, x);
+						}
+						else
+						{
+							/* Assume lit */
+							c_ptr->info |= (CAVE_GLOW);
+
+							/* Hack -- Memorize lit grids if allowed */
+							if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
+							
 							/* Hack -- Notice spot */
 							note_spot(y, x);
 						}
@@ -1013,8 +1017,6 @@ static void process_world(void)
 			p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 		}
 	}
-
-#endif
 
 	/* Set back the rewards once a day */
 	if (!(turn % (10L * STORE_TURNS)))
