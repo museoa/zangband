@@ -5052,48 +5052,6 @@ void do_cmd_borg(void)
 			/* Extract a flag */
 			switch (cmd)
 			{
-				case '0':
-				{
-					feat = 1 << 0;
-					break;
-				}
-				case '1':
-				{
-					feat = 1 << 1;
-					break;
-				}
-				case '2':
-				{
-					feat = 1 << 2;
-					break;
-
-				}
-				case '3':
-				{
-					feat = 1 << 3;
-					break;
-				}
-				case '4':
-				{
-					feat = 1 << 4;
-					break;
-				}
-				case '5':
-				{
-					feat = 1 << 5;
-					break;
-				}
-				case '6':
-				{
-					feat = 1 << 6;
-					break;
-				}
-				case '7':
-				{
-					feat = 1 << 7;
-					break;
-				}
-
 				case '.':
 				{
 					feat = FEAT_FLOOR;
