@@ -1850,7 +1850,7 @@ void do_cmd_debug(void)
 			do_cmd_script();
 			break;
 		}
-#endif DEBUG_SCRIPTS
+#endif /* DEBUG_SCRIPTS */
 
 		default:
 		{

@@ -3245,7 +3245,7 @@ void take_hit(int damage, cptr hit_from)
 	p_ptr->window |= (PW_PLAYER);
 
 	/* Do not skip the message */
-	p_ptr->skip_more = FALSE;
+	p_ptr->state.skip_more = FALSE;
 
 	if (pen_invuln)
 		msgf("The attack penetrates your shield of invulnerability!");
@@ -3359,7 +3359,7 @@ void lose_exp(s32b amount)
  */
 void make_noise(byte amount)
 {
-	int total = amount + p_ptr->noise_level;
+	int total = amount + p_ptr->state.noise_level;
 
 	/* Paranoia (watching for overflow) */
 	if (total > MONSTER_FLOW_DEPTH)
@@ -3374,7 +3374,7 @@ void make_noise(byte amount)
 	}
 
 	/* Save the new noise level */
-	p_ptr->noise_level = (byte)total;
+	p_ptr->state.noise_level = (byte)total;
 }
 
 

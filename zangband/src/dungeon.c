@@ -939,7 +939,7 @@ static void process_world(void)
 			do_cmd_save_game(TRUE);
 	}
 
-	if (p_ptr->mon_fight)
+	if (p_ptr->state.mon_fight)
 	{
 		msgf("You hear noise.");
 	}
@@ -2256,7 +2256,7 @@ static void process_command(void)
 				msgf("An anti-magic shell disrupts your %s!",
 						   which_power);
 
-				p_ptr->energy_use = 0;
+				p_ptr->state.energy_use = 0;
 			}
 			else
 			{
@@ -2717,14 +2717,14 @@ static void process_player(void)
 		}
 
 		/* Assume free turn */
-		p_ptr->energy_use = 0;
+		p_ptr->state.energy_use = 0;
 
 
 		/* Paralyzed or Knocked Out */
 		if (p_ptr->tim.paralyzed || (p_ptr->tim.stun >= 100))
 		{
 			/* Take a turn */
-			p_ptr->energy_use = 100;
+			p_ptr->state.energy_use = 100;
 		}
 
 		/* Resting */
@@ -2741,7 +2741,7 @@ static void process_player(void)
 			}
 
 			/* Take a turn */
-			p_ptr->energy_use = 100;
+			p_ptr->state.energy_use = 100;
 		}
 
 		/* Running */
@@ -2790,10 +2790,10 @@ static void process_player(void)
 		/*** Clean up ***/
 
 		/* Significant */
-		if (p_ptr->energy_use)
+		if (p_ptr->state.energy_use)
 		{
 			/* Use some energy */
-			p_ptr->energy -= p_ptr->energy_use;
+			p_ptr->energy -= p_ptr->state.energy_use;
 
 
 			/* Hack -- constant hallucination */
@@ -2888,7 +2888,7 @@ static void process_player(void)
 		if (p_ptr->state.leaving) break;
 
 		/* Used up energy for this turn */
-		if (p_ptr->energy_use) break;
+		if (p_ptr->state.energy_use) break;
 	}
 }
 

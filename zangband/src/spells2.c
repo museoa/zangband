@@ -1005,7 +1005,7 @@ static bool trap_tester(int x, int y)
 bool detect_traps(void)
 {
 	/* Have detected traps on this level */
-	p_ptr->detected = TRUE;
+	p_ptr->state.detected = TRUE;
 	
 	/* Detect them */
 	return(detect_sq_aux(trap_tester, "You sense the presence of traps!"));

@@ -2426,7 +2426,7 @@ void messages_free(void)
  */
 static void msg_flush(int x)
 {
-	if (!p_ptr->skip_more)
+	if (!p_ptr->state.skip_more)
 	{
 		/* Pause for response */
 		prtf(x, 0, CLR_L_BLUE "-more-");
@@ -2439,7 +2439,7 @@ static void msg_flush(int x)
 			if (cmd == ESCAPE)
 			{
 				/* Skip all the prompt until player's turn */
-				p_ptr->skip_more = TRUE;
+				p_ptr->state.skip_more = TRUE;
 				break;
 			}
 
@@ -2790,7 +2790,7 @@ void request_command(int shopping)
 			msg_flag = FALSE;
 
 			/* Reset the skip_more flag */
-			p_ptr->skip_more = FALSE;
+			p_ptr->state.skip_more = FALSE;
 
 			/* Activate "command mode" */
 			p_ptr->cmd.inkey_flag = TRUE;

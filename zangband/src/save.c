@@ -1054,7 +1054,7 @@ static void wr_extra(void)
 	wr_s32b(turn);
 
 	/* Trap detection status */
-	wr_byte(p_ptr->detected);
+	wr_byte(p_ptr->state.detected);
 
 	/* Player inventory item */
 	wr_s16b(p_ptr->inventory);

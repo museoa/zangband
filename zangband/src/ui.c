@@ -1462,7 +1462,7 @@ bool get_check(cptr prompt, ...)
 	va_end(vp);
 
 	/* Do not skip */
-	p_ptr->skip_more = FALSE;
+	p_ptr->state.skip_more = FALSE;
 
 	/* Paranoia XXX XXX XXX */
 	message_flush();

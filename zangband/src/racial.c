@@ -116,7 +116,7 @@ static void eat_corpse(void)
 
 	/* Nothing to eat */
 	msgf("There is no fresh skeleton or corpse here!");
-	p_ptr->energy_use = 0;
+	p_ptr->state.energy_use = 0;
 
 	/* Done */
 	return;
@@ -143,7 +143,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	if (p_ptr->lev < min_level)
 	{
 		msgf("You need to attain level %d to use this power.", min_level);
-		p_ptr->energy_use = 0;
+		p_ptr->state.energy_use = 0;
 		return FALSE;
 	}
 
@@ -151,7 +151,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	else if (p_ptr->tim.confused)
 	{
 		msgf("You are too confused to use this power.");
-		p_ptr->energy_use = 0;
+		p_ptr->state.energy_use = 0;
 		return FALSE;
 	}
 
@@ -160,7 +160,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	{
 		if (!get_check("Really use the power in your weakened state? "))
 		{
-			p_ptr->energy_use = 0;
+			p_ptr->state.energy_use = 0;
 			return FALSE;
 		}
 	}
@@ -181,7 +181,7 @@ bool racial_aux(s16b min_level, int cost, int use_stat, int difficulty)
 	if (difficulty < 5) difficulty = 5;
 
 	/* take time and pay the price */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	if (use_hp)
 	{
@@ -605,7 +605,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 			}
 			default:
 				msgf("This race has no bonus power.");
-				p_ptr->energy_use = 0;
+				p_ptr->state.energy_use = 0;
 		}
 	}
 
@@ -686,7 +686,7 @@ void do_cmd_racial_power(void)
 	if (p_ptr->tim.confused)
 	{
 		msgf("You are too confused to use any powers!");
-		p_ptr->energy_use = 0;
+		p_ptr->state.energy_use = 0;
 		return;
 	}
 
@@ -730,7 +730,7 @@ void do_cmd_racial_power(void)
 	if (num == 0)
 	{
 		msgf("You have no powers to activate.");
-		p_ptr->energy_use = 0;
+		p_ptr->state.energy_use = 0;
 		return;
 	}
 	
@@ -759,7 +759,7 @@ void do_cmd_racial_power(void)
 	if (!display_menu(racial_menu, -1, FALSE, display_racial_header, "Use which power?"))
 	{
 		/* We aborted */
-		p_ptr->energy_use = 0;
+		p_ptr->state.energy_use = 0;
 	}
 	
 	/* Free the allocated strings */

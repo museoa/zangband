@@ -1725,8 +1725,8 @@ static void calc_mana(void)
 
 	object_type *o_ptr;
 
-	bool old_cumber_glove = p_ptr->cumber_glove;
-	bool old_cumber_armor = p_ptr->cumber_armor;
+	bool old_cumber_glove = p_ptr->state.cumber_glove;
+	bool old_cumber_armor = p_ptr->state.cumber_armor;
 
 
 	/* Hack -- Must be literate */
@@ -1760,7 +1760,7 @@ static void calc_mana(void)
 	if (mp_ptr->spell_book == TV_SORCERY_BOOK)
 	{
 		/* Assume player is not encumbered by gloves */
-		p_ptr->cumber_glove = FALSE;
+		p_ptr->state.cumber_glove = FALSE;
 
 		/* Get the gloves */
 		o_ptr = &p_ptr->equipment[EQUIP_HANDS];
@@ -1770,7 +1770,7 @@ static void calc_mana(void)
 			!((FLAG(o_ptr, TR_FREE_ACT)) || (FLAG(o_ptr, TR_DEX))))
 		{
 			/* Encumbered */
-			p_ptr->cumber_glove = TRUE;
+			p_ptr->state.cumber_glove = TRUE;
 
 			/* Reduce mana */
 			msp = (3 * msp) / 4;
@@ -1779,7 +1779,7 @@ static void calc_mana(void)
 
 
 	/* Assume player not encumbered by armor */
-	p_ptr->cumber_armor = FALSE;
+	p_ptr->state.cumber_armor = FALSE;
 
 	/* Weigh the armor */
 	cur_wgt = 0;
@@ -1797,7 +1797,7 @@ static void calc_mana(void)
 	if (((cur_wgt - max_wgt) / 10) > 0)
 	{
 		/* Encumbered */
-		p_ptr->cumber_armor = TRUE;
+		p_ptr->state.cumber_armor = TRUE;
 
 		/*
 		 * Subtract a percentage of maximum mana.
@@ -1886,10 +1886,10 @@ static void calc_mana(void)
 	if (character_xtra) return;
 
 	/* Take note when "glove state" changes */
-	if (old_cumber_glove != p_ptr->cumber_glove)
+	if (old_cumber_glove != p_ptr->state.cumber_glove)
 	{
 		/* Message */
-		if (p_ptr->cumber_glove)
+		if (p_ptr->state.cumber_glove)
 		{
 			msgf("Your covered hands feel unsuitable for spellcasting.");
 		}
@@ -1901,10 +1901,10 @@ static void calc_mana(void)
 
 
 	/* Take note when "armor state" changes */
-	if (old_cumber_armor != p_ptr->cumber_armor)
+	if (old_cumber_armor != p_ptr->state.cumber_armor)
 	{
 		/* Message */
-		if (p_ptr->cumber_armor)
+		if (p_ptr->state.cumber_armor)
 		{
 			msgf("The weight of your armor encumbers your movement.");
 		}
@@ -2318,10 +2318,10 @@ static void calc_bonuses(void)
 	int extra_shots;
 	object_type *o_ptr;
 
-	bool old_heavy_wield = p_ptr->heavy_wield;
-	bool old_heavy_shoot = p_ptr->heavy_shoot;
-	bool old_icky_wield = p_ptr->icky_wield;
-	bool old_monk_armour = p_ptr->monk_armour_stat;
+	bool old_heavy_wield = p_ptr->state.heavy_wield;
+	bool old_heavy_shoot = p_ptr->state.heavy_shoot;
+	bool old_icky_wield = p_ptr->state.icky_wield;
+	bool old_monk_armour = p_ptr->state.monk_armour_stat;
 
 	object_flags oflags;
 	object_flags *of_ptr = &oflags;
@@ -2357,12 +2357,12 @@ static void calc_bonuses(void)
 		if (monk_arm_wgt > (100 + (p_ptr->lev * 4)))
 		{
 			/* Burdened */
-			p_ptr->monk_armour_stat = TRUE;
+			p_ptr->state.monk_armour_stat = TRUE;
 		}
 		else
 		{
 			/* Not burdened */
-			p_ptr->monk_armour_stat = FALSE;
+			p_ptr->state.monk_armour_stat = FALSE;
 		}
 	}
 
@@ -2533,7 +2533,7 @@ static void calc_bonuses(void)
 	}
 
 	/* Monks get extra ac for armour _not worn_ */
-	if ((p_ptr->rp.pclass == CLASS_MONK) && (!p_ptr->monk_armour_stat))
+	if ((p_ptr->rp.pclass == CLASS_MONK) && (!p_ptr->state.monk_armour_stat))
 	{
 		if (!(p_ptr->equipment[EQUIP_BODY].k_idx))
 		{
@@ -2835,7 +2835,7 @@ static void calc_bonuses(void)
 
 
 	/* Assume not heavy */
-	p_ptr->heavy_shoot = FALSE;
+	p_ptr->state.heavy_shoot = FALSE;
 
 	/* It is hard to carry a heavy bow */
 	if (hold < o_ptr->weight / 10)
@@ -2845,7 +2845,7 @@ static void calc_bonuses(void)
 		p_ptr->dis_to_h += 2 * (hold - o_ptr->weight / 10);
 
 		/* Heavy Bow */
-		p_ptr->heavy_shoot = TRUE;
+		p_ptr->state.heavy_shoot = TRUE;
 	}
 
 
@@ -2915,7 +2915,7 @@ static void calc_bonuses(void)
 		}
 
 		/* Apply special flags */
-		if (o_ptr->k_idx && !p_ptr->heavy_shoot)
+		if (o_ptr->k_idx && !p_ptr->state.heavy_shoot)
 		{
 			/* Extra shots */
 			p_ptr->num_fire += extra_shots;
@@ -2975,7 +2975,7 @@ static void calc_bonuses(void)
 	p_ptr->skills[SKILL_THN] += add_special_melee_skill(p_ptr->rp.pclass, o_ptr);
 
 	/* Assume okay */
-	p_ptr->icky_wield = FALSE;
+	p_ptr->state.icky_wield = FALSE;
 
 	/* Extra bonus for warriors... */
 	if (p_ptr->rp.pclass == CLASS_WARRIOR)
@@ -3001,7 +3001,7 @@ static void calc_bonuses(void)
 		p_ptr->dis_to_d -= (p_ptr->lev / 5);
 
 		/* Icky weapon */
-		p_ptr->icky_wield = TRUE;
+		p_ptr->state.icky_wield = TRUE;
 	}
 
 	/* Affect Skill -- stealth (bonus one) */
@@ -3064,7 +3064,7 @@ static void calc_bonuses(void)
 		 p_ptr->skills[SKILL_SAV] = p_ptr->lev + 85;
 
 	/* Assume not heavy */
-	p_ptr->heavy_wield = FALSE;
+	p_ptr->state.heavy_wield = FALSE;
 
 	/* Are we using a weapon? */
 	if (o_ptr->k_idx)
@@ -3077,7 +3077,7 @@ static void calc_bonuses(void)
 			p_ptr->dis_to_h += 2 * (hold - o_ptr->weight / 10);
 
 			/* Heavy weapon */
-			p_ptr->heavy_wield = TRUE;
+			p_ptr->state.heavy_wield = TRUE;
 
 			/* The player gets to swing a heavy weapon only once. -LM- */
 			p_ptr->num_blow = 1;
@@ -3156,7 +3156,7 @@ static void calc_bonuses(void)
 			if (p_ptr->lev > 44) p_ptr->num_blow++;
 			if (p_ptr->lev > 49) p_ptr->num_blow++;
 
-			if (p_ptr->monk_armour_stat)
+			if (p_ptr->state.monk_armour_stat)
 			{
 				p_ptr->num_blow /= 2;
 			}
@@ -3193,10 +3193,10 @@ static void calc_bonuses(void)
 	if (character_xtra) return;
 
 	/* Take note when "heavy bow" changes */
-	if (old_heavy_shoot != p_ptr->heavy_shoot)
+	if (old_heavy_shoot != p_ptr->state.heavy_shoot)
 	{
 		/* Message */
-		if (p_ptr->heavy_shoot)
+		if (p_ptr->state.heavy_shoot)
 		{
 			msgf("You have trouble wielding such a heavy bow.");
 		}
@@ -3212,10 +3212,10 @@ static void calc_bonuses(void)
 
 
 	/* Take note when "heavy weapon" changes */
-	if (old_heavy_wield != p_ptr->heavy_wield)
+	if (old_heavy_wield != p_ptr->state.heavy_wield)
 	{
 		/* Message */
-		if (p_ptr->heavy_wield)
+		if (p_ptr->state.heavy_wield)
 		{
 			msgf("You have trouble wielding such a heavy weapon.");
 		}
@@ -3231,10 +3231,10 @@ static void calc_bonuses(void)
 
 
 	/* Take note when "illegal weapon" changes */
-	if (old_icky_wield != p_ptr->icky_wield)
+	if (old_icky_wield != p_ptr->state.icky_wield)
 	{
 		/* Message */
-		if (p_ptr->icky_wield)
+		if (p_ptr->state.icky_wield)
 		{
 			msgf("You do not feel comfortable with your weapon.");
 		}
@@ -3249,9 +3249,9 @@ static void calc_bonuses(void)
 	}
 
 	if (p_ptr->rp.pclass == CLASS_MONK &&
-		(p_ptr->monk_armour_stat != old_monk_armour))
+		(p_ptr->state.monk_armour_stat != old_monk_armour))
 	{
-		if (p_ptr->monk_armour_stat)
+		if (p_ptr->state.monk_armour_stat)
 		{
 			msgf("The weight of your armor disrupts your balance.");
 		}

@@ -2637,7 +2637,7 @@ static errr rd_dungeon(void)
 	 * This is done here because it needs to be below all calls
 	 * to "change_level()"
 	 */
-	p_ptr->detected = player_detected;
+	p_ptr->state.detected = player_detected;
 
 	/* Success */
 	return (0);

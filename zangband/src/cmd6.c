@@ -62,7 +62,7 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 	sound(SOUND_EAT);
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Identity not known yet */
 	ident = FALSE;
@@ -190,7 +190,7 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 	sound(SOUND_QUAFF);
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -289,7 +289,7 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 	bool ident, used_up;
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -399,7 +399,7 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	}
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -600,7 +600,7 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 	if (!get_aim_dir(&dir)) return;
 
 	/* Take a turn */
-	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skills[SKILL_DEV] / 8);
+	p_ptr->state.energy_use = MIN(75, 200 - 5 * p_ptr->skills[SKILL_DEV] / 8);
 
 	/* Get the object level */
 	lev = k_info[o_ptr->k_idx].level;
@@ -747,7 +747,7 @@ static void do_cmd_zap_rod_aux(object_type *o_ptr)
 	}
 
 	/* Take a turn */
-	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skills[SKILL_DEV] / 8);
+	p_ptr->state.energy_use = MIN(75, 200 - 5 * p_ptr->skills[SKILL_DEV] / 8);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -942,7 +942,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 	int lev, chance;
 
 	/* Take a turn */
-	p_ptr->energy_use = MIN(75, 200 - 5 * p_ptr->skills[SKILL_DEV] / 8);
+	p_ptr->state.energy_use = MIN(75, 200 - 5 * p_ptr->skills[SKILL_DEV] / 8);
 
 	/* Extract the item level */
 	lev = get_object_level(o_ptr);

@@ -4425,7 +4425,7 @@ void change_level(int level)
 	bool switched = FALSE;
 
 	/* Hack - reset trap detection flag */
-	p_ptr->detected = FALSE;
+	p_ptr->state.detected = FALSE;
 
 	/* Clear the monster lights */
 	clear_mon_lite();

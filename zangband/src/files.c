@@ -1600,7 +1600,7 @@ void player_flags(object_flags *of_ptr)
 			break;
 		case CLASS_MONK:
 			/* Monks get extra abilities if unencumbered */
-			if (!p_ptr->monk_armour_stat)
+			if (!p_ptr->state.monk_armour_stat)
 			{
 				if (p_ptr->lev > 9)
 					SET_FLAG(of_ptr, TR_SPEED);

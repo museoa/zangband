@@ -1832,10 +1832,10 @@ void py_attack(int x, int y)
 				if (((p_ptr->rp.pclass == CLASS_WARRIOR) ||
 					 (p_ptr->rp.pclass == CLASS_CHAOS_WARRIOR)) &&
 					(p_ptr->lev > 39) && (num < p_ptr->num_blow) &&
-					(p_ptr->energy_use))
+					(p_ptr->state.energy_use))
 				{
-					p_ptr->energy_use =
-						p_ptr->energy_use * num / p_ptr->num_blow;
+					p_ptr->state.energy_use =
+						p_ptr->state.energy_use * num / p_ptr->num_blow;
 				}
 
 				mdeath = TRUE;
@@ -2293,7 +2293,7 @@ void move_player(int dir, int do_pickup)
 		{
 			/* Do not leave the wilderness */
 			msgf("You can not leave the wilderness.");
-			p_ptr->energy_use = 0;
+			p_ptr->state.energy_use = 0;
 			return;
 		}
 	}
@@ -2372,7 +2372,7 @@ void move_player(int dir, int do_pickup)
 			else
 			{
 				msgf("%^s is in your way!", m_name);
-				p_ptr->energy_use = 0;
+				p_ptr->state.energy_use = 0;
 				oktomove = FALSE;
 			}
 
@@ -2402,7 +2402,7 @@ void move_player(int dir, int do_pickup)
 			 (c_ptr->feat == FEAT_PINE_TREE) || (c_ptr->feat == FEAT_SNOW_TREE))
 	{
 		oktomove = TRUE;
-		if (p_ptr->rp.pclass != CLASS_RANGER) p_ptr->energy_use += 10;
+		if (p_ptr->rp.pclass != CLASS_RANGER) p_ptr->state.energy_use += 10;
 	}
 
 	/* Some terrains are hard to move through */
@@ -2411,7 +2411,7 @@ void move_player(int dir, int do_pickup)
 			 (c_ptr->feat == FEAT_OBELISK) || (c_ptr->feat == FEAT_BOULDER))
 	{
 		oktomove = TRUE;
-		p_ptr->energy_use += 10;
+		p_ptr->state.energy_use += 10;
 	}
 
 	/* Disarm a visible trap */
@@ -2469,7 +2469,7 @@ void move_player(int dir, int do_pickup)
 				msgf("There is a closed door blocking your way.");
 
 				if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
-					p_ptr->energy_use = 0;
+					p_ptr->state.energy_use = 0;
 			}
 
 			/* Sound */
@@ -2501,7 +2501,7 @@ void move_player(int dir, int do_pickup)
 				msgf(MSGT_HITWALL, "There is rubble blocking your way.");
 
 				if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
-					p_ptr->energy_use = 0;
+					p_ptr->state.energy_use = 0;
 
 				/*
 				 * Well, it makes sense that you lose time bumping into
@@ -2516,7 +2516,7 @@ void move_player(int dir, int do_pickup)
 				msgf(MSGT_HITWALL, "The jungle is impassable.");
 
 				if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
-					p_ptr->energy_use = 0;
+					p_ptr->state.energy_use = 0;
 			}
 
 			/* Pillar */
@@ -2525,7 +2525,7 @@ void move_player(int dir, int do_pickup)
 				msgf(MSGT_HITWALL, "There is a pillar blocking your way.");
 
 				if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
-					p_ptr->energy_use = 0;
+					p_ptr->state.energy_use = 0;
 			}
 
 			/* Wall (or secret door) */
@@ -2534,7 +2534,7 @@ void move_player(int dir, int do_pickup)
 				msgf(MSGT_HITWALL, "There is a wall blocking your way.");
 
 				if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
-					p_ptr->energy_use = 0;
+					p_ptr->state.energy_use = 0;
 			}
 		}
 
@@ -2547,7 +2547,7 @@ void move_player(int dir, int do_pickup)
 	{
 		if (!(p_ptr->tim.confused || p_ptr->tim.stun || p_ptr->tim.image))
 		{
-			p_ptr->energy_use = 0;
+			p_ptr->state.energy_use = 0;
 		}
 
 		/* To avoid a loop with running */
@@ -2612,14 +2612,15 @@ void move_player(int dir, int do_pickup)
 		/* 
 		 * Is the disturb_traps option set and out of detection range?
 		 */
-		if (disturb_traps && !(pc_ptr->player & GRID_DTCT) && p_ptr->detected)
+		if (disturb_traps && !(pc_ptr->player & GRID_DTCT) &&
+			p_ptr->state.detected)
 		{
 			/* We are out of range */
 
 			msgf("Out of trap detection range.");
 
 			/* Reset the detection flag */
-			p_ptr->detected = FALSE;
+			p_ptr->state.detected = FALSE;
 
 			/* Disturb the player */
 			disturb(FALSE);
@@ -3435,7 +3436,7 @@ void run_step(int dir)
 	p_ptr->state.running--;
 
 	/* Take time */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Move the player, using the "pickup" flag */
 	move_player(p_ptr->run.cur_dir, FALSE);

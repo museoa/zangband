@@ -50,7 +50,7 @@ void do_cmd_go_up(void)
 			 * act first when we go up stairs, theoretically resulting in a
 			 * possible insta-death.
 			 */
-			p_ptr->energy_use = 0;
+			p_ptr->state.energy_use = 0;
 
 			/* Success */
 			msgf(MSGT_STAIRS, "You enter a maze of up staircases.");
@@ -116,7 +116,7 @@ void do_cmd_go_down(void)
 
 		if (go_down)
 		{
-			p_ptr->energy_use = 0;
+			p_ptr->state.energy_use = 0;
 
 			/* Success */
 			msgf(MSGT_STAIRS, "You enter a maze of down staircases.");
@@ -160,7 +160,7 @@ void do_cmd_search(void)
 	}
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Search */
 	search();
@@ -466,7 +466,7 @@ static bool do_cmd_open_chest(int x, int y, object_type *o_ptr)
 
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Attempt to unlock it */
 	if (o_ptr->pval > 0)
@@ -703,7 +703,7 @@ bool do_cmd_open_aux(int x, int y)
 	s16b *fld_ptr;
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Get requested grid */
 	c_ptr = area(x, y);
@@ -842,7 +842,7 @@ void do_cmd_open(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a turn */
-			p_ptr->energy_use = 100;
+			p_ptr->state.energy_use = 100;
 
 			/* Message */
 			msgf("There is a monster in the way!");
@@ -898,7 +898,7 @@ static bool do_cmd_close_aux(int x, int y)
 	}
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Get grid and contents */
 	c_ptr = area(x, y);
@@ -995,7 +995,7 @@ void do_cmd_close(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a turn */
-			p_ptr->energy_use = 100;
+			p_ptr->state.energy_use = 100;
 
 			/* Message */
 			msgf("There is a monster in the way!");
@@ -1060,7 +1060,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 									FIELD_ACT_INTERACT_TEST, &action);
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Sound */
 	sound(SOUND_DIG);
@@ -1402,7 +1402,7 @@ void do_cmd_tunnel(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a turn */
-			p_ptr->energy_use = 100;
+			p_ptr->state.energy_use = 100;
 
 			/* Message */
 			msgf("There is a monster in the way!");
@@ -1440,7 +1440,7 @@ static bool do_cmd_disarm_chest(int x, int y, object_type *o_ptr)
 	bool more = FALSE;
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Get the "disarm" factor */
 	i = p_ptr->skills[SKILL_DIS];
@@ -1536,7 +1536,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	}
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Point to field */
 	f_ptr = &fld_list[*fld_ptr];
@@ -1752,7 +1752,7 @@ void do_cmd_alter(void)
 		c_ptr = area(x, y);
 
 		/* Take a turn */
-		p_ptr->energy_use = 100;
+		p_ptr->state.energy_use = 100;
 
 		/* Attack monsters */
 		if (c_ptr->m_idx)
@@ -1906,7 +1906,7 @@ void do_cmd_spike(void)
 		else if (c_ptr->m_idx)
 		{
 			/* Take a turn */
-			p_ptr->energy_use = 100;
+			p_ptr->state.energy_use = 100;
 
 			/* Message */
 			msgf("There is a monster in the way!");
@@ -1919,7 +1919,7 @@ void do_cmd_spike(void)
 		else
 		{
 			/* Take a turn */
-			p_ptr->energy_use = 100;
+			p_ptr->state.energy_use = 100;
 
 			/* Successful jamming */
 			msgf("You jam the door with a spike.");
@@ -1964,7 +1964,7 @@ void do_cmd_walk(int pickup)
 	if (get_rep_dir(&dir))
 	{
 		/* Take a turn */
-		p_ptr->energy_use = 100;
+		p_ptr->state.energy_use = 100;
 
 		/* Actually move the character */
 		move_player(dir, pickup);
@@ -2027,7 +2027,7 @@ void do_cmd_stay(int pickup)
 
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 
 	/* Spontaneous Searching */
@@ -2112,7 +2112,7 @@ void do_cmd_rest(void)
 		chg_virtue(V_DILIGENCE, -1);
 
 	/* Take a turn XXX XXX XXX (?) */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Save the rest code */
 	p_ptr->state.resting = p_ptr->cmd.arg;
@@ -2480,7 +2480,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	/* Shooter properties */
 	if (j_ptr)
 	{
-		p_ptr->energy_use = p_ptr->bow_energy;
+		p_ptr->state.energy_use = p_ptr->bow_energy;
 		tmul = p_ptr->ammo_mult;
 
 		/* Get extra "power" from "extra might" */
@@ -2488,7 +2488,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	}
 	else
 	{
-		p_ptr->energy_use = 100;
+		p_ptr->state.energy_use = 100;
 
 		if (FLAG(i_ptr, TR_THROW))
 		{
@@ -2518,7 +2518,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	/* Take a (partial) turn - note strange formula. */
 
 	/* The real number of shots per round is (1 + n)/2 */
-	p_ptr->energy_use = (2 * p_ptr->energy_use / (1 + thits));
+	p_ptr->state.energy_use = (2 * p_ptr->state.energy_use / (1 + thits));
 
 	/* Another thing to do in python */
 #if 0

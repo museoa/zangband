@@ -2855,7 +2855,7 @@ void update_flow(void)
 		/* Check to see if the player is too close and in los */
 		if ((distance(px, py, flow_x, flow_y) < FLOW_DIST_MAX)
 			&& player_has_los_grid(parea(flow_x, flow_y))
-			&& (p_ptr->noise_level < MONSTER_FLOW_DEPTH / 4)) return;
+			&& (p_ptr->state.noise_level < MONSTER_FLOW_DEPTH / 4)) return;
 	}
 
 	/* Save player position */
@@ -2888,8 +2888,8 @@ void update_flow(void)
 	c_ptr->when = flow_n;
 
 	/* Save the flow cost */
-	c_ptr->cost = p_ptr->noise_level;
-	p_ptr->noise_level = 0;
+	c_ptr->cost = p_ptr->state.noise_level;
+	p_ptr->state.noise_level = 0;
 
 	/* Paranoia - not too much noise */
 	if (c_ptr->cost > MONSTER_FLOW_DEPTH)

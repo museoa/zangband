@@ -1928,7 +1928,7 @@ void do_cmd_bldg(field_type *f_ptr)
 	}
 
 	/* Free turn XXX XXX XXX */
-	p_ptr->energy_use = 0;
+	p_ptr->state.energy_use = 0;
 
 	/* Hack -- Character is no longer in "icky" mode */
 	character_icky = FALSE;

@@ -154,7 +154,7 @@ void do_cmd_wield(void)
 	}
 
 	/* Take a turn */
-	p_ptr->energy_use = 100;
+	p_ptr->state.energy_use = 100;
 
 	/* Split object */
 	q_ptr = item_split(q_ptr, 1);
@@ -266,7 +266,7 @@ void do_cmd_takeoff(void)
 	}
 
 	/* Take a partial turn */
-	p_ptr->energy_use = 50;
+	p_ptr->state.energy_use = 50;
 
 	/* Take off the item */
 	(void)inven_takeoff(o_ptr);
@@ -318,7 +318,7 @@ void do_cmd_drop(void)
 
 
 	/* Take a partial turn */
-	p_ptr->energy_use = 50;
+	p_ptr->state.energy_use = 50;
 
 	/* Drop (some of) the item */
 	inven_drop(o_ptr, amt);
@@ -362,7 +362,7 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 	}
 
 	/* Take a turn */
-	p_ptr->energy_use += 100;
+	p_ptr->state.energy_use += 100;
 
 	/* Message */
 	msgf("You destroy %v.", OBJECT_FMT(o_ptr, TRUE, 3));
@@ -488,7 +488,7 @@ void do_cmd_destroy(void)
 	o_ptr->number = old_number;
 
 	/* No energy used yet */
-	p_ptr->energy_use = 0;
+	p_ptr->state.energy_use = 0;
 
 	/* Physically try to destroy the item(s) */
 	if (!destroy_item_aux(o_ptr, amt)) return;
@@ -667,7 +667,7 @@ static void do_cmd_refill_lamp(void)
 
 
 	/* Take a partial turn */
-	p_ptr->energy_use = 50;
+	p_ptr->state.energy_use = 50;
 
 	/* Access the lantern */
 	j_ptr = &p_ptr->equipment[EQUIP_LITE];
@@ -754,7 +754,7 @@ static void do_cmd_refill_torch(void)
 	if (!o_ptr) return;
 
 	/* Take a partial turn */
-	p_ptr->energy_use = 50;
+	p_ptr->state.energy_use = 50;
 
 	/* Access the primary torch */
 	j_ptr = &p_ptr->equipment[EQUIP_LITE];

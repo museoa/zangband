@@ -2067,6 +2067,9 @@ static int random_major_theme_armor(object_type *o_ptr, int level)
 
 	int i;
 
+	/* Hack - ignore unused parameter */
+	(void) level;
+
 	switch (randint1(10))
 	{
 		case 1:

@@ -2718,9 +2718,6 @@ bool potion_smash_effect(int who, int x, int y, object_type *o_ptr)
 {
 	int k_idx = o_ptr->k_idx;
 
-	int radius = 2;
-	int dt = 0;
-	int dam = 0;
 	bool ident = FALSE;
 	bool angry = FALSE;
 
@@ -2976,7 +2973,7 @@ s16b spell_chance(int spell, int realm)
 	}
 
 	/* Hack -- Priest prayer penalty for "edged" weapons  -DGK */
-	if ((p_ptr->rp.pclass == CLASS_PRIEST) && p_ptr->icky_wield) chance += 25;
+	if ((p_ptr->rp.pclass == CLASS_PRIEST) && p_ptr->state.icky_wield) chance += 25;
 
 	/* Minimum failure rate */
 	if (chance < minfail) chance = minfail;

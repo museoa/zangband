@@ -253,7 +253,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -273,7 +273,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -309,7 +309,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -339,7 +339,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_SHOOT);
@@ -369,7 +369,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_SHOOT);
@@ -399,7 +399,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_SHOOT);
@@ -429,7 +429,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_SHOOT);
@@ -461,7 +461,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -495,7 +495,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -529,7 +529,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -563,7 +563,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -596,7 +596,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -630,7 +630,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -664,7 +664,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -698,7 +698,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -732,7 +732,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -766,7 +766,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -800,7 +800,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -834,7 +834,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -868,7 +868,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -902,7 +902,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -936,7 +936,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -970,7 +970,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -1004,7 +1004,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -1038,7 +1038,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -1072,7 +1072,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -1106,7 +1106,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -1140,7 +1140,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1171,7 +1171,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -1205,7 +1205,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1236,7 +1236,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 
 					sound(SOUND_BREATH);
@@ -1270,7 +1270,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1301,7 +1301,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1332,7 +1332,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1363,7 +1363,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1394,7 +1394,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1425,7 +1425,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1458,7 +1458,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1489,7 +1489,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1520,7 +1520,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1677,7 +1677,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1708,7 +1708,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1739,7 +1739,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1771,7 +1771,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1802,7 +1802,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1824,7 +1824,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1846,7 +1846,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1868,7 +1868,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1898,7 +1898,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1920,7 +1920,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1941,7 +1941,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1963,7 +1963,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -1985,7 +1985,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2006,7 +2006,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2029,7 +2029,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2068,7 +2068,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2106,7 +2106,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2145,7 +2145,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2181,7 +2181,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2218,7 +2218,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2253,7 +2253,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2294,7 +2294,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2315,7 +2315,7 @@ bool monst_spell_monst(int m_idx)
 						}
 						else
 						{
-							p_ptr->mon_fight = TRUE;
+							p_ptr->state.mon_fight = TRUE;
 						}
 					}
 				}
@@ -2329,7 +2329,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2363,7 +2363,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2431,7 +2431,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2498,7 +2498,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2554,7 +2554,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2569,7 +2569,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2589,7 +2589,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2597,7 +2597,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2618,7 +2618,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2628,7 +2628,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2649,7 +2649,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2662,7 +2662,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2681,7 +2681,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2694,7 +2694,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2713,7 +2713,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2726,7 +2726,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2745,7 +2745,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2758,7 +2758,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2777,7 +2777,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2790,7 +2790,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2809,7 +2809,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2822,7 +2822,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2843,7 +2843,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2856,7 +2856,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2875,7 +2875,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2888,7 +2888,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2907,7 +2907,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2920,7 +2920,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2942,7 +2942,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2955,7 +2955,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -2978,7 +2978,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -2991,7 +2991,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -3011,7 +3011,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -3024,7 +3024,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;
@@ -3044,7 +3044,7 @@ bool monst_spell_monst(int m_idx)
 					}
 					else
 					{
-						p_ptr->mon_fight = TRUE;
+						p_ptr->state.mon_fight = TRUE;
 					}
 				}
 
@@ -3057,7 +3057,7 @@ bool monst_spell_monst(int m_idx)
 
 				if (known && !see_t && count)
 				{
-					p_ptr->mon_fight = TRUE;
+					p_ptr->state.mon_fight = TRUE;
 				}
 
 				break;

@@ -1030,10 +1030,10 @@ static void display_inventory(void)
 	for (k = 0; k < 12; k++)
 	{
 		/* Do not display "dead" items */
-		if (p_ptr->store_top + k >= stocknum) break;
+		if (p_ptr->state.store_top + k >= stocknum) break;
 
 		/* Display that line */
-		display_entry(p_ptr->store_top + k);
+		display_entry(p_ptr->state.store_top + k);
 	}
 
 	/* Erase the extra lines and the "more" prompt */
@@ -1049,7 +1049,7 @@ static void display_inventory(void)
 		prtf(3, k + 6, "-more-");
 
 		/* Indicate the "current page" */
-		put_fstr(20, 5, "(Page %d)", p_ptr->store_top / 12 + 1);
+		put_fstr(20, 5, "(Page %d)", p_ptr->state.store_top / 12 + 1);
 	}
 }
 
@@ -1374,7 +1374,7 @@ static void store_purchase(void)
 	}
 
 	/* Find the number of objects on this and following pages */
-	i = (get_list_length(st_ptr->stock) - p_ptr->store_top);
+	i = (get_list_length(st_ptr->stock) - p_ptr->state.store_top);
 
 	/* And then restrict it to the current page */
 	if (i > 12) i = 12;
@@ -1393,7 +1393,7 @@ static void store_purchase(void)
 	if (!get_stock(&item, out_val, i)) return;
 
 	/* Get the actual index */
-	item = item + p_ptr->store_top;
+	item = item + p_ptr->state.store_top;
 
 	/* Get the actual item */
 	o_ptr = get_list_item(st_ptr->stock, item);
@@ -1563,16 +1563,16 @@ static void store_purchase(void)
 				}
 
 				/* Start over */
-				p_ptr->store_top = 0;
+				p_ptr->state.store_top = 0;
 			}
 
 			/* The item is gone */
 			else if (get_list_length(st_ptr->stock) != i)
 			{
 				/* Pick the correct screen */
-				if (p_ptr->store_top >= get_list_length(st_ptr->stock))
+				if (p_ptr->state.store_top >= get_list_length(st_ptr->stock))
 				{
-					p_ptr->store_top -= 12;
+					p_ptr->state.store_top -= 12;
 				}
 			}
 			
@@ -1623,12 +1623,12 @@ static void store_purchase(void)
 		else
 		{
 			/* Nothing left */
-			if (!st_ptr->stock) p_ptr->store_top = 0;
+			if (!st_ptr->stock) p_ptr->state.store_top = 0;
 
 			/* Nothing left on that screen */
-			else if (p_ptr->store_top >= get_list_length(st_ptr->stock))
+			else if (p_ptr->state.store_top >= get_list_length(st_ptr->stock))
 			{
-				p_ptr->store_top -= 12;
+				p_ptr->state.store_top -= 12;
 			}
 
 			/* Redraw everything */
@@ -1839,7 +1839,7 @@ static void store_sell(void)
 			/* Re-display if item is now in store */
 			if (item_pos >= 0)
 			{
-				p_ptr->store_top = (item_pos / 12) * 12;
+				p_ptr->state.store_top = (item_pos / 12) * 12;
 				display_inventory();
 			}
 		}
@@ -1869,7 +1869,7 @@ static void store_sell(void)
 		/* Update store display */
 		if (item_pos >= 0)
 		{
-			p_ptr->store_top = (item_pos / 12) * 12;
+			p_ptr->state.store_top = (item_pos / 12) * 12;
 			display_inventory();
 		}
 	}
@@ -1899,7 +1899,7 @@ static void store_examine(void)
 
 
 	/* Find the number of objects on this and following pages */
-	i = (get_list_length(st_ptr->stock) - p_ptr->store_top);
+	i = (get_list_length(st_ptr->stock) - p_ptr->state.store_top);
 
 	/* And then restrict it to the current page */
 	if (i > 12) i = 12;
@@ -1911,7 +1911,7 @@ static void store_examine(void)
 	if (!get_stock(&item, out_val, i)) return;
 
 	/* Get the actual index */
-	item = item + p_ptr->store_top;
+	item = item + p_ptr->state.store_top;
 
 	/* Get the actual item */
 	o_ptr = get_list_item(st_ptr->stock, item);
@@ -1978,8 +1978,8 @@ static void store_process_command(void)
 			}
 			else
 			{
-				p_ptr->store_top += 12;
-				if (p_ptr->store_top >= stocknum) p_ptr->store_top = 0;
+				p_ptr->state.store_top += 12;
+				if (p_ptr->state.store_top >= stocknum) p_ptr->state.store_top = 0;
 				display_inventory();
 			}
 			break;
@@ -2445,7 +2445,7 @@ void do_cmd_store(const field_type *f1_ptr)
 	p_ptr->cmd.new = 0;
 
 	/* Start at the beginning */
-	p_ptr->store_top = 0;
+	p_ptr->state.store_top = 0;
 
 	/* Display the store */
 	display_store();
@@ -2602,7 +2602,7 @@ void do_cmd_store(const field_type *f1_ptr)
 
 
 	/* Free turn XXX XXX XXX */
-	p_ptr->energy_use = 0;
+	p_ptr->state.energy_use = 0;
 
 	/* Hack -- Character is no longer in "icky" mode */
 	character_icky = FALSE;

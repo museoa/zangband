@@ -1364,6 +1364,24 @@ struct player_state
 	bool create_down_stair;	/* Create down stair on next level */
 	
 	byte feeling;	/* Most recent feeling */
+	
+	s16b energy_use;	/* Energy use this turn */
+	
+	bool cumber_armor;	/* Mana draining armor */
+	bool cumber_glove;	/* Mana draining gloves */
+	bool heavy_wield;	/* Heavy weapon */
+	bool heavy_shoot;	/* Heavy shooter */
+	bool icky_wield;	/* Icky weapon */
+	bool detected;	/* Detected for traps? */
+	
+	bool skip_more;	/* Skip the --more-- prompt */
+	bool mon_fight;	/* Monster fighting indicator */
+
+	bool monk_armour_stat;	/* Status of monk armour */
+	
+	byte noise_level;	/* Amount of noise since last update */
+	
+	u16b store_top;		/* Top of store inventory list */
 };
 
 /*
@@ -1531,21 +1549,13 @@ struct player_type
 	s16b health_who;	/* Health bar trackee */
 
 	s16b monster_race_idx;	/* Monster race trackee */
+	u16b max_seen_r_idx;	/* Most powerful monster visible */
 
 	s16b object_kind_idx;	/* Object kind trackee */
-
-	s16b energy_use;	/* Energy use this turn */
 	
 	player_run run;		/* Current stat of the running routine */
 
 	s16b new_spells;	/* Number of spells available */
-
-	bool cumber_armor;	/* Mana draining armor */
-	bool cumber_glove;	/* Mana draining gloves */
-	bool heavy_wield;	/* Heavy weapon */
-	bool heavy_shoot;	/* Heavy shooter */
-	bool icky_wield;	/* Icky weapon */
-	bool detected;	/* Detected for traps? */
 
 	s16b cur_lite;	/* Radius of lite (if any) */
 
@@ -1597,16 +1607,6 @@ struct player_type
 	/* Options */
 	bool options[OPT_PLAYER];
 	bool birth[OPT_BIRTH];
-
-	/* Extra player-specific flags */
-	bool skip_more;	/* Skip the --more-- prompt */
-	bool mon_fight;	/* Monster fighting indicator */
-
-	u16b max_seen_r_idx;	/* Most powerful monster visible */
-	bool monk_armour_stat;	/* Status of monk armour */
-	byte noise_level;	/* Amount of noise since last update */
-	
-	u16b store_top;		/* Top of store inventory list */
 };
 
 
