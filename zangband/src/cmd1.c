@@ -954,6 +954,9 @@ void carry(int pickup)
 					
 			/* Paranoia XXX XXX XXX */
 			msg_print(NULL);
+			
+			/* Describe the object */
+			object_desc(o_name, o_ptr, TRUE, 3);
 					
 			sprintf(out_val, "Pick up %s? [y/n/k] ", o_name);
 					
