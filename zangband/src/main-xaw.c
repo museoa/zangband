@@ -565,8 +565,7 @@ static void AngbandOutputPict(AngbandWidget widget, int ox, int oy, int n,
 			if (arg_graphics == GRAPHICS_DAVID_GERVAIS)
 				blank = XGetPixel(tiles, 0, 0);
 			else
-				blank = XGetPixel(tiles,
-				                  0, widget->angband.fontheight * 6);
+				blank = XGetPixel(tiles, 0, widget->angband.fontheight * 6);
 
 			for (k = 0; k < wid; k++)
 			{
@@ -1625,7 +1624,6 @@ static errr term_data_init(term_data *td, Widget topLevel,
 	/* Hooks */
 	t->xtra_hook = Term_xtra_xaw;
 	t->curs_hook = Term_curs_xaw;
-	/* t->bigcurs_hook = Term_bigcurs_xaw; */
 	t->wipe_hook = Term_wipe_xaw;
 	t->text_hook = Term_text_xaw;
 
@@ -1767,6 +1765,7 @@ errr init_xaw(int argc, char *argv[])
 			bitdepth = atoi(&argv[i][2]);
 			
 			/* Paranoia */
+			if (bitdepth == 32) graphmode = GRAPHICS_DAVID_GERVAIS;
 			if (bitdepth == 16) graphmode = GRAPHICS_ADAM_BOLT;
 			if (bitdepth == 8) graphmode = GRAPHICS_ORIGINAL;
 			

@@ -235,9 +235,28 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 
 	use_graphics = GRAPHICS_NONE;
 	use_transparency = FALSE;
-
+	
 	if ((graphics == GRAPHICS_ANY)
-		|| (graphics == GRAPHICS_ADAM_BOLT) || (graphics == GRAPHICS_HALF_3D))
+			|| (graphics == GRAPHICS_DAVID_GERVAIS))
+	{
+		/* Try the "32x32.bmp" file */
+		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/32x32.bmp");
+
+		/* Use the "32x32.bmp" file if it exists */
+		if (0 == fd_close(fd_open(filename, O_RDONLY)))
+		{
+			use_transparency = TRUE;
+
+			*xsize = 32;
+			*ysize = 32;
+		}
+		
+		use_graphics = GRAPHICS_DAVID_GERVAIS;
+	}
+	
+	/* We failed, or we want 16x16 graphics */
+	if (!use_graphics && ((graphics == GRAPHICS_ANY)
+			|| (graphics == GRAPHICS_ADAM_BOLT) || (graphics == GRAPHICS_HALF_3D)))
 	{
 		/* Try the "16x16.bmp" file */
 		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");

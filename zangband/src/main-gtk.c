@@ -2115,11 +2115,14 @@ static void graf_menu_update_handler(GtkWidget *widget, gpointer user_data)
 		"<Angband>/Options/Graphics/None",
 		(use_graphics == GRAPHICS_NONE));
 	check_menu_item(
-		"<Angband>/Options/Graphics/Old",
+		"<Angband>/Options/Graphics/8x8",
 		(use_graphics == GRAPHICS_ORIGINAL));
 	check_menu_item(
-		"<Angband>/Options/Graphics/New",
+		"<Angband>/Options/Graphics/16x16",
 		(use_graphics == GRAPHICS_ADAM_BOLT));
+	check_menu_item(
+		"<Angband>/Options/Graphics/32x32",
+		(use_graphics == GRAPHICS_DAVID_GERVAIS));
 	check_menu_item(
 		"<Angband>/Options/Graphics/Transparency",
 		use_transparency);
@@ -2374,10 +2377,12 @@ static GtkItemFactoryEntry main_menu_items[] =
 	  NULL, 0, (char * ) "<Branch>" },
 	{ (char * ) "/Options/Graphics/None", NULL,
 	  change_graf_mode_event_handler, GRAPHICS_NONE, (char * ) "<CheckItem>" },
-	{ (char * ) "/Options/Graphics/Old", NULL,
+	{ (char * ) "/Options/Graphics/8x8", NULL,
 	  change_graf_mode_event_handler, GRAPHICS_ORIGINAL, (char * ) "<CheckItem>" },
-	{ (char * ) "/Options/Graphics/New", NULL,
+	{ (char * ) "/Options/Graphics/16x16", NULL,
 	  change_graf_mode_event_handler, GRAPHICS_ADAM_BOLT, (char * ) "<CheckItem>" },
+	{ (char * ) "/Options/Graphics/32x32", NULL,
+	  change_graf_mode_event_handler, GRAPHICS_DAVID_GERVAIS, (char * ) "<CheckItem>" },
 	{ (char * ) "/Options/Graphics/sep1", NULL,
 	  NULL, 0, (char * ) "<Separator>" },
 	{ (char * ) "/Options/Graphics/Transparency", NULL,
@@ -2788,6 +2793,7 @@ errr init_gtk(int argc, char **argv, unsigned char *new_game)
 			bitdepth = atoi(&argv[i][2]);
 			
 			/* Paranoia */
+			if (bitdepth == 32) graphmode = GRAPHICS_DAVID_GERVAIS;
 			if (bitdepth == 16) graphmode = GRAPHICS_ADAM_BOLT;
 			if (bitdepth == 8) graphmode = GRAPHICS_ORIGINAL;
 			

@@ -851,6 +851,8 @@ static cptr process_pref_file_expr(char **sp, char *fp)
 						break;
 					case GRAPHICS_ADAM_BOLT: v = "new";
 						break;
+					case GRAPHICS_DAVID_GERVAIS: v = "david";
+						break;
 					case GRAPHICS_ANY: v = "error";
 						break;
 					case GRAPHICS_HALF_3D: v = "none";

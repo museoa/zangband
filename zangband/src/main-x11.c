@@ -2717,7 +2717,6 @@ static errr term_data_init(term_data *td, int i)
 	/* Hooks */
 	t->xtra_hook = Term_xtra_x11;
 	t->curs_hook = Term_curs_x11;
-	/* t->bigcurs_hook = Term_bigcurs_x11; */
 	t->wipe_hook = Term_wipe_x11;
 	t->text_hook = Term_text_x11;
 
@@ -2780,6 +2779,7 @@ errr init_x11(int argc, char *argv[])
 			bitdepth = atoi(&argv[i][2]);
 			
 			/* Paranoia */
+			if (bitdepth == 32) graphmode = GRAPHICS_DAVID_GERVAIS;
 			if (bitdepth == 16) graphmode = GRAPHICS_ADAM_BOLT;
 			if (bitdepth == 8) graphmode = GRAPHICS_ORIGINAL;
 			
