@@ -1313,7 +1313,8 @@ void update_mon(int m_idx, bool full)
 			}
 
 			/* Use "illumination" */
-			if (player_can_see_bold(fy, fx))
+			if ((player_can_see_bold(fy, fx)) ||
+				 (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2)))
 			{
 				/* Handle "invisible" monsters */
 				if (r_ptr->flags2 & (RF2_INVISIBLE))
