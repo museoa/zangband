@@ -131,15 +131,10 @@ static const grouper group_item[] =
 static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
                       int k)
 {
-	object_type forge;
 	object_type *q_ptr;
 
-
-	/* Get local object */
-	q_ptr = &forge;
-
 	/* Prepare a fake item */
-	object_prep(q_ptr, k);
+	q_ptr = object_prep(k);
 
 	/* It is known */
 	q_ptr->info |= (OB_KNOWN);
@@ -1191,7 +1186,7 @@ static bool make_fake_artifact(object_type *o_ptr, int a_idx)
 	if (!i) return (FALSE);
 
 	/* Create the artifact */
-	object_prep(o_ptr, i);
+	object_copy(o_ptr, object_prep(i));
 
 	/* Save the artifact flags */
 	o_ptr->flags1 |= a_ptr->flags1;

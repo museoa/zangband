@@ -111,13 +111,12 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 		if (!((o_ptr->sval == SV_FOOD_WAYBREAD) ||
 			  (o_ptr->sval < SV_FOOD_BISCUIT)))
 		{
-			object_type forge;
-			object_type *q_ptr = &forge;
+			object_type *q_ptr;
 
 			msg_print("The food falls through your jaws!");
 
 			/* Create the item */
-			object_prep(q_ptr, lookup_kind(o_ptr->tval, o_ptr->sval));
+			q_ptr = object_prep(lookup_kind(o_ptr->tval, o_ptr->sval));
 
 			/* Drop the object from heaven */
 			drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);

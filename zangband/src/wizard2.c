@@ -875,7 +875,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 				delete_static_object(q_ptr);
 
 				/* Apply bad magic, but first clear object */
-				object_prep(q_ptr, o_ptr->k_idx);
+				q_ptr = object_prep(o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 0, OC_FORCE_BAD);
 				break;
 			}
@@ -885,7 +885,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 				delete_static_object(q_ptr);
 
 				/* Apply normal magic, but first clear object */
-				object_prep(q_ptr, o_ptr->k_idx);
+				q_ptr = object_prep(o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 0, OC_NORMAL);
 				break;
 			}
@@ -895,7 +895,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 				delete_static_object(q_ptr);
 
 				/* Apply great magic, but first clear object */
-				object_prep(q_ptr, o_ptr->k_idx);
+				q_ptr = object_prep(o_ptr->k_idx);
 				apply_magic(q_ptr, p_ptr->depth, 30, OC_FORCE_GOOD);
 				break;
 			}
@@ -904,7 +904,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 				/* Delete the refcounted information */
 				delete_static_object(q_ptr);
 
-				object_prep(q_ptr, o_ptr->k_idx);
+				q_ptr = object_prep(o_ptr->k_idx);
 
 				/* Make a random artifact */
 				(void)create_artifact(q_ptr, FALSE);
@@ -1268,7 +1268,6 @@ static void do_cmd_wiz_learn(void)
 {
 	int i;
 
-	object_type forge;
 	object_type *q_ptr;
 
 	/* Scan every object */
@@ -1279,11 +1278,8 @@ static void do_cmd_wiz_learn(void)
 		/* Induce awareness */
 		if (k_ptr->level <= p_ptr->command_arg)
 		{
-			/* Get local object */
-			q_ptr = &forge;
-
 			/* Prepare object */
-			object_prep(q_ptr, i);
+			q_ptr = object_prep(i);
 
 			/* Awareness */
 			object_aware(q_ptr);

@@ -1877,15 +1877,12 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_KERI:
 			{
-				object_type forge;
+				object_type *q_ptr;
 			
-				/* Get local object */
-				object_type *q_ptr = &forge;
-				
 				msg_print("Your rag feels warm for a moment...");
 
 				/* Hack - Create the food ration */
-				object_prep(q_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
+				q_ptr = object_prep(lookup_kind(TV_FOOD, SV_FOOD_RATION));
 
 				/* Drop the object from heaven */
 				drop_near(q_ptr, -1, p_ptr->px, p_ptr->py);
@@ -3172,14 +3169,10 @@ void random_artifact_resistance(object_type *o_ptr)
  */
 void create_named_art(int a_idx, int x, int y)
 {
-	object_type forge;
 	object_type *q_ptr;
 	int i;
 
 	artifact_type *a_ptr = &a_info[a_idx];
-
-	/* Get local object */
-	q_ptr = &forge;
 
 	/* Ignore "empty" artifacts */
 	if (!a_ptr->name) return;
@@ -3191,7 +3184,7 @@ void create_named_art(int a_idx, int x, int y)
 	if (!i) return;
 
 	/* Create the artifact */
-	object_prep(q_ptr, i);
+	q_ptr = object_prep(i);
 
 	/* Set the activation */
 	q_ptr->activate = a_idx + 128;

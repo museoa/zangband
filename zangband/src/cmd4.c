@@ -3643,17 +3643,13 @@ static void do_cmd_knowledge_objects(void)
 		/* List known flavored objects */
 		if (k_ptr->flavor && k_ptr->aware)
 		{
-			object_type *i_ptr;
-			object_type object_type_body;
-
-			/* Get local object */
-			i_ptr = &object_type_body;
+			object_type *o_ptr;
 
 			/* Create fake object */
-			object_prep(i_ptr, k);
+			o_ptr = object_prep(k);
 
 			/* Describe the object */
-			object_desc_store(o_name, i_ptr, FALSE, 0, 256);
+			object_desc_store(o_name, o_ptr, FALSE, 0, 256);
 
 			/* Print a message */
 			fprintf(fff, "     %s\n", o_name);

@@ -229,7 +229,6 @@ bool monster_death(int m_idx, bool explode)
 	bool dropped_corpse = FALSE;
 	int force_coin = get_coin_type(r_ptr);
 
-	object_type forge;
 	object_type *q_ptr;
 
 	/* Notice changes in view */
@@ -509,11 +508,8 @@ bool monster_death(int m_idx, bool explode)
 	/* Mega^2-hack -- destroying the Stormbringer gives it us! */
 	if (strstr((r_name + r_ptr->name), "Stormbringer"))
 	{
-		/* Get local object */
-		q_ptr = &forge;
-
 		/* Prepare to make the Stormbringer */
-		object_prep(q_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
+		q_ptr = object_prep(lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
 
 		/* Mega-Hack -- Name the sword */
 		q_ptr->xtra_name = quark_add("'Stormbringer'");
@@ -607,11 +603,8 @@ bool monster_death(int m_idx, bool explode)
 	else if (strstr((r_name + r_ptr->name), "Bloodletter") &&
 			 (randint1(100) < 15))
 	{
-		/* Get local object */
-		q_ptr = &forge;
-
 		/* Prepare to make a Blade of Chaos */
-		object_prep(q_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
+		q_ptr = object_prep(lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
 
 		apply_magic(q_ptr, object_level, 0, 0);
 
@@ -623,11 +616,8 @@ bool monster_death(int m_idx, bool explode)
 	else if (!r_ptr->r_pkills
 			 && strstr((r_name + r_ptr->name), "Greater hell-beast"))
 	{
-		/* Get local object */
-		q_ptr = &forge;
-
 		/* Prepare to make the Stormbringer */
-		object_prep(q_ptr, lookup_kind(TV_SOFT_ARMOR, SV_T_SHIRT));
+		q_ptr = object_prep(lookup_kind(TV_SOFT_ARMOR, SV_T_SHIRT));
 
 		/* Mega-Hack -- Name the shirt */
 		q_ptr->xtra_name =
@@ -3264,7 +3254,7 @@ void gain_level_reward(int chosen_reward)
 	int px = p_ptr->px;
 
 	object_type *q_ptr;
-	object_type forge;
+	
 	char wrath_reason[32] = "";
 	int nasty_chance = 6;
 	int tval, sval;
@@ -3353,8 +3343,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 					   chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thy deed hath earned thee a worthy blade.'");
-			/* Get local object */
-			q_ptr = &forge;
+
 			tval = TV_SWORD;
 			switch (randint1(p_ptr->lev))
 			{
@@ -3443,7 +3432,7 @@ void gain_level_reward(int chosen_reward)
 					sval = SV_BLADE_OF_CHAOS;
 			}
 
-			object_prep(q_ptr, lookup_kind(tval, sval));
+			q_ptr = object_prep(lookup_kind(tval, sval));
 
 			q_ptr->to_h = 3 + randint1(p_ptr->depth) % 10;
 			q_ptr->to_d = 3 + randint1(p_ptr->depth) % 10;

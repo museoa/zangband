@@ -1811,8 +1811,10 @@ void object_copy(object_type *o_ptr, const object_type *j_ptr)
 /*
  * Prepare an object based on an object kind.
  */
-void object_prep(object_type *o_ptr, int k_idx)
+object_type *object_prep(int k_idx)
 {
+	object_type *o_ptr = &temp_object;
+
 	object_kind *k_ptr = &k_info[k_idx];
 
 	/* Clear the record */
@@ -1851,6 +1853,8 @@ void object_prep(object_type *o_ptr, int k_idx)
 	o_ptr->flags1 = k_ptr->flags1;
 	o_ptr->flags2 = k_ptr->flags2;
 	o_ptr->flags3 = k_ptr->flags3;
+	
+	return (o_ptr);
 }
 
 
@@ -2196,8 +2200,8 @@ static object_type *make_artifact(void)
 {
 	int i;
 	int k_idx = 0;
-
-	object_type *o_ptr = &temp_object;
+	
+	object_type *o_ptr;
 
 	/* Moria had no artifacts */
 	if (ironman_moria) return (NULL);
@@ -2243,7 +2247,7 @@ static object_type *make_artifact(void)
 		}
 
 		/* Assign the template */
-		object_prep(o_ptr, k_idx);
+		o_ptr = object_prep(k_idx);
 
 		/* Save the artifact flags */
 		o_ptr->flags1 |= a_ptr->flags1;
@@ -4140,7 +4144,7 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 	byte flags;
 	int k_idx = 0, count = 5;
 
-	object_type *o_ptr = &temp_object;
+	object_type *o_ptr;
 
 	/* Chance of "special object" */
 	if (delta_level > 0)
@@ -4230,7 +4234,7 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 	if (!k_idx) return (NULL);
 
 	/* Prepare the object */
-	object_prep(o_ptr, k_idx);
+	o_ptr = object_prep(k_idx);
 
 	/* Apply magic (allow artifacts) */
 	apply_magic(o_ptr, base, base - k_info[k_idx].level, flags);
@@ -4283,11 +4287,8 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	/* Paranoia */
 	if (!k_idx) return;
 
-	/* Get local object */
-	q_ptr = &temp_object;
-
 	/* Create the item */
-	object_prep(q_ptr, k_idx);
+	q_ptr = object_prep(k_idx);
 
 	k_ptr = &k_info[k_idx];
 
@@ -4412,7 +4413,7 @@ object_type *make_gold(int coin_type)
 
 	s32b base;
 	
-	object_type *o_ptr = &temp_object;
+	object_type *o_ptr;
 
 	if (coin_type)
 	{
@@ -4435,7 +4436,7 @@ object_type *make_gold(int coin_type)
 	if (i >= MAX_GOLD) i = MAX_GOLD - 1;
 
 	/* Prepare a gold object */
-	object_prep(o_ptr, OBJ_GOLD_LIST + i);
+	o_ptr = object_prep(OBJ_GOLD_LIST + i);
 
 	/* Hack -- Base coin cost */
 	base = k_info[OBJ_GOLD_LIST + i].cost;
@@ -5614,7 +5615,7 @@ void display_koff(int k_idx)
 	int y;
 
 	/* Get local object */
-	object_type *q_ptr = &temp_object;
+	object_type *q_ptr;
 
 	char o_name[256];
 
@@ -5629,7 +5630,7 @@ void display_koff(int k_idx)
 	if (!k_idx) return;
 
 	/* Prepare the object */
-	object_prep(q_ptr, k_idx);
+	q_ptr = object_prep(k_idx);
 
 	/* Describe */
 	object_desc_store(o_name, q_ptr, FALSE, 0, 256);

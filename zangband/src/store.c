@@ -931,7 +931,6 @@ static void store_create(void)
 {
 	int kind, tries, level;
 
-	object_type forge;
 	object_type *q_ptr;
 
 	obj_theme theme;
@@ -971,11 +970,8 @@ static void store_create(void)
 		/* Handle failure */
 		if (!kind) continue;
 
-		/* Get local object */
-		q_ptr = &forge;
-
 		/* Create a new object of the chosen kind */
-		object_prep(q_ptr, kind);
+		q_ptr = object_prep(kind);
 
 		/* Create object based on restrictions */
 		if (restricted & ST_REST_GREAT)

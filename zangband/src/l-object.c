@@ -3587,20 +3587,19 @@ tolua_lerror:
 static int toluaI_object_object_prep00(lua_State* tolua_S)
 {
  if (
-     !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"object_type"),0) ||
-     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
-     !tolua_isnoobj(tolua_S,3)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
   goto tolua_lerror;
  else
  {
-  object_type* o_ptr = ((object_type*)  tolua_getusertype(tolua_S,1,0));
-  int k_idx = ((int)  tolua_getnumber(tolua_S,2,0));
+  int k_idx = ((int)  tolua_getnumber(tolua_S,1,0));
   {
-   object_prep(o_ptr,k_idx);
+   object_type* toluaI_ret = (object_type*)  object_prep(k_idx);
+   tolua_pushusertype(tolua_S,(void*)toluaI_ret,tolua_tag(tolua_S,"object_type"));
   }
  }
- return 0;
+ return 1;
 tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'object_prep'.");
  return 0;

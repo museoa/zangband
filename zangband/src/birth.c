@@ -1381,11 +1381,7 @@ static void player_outfit(void)
 {
 	int i, tv, sv;
 
-	object_type forge;
 	object_type *q_ptr;
-
-	/* Get local object */
-	q_ptr = &forge;
 
 	/* Give the player some food */
 	switch (p_ptr->prace)
@@ -1398,8 +1394,8 @@ static void player_outfit(void)
 		case RACE_GHOUL:
 		{
 			/* Scrolls of satisfy hunger */
-			object_prep(q_ptr,
-						lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
+			q_ptr = object_prep(
+							lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
 			q_ptr->number = (byte)rand_range(2, 5);
 			object_aware(q_ptr);
 			object_known(q_ptr);
@@ -1414,7 +1410,7 @@ static void player_outfit(void)
 		default:
 		{
 			/* Food rations */
-			object_prep(q_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
+			q_ptr = object_prep(lookup_kind(TV_FOOD, SV_FOOD_RATION));
 			q_ptr->number = (byte)rand_range(3, 7);
 			object_aware(q_ptr);
 			object_known(q_ptr);
@@ -1423,13 +1419,10 @@ static void player_outfit(void)
 		}
 	}
 
-	/* Get local object */
-	q_ptr = &forge;
-
 	if (p_ptr->prace == RACE_VAMPIRE)
 	{
 		/* Hack -- Give the player scrolls of DARKNESS! */
-		object_prep(q_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_DARKNESS));
+		q_ptr = object_prep(lookup_kind(TV_SCROLL, SV_SCROLL_DARKNESS));
 
 		q_ptr->number = (byte)rand_range(2, 5);
 
@@ -1444,7 +1437,7 @@ static void player_outfit(void)
 	else
 	{
 		/* Hack -- Give the player some torches */
-		object_prep(q_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
+		q_ptr = object_prep(lookup_kind(TV_LITE, SV_LITE_TORCH));
 		q_ptr->number = (byte)rand_range(3, 7);
 		q_ptr->timeout = rand_range(3, 7) * 500;
 		q_ptr->pval = 0;
@@ -1454,13 +1447,10 @@ static void player_outfit(void)
 		(void)inven_carry(q_ptr);
 	}
 
-	/* Get local object */
-	q_ptr = &forge;
-
 	if (p_ptr->pclass == CLASS_RANGER)
 	{
 		/* Hack -- Give the player some arrows */
-		object_prep(q_ptr, lookup_kind(TV_ARROW, SV_AMMO_NORMAL));
+		q_ptr = object_prep(lookup_kind(TV_ARROW, SV_AMMO_NORMAL));
 		q_ptr->number = (byte)rand_range(15, 20);
 
 		/* These objects are "storebought" */
@@ -1472,7 +1462,7 @@ static void player_outfit(void)
 		(void)inven_carry(q_ptr);
 
 		/* Hack -- Give the player some arrows */
-		object_prep(q_ptr, lookup_kind(TV_BOW, SV_SHORT_BOW));
+		q_ptr = object_prep(lookup_kind(TV_BOW, SV_SHORT_BOW));
 
 		/* These objects are "storebought" */
 		q_ptr->info |= OB_STOREB;
@@ -1485,7 +1475,7 @@ static void player_outfit(void)
 	else if (p_ptr->pclass == CLASS_HIGH_MAGE)
 	{
 		/* Hack -- Give the player some arrows */
-		object_prep(q_ptr, lookup_kind(TV_WAND, SV_WAND_MAGIC_MISSILE));
+		q_ptr = object_prep(lookup_kind(TV_WAND, SV_WAND_MAGIC_MISSILE));
 		q_ptr->number = 1;
 		q_ptr->pval = (byte)rand_range(25, 30);
 
@@ -1516,11 +1506,8 @@ static void player_outfit(void)
 			sv = SV_RING_SUSTAIN_STR;
 		}
 
-		/* Get local object */
-		q_ptr = &forge;
-
 		/* Hack -- Give the player an object */
-		object_prep(q_ptr, lookup_kind(tv, sv));
+		q_ptr = object_prep(lookup_kind(tv, sv));
 
 		/* Assassins begin the game with a poisoned dagger */
 		if (tv == TV_SWORD && p_ptr->pclass == CLASS_ROGUE &&

@@ -3752,7 +3752,7 @@ void borg_init_3(void)
 	/* Analyze some "item kinds" */
 	for (k = 1; k < z_info->k_max; k++)
 	{
-		object_type hack;
+		object_type *o_ptr;
 
 		/* Get the kind */
 		object_kind *k_ptr = &k_info[k];
@@ -3767,11 +3767,11 @@ void borg_init_3(void)
 		if (k_ptr->flags3 & TR3_INSTA_ART) continue;
 
 		/* Hack -- make an item */
-		object_prep(&hack, k);
+		o_ptr = object_prep(k);
 
 		/* Describe a "plural" object */
-		hack.number = 2;
-		object_desc_store(buf, &hack, FALSE, 0, 256);
+		o_ptr->number = 2;
+		object_desc_store(buf, o_ptr, FALSE, 0, 256);
 
 		/* Save an entry */
 		text[size] = string_make(buf);
@@ -3811,7 +3811,7 @@ void borg_init_3(void)
 	/* Analyze some "item kinds" */
 	for (k = 1; k < z_info->k_max; k++)
 	{
-		object_type hack;
+		object_type *o_ptr;
 
 		/* Get the kind */
 		object_kind *k_ptr = &k_info[k];
@@ -3826,11 +3826,11 @@ void borg_init_3(void)
 		if (k_ptr->flags3 & TR3_INSTA_ART) continue;
 
 		/* Hack -- make an item */
-		object_prep(&hack, k);
+		o_ptr = object_prep(k);
 
 		/* Describe a "singular" object */
-		hack.number = 1;
-		object_desc_store(buf, &hack, FALSE, 0, 256);
+		o_ptr->number = 1;
+		object_desc_store(buf, o_ptr, FALSE, 0, 256);
 
 		/* Save an entry */
 		text[size] = string_make(buf);
@@ -3841,7 +3841,7 @@ void borg_init_3(void)
 	/* Analyze the "INSTA_ART" items */
 	for (i = 1; i < z_info->a_max; i++)
 	{
-		object_type hack;
+		object_type *object_type;
 
 		artifact_type *a_ptr = &a_info[i];
 
@@ -3857,14 +3857,14 @@ void borg_init_3(void)
 		k = lookup_kind(a_ptr->tval, a_ptr->sval);
 
 		/* Hack -- make an item */
-		object_prep(&hack, k);
+		o_ptr = object_prep(k);
 
 		/* Save the index */
 /*         hack.name1 = i; */
 
 		/* Describe a "singular" object */
-		hack.number = 1;
-		object_desc_store(buf, &hack, FALSE, 0, 256);
+		o_ptr->number = 1;
+		object_desc_store(buf, o_ptr, FALSE, 0, 256);
 
 		/* Extract the "suffix" length */
 		n = strlen(name) + 1;

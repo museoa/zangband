@@ -1988,7 +1988,7 @@ static void bad_luck(object_type *o_ptr)
 			o_ptr->flags3 |= TR3_CURSED;
 
 			/* Prepare it */
-			object_prep(o_ptr, o_ptr->k_idx);
+			object_copy(o_ptr, object_prep(o_ptr->k_idx));
 
 			/* Restore the number */
 			o_ptr->number = number;
