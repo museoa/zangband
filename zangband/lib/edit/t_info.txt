@@ -467,7 +467,7 @@ F:2,field_action_door_store
 
 # Book Store
 N:42:Book Store
-:y
+G:5:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:17:35:0:0:100:0:0
