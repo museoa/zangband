@@ -778,8 +778,6 @@ struct object_type
 	u32b kn_flags2;	/* Known Flags, set 2 */
 	u32b kn_flags3;	/* Known Flags, set 3 */
 
-	s16b held_m_idx;	/* Monster holding us (if any) */
-
 	s32b cost;	/* Object "base cost" */
 
 	s16b region;	/* Region */
@@ -789,6 +787,8 @@ struct object_type
 	byte activate;	/* Activation type */
 	
 	byte info;		/* Special flags */
+	
+	bool held;	/* Held by something */
 };
 
 

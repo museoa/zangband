@@ -4819,7 +4819,7 @@ void wiz_lite(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip held objects */
-		if (o_ptr->held_m_idx) continue;
+		if (o_ptr->held) continue;
 
 		/* Memorize */
 		o_ptr->info |= OB_SEEN;
@@ -4900,7 +4900,7 @@ void wiz_dark(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip held objects */
-		if (o_ptr->held_m_idx) continue;
+		if (o_ptr->held) continue;
 
 		/* Forget the object */
 		o_ptr->info &= ~(OB_SEEN);

@@ -1693,46 +1693,6 @@ static int toluaI_set_object_object_type_ds(lua_State* tolua_S)
  return 0;
 }
 
-/* get function: info of class  object_type */
-static int toluaI_get_object_object_type_info(lua_State* tolua_S)
-{
-  object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  tolua_pushnumber(tolua_S,(long)self->info);
- return 1;
-}
-
-/* set function: info of class  object_type */
-static int toluaI_set_object_object_type_info(lua_State* tolua_S)
-{
-  object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
-   TOLUA_ERR_ASSIGN;
-  self->info = ((byte)  tolua_getnumber(tolua_S,2,0));
- return 0;
-}
-
-/* get function: marked of class  object_type */
-static int toluaI_get_object_object_type_marked(lua_State* tolua_S)
-{
-  object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  tolua_pushnumber(tolua_S,(long)self->marked);
- return 1;
-}
-
-/* set function: marked of class  object_type */
-static int toluaI_set_object_object_type_marked(lua_State* tolua_S)
-{
-  object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
-   TOLUA_ERR_ASSIGN;
-  self->marked = ((byte)  tolua_getnumber(tolua_S,2,0));
- return 0;
-}
-
 /* get function: inscription of class  object_type */
 static int toluaI_get_object_object_type_inscription(lua_State* tolua_S)
 {
@@ -1913,26 +1873,6 @@ static int toluaI_set_object_object_type_next_o_idx(lua_State* tolua_S)
  return 0;
 }
 
-/* get function: held_m_idx of class  object_type */
-static int toluaI_get_object_object_type_held_m_idx(lua_State* tolua_S)
-{
-  object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  tolua_pushnumber(tolua_S,(long)self->held_m_idx);
- return 1;
-}
-
-/* set function: held_m_idx of class  object_type */
-static int toluaI_set_object_object_type_held_m_idx(lua_State* tolua_S)
-{
-  object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
-  if (!self) TOLUA_ERR_SELF;
-  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
-   TOLUA_ERR_ASSIGN;
-  self->held_m_idx = ((s16b)  tolua_getnumber(tolua_S,2,0));
- return 0;
-}
-
 /* get function: cost of class  object_type */
 static int toluaI_get_object_object_type_cost(lua_State* tolua_S)
 {
@@ -1990,6 +1930,46 @@ static int toluaI_set_object_object_type_activate(lua_State* tolua_S)
   if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
    TOLUA_ERR_ASSIGN;
   self->activate = ((byte)  tolua_getnumber(tolua_S,2,0));
+ return 0;
+}
+
+/* get function: info of class  object_type */
+static int toluaI_get_object_object_type_info(lua_State* tolua_S)
+{
+  object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->info);
+ return 1;
+}
+
+/* set function: info of class  object_type */
+static int toluaI_set_object_object_type_info(lua_State* tolua_S)
+{
+  object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
+  self->info = ((byte)  tolua_getnumber(tolua_S,2,0));
+ return 0;
+}
+
+/* get function: held of class  object_type */
+static int toluaI_get_object_object_type_held(lua_State* tolua_S)
+{
+  object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->held);
+ return 1;
+}
+
+/* set function: held of class  object_type */
+static int toluaI_set_object_object_type_held(lua_State* tolua_S)
+{
+  object_type* self = (object_type*)  tolua_getusertype(tolua_S,1,0);
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
+  self->held = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
 
@@ -5579,7 +5559,7 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_constant(tolua_S,NULL,"CHEST_EXPLODE",CHEST_EXPLODE);
  tolua_constant(tolua_S,NULL,"CHEST_SUMMON",CHEST_SUMMON);
  tolua_constant(tolua_S,NULL,"OB_SENSE",OB_SENSE);
- tolua_constant(tolua_S,NULL,"OB_DUMMY1",OB_DUMMY1);
+ tolua_constant(tolua_S,NULL,"OB_SEEN",OB_SEEN);
  tolua_constant(tolua_S,NULL,"OB_EMPTY",OB_EMPTY);
  tolua_constant(tolua_S,NULL,"OB_KNOWN",OB_KNOWN);
  tolua_constant(tolua_S,NULL,"OB_STOREB",OB_STOREB);
@@ -5769,8 +5749,6 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_tablevar(tolua_S,"object_type","timeout",toluaI_get_object_object_type_timeout,toluaI_set_object_object_type_timeout);
  tolua_tablevar(tolua_S,"object_type","dd",toluaI_get_object_object_type_dd,toluaI_set_object_object_type_dd);
  tolua_tablevar(tolua_S,"object_type","ds",toluaI_get_object_object_type_ds,toluaI_set_object_object_type_ds);
- tolua_tablevar(tolua_S,"object_type","info",toluaI_get_object_object_type_info,toluaI_set_object_object_type_info);
- tolua_tablevar(tolua_S,"object_type","marked",toluaI_get_object_object_type_marked,toluaI_set_object_object_type_marked);
  tolua_tablevar(tolua_S,"object_type","inscription",toluaI_get_object_object_type_inscription,toluaI_set_object_object_type_inscription);
  tolua_tablevar(tolua_S,"object_type","xtra_name",toluaI_get_object_object_type_xtra_name,toluaI_set_object_object_type_xtra_name);
  tolua_tablevar(tolua_S,"object_type","flags1",toluaI_get_object_object_type_flags1,toluaI_set_object_object_type_flags1);
@@ -5780,10 +5758,11 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_tablevar(tolua_S,"object_type","kn_flags2",toluaI_get_object_object_type_kn_flags2,toluaI_set_object_object_type_kn_flags2);
  tolua_tablevar(tolua_S,"object_type","kn_flags3",toluaI_get_object_object_type_kn_flags3,toluaI_set_object_object_type_kn_flags3);
  tolua_tablevar(tolua_S,"object_type","next_o_idx",toluaI_get_object_object_type_next_o_idx,toluaI_set_object_object_type_next_o_idx);
- tolua_tablevar(tolua_S,"object_type","held_m_idx",toluaI_get_object_object_type_held_m_idx,toluaI_set_object_object_type_held_m_idx);
  tolua_tablevar(tolua_S,"object_type","cost",toluaI_get_object_object_type_cost,toluaI_set_object_object_type_cost);
  tolua_tablevar(tolua_S,"object_type","feeling",toluaI_get_object_object_type_feeling,toluaI_set_object_object_type_feeling);
  tolua_tablevar(tolua_S,"object_type","activate",toluaI_get_object_object_type_activate,toluaI_set_object_object_type_activate);
+ tolua_tablevar(tolua_S,"object_type","info",toluaI_get_object_object_type_info,toluaI_set_object_object_type_info);
+ tolua_tablevar(tolua_S,"object_type","held",toluaI_get_object_object_type_held,toluaI_set_object_object_type_held);
  tolua_globalvar(tolua_S,"o_max",toluaI_get_object_o_max,toluaI_set_object_o_max);
  tolua_globalvar(tolua_S,"o_cnt",toluaI_get_object_o_cnt,toluaI_set_object_o_cnt);
  tolua_globalarray(tolua_S,"o_list",toluaI_get_object_o_list,toluaI_set_object_o_list);
@@ -6751,7 +6730,7 @@ void tolua_object_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"CHEST_EXPLODE");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"CHEST_SUMMON");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_SENSE");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_DUMMY1");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_SEEN");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_EMPTY");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_KNOWN");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"OB_STOREB");

@@ -557,8 +557,8 @@ static void wr_item(const object_type *o_ptr)
 	/* Next object in list */
 	wr_s16b(o_ptr->next_o_idx);
 
-	/* Held by monster index */
-	wr_s16b(o_ptr->held_m_idx);
+	/* Held by something? */
+	wr_byte(o_ptr->held);
 
 	/* Feelings */
 	wr_byte(o_ptr->feeling);

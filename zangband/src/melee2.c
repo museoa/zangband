@@ -2588,8 +2588,8 @@ static void take_move(int m_idx, int *mm)
 						/* XXX Hack - Forget region */
 						o_ptr->region = 0;
 
-						/* Memorize monster */
-						o_ptr->held_m_idx = m_idx;
+						/* We are held */
+						o_ptr->held = TRUE;
 
 						/* Build a stack */
 						o_ptr->next_o_idx = m_ptr->hold_o_idx;

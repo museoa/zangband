@@ -713,8 +713,8 @@ bool make_attack_normal(int m_idx)
 								/* Forget mark */
 								j_ptr->info &= ~(OB_SEEN);
 
-								/* Memorize monster */
-								j_ptr->held_m_idx = m_idx;
+								/* We are held */
+								j_ptr->held = TRUE;
 
 								/* Build stack */
 								j_ptr->next_o_idx = m_ptr->hold_o_idx;

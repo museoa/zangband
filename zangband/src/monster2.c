@@ -164,9 +164,6 @@ static void compact_monsters_aux(int i1, int i2)
 
 	monster_type *m_ptr;
 
-	object_type *o_ptr;
-
-
 	/* Do nothing */
 	if (i1 == i2) return;
 
@@ -183,14 +180,6 @@ static void compact_monsters_aux(int i1, int i2)
 
 	/* Update the cave */
 	c_ptr->m_idx = i2;
-
-	/* Repair objects being carried by monster */
-	OBJ_ITT_START (m_ptr->hold_o_idx, o_ptr)
-	{
-		/* Reset monster pointer */
-		o_ptr->held_m_idx = i2;
-	}
-	OBJ_ITT_END;
 
 	/* Hack -- Update the target */
 	if (p_ptr->target_who == i1) p_ptr->target_who = i2;

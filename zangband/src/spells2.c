@@ -1088,7 +1088,7 @@ bool detect_objects_gold(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip held objects */
-		if (o_ptr->held_m_idx) continue;
+		if (o_ptr->held) continue;
 
 		/* Location */
 		y = o_ptr->iy;
@@ -1148,7 +1148,7 @@ bool detect_objects_normal(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip held objects */
-		if (o_ptr->held_m_idx) continue;
+		if (o_ptr->held) continue;
 
 		/* Location */
 		y = o_ptr->iy;
@@ -1214,7 +1214,7 @@ bool detect_objects_magic(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip held objects */
-		if (o_ptr->held_m_idx) continue;
+		if (o_ptr->held) continue;
 
 		/* Location */
 		y = o_ptr->iy;

@@ -305,7 +305,7 @@ void compact_objects(int size)
 			if (get_object_level(o_ptr) > cur_lev) continue;
 
 			/* Not held objects */
-			if (o_ptr->held_m_idx) continue;
+			if (o_ptr->held) continue;
 
 			/* Get the location */
 			x = o_ptr->ix;
@@ -383,7 +383,7 @@ void compact_objects(int size)
 		if (o_ptr->k_idx) continue;
 		
 		/* Stop when we get to a held object */
-		if (o_ptr->held_m_idx) break;
+		if (o_ptr->held) break;
 
 		/* Move last object into open hole */
 		compact_objects_aux(o_max - 1, i);
@@ -422,7 +422,7 @@ void wipe_o_list(void)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip held objects */
-		if (o_ptr->held_m_idx) continue;
+		if (o_ptr->held) continue;
 
 		/* Preserve artifacts */
 		if (preserve_mode && (o_ptr->flags3 & TR3_INSTA_ART) &&
@@ -4790,8 +4790,8 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 		/* Region */
 		o_ptr->region = cur_region;
 
-		/* No monster */
-		o_ptr->held_m_idx = 0;
+		/* Not held */
+		o_ptr->held = FALSE;
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;
@@ -5297,8 +5297,8 @@ s16b inven_carry(object_type *o_ptr)
 	/* Forget stack */
 	j_ptr->next_o_idx = 0;
 
-	/* Forget monster */
-	j_ptr->held_m_idx = 0;
+	/* Now held */
+	j_ptr->held = TRUE;
 
 	/* Forget location */
 	j_ptr->iy = j_ptr->ix = 0;

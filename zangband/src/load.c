@@ -292,6 +292,7 @@ static void rd_item(object_type *o_ptr)
 	byte old_ds;
 
 	byte tmpbyte;
+	s16b tmps16b;
 
 	object_kind *k_ptr;
 
@@ -385,8 +386,24 @@ static void rd_item(object_type *o_ptr)
 		rd_s16b(&o_ptr->next_o_idx);
 	}
 
-	/* Monster holding object */
-	rd_s16b(&o_ptr->held_m_idx);
+	if (sf_version < 36)
+	{
+		/* Monster holding object */
+		rd_s16b(&tmps16b);
+		
+		if (tmps16b)
+		{
+			o_ptr->held = TRUE;
+		}
+		else
+		{
+			o_ptr->held = FALSE;
+		}
+	}
+	else
+	{
+		rd_byte((byte *)(&o_ptr->held));
+	}
 
 	if (sf_version < 19)
 	{
@@ -2275,7 +2292,7 @@ static errr rd_dungeon(void)
 		/* XXX XXX XXX XXX XXX */
 
 		/* Dungeon items */
-		if (!o_ptr->held_m_idx && !ignore_stuff)
+		if (!o_ptr->held && !ignore_stuff)
 		{
 			/* Access the item location */
 			c_ptr = area(o_ptr->ix, o_ptr->iy);
