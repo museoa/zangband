@@ -95,6 +95,7 @@
 
 #define BORG_MAP_VIEW   0x01    /* in line of sight */
 #define BORG_MAP_ICKY	0x02	/* grids to avoid */
+#define BORG_MAP_KNOW	0x04	/* 'know' grids */
 
 /*
  * Maximum size of the "lite" array
@@ -1334,9 +1335,6 @@ extern int flow_tail;
 extern borg_data *borg_data_flow;  /* Current "flow" data */
 
 extern borg_data *borg_data_cost;   /* Current "cost" data */
-
-extern borg_data *borg_data_know;   /* Current "know" flags */
-
 
 
 /*

@@ -2370,14 +2370,11 @@ static void borg_forget_map(void)
 		mb_ptr->cost = 255;
 		mb_ptr->flow = 255;
 		
-		/* Clear icky flag */
-		mb_ptr->info &= ~(BORG_MAP_ICKY);
+		/* Clear icky + know flag */
+		mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
 	}
 	MAP_ITT_END;
-
-    /* Clear "borg_data_know" */
-    WIPE(borg_data_know, borg_data);
-
+	
     /* Forget the view */
     borg_forget_view();
 }
@@ -2778,10 +2775,7 @@ static void borg_update_map(void)
                 if (new_wall) borg_data_flow->data[y][x] = 255;
 
                 /* Remove this grid from any flow */
-                borg_data_know->data[y][x] = FALSE;
-
-                /* Remove this grid from any flow */
-                mb_ptr->info &= ~(BORG_MAP_ICKY);
+                mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
 
                 /* Recalculate the view (if needed) */
                 if (mb_ptr->info & BORG_MAP_VIEW) borg_do_update_view = TRUE;

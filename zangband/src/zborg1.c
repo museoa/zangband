@@ -1058,8 +1058,6 @@ borg_data *borg_data_cost;  /* Current "cost" data */
 
 borg_data *borg_data_flow;  /* Constant "flow" data */
 
-borg_data *borg_data_know;  /* Current "know" flags */
-
 
 /*
  * Strategy flags -- recalculate things
@@ -2375,9 +2373,6 @@ void borg_init_1(void)
 
     /* Allocate */
     MAKE(borg_data_flow, borg_data);
-
-    /* Allocate */
-    MAKE(borg_data_know, borg_data);
 
     /*** Very special "tracking" array ***/
 
