@@ -1260,7 +1260,7 @@ bool borg_zap_rod(int sval)
 	if (!l_ptr) return (FALSE);
 
 	/* Hack -- Still charging */
-	if (!l_ptr->pval) return (FALSE);
+	if (!l_ptr->timeout) return (FALSE);
 
 	/* Get item type */
 	k_ptr = &k_info[l_ptr->k_idx];
