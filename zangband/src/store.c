@@ -384,11 +384,11 @@ static s32b price_item(object_type *o_ptr, int greed, bool flip)
 		if (adjust > 100) adjust = 100;
 
 		/* Mega-Hack -- Black market sucks */
-		if (st_ptr->info_flags & ST_GREED)
+		if ((st_ptr->info_flags & ST_GREED) ||
+			(st_ptr->info_flags & ST_ULTRA_GREED))
+		{
 			price = price / 2;
-			
-		if (st_ptr->info_flags & ST_ULTRA_GREED)
-			price = price / 4;
+		}
 	}
 
 	/* Shop is selling */
