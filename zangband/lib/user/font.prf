@@ -59,7 +59,7 @@ T:42:0x03:0x39
 
 ##### System Specific Subfiles #####
 
-?:[IOR [EQU $SYS xaw] [EQU $SYS x11] [EQU $SYS xpj]]
+?:[IOR [EQU $SYS xaw] [EQU $SYS x11] [EQU $SYS xpj] [EQU $SYS gtk]]
 %:font-x11.prf
 
 ?:[EQU $SYS gcu]
