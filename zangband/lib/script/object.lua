@@ -18,7 +18,7 @@ function eat_food(object)
 		ident = TRUE
 	elseif object.sval == SV_FOOD_WAYBREAD then
 		msgf("That tastes good.")
-		set_poisoned(0)
+		clear_poisoned()
 		hp_player(damroll(4, 8))
 		ident = TRUE
 	elseif object.sval == SV_FOOD_RESTORING then
@@ -37,11 +37,11 @@ function eat_food(object)
 	elseif object.sval == SV_FOOD_CURE_CONFUSION then
 		if clear_confused() then ident = TRUE end
 	elseif object.sval == SV_FOOD_CURE_PARANOIA then
-		if set_afraid(0) then ident = TRUE end
+		if clear_afraid() then ident = TRUE end
 	elseif object.sval == SV_FOOD_CURE_BLINDNESS then
 		if clear_blind() then ident = TRUE end
 	elseif object.sval == SV_FOOD_CURE_POISON then
-		if set_poisoned(0) then ident = TRUE end
+		if clear_poisoned() then ident = TRUE end
 	elseif object.sval == SV_FOOD_DISEASE then
 		take_hit(damroll(10, 10), "poisonous food")
 		do_dec_stat(A_STR)
@@ -86,13 +86,13 @@ function eat_food(object)
 		end
 	elseif object.sval == SV_FOOD_PARANOIA then
 		if not player.resist_fear then
-			if set_afraid(player.afraid + rand_int(10) + 10) then
+			if inc_afraid(rand_int(10) + 10) then
 				ident = TRUE
 			end
 		end
 	elseif object.sval == SV_FOOD_POISON then
 		if not (player.resist_pois or (player.oppose_pois > 0)) then
-			if set_poisoned(player.poisoned + rand_int(10) + 10) then
+			if inc_poisoned(rand_int(10) + 10) then
 				ident = TRUE
 			end
 		end
@@ -123,12 +123,12 @@ function quaff_potion(object)
 		if player.food > PY_FOOD_STARVE - 1 then
 			set_food(PY_FOOD_STARVE - 1)
 		end
-		set_poisoned(0)
+		clear_poisoned()
 		set_paralyzed(player.paralyzed + 4)
 		ident = TRUE
 	elseif object.sval == SV_POTION_POISON then
 		if not (player.resist_pois or (player.oppose_pois > 0)) then
-			if set_poisoned(player.poisoned + rand_range(10, 25)) then
+			if inc_poisoned(rand_range(10, 25)) then
 				ident = TRUE
 			end
 		end
@@ -234,11 +234,11 @@ function quaff_potion(object)
 			ident = TRUE
 		end
 	elseif object.sval == SV_POTION_SLOW_POISON then
-		if set_poisoned(player.poisoned / 2) then ident = TRUE end
+		if inc_poisoned(-player.tim.poisoned / 2) then ident = TRUE end
 	elseif object.sval == SV_POTION_CURE_POISON then
-		if set_poisoned(0) then ident = TRUE end
+		if clear_poisoned() then ident = TRUE end
 	elseif object.sval == SV_POTION_BOLDNESS then
-		if set_afraid(0) then ident = TRUE end
+		if clear_afraid() then ident = TRUE end
 	elseif object.sval == SV_POTION_SPEED then
 		if player.fast == 0 then
 			if set_fast(rand_range(15, 40)) then ident = TRUE end
@@ -254,11 +254,11 @@ function quaff_potion(object)
 			ident = TRUE
 		end
 	elseif object.sval == SV_POTION_HEROISM then
-		if set_afraid(0) then ident = TRUE end
+		if clear_afraid() then ident = TRUE end
 		if set_hero(player.hero + rand_range(25, 50)) then ident = TRUE end
 		if hp_player(10)then ident = TRUE end
 	elseif object.sval == SV_POTION_BERSERK_STRENGTH then
-		if set_afraid(0) then ident = TRUE end
+		if clear_afraid() then ident = TRUE end
 		if set_shero(player.shero + rand_range(25, 50)) then ident = TRUE end
 		if hp_player(30) then ident = TRUE end
 	elseif object.sval == SV_POTION_CURE_LIGHT then
@@ -274,27 +274,27 @@ function quaff_potion(object)
 		if hp_player(150) then ident = TRUE end
 		if clear_blind() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
-		if set_poisoned(0) then ident = TRUE end
+		if clear_poisoned() then ident = TRUE end
 		if set_stun(0) then ident = TRUE end
 		if set_cut(0) then ident = TRUE end
 	elseif object.sval == SV_POTION_HEALING then
 		if hp_player(300) then ident = TRUE end
 		if clear_blind() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
-		if set_poisoned(0) then ident = TRUE end
+		if clear_poisoned() then ident = TRUE end
 		if set_stun(0) then ident = TRUE end
 		if set_cut(0) then ident = TRUE end
 	elseif object.sval == SV_POTION_STAR_HEALING then
 		if hp_player(1200) then ident = TRUE end
 		if clear_blind() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
-		if set_poisoned(0) then ident = TRUE end
+		if clear_poisoned() then ident = TRUE end
 		if set_stun(0) then ident = TRUE end
 		if set_cut(0) then ident = TRUE end
 	elseif object.sval == SV_POTION_LIFE then
 		msgf("You feel life flow through your body!")
 		restore_level()
-		set_poisoned(0)
+		clear_poisoned()
 		clear_blind()
 		clear_confused()
 		set_image(0)
@@ -397,7 +397,7 @@ function quaff_potion(object)
 	elseif object.sval == SV_POTION_CURING then
 		if hp_player(150) then ident = TRUE end
 		if clear_blind() then ident = TRUE end
-		if set_poisoned(0) then ident = TRUE end
+		if clear_poisoned() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
 		if set_stun(0) then ident = TRUE end
 		if set_cut(0) then ident = TRUE end
@@ -659,7 +659,7 @@ function use_staff(object)
 	elseif sval == SV_STAFF_CURING then
 		if hp_player(150) then ident = TRUE end
 		if clear_blind() then ident = TRUE end
-		if set_poisoned(0) then ident = TRUE end
+		if clear_poisoned() then ident = TRUE end
 		if clear_confused() then ident = TRUE end
 		if set_stun(0) then ident = TRUE end
 		if set_cut(0) then ident = TRUE end
@@ -700,8 +700,8 @@ function use_staff(object)
 		if dispel_evil(300) then ident = TRUE end
 		local k = 3 * player.lev
 		if set_protevil(player.protevil + randint1(25) + k) then ident = TRUE end
-		if set_poisoned(0) then ident = TRUE end
-		if set_afraid(0) then ident = TRUE end
+		if clear_poisoned() then ident = TRUE end
+		if clear_afraid() then ident = TRUE end
 		if hp_player(50) then ident = TRUE end
 		if set_stun(0) then ident = TRUE end
 		if set_cut(0) then ident = TRUE end
