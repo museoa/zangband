@@ -1513,7 +1513,7 @@ void borg_send_inscribe(int i, cptr str)
 	cptr s;
 
 	/* Label it */
-	borg_keypress(c1);
+	borg_keypress('{');
 
 	/* Choose from inventory */
 	if (i < INVEN_WIELD)

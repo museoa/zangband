@@ -848,15 +848,6 @@ FILE *borg_fff = NULL;	/* Log file */
 
 
 /*
- * Hack -- single character constants
- */
-
-const char p1 = '(', p2 = ')';
-const char c1 = '{', c2 = '}';
-const char b1 = '[', b2 = ']';
-
-
-/*
  * Locate the store doors
  */
 

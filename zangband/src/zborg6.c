@@ -11212,7 +11212,7 @@ static int borg_defend_aux_lbeam(void)
 	if (!hallway) return (0);
 
 	/* Make sure I am not in too much danger */
-	if (borg_simulate && p1 > avoidance * 3 / 4) return (0);
+	/* if (borg_simulate && p1 > avoidance * 3 / 4) return (0); */
 
 	/* test the beam function */
 	if (!borg_lite_beam(TRUE)) return (0);
@@ -12433,7 +12433,7 @@ static int borg_perma_aux_glyph(void)
 		{
 			/* Stop if we already new about this glyph */
 			if ((track_glyph_x[i] == c_x) &&
-				(track_glyph_y[i] == c_y)) return (p1 - p2);
+				(track_glyph_y[i] == c_y)) return (2);
 		}
 
 		/* Track the newly discovered glyph */
@@ -12444,7 +12444,7 @@ static int borg_perma_aux_glyph(void)
 			track_glyph_x[i] = c_x;
 			track_glyph_y[i] = c_y;
 		}
-		return (p1 - p2);
+		return (2);
 	}
 
 	/* default to can't do it. */

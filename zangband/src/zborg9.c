@@ -657,7 +657,7 @@ static bool borg_think(void)
 
 			/* Verify "intro" to the item */
 			if ((0 == borg_what_text(0, i + 6, 3, &t_a, buf)) &&
-				(buf[0] == I2A(i)) && (buf[1] == p2) && (buf[2] == ' '))
+				(buf[0] == I2A(i)) && (buf[1] == ')') && (buf[2] == ' '))
 			{
 				int k;
 
