@@ -1431,7 +1431,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 }
 
 /**** The monster bashing code. -LM- ****/
-static void monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr, 
+static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr, 
 			bool *fear, char *m_name)
 {
 	int bash_chance, bash_quality, bash_dam;
@@ -1506,7 +1506,7 @@ static void monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 		if (mon_take_hit(c_ptr->m_idx, bash_dam, fear, NULL))
 		{
 			/* Fight's over. */
-			return;
+			return (TRUE);
 		}
 
 		/* Stunning. */
@@ -1531,6 +1531,9 @@ static void monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
 		if ((30 + adj_dex_th[p_ptr->stat_ind[A_DEX]] - 128) < randint(60))
 			*blows -= randint(*blows);
 	}
+
+	/* Monster is not dead */	
+	return(FALSE);
 }
 
 /*
@@ -1795,7 +1798,7 @@ void py_attack(int y, int x)
 	}
 
 	/* Attempt to shield bash the monster */
-	monster_bash(&blows, sleeping_bonus, c_ptr, &fear, m_name);
+	if (monster_bash(&blows, sleeping_bonus, c_ptr, &fear, m_name)) return;
 
 	/* Access the weapon */
 	o_ptr = &inventory[INVEN_WIELD];
