@@ -3975,7 +3975,7 @@ bool curse_armor(void)
 	object_desc(o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if ((o_ptr->flags3 & TR3_INSTA_ART) && one_in_(2))
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && !one_in_(3))
 	{
 		/* Cool */
 		msg_format("A %s tries to %s, but your %s resists the effects!",
@@ -4044,7 +4044,7 @@ bool curse_weapon(void)
 	object_desc(o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw */
-	if ((o_ptr->flags3 & TR3_INSTA_ART) && one_in_(2))
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && !one_in_(3))
 	{
 		/* Cool */
 		msg_format("A %s tries to %s, but your %s resists the effects!",
