@@ -558,6 +558,7 @@ static void do_cmd_options_autosave(cptr info)
 				autosave_freq = toggle_frequency(autosave_freq);
 				prt(format("Timed autosave frequency: every %d turns",
 				    autosave_freq), 5, 0);
+				break;
 			}
 
 			default:
@@ -2724,7 +2725,7 @@ void do_cmd_save_screen(void)
 /*
  * Check the status of "artifacts"
  */
-void do_cmd_knowledge_artifacts(void)
+static void do_cmd_knowledge_artifacts(void)
 {
 	int i, k, z, x, y;
 
