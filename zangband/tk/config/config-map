@@ -130,7 +130,7 @@ proc ConfigMap::InitImage {size} {
 
 	foreach symbol [symbol names] {
 		if {[lsearch -exact $ImageName $symbol] == -1} continue
-		set ImageData($symbol,$size) [symbol data $symbol $size]
+#		set ImageData($symbol,$size) [symbol data $symbol $size]
 	}
 
 	return
@@ -323,7 +323,7 @@ proc ConfigMap::Init {} {
 			InitImage $size
 			foreach name $ImageName {
 				if {[info exists exists($name)]} {
-					symbol configure $name -data $ImageData($name,$size)
+#					symbol configure $name -data $ImageData($name,$size)
 				}
 			}
 		}
