@@ -881,6 +881,13 @@ static s32b object_value_base(object_type *o_ptr)
 	return (0L);
 }
 
+/* Return the sign of the argument * x * x. */
+static s32b sqvalue(s32b x)
+{
+	if (x < 0) return (-x * x);
+	return (x *x);
+}
+
 
 /* Return the value of the flags the object has... */
 s32b flag_cost(object_type * o_ptr, int plusses)
@@ -903,9 +910,9 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f1 & TR1_INFRA) total += (30 * plusses);
 	if (f1 & TR1_TUNNEL) total += (20 * plusses);
 	if ((f1 & TR1_SPEED) && (plusses > 0))
-		total += (500 * plusses * plusses);
+		total += (500 * sqvalue(plusses));
 	if ((f1 & TR1_BLOWS) && (plusses > 0))
-		total += (500 * plusses * plusses);
+		total += (500 * sqvalue(plusses));
 	if (f1 & TR1_XXX1) total += 0;
 	if (f1 & TR1_XXX2) total += 0;
 	if (f1 & TR1_SLAY_ANIMAL) total += 750;
@@ -1197,10 +1204,10 @@ s32b object_value_real(object_type *o_ptr)
 			if (f1 & (TR1_TUNNEL)) value += (o_ptr->pval * 20L);
 
 			/* Give credit for extra attacks */
-			if (f1 & (TR1_BLOWS)) value += (o_ptr->pval * o_ptr->pval * 500L);
+			if (f1 & (TR1_BLOWS)) value += (sqvalue(o_ptr->pval) * 500L);
 
 			/* Give credit for speed bonus */
-			if (f1 & (TR1_SPEED)) value += (o_ptr->pval * o_ptr->pval * 500L);
+			if (f1 & (TR1_SPEED)) value += (sqvalue(o_ptr->pval) * 500L);
 
 			break;
 		}
@@ -1242,9 +1249,9 @@ s32b object_value_real(object_type *o_ptr)
 			if (o_ptr->to_d < 0) return (0L);
 
 			/* Give credit for bonuses */
-			value += ((o_ptr->to_h * o_ptr->to_h
-				+ o_ptr->to_d * o_ptr->to_d
-				+ o_ptr->to_a * o_ptr->to_a) * 5L);
+			value += ((sqvalue(o_ptr->to_h)
+				+ sqvalue(o_ptr->to_d)
+				+ sqvalue(o_ptr->to_a)) * 5L);
 
 			/* Done */
 			break;
@@ -1262,16 +1269,13 @@ s32b object_value_real(object_type *o_ptr)
 		case TV_DRAG_ARMOR:
 		{
 			/* Give credit for hit bonus */
-			value += ((o_ptr->to_h - k_ptr->to_h) *
-				(o_ptr->to_h - k_ptr->to_h) * 5L);
+			value += (sqvalue(o_ptr->to_h - k_ptr->to_h) * 5L);
 
 			/* Give credit for damage bonus */
-			value += ((o_ptr->to_d - k_ptr->to_d) *
-				(o_ptr->to_d - k_ptr->to_d) * 5L);
+			value += (sqvalue(o_ptr->to_d - k_ptr->to_d) * 5L);
 
 			/* Give credit for armor bonus */
-			value += ((o_ptr->to_a - k_ptr->to_a) *
-				(o_ptr->to_a - k_ptr->to_a) * 5L);
+			value += (sqvalue(o_ptr->to_a - k_ptr->to_a) * 5L);
 
 			/* Done */
 			break;
@@ -1284,13 +1288,10 @@ s32b object_value_real(object_type *o_ptr)
 		case TV_SWORD:
 		case TV_POLEARM:
 		{
-			/* Hack -- negative hit/damage bonuses */
-			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
-
 			/* Factor in the bonuses */
-			value += ((o_ptr->to_h * o_ptr->to_h
-				+ o_ptr->to_d * o_ptr->to_d
-				+ o_ptr->to_a * o_ptr->to_a) * 5L);
+			value += ((sqvalue(o_ptr->to_h)
+				+ sqvalue(o_ptr->to_d)
+				+ sqvalue(o_ptr->to_a)) * 5L);
 
 			/* Hack -- Factor in extra damage dice */
 			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
@@ -1307,12 +1308,9 @@ s32b object_value_real(object_type *o_ptr)
 		case TV_ARROW:
 		case TV_BOLT:
 		{
-			/* Hack -- negative hit/damage bonuses */
-			if (o_ptr->to_h + o_ptr->to_d < 0) return (0L);
-
 			/* Factor in the bonuses */
-			value += ((o_ptr->to_h * o_ptr->to_h
-				+ o_ptr->to_d * o_ptr->to_d) * 2L);
+			value += ((sqvalue(o_ptr->to_h)
+				+ sqvalue(o_ptr->to_d)) * 2L);
 
 			/* Hack -- Factor in extra damage dice */
 			if ((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds))
@@ -1328,7 +1326,7 @@ s32b object_value_real(object_type *o_ptr)
 		case TV_FIGURINE:
 		{
 			value = (r_info[o_ptr->pval].level * 
-				r_info[o_ptr->pval].level * 50L);
+				r_info[o_ptr->pval].level * 5L);
 			break;
 		}
 	}
