@@ -6399,7 +6399,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 3, "take_notes",			"Allow notes to be appended to a file" },
 	{TRUE,  0, NULL,					"Number 253" },
 	{TRUE,  8, "testing_stack",			"Allow objects to stack on floor" },
-	{TRUE,  0, NULL,					"Number 255" },
+	{TRUE,  0, NULL,					NULL },
 };
 
 const int birth_options[OPT_BIRTH + 1] =
