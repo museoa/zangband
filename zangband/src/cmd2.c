@@ -618,7 +618,7 @@ int count_traps(int *x, int *y, bool under)
 /*
  * Return the number of doors around (or under) the character.
  */
-static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
+static int count_doors(int *x, int *y, bool (*test)(int feat), bool under)
 {
 	int d;
 	int xx, yy;
@@ -662,7 +662,7 @@ static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
  * Return the number of chests around (or under) the character.
  * If requested, count only trapped chests.
  */
-static int count_chests(int *y, int *x, bool trapped)
+static int count_chests(int *x, int *y, bool trapped)
 {
 	int d, count, o_idx;
 
@@ -831,10 +831,10 @@ void do_cmd_open(void)
 		int num_doors, num_chests;
 
 		/* Count closed doors */
-		num_doors = count_doors(&y, &x, is_closed, TRUE);
+		num_doors = count_doors(&x, &y, is_closed, TRUE);
 
 		/* Count chests (locked) */
-		num_chests = count_chests(&y, &x, FALSE);
+		num_chests = count_chests(&x, &y, FALSE);
 
 		/* See if only one target */
 		if ((num_doors + num_chests) == 1)
@@ -989,7 +989,7 @@ void do_cmd_close(void)
 	if (easy_open)
 	{
 		/* Count open doors */
-		if (count_doors(&y, &x, is_open, FALSE) == 1)
+		if (count_doors(&x, &y, is_open, FALSE) == 1)
 		{
 			p_ptr->command_dir = coords_to_dir(y, x);
 		}
@@ -1687,7 +1687,7 @@ void do_cmd_disarm(void)
 		num_traps = count_traps(&x, &y, TRUE);
 
 		/* Count chests (trapped) */
-		num_chests = count_chests(&y, &x, TRUE);
+		num_chests = count_chests(&x, &y, TRUE);
 
 		/* See if only one target */
 		if (num_traps || num_chests)
