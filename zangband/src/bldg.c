@@ -70,7 +70,7 @@ void have_nightmare(int r_idx)
 	msg_format("You behold the %s visage of %s!",
 				  horror_desc[randint0(MAX_SAN_HORROR)], desc);
 
-	r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
+	r_ptr->r_flags4 |= RF4_ELDRITCH_HORROR;
 
 	switch(p_ptr->prace)
 	{
@@ -242,7 +242,7 @@ bool get_nightmare(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Require eldritch horrors */
-	if (!(r_ptr->flags2 & (RF2_ELDRITCH_HORROR))) return (FALSE);
+	if (!(r_ptr->flags4 & (RF4_ELDRITCH_HORROR))) return (FALSE);
 
 	/* Require high level */
 	if (r_ptr->level <= p_ptr->lev) return (FALSE);

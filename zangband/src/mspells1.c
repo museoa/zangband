@@ -904,9 +904,12 @@ bool make_attack_spell(int m_idx)
 			break;
 		}
 
-		/* RF4_XXX2X4 */
+		/* RF4_ELDRITCH_HORROR */
 		case 96+1:
 		{
+			if (!direct) break;
+			disturb(TRUE);
+			sanity_blast(m_ptr);
 			break;
 		}
 

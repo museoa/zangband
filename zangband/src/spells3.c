@@ -4309,3 +4309,92 @@ void map_wilderness(int radius, s32b x, s32b y)
 		}
 	}
 }
+
+
+void sanity_blast(const monster_type *m_ptr)
+{
+	int power = 100;
+
+	char  m_name[80];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+	power = r_ptr->level + 10;
+
+	monster_desc(m_name, m_ptr, 0);
+
+	if (!(r_ptr->flags1 & RF1_UNIQUE))
+	{
+		if (r_ptr->flags1 & RF1_FRIENDS)
+		power /= 2;
+	}
+	else power *= 2;
+
+	/* Can we see it? */
+	if (!m_ptr->ml) return; 
+
+	/* Paranoia */
+	if (!(r_ptr->flags4 & RF4_ELDRITCH_HORROR)) return;
+
+	/* Pet eldritch horrors are safe most of the time */
+	if (is_pet(m_ptr) && !one_in_(8)) return;
+
+	/* Do we pass the saving throw? */
+	if (saving_throw(p_ptr->skill_sav * 100 / power)) return;
+
+	if (p_ptr->image)
+	{
+		/* Something silly happens... */
+		msg_format("You behold the %s visage of %s!",
+			funny_desc[randint0(MAX_SAN_FUNNY)], m_name);
+
+		if (one_in_(3))
+		{
+			msg_print(funny_comments[randint0(MAX_SAN_COMMENT)]);
+			p_ptr->image = p_ptr->image + randint1(r_ptr->level);
+		}
+
+		/* Never mind; we can't see it clearly enough */
+		return;
+	}
+
+	/* Something frightening happens... */
+	msg_format("You behold the %s visage of %s!",
+		horror_desc[randint0(MAX_SAN_HORROR)], m_name);
+
+	/* Monster memory */
+	r_ptr->r_flags4 |= RF4_ELDRITCH_HORROR;
+
+	/* Demon characters are unaffected */
+	if (p_ptr->prace == RACE_IMP) return;
+
+	/* Undead characters are 50% likely to be unaffected */
+	if (((p_ptr->prace == RACE_SKELETON) ||
+	    (p_ptr->prace == RACE_ZOMBIE) ||
+	    (p_ptr->prace == RACE_VAMPIRE) ||
+	    (p_ptr->prace == RACE_SPECTRE)) &&
+		saving_throw(25 + p_ptr->lev)) return;
+
+	/* Mind blast */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power))
+	{
+		if ((!p_ptr->resist_fear) || one_in_(5))
+		{
+			/* Get afraid, even if have resist fear! */
+			(void)set_afraid(p_ptr->afraid + rand_range(10, 20));
+		}
+		if (!p_ptr->resist_chaos)
+		{
+			(void)set_image(p_ptr->image + rand_range(150, 400));
+		}
+		return;
+	}
+
+	if (lose_all_info())
+	{
+		msg_print("You forget everything in your utmost terror!");
+	}
+
+	p_ptr->update |= PU_BONUS;
+	handle_stuff();
+}
+

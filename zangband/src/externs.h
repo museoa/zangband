@@ -149,7 +149,6 @@ extern int leaving_quest;
 extern s16b store_cache_num;
 extern store_type **store_cache;
 extern char summon_kin_type;
-extern bool hack_mind;
 extern bool hack_mutation;
 extern bool track_follow;
 extern bool track_target;
@@ -554,7 +553,6 @@ extern void create_name(int type, char *name);
 extern cptr horror_desc[MAX_SAN_HORROR];
 extern cptr funny_desc[MAX_SAN_FUNNY];
 extern cptr funny_comments[MAX_SAN_COMMENT];
-extern void sanity_blast(const monster_type *m_ptr, bool necro);
 extern void delete_monster_idx(int i);
 extern void delete_monster(int y, int x);
 extern void compact_monsters(int size);
@@ -871,7 +869,7 @@ extern bool brand_bolts(void);
 extern bool polymorph_monster(int y, int x);
 extern bool dimension_door(void);
 extern void map_wilderness(int radius, s32b x, s32b y);
-
+extern void sanity_blast(const monster_type *m_ptr);
 
 /* store.c */
 extern bool allocate_store(store_type *st_ptr);

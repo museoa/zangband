@@ -1704,7 +1704,7 @@ static void spoil_mon_info(cptr fname)
 
 		spoil_out("This");
 
-		if (flags2 & (RF2_ELDRITCH_HORROR)) spoil_out (" sanity-blasting");
+		if (flags2 & (RF2_XXX_1)) spoil_out (" something");
 		if (flags3 & (RF3_ANIMAL)) spoil_out(" natural");
 		if (flags3 & (RF3_EVIL)) spoil_out(" evil");
 		if (flags3 & (RF3_GOOD)) spoil_out(" good");
@@ -1797,7 +1797,7 @@ static void spoil_mon_info(cptr fname)
 		/* Collect inate attacks */
 		vn = 0;
 		if (flags4 & RF4_SHRIEK)  vp[vn++] = "shriek for help";
-		if (flags4 & RF4_XXX3)    vp[vn++] = "do something";
+		if (flags4 & RF4_ELDRITCH_HORROR) vp[vn++] = "blast your sanity";
 		if (flags4 & RF4_ROCKET)  vp[vn++] = "shoot a rocket";
 		if (flags4 & RF4_ARROW_1) vp[vn++] = "fire arrows";
 		if (flags4 & RF4_ARROW_2) vp[vn++] = "fire arrows";

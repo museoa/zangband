@@ -3160,9 +3160,6 @@ static void dungeon(void)
 	/* Set the base level */
 	base_level = p_ptr->depth;
 
-	/* Reset various flags */
-	hack_mind = FALSE;
-
 	/* Not leaving */
 	p_ptr->leaving = FALSE;
 
@@ -3339,8 +3336,6 @@ static void dungeon(void)
 
 	/* Reset the object generation level */
 	object_level = base_level;
-
-	hack_mind = TRUE;
 
 	/* Main loop */
 	while (TRUE)

@@ -1135,7 +1135,7 @@ static bool vault_aux_cthulhu(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Require eldritch horror */
-	if (!(r_ptr->flags2 & RF2_ELDRITCH_HORROR)) return (FALSE);
+	if (!(r_ptr->flags4 & RF4_ELDRITCH_HORROR)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);

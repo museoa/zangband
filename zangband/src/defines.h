@@ -2998,7 +2998,7 @@
 #define RF2_SHAPECHANGER    0x00000400  /* TY: shapechanger */
 #define RF2_ATTR_ANY        0x00000800  /* TY: Attr_any */
 #define RF2_POWERFUL        0x00001000  /* Monster has strong breath */
-#define RF2_ELDRITCH_HORROR 0x00002000  /* Sanity-blasting horror    */
+#define RF2_XXX_1			0x00002000
 #define RF2_AURA_FIRE       0x00004000  /* Burns in melee */
 #define RF2_AURA_ELEC       0x00008000  /* Shocks in melee */
 #define RF2_OPEN_DOOR       0x00010000  /* Monster can open doors */
@@ -3058,7 +3058,7 @@
  * New monster race bit flags
  */
 #define RF4_SHRIEK          0x00000001  /* Shriek for help */
-#define RF4_XXX2            0x00000002  /* (?) */
+#define RF4_ELDRITCH_HORROR 0x00000002  /* Sanity-blasting horror    */
 #define RF4_XXX3            0x00000004  /* (?) */
 #define RF4_ROCKET          0x00000008  /* TY: Rocket */
 #define RF4_ARROW_1         0x00000010  /* Fire an arrow (light) */
@@ -3347,7 +3347,7 @@
  * Annoying spells
  */
 #define RF4_ANNOY_MASK \
-	(RF4_SHRIEK)
+	(RF4_SHRIEK | RF4_ELDRITCH_HORROR)
 
 #define RF5_ANNOY_MASK \
 	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | \
@@ -3399,12 +3399,12 @@
  * Innate spell-like effects
  */
 #define RF4_INNATE_MASK \
-	(RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | \
-	 RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | \
-	 RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | \
-	 RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | \
-	 RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | \
-	 RF4_BR_NUKE | RF4_BR_DISI)
+	(RF4_SHRIEK | RF4_ELDRITCH_HORROR | RF4_ARROW_1 | RF4_ARROW_2 | \
+	 RF4_ARROW_3 | RF4_ARROW_4 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | \
+	 RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | \
+	 RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | \
+	 RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | \
+	 RF4_BR_WALL | RF4_BR_MANA | RF4_BR_NUKE | RF4_BR_DISI)
 
 #define RF5_INNATE_MASK \
 	(0L)

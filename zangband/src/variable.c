@@ -114,8 +114,7 @@ bool shimmer_monsters;	/* Hack -- optimize multi-hued monsters */
 
 bool repair_monsters;	/* Hack -- optimize detect monsters */
 
-/* Are these needed? */
-bool hack_mind;
+/* Is this needed? */
 bool hack_mutation;
 
 s16b o_max = 1;			/* Number of allocated objects */
