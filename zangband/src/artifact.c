@@ -713,7 +713,7 @@ static const struct randart_activation randart_activations[] =
 	{
 		NULL,
 		"charm animal (level %s)",
-		"charm animal(dir, %s)",
+		"charm_animal(dir, %s)",
 		10, TRUE, 200, 100, 0	/* lev */
 	},
 	{
@@ -1074,7 +1074,7 @@ static const struct randart_activation randart_activations[] =
 	{
 		"The %v shines brightly...",
 		"map & light area (5d20)",
-		"lite_area(damroll(5, 20), 3)",
+		"map_area(); lite_area(damroll(5, 20), 3)",
 		50, FALSE, 400, 0, 0
 	},
 	{
