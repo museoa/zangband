@@ -2479,16 +2479,14 @@ bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet)
  */
 void message_pain(int m_idx, int dam)
 {
-	long            oldhp, newhp, tmp;
-	int             percentage;
-	monster_type    *m_ptr = &m_list[m_idx];
-	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
-	char            m_name[80];
+	long oldhp, newhp, tmp;
+	int percentage;
 
-#if 0
-	if (!(player_can_see_bold(m_ptr->fy, m_ptr->fx)))
-		return;
-#endif
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+
+	char m_name[80];
+
 
 	/* Get the monster name */
 	monster_desc(m_name, m_ptr, 0);
@@ -2507,8 +2505,8 @@ void message_pain(int m_idx, int dam)
 	percentage = (int)(tmp);
 
 
-	/* Jelly's, Mold's, Vortex's, Quthl's */
-	if (strchr("jmvQ", r_ptr->d_char))
+	/* Mushrooms, Eyes, Jellies, Molds, Vortices, Worms, Quylthulgs */
+	if (strchr(",ejmvwQ", r_ptr->d_char))
 	{
 		if (percentage > 95)
 			msg_format("%^s barely notices.", m_name);
@@ -2525,6 +2523,207 @@ void message_pain(int m_idx, int dam)
 		else
 			msg_format("%^s jerks limply.", m_name);
 	}
+
+
+	/* Fish */
+	else if (strchr("~", r_ptr->d_char))
+	{
+		if (percentage > 95)
+			msg_format("%^s barely notices.", m_name);
+		else if (percentage > 75)
+			msg_format("%^s flinches.", m_name);
+		else if (percentage > 50)
+			msg_format("%^s hesitates.", m_name);
+		else if (percentage > 35)
+			msg_format("%^s quivers in pain.", m_name);
+		else if (percentage > 20)
+			msg_format("%^s writhes about.", m_name);
+		else if (percentage > 10)
+			msg_format("%^s writhes in agony.", m_name);
+		else
+			msg_format("%^s jerks limply.", m_name);
+	}
+
+
+	/* Golems, Walls, Doors, Stairs */
+	else if (strchr("g#+<>", r_ptr->d_char))
+	{
+		if (percentage > 95)
+			msg_format("%^s ignores the attack.", m_name);
+		else if (percentage > 75)
+			msg_format("%^s shrugs off the attack.", m_name);
+		else if (percentage > 50)
+			msg_format("%^s roars thunderously.", m_name);
+		else if (percentage > 35)
+			msg_format("%^s rumbles.", m_name);
+		else if (percentage > 20)
+			msg_format("%^s grunts.", m_name);
+		else if (percentage > 10)
+			msg_format("%^s hesitates.", m_name);
+		else
+			msg_format("%^s crumples.", m_name);
+	}
+
+
+	/* Snakes, Hydrae, Reptiles, Mimics */
+	else if (strchr("JMR", r_ptr->d_char) || !isalpha(r_ptr->d_char))
+	{
+		if (percentage > 95)
+			msg_format("%^s barely notices.", m_name);
+		else if (percentage > 75)
+			msg_format("%^s hisses.", m_name);
+		else if (percentage > 50)
+			msg_format("%^s rears up in anger.", m_name);
+		else if (percentage > 35)
+			msg_format("%^s hisses furiously.", m_name);
+		else if (percentage > 20)
+			msg_format("%^s writhes about.", m_name);
+		else if (percentage > 10)
+			msg_format("%^s writhes in agony.", m_name);
+		else
+			msg_format("%^s jerks limply.", m_name);
+	}
+
+
+	/* Felines */
+	else if (strchr("f", r_ptr->d_char))
+	{
+		if (percentage > 95)
+			msg_format("%^s shrugs off the attack.", m_name);
+		else if (percentage > 75)
+			msg_format("%^s roars.", m_name);
+		else if (percentage > 50)
+			msg_format("%^s growls angrily.", m_name);
+		else if (percentage > 35)
+			msg_format("%^s hisses with pain.", m_name);
+		else if (percentage > 20)
+			msg_format("%^s mewls in pain.", m_name);
+		else if (percentage > 10)
+			msg_format("%^s hisses in agony.", m_name);
+		else
+			msg_format("%^s mewls pitifully.", m_name);
+	}
+
+
+	/* Ants, Centipedes, Flies, Insects, Beetles, Spiders */
+	else if (strchr("acFIKS", r_ptr->d_char))
+	{
+		if (percentage > 95)
+			msg_format("%^s ignores the attack.", m_name);
+		else if (percentage > 75)
+			msg_format("%^s chitters.", m_name);
+		else if (percentage > 50)
+			msg_format("%^s scuttles about.", m_name);
+		else if (percentage > 35)
+			msg_format("%^s twitters.", m_name);
+		else if (percentage > 20)
+			msg_format("%^s jerks in pain.", m_name);
+		else if (percentage > 10)
+			msg_format("%^s jerks in agony.", m_name);
+		else
+			msg_format("%^s twitches.", m_name);
+	}
+
+
+	/* Birds */
+	else if (strchr("B", r_ptr->d_char))
+	{
+		if (percentage > 95)
+			msg_format("%^s chirps.", m_name);
+		else if (percentage > 75)
+			msg_format("%^s twitters.", m_name);
+		else if (percentage > 50)
+			msg_format("%^s squawks.", m_name);
+		else if (percentage > 35)
+			msg_format("%^s chatters.", m_name);
+		else if (percentage > 20)
+			msg_format("%^s jeers.", m_name);
+		else if (percentage > 10)
+			msg_format("%^s flutters about.", m_name);
+		else
+			msg_format("%^s squeaks.", m_name);
+	}
+
+
+	/* Dragons, Demons, High Undead */
+	else if (strchr("duDLUW", r_ptr->d_char))
+	{
+		if (percentage > 95)
+			msg_format("%^s ignores the attack.", m_name);
+		else if (percentage > 75)
+			msg_format("%^s flinches.", m_name);
+		else if (percentage > 50)
+			msg_format("%^s hisses in pain.", m_name);
+		else if (percentage > 35)
+			msg_format("%^s snarls with pain.", m_name);
+		else if (percentage > 20)
+			msg_format("%^s roars with pain.", m_name);
+		else if (percentage > 10)
+			msg_format("%^s gasps.", m_name);
+		else
+			msg_format("%^s snarls feebly.", m_name);
+	}
+
+
+	/* Skeletons */
+	else if (strchr("s", r_ptr->d_char))
+	{
+		if (percentage > 95)
+			msg_format("%^s ignores the attack.", m_name);
+		else if (percentage > 75)
+			msg_format("%^s shrugs off the attack.", m_name);
+		else if (percentage > 50)
+			msg_format("%^s rattles.", m_name);
+		else if (percentage > 35)
+			msg_format("%^s stumbles.", m_name);
+		else if (percentage > 20)
+			msg_format("%^s rattles.", m_name);
+		else if (percentage > 10)
+			msg_format("%^s staggers.", m_name);
+		else
+			msg_format("%^s clatters.", m_name);
+	}
+
+
+	/* Zombies */
+	else if (strchr("z", r_ptr->d_char))
+	{
+		if (percentage > 95)
+			msg_format("%^s ignores the attack.", m_name);
+		else if (percentage > 75)
+			msg_format("%^s shrugs off the attack.", m_name);
+		else if (percentage > 50)
+			msg_format("%^s groans.", m_name);
+		else if (percentage > 35)
+			msg_format("%^s moans.", m_name);
+		else if (percentage > 20)
+			msg_format("%^s hesitates.", m_name);
+		else if (percentage > 10)
+			msg_format("%^s grunts.", m_name);
+		else
+			msg_format("%^s staggers.", m_name);
+	}
+
+
+	/* Ghosts */
+	else if (strchr("G", r_ptr->d_char))
+	{
+		if (percentage > 95)
+			msg_format("%^s ignores the attack.", m_name);
+		else if (percentage > 75)
+			msg_format("%^s shrugs off the attack.", m_name);
+		else if (percentage > 50)
+			msg_format("%^s moans.", m_name);
+		else if (percentage > 35)
+			msg_format("%^s wails.", m_name);
+		else if (percentage > 20)
+			msg_format("%^s howls.", m_name);
+		else if (percentage > 10)
+			msg_format("%^s moans softly.", m_name);
+		else
+			msg_format("%^s sighs.", m_name);
+	}
+
 
 	/* Dogs and Hounds */
 	else if (strchr("CZ", r_ptr->d_char))
@@ -2546,7 +2745,7 @@ void message_pain(int m_idx, int dam)
 	}
 
 	/* One type of monsters (ignore,squeal,shriek) */
-	else if (strchr("FIKMRSXabclqrst", r_ptr->d_char))
+	else if (strchr("Xbilqrt", r_ptr->d_char))
 	{
 		if (percentage > 95)
 			msg_format("%^s ignores the attack.", m_name);
@@ -2583,7 +2782,6 @@ void message_pain(int m_idx, int dam)
 			msg_format("%^s cries out feebly.", m_name);
 	}
 }
-
 
 
 /*
