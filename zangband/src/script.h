@@ -6,10 +6,12 @@
 #include "angband.h"
 
 /*
- * Useful macro for appl_object_trigger()
+ * Useful macros for appl_object_trigger()
  */
 #define LUA_VAR(A) \
 	#A, A
+#define LUA_RETURN(A) \
+	#A, &A
 
 /*
  * Initalize the scripting support
@@ -39,9 +41,7 @@ extern bool script_do_file(cptr filename);
 /*
  * Execute one of the scripts attached to an object
  */
-extern bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident, 
-		int vcount, ...);
-extern cptr apply_object_trigger_str(int trigger_id, const object_type *o_ptr);
+extern void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...); 
 
 /*
  * Callback for using an object

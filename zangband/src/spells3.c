@@ -2766,8 +2766,11 @@ bool potion_smash_effect(int who, int x, int y, object_type *o_ptr)
 
 	if (o_ptr->trigger[TRIGGER_SMASH])
 	{
-		angry = apply_object_trigger(TRIGGER_SMASH, o_ptr, &ident, 3,
-				LUA_VAR(who), LUA_VAR(x), LUA_VAR(y));
+		bool result = FALSE;
+		apply_object_trigger(TRIGGER_SMASH, o_ptr, "iii:bb",
+				LUA_VAR(who), LUA_VAR(x), LUA_VAR(y),
+				LUA_RETURN(result), LUA_RETURN(ident));
+		angry = result;
 		
 		/* An identification was made */
 		if (ident && !(k_ptr->aware))

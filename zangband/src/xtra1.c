@@ -3180,7 +3180,7 @@ static void calc_bonuses(void)
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
-		apply_object_trigger(TRIGGER_BONUS, o_ptr, NULL, 0);
+		apply_object_trigger(TRIGGER_BONUS, o_ptr, "");
 	}
 		
 	/* Hack -- handle "xtra" mode */

@@ -569,8 +569,9 @@ void do_cmd_use_staff(void)
  */
 static void do_cmd_aim_wand_aux(object_type *o_ptr)
 {
-	bool ident, use_charge;
+	bool use_charge;
 	int chance, dir, lev;
+	bool ident = TRUE, result = TRUE;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if (floor_item(o_ptr) && (o_ptr->number > 1))
@@ -632,8 +633,9 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 	sound(SOUND_ZAP);
 
 	/* Aim the wand */
-	use_charge = apply_object_trigger(TRIGGER_USE, o_ptr, &ident, 1,
-			LUA_VAR(dir));
+	apply_object_trigger(TRIGGER_USE, o_ptr, "i:bb", 
+		LUA_VAR(dir), LUA_RETURN(result), LUA_RETURN(ident));
+	use_charge = result;
 	
 	/* Hack - wands may destroy themselves if activated on the ground */
 	if (o_ptr->k_idx)
@@ -1194,7 +1196,7 @@ static void do_cmd_activate_aux(object_type *o_ptr)
 	}
 
 	/* Activate the object */
-	apply_object_trigger(TRIGGER_USE, o_ptr, NULL, 0); 
+	apply_object_trigger(TRIGGER_USE, o_ptr, ""); 
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);

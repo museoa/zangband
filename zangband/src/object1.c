@@ -148,12 +148,15 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, 
 }
 
 
+static char string_buf[200];
 /*
  * Determine the "Activation" (if any) for an artifact
  * Return a string, or NULL for "no activation"
  */
 cptr item_activation(const object_type *o_ptr)
 {
+	cptr desc = "";
+	
 	/* Require activation ability */
 	if (!(o_ptr->flags3 & (TR3_ACTIVATE))) return ("nothing");
 
@@ -406,7 +409,16 @@ cptr item_activation(const object_type *o_ptr)
 		}
 	}
 
-	return apply_object_trigger_str(TRIGGER_DESC, o_ptr);
+	/* Get description and copy to temporary buffer */
+	/* Lua better not try to modify the object ... */
+	apply_object_trigger(TRIGGER_DESC, (object_type *) o_ptr, ":s", LUA_RETURN(desc));
+	strncpy(string_buf, desc, 199);
+
+	/* Free string allocated to hold return value */
+	string_free(desc);
+
+	/* Return the description */
+	return string_buf;
 }
 
 

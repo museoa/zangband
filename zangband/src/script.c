@@ -207,80 +207,203 @@ static const struct luaL_reg intMathLib[] =
 	{"max",    math_max },
 };
 
-static char string_buf[200];
-
-cptr apply_object_trigger_str(int trigger_id, const object_type *o_ptr)
+static void call_lua_hook(cptr script, cptr format, va_list vp)
 {
-	char *result;
-	
-	int status;
-
-	object_kind *k_ptr = &k_info[o_ptr->k_idx];
-
-	cptr script = NULL;
+	int i, status;
+	cptr vars[20];
+	void *out[20];
+	int first_return = 0;
 
 	int oldtop = lua_gettop(L);
 
-	if (o_ptr->trigger[trigger_id])
-		script = quark_str(o_ptr->trigger[trigger_id]);
-	else if (k_ptr->trigger[trigger_id])
-		script = k_text + k_ptr->trigger[trigger_id];
-	else
-		return "";
+	for (i = 0; format[i] && i < 20; i++)
+	{
+		cptr type, var;
+		
+		switch (format[i])
+		{
+		case 'i':
+			/* Get the next argument */
+			var = va_arg(vp, cptr);
+			vars[i] = var;
+	
+			lua_pushnumber(L, va_arg(vp, int));
+			lua_setglobal(L, var);
+			break;
 
-	/* Set parameters (really globals) */
-	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
-	lua_setglobal(L, "object");
-	lua_pushnumber(L, trigger_id); lua_setglobal(L, "trigger_id");
+		case 'b':
+			/* Get the next argument */
+			var = va_arg(vp, cptr);
+			vars[i] = var;
+	
+			tolua_pushbool(L, va_arg(vp, int));
+			lua_setglobal(L, var);
+			break;
 
-	/* Call the script */
+		case 's':
+			/* Get the next argument */
+			var = va_arg(vp, cptr);
+			vars[i] = var;
+	
+			tolua_pushstring(L, va_arg(vp, char *));
+			lua_setglobal(L, var);
+			break;
+
+		case 'p':
+			/* Get the next argument */
+			var = va_arg(vp, cptr);
+			vars[i] = var;
+
+			/* Get the type */
+			type = va_arg(vp, cptr);
+
+			tolua_pushusertype(L, va_arg(vp, void *), tolua_tag(L, type));
+			lua_setglobal(L, var);
+			break;
+			
+		case ':':
+			/* Start of return arguments */
+			break;
+		}
+
+		if (format[i] == ':')
+		{
+			i++;
+			first_return = i;
+			break;
+		}
+	}
+
+	for (i = first_return; format[i] && i < 20; i++)
+	{
+		cptr var;
+		int *ival;
+		bool *bval;
+		cptr *sval;
+		
+		switch (format[i])
+		{
+		case 'i':
+			/* Get the next argument */
+			var = va_arg(vp, cptr);
+			vars[i] = var;
+
+			ival = va_arg(vp, int *);
+			out[i] = (void *)ival;
+	
+			lua_pushnumber(L, *ival);
+			lua_setglobal(L, var);
+			break;
+
+		case 'b':
+			/* Get the next argument */
+			var = va_arg(vp, cptr);
+			vars[i] = var;
+
+			bval = va_arg(vp, bool *);
+			out[i] = (void *)bval;
+	
+			tolua_pushbool(L, *bval);
+			lua_setglobal(L, var);
+			break;
+
+		case 's':
+			/* Get the next argument */
+			var = va_arg(vp, cptr);
+			vars[i] = var;
+
+			sval = va_arg(vp, cptr *);
+			out[i] = (void *)sval;
+	
+			lua_pushstring(L, *sval);
+			lua_setglobal(L, var);
+			break;
+
+		default:
+			vars[i] = NULL;
+			out[i] = NULL;
+			break;
+		}
+	}
+			
 	status = lua_dostring(L, script);
 
 	if (status == 0)
 	{
-		strncpy(string_buf, tolua_getstring(L, 1, ""), 199);
-		result = string_buf;
+		int *ival;
+		bool *bval;
+		cptr *sval;
 
-		/* Remove the results */
+		int n = 1;
+		int top = lua_gettop(L);
+		
+		for (i = first_return; format[i] && i < 20; i++)
+		{
+			int where;
+			
+			if (top < oldtop + n)
+			{
+				lua_getglobal(L, vars[i]);
+				where = -1;
+			}
+			else
+				where = oldtop + n;
+			
+			switch (format[i])
+			{
+			case 'i':
+				ival = (int *)out[i];
+				*ival = tolua_getnumber(L, where, 0);
+				n++;
+				break;
+
+			case 'b':
+				bval = (bool *)out[i];
+				*bval = tolua_getbool(L, where, FALSE);
+				n++;
+				break;
+
+			case 's':
+				sval = (cptr *)out[i];
+				*sval = string_make(tolua_getstring(L, where, ""));
+				n++;
+				break;
+			}
+		}
+
 		lua_settop(L, oldtop);
 	}
-	else
+
+	/* Clear variables */
+	for (i = 0; format[i] && i < 20; i++)
 	{
-		result = NULL;
+		switch (format[i])
+		{
+		case 'i':
+		case 'b':
+		case 's':
+		case 'p':
+			lua_pushnil(L);
+			lua_setglobal(L, vars[i]);
+			break;
+		}
 	}
-
-	/* Clear globals */
-	lua_pushnil(L); lua_setglobal(L, "trigger_id");
-	lua_pushnil(L); lua_setglobal(L, "object");
-	lua_pushnil(L); lua_setglobal(L, "ident");
-	lua_pushnil(L); lua_setglobal(L, "result");
-
-	return (result);
 }
 
-bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident,
-		int vcount, ...)
+void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 {
-	int status, i;
-	bool result;
-	
 	va_list vp;
 	
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
-	cptr script = NULL, var;
-
-	int oldtop = lua_gettop(L);
+	cptr script = NULL;
 
 	if (o_ptr->trigger[trigger_id])
 		script = quark_str(o_ptr->trigger[trigger_id]);
 	else if (k_ptr->trigger[trigger_id])
 		script = k_text + k_ptr->trigger[trigger_id];
 	else
-	{
-		if (ident) *ident = FALSE;
-		return (FALSE);
-	}
+		return;
 
 	/* Set parameters (really globals) */
 	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
@@ -288,86 +411,30 @@ bool apply_object_trigger(int trigger_id, object_type *o_ptr, bool *ident,
 	lua_pushnumber(L, trigger_id); lua_setglobal(L, "trigger_id");
 	
 	/* Begin the Varargs Stuff */
-	va_start(vp, vcount);
+	va_start(vp, format);
 	
-	for (i = 0; i < vcount; i++)
-	{
-		/* Get the next argument */
-		var = va_arg(vp, cptr);
-	
-		lua_pushnumber(L, va_arg(vp, int));
-		lua_setglobal(L, var);
-	}
-	
+	call_lua_hook(script, format, vp);
+
 	/* End the Varargs Stuff */
 	va_end(vp);
-
-	/* Set result vars for convenience */
-	if (trigger_id == TRIGGER_USE)
-	{
-		tolua_pushbool(L, TRUE); lua_setglobal(L, "ident");
-		tolua_pushbool(L, TRUE); lua_setglobal(L, "result");
-	}
-	else if (trigger_id == TRIGGER_SMASH)
-	{
-		tolua_pushbool(L, FALSE); lua_setglobal(L, "ident");
-		tolua_pushbool(L, FALSE); lua_setglobal(L, "result");
-	}
-
-	/* Call the script */
-	status = lua_dostring(L, script);
-
-	if (status == 0)
-	{
-		/* Push default result */
-		if (lua_gettop(L) < oldtop + 1)
-			lua_getglobal(L, "result");
-		if (lua_gettop(L) < oldtop + 2)
-			lua_getglobal(L, "ident");
-		
-		if (ident) *ident = tolua_getbool(L, 1, FALSE);
-		result = tolua_getbool(L, 2, FALSE);
-
-		/* Remove the results */
-		lua_settop(L, oldtop);
-	}
-	else
-	{
-		/* Error */
-		if (ident) *ident = FALSE;
-		result = FALSE;
-	}
 
 	/* Clear globals */
 	lua_pushnil(L); lua_setglobal(L, "trigger_id");
 	lua_pushnil(L); lua_setglobal(L, "object");
-	lua_pushnil(L); lua_setglobal(L, "ident");
-	lua_pushnil(L); lua_setglobal(L, "result");	
-	
-	/* Begin the Varargs Stuff */
-	va_start(vp, vcount);
-	
-	for (i = 0; i < vcount; i++)
-	{
-		lua_pushnil(L);
-		lua_setglobal(L, va_arg(vp, cptr));
-		
-		/* Ignore value */
-		(void) va_arg(vp, int);
-	}
-	
-	/* End the Varargs Stuff */
-	va_end(vp);
-
-	return (result);
 }
 
 /*
  * Callback for using an object
  */
-bool use_object(object_type *o_ptr, bool *ident)
+bool use_object(object_type *o_ptr, bool *id_return)
 {
-	return apply_object_trigger(TRIGGER_USE, o_ptr, ident, 0);
+	bool result = TRUE, ident = TRUE;
+
+	apply_object_trigger(TRIGGER_USE, o_ptr, ":bb",
+			LUA_RETURN(result), LUA_RETURN(ident));
+
+	if (id_return) *id_return = ident;
+	return result;
 }
 
 
