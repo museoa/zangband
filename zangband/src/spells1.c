@@ -4418,7 +4418,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 						if (typ == GF_DISINTEGRATE)
 						{
 							/* Disintegration balls explosions are stopped by perma-walls */
-							if (!in_disintegration_range(y2, x2, y, x)) continue;
+							if (!in_disintegration_range(x2, y2, x, y)) continue;
 														
 							c_ptr = area(y, x);
 							

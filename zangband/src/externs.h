@@ -303,7 +303,7 @@ extern void mmove2(int *x, int *y, int x1, int y1, int x2, int y2, int *slope,
 extern bool projectable(int x1, int y1, int x2, int y2);
 extern sint project_path(coord *gp, int x1, int y1, int x2, int y2, u16b flg);
 extern bool in_ball_range(int x1, int y1, int x2, int y2);
-extern bool in_disintegration_range(int y1, int x1, int y2, int x2);
+extern bool in_disintegration_range(int x1, int y1, int x2, int y2);
 extern void scatter(int *yp, int *xp, int y, int x, int d);
 extern bool player_can_see_bold(int y, int x);
 extern bool cave_valid_grid(const cave_type *c_ptr);

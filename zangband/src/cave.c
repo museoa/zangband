@@ -745,7 +745,7 @@ static bool cave_stop_disintegration(cave_type *c_ptr)
  * Use modified version of los() for calculation of disintegration balls.
  * Disintegration effects are stopped by permanent walls and fields.
  */
-bool in_disintegration_range(int y1, int x1, int y2, int x2)
+bool in_disintegration_range(int x1, int y1, int x2, int y2)
 {
 	return (los_general(x1, y1, x2, y2, cave_stop_disintegration));
 }
