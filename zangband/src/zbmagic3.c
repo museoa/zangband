@@ -1,0 +1,6432 @@
+/* File: zbmagic3.c */
+/* Purpose: Medium level stuff for the Borg -BEN- */
+
+
+#include "angband.h"
+
+#ifdef ALLOW_BORG
+
+#include "zborg1.h"
+#include "zborg2.h"
+#include "zborg3.h"
+#include "zborg4.h"
+#include "zborg5.h"
+#include "zborg6.h"
+#include "zbmagic.h"
+
+
+/*
+ *
+ * There are several types of setup moves:
+ *
+ *   Temporary speed
+ *   Protect From Evil
+ *   Bless\Prayer
+ *   Berserk\Heroism
+ *   Temp Resist (either all or just cold/fire?)
+ *   Shield
+ *   Teleport away
+ *   Glyph of Warding
+ *   See inviso
+ *
+ * * and many others
+ *
+ */
+
+enum
+{
+	BD_SPEED,
+	BD_PROT_FROM_EVIL,
+	BD_BLESS,
+	BD_HERO_BERSERK,
+	BD_RESIST_FCE,
+	BD_RESIST_FECAP,
+	BD_RESIST_F,
+	BD_RESIST_C,
+	BD_RESIST_A,
+	BD_RESIST_P,
+	BD_SHIELD,
+	BD_GOI,
+	BD_GOI_POT,
+	BD_GLYPH,
+	BD_WARDING,
+	BD_TELL_AWAY,
+	BD_CREATE_WALLS,
+	BD_MASS_GENOCIDE,
+	BD_GENOCIDE,
+	BD_GENOCIDE_HOUNDS,
+	BD_EARTHQUAKE,
+	BD_DESTRUCTION,
+	BD_BANISHMENT,
+	BD_DETECT_INVISO,
+	BD_LIGHT_BEAM,
+	BD_TRUMP_SERVANT,
+
+	BD_MAX
+};
+
+
+/* basic method to calulate what fail_rate is allowed */
+static int borg_fail_allowed(int p1)
+{
+	int fail_allowed = 39;
+
+	/* If very scary, do not allow for much chance of fail */
+	if (p1 > avoidance)
+	{
+		fail_allowed -= 19;
+	}
+	/* a little scary */
+	else if (p1 > (avoidance * 2) / 3)
+	{
+		fail_allowed -= 10;
+	}
+	/* not very scary, allow lots of fail */
+	else if (p1 < avoidance / 3)
+	{
+		fail_allowed += 10;
+	}
+
+	/* Give it back */
+	return (fail_allowed);
+}
+
+
+/*
+ * Bless/Prayer to prepare for battle
+ */
+static int borg_defend_aux_bless(int p1)
+{
+	int fail_allowed = 10;
+
+	if (borg_simulate)
+	{
+		/* already blessed */
+		if (borg_bless) return (0);
+
+		/* Check if the borg be blessed (weakest last) */
+		if (!borg_spell_okay_fail(REALM_LIFE, 3, 1, fail_allowed) &&
+			!borg_spell_okay_fail(REALM_LIFE, 0, 2, fail_allowed) &&
+			!borg_read_scroll_fail(SV_SCROLL_HOLY_PRAYER) &&
+			!borg_read_scroll_fail(SV_SCROLL_HOLY_CHANT) &&
+			!borg_read_scroll_fail(SV_SCROLL_BLESSING))
+			return (0);
+
+		/* if we are in some danger but not much, go for a quick bless */
+		if (p1 > avoidance / 12 && p1 < avoidance / 2)
+		{
+			/* bless is a low priority */
+			return (1);
+		}
+
+		/* Don't do it */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_LIFE, 3, 1) ||
+		borg_spell(REALM_LIFE, 0, 2) ||
+		borg_read_scroll(SV_SCROLL_BLESSING) ||
+		borg_read_scroll(SV_SCROLL_HOLY_CHANT) ||
+		borg_read_scroll(SV_SCROLL_HOLY_PRAYER));
+}
+
+/*
+ * Speed to prepare for battle
+ */
+static int borg_defend_aux_speed(int p1)
+{
+	int p2;
+	bool good_speed = FALSE;
+	int fail_allowed;
+
+	if (borg_simulate)
+	{
+		/* Already fast */
+		if (borg_speed) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		/* Only cast defence spells if fail rate is not too high */
+		if (borg_spell_okay_fail(REALM_SORCERY, 1, 5, fail_allowed) ||
+			borg_spell_okay_fail(REALM_DEATH, 2, 3, fail_allowed) ||
+			borg_mindcr_okay_fail(MIND_ADRENALINE, 35, fail_allowed) ||
+			borg_equips_staff_fail(SV_STAFF_SPEED) ||
+			borg_equips_rod(SV_ROD_SPEED))
+		{
+			/* Recheargable speeds */
+			good_speed = TRUE;
+		}
+
+		/* If there is no speed source */
+		if (!good_speed && !borg_slot(TV_POTION, SV_POTION_SPEED))
+		{
+			/* Give up */
+			return (0);
+		}
+
+		/* pretend we are sped up and look again */
+		borg_speed = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, TRUE);
+		borg_speed = FALSE;
+
+		/* if we are fighting a unique cast it. */
+		if (borg_fighting_unique)
+		{
+			/* HACK pretend that it was scary and will be safer */
+			p2 = p2 * 7 / 10;
+		}
+		/* if the unique is Oberon cast it */
+		if (bp_ptr->depth == 99 && borg_fighting_unique >= BORG_QUESTOR)
+		{
+			p2 = p2 * 6 / 10;
+		}
+
+		/* if the unique is The Serpent cast it */
+		if (bp_ptr->depth == 100 && borg_fighting_unique >= BORG_QUESTOR)
+		{
+			p2 = p2 * 5 / 10;
+		}
+
+		/*
+		 * If this is an improvement and we may
+		 * not avoid monster now and we may have before
+		 */
+		if (((p1 > p2) &&
+			 p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			 && (p1 > (avoidance / 5)) && good_speed) ||
+			((p1 > p2) &&
+			 p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) :
+					(avoidance / 3)) && (p1 > (avoidance / 7))))
+		{
+			/* Simulation */
+			return (p1 - p2 + (borg_goi / 100) * 50);
+
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* Do it! */
+	return (borg_spell(REALM_SORCERY, 1, 5) ||
+		borg_spell(REALM_DEATH, 2, 3) ||
+		borg_mindcr(MIND_ADRENALINE, 35) ||
+		borg_zap_rod(SV_ROD_SPEED) ||
+		borg_use_staff(SV_STAFF_SPEED) ||
+		borg_quaff_potion(SV_POTION_SPEED));
+}
+
+/*
+ * Globe of Invulnurability
+ */
+static int borg_defend_aux_goi(int p1)
+{
+	int p2;
+	int fail_allowed;
+
+	if (borg_simulate)
+	{
+		/* does the borg have the spell up already? */
+		if (borg_goi) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		/* If fighting regular unique boost the fail rate */
+		if (borg_fighting_unique >= 1) fail_allowed = MAX(25, fail_allowed);
+
+		/* If fighting Questor */
+		if (borg_fighting_unique >= BORG_QUESTOR)
+		{
+			/* boost the fail rate */
+			fail_allowed = MAX(33, fail_allowed);
+		}
+
+		/* Do we have the spell? */
+		if (!borg_spell_okay_fail(REALM_SORCERY, 3, 7, fail_allowed) &&
+			!borg_spell_okay_fail(REALM_LIFE, 3, 7, fail_allowed))
+			return (0);
+
+		/* pretend we are protected and look again */
+		borg_goi = 100;
+		p2 = borg_danger(c_x, c_y, 1, TRUE);
+		borg_goi = 0;
+
+		/*  if we are fighting a unique enhance the value by reducing p2 */
+		if (borg_fighting_unique)
+		{
+			p2 = p2 / 2;
+		}
+
+		/* if the unique is Oberon cast it */
+		if (bp_ptr->depth == 99 && borg_fighting_unique >= BORG_QUESTOR)
+		{
+			p2 = p2 * 4 / 10;
+		}
+
+		/* if the unique is the Serpent cast it */
+		if (bp_ptr->depth == 100 && borg_fighting_unique >= BORG_QUESTOR)
+		{
+			p2 = 0;
+		}
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p1 > (avoidance / 7) &&
+			p2 <= (borg_fighting_unique) ? ((avoidance * 2) / 3) : (avoidance / 2))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_SORCERY, 3, 7) ||
+		borg_spell(REALM_LIFE, 3, 7));
+}
+
+/*
+ * Globe of Invulnurability Potion
+ */
+static int borg_defend_aux_goi_pot(int p1)
+{
+	int p2;
+
+	if (borg_simulate)
+	{
+		if (borg_goi) return (0);
+
+		/* Save for fighting uniques */
+		if (!borg_fighting_unique) return (0);
+
+		/* have some in inven? */
+		if (!borg_slot(TV_POTION, SV_POTION_INVULNERABILITY)) return (0);
+
+		/* pretend we are protected and look again */
+		borg_goi = 100;
+		p2 = borg_danger(c_x, c_y, 1, TRUE);
+		borg_goi = 0;
+
+		/*  Fighting a unique, enhance the value by reducing p2 */
+		p2 = p2 / 2;
+
+		/* if the unique is Oberon cast it */
+		if (bp_ptr->depth == 99 && borg_fighting_unique >= BORG_QUESTOR)
+		{
+			p2 = p2 * 4 / 10;
+		}
+
+		/* if the unique is The Serpent cast it */
+		if (bp_ptr->depth == 100 && borg_fighting_unique >= BORG_QUESTOR)
+		{
+			p2 = 0;
+		}
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p1 > (avoidance / 7) &&
+			p2 <= (borg_fighting_unique) ? ((avoidance * 2) / 3) : (avoidance / 2))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_quaff_potion(SV_POTION_INVULNERABILITY));
+}
+
+/* cold/fire */
+static int borg_defend_aux_resist_fce(int p1)
+{
+	int p2;
+	int fail_allowed;
+	bool save_fire, save_cold, save_elec;
+
+	if (borg_simulate)
+	{
+		if (my_oppose_fire && my_oppose_cold && my_oppose_elec) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		/* Does the borg have the spell? */
+		if (!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed)) return (0);
+
+		/* pretend we are protected and look again */
+		save_fire = my_oppose_fire;
+		save_cold = my_oppose_cold;
+		save_elec = my_oppose_elec;
+
+		my_oppose_fire = TRUE;
+		my_oppose_cold = TRUE;
+		my_oppose_elec = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, FALSE);
+		my_oppose_fire = save_fire;
+		my_oppose_cold = save_cold;
+		my_oppose_elec = save_elec;
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 7))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+		borg_spell(REALM_NATURE, 0, 6));
+}
+
+/* all resists */
+static int borg_defend_aux_resist_fecap(int p1)
+{
+	int p2;
+	int fail_allowed;
+	bool save_fire, save_acid, save_poison, save_elec, save_cold;
+
+	if (borg_simulate)
+	{
+		/* Does the borg already have al the resists? */
+		if (my_oppose_fire && my_oppose_acid && my_oppose_pois &&
+			my_oppose_elec && my_oppose_cold) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		/*
+		 * How about adding the potion of Resistance?
+		 * Won't want to cast it though if only one element is
+		 * down.  Ought to at least wait until 3 of the 4 are down.
+		 */
+		if (!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed) &&
+			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 35, fail_allowed) &&
+			!borg_mutation_check(MUT1_RESIST, TRUE))
+			return (0);
+
+		/* pretend we are protected and look again */
+		save_fire = my_oppose_fire;
+		save_acid = my_oppose_acid;
+		save_poison = my_oppose_pois;
+		save_elec = my_oppose_elec;
+		save_cold = my_oppose_cold;
+		my_oppose_fire = TRUE;
+		my_oppose_cold = TRUE;
+		my_oppose_acid = TRUE;
+		my_oppose_pois = TRUE;
+		my_oppose_elec = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, FALSE);
+		my_oppose_fire = save_fire;
+		my_oppose_cold = save_cold;
+		my_oppose_acid = save_acid;
+		my_oppose_pois = save_poison;
+		my_oppose_elec = save_elec;
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 7))
+		{
+			/* Simulation */
+			return ((p1 - p2) - 1);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+		borg_spell(REALM_NATURE, 2, 3) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 35) ||
+		borg_mutation(MUT1_RESIST));
+}
+
+/* fire */
+static int borg_defend_aux_resist_f(int p1)
+{
+	int p2;
+	int fail_allowed;
+	bool save_fire;
+
+	if (borg_simulate)
+	{
+		if (my_oppose_fire) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		if (!borg_spell_okay_fail(REALM_ARCANE, 1, 7, fail_allowed) &&
+			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 20, fail_allowed) &&
+			!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed) &&
+			!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed) &&
+			!borg_slot(TV_POTION, SV_POTION_RESIST_HEAT))
+			return (0);
+
+		/* pretend we are protected and look again */
+		save_fire = my_oppose_fire;
+		my_oppose_fire = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, FALSE);
+		my_oppose_fire = save_fire;
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 7))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+		borg_spell(REALM_SORCERY, 1, 6) ||
+		borg_spell(REALM_ARCANE, 0, 6) ||
+		borg_spell(REALM_NATURE, 2, 3) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 20) ||
+		borg_quaff_potion(SV_POTION_RESIST_HEAT));
+}
+
+ /* cold */
+static int borg_defend_aux_resist_c(int p1)
+{
+
+	int p2;
+	int fail_allowed;
+	bool save_cold;
+
+	if (borg_simulate)
+	{
+		if (my_oppose_cold) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		if (!borg_spell_okay_fail(REALM_ARCANE, 1, 7, fail_allowed) &&
+			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 25, fail_allowed) &&
+			!borg_slot(TV_POTION, SV_POTION_RESIST_COLD))
+			return (0);
+
+		/* pretend we are protected and look again */
+		save_cold = my_oppose_cold;
+		my_oppose_cold = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, FALSE);
+		my_oppose_cold = save_cold;
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 7))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+		borg_spell(REALM_ARCANE, 1, 7) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 25) ||
+		borg_quaff_potion(SV_POTION_RESIST_COLD));
+}
+
+/* acid */
+static int borg_defend_aux_resist_a(int p1)
+{
+
+	int p2;
+	int fail_allowed;
+	bool save_acid;
+
+	if (borg_simulate)
+	{
+		if (my_oppose_acid) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		if (!borg_spell_okay_fail(REALM_ARCANE, 2, 1, fail_allowed) &&
+			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 15, fail_allowed))
+			return (0);
+
+		/* pretend we are protected and look again */
+		save_acid = my_oppose_acid;
+		my_oppose_acid = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, FALSE);
+		my_oppose_acid = save_acid;
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 7))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 15) ||
+		borg_spell(REALM_ARCANE, 2, 1));
+}
+
+/* poison */
+static int borg_defend_aux_resist_p(int p1)
+{
+	int p2;
+	int fail_allowed;
+	bool save_poison;
+
+	if (borg_simulate)
+	{
+		if (my_oppose_pois) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		if (!borg_spell_okay_fail(REALM_DEATH, 0, 5, fail_allowed))
+			return (0);
+
+		/* pretend we are protected and look again */
+		save_poison = my_oppose_pois;
+		my_oppose_pois = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, FALSE);
+		my_oppose_pois = save_poison;
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 7))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
+		borg_spell(REALM_DEATH, 0, 5));
+}
+
+static int borg_defend_aux_prot_evil(int p1)
+{
+	int p2;
+	int fail_allowed;
+
+	if (borg_simulate)
+	{
+		/* if already protected */
+		if (borg_prot_from_evil || FLAG(bp_ptr, TR_SLAY_EVIL)) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		/* Is the spell available? */
+		if (!borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed) ||
+			!borg_read_scroll_fail(SV_SCROLL_PROTECTION_FROM_EVIL)) return (0);
+
+		/* pretend we are protected and look again */
+		borg_prot_from_evil = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, FALSE);
+		borg_prot_from_evil = FALSE;
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 7))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_LIFE, 1, 5) ||
+		borg_activate_artifact(ART_CARLAMMAS, FALSE) ||
+		borg_read_scroll(SV_SCROLL_PROTECTION_FROM_EVIL));
+}
+
+static int borg_defend_aux_shield(int p1)
+{
+	int p2;
+	int fail_allowed;
+
+	if (borg_simulate)
+	{
+		/* if already protected */
+		if (borg_shield || borg_goi) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		if (!borg_spell_okay_fail(REALM_NATURE, 2, 2, fail_allowed) &&
+			!borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 13, fail_allowed) &&
+			!borg_racial_check(RACE_GOLEM, TRUE))
+			return (0);
+
+		/* pretend we are protected and look again */
+		borg_shield = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, TRUE);
+		borg_shield = FALSE;
+
+		/* slightly enhance the value if fighting a unique */
+		if (borg_fighting_unique) p2 = (p2 * 7 / 10);
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 7))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_NATURE, 2, 2) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 13) ||
+		borg_racial(RACE_GOLEM));
+}
+
+/*
+ * Try to get rid of all of the non-uniques around so you can go at it
+ * 'mano-e-mano' with the unique.
+ */
+static int borg_defend_aux_tell_away(int p1)
+{
+	int p2, b_n;
+	int fail_allowed = 30;
+
+	if (borg_simulate)
+	{
+		/* Only tell away if scared */
+		if (p1 < avoidance) return (0);
+
+		/* if very scary, do not allow for much chance of fail */
+		if (p1 > avoidance * 4)
+		{
+			fail_allowed -= 18;
+		}
+		/* scary */
+		else if (p1 > avoidance * 3)
+		{
+			fail_allowed -= 12;
+		}
+		/* a little scary */
+		else if (p1 > (avoidance * 5) / 2)
+		{
+			fail_allowed += 5;
+		}
+
+		if (!borg_spell_okay_fail(REALM_ARCANE, 3, 3, fail_allowed) &&
+			!borg_spell_okay_fail(REALM_SORCERY, 1, 4, fail_allowed) &&
+			!borg_spell_okay_fail(REALM_CHAOS, 1, 5, fail_allowed) &&
+			!borg_equips_rod_fail(SV_ROD_TELEPORT_AWAY) &&
+			!borg_equips_wand_fail(SV_WAND_TELEPORT_AWAY))
+			return (0);
+
+		/* Try all monsters for the best shot */
+		b_n = borg_launch_beam(50, GF_AWAY_ALL, MAX_RANGE);
+
+		/* normalize the value */
+		p2 = MAX(p1 - b_n, 0);
+
+		/* check to see if I am left better off */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 7))
+		{
+			/* Simulation */
+			return (b_n);
+		}
+
+		/* Oh well */
+		return (0);
+	}
+
+	/* Set the target */
+	borg_target(g_x, g_y);
+
+	/* Set our shooting flag */
+	successful_target = BORG_FRESH_TARGET;
+
+	/* Cast the spell */
+	return (borg_spell(REALM_SORCERY, 1, 4) ||
+		borg_spell(REALM_ARCANE, 3, 3) ||
+		borg_spell(REALM_CHAOS, 1, 5) ||
+		borg_activate_artifact(ART_ULMO, FALSE) ||
+		borg_zap_rod(SV_ROD_TELEPORT_AWAY) ||
+		borg_aim_wand(SV_WAND_TELEPORT_AWAY));
+}
+
+/*
+ * Hero to prepare for battle
+ */
+static int borg_defend_aux_hero(int p1)
+{
+	int fail_allowed = 10;
+
+	if (borg_simulate)
+	{
+		/* already hero */
+		if (borg_hero || borg_berserk) return (0);
+
+		/* Is there some way to berserk? */
+		if (!borg_spell_okay_fail(REALM_LIFE, 3, 0, fail_allowed) &&
+			!borg_spell_okay_fail(REALM_DEATH, 2, 0, fail_allowed) &&
+			!borg_mindcr_okay_fail(MIND_ADRENALINE, 23, fail_allowed) &&
+			!borg_racial_check(RACE_HALF_TROLL, TRUE) &&
+			!borg_racial_check(RACE_BARBARIAN, TRUE) &&
+			!borg_mutation_check(MUT1_BERSERK, TRUE) &&
+			!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH) &&
+			!borg_slot(TV_POTION, SV_POTION_HEROISM)) return (0);
+
+		/* if we are in some danger but not much, go for a quick bless */
+		if (borg_goi || (p1 > avoidance / 12 && p1 < avoidance / 2) ||
+			(borg_fighting_unique && p1 < avoidance * 13 / 10))
+		{
+			/* Simulation */
+			return (1);
+		}
+
+		/* Never mind */
+		return (0);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_LIFE, 3, 0) ||
+		borg_spell(REALM_DEATH, 2, 0) ||
+		borg_mindcr(MIND_ADRENALINE, 23) ||
+		borg_racial(RACE_HALF_TROLL) ||
+		borg_racial(RACE_BARBARIAN) ||
+		borg_mutation(MUT1_BERSERK) ||
+		borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
+		borg_quaff_potion(SV_POTION_HEROISM));
+}
+
+
+/* Glyph of Warding and Rune of Protection */
+static int borg_defend_aux_glyph(int p1)
+{
+	int p2, i;
+	int fail_allowed;
+	map_block *mb_ptr = map_loc(c_x, c_y);
+
+	if (borg_simulate)
+	{
+		/* He should not cast it while on an object.
+		 * I have addressed this inadequately in borg9.c when dealing with
+		 * messages.  The message "the object resists" will delete the glyph
+		 * from the array.  Then I set a broken door on that spot, the borg ignores
+		 * broken doors, so he won't loop.
+		 */
+
+		if ((mb_ptr->object) || (mb_ptr->m_effect) || (mb_ptr->trap) ||
+			(mb_ptr->feat == FEAT_LESS) || (mb_ptr->feat == FEAT_MORE) ||
+			(mb_ptr->feat == FEAT_CLOSED) || (mb_ptr->feat == FEAT_OPEN) ||
+			(mb_ptr->feat == FEAT_BROKEN))
+		{
+			/* Something is in the way */
+			return (0);
+		}
+
+		/* The Serpent breaks these in one try so its a waste of mana against him */
+		if (borg_fighting_unique >= BORG_QUESTOR) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		if (!borg_spell_okay_fail(REALM_LIFE, 1, 7, fail_allowed) &&
+			!borg_read_scroll_fail(SV_SCROLL_RUNE_OF_PROTECTION)) return (0);
+
+		/* pretend we are protected and look again */
+		borg_on_glyph = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, TRUE);
+		borg_on_glyph = FALSE;
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 7))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	/* Check for an existing glyph */
+	for (i = 0; i < track_glyph_num; i++)
+	{
+		/* Stop if we already knew about this glyph */
+		if (track_glyph_x[i] == c_x &&
+			track_glyph_y[i] == c_y) break;
+	}
+
+	/* Track the newly discovered glyph */
+	if (i == track_glyph_num)
+	{
+		/* If the borg makes too many glyphs */
+		if (track_glyph_size == track_glyph_num)
+		{
+			/* Please recompile with a higher track_glyph_size value */
+			borg_oops("Borg makes too many glyphs.  Increase track_glyph_num");
+		}
+
+		/* Keep track of the existing glyphs */
+		borg_note("# Noting the creation of a glyph.");
+		track_glyph_num++;
+		track_glyph_x[i] = c_x;
+		track_glyph_y[i] = c_y;
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_LIFE, 1, 7) ||
+		borg_read_scroll(SV_SCROLL_RUNE_OF_PROTECTION));
+}
+
+/* True Warding */
+static int borg_defend_aux_true_warding(int p1)
+{
+	/* Ignore parameter */
+	(void)p1;
+#if 0
+	int p2;
+	int fail_allowed;
+	int glyph_bad = 0;
+	int glyph_x, glyph_y, x, y;
+
+	map_block *mb_ptr;
+
+	/* any summoners near? */
+	if (!borg_fighting_summoner) return (0);
+
+	/* Get the allowed fail_rate */
+	fail_allowed = borg_fail_allowed(p1);
+
+	if (!borg_spell_okay_fail(REALM_LIFE, 2, 7, fail_allowed)) return (0);
+
+	/* Do not cast if surounded by doors or something */
+	/* Get grid */
+	for (glyph_x = -1; glyph_x <= 1; glyph_x++)
+	{
+		for (glyph_y = -1; glyph_y <= 1; glyph_y++)
+		{
+			/* Acquire location */
+			x = glyph_x + c_x;
+			y = glyph_y + c_y;
+
+			/* Bounds checking */
+			if (!map_in_bounds(x, y)) continue;
+
+			mb_ptr = map_loc(x, y);
+
+			/* track spaces already protected */
+			if ((mb_ptr->feat >= FEAT_CLOSED) &&
+				(mb_ptr->feat <= FEAT_PERM_SOLID))
+			{
+				glyph_bad++;
+			}
+
+			/* track spaces that cannot be protected */
+			if ((mb_ptr->object)	/* ||
+									   ((mb_ptr->feat >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->feat <= FEAT_TRAP_SLEEP)) */
+				||
+				(mb_ptr->feat == FEAT_LESS) || (mb_ptr->feat == FEAT_MORE)
+				|| (mb_ptr->feat == FEAT_OPEN) ||
+				(mb_ptr->feat == FEAT_BROKEN) || (mb_ptr->monster))
+			{
+				glyph_bad++;
+			}
+		}
+	}
+
+
+	/* Track it */
+	/* lets make sure that we going to be benifited */
+	if (glyph_bad >= 6)
+	{
+		/* not really worth it.  Only 2 spaces protected */
+		return (0);
+	}
+
+	/* pretend we are protected and look again (use the door code) */
+	borg_create_door = TRUE;
+	p2 = borg_danger(c_x, c_y, 1, TRUE);
+	borg_create_door = FALSE;
+
+	/* if this is an improvement and we may not avoid monster now and */
+	/* we may have before */
+	if (p1 > p2 &&
+		p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+		&& p1 > (avoidance / 7))
+	{
+		/* Simulation */
+		if (borg_simulate) return (p1 - p2);
+
+		/* do it! */
+		if (borg_spell_fail(REALM_LIFE, 2, 7, fail_allowed))
+		{
+			/* Set the breeder flag to keep doors closed. Avoid summons */
+			breeder_level = TRUE;
+
+			/* Value */
+			return (p1 - p2);
+		}
+	}
+#endif /* 0 */
+
+	/* default to can't do it. */
+	return (0);
+}
+
+
+/* Create Granite Walls-- Nature spell */
+static int borg_defend_aux_create_walls(int p1)
+{
+	/* Ignore parameter */
+	(void)p1;
+#if 0
+	int p2 = 0;
+	int fail_allowed = 99;
+	int wall_bad = 0;
+	int wall_x, wall_y, x, y;
+
+	map_block *mb_ptr;
+
+	/* any summoners near? */
+	if (!borg_fighting_summoner) return (0);
+
+	/* Get the allowed fail_rate */
+	fail_allowed = borg_fail_allowed(p1);
+
+	if (!borg_spell_okay_fail(REALM_NATURE, 2, 6, fail_allowed) &&
+		!borg_spell_okay_fail(REALM_NATURE, 2, 0, fail_allowed))
+		return (0);
+
+	/* Do not cast if surounded by doors or something */
+	/* Get grid */
+	for (wall_x = -1; wall_x <= 1; wall_x++)
+	{
+		for (wall_y = -1; wall_y <= 1; wall_y++)
+		{
+			/* Acquire location */
+			x = wall_x + c_x;
+			y = wall_y + c_y;
+
+			/* Bounds checking */
+			if (!map_in_bounds(x, y)) continue;
+
+			mb_ptr = map_loc(x, y);
+
+			/* track spaces already protected */
+			if (				/* (mb_ptr->feat == FEAT_GLYPH) ||
+								   (mb_ptr->feat == FEAT_MINOR_GLYPH) || */ mb_ptr->
+				   monster ||
+				   ((mb_ptr->feat >= FEAT_CLOSED) &&
+					(mb_ptr->feat <= FEAT_PERM_SOLID)))
+			{
+				wall_bad++;
+			}
+
+			/* track spaces that cannot be protected */
+			if ((mb_ptr->object)	/*||
+									   ((mb_ptr->feat >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->feat <= FEAT_TRAP_SLEEP)) */
+				||
+				(mb_ptr->feat == FEAT_LESS) || (mb_ptr->feat == FEAT_MORE)
+				|| (mb_ptr->feat == FEAT_OPEN) ||
+				(mb_ptr->feat == FEAT_BROKEN) || (mb_ptr->monster))
+			{
+				wall_bad++;
+			}
+		}
+	}
+
+
+	/* Track it */
+	/* lets make sure that we going to be benifited */
+	if (wall_bad >= 6)
+	{
+		/* not really worth it.  Only 2 spaces protected */
+		return (0);
+	}
+
+	/* pretend we are protected and look again */
+	borg_create_door = TRUE;
+	p2 = borg_danger(c_x, c_y, 1, TRUE);
+	borg_create_door = FALSE;
+
+	/* if this is an improvement and we may not avoid monster now and */
+	/* we may have before */
+	if (p1 > p2 &&
+		p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+		&& p1 > (avoidance / 7))
+	{
+		/* Simulation */
+		if (borg_simulate) return (p1 - p2);
+
+		/* do it! */
+		if (borg_spell_fail(REALM_NATURE, 2, 0, fail_allowed) ||
+			borg_spell_fail(REALM_NATURE, 2, 6, fail_allowed))
+		{
+			/* Set the breeder flag to keep doors closed. Avoid summons */
+			breeder_level = TRUE;
+
+			/* Value */
+			return (p1 - p2);
+		}
+	}
+#endif /* 0 */
+
+	/* default to can't do it. */
+	return (0);
+}
+
+
+
+/* This will simulate and cast the mass genocide spell.
+ */
+static int borg_defend_aux_mass_genocide(int p1)
+{
+	int hit = 0, i = 0, p2;
+	int b_p = 0, p;
+
+	borg_kill *kill;
+	monster_race *r_ptr;
+
+	if (borg_simulate)
+	{
+		/* see if prayer is legal */
+		if (!borg_spell_okay_fail(REALM_DEATH, 2, 7, 40) &&
+			!borg_spell_okay_fail(REALM_DEATH, 3, 6, 40) &&
+			!borg_read_scroll_fail(SV_SCROLL_MASS_GENOCIDE)) return (0);
+
+		/* See if he is in real danger */
+		if (p1 < avoidance * 12 / 10) return (0);
+
+		/* Find a monster and calculate its danger */
+		for (i = 0; i < borg_kills_nxt; i++)
+		{
+			/* Monster */
+			kill = &borg_kills[i];
+			r_ptr = &r_info[kill->r_idx];
+
+			/* Skip dead monsters */
+			if (!kill->r_idx) continue;
+
+			/* Check the distance */
+			if (distance(c_y, c_x, kill->y, kill->x) > 20) continue;
+
+			/* we try not to genocide uniques */
+			if (FLAG(r_ptr, RF_UNIQUE)) continue;
+
+			/* Calculate danger */
+			borg_full_damage = TRUE;
+			p = borg_danger_aux(c_x, c_y, 1, i, TRUE);
+			borg_full_damage = FALSE;
+
+			/* store the danger for this type of monster */
+			b_p = b_p + p;
+			hit = hit + 4;
+		}
+
+		/* normalize the value */
+		p2 = MAX(p1 - b_p, 0);
+
+		/* if strain (plus a pad incase we did not know about some monsters)
+		 * is greater than hp, don't cast it
+		 */
+		if ((hit * 11 / 10) >= bp_ptr->chp) return (0);
+
+		/* Penalize the strain from casting the spell */
+		p2 = p2 + hit;
+
+		/* Be more likely to use this if fighting The Serpent */
+		if (borg_fighting_unique >= BORG_QUESTOR && (hit / 3 > 8))
+		{
+			p2 = p2 * 6 / 10;
+		}
+
+		/* if this is an improvement and we may not avoid monster now and */
+		/* we may have before */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? (avoidance * 2 / 3) : (avoidance / 2)))
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+		/* Not worth it */
+		return (0);
+	}
+
+	/* Cast the spell */
+	return (borg_spell(REALM_DEATH, 2, 7) ||
+		borg_spell(REALM_DEATH, 3, 6) ||
+		borg_activate_artifact(ART_EONWE, FALSE));
+}
+
+/* This will simulate and cast the genocide spell.
+ * There are two seperate functions happening here.
+ * 1. will genocide the race which is immediately threatening me.
+ * 2. will genocide the race which is most dangerous on the level.  Though it may not be
+ *    threatening the borg right now.  It was considered to nuke the escorts of a unique.
+ *    But it could also be used to nuke a race if it becomes too dangerous, for example
+ *    a summoner called up 15-20 hounds, and they must be dealt with.
+ * The first option may be called at any time.  While the 2nd option is only called when the
+ * borg is in relatively good health.
+ */
+static int borg_defend_aux_genocide(int p1, int *genocide_target)
+{
+	int i, p, u, b_i = 0;
+	int p2 = 0;
+	int threat = 0;
+	int max = 1;
+
+	int b_p[256];
+	int b_num[256];
+	int b_threat[256];
+	int b_threat_num[256];
+
+	int b_threat_id = (char)0;
+
+	int fail_allowed;
+
+	if (borg_simulate)
+	{
+		/* Set default target */
+		*genocide_target = 0;
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
+
+		/* Is genocide available at all? */
+		if (!borg_spell_okay_fail(REALM_DEATH, 1, 6, fail_allowed) &&
+			!borg_equips_staff_fail(SV_STAFF_GENOCIDE) &&
+			!borg_read_scroll_fail(SV_SCROLL_GENOCIDE)) return (0);
+
+		/* Don't try it if really weak */
+		if (bp_ptr->chp <= 75) return (0);
+
+		/* two methods to calculate the threat:
+		 *1. cycle each character of monsters on screen
+		 *   collect collective threat of each char
+		 *2 select race of most dangerous guy, and choose him.
+		 * Method 2 is cheaper and faster.
+		 *
+		 * The borg uses method #1
+		 */
+
+		/* Clear previous dangers */
+		for (i = 0; i < 256; i++)
+		{
+			b_p[i] = 0;
+			b_num[i] = 0;
+			b_threat[i] = 0;
+			b_threat_num[i] = 0;
+		}
+
+		/* Find a monster and calculate its danger */
+		for (i = 0; i < borg_kills_nxt; i++)
+		{
+			borg_kill *kill;
+			monster_race *r_ptr;
+
+			/* Monster */
+			kill = &borg_kills[i];
+			r_ptr = &r_info[kill->r_idx];
+
+			/* Our char of the monster */
+			u = r_ptr->d_char;
+
+			/* Skip dead monsters */
+			if (!kill->r_idx) continue;
+
+			/* we try not to genocide uniques */
+			if (FLAG(r_ptr, RF_UNIQUE)) continue;
+
+			/* Calculate danger */
+			borg_full_damage = TRUE;
+			p = borg_danger_aux(c_x, c_y, 1, i, TRUE);
+			threat = borg_danger_aux(kill->x, kill->y, 1, i, TRUE);
+			borg_full_damage = FALSE;
+
+			/* store the danger for this type of monster */
+			b_p[u] = b_p[u] + p;
+			b_threat[u] = b_threat[u] + threat;
+
+			/* Store the number of this type of monster */
+			b_num[u]++;
+			b_threat_num[u]++;
+		}
+
+		/* Now, see which race contributes the most danger */
+		for (i = 0; i < 256; i++)
+		{
+
+			/* Skip this one if empty */
+			if (!b_p[i]) continue;
+
+			/* for the race threatening me right now */
+			if (b_p[i] > max)
+			{
+				/* track the race */
+				max = b_p[i];
+				b_i = i;
+
+				/* note the danger with this race gone */
+				p2 = p1 - b_p[b_i];
+			}
+
+			/* for this race on the whole level */
+			if (b_threat[i] > max)
+			{
+				/* track the race */
+				max = b_threat[i];
+				b_threat_id = i;
+
+				/* Asses the danger on the level */
+				p2 = MAX(p1 - b_threat[i], 0);
+			}
+
+		}
+
+		/*
+		 * This will track and decide if it is worth genociding this dangerous
+		 * race for the level
+		 */
+		if (b_threat_id)
+		{
+			/* Not if I am weak (Have to watch out for monster pits) */
+			if (bp_ptr->chp < bp_ptr->mhp ||
+				bp_ptr->chp < 375) b_threat_id = 0;
+
+			/* Do not perform in Danger */
+			if (borg_danger(c_x, c_y, 1, TRUE) > avoidance/5) b_threat_id = 0;
+
+			/* The threat must be real */
+			if (b_threat[b_threat_id] < bp_ptr->mhp * 10) b_threat_id = 0;
+
+			/* Too painful to cast it (padded to be safe) */
+			if (b_num[b_threat_id] * 44 / 10 >= bp_ptr->chp) b_threat_id = 0;
+
+			/* report the danger and most dangerous race */
+			if (b_threat_id)
+			{
+				borg_note_fmt
+					("# Race '%c' is a real threat with total danger %d from %d individuals.",
+					 b_threat_id, b_threat[b_threat_id], b_threat_num[b_threat_id]);
+			}
+
+			/* Genociding this race would reduce the danger of the level */
+			*genocide_target = b_threat_id;
+		}
+
+		/* Consider the immediate threat genocide */
+		if (b_i)
+		{
+			/* Too painful to cast it (padded to be safe incase of unknown monsters) */
+			if (b_num[b_i] * 44 / 10 >= bp_ptr->chp) b_i = 0;
+
+			/* See if he is in real danger, generally,
+			 * or deeper in the dungeon, conservatively,
+			 */
+			if (p1 < avoidance * 12 / 10 ||
+				(bp_ptr->depth > 75 && p1 < avoidance * 7 / 10)) b_i = 0;
+
+			/* Did this help improve my situation? */
+			if (p1 < p2 && p2 >= (avoidance / 2)) b_i = 0;
+
+			/* Genociding this race would help me immediately */
+			*genocide_target = b_i;
+		}
+
+		/* Complete the genocide routine */
+		if (*genocide_target)
+		{
+			/* Simulation */
+			return (p1 - p2);
+		}
+
+		/* default to can't do it. */
+		return (0);
+	}
+
+	borg_note_fmt
+		("# Genociding race '%c' (%d)", *genocide_target, *genocide_target);
+
+	/* do it! ---use scrolls first since they clutter inventory */
+	if (borg_read_scroll(SV_SCROLL_GENOCIDE) ||
+		borg_spell(REALM_DEATH, 1, 6) ||
+		borg_activate_artifact(ART_CELEBORN, FALSE) ||
+		borg_use_staff(SV_STAFF_GENOCIDE))
+	{
+		/* and the winner is..... */
+		borg_keypress((char)*genocide_target);
+
+		/* Remove this race from the borg_kill */
+		for (i = 0; i < borg_kills_nxt; i++)
+		{
+			borg_kill *kill;
+			monster_race *r_ptr;
+
+			/* Monster */
+			kill = &borg_kills[i];
+			r_ptr = &r_info[kill->r_idx];
+
+			/* Our char of the monster */
+			if (r_ptr->d_char != *genocide_target) continue;
+
+			/* remove this monster */
+			borg_delete_kill(i, "genocided");
+		}
+
+		return (TRUE);
+	}
+
+	/* Inconceivable */
+	borg_oops("Decided to genocide without having genocide!");
+	return (FALSE);
+}
+
+
+/* This will cast the genocide spell on Hounds at the beginning of each level.
+ */
+static int borg_defend_aux_genocide_hounds(int p1)
+{
+	int i = 0;
+	char genocide_target = 'Z';
+
+	if (borg_simulate)
+	{
+		/* Not if I am weak */
+		if (bp_ptr->chp < bp_ptr->mhp || bp_ptr->chp < 350) return (0);
+
+		/* only do it when deep, */
+		if (bp_ptr->depth < 50) return (0);
+
+		/* Do not perform in Danger */
+		if (p1 > avoidance / 3) return (0);
+
+		/* Is the spell available? */
+		if (!borg_spell_okay_fail(REALM_DEATH, 1, 6, 35) &&
+			!borg_equips_staff_fail(SV_STAFF_GENOCIDE)) return (0);
+
+		return (1);
+	}
+
+	borg_note("# Genociding Hounds at Start of DLevel");
+
+	if (borg_spell(REALM_DEATH, 1, 6) ||
+		borg_activate_artifact(ART_CELEBORN, FALSE) ||
+		borg_use_staff(SV_STAFF_GENOCIDE))
+	{
+		/* and the winner is..... */
+		borg_keypress(genocide_target);
+
+		/* Remove this race from the borg_kill */
+		for (i = 0; i < borg_kills_nxt; i++)
+		{
+			monster_race *r_ptr;
+
+			/* Monster */
+			r_ptr = &r_info[borg_kills[i].r_idx];
+
+			/* Our char of the monster */
+			if (r_ptr->d_char != genocide_target) continue;
+
+			/* remove this monster */
+			borg_delete_kill(i, "genocided");
+		}
+
+		return (1);
+	}
+
+	/* default to can't do it. */
+	return (0);
+}
+
+/* Earthquake, priest and mage spells. */
+static int borg_defend_aux_earthquake(int p1)
+{
+	int p2 = 0;
+	int door_bad = 0;
+	int door_x, door_y, x, y;
+
+	map_block *mb_ptr;
+
+	if (borg_simulate)
+	{
+		if (!borg_spell_okay_fail(REALM_NATURE, 3, 0, 35)) return (0);
+
+		/* See if he is in real danger or fighting summoner */
+		if (p1 < avoidance) return (0);
+
+		/* Do not cast if surounded by doors or something */
+		/* Get grid */
+		for (door_x = -1; door_x <= 1; door_x++)
+		{
+			for (door_y = -1; door_y <= 1; door_y++)
+			{
+				/* Acquire location */
+				x = door_x + c_x;
+				y = door_y + c_y;
+
+				/* Bounds checking */
+				if (!map_in_bounds(x, y)) continue;
+
+				mb_ptr = map_loc(x, y);
+
+				/* track spaces already protected */
+				if ( /*(mb_ptr->feat == FEAT_GLYPH) || */
+					(mb_ptr->feat >= FEAT_CLOSED &&
+						mb_ptr->feat <= FEAT_PERM_SOLID) ||
+					mb_ptr->object ||
+					mb_ptr->feat == FEAT_LESS ||
+					mb_ptr->feat == FEAT_MORE ||
+					mb_ptr->feat == FEAT_OPEN ||
+					mb_ptr->feat == FEAT_BROKEN ||
+					mb_ptr->monster)
+				{
+					door_bad++;
+				}
+			}
+		}
+
+
+		/* If there are too many bad spots don't bother */
+		if (door_bad >= 6) return (0);
+
+		/* What effect is there? */
+		borg_create_door = TRUE;
+		p2 = borg_danger(c_x, c_y, 1, TRUE);
+		borg_create_door = FALSE;
+
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance / 5))
+		{
+			/* Simulation */
+			return (p2);
+		}
+
+		/* I guess not */
+		return (0);
+	}
+
+	/* Cast the spell */
+	return (borg_spell(REALM_NATURE, 3, 0));
+}
+
+/* Word of Destruction, priest and mage spells.  Death is right around the
+ *  corner, so kill everything.
+ */
+static int borg_defend_aux_destruction(int p1)
+{
+	if (borg_simulate)
+	{
+		/* Borg_defend() is called before borg_escape().  He may have some
+		 * easy ways to escape (teleport scroll) but he may attempt this spell
+		 * instead of using the scrolls.
+		 */
+		/* Use teleport scrolls instead of WoD */
+		if (bp_ptr->able.escape && !bp_ptr->status.blind &&
+			!bp_ptr->status.confused) return (0);
+
+		if (!borg_spell_okay_fail(REALM_CHAOS, 1, 6, 55) &&
+			!borg_read_scroll_fail(SV_SCROLL_STAR_DESTRUCTION) &&
+			!borg_equips_staff_fail(SV_STAFF_DESTRUCTION) &&
+			!(p1 > (avoidance * 4) && borg_equips_staff(SV_STAFF_DESTRUCTION)))
+			return (0);
+
+		/* See if he is in real danger */
+		if (p1 < avoidance * 2) return (0);
+
+		/* Try not to cast this against uniques */
+		/* Don't cast it on a quest level */
+		if ((borg_fighting_unique && p1 < avoidance * 5) ||
+			borg_fighting_unique >= BORG_QUESTOR) return (0);
+
+		/* Simulation */
+		return (p1);
+	}
+
+	/* Cast the spell */
+	return (borg_spell(REALM_CHAOS, 1, 6) ||
+		borg_use_staff(SV_STAFF_DESTRUCTION) ||
+		borg_read_scroll(SV_SCROLL_STAR_DESTRUCTION));
+}
+
+static int borg_defend_aux_banishment(int p1)
+{
+	int p2 = 1;
+	int fail_allowed = 15;
+	int i;
+
+	if (borg_simulate)
+	{
+		/* Only tell away if scared */
+		if (p1 < avoidance * 12 / 10) return (0);
+
+		/* if very scary, do not allow for much chance of fail */
+		if (p1 > avoidance * 4) fail_allowed -= 10;
+
+		if (!borg_spell_okay_fail(REALM_LIFE, 2, 5, fail_allowed) &&
+			!borg_spell_okay_fail(REALM_TRUMP, 1, 7, fail_allowed)) return (0);
+
+		/* reset initial danger */
+		p1 = 1;
+
+		/* Two passes to determine exact danger */
+		for (i = 0; i < borg_beam_n; i++)
+		{
+			int x = borg_beam_x[i];
+			int y = borg_beam_y[i];
+
+			/* Make sure to be on the map */
+			if (!map_in_bounds(x, y)) continue;
+
+			/* Calculate danger of who is left over */
+			borg_full_damage = TRUE;
+			p1 += borg_danger_aux(c_x, c_y, 1, map_loc(x, y)->kill, TRUE);
+			borg_full_damage = FALSE;
+		}
+
+		/* Pass two -- Find a monster and calculate its danger */
+		for (i = 0; i < borg_beam_n; i++)
+		{
+			int x = borg_beam_x[i];
+			int y = borg_beam_y[i];
+			int idx;
+
+			monster_race *r_ptr;
+
+			/* Make sure to be on the map */
+			if (!map_in_bounds(x, y)) continue;
+
+			/* Which monster is this in the kill_list. */
+			idx = map_loc(x, y)->kill;
+
+			/* Get the monster */
+			r_ptr = &r_info[borg_kills[idx].r_idx];
+
+			/* Get rid of evil monsters */
+			if (FLAG(r_ptr, RF_EVIL)) continue;
+
+			/* Calculate danger of who is left over */
+			borg_full_damage = TRUE;
+			p2 += borg_danger_aux(c_x, c_y, 1, idx, TRUE);
+			borg_full_damage = FALSE;
+		}
+
+		/* no negatives */
+		p2 = MAX(p2, 0);
+
+		/* Try not to cast this against Serpent/Oberon */
+		if (borg_fighting_unique >= BORG_QUESTOR &&
+			((bp_ptr->chp > 250 && bp_ptr->depth == 99) ||
+			(bp_ptr->chp > 350 && bp_ptr->depth == 100))) p2 = 9999;
+
+		/* check to see if I am left better off */
+		if (p1 > p2 &&
+			p2 <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2))
+			&& p1 > (avoidance * 2))
+		{
+			/* Simulation */
+			return (p2);
+		}
+
+		/* I guess not */
+		return (0);
+	}
+
+	/* Cast the spell */
+	return (borg_spell_fail(REALM_LIFE, 2, 5, fail_allowed) ||
+		borg_spell_fail(REALM_TRUMP, 1, 7, fail_allowed));
+}
+
+
+
+/*
+ * Detect Inviso/Monsters
+ * Used only if I am hit by an unseen guy.
+ * Casts detect invis.
+ */
+static int borg_defend_aux_inviso(int p1)
+{
+	int fail_allowed = 40;
+
+	if (borg_simulate)
+	{
+		/* Can the borg see invis already? */
+		if (borg_see_inv || FLAG(bp_ptr, TR_SEE_INVIS)) return (0);
+
+		/* not recent */
+		if (borg_t > need_see_inviso + 5) return (0);
+
+		/* too dangerous to cast */
+		if (p1 > avoidance * 7) return (0);
+
+		/* Do I have anything that will work? */
+		if (!borg_slot(TV_POTION, SV_POTION_DETECT_INVIS) &&
+			!borg_read_scroll_fail(SV_SCROLL_DETECT_INVIS) &&
+			!borg_equips_staff_fail(SV_STAFF_DETECT_INVIS) &&
+			!borg_equips_staff_fail(SV_STAFF_DETECT_EVIL) &&
+			!borg_spell_okay_fail(REALM_LIFE, 1, 3, fail_allowed) &&
+			!borg_spell_okay_fail(REALM_ARCANE, 0, 2, fail_allowed))
+			return (0);
+
+		/* No real value known, but lets cast it to find the bad guys. */
+		return (10);
+	}
+
+	/* smoke em if you got em */
+	/* short time */
+	if (borg_quaff_potion(SV_POTION_DETECT_INVIS))
+	{
+		borg_see_inv = 18000;
+		return (10);
+	}
+	/* long time */
+	if (borg_spell(REALM_LIFE, 1, 3) ||
+		borg_spell(REALM_ARCANE, 0, 2))
+	{
+		borg_see_inv = 20000;
+		return (10);
+	}
+	/* snap shot */
+	if (borg_read_scroll(SV_SCROLL_DETECT_INVIS) ||
+		borg_use_staff(SV_STAFF_DETECT_INVIS) ||
+		borg_use_staff(SV_STAFF_DETECT_EVIL))
+	{
+		borg_see_inv = 3000;	/* hack, actually a snap shot, no ignition message */
+		return (10);
+	}
+
+	borg_oops("How did this happen?");
+
+	/* ah crap, I guess I wont be able to see them */
+	return (0);
+
+}
+
+/*
+ * Light Beam to spot lurkers
+ * Used only if I am hit by an unseen guy.
+ * Lights up a hallway.
+ */
+static int borg_defend_aux_lbeam(int *key)
+{
+	bool hallway = FALSE;
+	int x = c_x;
+	int y = c_y;
+
+	if (borg_simulate)
+	{
+		/* no need */
+		if (bp_ptr->status.blind) return (0);
+
+		/* Light Beam section to spot non seen guys */
+		/* not recent, dont bother */
+		if (borg_t > (need_see_inviso + 2)) return (0);
+
+		/* Check to see if I am in a hallway */
+		/* Case 1a: north-south corridor */
+		if (borg_cave_floor_bold(y - 1, x) &&
+			borg_cave_floor_bold(y + 1, x) &&
+			!borg_cave_floor_bold(y, x - 1) &&
+			!borg_cave_floor_bold(y, x + 1) &&
+			!borg_cave_floor_bold(y + 1, x - 1) &&
+			!borg_cave_floor_bold(y + 1, x + 1) &&
+			!borg_cave_floor_bold(y - 1, x - 1) &&
+			!borg_cave_floor_bold(y - 1, x + 1))
+		{
+			/* ok to light up */
+			hallway = TRUE;
+		}
+
+		/* Case 1b: east-west corridor */
+		if (borg_cave_floor_bold(y, x - 1) &&
+			borg_cave_floor_bold(y, x + 1) &&
+			!borg_cave_floor_bold(y - 1, x) &&
+			!borg_cave_floor_bold(y + 1, x) &&
+			!borg_cave_floor_bold(y + 1, x - 1) &&
+			!borg_cave_floor_bold(y + 1, x + 1) &&
+			!borg_cave_floor_bold(y - 1, x - 1) &&
+			!borg_cave_floor_bold(y - 1, x + 1))
+		{
+			/* ok to light up */
+			hallway = TRUE;
+		}
+
+		/* Case 1aa: north-south doorway */
+		if (borg_cave_floor_bold(y - 1, x) &&
+			borg_cave_floor_bold(y + 1, x) &&
+			!borg_cave_floor_bold(y, x - 1) &&
+			!borg_cave_floor_bold(y, x + 1))
+		{
+			/* ok to light up */
+			hallway = TRUE;
+		}
+
+		/* Case 1ba: east-west doorway */
+		if (borg_cave_floor_bold(y, x - 1) &&
+			borg_cave_floor_bold(y, x + 1) &&
+			!borg_cave_floor_bold(y - 1, x) &&
+			!borg_cave_floor_bold(y + 1, x))
+		{
+			/* ok to light up */
+			hallway = TRUE;
+		}
+
+		/* not in a hallway */
+		if (!hallway) return (0);
+
+		/* Make sure I am not in too much danger */
+		/* if (borg_simulate && p1 > avoidance * 3 / 4) return (0); */
+
+		/* test the beam function */
+		if (borg_lite_beam(borg_simulate, key)) return (10);
+
+		/* Never mind */
+		return (0);
+	}
+
+	/* if in a hallway call the Light Beam routine */
+	return (borg_lite_beam(borg_simulate, key));
+}
+
+
+/*
+ * Phantasmal Servant.
+ * If I dont have one, then get one.
+ */
+static int borg_defend_aux_servant(int p1)
+{
+	int fail_allowed = 15;
+	int i;
+	int friendlies = 0;
+
+	if (borg_simulate)
+	{
+		/* must have the ability */
+		if (!borg_spell_okay_fail(REALM_TRUMP, 1, 2, fail_allowed)) return (0);
+
+		/* reset initial danger */
+		p1 = 1;
+
+		/* Two passes to determine exact danger */
+		for (i = 0; i < borg_kills_nxt; i++)
+		{
+			borg_kill *kill;
+
+			/* Monster */
+			kill = &borg_kills[i];
+
+			/* Skip dead monsters */
+			if (!kill->r_idx) continue;
+
+			/* Skip non Friendly */
+			if (!(kill->m_flags & MONST_PET)) continue;
+
+			/* Count Friendly */
+			friendlies++;
+		}
+
+		/* check to see if I am left better off */
+		if (friendlies < 5 && p1 < (avoidance / 3))
+		{
+			/* Simulation */
+			return (5);
+		}
+
+		/* I guess not */
+		return (0);
+	}
+
+	/* Cast the spell */
+	return (borg_spell(REALM_TRUMP, 1, 2));
+}
+
+
+/*
+ * Simulate/Apply the optimal result of using the given "type" of defence
+ * p1 is the current danger level (passed in for effiency)
+ */
+static int borg_defend_aux(int what, int p1, int *key)
+{
+	/* Analyze */
+	switch (what)
+	{
+		case BD_SPEED:
+		{
+			return (borg_defend_aux_speed(p1));
+		}
+		case BD_PROT_FROM_EVIL:
+		{
+			return (borg_defend_aux_prot_evil(p1));
+		}
+		case BD_BLESS:
+		{
+			return (borg_defend_aux_bless(p1));
+		}
+		case BD_HERO_BERSERK:
+		{
+			return (borg_defend_aux_hero(p1));
+		}
+		case BD_RESIST_FCE:
+		{
+			return (borg_defend_aux_resist_fce(p1));
+		}
+		case BD_RESIST_FECAP:
+		{
+			return (borg_defend_aux_resist_fecap(p1));
+		}
+		case BD_RESIST_F:
+		{
+			return (borg_defend_aux_resist_f(p1));
+		}
+		case BD_RESIST_C:
+		{
+			return (borg_defend_aux_resist_c(p1));
+		}
+		case BD_RESIST_A:
+		{
+			return (borg_defend_aux_resist_a(p1));
+		}
+		case BD_RESIST_P:
+		{
+			return (borg_defend_aux_resist_p(p1));
+		}
+		case BD_SHIELD:
+		{
+			return (borg_defend_aux_shield(p1));
+		}
+		case BD_GOI:
+		{
+			return (borg_defend_aux_goi(p1));
+		}
+		case BD_GOI_POT:
+		{
+			return (borg_defend_aux_goi_pot(p1));
+		}
+		case BD_GLYPH:
+		{
+			return (borg_defend_aux_glyph(p1));
+		}
+		case BD_WARDING:
+		{
+			return (borg_defend_aux_true_warding(p1));
+		}
+		case BD_TELL_AWAY:
+		{
+			return (borg_defend_aux_tell_away(p1));
+		}
+		case BD_CREATE_WALLS:
+		{
+			return (borg_defend_aux_create_walls(p1));
+		}
+		case BD_MASS_GENOCIDE:
+		{
+			return (borg_defend_aux_mass_genocide(p1));
+		}
+		case BD_GENOCIDE:
+		{
+			return (borg_defend_aux_genocide(p1, key));
+		}
+		case BD_GENOCIDE_HOUNDS:
+		{
+			return (borg_defend_aux_genocide_hounds(p1));
+		}
+		case BD_EARTHQUAKE:
+		{
+			return (borg_defend_aux_earthquake(p1));
+		}
+		case BD_DESTRUCTION:
+		{
+			return (borg_defend_aux_destruction(p1));
+		}
+		case BD_BANISHMENT:
+		{
+			return (borg_defend_aux_banishment(p1));
+		}
+		case BD_DETECT_INVISO:
+		{
+			return (borg_defend_aux_inviso(p1));
+		}
+		case BD_LIGHT_BEAM:
+		{
+			return (borg_defend_aux_lbeam(key));
+		}
+		case BD_TRUMP_SERVANT:
+		{
+			return (borg_defend_aux_servant(p1));
+		}
+	}
+
+	borg_oops_fmt("# Trying invalid BD type. (%d)", what);
+
+	return (0);
+}
+
+static bool borg_refresh_goi(void)
+{
+	int p;
+	map_block *mb_ptr = map_loc(c_x, c_y);
+
+	/* if you have a globe up and it is about to drop, */
+	if (borg_goi && borg_goi < (borg_game_ratio * 2))
+	{
+		/* check 'true' danger. This will make sure we do not */
+		/* refresh our GOI if no-one is around */
+		borg_attacking = TRUE;
+		p = borg_danger(c_x, c_y, 1, TRUE);
+		borg_attacking = FALSE;
+
+		/* Is it a good idea to keep up the Globe? */
+		if ((p > mb_ptr->fear) || borg_fighting_unique)
+		{
+			/* If you can cast the spell */
+			if (borg_spell(REALM_SORCERY, 3, 7) ||
+				borg_spell(REALM_LIFE, 3, 7))
+			{
+				/* Make a note */
+				borg_note_fmt("# refreshing GOI.  borg_goi = %d", borg_goi);
+				borg_note_fmt("# p_ptr->invuln = %d, (ratio = %d)",
+					p_ptr->tim.invuln, borg_game_ratio);
+
+				/* Declare success */
+				return (TRUE);
+			}
+		}
+	}
+
+	/* No Globe */
+	return (FALSE);
+}
+
+
+/*
+ * prepare to attack... this is setup for a battle.
+ */
+bool borg_defend(int p1)
+{
+	int n, b_n = 0;
+	int key, b_key;
+	int g, b_g = -1;
+
+	/* Simulate */
+	borg_simulate = TRUE;
+
+	/* refresh Globe of Invulnerablity (if you can) */
+	if (borg_refresh_goi()) return (TRUE);
+
+	/* Make sure you have the monsters lined correctly */
+	borg_temp_fill(TRUE);
+
+	/* Analyze the possible setup moves */
+	for (g = 0; g < BD_MAX; g++)
+	{
+		/* Simulate */
+		n = borg_defend_aux(g, p1, &key);
+
+		/* Track "best" attack */
+		if (n <= b_n) continue;
+
+		/* Track best */
+		b_g = g;
+		b_n = n;
+		b_key = key;
+	}
+
+	/* Nothing good */
+	if (b_n <= 0)
+	{
+		return (FALSE);
+	}
+
+	/* Note */
+	borg_note_fmt("# Performing defence type %d with value %d", b_g, b_n);
+
+	/* Instantiate */
+	borg_simulate = FALSE;
+
+	/* Instantiate */
+	(void)borg_defend_aux(b_g, p1, &b_key);
+
+	/* Success */
+	return (TRUE);
+
+}
+
+/*
+ * Perma spells.  Some are cool to have on all the time, so long as their
+ * mana cost is not too much.
+ * There are several types of setup moves:
+ *
+ *   Temporary speed
+ *   Protect From Evil
+ *   Prayer
+ *   Temp Resist (either all or just cold/fire?)
+ *   Shield
+ *
+ */
+enum
+{
+	BP_SPEED,
+	BP_PROT_FROM_EVIL,
+	BP_BLESS,
+	BP_TELEPATHY,
+	BP_SEE_INVIS,
+
+	BP_RESIST_ALL,
+	BP_RESIST_F,
+	BP_RESIST_C,
+	BP_RESIST_A,
+	BP_RESIST_P,
+	BP_RESIST_FCE,
+
+	BP_GOI,
+	BP_SHIELD,
+	BP_HERO_BERSERK,
+	BP_BERSERK_POTION,
+
+	BP_GLYPH,
+
+	BP_MAX
+};
+
+/*
+ * Bless/Prayer to prepare for battle
+ */
+static int borg_perma_aux_bless(void)
+{
+	int fail_allowed = 5, cost;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* already blessed */
+		if (borg_bless) return (0);
+
+		/* Is the life prayer spell available? */
+		if (borg_spell_okay_fail(REALM_LIFE, 3, 1, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_LIFE, 3, 1);
+		}
+		/* Is the life bless spell available? */
+		else if (borg_spell_okay_fail(REALM_LIFE, 0, 2, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_LIFE, 0, 2);
+		}
+		else
+		{
+			/* No bless available */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		/* bless is a low priority */
+		return (1);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_LIFE, 3, 1) ||
+			borg_spell(REALM_LIFE, 0, 2));
+}
+
+/* all resists */
+static int borg_perma_aux_resist(void)
+{
+	int cost = 0;
+	int fail_allowed = 5;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		if (my_oppose_fire + my_oppose_acid + my_oppose_pois +
+			my_oppose_elec + my_oppose_cold >= 3)
+			return (0);
+
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
+
+		if (!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed)) return (0);
+
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_NATURE, 2, 3);
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (2);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_NATURE, 2, 3));
+}
+
+
+/* resists--- Only bother if a Unique is on the level.*/
+static int borg_perma_aux_resist_f(void)
+{
+	int cost = 0;
+	int fail_allowed = 5;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		if (my_oppose_fire || !unique_on_level) return (0);
+
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
+
+		/* No need if the borg is immune to fire */
+		if (FLAG(bp_ptr, TR_IM_FIRE)) return (0);
+
+		/* Is the spell available? */
+		if (!borg_spell_okay_fail(REALM_ARCANE, 1, 6, fail_allowed)) return (0);
+
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_ARCANE, 1, 6);
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / 20) return (0);
+
+		/* Simulation */
+		return (1);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_ARCANE, 1, 6));
+}
+
+/* resists--- Only bother if a Unique is on the level.*/
+static int borg_perma_aux_resist_c(void)
+{
+	int cost = 0;
+	int fail_allowed = 5;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		if (my_oppose_cold || !unique_on_level) return (0);
+
+		/* No need if the borg is immune to Cold */
+		if (FLAG(bp_ptr, TR_IM_COLD)) return (0);
+
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
+
+		if (!borg_spell_okay_fail(REALM_ARCANE, 1, 7, fail_allowed)) return (0);
+
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_ARCANE, 1, 7);
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / 20) return (0);
+
+		/* Simulation */
+		return (1);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_ARCANE, 1, 7));
+}
+
+/* resists--- Only bother if a Unique is on the level.*/
+static int borg_perma_aux_resist_a(void)
+{
+	int cost = 0;
+	int fail_allowed = 5;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		if (my_oppose_acid || !unique_on_level) return (0);
+
+		/* No need if the borg is immune to Acid */
+		if (FLAG(bp_ptr, TR_IM_ACID)) return (0);
+
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
+
+		if (!borg_spell_okay_fail(REALM_ARCANE, 2, 1, fail_allowed)) return (0);
+
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_ARCANE, 2, 1);
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / 20) return (0);
+
+		/* Simulation */
+		return (1);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_ARCANE, 2, 1));
+}
+
+/* resists--- Only bother if a Unique is on the level.*/
+static int borg_perma_aux_resist_p(void)
+{
+	int cost = 0;
+	int fail_allowed = 5;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		if (my_oppose_pois || !unique_on_level) return (0);
+
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
+
+		/* No need if the borg is immune to Poison */
+		if (FLAG(bp_ptr, TR_IM_POIS)) return (0);
+
+		if (!borg_spell_okay_fail(REALM_DEATH, 0, 5, fail_allowed)) return (0);
+
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_DEATH, 0, 5);
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / 20) return (0);
+
+		/* Simulation */
+		return (1);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_DEATH, 0, 5));
+}
+
+/* resist fire and cold for priests */
+static int borg_perma_aux_resist_fce(void)
+{
+	int cost = 0;
+	int fail_allowed = 5;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* cast if one drops and unique is near */
+		if (borg_fighting_unique &&
+			(my_oppose_fire || FLAG(bp_ptr, TR_IM_FIRE)) &&
+			(my_oppose_elec || FLAG(bp_ptr, TR_IM_ELEC)) &&
+			(my_oppose_cold || FLAG(bp_ptr, TR_IM_COLD))) return (0);
+
+		/* cast if both drop and no unique is near */
+		if (!borg_fighting_unique && (my_oppose_fire || my_oppose_cold)) return (0);
+
+		/* no need if immune */
+		if (FLAG(bp_ptr, TR_IM_FIRE) &&
+			FLAG(bp_ptr, TR_IM_COLD) &&
+			FLAG(bp_ptr, TR_IM_ELEC)) return (0);
+
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
+
+		if (!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed)) return (0);
+
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_NATURE, 0, 6);
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (2);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_NATURE, 0, 6));
+}
+
+
+/*
+ * Speed to prepare for battle
+ */
+static int borg_perma_aux_speed(void)
+{
+	int fail_allowed = 7;
+	int cost;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* already fast */
+		if (borg_speed) return (0);
+
+		/* Is the sorcery speed spell available? */
+		if (borg_spell_okay_fail(REALM_SORCERY, 1, 5, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_SORCERY, 1, 5);
+		}
+		/* Is the death speed spell available? */
+		else if (borg_spell_okay_fail(REALM_DEATH, 2, 3, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_DEATH, 2, 3);
+		}
+		/* Is the mindcrafter speed spell available? */
+		else if (borg_mindcr_okay_fail(MIND_ADRENALINE, 23, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_ADRENALINE].power;
+		}
+		else
+		{
+			/* speed spell not available */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (5);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_SORCERY, 1, 5) ||
+		borg_mindcr(MIND_ADRENALINE, 23) ||
+		borg_spell(REALM_DEATH, 2, 3));
+}
+
+
+static int borg_perma_aux_goi(void)
+{
+	int fail_allowed = 5;
+	int cost;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* if already protected */
+		if (borg_shield || borg_goi) return (0);
+
+		/* only when a unique is near */
+		if (!unique_on_level) return (0);
+
+		/* Is the Life GoI spell available? */
+		if (borg_spell_okay_fail(REALM_LIFE, 3, 7, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_LIFE, 3, 7);
+		}
+		/* Is the Death GoI spell available? */
+		else if (borg_spell_okay_fail(REALM_SORCERY, 3, 7, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_SORCERY, 3, 7);
+		}
+		else
+		{
+			/* No GoI available */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (3);
+	}
+
+	/* do it! */
+	return (borg_spell_fail(REALM_SORCERY, 3, 7, fail_allowed) ||
+		borg_spell_fail(REALM_LIFE, 3, 7, fail_allowed));
+}
+
+/*
+ * Telepathy
+ */
+static int borg_perma_aux_telepathy(void)
+{
+	int fail_allowed = 5, cost;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* already telepathic */
+		if (borg_esp || (FLAG(bp_ptr, TR_TELEPATHY))) return (0);
+
+		/* Is the Arcane telepathy spell available? */
+		if (borg_spell_okay_fail(REALM_ARCANE, 3, 7, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_ARCANE, 3, 7);
+		}
+		/* Is the Sorcery telepathy spell available? */
+		else if (borg_spell_okay_fail(REALM_SORCERY, 3, 3, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_SORCERY, 3, 3);
+		}
+		else if (borg_mindcr_okay_fail(MIND_PRECOGNIT, 24, fail_allowed) &&
+				bp_ptr->lev < 40)
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_PRECOGNIT].power;
+		}
+		else
+		{
+			/* Telepathy, what is that? */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (1);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_ARCANE, 3, 7) ||
+		borg_spell(REALM_SORCERY, 3, 3) ||
+		borg_mindcr(MIND_PRECOGNIT, 24));
+}
+
+/*
+ * Telepathy
+ */
+static int borg_perma_aux_see_invis(void)
+{
+	int fail_allowed = 5, cost;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* already seeing invisible */
+		if (borg_inviso || FLAG(bp_ptr, TR_SEE_INVIS)) return (0);
+
+		/* Is the Arcane see invisible spell available? */
+		if (borg_spell_okay_fail(REALM_ARCANE, 2, 7, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_ARCANE, 2, 7);
+		}
+		/* Is the Life see invisible spell available? */
+		else if (borg_spell_okay_fail(REALM_LIFE, 1, 3, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_LIFE, 1, 3);
+		}
+		else
+		{
+			/* See invisible, what is that? */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (1);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_ARCANE, 2, 7) ||
+		borg_spell(REALM_SORCERY, 1, 3));
+}
+
+/* Shield for high AC */
+static int borg_perma_aux_shield(void)
+{
+	int fail_allowed = 5;
+	int cost;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* if already protected */
+		if (borg_shield || borg_goi) return (0);
+
+		/* Is the nature shield spell available? */
+		if (borg_spell_okay_fail(REALM_NATURE, 2, 2, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_NATURE, 2, 2);
+		}
+		/* Is the mindcrafter shield spell available? */
+		else if (borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 13, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_CHAR_ARMOUR].power;
+		}
+		else
+		{
+			/* No shield available */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (2);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_NATURE, 2, 2) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 13));
+}
+
+static int borg_perma_aux_prot_evil(void)
+{
+	int cost = 0;
+	int fail_allowed = 5;
+
+	if (borg_simulate)
+	{
+		/* if already protected */
+		if (borg_prot_from_evil || FLAG(bp_ptr, TR_SLAY_EVIL)) return (0);
+
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		if (!borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed)) return (0);
+
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_LIFE, 1, 5);
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (3);
+	}
+
+	/* do it! */
+	return (borg_spell_fail(REALM_LIFE, 1, 5, fail_allowed));
+}
+
+/*
+ * Hero/Berserk to prepare for battle
+ */
+static int borg_perma_aux_hero(void)
+{
+	int fail_allowed = 5;
+	int priority = 2, cost;
+
+	/* Is this for real */
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* already blessed */
+		if (borg_hero || borg_berserk) return (0);
+
+		/* Can the borg cast the death berserk spell? */
+		if (borg_spell_okay_fail(REALM_DEATH, 2, 0, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_DEATH, 2, 0);
+		}
+		/* Can the borg cast the mindcrafter adrenaline spell? */
+		else if (borg_mindcr_okay_fail(MIND_ADRENALINE, 23, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_ADRENALINE].power;
+		}
+		/* Can the borg cast the life hero spell? */
+		else if (borg_spell_okay_fail(REALM_LIFE, 3, 0, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_LIFE, 3, 0);
+
+			/* Reassign the importance */
+			priority = 1;
+		}
+		else
+		{
+			/* No hero or berserk available */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* hero/berserk has a low priority */
+		return (priority);
+	}
+
+	/* Do it!  (We know one of these will succeed) */
+	return (borg_spell(REALM_DEATH, 2, 0) ||
+		borg_mindcr(MIND_ADRENALINE, 23) ||
+		borg_spell(REALM_LIFE, 3, 0));
+}
+
+
+/*
+ * Berserk to prepare for battle
+ */
+static int borg_perma_aux_berserk_potion(void)
+{
+	if (borg_simulate)
+	{
+		/* Save the potions */
+		if (!borg_fighting_unique) return (0);
+
+		/* already blessed */
+		if (borg_hero || borg_berserk)return (0);
+
+		/* do I have any? */
+		if (!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH) ||
+			borg_mutation_check(MUT1_BERSERK, TRUE))
+		{
+			/* No dice */
+			return (0);
+		}
+
+		/* Simulation */
+		return (2);
+	}
+
+	/* do it! */
+	return (borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
+		borg_mutation(MUT1_BERSERK));
+}
+
+
+/* Glyph of Warding in a a-s corridor */
+static int borg_perma_aux_glyph(void)
+{
+#if 0
+	int i, wall_y, wall_x, wall_count = 0, y, x;
+	int fail_allowed = 20;
+
+	map_block *mb_ptr = map_loc(c_x, c_y);
+
+	/* check to make sure a summoner is near */
+	if (borg_kills_summoner == -1) return (0);
+
+	/* make sure I have the spell */
+	if (!borg_spell_okay_fail(REALM_LIFE, 1, 7, fail_allowed)) return (0);
+
+
+	/* He should not cast it while on an object.
+	 * I have addressed this inadequately in borg9.c when dealing with
+	 * messages.  The message "the object resists" will delete the glyph
+	 * from the array.  Then I set a broken door on that spot, the borg ignores
+	 * broken doors, so he won't loop.
+	 */
+	if ((mb_ptr->object)		/*||
+								   (mb_ptr->feat == FEAT_GLYPH) ||
+								   ((mb_ptr->feat >= FEAT_TRAP_TRAPDOOR) && (mb_ptr->feat <= FEAT_TRAP_SLEEP)) */
+		||
+		(mb_ptr->feat == FEAT_CLOSED) || (mb_ptr->feat == FEAT_LESS) ||
+		(mb_ptr->feat == FEAT_MORE) || (mb_ptr->feat == FEAT_OPEN) ||
+		(mb_ptr->feat == FEAT_BROKEN))
+	{
+		return (0);
+	}
+
+	/* This spell is cast while he is digging and AS Corridor */
+	/* Get grid */
+	for (wall_x = -1; wall_x <= 1; wall_x++)
+	{
+		for (wall_y = -1; wall_y <= 1; wall_y++)
+		{
+			/* Acquire location */
+			x = wall_x + c_x;
+			y = wall_y + c_y;
+
+			/* Bounds checking */
+			if (!map_in_bounds(x, y)) continue;
+
+			mb_ptr = map_loc(x, y);
+
+			/* track adjacent walls */
+			if (				/* (mb_ptr->feat == FEAT_GLYPH) || */
+				   (mb_ptr->feat == FEAT_PILLAR) ||
+				   ((mb_ptr->feat >= FEAT_MAGMA) &&
+					(mb_ptr->feat <= FEAT_WALL_SOLID)))
+			{
+				wall_count++;
+			}
+		}
+	}
+
+	/* must be in a corridor */
+	if (wall_count < 7) return (0);
+
+	/* Simulation */
+	if (borg_simulate) return (10);
+
+	/* do it! */
+	if (borg_spell_fail(REALM_LIFE, 1, 7, fail_allowed) ||
+		borg_read_scroll(SV_SCROLL_RUNE_OF_PROTECTION))
+	{
+		/* Check for an existing glyph */
+		for (i = 0; i < track_glyph_num; i++)
+		{
+			/* Stop if we already new about this glyph */
+			if ((track_glyph_x[i] == c_x) &&
+				(track_glyph_y[i] == c_y)) return (2);
+		}
+
+		/* Track the newly discovered glyph */
+		if ((i == track_glyph_num) && (track_glyph_size))
+		{
+			borg_note("# Noting the creation of a corridor glyph.");
+			track_glyph_num++;
+			track_glyph_x[i] = c_x;
+			track_glyph_y[i] = c_y;
+		}
+		return (2);
+	}
+#endif /* 0 */
+
+	/* default to can't do it. */
+	return (0);
+}
+
+
+
+/*
+ * Simulate/Apply the optimal result of using the given "type" of set-up
+ */
+static int borg_perma_aux(int what)
+{
+
+	/* Analyze */
+	switch (what)
+	{
+		case BP_SPEED:
+		{
+			return (borg_perma_aux_speed());
+		}
+		case BP_TELEPATHY:
+		{
+			return (borg_perma_aux_telepathy());
+		}
+		case BP_SEE_INVIS:
+		{
+			return (borg_perma_aux_see_invis());
+		}
+
+		case BP_PROT_FROM_EVIL:
+		{
+			return (borg_perma_aux_prot_evil());
+		}
+		case BP_RESIST_ALL:
+		{
+			return (borg_perma_aux_resist());
+		}
+		case BP_RESIST_F:
+		{
+			return (borg_perma_aux_resist_f());
+		}
+		case BP_RESIST_C:
+		{
+			return (borg_perma_aux_resist_c());
+		}
+		case BP_RESIST_A:
+		{
+			return (borg_perma_aux_resist_a());
+		}
+		case BP_RESIST_P:
+		{
+			return (borg_perma_aux_resist_p());
+		}
+		case BP_RESIST_FCE:
+		{
+			return (borg_perma_aux_resist_fce());
+		}
+		case BP_BLESS:
+		{
+			return (borg_perma_aux_bless());
+		}
+		case BP_HERO_BERSERK:
+		{
+			return (borg_perma_aux_hero());
+		}
+		case BP_BERSERK_POTION:
+		{
+			return (borg_perma_aux_berserk_potion());
+		}
+		case BP_GOI:
+		{
+			return (borg_perma_aux_goi());
+		}
+
+		case BP_SHIELD:
+		{
+			return (borg_perma_aux_shield());
+		}
+		case BP_GLYPH:
+		{
+			return (borg_perma_aux_glyph());
+		}
+	}
+	return (0);
+}
+
+
+/*
+ * prepare to attack... this is setup for a battle.
+ */
+bool borg_perma_spell()
+{
+	int n, b_n = 0;
+	int g, b_g = -1;
+
+
+	/* Simulate */
+	borg_simulate = TRUE;
+
+	/* Not in town */
+	if (!bp_ptr->depth) return (FALSE);
+
+	/* No perma-spells until clevel 30 or the borg has to rest too much */
+	if (bp_ptr->lev < 30) return (FALSE);
+
+	/* Analyze the possible setup moves */
+	for (g = 0; g < BP_MAX; g++)
+	{
+		/* Simulate */
+		n = borg_perma_aux(g);
+
+		/* Track "best" move */
+		if (n <= b_n) continue;
+
+		/* Track best */
+		b_g = g;
+		b_n = n;
+	}
+
+	/* Nothing good */
+	if (b_n <= 0) return (FALSE);
+
+	/* Note */
+	borg_note_fmt("# Performing perma-spell type %d with value %d", b_g, b_n);
+
+	/* Instantiate */
+	borg_simulate = FALSE;
+
+	/* Instantiate */
+	(void)borg_perma_aux(b_g);
+
+	/* Success */
+	return (TRUE);
+}
+
+/*
+ * check to make sure there are no monsters around
+ * that should prevent resting also make sure the ground
+ * is safe for us.
+ */
+bool borg_check_rest(void)
+{
+	int i;
+
+	if (FLAG(bp_ptr, TR_HURT_LITE) && !FLAG(bp_ptr, TR_RES_LITE))
+	{
+		list_item *l_ptr = look_up_equip_slot(EQUIP_LITE);
+
+		/* Do not rest with an artifact lite */
+		if (l_ptr && KN_FLAG(l_ptr, TR_INSTA_ART)) return (FALSE);
+
+		/* Do not rest in Sunlight */
+		if (!bp_ptr->depth &&
+			bp_ptr->hour >= 5 &&
+			bp_ptr->hour <= 18) return (FALSE);
+	}
+
+	/* Now check the ground to see if safe. */
+	if (borg_on_safe_feat(map_loc(c_x, c_y)->feat) == FALSE) return (FALSE);
+
+	/* Examine all the monsters */
+	for (i = 1; i < borg_kills_nxt; i++)
+	{
+		borg_kill *kill = &borg_kills[i];
+		monster_race *r_ptr = &r_info[kill->r_idx];
+
+		int x9 = kill->x;
+		int y9 = kill->y;
+		int ax, ay, d;
+		int p = 0;
+
+		/* Skip dead monsters */
+		if (!kill->r_idx) continue;
+
+		/* Distance components */
+		ax = (x9 > c_x) ? (x9 - c_x) : (c_x - x9);
+		ay = (y9 > c_y) ? (y9 - c_y) : (c_y - y9);
+
+		/* Distance */
+		d = MAX(ax, ay);
+
+		/* Minimal distance */
+		if (d > 16) continue;
+
+		/* if too close, don't rest */
+		if (d < 2) return (FALSE);
+
+		/* If too close, don't rest */
+		if (d < 3 && !(FLAG(r_ptr, RF_NEVER_MOVE))) return (FALSE);
+
+		/* one call for dangers */
+		borg_full_damage = TRUE;
+		p = borg_danger_aux(x9, y9, 1, i, TRUE);
+		borg_full_damage = FALSE;
+
+
+		/* Real scary guys pretty close */
+		if (d < 5 && (p > avoidance / 3)) return (FALSE);
+
+		/* should check LOS... monster to me */
+		if (borg_los(x9, y9, c_x, c_y)) return FALSE;
+
+		/* should check LOS... me to monster */
+		if (borg_los(c_x, c_y, x9, y9)) return FALSE;
+
+		/* Perhaps borg should check and see if the previous grid was los */
+
+		/* if absorbs mana, not safe */
+		if ((FLAG(r_ptr, RF_DRAIN_MANA)) && (bp_ptr->msp > 1)) return FALSE;
+
+		/* if it walks through walls, not safe */
+		if (FLAG(r_ptr, RF_PASS_WALL)) return FALSE;
+		if (FLAG(r_ptr, RF_KILL_WALL)) return FALSE;
+	}
+
+	/* Otherwise ok */
+	return TRUE;
+}
+
+/*
+ * Attempt to recover from damage and such after a battle
+ *
+ * Note that resting while in danger is counter-productive, unless
+ * the danger is low, in which case it may induce "farming".
+ *
+ * Note that resting while recall is active will often cause you
+ * to lose hard-won treasure from nasty monsters, so we disable
+ * resting when waiting for recall in the dungeon near objects.
+ *
+ * First we try spells/prayers, which are "free", and then we
+ * try food, potions, scrolls, staffs, rods, artifacts, etc.
+ *
+ * XXX XXX XXX
+ * Currently, we use healing spells as if they were "free", but really,
+ * this is only true if the "danger" is less than the "reward" of doing
+ * the healing spell, and if there are no monsters which might soon step
+ * around the corner and attack.
+ */
+bool borg_recover(void)
+{
+	int p = 0;
+	int q;
+
+	map_block *mb_ptr = map_loc(c_x, c_y);
+
+	/*** Handle annoying situations ***/
+	
+	/* Refuel torch, excluding Torch of Everburning */
+	if ((!bp_ptr->britelite) &&
+		(equipment[EQUIP_LITE].tval == TV_LITE) &&
+		(k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_TORCH))
+	{
+		/* Refuel the torch if needed */
+		if (equipment[EQUIP_LITE].timeout < 250)
+		{
+			if (borg_refuel_torch()) return (TRUE);
+
+			/* Take note */
+			borg_note_fmt("# Need to refuel but can't!", p);
+
+			/* Allow Pets to Roam so we dont hit them in the dark. */
+			p_ptr->pet_follow_distance = PET_STAY_AWAY;
+		}
+	}
+	
+	/* Refuel current lantern, including Lanterns of Everburning */
+	if ((equipment[EQUIP_LITE].tval == TV_LITE) &&
+		(k_info[equipment[EQUIP_LITE].k_idx].sval == SV_LITE_LANTERN))
+	{
+		/* Refuel the lantern if needed */
+		if (equipment[EQUIP_LITE].timeout < 500)
+		{
+			if (borg_refuel_lantern()) return (TRUE);
+		
+			if (!bp_ptr->britelite)	
+			{
+				/* Take note */
+				borg_note_fmt("# Need to refuel but can't!", p);
+				
+				/* Allow Pets to Roam so we dont hit them in the dark. */
+				p_ptr->pet_follow_distance = PET_STAY_AWAY;
+			}
+		}
+	}
+
+	/*** Do not recover when in danger ***/
+
+	/* Look around for danger */
+	p = borg_danger(c_x, c_y, 1, TRUE);
+
+	/* Never recover in dangerous situations */
+	if (p > avoidance / 4) return (FALSE);
+
+
+	/*** Roll for "paranoia" ***/
+
+	/* Base roll */
+	q = randint0(100);
+
+	/* Half dead */
+	if (bp_ptr->chp < bp_ptr->mhp / 2) q = q - 10;
+
+	/* Almost dead */
+	if (bp_ptr->chp < bp_ptr->mhp / 4) q = q - 10;
+
+
+	/*** Use "cheap" cures ***/
+
+	/* Hack -- cure stun */
+	if (bp_ptr->status.stun && (q < 75))
+	{
+		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
+			borg_spell(REALM_LIFE, 0, 1) ||
+			borg_spell(REALM_LIFE, 0, 6) || borg_spell(REALM_ARCANE, 0, 7))
+
+		{
+			/* Take note */
+			borg_note_fmt("# Cure Stun", p);
+
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- cure stun */
+	if (bp_ptr->status.heavy_stun)
+	{
+		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
+			borg_spell(REALM_LIFE, 1, 2))
+		{
+			/* Take note */
+			borg_note_fmt("# Cure Heavy Stun", p);
+
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- cure cuts */
+	if (bp_ptr->status.cut && (q < 75))
+	{
+		if (borg_activate_artifact(ART_LOTHARANG, FALSE) ||
+			borg_spell(REALM_LIFE, 1, 2) ||
+			borg_spell(REALM_NATURE, 0, 7) || borg_spell(REALM_LIFE, 0, 6))
+		{
+			/* Take note */
+			borg_note_fmt("# Cure Cuts", p);
+
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- cure poison */
+	if (bp_ptr->status.poisoned && (q < 75))
+	{
+		if (borg_activate_artifact(ART_DAL, FALSE) ||
+			borg_spell(REALM_ARCANE, 1, 7) ||
+			borg_spell(REALM_NATURE, 0, 7) || borg_spell(REALM_LIFE, 1, 2))
+		{
+			/* Take note */
+			borg_note_fmt("# Cure poison", p);
+
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- cure fear */
+	if (bp_ptr->status.afraid && (q < 75))
+	{
+		if (borg_activate_artifact(ART_DAL, FALSE) ||
+			borg_spell(REALM_LIFE, 0, 3))
+		{
+			/* Take note */
+			borg_note_fmt("# Cure fear", p);
+
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- satisfy hunger */
+	if ((bp_ptr->status.hungry || bp_ptr->status.weak) && (q < 75))
+	{
+		if (borg_spell_fail(REALM_LIFE, 0, 7, 65) ||
+			borg_spell_fail(REALM_ARCANE, 2, 7, 65) ||
+			borg_spell_fail(REALM_NATURE, 0, 3, 65) ||
+			borg_racial(RACE_HOBBIT) ||
+			borg_read_scroll(SV_SCROLL_SATISFY_HUNGER))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- heal damage */
+	if ((bp_ptr->chp < bp_ptr->mhp / 2) && (q < 75) && p == 0
+		&& (bp_ptr->csp > bp_ptr->msp / 4))
+	{
+		if (borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
+			borg_spell(REALM_LIFE, 1, 6) || borg_spell(REALM_NATURE, 1, 7))
+		{
+			/* Take note */
+			borg_note("# heal damage (recovering)");
+
+			return (TRUE);
+		}
+	}
+
+	/* cure experience loss with prayer */
+	if (bp_ptr->status.fixexp &&
+		(borg_activate_artifact(ART_LUTHIEN, FALSE) ||
+		 borg_spell(REALM_LIFE, 3, 3) ||
+		 borg_spell(REALM_DEATH, 1, 7) ||
+		 borg_racial(RACE_SKELETON) || borg_racial(RACE_ZOMBIE)))
+	{
+		return (TRUE);
+	}
+
+	/* cure stat drain with prayer */
+	if ((bp_ptr->status.fixstat[A_STR] ||
+		 bp_ptr->status.fixstat[A_INT] ||
+		 bp_ptr->status.fixstat[A_WIS] ||
+		 bp_ptr->status.fixstat[A_DEX] ||
+		 bp_ptr->status.fixstat[A_CON] ||
+		 bp_ptr->status.fixstat[A_CHR]) && borg_spell(REALM_LIFE, 3, 3))
+	{
+		return (TRUE);
+	}
+
+	/*** Use "expensive" cures ***/
+
+	/* Hack -- cure stun */
+	if (bp_ptr->status.stun && (q < 25))
+	{
+		if (borg_use_staff_fail(SV_STAFF_CURING) ||
+			borg_zap_rod(SV_ROD_CURING) ||
+			borg_zap_rod(SV_ROD_HEALING) ||
+			borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
+			borg_activate_artifact(ART_GONDOR, FALSE) ||
+			borg_quaff_crit(FALSE) || borg_quaff_potion(SV_POTION_CURING))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- cure heavy stun */
+	if (bp_ptr->status.heavy_stun && (q < 95))
+	{
+		if (borg_quaff_crit(TRUE) ||
+			borg_quaff_potion(SV_POTION_CURING) ||
+			borg_use_staff_fail(SV_STAFF_CURING) ||
+			borg_zap_rod(SV_ROD_CURING) ||
+			borg_zap_rod(SV_ROD_HEALING) ||
+			borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
+			borg_activate_artifact(ART_GONDOR, FALSE))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- cure cuts */
+	if (bp_ptr->status.cut && (q < 25))
+	{
+		if (borg_use_staff_fail(SV_STAFF_CURING) ||
+			borg_zap_rod(SV_ROD_CURING) ||
+			borg_zap_rod(SV_ROD_HEALING) ||
+			borg_quaff_potion(SV_POTION_CURING) ||
+			borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
+			borg_activate_artifact(ART_GONDOR, FALSE) ||
+			borg_quaff_crit((bool) (bp_ptr->chp < 10)))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- cure poison */
+	if (bp_ptr->status.poisoned && (q < 25))
+	{
+		if (borg_quaff_potion(SV_POTION_CURE_POISON) ||
+			borg_quaff_potion(SV_POTION_SLOW_POISON) ||
+			borg_eat_food(SV_FOOD_WAYBREAD) ||
+			borg_eat_food(SV_FOOD_CURE_POISON) ||
+			borg_quaff_crit((bool) (bp_ptr->chp < 10)) ||
+			borg_use_staff_fail(SV_STAFF_CURING) ||
+			borg_zap_rod(SV_ROD_CURING) ||
+			borg_quaff_potion(SV_POTION_CURING) ||
+			borg_activate_artifact(ART_DAL, FALSE))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- cure blindness */
+	if (bp_ptr->status.blind && (q < 25))
+	{
+		if (borg_eat_food(SV_FOOD_CURE_BLINDNESS) ||
+			borg_quaff_potion(SV_POTION_CURE_LIGHT) ||
+			borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
+			borg_quaff_crit(FALSE) ||
+			borg_use_staff_fail(SV_STAFF_CURING) ||
+			borg_quaff_potion(SV_POTION_CURING) || borg_zap_rod(SV_ROD_CURING))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- cure confusion */
+	if (bp_ptr->status.confused && (q < 25))
+	{
+		if (borg_eat_food(SV_FOOD_CURE_CONFUSION) ||
+			borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
+			borg_quaff_crit(FALSE) ||
+			borg_use_staff_fail(SV_STAFF_CURING) ||
+			borg_zap_rod(SV_ROD_CURING) || borg_quaff_potion(SV_POTION_CURING))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- cure fear */
+	if (bp_ptr->status.afraid && (q < 25))
+	{
+		if (borg_eat_food(SV_FOOD_CURE_PARANOIA) ||
+			borg_quaff_potion(SV_POTION_BOLDNESS) ||
+			borg_quaff_potion(SV_POTION_HEROISM) ||
+			borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
+			borg_activate_artifact(ART_DAL, FALSE) ||
+			borg_mutation(MUT1_BERSERK) ||
+			borg_racial(RACE_HALF_ORC) ||
+			borg_racial(RACE_HALF_TROLL))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- satisfy hunger */
+	if ((bp_ptr->status.hungry || bp_ptr->status.weak) && (q < 25))
+	{
+		if (borg_read_scroll(SV_SCROLL_SATISFY_HUNGER))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Hack -- heal damage */
+	if ((bp_ptr->chp < bp_ptr->mhp / 2) && (q < 25))
+	{
+		if (borg_zap_rod(SV_ROD_HEALING) ||
+			borg_quaff_potion(SV_POTION_CURE_SERIOUS) ||
+			borg_quaff_crit(FALSE) ||
+			borg_activate_artifact(ART_LOTHARANG, FALSE))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* If Fleeing, then do not rest */
+	if (goal_fleeing) return (FALSE);
+
+	/* Step 1.  Recharge just 1 rod. */
+	if ((borg_slot(TV_ROD, SV_ROD_HEALING) &&
+		 borg_slot(TV_ROD, SV_ROD_HEALING)->timeout) ||
+		(borg_slot(TV_ROD, SV_ROD_RECALL) &&
+		 borg_slot(TV_ROD, SV_ROD_RECALL)->timeout))
+	{
+		/* Rest until at least one recharges */
+		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
+			!bp_ptr->status.hungry && !bp_ptr->status.poisoned &&
+			borg_check_rest())
+		{
+			/* Take note */
+			borg_note("# Resting to recharge a rod...");
+
+			/* Rest until done */
+			borg_keypress('R');
+			borg_keypress('1');
+			borg_keypress('0');
+			borg_keypress('0');
+			borg_keypress('\n');
+
+			/* Done */
+			return (TRUE);
+		}
+	}
+
+	/*** Just Rest ***/
+
+	/* Hack -- rest until healed */
+	if ((bp_ptr->status.blind || bp_ptr->status.confused ||
+		 bp_ptr->status.image || bp_ptr->status.afraid ||
+		 bp_ptr->status.stun || bp_ptr->status.heavy_stun ||
+		 (bp_ptr->chp < bp_ptr->mhp) ||
+		 (bp_ptr->csp < bp_ptr->msp * 6 / 10)) &&
+		(!borg_takes_cnt || !goal_recalling) && !borg_goi && !borg_shield &&
+		!scaryguy_on_level && borg_check_rest() && (p <= mb_ptr->fear) &&
+		!goal_fleeing)
+	{
+		/* XXX XXX XXX */
+		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
+			!bp_ptr->status.hungry && !bp_ptr->status.poisoned)
+		{
+			/* Take note */
+			borg_note_fmt("# Resting (danger %d)...", p);
+
+			/* Rest until done */
+			borg_keypress('R');
+			borg_keypress('\n');
+
+			/* Done */
+			return (TRUE);
+		}
+	}
+
+	/* Hack to recharge mana if a low level mage or priest */
+	if (bp_ptr->msp && bp_ptr->lev < 25 && bp_ptr->csp < bp_ptr->msp && p == 0)
+	{
+		if (!bp_ptr->status.weak && !bp_ptr->status.cut &&
+			!bp_ptr->status.hungry && !bp_ptr->status.poisoned)
+		{
+			/* Take note */
+			borg_note_fmt("# Resting to gain Mana. (danger %d)...", p);
+
+			/* Rest until done */
+			borg_keypress('R');
+			borg_keypress('\n');
+
+			/* Done */
+			return (TRUE);
+		}
+	}
+
+	/* Nope */
+	return (FALSE);
+}
+
+
+/*
+ * Take one "step" towards the given location, return TRUE if possible
+ */
+static bool borg_play_step(int y2, int x2)
+{
+	map_block *mb_ptr;
+
+	int dir, x, y, ox, oy, i;
+
+	int o_y = 0, o_x = 0, door_found = 0;
+
+	/* Breeder levels, close all doors */
+	if (breeder_level)
+	{
+		/* Scan the adjacent grids */
+		for (ox = -1; ox <= 1; ox++)
+		{
+			for (oy = -1; oy <= 1; oy++)
+			{
+				/* Skip our own spot */
+				if ((oy + c_y == c_y) && (ox + c_x == c_x)) continue;
+
+				/* Skip our orignal goal */
+				if ((oy + c_y == y2) && (ox + c_x == x2)) continue;
+
+				/* Bounds checking */
+				if (!map_in_bounds(ox + c_x, oy + c_y)) continue;
+
+				/* Acquire location */
+				mb_ptr = map_loc(ox + c_x, oy + c_y);
+
+				/* Skip non open doors */
+				if (mb_ptr->feat != FEAT_OPEN) continue;
+
+				/* Skip monster on door */
+				if (mb_ptr->monster) continue;
+
+				/* Skip repeatedly closed doors */
+				if (track_door_num >= 255) continue;
+
+				/* Save this spot */
+				o_y = oy;
+				o_x = ox;
+				door_found = 1;
+			}
+		}
+
+		/* Is there a door to close? */
+		if (door_found)
+		{
+			/* Get a direction, if possible */
+			dir = borg_goto_dir(c_x, c_y, c_x + o_x, c_y + o_y);
+
+			/* Obtain the destination */
+			x = c_x + ddx[dir];
+			y = c_y + ddy[dir];
+
+			/* Hack -- set goal */
+			g_x = x;
+			g_y = y;
+
+			/* Close */
+			borg_note("# Closing a door");
+			borg_keypress('c');
+			borg_keypress(I2D(dir));
+
+			/* Check for an existing flag */
+			for (i = 0; i < track_door_num; i++)
+			{
+				/* Stop if we already new about this door */
+				if ((track_door_x[i] == x) &&
+					(track_door_y[i] == y)) return (TRUE);
+			}
+
+			/* Track the newly closed door */
+			if (i == track_door_num && i < track_door_size)
+			{
+
+				borg_note("# Noting the closing of a door.");
+				track_door_num++;
+				track_door_x[i] = x;
+				track_door_y[i] = y;
+			}
+			return (TRUE);
+
+		}
+	}
+
+	/* Get a direction, if possible */
+	dir = borg_goto_dir(c_x, c_y, x2, y2);
+
+	/* We have arrived */
+	if (dir == 5) return (FALSE);
+
+	/* Obtain the destination */
+	x = c_x + ddx[dir];
+	y = c_y + ddy[dir];
+
+	/* Access the grid we are stepping on (Assume this is in bounds) */
+	mb_ptr = map_loc(x, y);
+
+	/* Hack -- set goal */
+	g_x = x;
+	g_y = y;
+
+	/* Monsters -- Attack */
+	if (mb_ptr->kill)
+	{
+		/* Can't attack someone if afraid! */
+		if (bp_ptr->status.afraid)
+			return (FALSE);
+
+		/* Hack -- ignore Maggot until later.  */
+		if ((FLAG(&r_info[mb_ptr->monster], RF_UNIQUE)) &&
+			bp_ptr->depth == 0 && bp_ptr->lev < 5)
+			return (FALSE);
+
+		/* Message */
+		borg_note_fmt("# Walking into a '%s' at (%d,%d)",
+					  r_name + r_info[mb_ptr->monster].name, x, y);
+
+		/* Walk into it */
+		if (my_no_alter)
+		{
+			borg_keypress(';');
+			my_no_alter = FALSE;
+		}
+		else
+		{
+			borg_keypress('+');
+		}
+		borg_keypress(I2D(dir));
+		return (TRUE);
+	}
+
+
+	/* Objects -- Take */
+	if (mb_ptr->object)
+	{
+		/*** Handle other takes ***/
+		/* Message */
+		borg_note_fmt("# Walking onto a '%s' at (%d,%d)",
+					  k_name + k_info[mb_ptr->object].name, x, y);
+
+		/* Walk onto it */
+		borg_keypress(I2D(dir));
+		return (TRUE);
+	}
+
+
+	/* Traps -- disarm -- */
+	if (bp_ptr->cur_lite && !bp_ptr->status.blind &&
+		!bp_ptr->status.confused && !scaryguy_on_level &&
+		mb_ptr->trap)
+	{
+
+		/*
+		 * NOTE: If a scary guy is on the level,
+		 * we allow the borg to run over the
+		 * trap in order to escape this level.
+		 */
+
+		/* allow "destroy doors" */
+		if (borg_spell(REALM_ARCANE, 0, 6))
+		{
+			borg_note("# Unbarring ways");
+			borg_keypress(I2D(dir));
+			mb_ptr->trap = FT_NONE;
+			return (TRUE);
+		}
+		/* allow "destroy doors" */
+		if (borg_spell(REALM_CHAOS, 0, 1))
+		{
+			borg_note("# Unbarring ways");
+			mb_ptr->trap = FT_NONE;
+			return (TRUE);
+		}
+
+		/* Disarm */
+		borg_note("# Disarming a trap");
+		borg_keypress('D');
+		borg_keypress(I2D(dir));
+
+		/* We are not sure if the trap will get 'untrapped'. pretend it will */
+		mb_ptr->trap = FT_NONE;
+		return (TRUE);
+	}
+
+	/* Closed Doors -- Open */
+	if (mb_ptr->feat == FEAT_CLOSED)
+	{
+		/* Paranoia XXX XXX XXX */
+		if (one_in_(100)) return (FALSE);
+
+		/* Open */
+		if (my_need_alter)
+		{
+			borg_keypress('+');
+			my_need_alter = FALSE;
+		}
+		else
+		{
+			borg_note("# Opening a door");
+			borg_keypress('0');
+			borg_keypress('9');
+			borg_keypress('o');
+		}
+		borg_keypress(I2D(dir));
+		return (TRUE);
+	}
+
+	/* Rubble, Treasure, Seams, Walls -- Tunnel or Melt */
+	if (mb_ptr->feat >= FEAT_PILLAR && mb_ptr->feat <= FEAT_WALL_SOLID)
+	{
+
+		/* Mega-Hack -- prevent infinite loops */
+		if (randint0(100) < 10) return (FALSE);
+
+		/* Not if hungry */
+		if (bp_ptr->status.weak) return (FALSE);
+
+		/* Lose old target */
+		borg_keypress('*');
+		borg_keypress(ESCAPE);
+
+		/* Mega-Hack -- allow "stone to mud" */
+		if (mb_ptr->feat != FEAT_RUBBLE &&
+			(borg_spell_fail(REALM_ARCANE, 2, 4, 60) ||
+			borg_spell_fail(REALM_NATURE, 1, 0, 60) ||
+			borg_spell_fail(REALM_CHAOS, 2, 3, 60) ||
+			borg_mutation(MUT1_EAT_ROCK) ||
+			borg_racial(RACE_HALF_GIANT)))
+		{
+			borg_note("# Melting a wall");
+			borg_keypress(I2D(dir));
+			return (TRUE);
+		}
+
+		/* No tunneling if in danger */
+		if (borg_danger(c_x, c_y, 1, TRUE) >= bp_ptr->chp / 4) return (FALSE);
+
+		/* Tunnel */
+		borg_note("# Digging through wall/etc");
+		borg_keypress('0');
+		borg_keypress('9');
+		borg_keypress('9');
+
+		borg_keypress('T');
+		borg_keypress(I2D(dir));
+		return (TRUE);
+	}
+
+	/* Perhaps the borg could search for traps as he walks around level one. */
+	if ((bp_ptr->max_lev <= 3) && bp_ptr->depth &&
+		!bp_ptr->status.search && borg_needs_searching)
+	{
+		borg_keypress('S');
+	}
+
+	/* Turn off the searching if needed */
+	if (!borg_needs_searching && bp_ptr->status.search)
+	{
+		borg_keypress('S');
+	}
+
+	/* Walk in that direction */
+	if (my_need_alter)
+	{
+		borg_keypress('+');
+		my_need_alter = FALSE;
+	}
+
+	borg_keypress(I2D(dir));
+
+	/* Stand stairs up */
+	if (goal_less)
+	{
+		/* Up stairs */
+		if (mb_ptr->feat == FEAT_LESS)
+		{
+			/* Stand on stairs */
+			goal_less = FALSE;
+
+			/* Success */
+			return (TRUE);
+		}
+	}
+
+	/* Did something */
+	return (TRUE);
+}
+
+
+/*
+ * Act twitchy
+ */
+bool borg_twitchy(void)
+{
+	int dir;
+
+	/* This is a bad thing */
+	borg_note("# Twitchy!");
+
+	/* try to phase out of it */
+	if (bp_ptr->able.phase && borg_caution_phase(15, 2) &&
+		(borg_spell_fail(REALM_ARCANE, 0, 4, 40) ||
+		 borg_spell_fail(REALM_SORCERY, 0, 1, 40) ||
+		 borg_spell_fail(REALM_TRUMP, 0, 0, 40) ||
+		 borg_activate_artifact(ART_ANGUIREL, FALSE) ||
+		 borg_activate_artifact(ART_COLANNON, FALSE) ||
+		 borg_read_scroll(SV_SCROLL_PHASE_DOOR)))
+	{
+		/* We did something */
+		return (TRUE);
+	}
+	/* Pick a random direction */
+	dir = randint1(9);
+
+	/* Hack -- set goal */
+	g_x = c_x + ddx[dir];
+	g_y = c_y + ddy[dir];
+
+	/* Maybe alter */
+	if (randint0(100) < 10 && dir != 5)
+	{
+		/* Send action (alter) */
+		borg_keypress('+');
+
+		/* Send direction */
+		borg_keypress(I2D(dir));
+	}
+
+	/* Normally move */
+	else
+	{
+		/* Send direction */
+		borg_keypress(I2D(dir));
+	}
+
+	/* We did something */
+	return (TRUE);
+}
+
+
+/*
+ * Spread a "flow" from the "destination" grids outwards
+ *
+ * We fill in the "cost" field of every grid that the player can
+ * "reach" with the number of steps needed to reach that grid,
+ * if the grid is "reachable", and otherwise, with "255", which
+ * is the largest possible value that can be stored in a byte.
+ *
+ * Thus, certain grids which are actually "reachable" but only by
+ * a path which is at least 255 steps in length will thus appear
+ * to be "unreachable", but this is not a major concern.
+ *
+ * We use the "flow" array as a "circular queue", and thus we must
+ * be careful not to allow the "queue" to "overflow".  This could
+ * only happen with a large number of distinct destination points,
+ * each several units away from every other destination point, and
+ * in a dungeon with no walls and no dangerous monsters.  But this
+ * is technically possible, so we must check for it just in case.
+ *
+ * We do not need a "priority queue" because the cost from grid to
+ * grid is always "one" and we process them in order.  If we did
+ * use a priority queue, this function might become unusably slow,
+ * unless we reactivated the "room building" code.
+ *
+ * We handle both "walls" and "danger" by marking every grid which
+ * is "impassible", due to either walls, or danger, as "ICKY", and
+ * marking every grid which has been "checked" as "KNOW", allowing
+ * us to only check the wall/danger status of any grid once.  This
+ * provides some important optimization, since many "flows" can be
+ * done before the "ICKY" and "KNOW" flags must be reset.
+ *
+ * Note that the "borg_enqueue_grid()" function should refuse to
+ * enqueue "dangeous" destination grids, but does not need to set
+ * the "KNOW" or "ICKY" flags, since having a "cost" field of zero
+ * means that these grids will never be queued again.  In fact,
+ * the "borg_enqueue_grid()" function can be used to enqueue grids
+ * which are "walls", such as "doors" or "rubble".
+ *
+ * This function is extremely expensive, and is a major bottleneck
+ * in the code, due more to internal processing than to the use of
+ * the "borg_danger()" function, especially now that the use of the
+ * "borg_danger()" function has been optimized several times.
+ *
+ * The "optimize" flag allows this function to stop as soon as it
+ * finds any path which reaches the player, since in general we are
+ * looking for paths to destination grids which the player can take,
+ * and we can stop this function as soon as we find any usable path,
+ * since it will always be as short a path as possible.
+ *
+ * We queue the "children" in reverse order, to allow any "diagonal"
+ * neighbors to be processed first, since this may boost efficiency.
+ *
+ * Note that we should recalculate "danger", and reset all "flows"
+ * if we notice that a wall has disappeared, and if one appears, we
+ * must give it a maximal cost, and mark it as "icky", in case it
+ * was currently included in any flow.
+ *
+ * If a "depth" is given, then the flow will only be spread to that
+ * depth, note that the maximum legal value of "depth" is 250.
+ */
+static void borg_flow_spread(int depth, bool optimize, bool avoid,
+                             bool tunneling)
+{
+	int i;
+	int n, o = 0;
+	int x1, y1;
+	int x, y;
+
+	map_block *mb_ptr = map_loc(c_x, c_y);
+
+	int player_cost = mb_ptr->cost;
+
+
+	/* Now process the queue */
+	while (flow_head != flow_tail)
+	{
+		/* Extract the next entry */
+		x1 = borg_flow_x[flow_tail];
+		y1 = borg_flow_y[flow_tail];
+
+		/* Circular queue -- dequeue the next entry */
+		if (++flow_tail == AUTO_FLOW_MAX) flow_tail = 0;
+
+		/* Bounds checking */
+		if (!map_in_bounds(x1, y1)) continue;
+
+		mb_ptr = map_loc(x1, y1);
+
+		/* Cost (one per movement grid) */
+		n = mb_ptr->cost + 1;
+
+		/* New depth */
+		if (n > o)
+		{
+			/* Optimize (if requested) */
+			if (optimize && (n > player_cost)) break;
+
+			/* Limit depth */
+			if (n > depth) break;
+
+			/* Save */
+			o = n;
+		}
+
+		/* Queue the "children" */
+		for (i = 0; i < 8; i++)
+		{
+			int old_head;
+
+			map_block *mb_ptr;
+
+			/* Neighbor grid */
+			x = x1 + ddx_ddd[i];
+			y = y1 + ddy_ddd[i];
+
+			/* Only on legal grids */
+			if (!map_in_bounds(x, y)) continue;
+
+			/* Access the grid */
+			mb_ptr = map_loc(x, y);
+
+			/* Skip "reached" grids */
+			if (mb_ptr->cost <= n) continue;
+
+			/* Avoid "wall" grids (not doors) unless tunneling */
+			if (!tunneling &&
+				(mb_ptr->feat >= FEAT_SECRET &&
+				 mb_ptr->feat <= FEAT_WALL_SOLID)) continue;
+
+			/* Avoid pillars */
+			if (!tunneling && mb_ptr->feat == FEAT_PILLAR) continue;
+
+			/* Avoid "perma-wall" grids */
+			if (mb_ptr->feat >= FEAT_PERM_EXTRA &&
+				mb_ptr->feat <= FEAT_PERM_SOLID) continue;
+			
+			if (!borg_on_safe_feat(mb_ptr->feat)) continue;
+
+			/* Avoid Mountains */
+			if (mb_ptr->feat == FEAT_MOUNTAIN) continue;
+
+			/* Avoid some other Zang Terrains */
+
+			/* Avoid unknown grids (if requested or retreating) */
+			if ((avoid || borg_desperate) && !mb_ptr->feat) continue;
+
+			/* Avoid Monsters if Desprerate */
+			if (borg_desperate && (mb_ptr->monster)) continue;
+
+
+			/* Avoid Traps if low level-- unless brave or scaryguy. */
+			if (mb_ptr->trap && avoidance <= bp_ptr->chp && 
+				!scaryguy_on_level)
+			{
+				/* Do not disarm when you could end up dead */
+				if (bp_ptr->chp < 60) continue;
+
+				/* Do not disarm when clumsy */
+				if ((bp_ptr->skill_dis < 30) && (bp_ptr->lev < 20)) continue;
+				if ((bp_ptr->skill_dis < 45) && (bp_ptr->lev < 10)) continue;
+			}
+
+
+			/* Ignore "icky" grids */
+			if (mb_ptr->info & BORG_MAP_ICKY) continue;
+
+
+			/* Analyze every grid once */
+			if (!(mb_ptr->info & BORG_MAP_KNOW))
+			{
+				int p;
+
+				/* Mark as known */
+				mb_ptr->info |= BORG_MAP_KNOW;
+
+				if (!borg_desperate)
+				{
+					/* Get the danger */
+					p = borg_danger(x, y, 1, TRUE);
+
+					/* Dangerous grid */
+					if (p > avoidance / 3)
+					{
+						/* Mark as icky */
+						mb_ptr->info |= BORG_MAP_ICKY;
+
+						/* Ignore this grid */
+						continue;
+					}
+				}
+			}
+
+
+			/* Save the flow cost */
+			mb_ptr->cost = n;
+
+			/* Enqueue that entry */
+			borg_flow_x[flow_head] = x;
+			borg_flow_y[flow_head] = y;
+
+			/* Circular queue -- memorize head */
+			old_head = flow_head;
+
+			/* Circular queue -- insert with wrap */
+			if (++flow_head == AUTO_FLOW_MAX)
+				flow_head = 0;
+
+			/* Circular queue -- handle overflow (badly) */
+			if (flow_head == flow_tail)
+				flow_head = old_head;
+		}
+	}
+
+	/* Forget the flow info */
+	flow_head = flow_tail = 0;
+}
+
+
+
+/*
+ * Enqueue a fresh (legal) starting grid, if it is safe
+ */
+static void borg_flow_enqueue_grid(int x, int y)
+{
+	int old_head;
+
+	map_block *mb_ptr;
+
+	/* Bounds checking */
+	if (!map_in_bounds(x, y)) return;
+
+	mb_ptr = map_loc(x, y);
+
+	/* Avoid icky grids */
+	if (mb_ptr->info & BORG_MAP_ICKY) return;
+
+	/* Unknown */
+	if (!(mb_ptr->info & BORG_MAP_KNOW))
+	{
+		/* Mark as known */
+		mb_ptr->info |= BORG_MAP_KNOW;
+
+		/* Mark dangerous grids as icky */
+		if ((borg_danger(x, y, 1, TRUE) > avoidance / 3) && !borg_desperate)
+		{
+			/* Icky */
+			mb_ptr->info |= BORG_MAP_ICKY;
+
+			/* Avoid */
+			return;
+		}
+	}
+
+
+	/* Only enqueue a grid once */
+	if (mb_ptr->cost == 1) return;
+
+
+	/* Save the flow cost (zero) */
+	mb_ptr->cost = 1;
+
+	/* Enqueue that entry */
+	borg_flow_y[flow_head] = y;
+	borg_flow_x[flow_head] = x;
+
+
+	/* Circular queue -- memorize head */
+	old_head = flow_head;
+
+	/* Circular queue -- insert with wrap */
+	if (++flow_head == AUTO_FLOW_MAX) flow_head = 0;
+
+	/* Circular queue -- handle overflow */
+	if (flow_head == flow_tail) flow_head = old_head;
+
+}
+
+
+
+/*
+ * Clear the "flow" information
+ *
+ * This function was once a major bottleneck, so we now use several
+ * slightly bizarre, but highly optimized, memory copying methods.
+ */
+static void borg_flow_clear(void)
+{
+	map_block *mb_ptr;
+
+	/* Iterate over the map */
+	MAP_ITT_START (mb_ptr)
+	{
+		mb_ptr->cost = 255;
+
+		if (borg_danger_wipe)
+		{
+			/* Clear the "icky" + "know" flags */
+			mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
+		}
+	}
+	MAP_ITT_END;
+
+	/* Wipe complete */
+	borg_danger_wipe = FALSE;
+
+	/* Start over */
+	flow_head = 0;
+	flow_tail = 0;
+}
+
+
+/*
+ * Do a "reverse" flow from the player outwards
+ */
+static void borg_flow_reverse(void)
+{
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue the player's grid */
+	borg_flow_enqueue_grid(c_x, c_y);
+
+	/* Spread, but do NOT optimize */
+	borg_flow_spread(250, FALSE, FALSE, FALSE);
+}
+
+
+/*
+ * Commit the current "flow"
+ */
+static bool borg_flow_commit(cptr who, int why)
+{
+	int cost;
+
+	map_block *mb_ptr = map_loc(c_x, c_y);
+
+	/* Cost of current grid */
+	cost = mb_ptr->cost;
+
+	/* Verify the total "cost" */
+	if (cost >= 250) return (FALSE);
+
+	/* Message */
+	if (who) borg_note_fmt("# Flowing toward %s at cost %d", who, cost);
+
+	/* Iterate over all grids */
+	MAP_ITT_START (mb_ptr)
+	{
+		/* Obtain the "flow" information */
+		mb_ptr->flow = mb_ptr->cost;
+	}
+	MAP_ITT_END;
+
+	/* Save the goal type */
+	goal = why;
+
+	/* Success */
+	return (TRUE);
+}
+
+
+
+/*
+ * Attempt to take an optimal step towards the current goal location
+ *
+ * Note that the "borg_update()" routine notices new monsters and objects,
+ * and movement of monsters and objects, and cancels any flow in progress.
+ *
+ * Note that the "borg_update()" routine notices when a grid which was
+ * not thought to block motion is discovered to in fact be a grid which
+ * blocks motion, and removes that grid from any flow in progress.
+ *
+ * When given multiple alternative steps, this function attempts to choose
+ * the "safest" path, by penalizing grids containing embedded gold, monsters,
+ * rubble, doors, traps, store doors, and even floors.  This allows the Borg
+ * to "step around" dangerous grids, even if this means extending the path by
+ * a step or two, and encourages him to prefer grids such as objects and stairs
+ * which are not only interesting but which are known not to be invisible traps.
+ *
+ * XXX XXX XXX XXX This function needs some work.  It should attempt to
+ * analyze the "local region" around the player and determine the optimal
+ * choice of locations based on some useful computations.
+ *
+ * If it works, return TRUE, otherwise, cancel the goal and return FALSE.
+ */
+bool borg_flow_old(int why)
+{
+	int x, y;
+
+	map_block *mb_ptr;
+
+	/* Continue */
+	if (goal == why)
+	{
+		int b_n = 0;
+
+		int i, b_i = -1;
+
+		int c, b_c;
+
+		mb_ptr = map_loc(c_x, c_y);
+
+		/* Flow cost of current grid */
+		b_c = mb_ptr->flow * 10;
+
+		/* Prevent loops */
+		b_c = b_c - 5;
+
+
+		/* Look around */
+		for (i = 0; i < 8; i++)
+		{
+			/* Grid in that direction */
+			x = c_x + ddx_ddd[i];
+			y = c_y + ddy_ddd[i];
+
+			/* Bounds checking */
+			if (!map_in_bounds(x, y)) continue;
+
+			/* Access the grid */
+			mb_ptr = map_loc(x, y);
+
+			/* Flow cost at that grid */
+			c = mb_ptr->flow * 10;
+
+			/* Never backtrack */
+			if (c > b_c) continue;
+
+			/* Notice new best value */
+			if (c < b_c) b_n = 0;
+
+			/* Apply the randomizer to equivalent values */
+			if ((++b_n >= 2) && (randint0(b_n)))
+			{
+				continue;
+			}
+			/* Track it */
+			b_i = i;
+			b_c = c;
+		}
+
+
+		/* Try it */
+		if (b_i >= 0)
+		{
+			/* Access the location */
+			x = c_x + ddx_ddd[b_i];
+			y = c_y + ddy_ddd[b_i];
+
+			/* Attempt motion */
+			if (borg_play_step(y, x)) return (TRUE);
+		}
+
+		/* Cancel goal */
+		goal = 0;
+	}
+
+	/* Nothing to do */
+	return (FALSE);
+}
+
+
+
+
+/*
+ * Prepare to flee the level via stairs
+ */
+bool borg_flow_stair_both(int why)
+{
+	int i;
+
+	/* None to flow to */
+	if (!track_less_num && !track_more_num) return (FALSE);
+
+	/* dont go down if hungry or low on food, unless fleeing a scary town */
+	if ((!goal_fleeing && !bp_ptr->depth) &&
+		(!bp_ptr->cur_lite || bp_ptr->status.weak ||
+		 bp_ptr->status.hungry || (bp_ptr->food < 2)))
+		return (FALSE);
+
+	/* clear the possible searching flag */
+	borg_needs_searching = FALSE;
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue useful grids */
+	for (i = 0; i < track_less_num; i++)
+	{
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(track_less_x[i], track_less_y[i]);
+	}
+
+	/* Enqueue useful grids */
+	for (i = 0; i < track_more_num; i++)
+	{
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(track_more_x[i], track_more_y[i]);
+	}
+
+	/* Spread the flow */
+	borg_flow_spread(250, TRUE, FALSE, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("stairs", why)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(why)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*
+ * Prepare to flow towards "up" stairs
+ */
+bool borg_flow_stair_less(int why)
+{
+	int i;
+
+	/* None to flow to */
+	if (!track_less_num) return (FALSE);
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* clear the possible searching flag */
+	borg_needs_searching = FALSE;
+
+	/* Enqueue useful grids */
+	for (i = 0; i < track_less_num; i++)
+	{
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(track_less_x[i], track_less_y[i]);
+	}
+
+	if ((bp_ptr->lev > 35) || !bp_ptr->cur_lite)
+	{
+		/* Spread the flow */
+		borg_flow_spread(250, TRUE, FALSE, FALSE);
+	}
+	else
+	{
+		/* Spread the flow, No Optimize, Avoid */
+		borg_flow_spread(250, FALSE, (bool) !borg_desperate, FALSE);
+	}
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("up-stairs", why)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(why)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*
+ * Prepare to flow towards "down" stairs
+ */
+bool borg_flow_stair_more(int why)
+{
+	int i;
+
+	/* None to flow to */
+	if (!track_more_num) return (FALSE);
+
+	/* if not fleeing do not go down unless safe */
+	if (!goal_fleeing && borg_prepared(bp_ptr->depth + 1))
+		return (FALSE);
+
+	/* dont go down if hungry or low on food, unless fleeing a scary town */
+	if (bp_ptr->depth &&
+		(bp_ptr->status.weak || bp_ptr->status.hungry || (bp_ptr->food < 2)))
+		return (FALSE);
+
+	/* No diving if no light */
+	if (!bp_ptr->cur_lite) return (FALSE);
+
+	/* don't head for the stairs if you are recalling,  */
+	/* even if you are fleeing. */
+	if (goal_recalling)
+		return (FALSE);
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue useful grids */
+	for (i = 0; i < track_more_num; i++)
+	{
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(track_more_x[i], track_more_y[i]);
+	}
+
+	/* Spread the flow */
+	borg_flow_spread(250, TRUE, FALSE, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("down-stairs", why)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(why)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+/*
+ * Prepare to flow towards glyph of warding
+ */
+bool borg_flow_glyph(int why)
+{
+	int i;
+
+	/* None to flow to */
+	if (!track_glyph_num) return (FALSE);
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue useful grids */
+	for (i = 0; i < track_glyph_num; i++)
+	{
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(track_glyph_x[i], track_glyph_y[i]);
+	}
+
+	/* Spread the flow */
+	borg_flow_spread(250, TRUE, FALSE, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("glyph of warding", why)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(why)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+/*
+ * Prepare to flow towards Town Gates
+ */
+bool borg_flow_town_exit(int why)
+{
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Do something here */
+
+/* This routine can be used to flow to any town special
+ * such as the mayors office or the Whitehorse Inn or even
+ * special town quests.
+ */
+	/* Spread the flow */
+	borg_flow_spread(250, TRUE, FALSE, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("Town Gates", why)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(why)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+/*
+ * Prepare to flow towards light
+ */
+bool borg_flow_light(int why)
+{
+	int y, x, i;
+
+	map_block *mb_ptr;
+
+	/* reset counters */
+	borg_temp_n = 0;
+	i = 0;
+
+	/* build the glow array */
+	/* Scan map */
+	MAP_ITT_START (mb_ptr)
+	{
+		/* Not a perma-lit, and not our spot. */
+		if (!(mb_ptr->flags & MAP_GLOW)) continue;
+
+		/* Get location */
+		MAP_GET_LOC(x, y);
+
+		/* keep count */
+		borg_temp_y[borg_temp_n] = y;
+		borg_temp_x[borg_temp_n] = x;
+		borg_temp_n++;
+	}
+	MAP_ITT_END;
+
+	/* None to flow to */
+	if (!borg_temp_n) return (FALSE);
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue useful grids */
+	for (i = 0; i < borg_temp_n; i++)
+	{
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(borg_temp_x[i], borg_temp_y[i]);
+	}
+
+	/* Spread the flow */
+	borg_flow_spread(250, TRUE, FALSE, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("a lighted area", why)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(why)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*
+ * Prepare to "flow" towards a specific shop entry
+ */
+bool borg_flow_shop_entry(int i)
+{
+	int x, y;
+
+	/* Must be in town */
+	if (bp_ptr->depth) return (FALSE);
+
+	/* Obtain the location */
+	x = borg_shops[i].x;
+	y = borg_shops[i].y;
+
+	/* Hack -- re-enter a shop if needed */
+	if ((x == c_x) && (y == c_y))
+	{
+		/* Note */
+		borg_note("# Re-entering a shop");
+
+		/* Enter the store */
+		borg_keypress('5');
+
+		/* Success */
+		return (TRUE);
+	}
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue the grid */
+	borg_flow_enqueue_grid(x, y);
+
+	/* Spread the flow */
+	borg_flow_spread(250, TRUE, FALSE, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("shop", GOAL_MISC)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_MISC)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*
+ * Take a couple of steps to line up a shot
+ *
+ */
+bool borg_flow_kill_aim(bool viewable)
+{
+	int o_y, o_x;
+	int s_c_y = c_y;
+	int s_c_x = c_x;
+	int i;
+
+	/* Check the surroundings for monsters */
+	borg_temp_fill(FALSE);
+
+	/* If you can shoot from where you are, don't bother reaiming */
+	if (borg_ball_n) return (FALSE);
+
+	/* Consider each adjacent spot */
+	for (o_x = -2; o_x <= 2; o_x++)
+	{
+		for (o_y = -2; o_y <= 2; o_y++)
+		{
+			/* borg_attack would have already checked
+			   for a shot from where I currently am */
+			if (o_x == 0 && o_y == 0)
+				continue;
+
+			/* XXX  Mess with where the program thinks the
+			   player is */
+			c_x = s_c_x + o_x;
+			c_y = s_c_y + o_y;
+
+			/* avoid screen edgeds */
+			if (!map_in_bounds(c_x + 2, c_y + 2)) continue;
+			if (!map_in_bounds(c_x - 2, c_y - 2)) continue;
+
+			/* Make sure we do not end up next to a monster */
+			for (i = 0; i < borg_bolt_n; i++)
+			{
+				if (distance(c_y, c_x, borg_bolt_y[i], borg_bolt_x[i]) == 1)
+					break;
+			}
+			if (i != borg_bolt_n)
+				continue;
+
+			/* Check the surroundings for monsters */
+			borg_temp_fill(FALSE);
+
+			/* Is there a possible target? */
+			if (borg_ball_n)
+			{
+				/* Clear the flow codes */
+				borg_flow_clear();
+
+				/* Enqueue the grid */
+				borg_flow_enqueue_grid(c_x, c_y);
+
+				/* restore the saved player position */
+				c_x = s_c_x;
+				c_y = s_c_y;
+
+				/* Spread the flow */
+				borg_flow_spread(5, TRUE, (bool) !viewable, FALSE);
+
+				/* Attempt to Commit the flow */
+				if (!borg_flow_commit("targetable position", GOAL_KILL))
+					return (FALSE);
+
+				/* Take one step */
+				if (!borg_flow_old(GOAL_KILL)) return (FALSE);
+
+				return (TRUE);
+			}
+		}
+	}
+
+	/* restore the saved player position */
+	c_x = s_c_x;
+	c_y = s_c_y;
+
+	return FALSE;
+}
+
+/*
+ * Dig an anti-summon corridor
+ *
+ *            ############## We want the borg to not dig #1
+ *            #............# but to dig #2, and hopefully shoot from the
+ *      #######............# last #2 and try to avoid standing on #3.
+ *      #222223............# This is great for offset ball attacks but
+ *      #2#####..s.........# not for melee.  Warriors need to dig a wall
+ * ######2###########+###### adjacent to the monsters so he can swing on them.
+ * #            1     #
+ * # ################ #
+ *   #              # #
+ * ###              # #
+ *
+ */
+bool borg_flow_kill_corridor(bool viewable)
+{
+#if 0
+	int o_y, o_x;
+	int m_x, m_y;
+	int f_y, f_x;
+	int floors = 0;
+	int b_y = 0, b_x = 0;
+	int perma_grids = 0;
+
+	borg_kill *kill;
+
+#endif /* 0 */
+
+	/* Hack - ignore usused parameter */
+	(void)viewable;
+
+	/* Efficiency -- Nothing to kill */
+	if (!borg_kills_cnt) return (FALSE);
+
+	/* Need to do this properly */
+#if 0
+
+	/* Only do this to summoners when they are close */
+	if (borg_kills_summoner == -1) return (FALSE);
+
+	/* Do not dig when weak. It takes too long */
+	if (my_stat_ind[A_STR] < 17) return (FALSE);
+
+	/* Do not dig when confused */
+	if (bp_ptr->status.confused) return (FALSE);
+
+	/* Not when darkened */
+	if (!bp_ptr->cur_lite) return (FALSE);
+
+	/* get the summoning monster */
+	kill = &borg_kills[borg_kills_summoner];
+
+	/* Consider each adjacent spot to monster */
+	for (o_x = -1; o_x <= 1; o_x++)
+	{
+		for (o_y = -1; o_y <= 1; o_y++)
+		{
+			map_block *mb_ptr;
+
+			/* Check grids near monster */
+			m_x = kill->x + o_x;
+			m_y = kill->y + o_y;
+
+			/* avoid screen edges */
+			if (!map_in_bounds(m_x + 2, m_y + 2)) continue;
+			if (!map_in_bounds(m_x - 2, m_y - 2)) continue;
+
+			/* Bounds checking */
+			if (!map_in_bounds(m_x, m_y)) continue;
+
+			/* get the grid */
+			mb_ptr = map_loc(m_x, m_y);
+
+			/* Can't tunnel a non wall or permawall */
+			if (mb_ptr->feat >= FEAT_FLOOR &&
+				mb_ptr->feat < FEAT_MAGMA) continue;
+			if (mb_ptr->feat >= FEAT_PERM_EXTRA &&
+				mb_ptr->feat <= FEAT_PERM_SOLID)
+			{
+				perma_grids++;
+				continue;
+			}
+
+			/* Do not dig unless we appear strong enough to succeed or we have a digger */
+			if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
+				borg_spell_legal(REALM_NATURE, 1, 0) ||
+				borg_spell_legal(REALM_CHAOS, 2, 3) ||
+				borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
+				borg_racial_check(RACE_HALF_GIANT, TRUE) ||
+				(bp_ptr->skill_dig > (bp_ptr->depth > 80 ? 30 : 40)))
+			{
+				/* digging ought to work */
+			}
+			else
+			{
+				/* do not try digging */
+				continue;
+			}
+
+			/* reset floors counter */
+			floors = 0;
+
+			/* That grid must not have too many floors adjacent */
+			for (f_x = -1; f_x <= 1; f_x++)
+			{
+				for (f_y = -1; f_y <= 1; f_y++)
+				{
+					/* Bounds checking */
+					if (!map_in_bounds(m_x + f_x, m_y + f_y)) continue;
+
+					/* grid the grid */
+					mb_ptr = map_loc(m_x + f_x, m_y + f_y);
+
+					/* check if this neighbor is a floor */
+					if (borg_cave_floor_grid(mb_ptr)) floors++;
+				}
+			}
+
+			/* Do not dig if too many floors near. */
+			if (floors >= 5) continue;
+
+			/* Track the good location */
+			b_y = m_y;
+			b_x = m_x;
+		}
+	}
+	/* NOTE: Perma_grids count the number of grids which contain permawalls.
+	 * The borg may try to flow to an unknown grid but may get stuck on a perma
+	 * wall.  This will keep him from flowing to a summoner if the summoner is
+	 * near a perma grid.  The real fix out to be in the flow_spread so that
+	 * he will not flow through perma_grids.  I will work on that next.
+	 */
+	if (b_y != 0 && b_x != 0 && perma_grids == 0)
+	{
+		/* Clear the flow codes */
+		borg_flow_clear();
+
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(m_x, m_y);
+
+		/* Spread the flow */
+		borg_flow_spread(15, TRUE, FALSE, TRUE);
+
+		/* Attempt to Commit the flow */
+		if (!borg_flow_commit("anti-summon corridor", GOAL_KILL))
+			return (FALSE);
+
+		/* Take one step */
+		if (!borg_flow_old(GOAL_KILL)) return (FALSE);
+
+		return (TRUE);
+	}
+#endif /* 0 */
+	return FALSE;
+}
+
+
+
+/*
+ * Prepare to "flow" towards monsters to "kill"
+ * But in a few phases, viewable, near and far.
+ * Note that monsters under the player are always deleted
+ */
+bool borg_flow_kill(bool viewable, int nearness)
+{
+	int i, x, y, p, j, b_j = -1;
+	int b_stair = -1;
+
+	bool borg_in_hall = FALSE;
+	int hall_y, hall_x, hall_walls = 0;
+	bool skip_monster = FALSE;
+
+	map_block *mb_ptr;
+
+	/* Efficiency -- Nothing to kill */
+	if (!borg_kills_cnt) return (FALSE);
+
+	/* Don't chase down town monsters when you are just starting out */
+	if (bp_ptr->depth == 0 && bp_ptr->lev < 7) return (FALSE);
+
+	/* YOU ARE NOT A WARRIOR!! DON'T ACT LIKE ONE!! */
+	if (borg_class == CLASS_MAGE &&
+		bp_ptr->lev < (bp_ptr->depth ? 35 : 5)) return (FALSE);
+
+
+	/* Nothing found */
+	borg_temp_n = 0;
+
+	/* check to see if in a hall, used later */
+	for (hall_x = -1; hall_x <= 1; hall_x++)
+	{
+		for (hall_y = -1; hall_y <= 1; hall_y++)
+		{
+			/* Acquire location */
+			x = hall_x + c_x;
+			y = hall_y + c_y;
+
+			/* Bounds checking */
+			if (!map_in_bounds(x, y)) continue;
+
+			mb_ptr = map_loc(x, y);
+
+			/* track walls */
+			if (				/* (mb_ptr->feat == FEAT_GLYPH) ||
+								   (mb_ptr->feat == FEAT_MINOR_GLYPH) || */
+				   ((mb_ptr->feat >= FEAT_MAGMA) &&
+					(mb_ptr->feat <= FEAT_PERM_SOLID)))
+			{
+				hall_walls++;
+			}
+
+			/* addem up */
+			if (hall_walls >= 5) borg_in_hall = TRUE;
+		}
+	}
+
+
+	/* Check distance away from stairs, used later */
+
+	/* Check for an existing "up stairs" */
+	for (i = 0; i < track_less_num; i++)
+	{
+		x = track_less_x[i];
+		y = track_less_y[i];
+
+		/* How far is the nearest up stairs */
+		j = distance(c_y, c_x, y, x);
+
+		/* skip the closer ones */
+		if (b_j >= j) continue;
+
+		/* track it */
+		b_j = j;
+		b_stair = i;
+	}
+
+	/* Scan the monster list */
+	for (i = 1; i < borg_kills_nxt; i++)
+	{
+		borg_kill *kill = &borg_kills[i];
+
+		/* Skip dead monsters */
+		if (!kill->r_idx) continue;
+
+		/* Ignore multiplying monsters */
+		if (goal_ignoring && !bp_ptr->status.afraid &&
+			(FLAG(&r_info[kill->r_idx], RF_MULTIPLY))) continue;
+
+		/* Avoid fighting if a scary guy is on the level */
+		if (scaryguy_on_level) continue;
+
+		/* Don't chase our friends or pets */
+		if (kill->m_flags & (MONST_FRIEND | MONST_PET)) continue;
+
+		/* Avoid multiplying monsters when low level */
+		if (bp_ptr->lev < 10 &&
+			(FLAG(&r_info[kill->r_idx], RF_MULTIPLY))) continue;
+
+		/* Hack -- ignore Maggot until later.  Player will chase Maggot
+		 * down all accross the screen waking up all the monsters.  Then
+		 * he is stuck in a comprimised situation.
+		 */
+		if ((FLAG(&r_info[kill->r_idx], RF_UNIQUE)) &&
+			bp_ptr->depth == 0 && bp_ptr->lev < 5) continue;
+
+		/* Access the location */
+		x = kill->x;
+		y = kill->y;
+
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) continue;
+
+		/* Get the grid */
+		mb_ptr = map_loc(x, y);
+
+		/* Require line of sight if requested */
+		if (viewable && !(mb_ptr->info & BORG_MAP_VIEW)) continue;
+
+		/* Calculate danger */
+		borg_full_damage = FALSE;
+		p = borg_danger_aux(x, y, 1, i, TRUE);
+		borg_full_damage = FALSE;
+
+
+		/* Hack -- Skip "deadly" monsters unless uniques */
+		if (bp_ptr->lev > 15 && (!FLAG(&r_info[kill->r_idx], RF_UNIQUE)) &&
+			p > avoidance / 2) continue;
+		if (bp_ptr->lev <= 15 && p > avoidance / 3) continue;
+
+		/* Skip ones that make me wander too far */
+		if ((b_stair != -1) && (bp_ptr->lev < 10))
+		{
+			/* Check the distance of this monster to the stair */
+			j = distance(track_less_y[b_stair], track_less_x[b_stair], y, x);
+			/* skip far away monsters while I am close to stair */
+			if (b_j <= bp_ptr->lev * 5 + 9 &&
+				j >= bp_ptr->lev * 5 + 9) continue;
+		}
+
+		/* Hack -- Avoid getting surrounded */
+		if (borg_in_hall && (FLAG(&r_info[kill->r_idx], RF_FRIENDS)))
+		{
+			/* check to see if monster is in a hall, */
+			for (hall_x = -1; hall_x <= 1; hall_x++)
+			{
+				for (hall_y = -1; hall_y <= 1; hall_y++)
+				{
+					/* Bounds checking */
+					if (!map_in_bounds(hall_x + x, hall_y + y)) continue;
+
+					mb_ptr = map_loc(hall_x + x, hall_y + y);
+
+					/* track walls */
+					if (		/* (mb_ptr->feat == FEAT_GLYPH) ||
+								   (mb_ptr->feat == FEAT_MINOR_GLYPH) || */
+						   ((mb_ptr->feat >= FEAT_MAGMA) &&
+							(mb_ptr->feat <= FEAT_PERM_SOLID)))
+					{
+						hall_walls++;
+					}
+
+					/* we want the monster to be in a hall also
+					 *
+					 *  ########################
+					 *  ############      S  ###
+					 *  #         @'     SSS ###
+					 *  # ##########       SS###
+					 *  # #        #       Ss###
+					 *  # #        ###### ######
+					 *  # #             # #
+					 * Currently, we would like the borg to avoid
+					 * flowing to a situation like the one above.
+					 * We would like him to stay in the hall and
+					 * attack from a distance.  One problem is the
+					 * lower case 's' in the corner, He will show
+					 * up as being in a corner, and the borg may
+					 * flow to it.  Let's hope that is a rare case.
+					 *
+					 * The borg might flow to the 'dark' south exit
+					 * of the room.  This would be dangerous for
+					 * him as well.
+					 */
+					/* add 'em up */
+					if (hall_walls < 4)
+					{
+						/* This monster is not in a hallway.
+						 * It may not be safe to fight.
+						 */
+						skip_monster = TRUE;
+					}
+				}
+			}
+		}
+		/* skip certain ones */
+		if (skip_monster) continue;
+
+		/* Careful -- Remember it */
+		borg_temp_x[borg_temp_n] = x;
+		borg_temp_y[borg_temp_n] = y;
+		borg_temp_n++;
+	}
+
+	/* Nothing to kill */
+	if (!borg_temp_n) return (FALSE);
+
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Look for something to kill */
+	for (i = 0; i < borg_temp_n; i++)
+	{
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(borg_temp_x[i], borg_temp_y[i]);
+	}
+
+	/* Spread the flow */
+	/* if we are not flowing toward monsters that we can see, make sure they */
+	/* are at least easily reachable.  The second flag is whether or not */
+	/* to avoid unknown squares.  This was for performance when we have ESP. */
+	borg_flow_spread(nearness, TRUE, (bool) !viewable, FALSE);
+
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("kill", GOAL_KILL)) return (FALSE);
+
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_KILL)) return (FALSE);
+
+
+	/* Success */
+	return (TRUE);
+}
+
+
+
+/*
+ * Prepare to "flow" towards objects to "take"
+ *
+ * Note that objects under the player are always deleted
+ */
+bool borg_flow_take(bool viewable, int nearness)
+{
+	int i, x, y;
+	int b_stair = -1, j, b_j = -1;
+
+	map_block *mb_ptr;
+
+	/* Efficiency -- Nothing to take */
+	if (!borg_takes_cnt) return (FALSE);
+
+	/* Require one empty slot */
+	if (inven_num >= INVEN_PACK) return (FALSE);
+
+	/* Nothing yet */
+	borg_temp_n = 0;
+
+	/* Set the searching flag for low level borgs */
+	borg_needs_searching = TRUE;
+
+	/* Check distance away from stairs, used later */
+	/* Check for an existing "up stairs" */
+	for (i = 0; i < track_less_num; i++)
+	{
+		x = track_less_x[i];
+		y = track_less_y[i];
+
+		/* How far is the nearest up stairs */
+		j = distance(c_y, c_x, y, x);
+
+		/* skip the closer ones */
+		if (b_j >= j) continue;
+
+		/* track it */
+		b_j = j;
+		b_stair = i;
+	}
+
+	/* Scan the object list */
+	for (i = 1; i < borg_takes_nxt; i++)
+	{
+		borg_take *take = &borg_takes[i];
+
+		int a;
+		bool item_bad;
+
+		/* Skip dead objects */
+		if (!take->k_idx) continue;
+
+		/* Access the location */
+		x = take->x;
+		y = take->y;
+
+		/* Skip ones that make me wander too far */
+		if ((b_stair != -1) && (bp_ptr->lev < 10))
+		{
+			/* Check the distance of this 'take' to the stair */
+			j = distance(track_less_y[b_stair], track_less_x[b_stair], y, x);
+
+			/* skip far away takes while I am close to stair */
+			if (b_j <= bp_ptr->lev * 5 + 9 &&
+				j >= bp_ptr->lev * 5 + 9) continue;
+		}
+
+		/* look to see if this is on the bad items list */
+		item_bad = FALSE;
+		for (a = 0; a < 50; a++)
+		{
+			if (x == bad_obj_x[a] && y == bad_obj_y[a])
+				item_bad = TRUE;
+		}
+
+		/* it is a bad item, do not track it */
+		if (item_bad) continue;
+
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) continue;
+
+		/* Get the grid */
+		mb_ptr = map_loc(x, y);
+
+		/* Require line of sight if requested */
+		if (viewable && !(mb_ptr->info & BORG_MAP_VIEW)) continue;
+
+		/* Careful -- Remember it */
+		borg_temp_x[borg_temp_n] = x;
+		borg_temp_y[borg_temp_n] = y;
+		borg_temp_n++;
+	}
+
+	/* Nothing to take */
+	if (!borg_temp_n) return (FALSE);
+
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Look for something to take */
+	for (i = 0; i < borg_temp_n; i++)
+	{
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(borg_temp_x[i], borg_temp_y[i]);
+	}
+
+	/* Spread the flow */
+	/* if we are not flowing toward items that we can see, make sure they */
+	/* are at least easily reachable.  The second flag is weather or not  */
+	/* to avoid unkown squares.  This was for performance. */
+	borg_flow_spread(nearness, TRUE, (bool) !viewable, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("item", GOAL_TAKE)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_TAKE)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+
+/*
+ * Determine if a grid is "interesting" (and should be explored)
+ *
+ * A grid is "interesting" if it is a closed door, rubble, hidden treasure,
+ * or a visible trap, or an "unknown" grid.
+ * or a non-perma-wall adjacent to a perma-wall. (GCV)
+ *
+ * b_stair is the index to the closest upstairs.
+ */
+static bool borg_flow_dark_interesting(int x, int y, int b_stair)
+{
+	int oy;
+	int ox, i;
+
+	map_block *mb_ptr;
+
+	/* Hack ignore parameter */
+	(void)b_stair;
+
+	/* Have the borg so some Searching */
+	borg_needs_searching = TRUE;
+
+#if 0
+	/* Skip ones that make me wander too far */
+	if ((b_stair != -1) && (bp_ptr->lev < 10))
+	{
+		/* Check the distance of this grid to the stair */
+		j = distance(track_less_y[b_stair], track_less_x[b_stair], y, x);
+		/* Distance of me to the stairs */
+		b_j = distance(c_y, c_x, track_less_y[b_stair], track_less_x[b_stair]);
+
+		/* skip far away grids while I am close to stair */
+		if (b_j <= bp_ptr->lev * 5 + 9 &&
+			j >= bp_ptr->lev * 5 + 9) return (FALSE);
+	}
+#endif /* 0 */
+
+	/* Bounds checking */
+	if (!map_in_bounds(x, y)) return (TRUE);
+
+	/* Get the grid */
+	mb_ptr = map_loc(x, y);
+
+	/* Explore unknown grids */
+	if (!mb_ptr->feat) return (TRUE);
+
+	/* Efficiency -- Ignore "boring" grids */
+	if (mb_ptr->feat < FEAT_CLOSED) return (FALSE);
+
+	/* Explore "known treasure" */
+	if ((mb_ptr->feat == FEAT_MAGMA_K) || (mb_ptr->feat == FEAT_QUARTZ_K))
+	{
+		/* Do not disarm when confused */
+		if (bp_ptr->status.confused) return (FALSE);
+
+		/* Do not bother if super rich */
+		if (borg_gold >= 1000000) return (FALSE);
+
+		/* Not when darkened */
+		if (!bp_ptr->cur_lite) return (FALSE);
+
+		/* Allow "stone to mud" ability */
+		if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
+			borg_spell_legal(REALM_NATURE, 1, 0) ||
+			borg_spell_legal(REALM_CHAOS, 2, 3) ||
+			borg_mutation(MUT1_EAT_ROCK) ||
+			borg_racial(RACE_HALF_GIANT)) return (TRUE);
+
+		/*
+		 * Do not dig unless we appear strong
+		 * enough to succeed or we have a digger
+		 */
+		if (bp_ptr->skill_dig > 40)
+		{
+			/* digging ought to work */
+		}
+		else
+		{
+			return (FALSE);
+		}
+
+		/* Okay */
+		return (TRUE);
+	}
+
+#if 0
+	/* "Vaults" Explore non perma-walls adjacent to a perma wall */
+	if (mb_ptr->feat == FEAT_WALL_EXTRA || mb_ptr->feat == FEAT_MAGMA ||
+		mb_ptr->feat == FEAT_QUARTZ)
+	{
+		/* Do not attempt when confused */
+		if (bp_ptr->status.confused) return (FALSE);
+
+		/* hack and cheat.  No vaults  on this level */
+		if (!vault_on_level) return (FALSE);
+
+		/* AJG Do not attempt on the edge */
+		if (map_in_bounds(x, y))
+		{
+			/* scan the adjacent grids */
+			for (ox = -1; ox <= 1; ox++)
+			{
+				for (oy = -1; oy <= 1; oy++)
+				{
+					/* Bounds checking */
+					if (!map_in_bounds(ox + x, oy + y)) continue;
+
+					/* Acquire location */
+					mb_ptr = map_loc(ox + x, oy + y);
+
+					/* skip non perma grids wall */
+					if (mb_ptr->feat != FEAT_PERM_INNER) continue;
+
+					/* Allow "stone to mud" ability */
+					if (borg_spell_legal(REALM_ARCANE, 2, 4) ||
+						borg_spell_legal(REALM_NATURE, 1, 0) ||
+						borg_spell_legal(REALM_CHAOS, 0, 6) ||
+						borg_mutation_check(MUT1_EAT_ROCK, TRUE) ||
+						borg_racial_check(RACE_HALF_GIANT, TRUE)) return (TRUE);
+
+					/*
+					 * Do not dig unless we appear strong
+					 * enough to succeed or we have a digger
+					 */
+					if (bp_ptr->skill_dig > 40)
+					{
+						/* digging ought to work, proceed */
+					}
+					else
+					{
+						continue;
+					}
+					if (bp_ptr->skill_dig < 40) return (FALSE);
+
+					/* Glove up and dig in */
+					return (TRUE);
+				}
+			}
+		}
+
+		/* not adjacent to a GCV,  Restore Grid */
+		mb_ptr = map_loc(x, y);
+	}
+#endif /* 0 */
+
+	/* Explore "rubble" */
+	if (mb_ptr->feat == FEAT_RUBBLE)
+	{
+		return (TRUE);
+	}
+
+	/* Explore "Trees" somewhat */
+	if (mb_ptr->feat == FEAT_TREES)
+	{
+		/* Scan near trees for unknown grids */
+
+		/* AJG Do not attempt on the edge */
+		if (map_in_bounds(x, y))
+		{
+			/* scan the adjacent grids */
+			for (ox = -1; ox <= 1; ox++)
+			{
+				for (oy = -1; oy <= 1; oy++)
+				{
+					/* Bounds checking */
+					if (!map_in_bounds(ox + x, oy + y)) continue;
+
+					/* Acquire location */
+					mb_ptr = map_loc(ox + x, oy + y);
+
+					/* look for Unknown grid */
+					if (!mb_ptr->feat) return (TRUE);
+				}
+			}
+		}
+
+		/* this forest is already explored */
+		return (FALSE);
+	}
+
+
+	/* Explore "closed doors" */
+	if (mb_ptr->feat == FEAT_CLOSED)
+	{
+		/* some closed doors leave alone */
+		if (breeder_level)
+		{
+			/* Did I close this one */
+			for (i = 0; i < track_door_num; i++)
+			{
+				/* mark as icky if I closed this one */
+				if ((track_door_x[i] == x) && (track_door_y[i] == y))
+				{
+					/* not interesting */
+					return (FALSE);
+				}
+			}
+
+		}
+		/* this door should be ok to open */
+		return (TRUE);
+	}
+
+	/* Explore "visible traps" */
+	if (mb_ptr->trap)
+	{
+		/* Do not disarm when blind */
+		if (bp_ptr->status.blind) return (FALSE);
+
+		/* Do not disarm when confused */
+		if (bp_ptr->status.confused) return (FALSE);
+
+		/* Do not disarm when hallucinating */
+		if (bp_ptr->status.image) return (FALSE);
+
+		/* Do not flow without lite */
+		if (!bp_ptr->cur_lite) return (FALSE);
+
+		/* Do not disarm trap doors on level 99 */
+		if (bp_ptr->depth == 99 &&
+			mb_ptr->trap == FT_TRAP_DOOR) return (FALSE);
+
+		/* Do not disarm when you could end up dead */
+		if (bp_ptr->chp < 60) return (FALSE);
+
+		/* Do not disarm when clumsy */
+		if ((bp_ptr->skill_dis < 30) && (bp_ptr->lev < 20)) return (FALSE);
+		if ((bp_ptr->skill_dis < 45) && (bp_ptr->lev < 10)) return (FALSE);
+
+		/* NOTE: the flow code allows a borg to flow through a trap and so he may
+		 * still try to disarm one on his way to the other interesting grid.  If mods
+		 * are made to the above criteria for disarming traps, then mods must also be
+		 * made to borg_flow_spread()
+		 */
+
+		/* Okay */
+		return (TRUE);
+	}
+
+	/* Ignore other grids */
+	return (FALSE);
+}
+
+
+/*
+ * Determine if a grid is "reachable" (and can be explored)
+ */
+static bool borg_flow_dark_reachable(int x, int y)
+{
+	int j;
+
+	map_block *mb_ptr;
+
+	/* Scan neighbors */
+	for (j = 0; j < 8; j++)
+	{
+		int y2 = y + ddy_ddd[j];
+		int x2 = x + ddx_ddd[j];
+
+		/* Bounds checking */
+		if (!map_in_bounds(x2, y2)) continue;
+
+		/* Get the grid */
+		mb_ptr = map_loc(x2, y2);
+
+
+		/* Skip unknown grids (important) */
+		if (!mb_ptr->feat) continue;
+
+		/* Accept known floor grids */
+		if (borg_cave_floor_grid(mb_ptr)) return (TRUE);
+
+		/* Accept Trees too */
+		if (mb_ptr->feat == FEAT_TREES) return (TRUE);
+		
+		if (borg_on_safe_feat(mb_ptr->feat)) return (TRUE);
+
+		/* I can push pass friendly monsters */
+		if (mb_ptr->kill &&
+			(borg_kills[mb_ptr->kill].m_flags & (MONST_FRIEND | MONST_PET)))
+		{
+			return (TRUE);
+		}
+	}
+
+	/* Failure */
+	return (FALSE);
+}
+
+
+/*
+ * Place a "direct path" into the flow array, checking danger
+ *
+ * Modify the "cost" array in such a way that from any point on
+ * one "direct" path from the player to the given grid, as long
+ * as the rest of the path is "safe" and "clear", the Borg will
+ * walk along the path to the given grid.
+ *
+ * This is used to move around town without looking like a drunk.
+ */
+void borg_flow_direct(int x, int y)
+{
+	int n = 0;
+
+	int x1, y1, x2, y2;
+
+	int ay, ax;
+
+	int shift;
+
+	map_block *mb_ptr;
+
+	/* Bounds checking */
+	if (!map_in_bounds(x, y)) return;
+
+	mb_ptr = map_loc(x, y);
+
+	/* Avoid icky grids */
+	if (mb_ptr->info & BORG_MAP_ICKY) return;
+
+	/* Unknown */
+	if (!(mb_ptr->info & BORG_MAP_KNOW))
+	{
+		/* Mark as known */
+		mb_ptr->info |= BORG_MAP_KNOW;
+
+		/* Mark dangerous grids as icky */
+		if (borg_danger(x, y, 1, TRUE) > avoidance / 3)
+		{
+			/* Icky */
+			mb_ptr->info |= BORG_MAP_ICKY;
+
+
+			/* Avoid */
+			return;
+		}
+	}
+
+
+	/* Save the flow cost (zero) */
+	mb_ptr->cost = 1;
+
+
+	/* Save "origin" */
+	y1 = y;
+	x1 = x;
+
+	/* Save "destination" */
+	y2 = c_y;
+	x2 = c_x;
+
+	/* Calculate distance components */
+	ay = (y2 < y1) ? (y1 - y2) : (y2 - y1);
+	ax = (x2 < x1) ? (x1 - x2) : (x2 - x1);
+
+	/* Path */
+	while (1)
+	{
+		/* Check for arrival at player */
+		if ((x == x2) && (y == y2)) return;
+
+		/* Next */
+		n++;
+
+		/* Move mostly vertically */
+		if (ay > ax)
+		{
+			/* Extract a shift factor XXX */
+			shift = (n * ax + (ay - 1) / 2) / ay;
+
+			/* Sometimes move along the minor axis */
+			x = (x2 < x1) ? (x1 - shift) : (x1 + shift);
+
+			/* Always move along major axis */
+			y = (y2 < y1) ? (y1 - n) : (y1 + n);
+		}
+
+		/* Move mostly horizontally */
+		else
+		{
+			/* Extract a shift factor XXX */
+			shift = (n * ay + (ax - 1) / 2) / ax;
+
+			/* Sometimes move along the minor axis */
+			y = (y2 < y1) ? (y1 - shift) : (y1 + shift);
+
+			/* Always move along major axis */
+			x = (x2 < x1) ? (x1 - n) : (x1 + n);
+		}
+
+		/* Bounds checking */
+		if (!map_in_bounds(x, y)) return;
+
+		/* Access the grid */
+		mb_ptr = map_loc(x, y);
+
+		if (borg_cave_wall_grid(mb_ptr))
+		{
+			/* Only like 'diggable' things */
+			if (!((mb_ptr->feat >= FEAT_CLOSED) &&
+				  (mb_ptr->feat <= FEAT_QUARTZ))) return;
+		}
+
+		/* Ignore certain "non-wall" grids */
+		if (!borg_on_safe_feat(mb_ptr->feat)) return;
+
+		/* Abort at "icky" grids */
+		if (mb_ptr->info & BORG_MAP_ICKY) return;
+
+		/* Analyze every grid once */
+		if (!(mb_ptr->info & BORG_MAP_KNOW))
+		{
+			/* Mark as known */
+			mb_ptr->info |= BORG_MAP_KNOW;
+
+			/* Avoid dangerous grids (forever) */
+			if (borg_danger(x, y, 1, TRUE) > avoidance / 3)
+			{
+				/* Mark as icky */
+				mb_ptr->info |= BORG_MAP_ICKY;
+
+				/* Abort */
+				return;
+			}
+		}
+
+		/* Abort "pointless" paths if possible */
+		if (mb_ptr->cost <= n) break;
+
+		/* Save the new flow cost */
+		mb_ptr->cost = n;
+	}
+
+}
+
+/*
+ * Hack -- mark off the edges of a rectangle as "avoid" or "clear"
+ */
+static void borg_flow_border(int x1, int y1, int x2, int y2, bool stop)
+{
+	int x, y;
+
+	map_block *mb_ptr;
+
+	if (stop)
+	{
+		/* Scan west/east edges */
+		for (y = y1; y <= y2; y++)
+		{
+			/* Avoid/Clear west edge */
+			if (!map_in_bounds(x1, y)) continue;
+			mb_ptr = map_loc(x1, y);
+			mb_ptr->info |= (BORG_MAP_ICKY | BORG_MAP_KNOW);
+
+			/* Avoid/Clear east edge */
+			if (!map_in_bounds(x2, y)) continue;
+			mb_ptr = map_loc(x2, y);
+			mb_ptr->info |= (BORG_MAP_ICKY | BORG_MAP_KNOW);
+		}
+
+		/* Scan north/south edges */
+		for (x = x1; x <= x2; x++)
+		{
+			/* Avoid/Clear north edge */
+			if (!map_in_bounds(x, y1)) continue;
+			mb_ptr = map_loc(x, y1);
+			mb_ptr->info |= (BORG_MAP_ICKY | BORG_MAP_KNOW);
+
+			/* Avoid/Clear south edge */
+			if (!map_in_bounds(x, y2)) continue;
+			mb_ptr = map_loc(x, y2);
+			mb_ptr->info |= (BORG_MAP_ICKY | BORG_MAP_KNOW);
+		}
+	}
+	else
+	{
+		/* Scan west/east edges */
+		for (y = y1; y <= y2; y++)
+		{
+			/* Avoid/Clear west edge */
+			if (!map_in_bounds(x1, y)) continue;
+			mb_ptr = map_loc(x1, y);
+			mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
+
+			/* Avoid/Clear east edge */
+			if (!map_in_bounds(x2, y)) continue;
+			mb_ptr = map_loc(x2, y);
+			mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
+		}
+
+		/* Scan north/south edges */
+		for (x = x1; x <= x2; x++)
+		{
+			/* Avoid/Clear north edge */
+			if (!map_in_bounds(x, y1)) continue;
+			mb_ptr = map_loc(x, y1);
+			mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
+
+			/* Avoid/Clear south edge */
+			if (!map_in_bounds(x, y2)) continue;
+			mb_ptr = map_loc(x, y2);
+			mb_ptr->info &= ~(BORG_MAP_ICKY | BORG_MAP_KNOW);
+		}
+	}
+}
+
+
+/*
+ * Prepare to "flow" towards "interesting" grids (method 2)
+ *
+ * This function is only used when the player is at least 4 grids away
+ * from the outer dungeon wall, to prevent any nasty memory errors.
+ *
+ * This function examines the grids just outside the torch-lit grids
+ * for "unknown" grids, and flows directly towards them (one step).
+ */
+static bool borg_flow_dark_2(void)
+{
+	int i, r;
+
+	int x, y;
+
+	map_block *mb_ptr;
+
+	/* Hack -- not in town */
+	if (!bp_ptr->depth) return (FALSE);
+
+	/* Set the searching flag for low level borgs */
+	borg_needs_searching = TRUE;
+
+	/* Maximal radius */
+	r = bp_ptr->cur_lite + 1;
+
+
+	/* Reset */
+	borg_temp_n = 0;
+
+	/* Four directions */
+	for (i = 0; i < 4; i++)
+	{
+		y = c_y + ddy_ddd[i] * r;
+		x = c_x + ddx_ddd[i] * r;
+
+		/* Check legality */
+		if (!map_in_bounds(x, y)) continue;
+
+		/* Acquire grid */
+		mb_ptr = map_loc(x, y);
+
+		/* Require unknown */
+		if (mb_ptr->feat) continue;
+
+		/* Require viewable */
+		if (!(mb_ptr->info & BORG_MAP_VIEW)) continue;
+
+		/* if it makes me wander, skip it */
+
+		/* Careful -- Remember it */
+		borg_temp_x[borg_temp_n] = x;
+		borg_temp_y[borg_temp_n] = y;
+		borg_temp_n++;
+	}
+
+	/* Nothing */
+	if (!borg_temp_n) return (FALSE);
+
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Create paths to useful grids */
+	for (i = 0; i < borg_temp_n; i++)
+	{
+		y = borg_temp_y[i];
+		x = borg_temp_x[i];
+#if 0
+		/* Create a path */
+		borg_flow_direct(x, y);
+#endif /* 0 */
+		borg_flow_enqueue_grid(x, y);
+	}
+
+	/* Spread the flow */
+	borg_flow_spread(5, TRUE, FALSE, FALSE);
+
+
+	/* Attempt to Commit the flow */
+	/* Note was NULL */
+	if (!borg_flow_commit("dark-2", GOAL_DARK)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_DARK)) return (FALSE);
+
+	/* Forget goal */
+	goal = 0;
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*
+ * Prepare to "flow" towards "interesting" grids (method 3)
+ *
+ * Note the use of a limit on the "depth" of the flow, and of the flag
+ * which avoids "unknown" grids when calculating the flow, both of which
+ * help optimize this function to only handle "easily reachable" grids.
+ *
+ * The "borg_temp" array is much larger than any "local region".
+ */
+static bool borg_flow_dark_3(int b_stair)
+{
+	int i;
+
+	int x, y;
+
+	int x1, y1, x2, y2;
+
+
+	/* Hack -- not in town */
+	if (!bp_ptr->depth) return (FALSE);
+
+
+	/* Local region */
+	y1 = c_y - 4;
+	x1 = c_x - 4;
+	y2 = c_y + 4;
+	x2 = c_x + 4;
+
+	/* Reset */
+	borg_temp_n = 0;
+
+	/* Examine the region */
+	for (y = y1; y <= y2; y++)
+	{
+		/* Examine the region */
+		for (x = x1; x <= x2; x++)
+		{
+			if (!map_in_bounds(x, y)) continue;
+
+			/* Skip "boring" grids */
+			if (!borg_flow_dark_interesting(x, y, b_stair)) continue;
+
+			/* Skip "unreachable" grids */
+			if (!borg_flow_dark_reachable(x, y)) continue;
+
+			/* Careful -- Remember it */
+			borg_temp_x[borg_temp_n] = x;
+			borg_temp_y[borg_temp_n] = y;
+			borg_temp_n++;
+		}
+	}
+
+	/* Nothing interesting */
+	if (!borg_temp_n) return (FALSE);
+
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue useful grids */
+	for (i = 0; i < borg_temp_n; i++)
+	{
+		y = borg_temp_y[i];
+		x = borg_temp_x[i];
+
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(x, y);
+	}
+
+	/* Spread the flow (limit depth) */
+	borg_flow_spread(5, TRUE, TRUE, FALSE);
+
+
+	/* Attempt to Commit the flow */
+	/* Note was NULL */
+	if (!borg_flow_commit("dark-3", GOAL_DARK)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_DARK)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*
+ * Prepare to "flow" towards "interesting" grids (method 4)
+ *
+ * Note that we avoid grids close to the edge of the panel, since they
+ * induce panel scrolling, which is "expensive" in terms of CPU usage,
+ * and because this allows us to "expand" the border by several grids
+ * to lay down the "avoidance" border in known legal grids.
+ *
+ * We avoid paths that would take us into different panels by setting
+ * the "icky" flag for the "border" grids to prevent path construction,
+ * and then clearing them when done, to prevent confusion elsewhere.
+ *
+ * The "borg_temp" array is large enough to hold one panel full of grids.
+ */
+static bool borg_flow_dark_4(int b_stair)
+{
+	int i, x, y;
+
+	int x1, y1, x2, y2;
+
+
+	/* Hack -- not in town */
+	if (!bp_ptr->depth) return (FALSE);
+
+
+	/* Local region */
+	y1 = c_y - 11;
+	x1 = c_x - 11;
+	y2 = c_y + 11;
+	x2 = c_x + 11;
+
+	/* Nothing yet */
+	borg_temp_n = 0;
+
+	/* Examine the panel */
+	for (y = y1; y <= y2; y++)
+	{
+		/* Examine the panel */
+		for (x = x1; x <= x2; x++)
+		{
+			if (!map_in_bounds(x, y)) continue;
+
+			/* Skip "boring" grids */
+			if (!borg_flow_dark_interesting(x, y, b_stair)) continue;
+
+			/* Skip "unreachable" grids */
+			if (!borg_flow_dark_reachable(x, y)) continue;
+
+			/* Careful -- Remember it */
+			borg_temp_x[borg_temp_n] = x;
+			borg_temp_y[borg_temp_n] = y;
+			borg_temp_n++;
+		}
+	}
+
+	/* Nothing useful */
+	if (!borg_temp_n) return (FALSE);
+
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue useful grids */
+	for (i = 0; i < borg_temp_n; i++)
+	{
+		y = borg_temp_y[i];
+		x = borg_temp_x[i];
+
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(x, y);
+	}
+
+
+	/* Expand borders */
+	y1--;
+	x1--;
+	y2++;
+	x2++;
+
+	/* Avoid the edges */
+	borg_flow_border(x1, y1, x2, y2, TRUE);
+
+	/* Spread the flow (limit depth) */
+	borg_flow_spread(32, TRUE, TRUE, FALSE);
+
+	/* Clear the edges */
+	borg_flow_border(x1, y1, x2, y2, FALSE);
+
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("dark-4", GOAL_DARK)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_DARK)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*
+ * Prepare to "flow" towards "interesting" grids (method 5)
+ */
+static bool borg_flow_dark_5(int b_stair)
+{
+	int i, x, y;
+
+	map_block *mb_ptr;
+
+	/* Hack -- not in town */
+	if (!bp_ptr->depth) return (FALSE);
+
+	/* Nothing yet */
+	borg_temp_n = 0;
+
+	/* Examine every "legal" grid */
+	MAP_ITT_START (mb_ptr)
+	{
+		/* Paranoia -- Check for overflow */
+		if (borg_temp_n == AUTO_TEMP_MAX) continue;
+
+		/* Get location */
+		MAP_GET_LOC(x, y);
+
+		/* Skip "boring" grids */
+		if (!borg_flow_dark_interesting(x, y, b_stair)) continue;
+
+		/* Skip "unreachable" grids */
+		if (!borg_flow_dark_reachable(x, y)) continue;
+
+		/* Careful -- Remember it */
+		borg_temp_x[borg_temp_n] = x;
+		borg_temp_y[borg_temp_n] = y;
+		borg_temp_n++;
+	}
+	MAP_ITT_END;
+
+	/* Nothing useful */
+	if (!borg_temp_n) return (FALSE);
+
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Enqueue useful grids */
+	for (i = 0; i < borg_temp_n; i++)
+	{
+		y = borg_temp_y[i];
+		x = borg_temp_x[i];
+
+		/* Enqueue the grid */
+		borg_flow_enqueue_grid(x, y);
+	}
+
+	/* Spread the flow */
+	borg_flow_spread(250, TRUE, TRUE, FALSE);
+
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("dark-5", GOAL_DARK)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_DARK)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+/*
+ * Prepare to "flow" towards "interesting" grids
+ *
+ * The "exploration" routines are broken into "near" and "far"
+ * exploration, and each set is chosen via the flag below.
+ */
+bool borg_flow_dark(bool close)
+{
+	int i;
+	int x, y, j, b_j = -1;
+	int b_stair = -1;
+
+	/* Paranoia */
+	if (borg_flow_dark_interesting(c_x, c_y, -1))
+	{
+		return (FALSE);
+	}
+
+	/* Check distance away from stairs, used later */
+	/* Check for an existing "up stairs" */
+	for (i = 0; i < track_less_num; i++)
+	{
+		x = track_less_x[i];
+		y = track_less_y[i];
+
+		/* How far is the nearest up stairs */
+		j = distance(c_y, c_x, y, x);
+
+		/* skip the closer ones */
+		if (b_j >= j) continue;
+
+		/* track it */
+		b_j = j;
+		b_stair = i;
+	}
+
+	/* Near */
+	if (close)
+	{
+		/* Method 2 */
+		if (borg_flow_dark_2()) return (TRUE);
+
+		/* Method 3 */
+		if (borg_flow_dark_3(b_stair)) return (TRUE);
+	}
+
+	/* Far */
+	else
+	{
+		/* Method 4 */
+		if (borg_flow_dark_4(b_stair)) return (TRUE);
+
+		/* Method 5 */
+		if (borg_flow_dark_5(b_stair)) return (TRUE);
+	}
+
+	/* Fail */
+	return (FALSE);
+}
+
+
+/*
+ * Hack -- spastic searching
+ */
+
+static s16b spastic_x;
+static s16b spastic_y;
+
+
+
+/*
+ * Search carefully for secret doors and such
+ */
+bool borg_flow_spastic(bool bored)
+{
+	int cost;
+
+	int i, x, y, v;
+
+	int b_x = c_x;
+	int b_y = c_y;
+	int b_v = -1;
+	int j, b_j = 1;
+	int b_stair = -1;
+
+	map_block *mb_ptr;
+
+	/* Hack -- not in town */
+	if (!bp_ptr->depth) return (FALSE);
+
+
+	/* Not bored */
+	if (!bored)
+	{
+		/* Look around for danger */
+		int p = borg_danger(c_x, c_y, 1, TRUE);
+
+		/* Avoid searching when in danger */
+		if (p > avoidance / 4) return (FALSE);
+	}
+
+	/* Check distance away from stairs, used later */
+	/* Check for an existing "up stairs" */
+	for (i = 0; i < track_less_num; i++)
+	{
+		x = track_less_x[i];
+		y = track_less_y[i];
+
+		/* How far is the nearest up stairs */
+		j = distance(c_y, c_x, y, x);
+
+		/* skip the closer ones */
+		if (b_j >= j) continue;
+
+		/* track it */
+		b_j = j;
+		b_stair = i;
+	}
+
+	/* We have arrived */
+	if ((spastic_x == c_x) && (spastic_y == c_y))
+	{
+		/* Cancel */
+		spastic_x = 0;
+		spastic_y = 0;
+
+		/* Take note */
+		borg_note_fmt("# Spastic Searching at (%d,%d)...", c_x, c_y);
+
+		/* Count searching */
+		for (i = 0; i < 9; i++)
+		{
+			/* Extract the location */
+			int xx = c_x + ddx_ddd[i];
+			int yy = c_y + ddy_ddd[i];
+
+			/* Bounds checking */
+			if (!map_in_bounds(xx, yy)) continue;
+
+			/* Current grid */
+			mb_ptr = map_loc(xx, yy);
+
+			/* Tweak -- Remember the search */
+			if (mb_ptr->xtra < 100) mb_ptr->xtra += 5;
+		}
+
+		/* Tweak -- Search a little */
+		borg_keypress('0');
+		borg_keypress('5');
+		borg_keypress('s');
+
+		/* Success */
+		return (TRUE);
+	}
+
+
+	/* Reverse flow */
+	borg_flow_reverse();
+
+	/* Scan the entire map */
+	MAP_ITT_START (mb_ptr)
+	{
+		map_block *mb_array[8];
+
+		int wall = 0;
+		int supp = 0;
+		int diag = 0;
+
+		byte xtra_val;
+
+		/* Skip unknown grids */
+		if (!mb_ptr->feat) continue;
+
+		/* Skip walls/doors */
+		if (borg_cave_wall_grid(mb_ptr)) continue;
+
+		/* Acquire the cost */
+		cost = mb_ptr->cost;
+
+		/* Skip "unreachable" grids */
+		if (cost >= 250) continue;
+
+		xtra_val = mb_ptr->xtra;
+
+		/* Tweak -- Limit total searches */
+		if (xtra_val >= 50) continue;
+		if (xtra_val >= bp_ptr->lev * 5) continue;
+
+		/* Limit initial searches until bored */
+		if (!bored && (xtra_val > 5)) continue;
+
+		/* Acquire the location */
+		MAP_GET_LOC(x, y);
+
+		/* Avoid searching detected sectors */
+		if (mb_ptr->detect & BORG_DETECT_DOOR) continue;
+
+		/* Skip ones that make me wander too far */
+		if ((b_stair != -1) && (bp_ptr->lev < 10))
+		{
+			/* Check the distance of this grid to the stair */
+			j = distance(track_less_y[b_stair], track_less_x[b_stair], y, x);
+			/* Distance of me to the stairs */
+			b_j =
+				distance(c_y, c_x, track_less_y[b_stair],
+						 track_less_x[b_stair]);
+
+			/* skip far away grids while I am close to stair */
+			if (b_j <= bp_ptr->lev * 5 + 9 &&
+				j >= bp_ptr->lev * 5 + 9) continue;
+		}
+
+		/* Extract adjacent locations */
+		for (i = 0; i < 8; i++)
+		{
+			/* Extract the location */
+			int xx = x + ddx_ddd[i];
+			int yy = y + ddy_ddd[i];
+
+			/* Bounds checking */
+			if (map_in_bounds(xx, yy))
+			{
+				/* Get the grid contents */
+				mb_array[i] = map_loc(xx, yy);
+			}
+			else
+			{
+				mb_array[i] = NULL;
+			}
+		}
+
+
+		/* Count possible door locations */
+		for (i = 0; i < 4; i++)
+		{
+			mb_ptr = mb_array[i];
+			if (mb_ptr && mb_ptr->feat >= FEAT_WALL_EXTRA) wall++;
+		}
+
+		/* No possible secret doors */
+		if (wall < 1) continue;
+
+
+		/* Count supporting evidence for secret doors */
+		for (i = 0; i < 4; i++)
+		{
+			mb_ptr = mb_array[i];
+
+			/* Rubble */
+			if (!mb_ptr || mb_ptr->feat == FEAT_RUBBLE) continue;
+
+			/* Walls, Doors */
+			if (((mb_ptr->feat >= FEAT_SECRET) &&
+				 (mb_ptr->feat <= FEAT_PERM_SOLID)) ||
+				((mb_ptr->feat == FEAT_OPEN) ||
+				 (mb_ptr->feat == FEAT_BROKEN)) ||
+				(mb_ptr->feat == FEAT_CLOSED))
+			{
+				supp++;
+			}
+		}
+
+		/* Count supporting evidence for secret doors */
+		for (i = 4; i < 8; i++)
+		{
+			mb_ptr = mb_array[i];
+
+			/* Rubble */
+			if (!mb_ptr || mb_ptr->feat == FEAT_RUBBLE) continue;
+
+			/* Walls */
+			if (mb_ptr->feat >= FEAT_SECRET)
+			{
+				diag++;
+			}
+		}
+
+		/* No possible secret doors */
+		if (diag < 2) continue;
+
+		/* Tweak -- Reward walls, punish visitation and distance */
+		v = (supp * 500) + (diag * 100) - (xtra_val * 20) - (cost * 1);
+
+		/* The grid is not searchable */
+		if (v <= 0) continue;
+
+
+		/* Tweak -- Minimal interest until bored */
+		if (!bored && (v < 1500)) continue;
+
+
+		/* Track "best" grid */
+		if ((b_v >= 0) && (v < b_v)) continue;
+
+		/* Save the data */
+		b_v = v;
+		b_x = x;
+		b_y = y;
+
+	}
+	MAP_ITT_END;
+
+	/* Clear the flow codes */
+	borg_flow_clear();
+
+	/* Hack -- Nothing found */
+	if (b_v < 0) return (FALSE);
+
+	/* Memorize */
+	spastic_x = b_x;
+	spastic_y = b_y;
+
+
+	/* Enqueue the grid */
+	borg_flow_enqueue_grid(b_x, b_y);
+
+	/* Spread the flow */
+	borg_flow_spread(250, TRUE, FALSE, FALSE);
+
+	/* Attempt to Commit the flow */
+	if (!borg_flow_commit("spastic", GOAL_XTRA)) return (FALSE);
+
+	/* Take one step */
+	if (!borg_flow_old(GOAL_XTRA)) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
+
+
+
+
+/*
+ * Initialize this file
+ */
+void borg_init_6(void)
+{
+	/* Nothing */
+}
+
+
+
+#else
+
+#ifdef MACINTOSH
+static int HACK = 0;
+#endif
+
+#endif

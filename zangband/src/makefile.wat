@@ -26,7 +26,8 @@ OBJS = &
   bldg.obj obj_kind.obj wild1.obj wild2.obj wild3.obj avatar.obj &
   notes.obj main-ibm.obj main.obj &
   zborg1.obj zborg2.obj zborg3.obj zborg4.obj zborg5.obj &
-  zborg6.obj zborg7.obj zborg8.obj zborg9.obj
+  zborg6.obj zborg7.obj zborg8.obj zborg9.obj &
+  zbmagic1.obj zbmagic2.obj zbmagic3.obj
 
 all: angband.exe gredit.exe makepref.exe
 
