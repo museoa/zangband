@@ -3713,7 +3713,7 @@ extern int PlayerUID;
 #define FIELD_ACT_MONSTER_LEAVE	7	/* Monster leaves square */
 #define FIELD_ACT_OBJECT_DROP	8	/* Object lands on square */
 #define FIELD_ACT_OBJECT_ON		9	/* Object is on square */
-#define FIELD_ACT_TUNNEL		10  /* Something trys to tunnel into grid */
+#define FIELD_ACT_TUNNEL		10  /* Something tries to tunnel into grid */
 #define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
 #define FIELD_ACT_COMPACT		12	/* Compaction hook */
 #define FIELD_ACT_EXIT			13	/* Field is destroyed */
