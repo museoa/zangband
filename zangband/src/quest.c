@@ -255,6 +255,7 @@ void get_player_quests(void)
 	
 	int best_level, best_r_idx;
 	int num;
+	int q_idx;
 	
 	/* Reset number of quests */
 	q_max = 1;
@@ -380,12 +381,16 @@ void get_player_quests(void)
 	/* Add the winner quests */
 	
 	/* Hack XXX XXX Oberon, hard coded */
-	quest[insert_dungeon_monster_quest(QW_OBERON, 1, 98)].x_type
-		 = QX_KILL_WINNER;
+	q_idx = insert_dungeon_monster_quest(QW_OBERON, 1, 98);
+	quest[q_idx].x_type = QX_KILL_WINNER;
+	quest[q_idx].flags |= QUEST_FLAG_KNOWN;
+	quest[q_idx].status = QUEST_STATUS_TAKEN;
 	
 	/* Hack XXX XXX Serpent, hard coded */
-	quest[insert_dungeon_monster_quest(QW_SERPENT, 1, 100)].x_type
-		 = QX_KILL_WINNER;
+	q_idx = insert_dungeon_monster_quest(QW_SERPENT, 1, 100);
+	quest[q_idx].x_type = QX_KILL_WINNER;
+	quest[q_idx].flags |= QUEST_FLAG_KNOWN;
+	quest[q_idx].status = QUEST_STATUS_TAKEN;
 }
 
 
@@ -1045,11 +1050,10 @@ void do_cmd_knowledge_quests(void)
 
 	for (i = 0; i < q_max; i++)
 	{
-
 		q_ptr = &quest[i];
 		
 		/* Do we know about it? */
-		if (q_ptr->status == QUEST_STATUS_UNTAKEN) continue;
+		if (!(q_ptr->flags & QUEST_FLAG_KNOWN)) continue;
 		
 		/* See what type of quest it is */
 		switch (q_ptr->type)
@@ -1080,13 +1084,13 @@ void do_cmd_knowledge_quests(void)
 					{
 						plural_aux(name);
 
-						strnfmt(tmp_str, 256, "%s (Dungeon level: %d)\n  Kill %d %s, have killed %d.\n",
+						strnfmt(tmp_str, 256, "%s (Dungeon level: %d)\n\n  Kill %d %s, have killed %d.\n",
 							q_ptr->name, (int) q_ptr->data.dun.level,
 							(int) q_ptr->data.dun.max_num, name, (int) q_ptr->data.dun.cur_num);
 					}
 					else
 					{
-						strnfmt(tmp_str, 256, "%s (Dungeon level: %d)\n  Kill %s.\n",
+						strnfmt(tmp_str, 256, "%s (Dungeon level: %d)\n\n",
 							q_ptr->name, (int) q_ptr->data.dun.level, name);
 					}
 				}
@@ -1095,8 +1099,9 @@ void do_cmd_knowledge_quests(void)
 					/* Assume we've completed it for now */
 					strnfmt(tmp_str, 256, "%s (Completed on dungeon level %d). \n",
 						q_ptr->name, (int) q_ptr->data.dun.level, name);
-				
 				}
+				
+				break;
 			}
 		
 			case QUEST_TYPE_WILD:
@@ -1111,8 +1116,7 @@ void do_cmd_knowledge_quests(void)
 				/* Paranoia */
 				return;
 			}
-		
-		}	
+		}
 		
 		/* Copy to the file */
 		fprintf(fff, "%s", tmp_str);
