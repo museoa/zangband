@@ -954,21 +954,21 @@ proc InitOther {} {
 	angband_load note "Initializing modules..."
 	InitModules
 
-	angband_load prompt "Initializing: Main Window"
+	angband_load note "Initializing: Main Window"
 	NSModule::LoadIfNeeded NSMainWindow
 	angband_load progress 0.80
 	
-	angband_load prompt "Initializing: Status"
+	angband_load note "Initializing: Status"
 	NSModule::LoadIfNeeded NSStatus
 	
-	angband_load prompt "Initializing: Aux Windows"
+	angband_load note "Initializing: Aux Windows"
 	NSModule::LoadIfNeeded NSMiscWindow
 	angband_load progress 0.85
 	
-	angband_load prompt "Initializing: Recall"
+	angband_load note "Initializing: Recall"
 	NSModule::LoadIfNeeded NSRecall
 	
-	angband_load prompt "Initializing: Info"
+	angband_load note "Initializing: Info"
 	NSObject::New NSInfoWindow
 
 	# Synch windows with options

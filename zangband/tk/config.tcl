@@ -327,7 +327,7 @@ proc NSConfig::CheckIconData {imageFile iconFile imageSize makeMask} {
 	}
 	
 	# Tell the user why she's waiting
-	angband_load prompt "Writing icon file \"[file tail $iconFile]...\""
+	angband_load note "Writing icon file \"[file tail $iconFile]...\""
 
 	# Build a command
 	set iconSize [icon size]

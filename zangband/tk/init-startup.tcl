@@ -156,52 +156,6 @@ proc AboutApplication {} {
 	return
 }
 
-# NewGame --
-#
-#	Create a new character.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NewGame {} {
-
-	after idle angband game new
-
-	return
-}
-
-# OpenGame --
-#
-#	Choose a savefile and play a game.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc OpenGame {} {
-
-	# Hack -- Update the button
-	update
-
-	# Hack -- If the user types 'o' too fast, this command may be
-	# called twice before the Choose Game Window appears. So disable
-	# the "Open" button
-	.opengame configure -state disabled
-	
-#	uplevel #0 Source choose-game.tcl
-NSModule::RebootModule NSChooseGame
-#	NSChooseGame::InitModule
-
-	# Hack -- Enable the "Open" button again
-	.opengame configure -state normal
-	
-	return
-}
 
 # QuitNoSave --
 #
@@ -236,23 +190,6 @@ proc QuitNoSave {} {
 	return
 }
 
-
-# angband_save --
-#
-#	Called by Angband whenever the game is saved.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc angband_save {savefile} {
-
-	Value savefile [file split [LongName $savefile]]
-
-	return
-}
 
 # NSInitStartup::InitStartupScreen --
 #
@@ -326,74 +263,6 @@ proc NSInitStartup::InitStartupScreen {} {
 	return
 }
 
-# NSInitStartup::FinalizeStartupWindow --
-#
-#	Fiddle with the startup window after Angband is initialized.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSInitStartup::FinalizeStartupWindow {} {
-
-	# Remove the prompt, and add some buttons
-	destroy .filler
-	destroy .prompt
-
-	# Buttons
-	button .newgame \
-		-text [mc New] -command NewGame -width 11 -underline 0
-	button .opengame \
-		-text [mc Open] -command OpenGame -width 11 -underline 0
-	button .quit \
-		-text [mc Quit] -command exit -width 11 -underline 0
-
-	switch -- [Platform] {
-		windows {
-			set padTop 20
-			set fillHeight 10
-		}
-		unix {
-			set padTop 8
-			set fillHeight 2
-		}
-	}
-
-	# Geometry
-	pack [frame .filler1 -height $padTop -borderwidth 0] \
-		-side top
-	pack .newgame \
-		-side top -expand no -pady 0 -padx 20
-	pack [frame .filler2 -height $fillHeight -borderwidth 0] \
-		-side top
-	pack .opengame \
-		-side top -expand no -pady 0 -padx 20
-	pack [frame .filler3 -height $fillHeight -borderwidth 0] \
-		-side top
-	pack .quit \
-		-side top -expand no -pady 0 -padx 20
-
-	NSUtils::SetDefaultButton . .opengame
-
-	# KeyPress bindings
-	bind . <KeyPress-n> \
-		"tkButtonInvoke .newgame"
-	bind . <KeyPress-o> \
-		"tkButtonInvoke .opengame"
-	bind . <KeyPress-q> \
-		"tkButtonInvoke .quit"
-	bind . <KeyPress-Return> \
-		"NSUtils::InvokeDefaultButton ."
-	bind . <KeyPress-Escape> \
-		"tkButtonInvoke .quit"
-
-	# Focus on Open Button
-	focus .opengame
-
-	return
-}
 
 # angband_startup --
 #
@@ -526,8 +395,9 @@ proc angband_initialized {} {
 
 	NSModule::AddModule NSChooseGame [PathTk choose-game.tcl]
 	NSModule::IndexLoad [PathTk library moduleIndex.tcl]
-
-	NSInitStartup::FinalizeStartupWindow
+	
+	destroy .filler
+	destroy .prompt
 
 	Source config.tcl
 	NSConfig::InitModule
@@ -753,9 +623,6 @@ proc angband_load {action {message ""}} {
 	global AngbandPriv
 	
 	switch -- $action {
-		init {
-			InitLoadWindow
-		}
 		kill {
 			set win $AngbandPriv(load,win)
 			destroy $win
@@ -767,11 +634,6 @@ proc angband_load {action {message ""}} {
 		}
 		progress {
 			NSProgress2::SetDoneRatio $AngbandPriv(load,prog) $message
-		}
-		prompt {
-			set canvas $AngbandPriv(load,win).canvas
-			$canvas itemconfigure message -text $message
-			LoadNote $message
 		}
 	}
 
