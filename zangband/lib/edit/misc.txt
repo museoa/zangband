@@ -20,7 +20,7 @@ M:R:877
 M:K:581
 
 # Maximum number of vaults in v_info.txt
-M:V:116
+M:V:117
 
 # Maximum number of terrain features in f_info.txt
 M:F:160
@@ -32,8 +32,10 @@ M:A:128
 M:E:128
 
 # Maximum size for "o_list[]"
+# Increase this if you get lots of 'Generation restarted (too many objects)' messages.
 M:O:512
 
 # Maximum size for "m_list[]"
+# Increase this if you get lots of 'Generation restarted (too many monsters)' messages.
 M:M:1024
 
