@@ -34,6 +34,10 @@ int tnb_tile_y;
 
 char tnb_tile_file[1024];
 
+/* Font information */
+char tnb_font_file[1024];
+int tnb_font_size;
+
 void tnb_get_term(int x, int y, byte *a, char *c)
 {
 	/* Get the term information */
@@ -315,6 +319,18 @@ int init_tnb(int argc, cptr *argv)
 
 	/* Use graphics */
 	pick_graphics(GRAPHICS_ADAM_BOLT, &tnb_tile_x, &tnb_tile_y, tnb_tile_file);
+
+	/* Try the "16x16.bmp" file */
+	path_build(tnb_font_file, 1024, ANGBAND_DIR_XTRA, "font/16x16.txt");
+	
+	/* Use the "16x16.bmp" file if it exists */
+	if (fd_close(fd_open(tnb_font_file, O_RDONLY)))
+	{
+		quit("Could not initialise font metrics!");
+	}
+	
+	/* Always 16x16 for now */
+	tnb_font_size = 16;
 
 	/* Prepare the windows */
 	init_windows();
