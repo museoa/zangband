@@ -274,17 +274,18 @@ aix: LIBS := -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
 ##
 ## Variation -- Dos using "main-dos.c" and the allegro library, with djgpp
 ##
-dos: CFLAGS := -Wall -O2 -g -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
+dos: CFLAGS := -Wall -O2 -ggdb -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
-dos: INSTALL := copy zangband ../zangband.exe
-dos: EXEC := .exe
+dos: INSTALL := copy zangband.exe ../zangband.exe
+dos: EXEC :=.exe
 
 ##
 ## Variation -- Compile using the main-ibm.c port with djgpp
 ##
-ibm: CFLAGS := -Wall -O2 -g -DUSE_IBM
+ibm: CFLAGS := -Wall -O2 -ggdb -DUSE_IBM
 ibm: LIBS := -lpc
-ibm: EXEC := .exe
+dos: INSTALL := copy zangband.exe ../zangband.exe
+ibm: EXEC :=.exe
 
 ##
 ## Variation -- Compile using the lcc32 compiler
