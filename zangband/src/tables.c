@@ -1490,6 +1490,25 @@ b_own_type b_owners[MAX_BLDG][MAX_B_OWN] =
 		{ "Tile Green",			100,			RACE_HUMAN},
 		{ "Gold Red",			100,			RACE_DWARF},
 	},
+	
+	{
+		/* Inn */
+		{ "Pwvnom",				100,			RACE_DARK_ELF},
+		{ "Laign Mawan",		150,			RACE_SPRITE},
+		{ "Palson",			 	200,			RACE_HUMAN},
+		{ "Thwynyhtm",			250,			RACE_HIGH_ELF},
+		{ "Chaillnew",			50,				RACE_HUMAN},
+	},
+	
+	{
+		/* Healer */
+		{ "Nethlew",			150,			RACE_ELF},
+		{ "Alorn Peln",			80,				RACE_GNOME},
+		{ "Ahsilth Peon",	 	100,			RACE_HOBBIT},
+		{ "McPallion",			120,			RACE_HUMAN},
+		{ "Qonwyn",				110,			RACE_DWARF},
+	},
+
 
 };
 
@@ -6887,6 +6906,18 @@ field_action f_action[] =
 	
 	/* Casino part 2 */
 	{field_action_casino2, "field_action_casino2"},
+	
+	/* Inn part 1 */
+	{field_action_inn1, "field_action_inn1"},
+	
+	/* Inn part 2 */
+	{field_action_inn2, "field_action_inn2"},
+	
+	/* Healer part 1 */
+	{field_action_healer1, "field_action_healer1"},
+	
+	/* Healer part 2 */
+	{field_action_healer2, "field_action_healer2"},
 	
 	/* Bookstore */
 	{field_action_isbook_tester, "field_action_isbook_tester"},

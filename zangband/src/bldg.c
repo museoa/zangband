@@ -870,100 +870,86 @@ void gamble_dice_slots(void)
 }
 	
 
-#if 0
-
 /*
- * Inn commands
+ * The Inn
  * Note that resting for the night was a perfect way to avoid player
  * ghosts in the town *if* you could only make it to the inn in time (-:
  * Now that the ghosts are temporarily disabled in 2.8.X, this function
- * will not be that useful.  I will keep it in the hopes the player
- * ghost code does become a reality again. Does help to avoid filthy urchins.
+ * will not be that useful.
+ *
+ * (Although food is fairly hard to find elsewhere - so the Inn is quite
+ *  useful when you are hungry after crossing the wilderness.)
+ *
  * Resting at night is also a quick way to restock stores -KMW-
  */
-static bool inn_comm(int cmd)
+bool inn_rest(void)
 {
-	s32b dawnval;
-
-	switch (cmd)
+	/* Only at night time */
+	if ((turn % (10L * TOWN_DAWN)) < 50000)
 	{
-		case BACT_FOOD: /* Buy food & drink */
-			msg_print("The barkeeper gives you some gruel and a beer.");
-			msg_print(NULL);
-			(void)set_food(PY_FOOD_MAX - 1);
-			break;
-
-		case BACT_REST: /* Rest for the night */
-			dawnval = ((turn % (10L * TOWN_DAWN)));
-			if (dawnval > 50000)
-			{  /* nighttime */
-				if ((p_ptr->poisoned) || (p_ptr->cut))
-				{
-					msg_print("You need a healer, not a room.");
-					msg_print(NULL);
-					msg_print("Sorry, but don't want anyone dying in here.");
-					return (FALSE);
-				}
-				else
-				{
-					turn = ((turn / 50000) + 1) * 50000;
-					p_ptr->chp = p_ptr->mhp;
-
-					if (ironman_nightmare)
-					{
-						msg_print("Horrible visions flit through your mind as you sleep.");
-
-						/* Pick a nightmare */
-						get_mon_num_prep(get_nightmare, NULL);
-
-						/* Have some nightmares */
-						while (1)
-						{
-							have_nightmare(get_mon_num(MAX_DEPTH));
-
-							if (!one_in_(3)) break;
-						}
-
-						/* Remove the monster restriction */
-						get_mon_num_prep(NULL, NULL);
-
-						msg_print("You awake screaming.");
-					}
-					else
-					{
-						set_blind(0);
-						set_confused(0);
-						p_ptr->stun = 0;
-						p_ptr->chp = p_ptr->mhp;
-						p_ptr->csp = p_ptr->msp;
-
-						msg_print("You awake refreshed for the new day.");
-					}
-
-					msg_print(NULL);
-				}
-			}
-			else
-			{
-				msg_print("The rooms are available only at night.");
-				msg_print(NULL);
-				return (FALSE);
-			}
-			break;
-		case BACT_RUMORS: /* Listen for rumors */
-			{
-				char Rumor[1024];
-
-				if (!get_rnd_line("rumors.txt", 0, Rumor))
-					msg_format("%s", Rumor);
-				msg_print(NULL);
-				break;
-			}
+		msg_print("The rooms are available only at night.");
+		msg_print(NULL);
+		
+		return (FALSE);
 	}
+	
+	/* Hurt? */
+	if ((p_ptr->poisoned) || (p_ptr->cut))
+	{
+		msg_print("You need a healer, not a room.");
+		msg_print(NULL);
+		msg_print("Sorry, but don't want anyone dying in here.");
+		msg_print(NULL);			
+
+		return (FALSE);
+	}
+
+	/* Rest all night */		
+	turn = ((turn / 50000) + 1) * 50000;
+	p_ptr->chp = p_ptr->mhp;
+
+	/*
+	 * Nightmare mode has a TY_CURSE at midnight...
+	 * and the player may want to avoid that.
+	 */
+	if (ironman_nightmare)
+	{
+		msg_print("Horrible visions flit through your mind as you sleep.");
+
+		/* Pick a nightmare */
+		get_mon_num_prep(get_nightmare, NULL);
+
+		/* Have some nightmares */
+		while (TRUE)
+		{
+			have_nightmare(get_mon_num(MAX_DEPTH));
+
+			if (!one_in_(3)) break;
+		}
+
+		/* Remove the monster restriction */
+		get_mon_num_prep(NULL, NULL);
+
+		msg_print("You awake screaming.");
+		msg_print(NULL);
+		
+		return (TRUE);
+	}
+
+	/* Normally heal the player */
+	set_blind(0);
+	set_confused(0);
+	p_ptr->stun = 0;
+	p_ptr->csp = p_ptr->msp;
+
+	msg_print("You awake refreshed for the new day.");
+	msg_print(NULL);
 
 	return (TRUE);
 }
 
+
+#if 0
 
 /*
  * Share gold for thieves
@@ -1765,6 +1751,26 @@ void building_recharge(s32b cost)
 	return;
 }
 
+bool building_healer(void)
+{
+	bool paid = FALSE;
+	
+	if (do_res_stat(A_STR)) paid = TRUE;
+	if (do_res_stat(A_INT)) paid = TRUE;
+	if (do_res_stat(A_WIS)) paid = TRUE;
+	if (do_res_stat(A_DEX)) paid = TRUE;
+	if (do_res_stat(A_CON)) paid = TRUE;
+	if (do_res_stat(A_CHR)) paid = TRUE;
+	
+	if (paid)
+	{
+		msg_print("You are infused with magic, and your ailments disappear.");
+		msg_print(NULL);	
+	}
+	
+	return (paid);
+}
+
 
 #if 0
 /*
@@ -1795,18 +1801,6 @@ static void bldg_process_command(building_type *bldg, int i)
 			show_highclass();
 			break;
 
-		case BACT_IN_BETWEEN:
-		case BACT_CRAPS:
-		case BACT_SPIN_WHEEL:
-		case BACT_DICE_SLOTS:
-		case BACT_GAMBLE_RULES:
-			gamble_comm(bact);
-			break;
-		case BACT_REST:
-		case BACT_RUMORS:
-		case BACT_FOOD:
-			paid = inn_comm(bact);
-			break;
 
 		case BACT_IDENTS: /* needs work */
 			identify_pack();

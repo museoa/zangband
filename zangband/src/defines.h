@@ -153,7 +153,7 @@
 /*
  * Total number of buildings (see "bldg.c", etc)
  */
-#define MAX_BLDG			8
+#define MAX_BLDG			10
 
 /* List of building types */
 #define	BUILD_STORE_GENERAL		0
@@ -265,9 +265,11 @@
 #define BUILD_FOOD				106
 #define BUILD_LIBRARY			107
 #define BUILD_CASINO			108
+#define BUILD_INN				109
+#define BUILD_HEALER			110
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			109
+#define MAX_CITY_BUILD			111
 
 
 /*
@@ -1265,6 +1267,9 @@
 #define FT_STORE_FOOD			0x0089
 #define FT_BUILD_LIBRARY		0x008A
 #define FT_BUILD_CASINO			0x008B
+#define FT_BUILD_INN			0x008C
+#define FT_BUILD_HEALER			0x008D
+
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 

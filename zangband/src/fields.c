@@ -3986,6 +3986,117 @@ void field_action_casino2(s16b *field_ptr, vptr input)
 	}
 }
 
+/*
+ * Inn1
+ */
+void field_action_inn1(s16b *field_ptr, vptr input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	char tmp_str[80];
+	
+	int factor = *((int*) input);
+
+	sprintf(tmp_str, " E) Eat (%dgp)", f_ptr->data[1] * factor / 100);
+	c_put_str(TERM_YELLOW, tmp_str, 18, 35);
+	
+	sprintf(tmp_str, " R) Rest (%dgp)", f_ptr->data[1] * factor / 20);
+	c_put_str(TERM_YELLOW, tmp_str, 19, 35);
+}
+
+/*
+ * Inn2
+ */
+void field_action_inn2(s16b *field_ptr, vptr input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	int *factor = ((int*) input);
+	
+	s32b cost;
+		
+	if (p_ptr->command_cmd == 'E')
+	{
+		cost = f_ptr->data[1] * *factor / 100;
+				
+		if (test_gold(&cost))
+		{
+			msg_print("The barkeeper gives you some gruel and a beer.");
+			msg_print(NULL);
+			(void)set_food(PY_FOOD_MAX - 1);
+			
+			/* Subtract off cost */
+			p_ptr->au -= cost;
+		}
+	
+		/* Hack, use factor as a return value */	
+		*factor = TRUE;
+	}
+	else if (p_ptr->command_cmd == 'R')
+	{
+		cost = f_ptr->data[1] * *factor / 20;
+				
+		if (test_gold(&cost) && inn_rest())
+		{
+			/* Subtract off cost */
+			p_ptr->au -= cost;
+		}
+	
+		/* Hack, use factor as a return value */	
+		*factor = TRUE;
+	}
+	else
+	{
+		*factor = FALSE;
+	}
+}
+
+
+/*
+ * Healer1
+ */
+void field_action_healer1(s16b *field_ptr, vptr input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	char tmp_str[80];
+	
+	int factor = *((int*) input);
+
+	sprintf(tmp_str, " R) Restore Stats (%dgp)", f_ptr->data[1] * factor);
+	c_put_str(TERM_YELLOW, tmp_str, 18, 35);
+}
+
+/*
+ * Healer2
+ */
+void field_action_healer2(s16b *field_ptr, vptr input)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+	
+	int *factor = ((int*) input);
+	
+	s32b cost;
+		
+	if (p_ptr->command_cmd == 'R')
+	{
+		cost = f_ptr->data[1] * *factor;
+				
+		if (test_gold(&cost) && building_healer())
+		{
+			/* Subtract off cost */
+			p_ptr->au -= cost;
+		}
+	
+		/* Hack, use factor as a return value */	
+		*factor = TRUE;
+	}
+	else
+	{
+		*factor = FALSE;
+	}
+}
+
 
 
 

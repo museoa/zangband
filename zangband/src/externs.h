@@ -882,6 +882,7 @@ extern void do_cmd_bldg(field_type *f_ptr);
 extern bool compare_weapons(void);
 extern bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac);
 extern void building_recharge(s32b cost);
+extern bool building_healer(void);
 extern void do_cmd_quest(void);
 extern void quest_discovery(int q_idx);
 extern int quest_number(int level);
@@ -892,6 +893,7 @@ extern void gamble_in_between(void);
 extern void gamble_craps(void);
 extern void gamble_spin_wheel(void);
 extern void gamble_dice_slots(void);
+extern bool inn_rest(void);
 extern void build_init(int town_num, int build_num, byte build_type);
 
 /* util.c */
@@ -1210,6 +1212,10 @@ extern void field_action_library1(s16b *field_ptr, vptr input);
 extern void field_action_library2(s16b *field_ptr, vptr input);
 extern void field_action_casino1(s16b *field_ptr, vptr nothing);
 extern void field_action_casino2(s16b *field_ptr, vptr input);
+extern void field_action_inn1(s16b *field_ptr, vptr input);
+extern void field_action_inn2(s16b *field_ptr, vptr input);
+extern void field_action_healer1(s16b *field_ptr, vptr input);
+extern void field_action_healer2(s16b *field_ptr, vptr input);
 extern void field_action_isbook_tester(s16b *field_ptr, vptr input);
 extern void field_action_isweapon_tester(s16b *field_ptr, vptr input);
 extern void field_action_isarmour_tester(s16b *field_ptr, vptr input);
