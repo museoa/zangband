@@ -22,11 +22,8 @@ typedef struct IconSpec {
 extern int g_icon_depth; /* 8, 16 or 24 */
 extern long g_icon_length;
 
-#define ICON_LENGTH_16 256L
-#define ICON_LENGTH_24 576L
-#define ICON_LENGTH_32 1024L
-#define ICON_LENGTH_MAX (ICON_LENGTH_32 * 4)
-#define ICON_LENGTH g_icon_length
+/* 32x32 x 32bits = 32x32x4 */
+#define ICON_LENGTH_MAX (4096L * 4)
 
 typedef byte IconData[ICON_LENGTH_MAX];
 typedef byte *IconPtr;
@@ -92,7 +89,6 @@ extern int Icon_GetTypeFromObj(Tcl_Interp *interp,
 	t_icon_data **typePtrPtr, Tcl_Obj *objPtr);
 extern int Icon_GetIndexFromObj(Tcl_Interp *interp,
 	int *indexPtr, Tcl_Obj *objPtr, t_icon_data *iconDataPtr);
-extern void Icon_MakeDark(t_icon_data *iconDataPtr, int index);
 
 
 /*
@@ -171,6 +167,5 @@ extern void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr, int hack, obj
 extern int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc);
 extern char *AssignToString_Icon(char *buf, t_assign_icon *assign);
 extern char *assign_print2(char *buf, int assignType);
-extern char *assign_print_object(char *buf, object_type *o_ptr);
 
 #endif /* _INCLUDE_ICON_H_ */

@@ -238,11 +238,8 @@ static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 /*
  * Get what to draw
  */
-static void widget_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
+static void widget_wtd(int x, int y, t_display *wtd)
 {
-	/* Hack - ignore parameter */
-	(void) widgetPtr;
-
 	/* If this is a valid cave location, get the display info. */
 	if (in_bounds2 && in_bounds2(x, y))
 		get_display_info(y, x, wtd);
@@ -279,7 +276,7 @@ static void widget_draw_all(Widget *widgetPtr)
 		y = widgetPtr->y_min + tile / cc;
 		x = widgetPtr->x_min + tile % cc;
 
-		widget_wtd(widgetPtr, y, x, &wtd);
+		widget_wtd(x, y, &wtd);
 
 		yp = tile / cc * widgetPtr->gheight;
 		xp = tile % cc * widgetPtr->gwidth;
@@ -365,7 +362,7 @@ static void widget_draw_invalid(Widget *widgetPtr)
 		y = widgetPtr->y_min + tile / cc;
 		x = widgetPtr->x_min + tile % cc;
 
-		widget_wtd(widgetPtr, y, x, &wtd);
+		widget_wtd(x, y, &wtd);
 
 		/* Bitmap coords */
 		yp = (tile / cc) * widgetPtr->gheight;

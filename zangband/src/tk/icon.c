@@ -563,27 +563,6 @@ char *assign_print2(char *buf, int assignType)
 	return AssignToString_Icon(buf, assignPtr);
 }
 
-char *assign_print_object(char *buf, object_type *o_ptr)
-{
-	t_assign_icon assign;
-
-	if (o_ptr->k_idx)
-	{
-		assign = g_assign[ASSIGN_OBJECT].assign[o_ptr->k_idx];
-	}
-	else
-	{
-		/*
-		 * Use ICON_TYPE_NONE icon. This is needed because the "pile" icon is
-		 * assigned to object zero.
-		 */
-		assign.type = ICON_TYPE_NONE;
-		assign.index = 0;
-		assign.ascii = -1;
-	}
-	
-	return AssignToString_Icon(buf, &assign);
-}
 
 /* (assign) types */
 static int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int objc,
@@ -2668,13 +2647,11 @@ static int objcmd_icon(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *
 	static cptr cmdOption[] = {"createtype", "count",
 		"gettypes", "validate", "size", "ascii",
 		"makeicon", "depth",
-		"rle", "height", "width", "duplicate",
-		"transparent", NULL};
+		"height", "width", "duplicate", NULL};
 	enum {IDX_CREATETYPE, IDX_COUNT,
 		IDX_GETTYPES, IDX_VALIDATE, IDX_SIZE, IDX_ASCII,
 		IDX_MAKEICON, IDX_DEPTH,
-		IDX_RLE, IDX_HEIGHT, IDX_WIDTH, IDX_DUPLICATE,
-		IDX_TRANSPARENT} option;
+		IDX_HEIGHT, IDX_WIDTH, IDX_DUPLICATE} option;
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 	int index;
 
@@ -2965,33 +2942,6 @@ wrongCreateArgs:
 			Tcl_SetIntObj(resultPtr, g_icon_depth);
 			break;
 
-		case IDX_RLE: /* rle */
-		{
-			XColor *xColorPtr;
-			Tk_Window tkwin = Tk_MainWindow(interp);
-
-			/* Lookup the icon type by name */
-			if (Icon_GetTypeFromObj(interp, &iconDataPtr, objv[2]) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Get the transparent color */
-			xColorPtr = Tk_AllocColorFromObj(interp, tkwin, objv[3]);
-			if (xColorPtr == NULL)
-			{
-				return TCL_ERROR;
-			}
-			iconDataPtr->rle_pixel = Plat_XColor2Pixel(xColorPtr); 
-
-			/* Check size because 'dynamic' needs rle_pixel too */
-			if (iconDataPtr->icon_count)
-				Icon_MakeRLE(iconDataPtr);
-
-			Tk_FreeColor(xColorPtr);
-			break;
-		}
-
 		case IDX_HEIGHT: /* height */
 		{
 			/* Lookup the icon type by name */
@@ -3072,37 +3022,6 @@ wrongCreateArgs:
 					
 			/* New number of icons */
 			iconDataPtr->icon_count += count;
-			break;
-		}
-
-		case IDX_TRANSPARENT: /* transparent */
-		{
-			int trans = TRUE;
-
-			if (objc != 4)
-			{
-				Tcl_WrongNumArgs(interp, 2, objv, "type index");
-				return TCL_ERROR;
-			}
-
-			/* Lookup the icon type by name */
-			if (Icon_GetTypeFromObj(interp, &iconDataPtr, objv[2]) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Get the icon index */
-			if (Icon_GetIndexFromObj(interp, &index, objv[3], iconDataPtr)
-				!= TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-
-			/* Not transparent */
-			if (iconDataPtr->rle_data == NULL)
-				trans = FALSE;
-				
-			Tcl_SetBooleanObj(resultPtr, trans);
 			break;
 		}
 	}
