@@ -1828,11 +1828,6 @@ static bool borg_choose_shop(void)
 	/* Must be in town */
 	if (borg_skill[BI_CDEPTH]) return (FALSE);
 
-	/*apw Forbid if been sitting on level forever */
-	/*    Just come back and work through the loop later */
-	if (borg_t - borg_began > 2000) return (FALSE);
-	if (time_this_panel > 350) return (FALSE);
-
 	/* If poisoned or bleeding -- flow to temple */
 	if (borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) goal_shop = 3;
 
@@ -2048,9 +2043,6 @@ static bool borg_think_shop_sell(void)
 			borg_keypress(' ');
 		borg_do_browse_what = -1;
 
-		/* tick the anti-loop clock */
-		time_this_panel++;
-
 		/* Success */
 		return (TRUE);
 	}
@@ -2084,9 +2076,6 @@ static bool borg_think_shop_buy(void)
 
 			/* rebrowse this store */
 			borg_do_browse_what = -1;
-
-			/* Increment our clock to avoid loops */
-			time_this_panel++;
 
 			return (FALSE);
 		}
@@ -2124,16 +2113,12 @@ static bool borg_think_shop_buy(void)
 		/* rebrowse this store */
 		borg_do_browse_what = -1;
 
-		/* Increment our clock to avoid loops */
-		time_this_panel++;
-
 		/*
 		 * It is easier for the borg to wear the Equip if he exits
 		 * the shop after buying it, even though there may be a few
 		 * more items he'd like to buy.
 		 */
-		if (borg_wield_slot(l_ptr) >= INVEN_WIELD || time_this_panel > 100 ||
-			item->tval == TV_FOOD)
+		if (borg_wield_slot(l_ptr) >= INVEN_WIELD || item->tval == TV_FOOD)
 		{
 			/* leave the store */
 			borg_keypress(ESCAPE);
@@ -2461,64 +2446,6 @@ bool borg_think_dungeon(void)
 			goal_fleeing = TRUE;
 		}
 	}
-
-	/* Prevent a "bouncing Borg" bug. Where borg with telepathy
-	 * will sit in a narrow area bouncing between 2 or 3 places
-	 * tracking and flowing to a bouncing monster behind a wall.
-	 *
-	 * 1. Clear goals
-	 * 2. Clear all objects and monsters
-	 * 3. Flee the level
-	 */
-	if (borg_skill[BI_CDEPTH] &&
-		(time_this_panel >= 300 && time_this_panel <= 303))
-	{
-		borg_oops("bouncing borg");
-#if 0
-		/* Clear goals, start flow over */
-		goal = 0;
-#endif /* 0 */
-	}
-#if 0
-	if (borg_skill[BI_CDEPTH] &&
-		(time_this_panel >= 400 && time_this_panel <= 405))
-	{
-		/* Clear all objects */
-		borg_takes_cnt = 0;
-		borg_takes_nxt = 1;
-		C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
-
-		/* Clear all monsters */
-		borg_kills_cnt = 0;
-		borg_kills_nxt = 1;
-		C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
-
-	}
-	if (borg_skill[BI_CDEPTH] && (time_this_panel >= 500))
-	{
-
-		/* Start leaving */
-		if (!goal_leaving)
-		{
-			/* Note */
-			borg_note("# Leaving (bouncing-borg)");
-
-			/* Start leaving */
-			goal_leaving = TRUE;
-		}
-
-		/* Start fleeing */
-		if (!goal_fleeing)
-		{
-			/* Note */
-			borg_note("# Fleeing (bouncing-borg)");
-
-			/* Start fleeing */
-			goal_fleeing = TRUE;
-		}
-
-	}
-#endif /* 0 */
 
 	/* Avoid the burning sun */
 	if (borg_skill[BI_FEAR_LITE] &&

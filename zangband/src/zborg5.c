@@ -2600,8 +2600,6 @@ void borg_update(void)
 
 				borg_delete_kill(k, "killed");
 				borg_msg_use[i] = 2;
-				/* reset the panel.  He's on a roll */
-				time_this_panel = 1;
 			}
 			/* Shooting through darkness worked */
 			if (successful_target < 0) successful_target = 2;
@@ -2616,8 +2614,6 @@ void borg_update(void)
 			{
 				borg_delete_kill(k, "blinked");
 				borg_msg_use[i] = 2;
-				/* reset the panel.  He's on a roll */
-				time_this_panel = 1;
 			}
 			/* Shooting through darkness worked */
 			if (successful_target < 0) successful_target = 2;
@@ -2632,8 +2628,6 @@ void borg_update(void)
 				borg_count_death(k);
 				borg_delete_kill(k, "died");
 				borg_msg_use[i] = 2;
-				/* reset the panel.  He's on a roll */
-				time_this_panel = 1;
 			}
 			/* Shooting through darkness worked */
 			if (successful_target < 0) successful_target = 2;
@@ -2757,8 +2751,6 @@ void borg_update(void)
 				borg_count_death(k);
 				borg_delete_kill(k, "killed");
 				borg_msg_use[i] = 3;
-				/* reset the panel.  He's on a roll */
-				time_this_panel = 1;
 			}
 			/* Shooting through darkness worked */
 			if (successful_target == -1) successful_target = 2;
@@ -2772,8 +2764,6 @@ void borg_update(void)
 			{
 				borg_delete_kill(k, "blinked");
 				borg_msg_use[i] = 3;
-				/* reset the panel.  He's on a roll */
-				time_this_panel = 1;
 			}
 			/* Shooting through darkness worked */
 			if (successful_target == -1) successful_target = 2;
@@ -2789,8 +2779,6 @@ void borg_update(void)
 				borg_count_death(k);
 				borg_delete_kill(k, "died");
 				borg_msg_use[i] = 3;
-				/* reset the panel.  He's on a roll */
-				time_this_panel = 1;
 			}
 			/* Shooting through darkness worked */
 			if (successful_target == -1) successful_target = 2;
@@ -2904,9 +2892,6 @@ void borg_update(void)
 
 		/* Hack -- Restart the clock */
 		borg_t = 1000;
-
-		/* reset our panel clock */
-		time_this_panel = 1;
 
 		/* reset our vault/unique check */
 		vault_on_level = FALSE;
@@ -3105,14 +3090,6 @@ void borg_update(void)
 				if (mb_ptr->fear) mb_ptr->fear--;
 			}
 			MAP_ITT_END;
-		}
-
-		/* Handle changing map panel */
-		if ((o_w_x != w_x) || (o_w_y != w_y))
-		{
-			/* Time stamp this new panel-- to avoid a repeated motion bug */
-			time_this_panel = 1;
-
 		}
 	}
 

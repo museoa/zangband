@@ -114,7 +114,6 @@ s16b need_see_inviso = 0;	/* cast this when required */
 s16b borg_see_inv = 0;
 bool need_shift_panel = FALSE;	/* to spot offscreens */
 s16b when_shift_panel = 0L;
-s16b time_this_panel = 0L;	/* Current "time" on current panel */
 bool vault_on_level;	/* Borg will search for a vault */
 bool unique_on_level;
 bool scaryguy_on_level;	/* flee from certain guys */
@@ -807,14 +806,6 @@ void borg_note(cptr what)
 	{
 		/* Clean cancel */
 		borg_cancel = TRUE;
-	}
-
-	/* Mega-Hack -- Check against the swap loops */
-	if (strstr(what, "Best Combo"))
-	{
-		/* Tick the anti loop clock */
-		time_this_panel += 10;
-		borg_note(format("# Anti-loop variable tick (%d).", time_this_panel));
 	}
 
 	/* Scan windows */

@@ -2182,9 +2182,6 @@ static bool borg_heal(int danger)
 			borg_keypress('R');
 			borg_keypress('\n');
 
-			/* Reset our panel clock, we need to be here */
-			time_this_panel = 0;
-
 			/* reset the inviso clock to avoid loops */
 			need_see_inviso = borg_t - 50;
 
@@ -12544,9 +12541,6 @@ bool borg_recover(void)
 				/* Take note */
 				borg_note("# Resting to recharge a rod...");
 
-				/* Reset the Bouncing-borg Timer */
-				time_this_panel = 0;
-
 				/* Rest until done */
 				borg_keypress('R');
 				borg_keypress('1');
@@ -12585,9 +12579,6 @@ bool borg_recover(void)
 			/* Rest until done */
 			borg_keypress('R');
 			borg_keypress('\n');
-
-			/* Reset our panel clock */
-			time_this_panel = 0;
 
 			/* Done */
 			return (TRUE);
@@ -13636,10 +13627,6 @@ bool borg_flow_kill_aim(bool viewable)
 	/* Efficiency -- Nothing to kill */
 	if (!borg_kills_cnt) return (FALSE);
 
-	/* Sometimes we loop on this if we back  up to a point where */
-	/* the monster is out of site */
-	if (time_this_panel > 500) return (FALSE);
-
 	/* If you can shoot from where you are, don't bother reaiming */
 	if (borg_has_distance_attack()) return (FALSE);
 
@@ -13749,9 +13736,6 @@ bool borg_flow_kill_corridor(bool viewable)
 
 	/* Do not dig when weak. It takes too long */
 	if (borg_skill[BI_STR] < 17) return (FALSE);
-
-	/* Sometimes we loop on this */
-	if (time_this_panel > 500) return (FALSE);
 
 	/* Do not dig when confused */
 	if (borg_skill[BI_ISCONFUSED]) return (FALSE);

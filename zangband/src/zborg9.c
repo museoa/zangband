@@ -749,9 +749,6 @@ static bool borg_think(void)
 	/* Increment the clock */
 	borg_t++;
 
-	/* Increment the panel clock */
-	time_this_panel++;
-
 	/* Examine the screen */
 	borg_update();
 
@@ -1848,9 +1845,6 @@ static void borg_parse_aux(cptr msg, int len)
 	/* Feature XXX XXX XXX */
 	if (streq(msg, "You tunnel into the granite wall."))
 	{
-		/* reseting my panel clock */
-		time_this_panel = 1;
-
 		/* Clear goals */
 		goal = 0;
 
@@ -2080,7 +2074,6 @@ static void borg_parse_aux(cptr msg, int len)
 		/* Hack -- Oops */
 		borg_keypress(ESCAPE);
 		borg_keypress(ESCAPE);
-		time_this_panel += 100;
 		return;
 	}
 
@@ -2090,7 +2083,6 @@ static void borg_parse_aux(cptr msg, int len)
 		/* Hack -- Oops */
 		borg_keypress(ESCAPE);
 		borg_keypress(ESCAPE);
-		time_this_panel += 100;
 
 		/* ID all items (equipment) */
 		for (i = INVEN_WIELD; i <= INVEN_FEET; i++)
@@ -2114,20 +2106,6 @@ static void borg_parse_aux(cptr msg, int len)
 			item->able = TRUE;
 		}
 		return;
-	}
-
-	/* Hack to protect against clock overflows and errors */
-	if (prefix(msg, "Identifying The Phial"))
-	{
-
-		/* ID item (equipment) */
-		borg_item *item = &borg_items[INVEN_LITE];
-		item->able = TRUE;
-
-		/* Hack -- Oops */
-		borg_keypress(ESCAPE);
-		borg_keypress(ESCAPE);
-		time_this_panel += 100;
 	}
 
 	/* resist acid */
@@ -2302,13 +2280,6 @@ static void borg_parse_aux(cptr msg, int len)
 				if (borg_skill[BI_CUR_LITE]) continue;
 			}
 		}
-		return;
-	}
-
-	if (prefix(msg, "The enchantment failed"))
-	{
-		/* reset our panel clock for this */
-		time_this_panel = 1;
 		return;
 	}
 
@@ -3571,9 +3542,6 @@ void borg_status(void)
 			Term_putstr(65, 12, -1, TERM_WHITE,
 						format("%d", borg_time_town + (borg_t - borg_began)));
 
-			Term_putstr(54, 13, -1, TERM_SLATE, "This Panel         ");
-			Term_putstr(65, 13, -1, TERM_WHITE, format("%d", time_this_panel));
-
 
 			/* Sustains */
 			Term_putstr(19, 0, -1, TERM_WHITE, "Sustains");
@@ -4643,7 +4611,6 @@ void do_cmd_borg(void)
 			msg_format("time: (%d) ", time);
 			time = (borg_time_town + (borg_t - borg_began));
 			msg_format("; from town (%d)", time);
-			msg_format("; on this panel (%d)", time_this_panel);
 			msg_format("; need inviso (%d)", need_see_inviso);
 			break;
 		}

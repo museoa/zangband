@@ -7705,14 +7705,6 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 	/* Physical attacks */
 	v1 = borg_danger_aux1(kill->r_idx);
 
-	/* Hack -- Under Stressful Situation.
-	 */
-	if (time_this_panel > 1200 || borg_t > 25000)
-	{
-		/* he might be stuck and could overflow */
-		v1 = v1 / 5;
-	}
-
 	/* No attacks for some monsters */
 	if (r_ptr->flags1 & RF1_NEVER_BLOW)
 	{
@@ -7889,14 +7881,6 @@ int borg_danger_aux(int x, int y, int c, int i, bool average)
 
 		/* Spell attacks */
 		v2 = borg_danger_aux2(i, average);
-
-		/* Hack -- Under Stressful Situation.
-		 */
-		if (time_this_panel > 1200 || borg_t > 25000)
-		{
-			/* he might be stuck and could overflow */
-			v2 = v2 / 5;
-		}
 
 		/* multipliers yeild some trouble when I am weak */
 		if ((r_ptr->flags2 & RF2_MULTIPLY) && (borg_skill[BI_CLEVEL] < 20))

@@ -2148,44 +2148,6 @@ bool borg_test_stuff(bool star_id)
 			}
 		}
 
-		/* Analyze the type */
-		switch (l_ptr->tval)
-		{
-			case TV_CHEST:
-			{
-
-				/* Hack -- Always identify chests */
-				v = item->value;
-				break;
-			}
-
-			case TV_WAND:
-			case TV_STAFF:
-			{
-
-				/* Hack -- Always identify (get charges) */
-				v = item->value;
-				break;
-			}
-
-			case TV_RING:
-			case TV_AMULET:
-			{
-
-				/* Hack -- Always identify (get information) */
-				v = item->value;
-				break;
-			}
-
-			case TV_LITE:
-			{
-
-				/* Hack -- Always identify (get artifact info) */
-				v = item->value;
-				break;
-			}
-		}
-
 		/* Nothing */
 		if (!v) continue;
 
@@ -2434,7 +2396,7 @@ bool borg_swap_rings(void)
 
 		/* Take it off */
 		borg_keypress('t');
-		borg_keypress(I2A(INVEN_RIGHT));
+		borg_keypress(I2A(EQUIP_RIGHT));
 
 		/* Success */
 		return (TRUE);
@@ -2487,7 +2449,7 @@ bool borg_wear_rings(void)
 		l_ptr = &inventory[i];
 
 		/* Skip empty / unaware items */
-		if (!item->k_idx) continue;
+		if (!l_ptr->k_idx) continue;
 
 		/* Not cursed items */
 		if (l_ptr->kn_flags3 & TR3_CURSED) continue;
@@ -2507,21 +2469,10 @@ bool borg_wear_rings(void)
 		{
 			slot = EQUIP_RIGHT;
 		}
-
-		/* Save the old item (empty) */
-		COPY(&safe_items[slot], &borg_items[slot], borg_item);
-
-		/* Save the new item */
-		COPY(&safe_items[i], &borg_items[i], borg_item);
-
-		/* Wear new item */
-		COPY(&borg_items[slot], &safe_items[i], borg_item);
-
-		/* Only a single item */
-		borg_items[slot].iqty = 1;
-
-		/* Reduce the inventory quantity by one */
-		borg_items[i].iqty--;
+		
+		/* Pretend to move item into equipment slot */
+		equipment[slot].treat_as = TREAT_AS_SWAP;
+		l_ptr->treat_as = TREAT_AS_GONE;
 
 		/* Fix later */
 		fix = TRUE;
@@ -2532,11 +2483,9 @@ bool borg_wear_rings(void)
 		/* Evaluate the inventory */
 		p = borg_power();
 
-		/* Restore the old item (empty) */
-		COPY(&borg_items[slot], &safe_items[slot], borg_item);
-
-		/* Restore the new item */
-		COPY(&borg_items[i], &safe_items[i], borg_item);
+		/* Restore the old items */
+		equipment[slot].treat_as = TREAT_AS_NORM;
+		l_ptr->treat_as = TREAT_AS_NORM;
 
 		/* Ignore "bad" swaps */
 		if ((b_i >= 0) && (p < b_p)) continue;
@@ -2553,20 +2502,18 @@ bool borg_wear_rings(void)
 	if ((b_i >= 0) && (b_p > my_power))
 	{
 		/* Get the item */
-		item = &borg_items[b_i];
+		l_ptr = inventory[b_i];
 
 		/* Log */
 		borg_note("# Putting on best tight ring.");
 
 		/* Log */
-		borg_note(format("# Wearing %s.", item->desc));
+		borg_note(format("# Wearing %s.", l_ptr->o_name));
 
 		/* Wear it */
 		borg_keypress('w');
 		borg_keypress(I2A(b_i));
 
-		/* Did something */
-		time_this_panel++;
 		return (TRUE);
 	}
 
@@ -2601,11 +2548,6 @@ bool borg_remove_stuff(void)
 
 	/* apw hack to prevent the swap till you drop loop */
 	if (borg_skill[BI_ISHUNGRY] || borg_skill[BI_ISWEAK]) return (FALSE);
-
-	/*apw Forbid if been sitting on level forever */
-	/*    Just come back and work through the loop later */
-	if (borg_t - borg_began > 2000) return (FALSE);
-	if (time_this_panel > 150) return (FALSE);
 
 	/* Start with good power */
 	b_p = borg_power();
@@ -2694,8 +2636,6 @@ bool borg_remove_stuff(void)
 		borg_keypress('t');
 		borg_keypress(I2A(b_i - INVEN_WIELD));
 
-		/* Did something */
-		time_this_panel++;
 		return (TRUE);
 	}
 
@@ -2742,11 +2682,6 @@ bool borg_wear_stuff(void)
 
 	/* apw hack to prevent the swap till you drop loop */
 	if (borg_skill[BI_ISHUNGRY] || borg_skill[BI_ISWEAK]) return (FALSE);
-
-	/*apw Forbid if been sitting on level forever */
-	/*    Just come back and work through the loop later */
-	if (borg_t - borg_began > 2000) return (FALSE);
-	if (time_this_panel > 300) return (FALSE);
 
 	/* Scan inventory */
 	for (i = 0; i < INVEN_PACK; i++)
@@ -2989,8 +2924,6 @@ bool borg_wear_stuff(void)
 		borg_keypress('w');
 		borg_keypress(I2A(b_i));
 
-		/* Did something */
-		time_this_panel++;
 		return (TRUE);
 	}
 
@@ -3168,10 +3101,6 @@ bool borg_best_stuff(void)
 	byte test[12];
 	byte best[12];
 
-
-	/* Hack -- Anti-loop */
-	if (time_this_panel >= 300) return (FALSE);
-
 	/* Hack -- Initialize */
 	for (k = 0; k < 12; k++)
 	{
@@ -3224,7 +3153,6 @@ bool borg_best_stuff(void)
 
 			borg_keypress('w');
 			borg_keypress(I2A(i));
-			time_this_panel++;
 			return (TRUE);
 		}
 		else
@@ -3261,10 +3189,6 @@ bool borg_best_stuff(void)
 			borg_keypress('\r');
 			borg_keypress('\r');
 			borg_keypress('\r');
-
-
-			/* tick the clock */
-			time_this_panel++;
 
 			return (TRUE);
 #endif /* 0 */
