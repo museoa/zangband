@@ -2608,6 +2608,12 @@ bool destroy_area(int y1, int x1, int r, int full)
 				delete_monster(y, x);
 			}
 
+			/* Fields can block destruction */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) continue;
+			
+			/* Destroy the fields on the square */
+			delete_field(y, x);
+			
 			/* Destroy "valid" grids */
 			if (cave_valid_grid(c_ptr))
 			{
