@@ -130,7 +130,7 @@ static int get_mindcraft_power(int *sn)
 	char comment[80];
 	cptr p = "power";
 	mindcraft_power spell;
-	bool flag, redraw;
+	bool flag;
 
 	/* Assume cancelled */
 	*sn = (-1);
@@ -149,9 +149,6 @@ static int get_mindcraft_power(int *sn)
 	/* Nothing chosen yet */
 	flag = FALSE;
 
-	/* No redraw yet */
-	redraw = FALSE;
-
 	for (i = 0; i < MINDCRAFT_MAX; i++)
 	{
 		if (mindcraft_powers[i].min_lev <= plev)
@@ -161,92 +158,66 @@ static int get_mindcraft_power(int *sn)
 	}
 
 	/* Build a prompt (accept all spells) */
-	(void)strnfmt(out_val, 78, "(%^ss %c-%c, *=List, ESC=exit) Use which %s? ",
+	(void)strnfmt(out_val, 78, "(%^ss %c-%c, ESC=exit) Use which %s? ",
 				  p, I2A(0), I2A(num - 1), p);
+	
+	/* Save the screen */
+	screen_save();
+
+	/* Display a list of spells */
+	prtf(x, y, "");
+	put_fstr(x + 5, y, "Name");
+	put_fstr(x + 35, y, "Lv Mana Fail Info");
+
+	/* Dump the spells */
+	for (i = 0; i < MINDCRAFT_MAX; i++)
+	{
+		/* Access the spell */
+		spell = mindcraft_powers[i];
+		if (spell.min_lev > plev) break;
+
+		chance = spell.fail;
+
+		/* Reduce failure rate by "effective" level adjustment */
+		chance -= 3 * (plev - spell.min_lev);
+
+		/* Reduce failure rate by INT/WIS adjustment */
+		chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[mp_ptr->spell_stat]] - 1);
+
+		/* Not enough mana to cast */
+		if (spell.mana_cost > p_ptr->csp)
+		{
+			chance += 5 * (spell.mana_cost - p_ptr->csp);
+		}
+
+		/* Extract the minimum failure rate */
+		minfail = adj_mag_fail[p_ptr->stat_ind[mp_ptr->spell_stat]];
+
+		/* Minimum failure rate */
+		if (chance < minfail) chance = minfail;
+
+		/* Stunning makes spells harder */
+		if (p_ptr->stun > 50) chance += 25;
+		else if (p_ptr->stun) chance += 15;
+
+		/* Always a 5 percent chance of working */
+		if (chance > 95) chance = 95;
+
+		/* Get info */
+		mindcraft_info(comment, i);
+
+		/* Dump the spell --(-- */
+		prtf(x, y + i + 1, "  %c) %-30s%2d %4d %3d%%%s",
+				I2A(i), spell.name,
+				spell.min_lev, spell.mana_cost, chance, comment);
+	}
+
+	/* Clear the bottom line */
+	prtf(x, y + i + 1, "");
 
 	/* Get a spell from the user */
 	while (!flag && get_com(out_val, &choice))
 	{
-		/* Request redraw */
-		if ((choice == ' ') || (choice == '*') || (choice == '?'))
-		{
-			/* Show the list */
-			if (!redraw)
-			{
-				/* Show list */
-				redraw = TRUE;
-
-				/* Save the screen */
-				screen_save();
-
-				/* Display a list of spells */
-				prtf(x, y, "");
-				put_fstr(x + 5, y, "Name");
-				put_fstr(x + 35, y, "Lv Mana Fail Info");
-
-				/* Dump the spells */
-				for (i = 0; i < MINDCRAFT_MAX; i++)
-				{
-					/* Access the spell */
-					spell = mindcraft_powers[i];
-					if (spell.min_lev > plev) break;
-
-					chance = spell.fail;
-
-					/* Reduce failure rate by "effective" level adjustment */
-					chance -= 3 * (plev - spell.min_lev);
-
-					/* Reduce failure rate by INT/WIS adjustment */
-					chance -=
-						3 * (adj_mag_stat[p_ptr->stat_ind[mp_ptr->spell_stat]] -
-							 1);
-
-					/* Not enough mana to cast */
-					if (spell.mana_cost > p_ptr->csp)
-					{
-						chance += 5 * (spell.mana_cost - p_ptr->csp);
-					}
-
-					/* Extract the minimum failure rate */
-					minfail = adj_mag_fail[p_ptr->stat_ind[mp_ptr->spell_stat]];
-
-					/* Minimum failure rate */
-					if (chance < minfail) chance = minfail;
-
-					/* Stunning makes spells harder */
-					if (p_ptr->stun > 50) chance += 25;
-					else if (p_ptr->stun) chance += 15;
-
-					/* Always a 5 percent chance of working */
-					if (chance > 95) chance = 95;
-
-					/* Get info */
-					mindcraft_info(comment, i);
-
-					/* Dump the spell --(-- */
-					prtf(x, y + i + 1, "  %c) %-30s%2d %4d %3d%%%s",
-							I2A(i), spell.name,
-							spell.min_lev, spell.mana_cost, chance, comment);
-				}
-
-				/* Clear the bottom line */
-				prtf(x, y + i + 1, "");
-			}
-
-			/* Hide the list */
-			else
-			{
-				/* Hide list */
-				redraw = FALSE;
-
-				/* Restore the screen */
-				screen_load();
-			}
-
-			/* Redo asking */
-			continue;
-		}
-
 		/* Note verify */
 		ask = isupper(choice);
 
@@ -278,7 +249,7 @@ static int get_mindcraft_power(int *sn)
 	}
 
 	/* Restore the screen */
-	if (redraw) screen_load();
+	screen_load();
 
 	/* Show choices */
 	/* Update */
