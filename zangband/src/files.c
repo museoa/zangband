@@ -1399,7 +1399,7 @@ static void display_player_abilities(void)
 	char		desc[20];
 	int         muta_att = 0;
 	long		avgdam;
-	u32b            f1, f2, f3;
+	u32b		f1, f2, f3;
 	int		energy_fire;
 	int		shots, shot_frac;
 
@@ -1512,7 +1512,7 @@ static void display_player_abilities(void)
 	avgdam *= blows;
 
 	/* Rescale */
-	avgdam /= 2;
+	avgdam /= 200;
 
 	/* See if have a weapon with extra power */
 	if (o_ptr->k_idx)

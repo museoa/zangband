@@ -39,8 +39,8 @@ long avg_dam(int attack_power, int dice_num, int dice_sides)
 	/* Calculate damage per dice x 100 */
 	long temp = dice_sides * deadliness_calc(attack_power);
 	
-	/* Add one to take into account dice formula, and return avg*2 */
-	return (dice_num * (temp + 1) / 100);
+	/* Add one to take into account dice formula, and return avg*200 */
+	return (dice_num * (temp + 100));
 }
 
 /*
