@@ -2420,227 +2420,12 @@ static void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 
 
 /*
- * Prints the map of the dungeon
- *
- * Note that, for efficiency, we contain an "optimized" version
- * of both "lite_spot()" and "print_rel()", and that we use the
- * "lite_spot()" function to display the player grid, if needed.
- */
-void prt_map(void)
-{
-	int x, y;
-	int v, n;
-
-	/* map bounds */
-	s16b xmin, xmax, ymin, ymax;
-
-	int wid, hgt;
-
-	/* Temp variables to speed up deletion loops */
-	s16b l1, l2, l3;
-
-	cave_type *c_ptr;
-	pcave_type *pc_ptr;
-
-	byte *pa;
-	char *pc;
-
-	byte *pta;
-	char *ptc;
-
-	/* Get size */
-	Term_get_size(&wid, &hgt);
-
-	/* Remove map offset */
-	wid -= COL_MAP + 1;
-	hgt -= ROW_MAP + 1;
-
-	/* Access the cursor state */
-	(void)Term_get_cursor(&v);
-
-	/* Hide the cursor */
-	(void)Term_set_cursor(0);
-
-
-	/* Get bounds */
-	xmin = (p_ptr->min_wid < panel_col_min) ? panel_col_min : p_ptr->min_wid;
-	xmax = (p_ptr->max_wid - 1 > panel_col_max) ?
-		panel_col_max : p_ptr->max_wid - 1;
-	ymin = (p_ptr->min_hgt < panel_row_min) ? panel_row_min : p_ptr->min_hgt;
-	ymax = (p_ptr->max_hgt - 1 > panel_row_max) ?
-		panel_row_max : p_ptr->max_hgt - 1;
-
-	/* Top section of screen */
-    clear_region(COL_MAP, 1, ymin - panel_row_prt);
-
-	/* Bottom section of screen */
-    clear_region(COL_MAP, ymax - panel_row_prt, hgt);
-
-	/* Sides of screen */
-	/* Left side */
-	l1 = xmin - panel_col_min;
-
-	/* Right side */
-	l2 = xmax - panel_col_prt;
-	l3 = Term->wid - l2;
-
-	for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
-	{
-		/* Erase the sections */
-		Term_erase(COL_MAP, y, l1);
-		Term_erase(l2, y, l3);
-	}
-
-	/* Pointers to current position in the string */
-	pa = mp_a;
-	pc = mp_c;
-
-	pta = mp_ta;
-	ptc = mp_tc;
-
-	/* Dump the map */
-	for (y = ymin; y <= ymax; y++)
-	{
-		/* No characters yet */
-		n = 0;
-
-		/* Scan the columns of row "y" */
-		for (x = xmin; x <= xmax; x++)
-		{
-			c_ptr = area(x, y);
-
-			pc_ptr = parea(x, y);
-
-			/* Tell the world about this square */
-			Term_write_map(x, y, c_ptr, pc_ptr);
-
-			/* Determine what is there */
-			map_info(c_ptr, pc_ptr, pa++, pc++, pta++, ptc++);
-		}
-
-
-		/* Point to start of line */
-		pa = mp_a;
-		pc = mp_c;
-		pta = mp_ta;
-		ptc = mp_tc;
-
-		/* Efficiency -- Redraw that row of the map */
-		Term_queue_line(xmin - panel_col_prt, y - panel_row_prt,
-						xmax - xmin + 1, pa, pc, pta, ptc);
-	}
-
-	/* Restore the cursor */
-	(void)Term_set_cursor(v);
-}
-
-
-void display_dungeon(void)
-{
-	int px = p_ptr->px;
-	int py = p_ptr->py;
-
-	pcave_type *pc_ptr;
-	cave_type *c_ptr;
-
-	int x, y;
-	byte a;
-	char c;
-
-	int wid = Term->wid / 2, hgt = Term->hgt / 2;
-
-	byte ta;
-	char tc;
-
-	for (x = px - wid + 1; x <= px + wid; x++)
-	{
-		for (y = py - hgt + 1; y <= py + hgt; y++)
-		{
-			if (in_boundsp(x, y))
-			{
-				c_ptr = area(x, y);
-				pc_ptr = parea(x, y);
-
-				/* Tell the world about this square */
-				Term_write_map(x, y, c_ptr, pc_ptr);
-
-				/* Examine the grid */
-				map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
-
-				/* Hack -- Queue it */
-				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta,
-								tc);
-			}
-			else
-			{
-				/* Clear out-of-bound tiles */
-
-				/* Access darkness */
-				feature_type *f_ptr = &f_info[FEAT_NONE];
-
-				/* Normal attr */
-				a = f_ptr->x_attr;
-
-				/* Normal char */
-				c = f_ptr->x_char;
-
-				/* Hack -- Queue it */
-				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta,
-								tc);
-			}
-		}
-	}
-}
-
-
-/*
- * Redraw (on the screen) a given MAP location
- *
- * This function should only be called on "legal" grids
- */
-void lite_spot(int x, int y)
-{
-	cave_type *c_ptr;
-	pcave_type *pc_ptr;
-
-	/* Paranoia */
-	if (!character_dungeon) return;
-
-	if (in_boundsp(x, y))
-	{
-		/* Get location */
-		c_ptr = area(x, y);
-		pc_ptr = parea(x, y);
-
-		/* Tell the world about this square */
-		Term_write_map(x, y, c_ptr, pc_ptr);
-
-		/* Redraw if on screen */
-		if (panel_contains(x, y))
-		{
-			byte a;
-			char c;
-
-			byte ta;
-			char tc;
-
-			/* Examine the grid */
-			map_info(c_ptr, pc_ptr, &a, &c, &ta, &tc);
-
-			/* Hack -- Queue it */
-			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
-		}
-	}
-}
-
-
-/*
  * Angband-specific code designed to allow the map to be sent
  * to the port as required.  This allows the main-???.c file
  * not to access internal game data, which may or may not
  * be accessable.
  */
-void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
+static void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 {
 	term_map map;
 
@@ -2787,6 +2572,27 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	save_map_location(x, y, &map);
 }
 
+
+/*
+ * The status of the square (x, y) has probably changed,
+ * update our knowledge of it and return the tile info.
+ */
+static void Term_note_map(int x, int y, byte *a, char *c, byte *ta, char *tc)
+{
+	cave_type *c_ptr;
+	pcave_type *pc_ptr;
+	
+	/* Get location */
+	c_ptr = area(x, y);
+	pc_ptr = parea(x, y);
+	
+	Term_write_map(x, y, c_ptr, pc_ptr);
+	
+	/* Examine the grid */
+	map_info(c_ptr, pc_ptr, a, c, ta, tc);
+}
+
+
 /*
  * Erase the map
  */
@@ -2807,6 +2613,193 @@ void Term_erase_map(void)
 	/* Actually clear the map */
 	clear_map();
 }
+
+
+/*
+ * Prints the map of the dungeon
+ *
+ * Note that, for efficiency, we contain an "optimized" version
+ * of both "lite_spot()" and "print_rel()", and that we use the
+ * "lite_spot()" function to display the player grid, if needed.
+ */
+void prt_map(void)
+{
+	int x, y;
+	int v, n;
+
+	/* map bounds */
+	s16b xmin, xmax, ymin, ymax;
+
+	int wid, hgt;
+
+	/* Temp variables to speed up deletion loops */
+	s16b l1, l2, l3;
+
+	byte *pa;
+	char *pc;
+
+	byte *pta;
+	char *ptc;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
+	/* Remove map offset */
+	wid -= COL_MAP + 1;
+	hgt -= ROW_MAP + 1;
+
+	/* Access the cursor state */
+	(void)Term_get_cursor(&v);
+
+	/* Hide the cursor */
+	(void)Term_set_cursor(0);
+
+
+	/* Get bounds */
+	xmin = (p_ptr->min_wid < panel_col_min) ? panel_col_min : p_ptr->min_wid;
+	xmax = (p_ptr->max_wid - 1 > panel_col_max) ?
+		panel_col_max : p_ptr->max_wid - 1;
+	ymin = (p_ptr->min_hgt < panel_row_min) ? panel_row_min : p_ptr->min_hgt;
+	ymax = (p_ptr->max_hgt - 1 > panel_row_max) ?
+		panel_row_max : p_ptr->max_hgt - 1;
+
+	/* Top section of screen */
+    clear_region(COL_MAP, 1, ymin - panel_row_prt);
+
+	/* Bottom section of screen */
+    clear_region(COL_MAP, ymax - panel_row_prt, hgt);
+
+	/* Sides of screen */
+	/* Left side */
+	l1 = xmin - panel_col_min;
+
+	/* Right side */
+	l2 = xmax - panel_col_prt;
+	l3 = Term->wid - l2;
+
+	for (y = ymin - panel_row_prt; y <= ymax - panel_row_prt; y++)
+	{
+		/* Erase the sections */
+		Term_erase(COL_MAP, y, l1);
+		Term_erase(l2, y, l3);
+	}
+
+	/* Pointers to current position in the string */
+	pa = mp_a;
+	pc = mp_c;
+
+	pta = mp_ta;
+	ptc = mp_tc;
+
+	/* Dump the map */
+	for (y = ymin; y <= ymax; y++)
+	{
+		/* No characters yet */
+		n = 0;
+
+		/* Scan the columns of row "y" */
+		for (x = xmin; x <= xmax; x++)
+		{
+			/* Update this square */
+			Term_note_map(x, y, pa++, pc++, pta++, ptc++);
+		}
+
+
+		/* Point to start of line */
+		pa = mp_a;
+		pc = mp_c;
+		pta = mp_ta;
+		ptc = mp_tc;
+
+		/* Efficiency -- Redraw that row of the map */
+		Term_queue_line(xmin - panel_col_prt, y - panel_row_prt,
+						xmax - xmin + 1, pa, pc, pta, ptc);
+	}
+
+	/* Restore the cursor */
+	(void)Term_set_cursor(v);
+}
+
+
+void display_dungeon(void)
+{
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
+	int x, y;
+	byte a;
+	char c;
+
+	int wid = Term->wid / 2, hgt = Term->hgt / 2;
+
+	byte ta;
+	char tc;
+
+	for (x = px - wid + 1; x <= px + wid; x++)
+	{
+		for (y = py - hgt + 1; y <= py + hgt; y++)
+		{
+			if (in_boundsp(x, y))
+			{
+				/* Update this square */
+				Term_note_map(x, y, &a, &c, &ta, &tc);
+
+				/* Hack -- Queue it */
+				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta,
+								tc);
+			}
+			else
+			{
+				/* Clear out-of-bound tiles */
+
+				/* Access darkness */
+				feature_type *f_ptr = &f_info[FEAT_NONE];
+
+				/* Normal attr */
+				a = f_ptr->x_attr;
+
+				/* Normal char */
+				c = f_ptr->x_char;
+
+				/* Hack -- Queue it */
+				Term_queue_char(x - px + wid - 1, y - py + hgt - 1, a, c, ta,
+								tc);
+			}
+		}
+	}
+}
+
+
+/*
+ * Redraw (on the screen) a given MAP location
+ *
+ * This function should only be called on "legal" grids
+ */
+void lite_spot(int x, int y)
+{
+	byte a;
+	char c;
+
+	byte ta;
+	char tc;
+
+	/* Paranoia */
+	if (!character_dungeon) return;
+
+	if (in_boundsp(x, y))
+	{
+		/* Update this square */
+		Term_note_map(x, y, &a, &c, &ta, &tc);
+
+		/* Redraw if on screen */
+		if (panel_contains(x, y))
+		{
+			/* Hack -- Queue it */
+			Term_queue_char(x - panel_col_prt, y - panel_row_prt, a, c, ta, tc);
+		}
+	}
+}
+
 
 /*
  * The player has moved
