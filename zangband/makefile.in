@@ -88,3 +88,5 @@ test:
 	@echo
 	@echo I will install:
 	@echo $(dirlist) $(files) $(INSTALL)
+
+.PHONY: default makedirs install-files install clean test
