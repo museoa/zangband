@@ -328,19 +328,23 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			/* Terrain */
 			if (c_ptr->feat >= FEAT_TREES)
 			{
-				/* Destroy the wall */
-				cave_set_feat(x, y, FEAT_DIRT);
-
 				/* Message */
 				if (known)
 				{
-					msgf("It disappears!");
+					if (c_ptr->feat == FEAT_JUNGLE)
+						msgf("The jungle dissolves!");
+					else
+						msgf("It disappears!");
+
 					obvious = TRUE;
 				}
+
+				/* Destroy the wall */
+				cave_set_feat(x, y, FEAT_DIRT);
 			}
 
 			/* Granite */
-			if (c_ptr->feat >= FEAT_WALL_EXTRA)
+			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
 				/* Destroy the wall */
 				cave_set_feat(x, y, the_floor());
