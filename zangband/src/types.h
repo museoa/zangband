@@ -1393,10 +1393,7 @@ struct player_run
 {
 	s16b cur_dir;	/* Direction we are running */
 	s16b old_dir;	/* Direction we came from */
-	bool unused;	/* Unused (padding field) */
-	bool open_area;	/* Looking for an open area */
-	bool break_right;	/* Looking for a break (right) */
-	bool break_left;	/* Looking for a break (left) */
+	int  mode;      /* Current running algorithm */
 };
 
 /*
