@@ -2508,6 +2508,106 @@ static int breakage_chance(object_type *o_ptr)
 	}
 }
 
+/*
+ * Calculation of critical hits for objects fired or thrown by the player. -LM-
+ */
+static sint critical_shot(int chance, int sleeping_bonus, bool thrown_weapon, 
+	char o_name[], char m_name[], int visible)
+{
+	int i, k;
+	int mult_a_crit = 10;
+
+	/* Extract missile power.  */
+	i = (chance + sleeping_bonus);
+
+	/* Test for critical hit. */
+	if (randint(i + 200) <= i)
+	{
+		/* Encourage the player to throw weapons at sleeping 
+		 * monsters. -LM-
+		 */
+		if (sleeping_bonus)
+		{ 
+			msg_print("You rudely awaken the monster!");
+		}
+
+		/* Determine level of critical hit */
+		k = randint(i) + randint(100); 
+
+		/* This portion of the function determines the level of critical hit,
+		 * then adjusts the damage dice multiplier and displays an appropriate
+		 * combat message.
+		 * A distinction is made between visible and invisible monsters.
+		 */
+		if (k < 125)
+		{
+
+				if (!visible)
+				{
+				/* Invisible monster */
+					msg_format("The %s finds a mark.", o_name);
+				}
+				else
+				{
+				/* Visible monster */
+					msg_format("The %s strikes %s.", o_name, m_name);
+				}
+			mult_a_crit = 15;
+		}
+		else if (k < 215)
+		{
+				if (!visible)
+				{
+				/* Invisible monster */
+					msg_format("The %s finds a mark.", o_name);
+				}
+				else
+				{
+				/* Visible monster */
+					msg_format("The %s penetrates %s.", o_name, m_name);
+				}
+			mult_a_crit = 21;
+		}
+		else if (k < 275)
+		{
+				if (!visible)
+				{
+				/* Invisible monster */
+					msg_format("The %s finds a mark.", o_name);
+				}
+				else
+				{
+				/* Visible monster */
+					msg_format("The %s drives into %s!", o_name, m_name);
+				}
+			mult_a_crit = 28;
+		}
+		else
+		{
+				if (!visible)
+				{
+				/* Invisible monster */
+					msg_format("The %s finds a mark.", o_name);
+				}
+				else
+				{
+				/* Visible monster */
+					msg_format("The %s transpierces %s!", o_name, m_name);
+				}
+			mult_a_crit = 35;
+		}
+	}
+	/* If the shot is not a critical hit, then the default message is shown. */
+	else
+	{
+		mult_a_crit = 10; 
+		msg_format("The %s hits %s.", o_name, m_name);
+	}
+
+	return (mult_a_crit);
+}
+
+
 
 /*
  * Fire an object from the pack or floor.
@@ -2541,9 +2641,17 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 {
 	int dir;
 	int j, y, x, ny, nx, ty, tx;
-	int tdam, tdis, thits, tmul;
+	
+	long tdam;
+	int tdam_remainder, tdam_whole;
+	int total_deadliness;
+	
+	int tdis, thits, tmul;
 	int bonus, chance;
 	int cur_dis, visible;
+
+	int sleeping_bonus=0;
+	int chance2;
 
 	object_type forge;
 	object_type *q_ptr;
@@ -2553,6 +2661,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	bool hit_body = FALSE;
 
 	char o_name[80];
+	char m_name[80];
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
@@ -2607,14 +2716,15 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	/* Use the proper number of shots */
 	thits = p_ptr->num_fire;
 
-	/* Use a base distance */
-	tdis = 10;
-
 	/* Base damage from thrown object plus launcher bonus */
 	tdam = damroll(q_ptr->dd, q_ptr->ds) + q_ptr->to_d + j_ptr->to_d;
 
 	/* Actually "fire" the object */
 	bonus = (p_ptr->to_h + q_ptr->to_h + j_ptr->to_h);
+	
+	/* sum all the applicable additions to Deadliness. */
+	total_deadliness = p_ptr->to_d + q_ptr->to_d + j_ptr->to_d;
+	
 	chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
 	/* Assume a base multiplier */
@@ -2750,11 +2860,18 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			/* Check the visibility */
 			visible = m_ptr->ml;
 
+			chance2 = chance - distance(py, px, y, x);
+
 			/* Note the collision */
 			hit_body = TRUE;
 
+			/* Sleeping, visible monsters are easier to hit. -LM- */
+			if ((m_ptr->csleep) && (visible)) 
+				sleeping_bonus = 5 + p_ptr->lev / 5;
+
 			/* Did we hit it (penalize range) */
-			if (test_hit_fire(chance - cur_dis, r_ptr->ac, m_ptr->ml))
+			if (test_hit_fire(chance - cur_dis+sleeping_bonus
+					, r_ptr->ac, m_ptr->ml))
 			{
 				bool fear = FALSE;
 
@@ -2793,9 +2910,49 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 					if (m_ptr->ml) health_track(c_ptr->m_idx);
 				}
 
-				/* Apply special damage XXX XXX XXX */
+				/* The basic damage-determination formula is the same in
+				 * archery as it is in melee (apart from the launcher mul-
+				 * tiplier).  See formula "py_attack" in "cmd1.c" for more 
+				 * details. -LM-
+				 */
+
+				/* Base damage dice. */
+				tdam = q_ptr->dd;
+
+				/* Multiply by the missile weapon multiplier. */
+				tdam *= tmul;
+
+
+				/* multiply by slays or brands. (10x inflation) */
 				tdam = tot_dam_aux(q_ptr, tdam, m_ptr);
-				tdam = critical_shot(q_ptr->weight, q_ptr->to_h, tdam);
+
+				/* multiply by critical shot. (10x inflation) */
+				tdam *= critical_shot(chance2, sleeping_bonus, FALSE, 
+					o_name, m_name, visible);
+
+				/* Convert total Deadliness into a percentage, and apply
+				 * it as a bonus or penalty. (100x inflation)
+				 */
+				if (total_deadliness > 0)
+					tdam *= (100 + 
+					deadliness_conversion[total_deadliness]);
+				else if (total_deadliness > -31)
+					tdam *= (100 - 
+					deadliness_conversion[ABS(total_deadliness)]);
+				else
+					tdam = 0;
+
+				/* Get the whole number of dice by deflating the result. */
+				tdam_whole = tdam / 10000;
+
+				/* Calculate the remainder (the fractional die, x10000). */
+				tdam_remainder = tdam % 10000;
+
+				/* Calculate and combine the damages of the whole and 
+				 * fractional dice.
+				 */
+				tdam = damroll(tdam_whole, o_ptr->ds) + 
+					(tdam_remainder * damroll(1, o_ptr->ds) / 10000);
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
@@ -2898,10 +3055,12 @@ void do_cmd_throw_aux(int mult)
 {
 	int dir, item;
 	int j, y, x, ny, nx, ty, tx;
-	int chance, tdam, tdis;
+	int chance, chance2, tdam, tdis;
 	int mul, div;
 	int cur_dis, visible;
 
+	int terrain_bonus;
+	
 	object_type forge;
 	object_type *q_ptr;
 
@@ -3073,6 +3232,15 @@ void do_cmd_throw_aux(int mult)
 			/* Check the visibility */
 			visible = m_ptr->ml;
 
+			/* Calculate the projectile accuracy, modified by distance. */
+			chance2 = chance - distance(py, px, y, x);
+
+			/* Monsters in rubble can take advantage of cover. -LM- */
+			if (cave[y][x].feat == FEAT_RUBBLE)
+			{
+				terrain_bonus = r_ptr->ac / 5 + 5;
+			}
+			
 			/* Note the collision */
 			hit_body = TRUE;
 
@@ -3118,8 +3286,14 @@ void do_cmd_throw_aux(int mult)
 				}
 
 				/* Apply special damage XXX XXX XXX */
-				tdam = tot_dam_aux(q_ptr, tdam, m_ptr);
-				tdam = critical_shot(q_ptr->weight, q_ptr->to_h, tdam);
+				tdam = tot_dam_aux(q_ptr, tdam, m_ptr)/10;
+				
+				/*
+				* Major hack - thrown weapons do not have an ego bonus.
+				* Waiting for tr1_thrown flag before can implement thrown
+				* weapons from Oangbnad properly.  -SF-
+				*/
+				/*tdam = critical_shot(q_ptr->weight, q_ptr->to_h, tdam);*/
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;

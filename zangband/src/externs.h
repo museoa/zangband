@@ -60,6 +60,7 @@ extern byte realm_choices1[];
 extern byte realm_choices2[];
 extern cptr realm_names[];
 extern cptr spell_names[7][32];
+extern byte deadliness_conversion[151];
 extern byte chest_traps[64];
 extern cptr player_title[MAX_CLASS][PY_MAX_LEVEL/5];
 extern cptr color_names[16];
@@ -470,8 +471,6 @@ extern void disturb(int stop_search, int flush_output);
 /* cmd1.c */
 extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_norm(int chance, int ac, int vis);
-extern s16b critical_shot(int weight, int plus, int dam);
-extern s16b critical_norm(int weight, int plus, int dam);
 extern s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr);
 extern void search(void);
 extern void carry(int pickup);
