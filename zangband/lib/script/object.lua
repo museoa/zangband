@@ -597,6 +597,7 @@ end
 
 function use_staff(object)
 	local ident = FALSE
+	local use_charge = TRUE
 
 	local sval = object.sval
 
