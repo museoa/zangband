@@ -182,6 +182,9 @@ static cave_type *access_wild(int y, int x)
 
 void change_level(int level)
 {
+	/* Hack - reset trap detection flag */
+	p_ptr->detected = FALSE;
+	
 	if (!level)
 	{
 		/* In the wilderness */

@@ -197,6 +197,7 @@ extern bool disturb_panel;
 extern bool disturb_state;
 extern bool disturb_minor;
 extern bool disturb_other;
+extern bool disturb_traps;	
 extern bool avoid_abort;
 extern bool avoid_other;
 extern bool flush_disturb;

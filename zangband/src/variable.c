@@ -221,6 +221,7 @@ bool disturb_panel;			/* Disturb whenever map panel changes */
 bool disturb_state;			/* Disturn whenever player state changes */
 bool disturb_minor;			/* Disturb whenever boring things happen */
 bool disturb_other;			/* Disturb whenever various things happen */
+bool disturb_traps;			/* Disturb whenever you move out of detect radius */
 
 bool alert_failure;		/* Alert user to various failures */
 bool last_words;		/* Get last words upon dying */

@@ -1450,6 +1450,7 @@ static void rd_ghost(void)
 }
 
 
+static bool player_detected = FALSE;
 
 
 /*
@@ -1725,6 +1726,16 @@ static void rd_extra(void)
 
 	/* Current turn */
 	rd_s32b(&turn);
+	
+	if (sf_version > 17)
+	{
+		/* Get trap detection status */
+		rd_byte((byte *)&player_detected);
+		
+		/* Get location of detection */
+		rd_s16b(&p_ptr->detecty);
+		rd_s16b(&p_ptr->detectx);
+	}
 }
 
 
@@ -3218,6 +3229,14 @@ static errr rd_dungeon(void)
 		/* enter the level */
 		change_level(dun_level);
 	}
+	
+	/* 
+	 * Set the trap detected flag.
+	 *
+	 * This is done here because it needs to be below all calls
+	 * to "change_level()"
+	 */
+	 p_ptr->detected = player_detected;
 	
 	/* Success */
 	return (0);

@@ -6000,6 +6000,9 @@ option_type option_info[] =
 	{ &disturb_other,               TRUE, 2, 0, 25,
 	"disturb_other",                "Disturb whenever random things happen" },
 
+	{ &disturb_traps,               TRUE, 2, 0, 28,
+	"disturb_traps",                "Disturb when you leave detection radius" },
+
 	{ &alert_failure,               FALSE, 2, 0, 27,
 	"alert_failure",                "Alert user to various failures" },
 

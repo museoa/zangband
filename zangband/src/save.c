@@ -1125,6 +1125,13 @@ static void wr_extra(void)
 
 	/* Current turn */
 	wr_s32b(turn);
+	
+	/* Trap detection status */
+	wr_byte(p_ptr->detected);
+	
+	/* Coords of last trap detection spell */
+	wr_s16b(p_ptr->detecty);
+	wr_s16b(p_ptr->detectx);
 }
 
 /*

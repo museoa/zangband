@@ -1328,6 +1328,13 @@ bool detect_traps(void)
 	bool            detect = FALSE;
 	cave_type       *c_ptr;
 
+	/* Save center of detection radius */
+	p_ptr->detectx = px;
+	p_ptr->detecty = py;
+	
+	/* Have detected traps on this level */
+	p_ptr->detected = TRUE;
+
 
 	/* Scan a radius MAX_DETECT circle */
 	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)

@@ -1992,6 +1992,7 @@ void mutation_power_aux(u32b power)
 				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
 				p_ptr->update |= (PU_DISTANCE);
 				p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+				
 			}
 			break;
 

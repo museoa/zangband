@@ -1531,6 +1531,10 @@ struct player_type
 	bool leaving_dungeon;	/* True if player is leaving the dungeon */
 
 	s32b align;				/* Good/evil/neutral */
+	
+	s16b detectx;			/* Coords of last detect traps casting */
+	s16b detecty;
+	bool detected;			/* Have cast detect_traps on this level */
 };
 
 

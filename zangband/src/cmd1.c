@@ -2565,7 +2565,25 @@ void move_player(int dir, int do_pickup)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
-
+		
+		/* Warn about traps */
+		
+		/* 
+		 * Is the disturb_traps option set +
+		 * out of detection range +
+		 * we are running?
+		 */
+		if (disturb_traps && p_ptr->detected && running && 
+			(distance(py, px, p_ptr->detecty, p_ptr->detectx) >= MAX_DETECT))
+		{
+			/* We are out of range */
+				
+			/* Disturb */
+			disturb(0, 0);
+				
+			/* Reset the detection flag */
+			p_ptr->detected = FALSE;
+		}
 
 		/* Spontaneous Searching */
 		if ((p_ptr->skill_fos >= 50) ||
@@ -2912,9 +2930,8 @@ static void run_init(int dir)
 
 	if (!dun_level)
 	{
-		/* If in the wilderness - run max 21 squares at a time */
-		/* This is one less than the detection radius. */
-		running = 21;
+		/* If in the wilderness - run max 32 squares at a time */
+		running = 32;
 	}
 	else
 	{
