@@ -1018,7 +1018,7 @@ void borg_mmove_init(int x1, int y1, int x2, int y2)
 	int dx, dy, ax, ay, sx, sy, dist;
 
 	map_block *mb_ptr;
-	
+
 	bool is_projectable;
 
 	/* Clear slope and square */
@@ -1060,8 +1060,8 @@ void borg_mmove_init(int x1, int y1, int x2, int y2)
 	/* Extract some signs */
 	sx = (dx < 0) ? -1 : 1;
 	sy = (dy < 0) ? -1 : 1;
-	
-	
+
+
 	/* Is the square projectable from here? */
 	is_projectable = projectable(x1, y1, x2, y2);
 
@@ -1083,12 +1083,12 @@ void borg_mmove_init(int x1, int y1, int x2, int y2)
 
 			/* Done? */
 			if ((xx == x1 + dx) && (yy == y1 + dy)) break;
-			
+
 			/* Paranoia */
 			if (!map_in_bounds(xx, yy)) break;
 
 			mb_ptr = map_loc(xx, yy);
-			
+
 			/* Do we want to stop early? */
 			if (!is_projectable && mb_ptr->monster) break;
 
@@ -1131,7 +1131,7 @@ void borg_mmove_init(int x1, int y1, int x2, int y2)
 			if (!map_in_bounds(xx, yy)) break;
 
 			mb_ptr = map_loc(xx, yy);
-			
+
 			/* Do we want to stop early? */
 			if (!is_projectable && mb_ptr->monster) break;
 
@@ -1438,13 +1438,35 @@ static bool map_stop_project(map_block *mb_ptr)
 {
 	/* Unknown area is probably a wall */
 	/* if (!mb_ptr->feat) return (TRUE); */
-	
+
 	/* Walls block projections */
 	if (borg_cave_wall_grid(mb_ptr)) return (TRUE);
-	
+
 	/* Seems ok */
 	return (FALSE);
 }
+
+
+/*
+ * Hack - a function to pass to los_general() used
+ * to do borg_projectable().
+ * Hack -- we stop at known monsters
+ */
+static bool map_pure_stop_project(map_block *mb_ptr)
+{
+	/* Unknown area is probably a wall */
+	if (!mb_ptr->feat) return (TRUE);
+
+	/* Walls block projections */
+	if (borg_cave_wall_grid(mb_ptr)) return (TRUE);
+
+	/* Stop at monsters */
+	if (mb_ptr->monster) return (TRUE);
+
+	/* Seems ok */
+	return (FALSE);
+}
+
 
 
 
@@ -1454,7 +1476,7 @@ static bool map_stop_project(map_block *mb_ptr)
  * Hack -- we refuse to assume that unknown grids are floors
  * Adapted from "projectable()" in "spells1.c".
  */
-bool borg_projectable(int y1, int x1, int y2, int x2)
+bool borg_projectable(int x1, int y1, int x2, int y2)
 {
 	/* Are we projectable? */
 	return (los_general(x1, y1, x2, y2, map_stop_project));
@@ -1467,43 +1489,10 @@ bool borg_projectable(int y1, int x1, int y2, int x2)
  * Hack -- we refuse to assume that unknown grids are floors
  * Adapted from "projectable()" in "spells1.c".
  */
-bool borg_projectable_pure(int y1, int x1, int y2, int x2)
+bool borg_projectable_pure(int x1, int y1, int x2, int y2)
 {
-	int dist, y, x;
-
-	map_block *mb_ptr;
-
-	/* Start at the initial location */
-	y = y1;
-	x = x1;
-
-	/* Simulate the spell/missile path */
-	for (dist = 0; dist <= MAX_RANGE; dist++)
-	{
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) break;
-
-		/* Get the grid */
-		mb_ptr = map_loc(x, y);
-
-		/* Hack -- assume unknown grids are walls */
-		if (dist && !mb_ptr->feat) break;
-
-		/* Never pass through walls/doors */
-		if (dist && borg_cave_wall_grid(mb_ptr)) break;
-
-		/* Check for arrival at "final target" */
-		if ((x == x2) && (y == y2)) return (TRUE);
-
-		/* Stop at monsters */
-		if (mb_ptr->monster) break;
-
-		/* Calculate the new location */
-		borgmove2(&y, &x, y1, x1, y2, x2);
-	}
-
-	/* Assume obstruction */
-	return (FALSE);
+	/* Are we projectable? */
+	return (los_general(x1, y1, x2, y2, map_pure_stop_project));
 }
 
 

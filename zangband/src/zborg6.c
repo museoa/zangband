@@ -11059,7 +11059,7 @@ static int borg_defend_aux_panel_shift(void)
 		}
 		else
 			/* shift up? only if a north corridor */
-		if (dir == 8 && borg_projectable_pure(c_y, c_x, c_y - 2, c_x) &&
+		if (dir == 8 && borg_projectable_pure(c_x, c_y, c_x, c_y - 2) &&
 				track_step_y[track_step_num - 1] != c_y - 1)
 		{
 			/* Send action (view panel info) */
@@ -11069,13 +11069,9 @@ static int borg_defend_aux_panel_shift(void)
 			/* Mark the time to avoid loops */
 			when_shift_panel = borg_t;
 		}
-		else /* shift down? only if a south corridor */ if (dir == 2 &&
-															borg_projectable_pure
-															(c_y, c_x, c_y + 2,
-															 c_x) &&
-															track_step_y
-															[track_step_num -
-															 1] != c_y + 1)
+		/* shift down? only if a south corridor */
+		else if (dir == 2 && borg_projectable_pure(c_x, c_y, c_x, c_y + 2) &&
+				 track_step_y[track_step_num - 1] != c_y + 1)
 		{
 			/* Send action (view panel info) */
 			borg_keypress('L');
@@ -11084,13 +11080,9 @@ static int borg_defend_aux_panel_shift(void)
 			/* Mark the time to avoid loops */
 			when_shift_panel = borg_t;
 		}
-		else /* shift Left? only if a west corridor */ if (dir == 4 &&
-														   borg_projectable_pure
-														   (c_y, c_x, c_y,
-															c_x - 2) &&
-														   track_step_x
-														   [track_step_num -
-															1] != c_x - 1)
+		/* shift Left? only if a west corridor */
+		else if (dir == 4 && borg_projectable_pure(c_x, c_y, c_x - 2, c_y) &&
+				 track_step_x[track_step_num - 1] != c_x - 1)
 		{
 			/* Send action (view panel info) */
 			borg_keypress('L');
@@ -11099,13 +11091,9 @@ static int borg_defend_aux_panel_shift(void)
 			/* Mark the time to avoid loops */
 			when_shift_panel = borg_t;
 		}
-		else /* shift Right? only if a east corridor */ if (dir == 6 &&
-															borg_projectable_pure
-															(c_y, c_x, c_y,
-															 c_x + 2) &&
-															track_step_x
-															[track_step_num -
-															 1] != c_x + 1)
+		/* shift Right? only if a east corridor */
+		else if (dir == 6 && borg_projectable_pure(c_x, c_y, c_x + 2, c_y) &&
+				 track_step_x[track_step_num - 1] != c_x + 1)
 		{
 			/* Send action (view panel info) */
 			borg_keypress('L');

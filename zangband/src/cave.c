@@ -295,7 +295,7 @@ void mmove_init(int x1, int y1, int x2, int y2)
 	int dx, dy, ax, ay, sx, sy, dist;
 
 	cave_type *c_ptr;
-	
+
 	bool is_projectable;
 
 	/* Clear slope and square */
@@ -337,8 +337,8 @@ void mmove_init(int x1, int y1, int x2, int y2)
 	/* Extract some signs */
 	sx = (dx < 0) ? -1 : 1;
 	sy = (dy < 0) ? -1 : 1;
-	
-	
+
+
 	/* Is the square projectable from here? */
 	is_projectable = projectable(x1, y1, x2, y2);
 
@@ -362,7 +362,7 @@ void mmove_init(int x1, int y1, int x2, int y2)
 			if ((xx == x1 + dx) && (yy == y1 + dy)) break;
 
 			c_ptr = area(xx, yy);
-			
+
 			/* Do we want to stop early? */
 			if (!is_projectable && c_ptr->m_idx) break;
 
@@ -402,7 +402,7 @@ void mmove_init(int x1, int y1, int x2, int y2)
 			if ((xx == x1 + dx) && (yy == y1 + dy)) break;
 
 			c_ptr = area(xx, yy);
-			
+
 			/* Do we want to stop early? */
 			if (!is_projectable && c_ptr->m_idx) break;
 
