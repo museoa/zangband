@@ -1322,7 +1322,7 @@ bool detect_objects_magic(void)
  * This is an "engine" function that does all the work, and
  * prevents a huge amount of code duplication.
  */
-static bool detect_mon_aux(bool tester(const monster_type *m_ptr, vptr data), cptr msg, vptr data)
+static bool detect_mon_aux(bool tester(const monster_type *m_ptr, const vptr data), cptr msg, const vptr data)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -1534,12 +1534,12 @@ bool detect_monsters_string(cptr match)
 /* Generic monster tester */
 static bool flag_mon_tester(const monster_type *m_ptr, vptr data)
 {
-	u32b flag;
+	const u32b flag;
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
 	/* Get flags to compare with */
-	flag = *((u32b *) data);
+	flag = *((const u32b *) data);
 	
 	if (r_ptr->flags[2] & flag)
 	{

@@ -38,7 +38,7 @@ void  tolua_foreach (lua_State* L, int lo, int f);
 int   tolua_tag (lua_State* L, const char* type);
 const char* tolua_type (lua_State* L, int lo);
 int   tolua_base (lua_State* L, int lo);
-int   tolua_cast (lua_State* L, int lo, char* type);
+int   tolua_cast (lua_State* L, int lo, const char* type);
 void  tolua_takeownership (lua_State* L, int lo);
 
 

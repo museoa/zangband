@@ -122,5 +122,4 @@ extern void handle_stuff(void);
 extern void message_flush(void);
 extern void msgf(cptr fmt);
 extern bool get_check(cptr prompt);
-extern errr get_rnd_line(cptr file_name, int entry, char *output);
 

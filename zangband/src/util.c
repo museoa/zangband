@@ -176,7 +176,6 @@ errr path_parse(char *buf, int max, cptr file)
 	struct passwd *pw;
 	char user[128];
 
-
 	/* Assume no result */
 	buf[0] = '\0';
 
@@ -186,7 +185,11 @@ errr path_parse(char *buf, int max, cptr file)
 	/* File needs no parsing */
 	if (file[0] != '~')
 	{
-		strcpy(buf, file);
+		strncpy(buf, file, max - 1);
+
+		/* Terminate */
+		buf[max - 1] = '\0';
+				
 		return (0);
 	}
 
@@ -224,6 +227,9 @@ errr path_parse(char *buf, int max, cptr file)
 
 	/* Append the rest of the filename, if any */
 	if (s) (void)strncat(buf, s, max - 1);
+	
+	/* Terminate */
+	buf[max - 1] = '\0';
 
 	/* Success */
 	return (0);

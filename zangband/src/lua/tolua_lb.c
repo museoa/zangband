@@ -135,7 +135,7 @@ int tolua_base (lua_State* L, int lo)
   return 0;
 }
 
-int tolua_cast (lua_State* L, int lo, char* type)
+int tolua_cast (lua_State* L, int lo, const char* type)
 {
  if (lua_isuserdata(L,lo))
  {
