@@ -5370,7 +5370,7 @@ D:An agent of supernatural beings, this creature looks like a
 D:huge eagle.
 
 N:385:Phantom beast
-G:G:B
+G:G:b
 I:110:8d12:20:20:40
 W:37:1:0:2350
 O:0:0:0
