@@ -719,13 +719,7 @@ static bool store_will_buy(const object_type *o_ptr)
 	}
 	
 	/* Good items only */
-	if (info_flags & ST_REST_GOOD)
-	{
-		if (!item_tester_hook_is_good(o_ptr)) return (FALSE);
-	}
-	
-	/* Great items only */
-	if (info_flags & ST_REST_GREAT)
+	if ((info_flags & ST_REST_GOOD) || (info_flags & ST_REST_GREAT))
 	{
 		if (!item_tester_hook_is_good(o_ptr)) return (FALSE);
 	}
@@ -1140,6 +1134,8 @@ static void store_create(void)
 	/* Prepare allocation table */
 	get_obj_num_prep();
 
+	/* Limit table with store-only items */
+	get_obj_store_prep();
 
 	/* Hack -- consider up to twenty items */
 	for (tries = 0; tries < 20; tries++)
@@ -1588,7 +1584,7 @@ static void store_maint(void)
 	if (j >= st_ptr->max_stock) j = st_ptr->max_stock - 1;
 
 	/* Acquire some new items */
-	while ((st_ptr->stock_num < j) && (i < 100))
+	while ((st_ptr->stock_num < j) && (i < 30))
 	{
 		/* Increment counter so we avoid taking too long */
 		i++;

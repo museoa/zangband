@@ -641,6 +641,75 @@ errr get_obj_num_prep(void)
 
 
 /*
+ * Apply store "object restriction function" to the "object allocation table"
+ */
+errr get_obj_store_prep(void)
+{
+	int i;
+
+	object_type dummy_object;
+	object_type *o_ptr = &dummy_object;
+
+	/* The field to use */
+	s16b *fld_ptr = &area(p_ptr->py, p_ptr->px)->fld_idx;
+	
+	/* Thing to pass to the action functions */
+	field_obj_test f_o_t;
+	
+	/* Get the entry */
+	alloc_entry *table = alloc_kind_table;
+	
+	/* Clear the object */
+	object_wipe(o_ptr);
+
+	
+	/* Scan the allocation table */
+	for (i = 0; i < alloc_kind_size; i++)
+	{
+		/* Init the object (we only care about tval and sval) */
+		o_ptr->tval = k_info[table[i].index].tval;
+		o_ptr->sval = k_info[table[i].index].sval;
+		
+		/* Save information to pass to the field action function */
+		f_o_t.o_ptr = o_ptr;
+	
+		/* Default is to reject this rejection */
+		f_o_t.result = FALSE;
+		
+		/* Will the store !not! buy this item? */
+		field_hook(fld_ptr, FIELD_ACT_STORE_ACT1, (vptr) &f_o_t);
+		
+		/* We don't want this item type? */
+		if (f_o_t.result == TRUE)
+		{
+			/* Clear the probability */
+			table[i].prob2 = 0;
+			continue;
+		}
+		
+		/* Change the default to acceptance */
+		f_o_t.result = TRUE;
+		
+		/* Will the store buy this item? */
+		field_hook(fld_ptr, FIELD_ACT_STORE_ACT2, (vptr) &f_o_t);
+
+		/* We don't want this item type? */
+		if (f_o_t.result == FALSE)
+		{
+			/* Clear the probability */
+			table[i].prob2 = 0;
+			continue;
+		}
+
+		/* Keep the current probability (initialised earlier) */
+	}
+
+	/* Success */
+	return (0);
+}
+
+
+/*
  * Choose an object kind that seems "appropriate" to the given level
  *
  * This function uses the "prob2" field of the "object allocation table",
@@ -3849,7 +3918,7 @@ byte kind_is_match(int k_idx)
 	if ((match_sv == SV_ANY) || (k_ptr->sval == match_sv)) return (100);
 
 	/* Not a match */
-	return (FALSE);
+	return (0);
 }
 
 
