@@ -4507,7 +4507,7 @@ static void build_type18(int bx0, int by0)
  */
 static void build_type19(int bx0, int by0)
 {
-	int y1, x1;
+	int y, x, y1, x1;
 	int y2, x2, yval, xval;
 	bool light;
 	
@@ -4537,7 +4537,17 @@ static void build_type19(int bx0, int by0)
 		
 		/* Generate liquid */
 		generate_draw(x1, y1 + 1, x2, y2 - 1, dun->feat_shal_liquid);
-		generate_fill(x1, y1 + 2, x2, y2 - 2, dun->feat_deep_liquid);
+
+		for (x = x1; x <= x2; x++)
+		{
+			for (y = y1 + 2; y <= y2 - 2; y++)
+			{
+				if (randint1(p_ptr->depth + 10) > 10)
+					set_feat_bold(x, y, dun->feat_deep_liquid);
+				else
+					set_feat_bold(x, y, dun->feat_shal_liquid);
+			}
+		}
 	}
 	else
 	{
@@ -4561,7 +4571,17 @@ static void build_type19(int bx0, int by0)
 		
 		/* Generate liquid */
 		generate_draw(x1 + 1, y1, x2 - 1, y2, dun->feat_shal_liquid);
-		generate_fill(x1 + 2, y1, x2 - 2, y2, dun->feat_deep_liquid);
+
+		for (x = x1 + 2; x <= x2 - 2; x++)
+		{
+			for (y = y1; y <= y2; y++)
+			{
+				if (randint1(p_ptr->depth + 10) > 10)
+					set_feat_bold(x, y, dun->feat_deep_liquid);
+				else
+					set_feat_bold(x, y, dun->feat_shal_liquid);
+			}
+		}
 	}
 }
 
