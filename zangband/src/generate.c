@@ -446,18 +446,24 @@ static void add_monsters(int count)
 	
 	cave_type *c_ptr;
 
+	int target_rating = randint1(10) + p_ptr->depth * 2 / 3;
+
 	/* Put some monsters in the dungeon */
 	for (i = 0; i < count; i++)
 	{
 		/*
+		 * Calculate the total levels of monster ood'ness to get
+                 * an appropriate level feeling.
+		 *
 		 * The more boring the dungeon is right now,
 		 * the more out of depth to pick monsters.
+		 *
+		 * Each monster gets a fraction of the total levels we want
+		 * that depends on the number of monsters left to generate.
 		 */
-		delta_level = (100 - dun_rating) / 10;
+		delta_level = (target_rating - dun_rating) / (count - i);
 		if (delta_level < 0) delta_level = 0;
-		
-		/* Not too far out of depth for the early levels */
-		if (delta_level > p_ptr->depth * 2) delta_level = 0;
+		if (delta_level > 10) delta_level = 10;
 		
 		(void)alloc_monster(0, TRUE, delta_level);
 	}
@@ -548,7 +554,7 @@ static void add_monsters(int count)
 		 * Make a great object somewhere in the dungeon to compensate
 		 * (Hack - use location of last monster as target)
 		 */
-		place_object(x, y, TRUE, TRUE, 0);
+		place_object(x, y, TRUE, TRUE, best_level - p_ptr->depth);
 	}
 }
 
