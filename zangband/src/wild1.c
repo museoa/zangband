@@ -322,7 +322,7 @@ static bool create_city(int x, int y, int town_num)
 /*	int pop = wild[y][x].trans.pop_map; */
 	int pop = (1 << randint0(7)) + 128;
 	int law = wild[y][x].trans.law_map;
-	int magic, temp;
+	int magic;
 	int build_num = 0, build_tot;
 	byte building;
 	byte count;
