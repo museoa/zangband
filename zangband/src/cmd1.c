@@ -1452,7 +1452,7 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 	if ((special_effect == MA_KNEE) && ((*k + p_ptr->to_d) < m_ptr->hp))
 	{
 		msg_format("%^s moans in agony!", m_name);
-		stun_effect = rand_range(13, 20);
+		stun_effect = rand_range(8, 20);
 		resist_stun /= 3;
 	}
 

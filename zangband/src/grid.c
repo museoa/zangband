@@ -122,7 +122,7 @@ void place_random_door(int y, int x)
 	delete_field(y, x);
 	
 	/* Invisible wall */
-	if (ironman_nightmare && !one_in_(666))
+	if (ironman_nightmare && one_in_(666))
 	{
 		/* Create invisible wall */
 		cave_set_feat(y, x, FEAT_FLOOR);
@@ -167,7 +167,7 @@ void place_closed_door(int y, int x)
 	int tmp;
 
 	/* Invisible wall */
-	if (ironman_nightmare && !one_in_(666))
+	if (ironman_nightmare && one_in_(666))
 	{
 		/* Create invisible wall */
 		cave_set_feat(y, x, FEAT_FLOOR);

@@ -1034,7 +1034,7 @@ static void castle_quest(void)
 				if (randint1(10) > 7)
 					q_ptr->max_num = 1;
 				else
-					q_ptr->max_num = rand_range(2, 5);
+					q_ptr->max_num = rand_range(2, 4);
 			}
 
 			q_ptr->cur_num = 0;

@@ -530,7 +530,7 @@ static void wild_magic(int spell)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
-	switch (randint1(spell) + rand_range(2, 10))
+	switch (randint0(spell) + randint0(9))
 	{
 		case 1:
 		case 2:
@@ -927,7 +927,7 @@ static bool cast_sorcery_spell(int spell)
 		msg_print("You open a dimensional gate. Choose a destination.");
 		return dimension_door();
 	case 20: /* Sense Minds */
-		(void)set_tim_esp(p_ptr->tim_esp + rand_range(30, 55));
+		(void)set_tim_esp(p_ptr->tim_esp + rand_range(25, 55));
 		break;
 	case 21: /* Self knowledge */
 		(void)self_knowledge();
@@ -955,7 +955,7 @@ static bool cast_sorcery_spell(int spell)
 		wiz_lite();
 		if (!(p_ptr->telepathy))
 		{
-			(void)set_tim_esp(p_ptr->tim_esp + rand_range(30, 55));
+			(void)set_tim_esp(p_ptr->tim_esp + rand_range(25, 55));
 		}
 		break;
 	case 28: /* Enchant Weapon */
@@ -1956,7 +1956,7 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 30)
 				{
 					msg_print("It's the picture of a strange monster.");
-					if (!(summon_specific(0, py, px, (p_ptr->depth * 3) / 2, rand_range(32, 38), TRUE, FALSE, FALSE)))
+					if (!(summon_specific(0, py, px, (p_ptr->depth * 3) / 2, rand_range(33, 38), TRUE, FALSE, FALSE)))
 						no_trump = TRUE;
 				}
 				else if (die < 33)

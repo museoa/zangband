@@ -2586,7 +2586,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_SUMMON_ANIMAL:
 		{
 			(void)summon_specific(-1, py, px, plev, SUMMON_ANIMAL_RANGER, TRUE, TRUE, TRUE);
-			o_ptr->timeout = rand_range(300, 500);
+			o_ptr->timeout = rand_range(200, 500);
 			break;
 		}
 
@@ -2631,7 +2631,7 @@ bool activate_effect(object_type *o_ptr)
 					msg_print("'NON SERVIAM! Wretch! I shall feast on thy mortal soul!'");
 			}
 
-			o_ptr->timeout = rand_range(333, 1000);
+			o_ptr->timeout = rand_range(666, 1000);
 			break;
 		}
 
@@ -2662,7 +2662,7 @@ bool activate_effect(object_type *o_ptr)
 					msg_print("'The dead arise... to punish you for disturbing them!'");
 			}
 
-			o_ptr->timeout = rand_range(333, 1000);
+			o_ptr->timeout = rand_range(666, 1000);
 			break;
 		}
 
@@ -2740,7 +2740,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_ESP:
 		{
-			(void)set_tim_esp(p_ptr->tim_esp + rand_range(30, 55));
+			(void)set_tim_esp(p_ptr->tim_esp + rand_range(25, 55));
 			o_ptr->timeout = 200;
 			break;
 		}
@@ -3060,7 +3060,7 @@ void random_artifact_resistance(object_type * o_ptr)
 
 	if (give_resistance)
 	{
-		(void) random_resistance(o_ptr, rand_range(23, 39), 0);
+		(void) random_resistance(o_ptr, rand_range(17, 38), 0);
 	}
 }
 

@@ -1920,7 +1920,7 @@ bool make_attack_spell(int m_idx)
 			}
 			else
 			{
-				int dummy = (((s32b) (rand_range(25, 90) * (p_ptr->chp))) / 100);
+				int dummy = (((s32b) (rand_range(65, 90) * (p_ptr->chp))) / 100);
 				msg_print("Your feel your life fade away!");
 				take_hit(dummy, m_name);
 				curse_equipment(100, 20);

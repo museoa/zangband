@@ -3932,7 +3932,7 @@ void do_cmd_time(void)
 				  min, (hour < 12) ? "AM" : "PM");
 
 	/* Find the path */
-	if (!one_in_(10) || p_ptr->image)
+	if (one_in_(10) || p_ptr->image)
 	{
 		path_build(buf, 1024, ANGBAND_DIR_FILE, "timefun.txt");
 	}
@@ -3988,7 +3988,7 @@ void do_cmd_time(void)
 			num++;
 
 			/* Apply the randomizer */
-			if (!one_in_(num)) strcpy(desc, buf + 2);
+			if (one_in_(num)) strcpy(desc, buf + 2);
 
 			/* Next... */
 			continue;

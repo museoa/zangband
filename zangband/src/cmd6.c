@@ -3114,7 +3114,7 @@ static void do_cmd_activate_aux(int item)
 			{
 				msg_print("You breathe sound.");
 				fire_ball(GF_SOUND, dir, 430, 2);
-				o_ptr->timeout = rand_range(50, 100) + 50;
+				o_ptr->timeout = rand_range(50, 100);
 				break;
 			}
 

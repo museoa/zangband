@@ -1970,7 +1970,7 @@ static void process_world(void)
 				if (p_ptr->depth < 1) p_ptr->depth = 1;
 
 				/* Nightmare mode makes recall more dangerous */
-				if (ironman_nightmare && !one_in_(666))
+				if (ironman_nightmare && one_in_(666))
 				{
 					if (p_ptr->depth < 50)
 					{

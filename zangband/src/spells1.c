@@ -1387,7 +1387,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags3 & RF3_IM_POIS)
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 				if (seen) r_ptr->r_flags3 |= (RF3_IM_POIS);
 			}
 			else if (one_in_(3)) do_poly = TRUE;
@@ -1426,7 +1426,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			else
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 			}
 			break;
 		}
@@ -1445,7 +1445,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags3 & RF3_RES_PLAS)
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 				if (seen)
 					r_ptr->r_flags3 |= (RF3_RES_PLAS);
 			}
@@ -1465,7 +1465,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			else if (r_ptr->flags3 & RF3_RES_NETH)
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 
 				if (seen) r_ptr->r_flags3 |= (RF3_RES_NETH);
 			}
@@ -1492,7 +1492,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			else if (r_ptr->flags3 & RF3_RES_WATE)
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 				if (seen) r_ptr->r_flags3 |= (RF3_RES_WATE);
 			}
 			break;
@@ -1508,7 +1508,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			   ((r_ptr->flags3 & RF3_DEMON) && one_in_(3)))
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 				do_poly = FALSE;
 			}
 			break;
@@ -1521,7 +1521,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags4 & RF4_BR_SHAR)
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 			}
 			break;
 		}
@@ -1548,7 +1548,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags4 & RF4_BR_SOUN)
 			{
 				note = " resists.";
-				dam *= 2; dam /= rand_range(6, 12);
+				dam *= 2; dam /= rand_range(7, 12);
 			}
 			break;
 		}
@@ -1561,7 +1561,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags4 & RF4_BR_CONF)
 			{
 				note = " resists.";
-				dam *= 2; dam /= rand_range(6, 12);
+				dam *= 2; dam /= rand_range(7, 12);
 			}
 			else if (r_ptr->flags3 & RF3_NO_CONF)
 			{
@@ -1578,7 +1578,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags3 & RF3_RES_DISE)
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 				if (seen) r_ptr->r_flags3 |= (RF3_RES_DISE);
 			}
 			break;
@@ -1591,7 +1591,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags3 & RF3_RES_NEXU)
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 				if (seen) r_ptr->r_flags3 |= (RF3_RES_NEXU);
 			}
 			break;
@@ -1605,7 +1605,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags4 & RF4_BR_WALL)
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 			}
 			break;
 		}
@@ -1617,7 +1617,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags4 & (RF4_BR_INER))
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 			}
 			else
 			{
@@ -1644,7 +1644,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags4 & (RF4_BR_TIME))
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 			}
 			break;
 		}
@@ -1678,7 +1678,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags4 & (RF4_BR_GRAV))
 			{
 				note = " resists.";
-				dam *= 3; dam /= rand_range(6, 12);
+				dam *= 3; dam /= rand_range(7, 12);
 				do_dist = 0;
 			}
 			else
@@ -2561,7 +2561,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (r_ptr->flags4 & (RF4_BR_LITE))
 			{
 				note = " resists.";
-				dam *= 2; dam /= (rand_range(6, 12));
+				dam *= 2; dam /= (rand_range(7, 12));
 			}
 			else if (r_ptr->flags3 & (RF3_HURT_LITE))
 			{
@@ -2585,7 +2585,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			    (r_ptr->flags3 & RF3_HURT_LITE))
 			{
 				note = " resists.";
-				dam *= 2; dam /= (rand_range(6, 12));
+				dam *= 2; dam /= (rand_range(7, 12));
 			}
 			break;
 		}
@@ -3402,8 +3402,8 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 		/* Choose 'new' target */
 		while (TRUE)
 		{
-			t_y = m_list[who].fy + randint0(3) - 1;
-			t_x = m_list[who].fx + randint0(3) - 1;
+			t_y = m_list[who].fy + rand_range(-1, 1);
+			t_x = m_list[who].fx + rand_range(-1, 1);
 			max_attempts--;
 
 
@@ -3607,7 +3607,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (p_ptr->resist_nethr)
 			{
 				if (p_ptr->prace != RACE_SPECTRE)
-					dam *= 6; dam /= rand_range(6, 12);
+					dam *= 6; dam /= rand_range(7, 12);
 			}
 			else
 			{
@@ -3668,7 +3668,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("You are hit by a wave of anarchy!");
 			if (p_ptr->resist_chaos)
 			{
-				dam *= 6; dam /= rand_range(6, 12);
+				dam *= 6; dam /= rand_range(7, 12);
 			}
 			if (!p_ptr->resist_confu)
 			{
@@ -3715,7 +3715,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("You are hit by something sharp!");
 			if (p_ptr->resist_shard)
 			{
-				dam *= 6; dam /= rand_range(6, 12);
+				dam *= 6; dam /= rand_range(7, 12);
 			}
 			else
 			{
@@ -3737,7 +3737,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("You are hit by a loud noise!");
 			if (p_ptr->resist_sound)
 			{
-				dam *= 5; dam /= rand_range(6, 12);
+				dam *= 5; dam /= rand_range(7, 12);
 			}
 			else
 			{
@@ -3760,7 +3760,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("You are hit by something puzzling!");
 			if (p_ptr->resist_confu)
 			{
-				dam *= 5; dam /= rand_range(6, 12);
+				dam *= 5; dam /= rand_range(7, 12);
 			}
 			if (!p_ptr->resist_confu)
 			{
@@ -3776,7 +3776,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("You are hit by something static!");
 			if (p_ptr->resist_disen)
 			{
-				dam *= 6; dam /= rand_range(6, 12);
+				dam *= 6; dam /= rand_range(7, 12);
 			}
 			else
 			{
@@ -3792,7 +3792,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("You are hit by something strange!");
 			if (p_ptr->resist_nexus)
 			{
-				dam *= 6; dam /= rand_range(6, 12);
+				dam *= 6; dam /= rand_range(7, 12);
 			}
 			else
 			{
@@ -3856,7 +3856,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("You are hit by something!");
 			if (p_ptr->resist_lite)
 			{
-				dam *= 4; dam /= rand_range(6, 12);
+				dam *= 4; dam /= rand_range(7, 12);
 			}
 			else if (!blind && !p_ptr->resist_blind)
 			{
@@ -3889,7 +3889,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			if (fuzzy) msg_print("You are hit by something!");
 			if (p_ptr->resist_dark)
 			{
-				dam *= 4; dam /= rand_range(6, 12);
+				dam *= 4; dam /= rand_range(7, 12);
 
 				if (p_ptr->prace == RACE_VAMPIRE) dam = 0;
 			}
@@ -5551,8 +5551,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 					/* Choose 'new' target */
 					do
 					{
-						t_y = y_saver + randint0(3) - 1;
-						t_x = x_saver + randint0(3) - 1;
+						t_y = y_saver + rand_range(-1, 1);
+						t_x = x_saver + rand_range(-1, 1);
 						max_attempts--;
 					}
 

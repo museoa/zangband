@@ -373,7 +373,7 @@ static bool object_flavor(int k_idx)
 
 void get_table_name(char *out_string)
 {
-	int testcounter = rand_range(1, 4);
+	int testcounter = rand_range(2, 4);
 
 	strcpy(out_string, "'");
 

@@ -1272,7 +1272,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* Don't kill Amberites */
 		if ((r_ptr->flags3 & RF3_AMBERITE) && one_in_(2))
 		{
-			int curses = rand_range(1, 4);
+			int curses = rand_range(2, 4);
 			bool stop_ty = FALSE;
 			int count = 0;
 
@@ -3573,7 +3573,7 @@ void gain_level_reward(int chosen_reward)
 			q_ptr->to_h = 3 + randint1(p_ptr->depth) % 10;
 			q_ptr->to_d = 3 + randint1(p_ptr->depth) % 10;
 			
-			(void) random_resistance(q_ptr, rand_range(4, 38), 0);
+			(void) random_resistance(q_ptr, rand_range(5, 38), 0);
 			
 			add_ego_flags(q_ptr, EGO_CHAOTIC);
 
