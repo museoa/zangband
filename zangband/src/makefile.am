@@ -33,9 +33,8 @@ EXTRA_zangband_SOURCES = \
   main-ibm.c main-lsl.c main-mac.c main-sla.c main-vme.c \
   main-xxx.c \
   makefile.acn makefile.ami makefile.bcc makefile.cyg \
-  makefile.dos makefile.emx makefile.gtk makefile.ibm \
-  makefile.lcc makefile.lsl makefile.std makefile.wat \
-  makefile.win \
+  makefile.dos makefile.emx makefile.ibm makefile.lcc \
+  makefile.std makefile.wat makefile.win \
   angband.rc angband.ico readdib.c readdib.h \
   maid-x11.c
 
