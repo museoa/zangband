@@ -350,6 +350,51 @@ static const struct
 {TEST_FLOOR, -1,  0, RUN_SE | RUN_E | RUN_NE, RUN_NW | RUN_SW}
 };
 
+static const u32b valid_dir_mask[10] = {
+/* 0 */ 0,
+/* 1 */ RUN_NW | RUN_W | RUN_SW | RUN_S | RUN_SE,
+/* 2 */ RUN_SW | RUN_S | RUN_SE,
+/* 3 */ RUN_SW | RUN_S | RUN_SE | RUN_E | RUN_NE,
+/* 4 */ RUN_NW | RUN_W | RUN_SW,
+/* 5 */ 0,
+/* 6 */ RUN_SE | RUN_E | RUN_NE,
+/* 7 */ RUN_NE | RUN_N | RUN_NW | RUN_W | RUN_SW,
+/* 8 */ RUN_NE | RUN_N | RUN_NW,
+/* 9 */ RUN_SE | RUN_E | RUN_NE | RUN_N | RUN_NW
+};
+
+static const u32b basic_dir_mask[10] = {
+/* 0 */ 0,
+/* 1 */ RUN_SW,
+/* 2 */ RUN_S,
+/* 3 */ RUN_SE,
+/* 4 */ RUN_W,
+/* 5 */ 0,
+/* 6 */ RUN_E,
+/* 7 */ RUN_NW,
+/* 8 */ RUN_N,
+/* 9 */ RUN_NE
+};
+
+/*
+ * Lists of walls that, if all set, mean we're
+ * probably in a corridor.
+ *
+ * Generally we decide we're in a corridor if
+ * two opposite squares are walls, or one square
+ * and the two opposite corners, or all four
+ * corners.
+ */
+static const u32b corridor_test_mask[] = {
+RUN_N | RUN_S,
+RUN_E | RUN_W,
+RUN_N | RUN_SE | RUN_SW,
+RUN_E | RUN_NW | RUN_SW,
+RUN_S | RUN_NE | RUN_NW,
+RUN_W | RUN_SE | RUN_NE,
+RUN_NW | RUN_NE | RUN_SE | RUN_SW
+};
+
 /*
  * Determine the run algorithm to use.
  *
@@ -360,30 +405,37 @@ static const struct
  * the player has moved the first step of the run.
  *
  * In general determining which algorithm to use is complicated.
- * For example in this situation:
- *
- * #.#
- * #@.
- * ###
- *
- * we should use the corridor algorithm, not the room algorithm.
- *
- * Fortunately, in that situation both algorithms will stop
- * immediately (assuming we didn't just step out of a wall), so
- * it doesn't matter that we get it wrong.
  */
 static void run_choose_mode(void)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
+	unsigned int i;
+	u32b wall_dirs = 0;
 
-	/* Check for two walls on opposite sides of the player */
-	if (see_wall(px - 1, py) && see_wall(px + 1, py))
-		p_ptr->run.mode = RUN_MODE_FOLLOW;
-	else if (see_wall(px, py - 1) && see_wall(px, py + 1))
-		p_ptr->run.mode = RUN_MODE_FOLLOW;
-	else
-		p_ptr->run.mode = RUN_MODE_OPEN;
+	/* Check valid dirs */
+	for (i = 1; i < 10; i++)
+	{
+		if (see_wall(px + ddx[i], py + ddy[i]))
+			wall_dirs |= basic_dir_mask[i];
+	}
+
+	/* Check for evidence we're in a corridor */
+	for (i = 0; i < NUM_ELEMENTS(corridor_test_mask); i++)
+	{
+		/* 
+		 * If none of the elements in the mask are _not_
+		 * set, we're in a corridor.
+		 */
+		if (!(~wall_dirs & corridor_test_mask[i]))
+		{
+			p_ptr->run.mode = RUN_MODE_FOLLOW;
+			return;
+		}
+	}
+
+	/* Assume we're in the open */
+	p_ptr->run.mode = RUN_MODE_OPEN;
 }
 
 
@@ -410,19 +462,6 @@ static int check_interesting(void)
 
 	return (FALSE);
 }
-
-static int valid_dir_mask[10] = {
-/* 0 */ 0,
-/* 1 */ RUN_NW | RUN_W | RUN_SW | RUN_S | RUN_SE,
-/* 2 */ RUN_SW | RUN_S | RUN_SE,
-/* 3 */ RUN_SW | RUN_S | RUN_SE | RUN_E | RUN_NE,
-/* 4 */ RUN_NW | RUN_W | RUN_SW,
-/* 5 */ 0,
-/* 6 */ RUN_SE | RUN_E | RUN_NE,
-/* 7 */ RUN_NE | RUN_N | RUN_NW | RUN_W | RUN_SW,
-/* 8 */ RUN_NE | RUN_N | RUN_NW,
-/* 9 */ RUN_SE | RUN_E | RUN_NE | RUN_N | RUN_NW
-};
 
 /*
  * The corridor running algorithm.
