@@ -47,7 +47,16 @@ static bool get_enemy_dir(monster_type *m_ptr, int *mm)
 
 		/* Paranoia -- Skip dead monsters */
 		if (!t_ptr->r_idx) continue;
+		
+		/* Monster must be 'an enemy' */
+		if (!are_enemies(m_ptr, t_ptr)) continue;
 
+		/* Mega Hack - Monster must be close */
+		if (abs(m_ptr->fy - t_ptr->fy) + abs(m_ptr->fx - t_ptr->fx) > 20)
+		{
+			continue;
+		}
+		
 		if (is_pet(m_ptr))
 		{
 			/* Hack -- only fight away from player */
@@ -66,15 +75,6 @@ static bool get_enemy_dir(monster_type *m_ptr, int *mm)
 				continue;
 			}
 		}
-		
-		/* Mega Hack - Monster must be close */
-		if (abs(m_ptr->fy - t_ptr->fy) + abs(m_ptr->fx - t_ptr->fx) > 20)
-		{
-			continue;
-		}
-
-		/* Monster must be 'an enemy' */
-		if (!are_enemies(m_ptr, t_ptr)) continue;
 
 		/* Monster must be projectable if we can't pass through walls */
 		if (!(r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)) &&
