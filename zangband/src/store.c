@@ -833,7 +833,8 @@ static void store_delete(void)
  */
 static void store_create(void)
 {
-	int kind, tries, level;
+    int kind, tries, level, delta;
+    byte flags;
 
 	object_type *q_ptr;
 
@@ -864,7 +865,13 @@ static void store_create(void)
 
 	/* Hack -- consider up to fifty items */
 	for (tries = 0; tries < 50; tries++)
-	{
+    {
+        /* Assume no flags */
+        flags = OC_NONE;
+
+        /* Assume no bonus */
+        delta = 0;
+
 		/* Get level to use */
 		level = rand_range(f_ptr->data[1], f_ptr->data[2]);
 
@@ -875,24 +882,29 @@ static void store_create(void)
 		if (!kind) continue;
 
 		/* Create a new object of the chosen kind */
-		q_ptr = object_prep(kind);
+        q_ptr = object_prep(kind);
 
 		/* Create object based on restrictions */
 		if (restricted & ST_REST_GREAT)
-		{
-			/* Apply some "low-level" magic (great) */
-			apply_magic(q_ptr, level, 30, OC_FORCE_GOOD);
+        {
+            /* Apply "great" magic */
+            delta = 30;
+            flags = OC_FORCE_GOOD;
 		}
 		else if (restricted & ST_REST_GOOD)
-		{
-			/* Apply some "low-level" magic (good) */
-			apply_magic(q_ptr, level, 15, OC_NONE);
-		}
-		else
-		{
-			/* Apply some "low-level" magic (normal) */
-			apply_magic(q_ptr, level, 0, OC_NONE);
-		}
+        {
+            /* Apply "good" magic */
+            delta = 15;
+        }
+
+        /* Occasionally generate unusually good items */
+        while (one_in_(40))
+        {
+            delta += rand_range(5, 15);
+        }
+
+        /* Apply some magic */
+        apply_magic(q_ptr, level, delta + (level - k_info[kind].level) / 3, flags);
 
 		/* Mega-Hack -- no chests in stores */
 		if (q_ptr->tval == TV_CHEST) continue;
