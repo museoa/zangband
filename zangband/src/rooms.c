@@ -1675,7 +1675,7 @@ static void build_type6(int bx0, int by0)
 	/* Prepare the monster distribution array */
 	for (i = 0; i < PIT_HGT; i++)
 	{
-		C_WIPE(power[i], PIT_WID, byte);
+		(void) C_WIPE(power[i], PIT_WID, byte);
 	}
 
 	/* Process a preparation function if necessary */

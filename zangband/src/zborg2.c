@@ -1535,7 +1535,7 @@ static void borg_delete_take(int i)
 				  (k_name + k_info[take->k_idx].name), take->x, take->y);
 
 	/* Kill the object */
-	WIPE(take, borg_take);
+	(void) WIPE(take, borg_take);
 
 	/* One less object */
 	borg_takes_cnt--;
@@ -1735,7 +1735,7 @@ void borg_delete_kill(int who, cptr reason)
 				  kill->x, kill->y, reason);
 
 	/* Kill the monster */
-	WIPE(kill, borg_kill);
+	(void) WIPE(kill, borg_kill);
 
 	/* One less monster */
 	borg_kills_cnt--;
@@ -1798,7 +1798,7 @@ static void borg_merge_kill(int who)
 	}
 
 	/* Kill the monster */
-	WIPE(kill, borg_kill);
+	(void) WIPE(kill, borg_kill);
 
 	/* One less monster */
 	borg_kills_cnt--;
@@ -2797,10 +2797,10 @@ void borg_map_erase(void)
 	borg_takes_nxt = 1;
 
 	/* Forget old objects */
-	C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
+	(void) C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
 
 	/* Forget old monsters */
-	C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
+	(void) C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
 }
 
 
@@ -4243,10 +4243,10 @@ void borg_update(void)
 		borg_kills_nxt = 1;
 
 		/* Forget old monsters */
-		C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
+		(void) C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
 
 		/* Hack -- Forget race counters */
-		C_WIPE(borg_race_count, z_info->r_max, s16b);
+		(void) C_WIPE(borg_race_count, z_info->r_max, s16b);
 
 		/* Fake goal location */
 		g_x = c_x;
