@@ -479,12 +479,23 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 
 		/* Unstack the used item */
 		o_ptr = inven_carry(o_ptr);
+		
+		/* Notice weight changes */
+		p_ptr->update |= PU_WEIGHT;
+		
+		/* Paranoia */
+		if (!o_ptr)
+		{
+			msg_print("Too many dungeon objects - staff lost!");
+			
+			make_noise(1);
+			
+			/* Exit */
+			return;
+		}
 
 		/* Message */
 		msg_print("You unstack your staff.");
-
-		/* Notice weight changes */
-		p_ptr->update |= PU_WEIGHT;
 	}
 	else
 	{
@@ -493,7 +504,7 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	}
 	
 	/* Describe charges in the pack */
-	item_charges(o_ptr);
+	if (o_ptr) item_charges(o_ptr);
 
 	make_noise(1);
 }

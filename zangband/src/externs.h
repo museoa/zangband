@@ -651,7 +651,6 @@ extern object_type *make_gold(int coin_type);
 extern void place_gold(int x, int y);
 extern void drop_near(object_type *o_ptr, int chance, int x, int y);
 extern void acquirement(int x1, int y1, int num, bool great, bool known);
-extern s16b *look_up_list(object_type *o_ptr);
 extern object_type *get_list_item(s16b list_start, int number);
 extern int get_item_position(s16b list_start, object_type *o_ptr);
 extern int get_list_length(s16b list_start);

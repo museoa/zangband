@@ -103,8 +103,7 @@ void delete_held_object(s16b *o_idx_ptr, object_type *o_ptr)
 }
 
 /*
- * Delete an object we know is lying on the dungeon
- * floor.
+ * Delete an object we know is lying on the dungeon floor.
  */
 void delete_dungeon_object(object_type *o_ptr)
 {
@@ -201,12 +200,12 @@ void drop_object_list(s16b *o_idx_ptr, int x, int y)
 	{
 		/* Duplicate object */
 		q_ptr = object_dup(o_ptr);
+		
+		/* Delete held object */
+		delete_held_object(o_idx_ptr, o_ptr);
 
 		/* Drop object */
 		drop_near(q_ptr, -1, x, y);
-
-		/* Delete held object */
-		delete_held_object(o_idx_ptr, o_ptr);
 	}
 	OBJ_ITT_END;
 
@@ -344,9 +343,9 @@ void compact_objects(int size)
 
 
 	/* Excise dead objects (backwards!) */
-	for (i = o_max - 1; i >= 1; i--)
+	while (o_max > 1)
 	{
-		object_type *o_ptr = &o_list[i];
+		object_type *o_ptr = &o_list[o_max - 1];
 
 		/* Stop when we get to an object */
 		if (o_ptr->k_idx) break;
@@ -4348,6 +4347,8 @@ static bool put_object(object_type *o_ptr, int x, int y)
 {
 	/* Acquire grid */
 	cave_type *c_ptr = area(x, y);
+	
+	object_type *j_ptr;
 
 	/* Require nice floor space */
 	if (!cave_nice_grid(c_ptr)) return (FALSE);
@@ -4356,10 +4357,10 @@ static bool put_object(object_type *o_ptr, int x, int y)
 	if (!o_ptr) return (FALSE);
 
 	/* Add the object to the ground */
-	o_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
+	j_ptr = add_object_list(&c_ptr->o_idx, o_ptr);
 
 	/* Success */
-	if (o_ptr)
+	if (j_ptr)
 	{
 		/* Location */
 		o_ptr->iy = y;
@@ -4400,12 +4401,6 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	/* Paranoia */
 	if (!k_idx) return;
 
-	/* Create the item */
-	o_ptr = object_prep(k_idx);
-
-	/* Failure? */
-	if (!o_ptr) return;
-
 	k_ptr = &k_info[k_idx];
 
 	/* Instant artifacts are special */
@@ -4431,6 +4426,9 @@ void place_specific_object(int x, int y, int level, int k_idx)
 	}
 	else
 	{
+		/* Create the item */
+		o_ptr = object_prep(k_idx);
+	
 		/* Apply magic */
 		apply_magic(o_ptr, level, 0, OC_NORMAL);
 
@@ -4502,8 +4500,6 @@ void place_object(int x, int y, bool good, bool great)
 
 /*
  * Make a treasure object
- *
- * The location must be a legal, clean, floor grid.
  */
 object_type *make_gold(int coin_type)
 {
@@ -4933,7 +4929,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
  * We know the item is in our equipment, our
  * inventory, or is on the floor underneith us.
  */
-s16b *look_up_list(object_type *o_ptr)
+static s16b *look_up_list(object_type *o_ptr)
 {
 	object_type *j_ptr;
 
@@ -5441,11 +5437,11 @@ object_type *inven_carry(object_type *o_ptr)
 	}
 	OBJ_ITT_END;
 
-	/* Paranoia */
-	if (get_list_length(p_ptr->inventory) > INVEN_PACK) return (NULL);
-
 	/* Add the item to the pack */
 	o_ptr = add_object_list(&p_ptr->inventory, o_ptr);
+	
+	/* Paranoia */
+	if (!o_ptr) return (NULL);
 
 	/* Forget location */
 	o_ptr->iy = o_ptr->ix = 0;
@@ -5524,6 +5520,13 @@ object_type *inven_takeoff(object_type *o_ptr)
 
 	/* Carry the object */
 	q_ptr = inven_carry(o_ptr);
+	
+	/* Paranoia */
+	if (!q_ptr)
+	{
+		msg_print("You cannot take off the item - too many dungeon objects!");
+		return (NULL);
+	}
 
 	/* Message */
 	msg_format("%s %s (%c).", act, o_name, I2A(item));
@@ -5579,16 +5582,19 @@ void inven_drop(object_type *o_ptr, int amt)
 	{
 		/* Take off first */
 		o_ptr = inven_takeoff(o_ptr);
+		
+		/* Paranoia */
+		if (!o_ptr) return;
 	}
+	
+	/* Get item slot */
+	slot = get_item_position(p_ptr->inventory, o_ptr);
 
 	/* Get local object */
 	q_ptr = item_split(o_ptr, amt);
 
 	/* Describe local object */
 	object_desc(o_name, q_ptr, TRUE, 3, 256);
-
-	/* Get item slot */
-	slot = get_item_position(p_ptr->inventory, q_ptr);
 
 	/* Message */
 	msg_format("You drop %s (%c).", o_name, I2A(slot));

@@ -683,6 +683,9 @@ static object_type *home_carry(object_type *o_ptr)
 
 	/* Add the item to the store */
 	o_ptr = add_object_list(&st_ptr->stock, o_ptr);
+	
+	/* Paranoia */
+	if (!o_ptr) return (NULL);
 
 	/* Forget location */
 	o_ptr->iy = o_ptr->ix = 0;
@@ -760,6 +763,9 @@ static object_type *store_carry(object_type *o_ptr)
 
 	/* Add the item to the store */
 	o_ptr = add_object_list(&st_ptr->stock, o_ptr);
+	
+	/* Paranoia */
+	if (!o_ptr) return (NULL);
 
 	/* Forget location */
 	o_ptr->iy = o_ptr->ix = 0;
@@ -1506,6 +1512,13 @@ static void store_purchase(int *store_top)
 
 			/* Give it to the player */
 			j_ptr = inven_carry(j_ptr);
+			
+			/* Paranoia */
+			if (!j_ptr)
+			{
+				msg_print("Too many allocated objects!");
+				return;
+			}
 
 			/* Describe the final result */
 			object_desc(o_name, j_ptr, TRUE, 3, 256);
@@ -1598,6 +1611,13 @@ static void store_purchase(int *store_top)
 
 		/* Give it to the player */
 		j_ptr = inven_carry(j_ptr);
+		
+		/* Paranoia */
+		if (!j_ptr)
+		{
+			msg_print("Too many allocated objects!");
+			return;
+		}
 
 		/* Describe just the result */
 		object_desc(o_name, j_ptr, TRUE, 3, 256);
@@ -1642,9 +1662,6 @@ static void store_purchase(int *store_top)
 			chg_virtue(V_SACRIFICE, 1);
 		}
 	}
-
-	/* Not kicked out */
-	return;
 }
 
 

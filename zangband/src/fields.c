@@ -2819,6 +2819,9 @@ bool field_action_hit_trap_drop_item(field_type *f_ptr, vptr nothing)
 	item = randint1(get_list_length(p_ptr->inventory));
 
 	o_ptr = get_list_item(p_ptr->inventory, item);
+	
+	/* Paranoia */
+	if (!o_ptr) return (FALSE);
 
 	/* Only if not cursed */
 	if (!cursed_p(o_ptr))
