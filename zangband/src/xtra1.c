@@ -170,8 +170,8 @@ void show_status_bar(cptr letter, byte *colour, int num)
 	}
 	else
 	{
-		/* increment offset of scroll every 10 turns*/
-		if (!(turn % 10)) bar_count++;
+		/* increment the count (scroll the flags) */
+		bar_count++;
 		
 		if (bar_count>=num) bar_count=0;
 		
@@ -388,6 +388,22 @@ static void prt_status(void)
 	{
 		letter[num]='P';
 		colour[num]=TERM_GREEN;
+		num++;
+	}
+	
+	/* Word of Recall */
+	if (p_ptr->word_recall)
+	{
+		letter[num]='W';
+		colour[num]=TERM_WHITE;
+		num++;
+	}
+	
+	/* Confusing Hands */
+	if (p_ptr->confusing)
+	{
+		letter[num]='C';
+		colour[num]=TERM_RED;
 		num++;
 	}
 	

@@ -1178,6 +1178,7 @@ static bool cast_chaos_spell(int spell)
 		{
 			msg_print("Your hands start glowing.");
 			p_ptr->confusing = TRUE;
+			p_ptr->redraw |= (PR_STATUS);
 		}
 		break;
 	case 4: /* Manaburst */

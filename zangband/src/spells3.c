@@ -554,11 +554,13 @@ void recall_player(int turns)
 	{
 		p_ptr->word_recall = turns;
 		msg_print("The air about you becomes charged...");
+		p_ptr->redraw |= (PR_STATUS);
 	}
 	else
 	{
 		p_ptr->word_recall = 0;
 		msg_print("A tension leaves the air around you...");
+		p_ptr->redraw |= (PR_STATUS);
 	}
 }
 

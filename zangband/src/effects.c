@@ -60,7 +60,7 @@ bool set_blind(int v)
 	/* Fully update the visuals */
 	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE | PU_VIEW | PU_LITE | PU_MONSTERS);
 
-	/* Redraw map */
+	/* Redraw map + status bar*/
 	p_ptr->redraw |= (PR_MAP | PR_STATUS);
 
 	/* Redraw the "blind" */
@@ -377,11 +377,11 @@ bool set_fast(int v)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
-	/* Handle stuff */
-	handle_stuff();
-
 	/* Show bar */
 	p_ptr->redraw |= (PR_STATUS);
+
+	/* Handle stuff */
+	handle_stuff();
 
 	/* Result */
 	return (TRUE);
@@ -430,12 +430,12 @@ bool set_slow(int v)
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
-	/* Handle stuff */
-	handle_stuff();
-
 	/* Show bar */
 	p_ptr->redraw |= (PR_STATUS);
 
+	/* Handle stuff */
+	handle_stuff();
+	
 	/* Result */
 	return (TRUE);
 }
@@ -1109,11 +1109,11 @@ bool set_oppose_elec(int v)
 	/* Disturb */
 	if (disturb_state) disturb(0, 0);
 
-	/* Handle stuff */
-	handle_stuff();
-
 	/* Show bar */
 	p_ptr->redraw |= (PR_STATUS);
+
+	/* Handle stuff */
+	handle_stuff();
 
 	/* Result */
 	return (TRUE);

@@ -2205,11 +2205,13 @@ void mutation_power_aux(u32b power)
 				{
 					p_ptr->word_recall = rand_int(21) + 15;
 					msg_print("The air about you becomes charged...");
+					p_ptr->redraw |= (PR_STATUS);
 				}
 				else
 				{
 					p_ptr->word_recall = 0;
 					msg_print("A tension leaves the air around you...");
+					p_ptr->redraw |= (PR_STATUS);
 				}
 			}
 			break;

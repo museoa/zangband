@@ -1892,6 +1892,7 @@ void py_attack(int y, int x)
 				{
 					p_ptr->confusing = FALSE;
 					msg_print("Your hands stop glowing.");
+					p_ptr->redraw |= (PR_STATUS);
 				}
 
 				/* Confuse the monster */

@@ -1827,6 +1827,7 @@ static void bldg_process_command(building_type *bldg, int i)
 				p_ptr->word_recall = 1;
 				msg_print("The air about you becomes charged...");
 				paid = TRUE;
+				p_ptr->redraw |= (PR_STATUS);
 				break;
 			case BACT_TELEPORT_LEVEL:
 				amt = get_quantity("Teleport to which level? ", 98);
@@ -1836,6 +1837,7 @@ static void bldg_process_command(building_type *bldg, int i)
 					p_ptr->max_dlv = amt;
 					msg_print("The air about you becomes charged...");
 					paid = TRUE;
+					p_ptr->redraw |= (PR_STATUS);
 				}
 				break;
 			case BACT_LOSE_MUTATION:

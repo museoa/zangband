@@ -2232,6 +2232,8 @@ static void process_world(void)
 		/* Count down towards recall */
 		p_ptr->word_recall--;
 
+		p_ptr->redraw |= (PR_STATUS);
+		
 		/* Activate the recall */
 		if (!p_ptr->word_recall)
 		{
@@ -4224,6 +4226,7 @@ void play_game(bool new_game)
 
 					/* Hack -- Prevent recall */
 					p_ptr->word_recall = 0;
+					p_ptr->redraw |= (PR_STATUS);
 				}
 
 				/* Note cause of death XXX XXX XXX */

@@ -1353,6 +1353,7 @@ static void do_cmd_read_scroll_aux(int item)
 				msg_print("Your hands begin to glow.");
 				p_ptr->confusing = TRUE;
 				ident = TRUE;
+				p_ptr->redraw |= (PR_STATUS);
 			}
 			break;
 		}
@@ -3470,11 +3471,13 @@ static void do_cmd_activate_aux(int item)
 				{
 					p_ptr->word_recall = randint(20) + 15;
 					msg_print("The air about you becomes charged...");
+					p_ptr->redraw |= (PR_STATUS);
 				}
 				else
 				{
 					p_ptr->word_recall = 0;
 					msg_print("A tension leaves the air around you...");
+					p_ptr->redraw |= (PR_STATUS);
 				}
 				o_ptr->timeout = 200;
 				break;
