@@ -173,16 +173,6 @@ $(PORTS): install
 INSTALL := cp zangband ..
 
 ##
-## Hack - default clean action
-##
-CLEAN := \
-	rm -f *.bak *.o; \
-	rm -f ./lua/*.bak ./lua/*.o; \
-	rm -f ./l-*.c; \
-	rm -f ./lua/tolua; \
-	rm -f ./lua/tolua_boot;
-
-##
 ## Variation -- All the ports that work in Linux at once.
 ## (Use the -m option to start the one you want.)
 ##
@@ -277,16 +267,25 @@ aix: LIBS := -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
 dos: CFLAGS += -s -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
 dos: INSTALL := copy zangband ../zangband.exe
-dos: CLEAN := del *.o; del lua\*.o; del *.exe; del lua\*.exe;
 dos: LUA := lua\# Dos has different path seperators
+dos_clean:
+	del *.o \
+	del lua\*.o \
+	del *.exe \
+	del lua\*.exe
 
 ##
 ## Variation -- Compile using the main-ibm.c port
 ##
 ibm: CFLAGS += -DUSE_IBM
 ibm: LIBS := -lpc
-ibm: CLEAN := del *.o; del lua\*.o; del *.exe; del lua\*.exe;
 ibm: LUA := lua\# Dos has different path seperators
+ibm_clean:
+	del *.o \
+	del lua\*.o \
+	del *.exe \
+	del lua\*.exe
+
 
 ##
 ## Variation -- Compile using the lcc32 compiler
@@ -299,8 +298,11 @@ lcc: RES := $(LCC_PATH)\bin\lrc.exe
 lcc: RESCMD := -I$(LCC_PATH)\include angband.rc
 lcc: ANGOBJS += angband.res readdib.o
 lcc: INSTALL := copy zangband ..\zangband.exe
-lcc: CLEAN := del *.obj; del *.res; del *.exe;
 lcc: LUA := lua\# Dos has different path seperators
+lcc_clean:
+	del *.obj \
+	del *.res \
+	del *.exe;
 
 ##
 ## Variation -- Compile for Risc OS 3.10 or later  (Acorn)
@@ -374,7 +376,11 @@ zangband: $(OBJS)
 ##
 
 clean:
-	-$(CLEAN)
+	rm -f *.bak *.o; \
+	rm -f ./lua/*.bak ./lua/*.o; \
+	rm -f ./l-*.c; \
+	rm -f ./lua/tolua; \
+	rm -f ./lua/tolua_boot;
 
 ##
 ## Generate dependencies automatically
@@ -467,8 +473,6 @@ zborg9.o: zborg9.h zborg8.o
 
 angband.res : angband.rc
 	$(RES) $(RESCMD)
-
-
 
 ##
 ## Build wrappers
