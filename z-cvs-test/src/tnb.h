@@ -18,14 +18,6 @@
 #endif /* */
 
 /*
- * These macros mask some differences between different variants
- * to make the code cleaner.
- */
-
-#define in_bounds_test in_bounds2
-#define in_bounds_fully_test in_bounds
-
-/*
  * Angband, KAngband and OAngband have monster_lore, while
  * ZAngband has monster_race. In addition, OAngband has
  * removed the "r_" prefix before field names.

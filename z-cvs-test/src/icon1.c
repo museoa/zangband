@@ -786,7 +786,7 @@ int wall_shape(int y, int x, bool force)
 	int row0n = 0, row2n = 0;
 	int shape;
 
-	if (!in_bounds_test(y, x))
+	if (!in_bounds2(y, x))
 		return GRID_SHAPE_NOT;
 
 	/* Require knowledge unless forced */
@@ -809,7 +809,7 @@ int wall_shape(int y, int x, bool force)
 			if ((i == 1) && (j == 1))
 				continue;
 
-			if (!in_bounds_test(yy, xx))
+			if (!in_bounds2(yy, xx))
 			{
 				wall[j][i] = FALSE;
 				continue;
@@ -1179,7 +1179,7 @@ void angtk_feat_changed(int y, int x)
 		int yy = y + ddy_ddd[d];
 		int xx = x + ddx_ddd[d];
 		
-		if (in_bounds_test(yy, xx) && (g_grid[yy][xx].xtra & GRID_XTRA_WALL))
+		if (in_bounds2(yy, xx) && (g_grid[yy][xx].xtra & GRID_XTRA_WALL))
 		{
 			shape = wall_shape(yy, xx, FALSE);
 			if (shape != g_grid[yy][xx].shape)
@@ -1215,7 +1215,7 @@ void angtk_feat_known(int y, int x)
 				int yy = y + ddy_ddd[d];
 				int xx = x + ddx_ddd[d];
 				
-				if (in_bounds_test(yy, xx) && (g_grid[yy][xx].xtra & GRID_XTRA_WALL))
+				if (in_bounds2(yy, xx) && (g_grid[yy][xx].xtra & GRID_XTRA_WALL))
 				{
 					shape = wall_shape(yy, xx, FALSE);
 					if (shape != g_grid[yy][xx].shape)

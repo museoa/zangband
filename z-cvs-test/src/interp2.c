@@ -318,7 +318,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			{
 				return TCL_ERROR;
 			}
-			if (!in_bounds_test(y, x))
+			if (!in_bounds2(y, x))
 			{
 				goto bad_location;
 			}
@@ -360,7 +360,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 				return TCL_ERROR;
 			}
 	
-			if (!in_bounds_test(y, x))
+			if (!in_bounds2(y, x))
 			{
 				goto bad_location;
 			}
@@ -430,7 +430,7 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			}
 
 			/* Validate coordinates */
-			if (!in_bounds_test(y, x))
+			if (!in_bounds2(y, x))
 			{
 				goto bad_location;
 			}
@@ -484,9 +484,9 @@ objcmd_cave(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			}
 
 			if (option == IDX_IN_BOUNDS)
-				Tcl_SetBooleanObj(resultPtr, in_bounds_test(y, x));
+				Tcl_SetBooleanObj(resultPtr, in_bounds2(y, x));
 			else
-				Tcl_SetBooleanObj(resultPtr, in_bounds_fully_test(y, x));
+				Tcl_SetBooleanObj(resultPtr, in_bounds(y, x));
 			break;
 
 		case IDX_EXISTS: /* exists */

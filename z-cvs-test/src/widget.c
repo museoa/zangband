@@ -820,7 +820,7 @@ else
 void widget_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 {
 	/* If this is a valid cave location, get the display info. */
-	if (in_bounds_test(y, x))
+	if (in_bounds2(y, x))
 		get_display_info(y, x, wtd);
 
 	/* This isn't a valid cave location, so draw a "blank" icon */

@@ -3803,7 +3803,7 @@ void angtk_examine(int y, int x, char *out_val)
 	(void) strcpy(out_val, "");
 
 	/* Not in bounds */
-	if (!in_bounds_test(y, x)) return;
+	if (!in_bounds2(y, x)) return;
 
 	/* Assume boring */
 	boring = TRUE;

@@ -198,45 +198,6 @@ void map_symbol_set(int y, int x)
 	g_map_symbol[y][x] = symbol;
 }
 
-#if 0
-
-/* Is this ever called? */
-void Widget_DrawMap(Widget *widgetPtr, int y, int x)
-{
-	DrawSymbolProc symbolProc;
-	IconPtr *tilePtr;
-	long *srcPtr, *dstPtr, pitch;
-	int night, symbol, size = widgetPtr->gwidth;
-
-	symbolProc = symbolProcTable[g_pixel_size - 1][size - 4];
-	tilePtr = g_bits[size - 4];
-
-	night = (dun_level || !g_daytime);
-
-	if (in_bounds_test(widgetPtr->y_min + y, widgetPtr->x_min + x))
-	{
-		symbol = g_map_symbol[widgetPtr->y_min + y][widgetPtr->x_min + x];
-#if USE_MAP_MIMIC
-		symbol = g_symbol[symbol]->mimic;
-#endif
-		if (night && g_symbol[symbol]->light)
-			symbol += g_grid[y][x].dark;
-	}
-	else
-	{
-		symbol = g_symbol_assign[SYMBOL_ASSIGN_FEATURE].assign[0];
-	}
-
-	pitch = widgetPtr->bitmap.pitch;
-	srcPtr = (long *) (long *) tilePtr[symbol];
-	dstPtr = (long *) (widgetPtr->bitmap.pixelPtr + x * size * g_pixel_size +
-		y * size * pitch);
-
-	(*symbolProc)(srcPtr, dstPtr, pitch);
-}
-
-#endif /* 0 */
-
 #define INCR(p,d) \
 	p = (void *) ((byte *) p + (d));
 
@@ -246,7 +207,7 @@ int map_symbol_proc(Widget *widgetPtr, int y, int x)
 	int night = (dun_level || !g_daytime);
 	int symbol = -1;
 
-	if (in_bounds_test(y, x))
+	if (in_bounds2(y, x))
 	{
 		symbol = g_map_symbol[y][x];
 #if USE_MAP_MIMIC
