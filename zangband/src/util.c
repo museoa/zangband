@@ -3177,10 +3177,10 @@ s16b get_quantity(cptr prompt, int max)
 void pause_line(int row)
 {
 	int i;
-	prt("", row, 0);
+	prt("", 0, row);
 	put_str("[Press any key to continue]", 23, row);
 	i = inkey();
-	prt("", row, 0);
+	prt("", 0, row);
 }
 
 
