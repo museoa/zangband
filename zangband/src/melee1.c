@@ -135,7 +135,10 @@ bool make_attack_normal(int m_idx)
 	bool blinked;
 	bool touched = FALSE, fear = FALSE, alive = TRUE;
 	bool explode = FALSE;
-	bool resist_drain = FALSE;
+    bool resist_drain = FALSE;
+
+    /* Save visibility */
+    bool visible = m_ptr->ml;
 
 	/* Not allowed to attack */
 	if (r_ptr->flags1 & (RF1_NEVER_BLOW)) return (FALSE);
@@ -1369,7 +1372,7 @@ bool make_attack_normal(int m_idx)
 									(PR_HEALTH);
 
 							/* Special message */
-							if ((m_ptr->ml) && (did_heal))
+							if ((visible) && (did_heal))
 							{
 								msg_format("%^s appears healthier.", m_name);
 							}
@@ -1537,7 +1540,7 @@ bool make_attack_normal(int m_idx)
 					}
 					else
 					{
-						if (m_ptr->ml)
+						if (visible)
 							r_ptr->r_flags3 |= RF3_IM_FIRE;
 					}
 				}
@@ -1562,7 +1565,7 @@ bool make_attack_normal(int m_idx)
 					}
 					else
 					{
-						if (m_ptr->ml)
+						if (visible)
 							r_ptr->r_flags3 |= RF3_IM_ELEC;
 					}
 				}
@@ -1590,7 +1593,7 @@ bool make_attack_normal(int m_idx)
 				case RBM_CHARGE:
 				{
 					/* Visible monsters */
-					if (m_ptr->ml)
+					if (visible)
 					{
 						/* Disturbing */
 						disturb(TRUE);
@@ -1606,7 +1609,7 @@ bool make_attack_normal(int m_idx)
 
 
 		/* Analyze "visible" monsters only */
-		if (alive && m_ptr->ml)
+		if (alive && visible)
 		{
 			/* Count "obvious" attacks (and ones that cause damage) */
 			if (obvious || damage || (r_ptr->r_blows[ap_cnt] > 10))
@@ -1645,7 +1648,7 @@ bool make_attack_normal(int m_idx)
 		r_ptr->r_deaths++;
 	}
 
-	if (alive && m_ptr->ml && fear)
+	if (alive && visible && fear)
 	{
 		sound(SOUND_FLEE);
 		msg_format("%^s flees in terror!", m_name);

@@ -897,7 +897,8 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 	/* Innocent until proven otherwise */
 	bool innocent = TRUE, thief = FALSE;
-	bool corpse = FALSE;
+    bool corpse = FALSE;
+    bool visible = FALSE;
 	int i;
 
 	/* Redraw (later) if needed */
@@ -1080,7 +1081,10 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		}
 
 		/* Get how much the kill was worth */
-		exp_for_kill(r_ptr, &new_exp, &new_exp_frac);
+        exp_for_kill(r_ptr, &new_exp, &new_exp_frac);
+
+        /* Save visibility at death */
+        visible = m_ptr->ml;
 
 		/* Generate treasure */
 		corpse = monster_death(m_idx, TRUE);
@@ -1126,7 +1130,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		if (r_ptr->flags3 & RF3_UNIQUE_7) r_ptr->max_num--;
 
 		/* Recall even invisible uniques or winners */
-		if (m_ptr->ml || (r_ptr->flags1 & RF1_UNIQUE) || corpse)
+		if (visible || (r_ptr->flags1 & RF1_UNIQUE) || corpse)
 		{
 			/* Count kills this life */
 			if (r_ptr->r_pkills < MAX_SHORT) r_ptr->r_pkills++;
