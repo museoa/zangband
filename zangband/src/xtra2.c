@@ -23,7 +23,7 @@ void check_experience(void)
 {
 	bool level_reward = FALSE;
 	bool level_mutation = FALSE;
-	
+
 	/* Hack -- lower limit */
 	if (p_ptr->exp < 0) p_ptr->exp = 0;
 
@@ -98,7 +98,7 @@ void check_experience(void)
 
 			if (p_ptr->prace == RACE_BEASTMAN)
 			{
-				/* 
+				/*
 				 * Chance for a mutation is increased
 				 * if multiple levels are gained.
 				 */
@@ -107,7 +107,7 @@ void check_experience(void)
 					if (randint(5) == 1) level_mutation = TRUE;
 				}
 			}
-			
+
 			p_ptr->max_plv = p_ptr->lev;
 
 			if ((p_ptr->pclass == CLASS_CHAOS_WARRIOR) ||
@@ -116,7 +116,7 @@ void check_experience(void)
 				level_reward = TRUE;
 			}
 
-			
+
 		}
 
 		/* Sound */
@@ -1416,8 +1416,8 @@ bool change_panel(int dy, int dx)
 
 		if (vanilla_town)
 		{
-			x = max_wild * 8 - (wid - 14) / 2 - 15;
-			y = max_wild * 8 - (hgt - 2) / 2 - 5;
+			x = 0;
+			y = 0;
 		}
 	}
 	else
@@ -1505,7 +1505,7 @@ void verify_panel(void)
 		if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
 		else if (pcol_min < 0) pcol_min = 0;
 
-		
+
 	}
 	else
 	{
@@ -1519,7 +1519,7 @@ void verify_panel(void)
 			{
 				prow_min -= ((hgt - 2) / 2);
 			}
-			
+
 			if (prow_min < 0) prow_min = 0;
 		}
 
@@ -1529,7 +1529,7 @@ void verify_panel(void)
 			{
 				prow_min += ((hgt - 2) / 2);
 			}
-			
+
 			if (prow_min > max_prow_min) prow_min = max_prow_min;
 		}
 
@@ -1540,17 +1540,17 @@ void verify_panel(void)
 			{
 				pcol_min -= ((wid - 14) / 2);
 			}
-			
+
 			if (pcol_min < 0) pcol_min = 0;
 		}
-		
+
 		if (x > panel_col_max - 4)
 		{
 			while (x > pcol_min + wid - 14 - 4)
 			{
 				pcol_min += ((wid - 14) / 2);
 			}
-			
+
 			if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
 		}
 	}
@@ -1564,10 +1564,10 @@ void verify_panel(void)
 
 	/* Hack -- optional disturb on "panel change" */
 	if (disturb_panel && !center_player) disturb(0, 0);
-		
+
 	/* Recalculate the boundaries */
 	panel_bounds_center();
-	
+
 	/* Update stuff */
 	p_ptr->update |= (PU_MONSTERS);
 
