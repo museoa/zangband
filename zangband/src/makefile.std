@@ -135,7 +135,7 @@ PORTS := default_port linux linux_svga openbsd freebsd main-cap vt100 \
 ##
 
 ## Generic compile flags used by most ports.
-CFLAGS := -Wall -O2 -g -pipe
+CFLAGS := -Wall -O2 -g
 
 ## Variation
 # CFLAGS := -O1 -g
@@ -173,7 +173,7 @@ linux: CFLAGS += -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ" -D"USE_X11" \
 				 -Wno-long-long -Wwrite-strings -Wpointer-arith \
 				 -Wbad-function-cast -Wsign-compare \
 				 -Waggregate-return -Wstrict-prototypes \
-				 -Wredundant-decls -Wunreachable-code
+				 -Wredundant-decls #-Wunreachable-code
  
 linux: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
                -lXaw -lXext -lSM -lICE -lXmu -lXt -lgtk `gtk-config --libs`
@@ -288,7 +288,7 @@ aix: LIBS := -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
 ## Variation -- Dos using "main-dos.c" and the allegro library, with djgpp
 ##
 
-dos: CFLAGS := -Wall -O2 -fno-strength-reduce -s -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
+dos: CFLAGS += -s -DUSE_DOS -DUSE_IBM -D"USE_BACKGROUND"
 dos: LIBS := -lpc -lalleg
 dos: EXEC := .exe
 dos: INSTALL := copy zangband.exe ..
@@ -302,7 +302,7 @@ dos_clean:
 ## Variation -- Compile using the main-ibm.c port with djgpp
 ##
 
-ibm: CFLAGS := -Wall -O2 -fno-strength-reduce -s -DUSE_IBM
+ibm: CFLAGS += -s -DUSE_IBM
 ibm: LIBS := -lpc
 ibm: EXEC := .exe
 ibm: INSTALL := copy zangband.exe ..
