@@ -2345,7 +2345,7 @@ void move_player(int dir, int do_pickup)
 	/* Examine the destination */
 	c_ptr = &cave[y][x];
 
-	/* Exit the area */
+	/* Exit the wilderness-area */
 	if (!dun_level &&
 		((x == 0) || (x == MAX_WID - 1) ||
 		 (y == 0) || (y == MAX_HGT - 1)))
@@ -2354,64 +2354,29 @@ void move_player(int dir, int do_pickup)
 		if (c_ptr->mimic && player_can_enter(c_ptr->mimic))
 		{
 			/* Hack: move to new area */
-			if ((y == 0) && (x == 0))
-			{
-				p_ptr->wilderness_y--;
-				p_ptr->wilderness_x--;
-				p_ptr->oldpy = cur_hgt - 2;
-				p_ptr->oldpx = cur_wid - 2;
-			}
-
-			else if ((y == 0) && (x == MAX_WID - 1))
-			{
-				p_ptr->wilderness_y--;
-				p_ptr->wilderness_x++;
-				p_ptr->oldpy = cur_hgt - 2;
-				p_ptr->oldpx = 1;
-			}
-
-			else if ((y == MAX_HGT - 1) && (x == 0))
-			{
-				p_ptr->wilderness_y++;
-				p_ptr->wilderness_x--;
-				p_ptr->oldpy = 1;
-				p_ptr->oldpx = cur_wid - 2;
-			}
-
-			else if ((y == MAX_HGT - 1) && (x == MAX_WID - 1))
-			{
-				p_ptr->wilderness_y++;
-				p_ptr->wilderness_x++;
-				p_ptr->oldpy = 1;
-				p_ptr->oldpx = 1;
-			}
-
-			else if (y == 0)
+			p_ptr->oldpx = x;
+			p_ptr->oldpy = y;
+			
+			if (y == 0)
 			{
 				p_ptr->wilderness_y--;
 				p_ptr->oldpy = cur_hgt - 2;
-				p_ptr->oldpx = x;
 			}
-
 			else if (y == MAX_HGT - 1)
 			{
 				p_ptr->wilderness_y++;
 				p_ptr->oldpy = 1;
-				p_ptr->oldpx = x;
 			}
 
-			else if (x == 0)
+			if (x == 0)
 			{
 				p_ptr->wilderness_x--;
 				p_ptr->oldpx = cur_wid - 2;
-				p_ptr->oldpy = y;
 			}
-
 			else if (x == MAX_WID - 1)
 			{
 				p_ptr->wilderness_x++;
 				p_ptr->oldpx = 1;
-				p_ptr->oldpy = y;
 			}
 
 			p_ptr->leftbldg = TRUE;
