@@ -1326,6 +1326,7 @@ D:0:0:25:0:0:0:100:8
 F:2,field_action_door_store
 F:19,field_action_isfood_tester
 
+# Library
 N:138:Library
 G:9:b
 W:100:3:0
@@ -1334,11 +1335,29 @@ D:6:100:0:0:0:0:0:0
 F:2,field_action_door_build
 F:18,field_action_library1 | 19,field_action_library2
 
+# Casino
 N:139:Casino
-G:7:o
+G:0:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:7:0:0:0:0:0:0:0
 F:2,field_action_door_build
 F:18,field_action_casino1 | 19,field_action_casino2
 
+# Inn
+N:140:Inn
+G:0:y
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
+D:8:5:0:0:0:0:0:0
+F:2,field_action_door_build
+F:18,field_action_inn1 | 19,field_action_inn2
+
+# Restore stats
+N:141:Healer
+G:9:y
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
+D:9:100:0:0:0:0:0:0
+F:2,field_action_door_build
+F:18,field_action_healer1 | 19,field_action_healer2
