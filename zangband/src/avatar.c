@@ -108,7 +108,7 @@ static void get_random_virtue(int which)
 */
 void get_virtues(void)
 {
-	int i = 0, j = 0;
+	int i, j;
 
 	/* Reset */
 	for (i = 0; i < 8; i++)
@@ -325,7 +325,7 @@ void get_virtues(void)
 
 void chg_virtue(int virtue, int amount)
 {
-	int i = 0;
+	int i;
 
 	for (i = 0; i < 8; i++)
 	{
@@ -353,7 +353,7 @@ void chg_virtue(int virtue, int amount)
 
 void dump_virtues(FILE * OutFile)
 {
-	int v_nr = 0;
+	int v_nr;
 
 	if (!OutFile) return;
 
