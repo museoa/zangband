@@ -531,12 +531,11 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 	int sides = 1;
 	int radius = 0;
 	bool aimed = TRUE;
-
-	char turns_buf[40];
-	char dice_buf[40];
-	char radius_buf[40];
 	
-	char xtra_buf[256];
+	int len;
+
+	char text_buf[256];
+	char buf[1024];
 
 	text = activation_text[randint0(NUM_ELEMENTS(activation_text))];
 
@@ -1126,63 +1125,57 @@ static void apply_activation_power(object_type *o_ptr, int type, int level)
 	if (!charge_max) charge_max = charge_min * randint1(2);
 
 	if (sides > 1 && dice < 1) dice = 1;
-
-
-	if (charge_min != charge_max)
-		strnfmt(turns_buf, 40, "rand_range(%i, %i)", charge_min, charge_max);
-	else
-		strnfmt(turns_buf, 40, "%i", charge_min);
-
-	if (sides > 1)
-		strnfmt(dice_buf, 40, "local dam = damroll(%i, %i); ", dice, sides);
-	else if (sides < 0)
-		strnfmt(dice_buf, 40, "local dam = rand_range(%i, %i); ", dice, dice + -sides);
-	else if (dice > 0)
-		strnfmt(dice_buf, 40, "local dam = %i; ", dice);
-	else
-		strnfmt(dice_buf, 40, "");
-
-	if (radius > 0 && radius != 2)
-		strnfmt(radius_buf, 40, "local rad = %i; ", radius);
-	else
-		strnfmt(radius_buf, 40, "");
-		
-	/* Get the basic name of the object in the description */
-	strnfmt(xtra_buf, 256, text, OBJECT_FMT(o_ptr, FALSE, 0));
 	
-	o_ptr->trigger[TRIGGER_USE] = quark_fmt(
-			"msgf(\"%s\"); "
-			"%s%s%s%s; object.timeout = %s",
-			xtra_buf, aimed ? 
+	/* Get the basic name of the object in the description */
+	strnfmt(text_buf, 256, text, OBJECT_FMT(o_ptr, FALSE, 0));
+	
+	/* Construct the lua script */
+	len = strnfmt(buf, 1024, "msgf(\"%s\"); ", text_buf);
+	
+	if (aimed) strnfcat(buf, 1024, &len, 
 				"local success; local dir; "
 				"success, dir = get_aim_dir(); "
-				"if not success then return; end; " : "",
-			dice_buf, radius_buf, effect, turns_buf);
+				"if not success then return; end; ");
 
+	if (sides > 1)
+		strnfcat(buf, 1024, &len, "local dam = damroll(%i, %i); ", dice, sides);
+	else if (sides < 0)
+		strnfcat(buf, 1024, &len, "local dam = rand_range(%i, %i); ", dice, dice + -sides);
+	else if (dice > 0)
+		strnfcat(buf, 1024, &len, "local dam = %i; ", dice);
+
+	if (radius > 0 && radius != 2)
+		strnfcat(buf, 1024, &len, "local rad = %i; ", radius);
 	
+	strnfcat(buf, 1024, &len, "%s; object.timeout = ", effect);
+
 	if (charge_min != charge_max)
-		strnfmt(turns_buf, 40, "%i-%i", charge_min, charge_max);
+		strnfcat(buf, 1024, &len, "rand_range(%i, %i)", charge_min, charge_max);
 	else
-		strnfmt(turns_buf, 40, "%i", charge_min);
+		strnfcat(buf, 1024, &len, "%i", charge_min);
+	
+	/* Usage script */
+	o_ptr->trigger[TRIGGER_USE] = quark_add(buf);
+	
+	
+	len = strnfmt(buf, 1024, "return \"%s", desc);
 	
 	if (sides > 1)
-		strnfmt(dice_buf, 40, " (%id%i)", dice, sides);
+		strnfcat(buf, 1024, &len, " (%id%i)", dice, sides);
 	else if (sides < 0)
-		strnfmt(dice_buf, 40, " (%i-%i)", dice, dice + -sides);
+		strnfcat(buf, 1024, &len, " (%i-%i)", dice, dice + -sides);
 	else if (dice > 0)
-		strnfmt(dice_buf, 40, " (%i)", dice);
-	else
-		strnfmt(dice_buf, 40, "");
+		strnfcat(buf, 1024, &len, " (%i)", dice);
 
-	if (radius > 0)
-		strnfmt(radius_buf, 40, ", rad. %i,", radius);
-	else
-		strnfmt(radius_buf, 40, "");
+	if (radius > 0) strnfcat(buf, 1024, &len, ", rad. %i,", radius);
 	
-	o_ptr->trigger[TRIGGER_DESC] = quark_fmt(
-		"return \"%s%s%s every %s turns\"", desc, dice_buf, 
-		radius_buf, turns_buf);
-		
+	if (charge_min != charge_max)
+		strnfcat(buf, 1024, &len, " every %i-%i turns \"", charge_min, charge_max);
+	else
+		strnfcat(buf, 1024, &len, " every %i turns \"", charge_min);
+	
+	/* Description script */
+	o_ptr->trigger[TRIGGER_DESC] = quark_fmt(buf);
 
 	o_ptr->flags3 |= TR3_ACTIVATE;
 	o_ptr->timeout = 0;
