@@ -634,16 +634,13 @@ $(LUAWSRCS): %.c: %.pkg $(LUA)tolua$(EXEC)
 ## Extra dependancies for the tk port
 ##
 $(TKOBJS): $(INCS) tk/tnb.h
-tk/canv.o: tk/icon.h
-tk/icon1.o: tk/icon.h
-tk/icon2.o: tk/icon.h
-tk/icon3.o: tk/icon.h
-tk/interp1.o: tk/icon.h
-tk/interp2.o: tk/icon.h
-tk/plat.o: tk/icon.h
-tk/widget.o: tk/icon.h
-
 main-tnb.o: tk/tnb.h
+
+TKICONOBJS := \
+	tk/canv.o tk/icon1.o tk/icon2.o tk/icon3.o \
+	tk/interp1.o tk/interp2.o tk/plat.o tk/widget.o
+
+$(TKICONOBJS): tk/icon.h
 
 ##
 ## Hack... .o files can be created from .obj files
