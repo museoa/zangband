@@ -118,8 +118,7 @@ TKOBJS := \
 	tk/canv.o tk/cmdinfo.o \
 	tk/icon1.o tk/icon2.o tk/icon3.o \
 	tk/describe.o tk/interp1.o tk/interp2.o tk/plat.o \
-	tk/r_info.o tk/widget.o \
-	tk/tk-util.o tk/tcltk.o tk/term.o
+	tk/r_info.o tk/widget.o tk/tk-util.o tk/tcltk.o
 
 ##
 ## The "source" and "object" files.
@@ -637,12 +636,11 @@ $(LUAWSRCS): %.c: %.pkg $(LUA)tolua$(EXEC)
 $(TKOBJS): $(INCS) tk/tnb.h
 tk/canv.o: tk/icon.h
 tk/icon1.o: tk/icon.h
-tk/icon2.o: tk/widget.h tk/icon.h
+tk/icon2.o: tk/icon.h
 tk/icon3.o: tk/icon.h
 tk/interp1.o: tk/icon.h
 tk/interp2.o: tk/icon.h
 tk/plat.o: tk/icon.h
-tk/term.o: tk/widget.h tk/icon.h
 tk/widget.o: tk/widget.h tk/icon.h
 
 main-tnb.o: tk/tnb.h
