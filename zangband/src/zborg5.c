@@ -3609,24 +3609,104 @@ static s32b borg_power_aux3(void)
 		/* Skip empty items */
 		if (!l_ptr) continue;
 
-		/* Avoid wearing two Rings of Light and Dark Resistance */
-		if (l_ptr->tval == TV_RING &&
-			k_info[l_ptr->k_idx].sval == SV_RING_RES_LD) continue;
+		/* Don't reward rings twice */
+		if (i == EQUIP_LEFT)
+		{
+			list_item *q_ptr = look_up_equip_slot(EQUIP_RIGHT);
 
-		/* Good to have one item with multiple high resists */
-		multibonus = (KN_FLAG(l_ptr, TR_RES_POIS) +
-					  KN_FLAG(l_ptr, TR_RES_LITE) +
-					  KN_FLAG(l_ptr, TR_RES_DARK) +
-					  KN_FLAG(l_ptr, TR_RES_BLIND) +
-					  KN_FLAG(l_ptr, TR_RES_CONF) +
-					  KN_FLAG(l_ptr, TR_RES_SOUND) +
-					  KN_FLAG(l_ptr, TR_RES_SHARDS) +
-					  KN_FLAG(l_ptr, TR_RES_NEXUS) +
-					  KN_FLAG(l_ptr, TR_RES_NETHER) +
-					  KN_FLAG(l_ptr, TR_RES_CHAOS) +
-					  KN_FLAG(l_ptr, TR_RES_DISEN));
+			/* If the rings are the same */
+			if (q_ptr &&
+				k_info[l_ptr->k_idx].sval == k_info[q_ptr->k_idx].sval)
+			{
+				/* skip a ring */
+				continue;
+			}
+		}
 
-		if (multibonus >= 2) value += 15000 * multibonus;
+		/*
+		 * It is good to have one item with multiple high resists.  But
+		 * the various races all have their bonuses.  So a ring of Light and
+		 * Dark should not get a multibonus when it is worn by Elf or Half-Ogre
+		 */
+		multibonus = KN_FLAG(l_ptr, TR_RES_NEXUS) +
+					 KN_FLAG(l_ptr, TR_IM_LITE) +
+					 KN_FLAG(l_ptr, TR_IM_FIRE) +
+					 KN_FLAG(l_ptr, TR_IM_COLD) +
+					 KN_FLAG(l_ptr, TR_IM_ELEC);
+
+		/* Vampires get Immunity to Dark */
+		if (KN_FLAG(l_ptr, TR_IM_DARK) &&
+			borg_race != RACE_VAMPIRE) multibonus += 1;
+
+		/* Zombies get resist Nether */
+		if (KN_FLAG(l_ptr, TR_RES_NETHER) &&
+			borg_race != RACE_GHOUL &&
+			borg_race != RACE_ZOMBIE &&
+			borg_race != RACE_SPECTRE &&
+			borg_race != RACE_VAMPIRE) multibonus += 1;
+
+		/* Yeeks get Immunity to Acid */
+		if (KN_FLAG(l_ptr, TR_IM_ACID) &&
+			borg_race != RACE_YEEK) multibonus += 1;
+
+		/* Golems get Immunity to Poison */
+		if (KN_FLAG(l_ptr, TR_IM_POIS) &&
+			borg_race != RACE_GHOUL &&
+			borg_race != RACE_GOLEM &&
+			borg_race != RACE_ZOMBIE &&
+			borg_race != RACE_VAMPIRE &&
+			borg_race != RACE_SPECTRE &&
+			borg_race != RACE_SKELETON) multibonus += 1;
+
+		/* Nibelungs get resist Disenchant */
+		if (KN_FLAG(l_ptr, TR_RES_DISEN) &&
+			borg_race != RACE_NIBELUNG) multibonus += 1;
+
+		/* Kobolds get resist Poison */
+		if (KN_FLAG(l_ptr, TR_RES_POIS) &&
+			borg_race != RACE_KOBOLD &&
+			borg_race != RACE_DRACONIAN) multibonus += 1;
+
+		/* Cyclopi get resist Sound */
+		if (KN_FLAG(l_ptr, TR_RES_SOUND) &&
+			borg_race != RACE_BEASTMAN &&
+			borg_race != RACE_CYCLOPS) multibonus += 1;
+
+		/* Half Giants get resist Shards */
+		if (KN_FLAG(l_ptr, TR_RES_SHARDS) &&
+			borg_race != RACE_HALF_GIANT &&
+			borg_race != RACE_SKELETON) multibonus += 1;
+
+		/* Half Ogres get resist Dark  */
+		if (KN_FLAG(l_ptr, TR_RES_DARK) &&
+			borg_race != RACE_HALF_OGRE &&
+			borg_race != RACE_NIBELUNG &&
+			borg_race != RACE_VAMPIRE &&
+			borg_race != RACE_GHOUL &&
+			borg_race != RACE_DARK_ELF) multibonus += 1;
+
+		/* Elves get resist Lite  */
+		if (KN_FLAG(l_ptr, TR_RES_LITE) &&
+			borg_race != RACE_ELF &&
+			borg_race != RACE_SPRITE &&
+			borg_race != RACE_HIGH_ELF) multibonus += 1;
+
+		/* Dwarves get resist Blind  */
+		if (KN_FLAG(l_ptr, TR_RES_BLIND) &&
+			borg_race != RACE_DWARF) multibonus += 1;
+
+		/* Mindcrafter get resist Conf  */
+		if (KN_FLAG(l_ptr, TR_RES_CONF) &&
+			borg_class != CLASS_MINDCRAFTER &&
+			borg_race != RACE_BEASTMAN &&
+			borg_race != RACE_KLACKON) multibonus += 1;
+
+		/* Chaos-warriors and Half Titan get resist Chaos */
+		if (KN_FLAG(l_ptr, TR_RES_CHAOS) &&
+			borg_class != CLASS_CHAOS_WARRIOR &&
+			borg_race != RACE_HALF_TITAN) multibonus += 1;
+
+		value += 1500 * ((multibonus < 2) ? 0 : multibonus);
 	}
 
 	/* Result */
