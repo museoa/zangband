@@ -2736,7 +2736,7 @@ static bool do_cmd_dump_colour(int dummy)
  */
 static bool do_cmd_dump_message(int dummy)
 {
-	int i;
+	byte i;
 
 	FILE *fff;
 
@@ -3956,6 +3956,12 @@ void dump_town_info(FILE *fff, int town)
 
 			/* Seperator */
 			froff(fff, "\n");
+		}
+
+		/* Never been near the place */
+		else
+		{
+			froff(fff, "\nThis town has not been visited yet.\n");
 		}
 	}
 }

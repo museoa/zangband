@@ -2043,21 +2043,26 @@ bool dump_castle_info(FILE *fff, int town)
 {
 	int i;
 	bool quest_in_town = FALSE;
+	bool visited_town = FALSE;
 
 	quest_type *q_ptr;
+	store_type *st_ptr;
 
 	/* Check if there is a castle */
 	for (i = 0; i < place[town].numstores; i++)
 	{
-		if (place[town].store[i].type == BUILD_CASTLE0 ||
-			place[town].store[i].type == BUILD_CASTLE1)
-		{
-			quest_in_town = TRUE;
-		}
+		st_ptr = &place[town].store[i];
+
+		/* Is there a castle at all? */
+		if (st_ptr->type == BUILD_CASTLE0 ||
+			st_ptr->type == BUILD_CASTLE1) quest_in_town = TRUE;
+
+		/* Stores are not given coordinates until you visit a town */
+		if (st_ptr->x != 0 && st_ptr->y != 0) visited_town = TRUE;
 	}
 
 	/* Give up */
-	if (!quest_in_town) return (FALSE);
+	if (!quest_in_town || !visited_town) return (FALSE);
 
 	/* So there is a castle, but did it issue any quests? */
 	quest_in_town = FALSE;

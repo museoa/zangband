@@ -742,6 +742,7 @@ static void display_banner(place_type *pl_ptr, int wid, int hgt)
 	cptr place_dir;
 	int i, banner_len;
 
+	bool visited_town = FALSE;
 	bool home_in_town = FALSE;
 	bool castle_in_town = FALSE;
 
@@ -758,13 +759,22 @@ static void display_banner(place_type *pl_ptr, int wid, int hgt)
 		/* Find out if there are homes or castles here */
 		for (i = 0; i < pl_ptr->numstores; i++)
 		{
+			store_type *st_ptr = &pl_ptr->store[i];
+
 			/* Is there a home? */
-			if (pl_ptr->store[i].type == BUILD_STORE_HOME) home_in_town = TRUE;
+			if (st_ptr->type == BUILD_STORE_HOME) home_in_town = TRUE;
 
 			/* Is there a castle? */
-			if (pl_ptr->store[i].type == BUILD_CASTLE0) castle_in_town = TRUE;
-			if (pl_ptr->store[i].type == BUILD_CASTLE1) castle_in_town = TRUE;
+			if (st_ptr->type == BUILD_CASTLE0 ||
+				st_ptr->type == BUILD_CASTLE1) castle_in_town = TRUE;
+
+			/* Stores are not given coordinates until you visit a town */
+			if (st_ptr->x != 0 && st_ptr->y != 0) visited_town = TRUE;
 		}
+
+		/* Prevent knowledge from leaking out */
+		home_in_town   &= visited_town;
+		castle_in_town &= visited_town;
 
 		/* Find out the lower banner */
 		if (home_in_town)
@@ -844,6 +854,7 @@ static bool dump_home_info(FILE *fff, int town)
 {
 	int i, k;
 	bool home_in_town = FALSE;
+	bool visited_town = FALSE;
 
 	store_type *st_ptr;
 	object_type *o_ptr;
@@ -852,6 +863,10 @@ static bool dump_home_info(FILE *fff, int town)
 	{
 		st_ptr = &place[town].store[i];
 
+		/* Stores are not given coordinates until you visit a town */
+		if (st_ptr->x != 0 && st_ptr->y != 0) visited_town = TRUE;
+
+		/* The only interest is homes */
 		if (st_ptr->type == BUILD_STORE_HOME)
 		{
 			/* Remember that a home was found */
@@ -896,8 +911,7 @@ static bool dump_home_info(FILE *fff, int town)
 	}
 
 	/* No home, no show */
-	return (home_in_town);
-	
+	return (home_in_town && visited_town);
 }
 
 
