@@ -778,8 +778,8 @@ G:1:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:10:0:50:0:50:0
-F:18,field_action_isweaparmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = item_tester_hook_weapon_armour(object)
 
 # Armoury
 N:35:Armoury
@@ -787,8 +787,8 @@ G:2:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:5:30:0:100:0:0:0
-F:19,field_action_isarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_armour(object)
 
 # Weapon Smiths
 N:36:Weapon Smiths
@@ -796,8 +796,8 @@ G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:5:20:0:100:0:0:0
-F:19,field_action_isweapon_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon(object)
 
 # Temple
 N:37:Temple
@@ -805,8 +805,8 @@ G:6:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:5:20:33:33:34:0:1
-F:18,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = item_tester_hook_recharge(object)
 
 # Alchemy Shop
 N:38:Alchemy Shop
@@ -814,8 +814,8 @@ G:6:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:5:30:0:0:100:0:0
-F:18,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = item_tester_hook_recharge(object)
 
 # Magic Wares
 N:39:Magic Wares
@@ -823,8 +823,8 @@ G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:20:40:0:0:100:0:0
-F:18,field_action_ispotion_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = item_tester_hook_tval(object, TV_POTION)
 
 # Black Market
 N:40:Black Market
@@ -848,8 +848,8 @@ G:5:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:20:40:0:0:100:0:8
-F:19,field_action_isbook_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_is_book(object)
 
 # Weaponmaster
 N:43:Weaponmaster
@@ -911,8 +911,8 @@ G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:20:50:0:100:0:0:0
-F:19,field_action_isweapon_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon(object)
 
 # Weapon Smiths
 N:50:Expert Weapon Smiths
@@ -920,8 +920,8 @@ G:3:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:75:0:100:0:0:0
-F:19,field_action_isweapon_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon(object)
 
 # Weapon Smiths
 N:51:Deep Weapon Smiths
@@ -929,8 +929,8 @@ G:3:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:75:127:0:100:0:0:24
-F:19,field_action_isweapon_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon(object)
 
 # Weapon Smiths
 N:52:Arcane Weapon Smiths
@@ -938,8 +938,8 @@ G:3:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:42
-F:19,field_action_isweapon_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon(object)
 
 # Weapon Smiths
 N:53:Unique Weapon Smiths
@@ -947,8 +947,8 @@ G:3:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:62
-F:19,field_action_isweapon_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon(object)
 
 # Armoury
 N:54:Advanced Armoury
@@ -956,8 +956,8 @@ G:2:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:20:50:0:100:0:0:0
-F:19,field_action_isarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_armour(object)
 
 # Armoury
 N:55:Expert Armoury
@@ -965,8 +965,8 @@ G:2:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:75:0:100:0:0:0
-F:19,field_action_isarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_armour(object)
 
 # Armoury
 N:56:Deep Armoury
@@ -974,8 +974,8 @@ G:2:u
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:75:127:0:100:0:0:24
-F:19,field_action_isarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_armour(object)
 
 # Armoury
 N:57:Arcane Armoury
@@ -983,8 +983,8 @@ G:2:u
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:42
-F:19,field_action_isarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_armour(object)
 
 # Armoury
 N:58:Unique Armoury
@@ -992,8 +992,8 @@ G:2:u
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:62
-F:19,field_action_isarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_armour(object)
 
 # Swordsman
 N:59:Swordsman
@@ -1001,8 +1001,8 @@ G:3:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:1:20:0:100:0:0:8
-F:19,field_action_issword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
 # Swordsman
 N:60:Advanced Swordsman
@@ -1010,8 +1010,8 @@ G:3:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:20:50:0:100:0:0:8
-F:19,field_action_issword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
 # Swordsman
 N:61:Expert Swordsman
@@ -1019,8 +1019,8 @@ G:3:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:40:75:0:100:0:0:8
-F:19,field_action_issword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
 # Swordsman
 N:62:Deep Swordsman
@@ -1028,8 +1028,8 @@ G:3:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:75:127:0:100:0:0:24
-F:19,field_action_issword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
 # Swordsman
 N:63:Arcane Swordsman
@@ -1037,8 +1037,8 @@ G:3:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:42
-F:19,field_action_issword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
 # Swordsman
 N:64:Unique Swordsman
@@ -1046,8 +1046,8 @@ G:3:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:62
-F:19,field_action_issword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SWORD)
 
 # Shieldsman
 N:65:Shieldsman
@@ -1055,8 +1055,8 @@ G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:1:30:0:100:0:0:8
-F:19,field_action_isshield_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
 # Shieldsman
 N:66:Advanced Shieldsman
@@ -1064,8 +1064,8 @@ G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:20:50:0:100:0:0:8
-F:19,field_action_isshield_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
 # Shieldsman
 N:67:Expert Shieldsman
@@ -1073,8 +1073,8 @@ G:2:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:30:75:0:100:0:0:8
-F:19,field_action_isshield_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
 # Shieldsman
 N:68:Obscure Shieldsman
@@ -1082,8 +1082,8 @@ G:2:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:75:127:0:100:0:0:42
-F:19,field_action_isshield_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
 # Shieldsman
 N:69:Arcane Shieldsman
@@ -1091,8 +1091,8 @@ G:2:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:26
-F:19,field_action_isshield_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
 # Shieldsman
 N:70:Unique Shieldsman
@@ -1100,8 +1100,8 @@ G:2:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:62
-F:19,field_action_isshield_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SHIELD)
 
 # Axeman
 N:71:Axeman
@@ -1109,8 +1109,8 @@ G:3:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:1:20:0:100:0:0:8
-F:19,field_action_isnonsword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_nonsword(object)
 
 # Axeman
 N:72:Advanced Axeman
@@ -1118,8 +1118,8 @@ G:3:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:20:50:0:100:0:0:8
-F:19,field_action_isnonsword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_nonsword(object)
 
 # Axeman
 N:73:Expert Axeman
@@ -1127,8 +1127,8 @@ G:3:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:75:0:100:0:0:8
-F:19,field_action_isnonsword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_nonsword(object)
 
 # Axeman
 N:74:Deep Axeman
@@ -1136,8 +1136,8 @@ G:3:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:75:127:0:100:0:0:24
-F:19,field_action_isnonsword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_nonsword(object)
 
 # Axeman
 N:75:Arcane Axeman
@@ -1145,8 +1145,8 @@ G:3:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:42
-F:19,field_action_isnonsword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_nonsword(object)
 
 # Axeman
 N:76:Unique Axeman
@@ -1154,8 +1154,8 @@ G:3:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:62
-F:19,field_action_isnonsword_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_nonsword(object)
 
 # Ammunition
 N:77:Ammo Supplies
@@ -1163,8 +1163,8 @@ G:3:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:1:50:0:100:0:0:8
-F:19,field_action_isammo_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_ammo(object)
 
 # Ammunition
 N:78:Advanced Ammo Supplies
@@ -1172,8 +1172,8 @@ G:3:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:8
-F:19,field_action_isammo_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_ammo(object)
 
 # Ammunition
 N:79:Deep Ammo Supplies
@@ -1181,8 +1181,8 @@ G:3:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:24
-F:19,field_action_isammo_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_ammo(object)
 
 # Fletcher
 N:80:Fletcher
@@ -1190,8 +1190,8 @@ G:3:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:1:50:0:100:0:0:8
-F:19,field_action_isfletcher_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_fletcher(object)
 
 # Fletcher
 N:81:Advanced Fletcher
@@ -1199,8 +1199,8 @@ G:3:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:8
-F:19,field_action_isfletcher_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_fletcher(object)
 
 # Fletcher
 N:82:Arcane Fletcher
@@ -1208,8 +1208,8 @@ G:3:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:42
-F:19,field_action_isfletcher_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_fletcher(object)
 
 # Fletcher
 N:83:Unique Fletcher
@@ -1217,8 +1217,8 @@ G:3:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:20:100:0:100:0:0:62
-F:19,field_action_isfletcher_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_fletcher(object)
 
 # Warrior Hall
 N:84:Warrior Hall
@@ -1226,8 +1226,8 @@ G:0:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:1:20:0:100:0:0:0
-F:19,field_action_isweaparmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon_armour(object)
 
 # Warrior Hall
 N:85:Advanced Warrior Hall
@@ -1235,8 +1235,8 @@ G:0:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:20:50:0:100:0:0:0
-F:19,field_action_isweaparmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon_armour(object)
 
 # Warrior Hall
 N:86:Expert Warrior Hall
@@ -1244,8 +1244,8 @@ G:0:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:40:75:0:100:0:0:8
-F:19,field_action_isweaparmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon_armour(object)
 
 # Warrior Hall
 N:87:Deep Warrior Hall
@@ -1253,8 +1253,8 @@ G:0:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:75:127:0:100:0:0:24
-F:19,field_action_isweaparmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon_armour(object)
 
 # Warrior Hall
 N:88:Arcane Warrior Hall
@@ -1262,8 +1262,8 @@ G:0:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:5:95:0:0:42
-F:19,field_action_isweaparmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon_armour(object)
 
 # Warrior Hall
 N:89:Unique Warrior Hall
@@ -1271,8 +1271,8 @@ G:0:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:2:50:100:0:100:0:0:62
-F:19,field_action_isweaparmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_weapon_armour(object)
 
 # Clothes Store
 N:90:Clothes Store
@@ -1280,8 +1280,8 @@ G:2:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:1:20:0:100:0:0:8
-F:19,field_action_isclothes_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_soft_armour(object)
 
 # Clothes Store
 N:91:Expensive Clothes Store
@@ -1289,8 +1289,8 @@ G:2:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:50:0:100:0:0:24
-F:19,field_action_isclothes_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_soft_armour(object)
 
 # Heavy Armoury
 N:92:Heavy Armoury
@@ -1298,8 +1298,8 @@ G:2:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:1:30:0:100:0:0:8
-F:19,field_action_isphardarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
 # Heavy Armoury
 N:93:Advanced Heavy Armoury
@@ -1307,8 +1307,8 @@ G:2:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:20:60:20:80:0:0:8
-F:19,field_action_isphardarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
 # Heavy Armoury
 N:94:Expert Heavy Armoury
@@ -1316,8 +1316,8 @@ G:2:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:75:20:80:0:0:8
-F:19,field_action_isphardarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
 # Heavy Armoury
 N:95:Arcane Heavy Armoury
@@ -1325,8 +1325,8 @@ G:2:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:75:127:20:80:0:0:42
-F:19,field_action_isphardarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
 # Heavy Armoury
 N:96:Obscure Heavy Armoury
@@ -1334,8 +1334,8 @@ G:2:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:20:80:0:0:26
-F:19,field_action_isphardarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
 # Heavy Armoury
 N:97:Unique Heavy Armoury
@@ -1343,8 +1343,8 @@ G:2:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:0:100:0:0:62
-F:19,field_action_isphardarmour_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_pure_hard_armour(object)
 
 # Milliner
 N:98:Milliner
@@ -1352,8 +1352,8 @@ G:2:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:1:50:50:50:0:0:8
-F:19,field_action_ishelm_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_helm(object)
 
 # Milliner
 N:99:Advanced Milliner
@@ -1361,8 +1361,8 @@ G:2:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:50:100:50:50:0:0:8
-F:19,field_action_ishelm_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_helm(object)
 
 # Milliner
 N:100:Arcane Milliner
@@ -1370,8 +1370,8 @@ G:2:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:50:50:0:0:42
-F:19,field_action_ishelm_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_helm(object)
 
 # Milliner
 N:101:Unique Milliner
@@ -1379,8 +1379,8 @@ G:2:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:20:100:50:50:0:0:62
-F:19,field_action_ishelm_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_helm(object)
 
 # Jeweler
 N:102:Jeweler
@@ -1388,8 +1388,8 @@ G:5:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:1:30:100:0:0:0:8
-F:19,field_action_isjewel_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_jewel(object)
 
 # Jeweler
 N:103:Copper Jewler
@@ -1397,8 +1397,8 @@ G:5:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:20:50:100:0:0:0:8
-F:19,field_action_isjewel_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_jewel(object)
 
 # Jeweler
 N:104:Silver Jeweler
@@ -1406,8 +1406,8 @@ G:5:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:40:70:100:0:0:0:24
-F:19,field_action_isjewel_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_jewel(object)
 
 # Jeweler
 N:105:Gold Jeweler
@@ -1415,8 +1415,8 @@ G:5:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:60:90:100:0:0:0:40
-F:19,field_action_isjewel_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_jewel(object)
 
 # Jeweler
 N:106:Rare Jeweler
@@ -1424,8 +1424,8 @@ G:5:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:80:120:100:0:0:0:56
-F:19,field_action_isjewel_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_jewel(object)
 
 # Statue Store
 N:107:Statue Store
@@ -1442,8 +1442,8 @@ G:5:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:1:50:100:100:0:0:0:8
-F:19,field_action_isstatue_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_STATUE)
 
 # Figurine Store
 N:109:Figurine Store
@@ -1451,8 +1451,8 @@ G:5:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:26:26:100:0:0:0:8
-F:19,field_action_isfigurine_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_FIGURINE)
 
 # Figurine Store
 N:110:Expensive Figurine Store
@@ -1460,8 +1460,8 @@ G:5:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:50:90:100:0:0:0:16
-F:19,field_action_isfigurine_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_FIGURINE)
 
 # Potion Store
 N:111:Potion Store
@@ -1471,6 +1471,7 @@ I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:1:30:0:0:100:0:0
 F:19,field_action_ispotion_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
 # Potion Store
 N:112:Expensive Potion Store
@@ -1478,8 +1479,8 @@ G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:20:40:0:0:100:0:24
-F:19,field_action_ispotion_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
 # Potion Store
 N:113:Deep Potion Store
@@ -1487,8 +1488,8 @@ G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:40:70:0:0:100:0:24
-F:19,field_action_ispotion_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
 # Potion Store
 N:114:Rare Potion Store
@@ -1496,8 +1497,8 @@ G:5:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:60:90:0:0:100:0:40
-F:19,field_action_ispotion_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
 # Potion Store
 N:115:Custom Potion Store
@@ -1505,8 +1506,8 @@ G:5:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:80:120:0:0:100:0:56
-F:19,field_action_ispotion_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
 # Scroll Store
 N:116:Scroll Store
@@ -1514,8 +1515,8 @@ G:5:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:1:30:0:0:100:0:0
-F:19,field_action_isscroll_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SCROLL)
 
 # Scroll Store
 N:117:Unusual Scroll Store
@@ -1523,8 +1524,8 @@ G:5:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:20:50:0:0:100:0:8
-F:19,field_action_isscroll_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SCROLL)
 
 # Scroll Store
 N:118:Expensive Scroll Store
@@ -1532,8 +1533,8 @@ G:5:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:40:70:0:0:100:0:24
-F:19,field_action_isscroll_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SCROLL)
 
 # Scroll Store
 N:119:Deep Scroll Store
@@ -1541,8 +1542,8 @@ G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:60:90:0:0:100:0:40
-F:19,field_action_isscroll_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SCROLL)
 
 # Scroll Store
 N:120:Rare Scroll Store
@@ -1550,8 +1551,8 @@ G:5:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:80:120:0:0:100:0:56
-F:19,field_action_isscroll_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_SCROLL)
 
 # Magic Store
 N:121:Magic Store
@@ -1559,8 +1560,8 @@ G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:1:20:0:0:100:0:8
-F:19,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_recharge(object)
 
 # Magic Store
 N:122:Advanced Magic Store
@@ -1568,8 +1569,8 @@ G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:20:40:0:0:100:0:8
-F:19,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_recharge(object)
 
 # Magic Store
 N:123:Expensive Magic Store
@@ -1577,8 +1578,8 @@ G:6:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:40:60:0:0:100:0:24
-F:19,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_recharge(object)
 
 # Magic Store
 N:124:Rare Magic Store
@@ -1586,8 +1587,8 @@ G:6:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:60:90:0:0:100:0:40
-F:19,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_recharge(object)
 
 # Magic Store
 N:125:Custom Magic Store
@@ -1595,8 +1596,8 @@ G:6:v
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:80:120:0:0:100:0:56
-F:19,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_recharge(object)
 
 # Book Store
 N:126:Rare Book Store
@@ -1604,8 +1605,8 @@ G:5:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:20:120:0:0:100:0:56
-F:19,field_action_isbook_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_is_book(object)
 
 # Temple
 N:127:Large Temple
@@ -1613,8 +1614,8 @@ G:6:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:20:50:33:33:34:0:1
-F:18,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = item_tester_hook_recharge(object)
 
 # Temple
 N:128:High Temple
@@ -1622,8 +1623,8 @@ G:6:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:50:75:33:33:34:0:17
-F:18,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = item_tester_hook_recharge(object)
 
 # Temple
 N:129:Hidden Temple
@@ -1631,8 +1632,8 @@ G:6:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:75:100:33:33:34:0:57
-F:18,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = item_tester_hook_recharge(object)
 
 # Supplies store
 N:130:Supplies Store
@@ -1640,8 +1641,13 @@ G:1:u
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:9:0:20:40:30:0
-F:18,field_action_issupplies_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = FALSE
+L:STORE1:-- This leaves the store with scrolls, tools, ammo, and diggers (by elimination)
+L:STORE1:if (item_tester_hook_tval(object, POTION) == TRUE) then result = TRUE end
+L:STORE1:if (item_tester_hook_weapon_armour(object) == TRUE) then result = TRUE end
+L:STORE1:if (item_tester_hook_recharge(object) == TRUE) then result = TRUE end
+L:STORE1:if (item_tester_hook_is_book(object) == TRUE) then result = TRUE end
 
 # Supplies store
 N:131:Dungeon Supplies Store
@@ -1649,8 +1655,13 @@ G:1:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:20:0:10:40:50:0
-F:18,field_action_issupplies_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = FALSE
+L:STORE1:-- This leaves the store with scrolls, tools, ammo, and diggers (by elimination)
+L:STORE1:if (item_tester_hook_tval(object, POTION) == TRUE) then result = TRUE end
+L:STORE1:if (item_tester_hook_weapon_armour(object) == TRUE) then result = TRUE end
+L:STORE1:if (item_tester_hook_recharge(object) == TRUE) then result = TRUE end
+L:STORE1:if (item_tester_hook_is_book(object) == TRUE) then result = TRUE end
 
 # Black Market
 N:132:Large Black Market
@@ -1674,8 +1685,8 @@ G:6:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:20:60:0:0:100:0:8
-F:18,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = item_tester_hook_recharge(object)
 
 # Alchemy Shop
 N:135:Rare Alchemy Shop
@@ -1683,8 +1694,8 @@ G:6:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:50:80:0:0:100:0:40
-F:18,field_action_isrecharge_tester
 L:PENTER:do_cmd_store(field)
+L:STORE1:result = item_tester_hook_recharge(object)
 
 # Junk store
 N:136:Flea Market
@@ -1702,6 +1713,7 @@ I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:25:0:0:0:100:8
 F:19,field_action_isfood_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_FOOD)
 
 # Library
 N:138:Library
