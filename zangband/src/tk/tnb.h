@@ -55,7 +55,6 @@ extern cptr ANGBAND_DIR_TK;
 extern Tcl_Interp *g_interp;
 
 /* canv-widget.c */
-extern void CanvasWidget_Idle(void);
 extern int CanvasWidget_Init(Tcl_Interp *interp);
 
 

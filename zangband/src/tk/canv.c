@@ -34,12 +34,6 @@ struct WidgetItem  {
 	int borderDist;
 };
 
-/*
- * Linked list of all Widget-type Canvas items in all Canvases which
- * display animated icons.
- */
-static DoubleLinker WidgetItemList;
-
 static int Assign_ParseProc _ANSI_ARGS_((
 			    ClientData clientData, Tcl_Interp *interp,
 			    Tk_Window tkwin, cptr value, char *widgRec,
@@ -783,23 +777,8 @@ static char *Assign_PrintProc(ClientData clientData, Tk_Window tkwin,
 	return assign_print(buf, (t_assign *) (widgRec + offset));
 }
 
-void CanvasWidget_Idle(void)
-{
-	DoubleLink *link;
-	WidgetItem *widgetPtr;
-
-	for (link = WidgetItemList.head; link; link = link->next)
-	{
-		widgetPtr = DoubleLink_Data(link, WidgetItem);
-	    Tk_CanvasEventuallyRedraw(widgetPtr->canvas, widgetPtr->header.x1,
-		    widgetPtr->header.y1, widgetPtr->header.x2, widgetPtr->header.y2);
-	}
-}
-
 int CanvasWidget_Init(Tcl_Interp *interp)
 {
-	DoubleLink_Init(&WidgetItemList, NULL, NULL);
-
 	CanvWidgetBitmap.height = 100;
 	CanvWidgetBitmap.width = 100;
 	CanvWidgetBitmap.depth = g_icon_depth;
