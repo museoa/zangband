@@ -663,7 +663,7 @@ cave_type **wild_cache[WILD_BLOCKS];
 wild_grid_type wild_grid;
 
 /* The wilderness itself */
-wild_type *wild[WILD_SIZE];
+wild_type **wild;
 
 /* Description of wilderness block types */
 wild_gen_data_type *wild_gen_data;
@@ -1051,8 +1051,17 @@ u16b max_m_idx;
 /*
  * Maximum size of the wilderness
  */
-s32b max_wild_x;
-s32b max_wild_y;
+s32b max_wild;
+
+/*
+ * Maximum number of nodes in the wilderness decision tree
+ */
+u16b max_w_node;
+
+/*
+ * Maximum number of types of wilderness block.
+ */
+u16b max_w_block;
 
 /*
  * Quest info

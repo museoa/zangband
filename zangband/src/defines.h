@@ -120,9 +120,6 @@
  * Defines used by the wilderness data structures
  */
 
-/* size of side of total wilderness square in blocks 2^n+1 works best*/
-#define WILD_SIZE	65
-
 /* size of blocks - hard coded. */
 #define WILD_BLOCK_SIZE	16
 

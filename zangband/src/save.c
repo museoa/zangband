@@ -1283,9 +1283,9 @@ static void save_wild_data(void)
 	wr_u32b(wild_grid.wild_seed);
 
 	/* Save wilderness map */
-	for (i = 0; i < WILD_SIZE; i++)
+	for (i = 0; i < max_wild; i++)
 	{
-		for (j = 0; j < WILD_SIZE; j++)
+		for (j = 0; j < max_wild; j++)
 		{
 			/* Terrain */
 			wr_u16b(wild[j][i].done.wild);
@@ -1515,9 +1515,8 @@ static bool wr_savefile_new(void)
 	wr_s32b(p_ptr->wilderness_x);
 	wr_s32b(p_ptr->wilderness_y);
 
-	wr_s32b(max_wild_x);
-	wr_s32b(max_wild_y);
-
+	wr_s32b((s32b) max_wild);
+	wr_s32b((s32b) max_wild);
 
 	/* Hack -- Dump the artifacts */
 	tmp16u = max_a_idx;

@@ -631,13 +631,6 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 /* The number of allocated nodes in the decsion tree */
 static u16b d_tree_count;
 
-/* Get rid of this as soon as misc.txt is used to resize
- * the wilderness arrays.  Note that init2.c contains
- * hard coded array sizes (100 and 27) that will also
- * need to be changed.  -  This is only temporary.
- */
-#define MAX_D_TREE 100
-
 /*
  * This function creates a new node on the decision tree.
  * It then connects that node to the node referenced by
@@ -655,7 +648,7 @@ static u16b create_node(u16b node, bool branch)
 	
 	wild_choice_tree_type	*tree_ptr;
 	
-	if (d_tree_count >= MAX_D_TREE)
+	if (d_tree_count >= max_w_node)
 	{
 		/* 
 		 * Return zero (known as the location of the tree's
@@ -2160,7 +2153,7 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant wilderness blocks */
-	Rand_value = wild_grid.wild_seed + x + y * WILD_SIZE;
+	Rand_value = wild_grid.wild_seed + x + y * max_wild;
 
 	/* Generate a terrain block*/
 
@@ -2382,8 +2375,8 @@ void move_wild(void)
 	/* Move if out of bounds */
 	if (x < 0) x = 0;
 	if (y < 0) y = 0;
-	if (x + WILD_GRID_SIZE > WILD_SIZE) x = WILD_SIZE - WILD_GRID_SIZE;
-	if (y + WILD_GRID_SIZE > WILD_SIZE) y = WILD_SIZE - WILD_GRID_SIZE;
+	if (x + WILD_GRID_SIZE > max_wild) x = max_wild - WILD_GRID_SIZE;
+	if (y + WILD_GRID_SIZE > max_wild) y = max_wild - WILD_GRID_SIZE;
 
 	/* Hack - set town */
 	p_ptr->town_num = wild[p_ptr->wilderness_y >> 4]
@@ -2455,8 +2448,12 @@ void move_wild(void)
 /* this routine probably should be an inline function or a macro. */
 static void store_hgtmap(int x, int y, int val)
 {
+	/* bounds checking */
+	if (val < 0) val = 0;
+	if ((val >> 4) >= max_wild) val = (max_wild << 4) - 1;
+	
 	/* Save distribution information */	
-	wild_temp_dist[val] = 1;
+	wild_temp_dist[val >> 4] = 1;
 	
 	/* store the value in height-map format */
 	wild[y][x].gen.hgt_map = val;
@@ -2477,10 +2474,10 @@ static void create_hgt_map(void)
 	/* fixed point variables- these are stored as 16 x normal value
 	* this gives 4 binary places of fractional part + 12 places of normal part*/
 
-	u16b lstep, hstep, i, j, ii, jj, size;
-
+	int lstep, hstep, i, j, ii, jj, size;
+	
 	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
-	size = WILD_SIZE - 1;
+	size = max_wild - 1;
 
 	/* Clear the section */
 	for (i = 0; i <= size; i++)
@@ -2532,7 +2529,7 @@ static void create_hgt_map(void)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_hgtmap(ii, jj, randint(WILD_SIZE * 16));
+						store_hgtmap(ii, jj, randint(max_wild * 16));
 					}
 			   		else
 					{
@@ -2562,7 +2559,7 @@ static void create_hgt_map(void)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_hgtmap(ii, jj, randint(WILD_SIZE * 16));
+						store_hgtmap(ii, jj, randint(max_wild * 16));
 					}
 		   			else
 					{
@@ -2591,7 +2588,7 @@ static void create_hgt_map(void)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_hgtmap(ii, jj, randint(WILD_SIZE * 16));
+						store_hgtmap(ii, jj, randint(max_wild * 16));
 					}
 		   			else
 					{
@@ -2614,8 +2611,12 @@ static void create_hgt_map(void)
 /* this routine probably should be an inline function or a macro. */
 static void store_popmap(int x, int y, int val, u16b sea)
 {
+	/* bounds checking */
+	if (val < 0) val = 0;
+	if ((val >> 4) >= max_wild) val = (max_wild << 4) - 1;
+	
 	/* Save distribution information (only if not below sea level)*/	
-	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val] = 1;
+	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val >> 4] = 1;
 	
 	/* store the value in height-map format */
 	wild[y][x].gen.pop_map = val;
@@ -2634,10 +2635,10 @@ static void create_pop_map(u16b sea)
 	/* fixed point variables- these are stored as 16 x normal value
 	* this gives 4 binary places of fractional part + 12 places of normal part*/
 
-	u16b lstep, hstep, i, j, ii, jj, size;
+	int lstep, hstep, i, j, ii, jj, size;
 
 	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
-	size = WILD_SIZE - 1;
+	size = max_wild - 1;
 
 	/* Clear the section */
 	for (i = 0; i <= size; i++)
@@ -2689,7 +2690,7 @@ static void create_pop_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_popmap(ii, jj, randint(WILD_SIZE * 16), sea);
+						store_popmap(ii, jj, randint(max_wild * 16), sea);
 					}
 			   		else
 					{
@@ -2719,7 +2720,7 @@ static void create_pop_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_popmap(ii, jj, randint(WILD_SIZE * 16), sea);
+						store_popmap(ii, jj, randint(max_wild * 16), sea);
 					}
 		   			else
 					{
@@ -2748,7 +2749,7 @@ static void create_pop_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_popmap(ii, jj, randint(WILD_SIZE * 16), sea);
+						store_popmap(ii, jj, randint(max_wild * 16), sea);
 					}
 		   			else
 					{
@@ -2770,9 +2771,13 @@ static void create_pop_map(u16b sea)
 
 /* this routine probably should be an inline function or a macro. */
 static void store_lawmap(int x, int y, int val, u16b sea)
-{
+{	
+	/* bounds checking */
+	if (val < 0) val = 0;
+	if ((val >> 4) >= max_wild) val = (max_wild << 4) - 1;
+	
 	/* Save distribution information (only if not below sea level)*/	
-	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val] = 1;
+	if (wild[y][x].gen.hgt_map > sea) wild_temp_dist[val >> 4] = 1;
 	
 	/* store the value in height-map format */
 	wild[y][x].gen.law_map = val;
@@ -2791,10 +2796,10 @@ static void create_law_map(u16b sea)
 	/* fixed point variables- these are stored as 16 x normal value
 	* this gives 4 binary places of fractional part + 12 places of normal part*/
 
-	u16b lstep, hstep, i, j, ii, jj, size;
+	int lstep, hstep, i, j, ii, jj, size;
 
 	/* Size is one bigger than normal blocks for speed of algorithm with 2^n + 1 */
-	size = WILD_SIZE - 1;
+	size = max_wild - 1;
 
 	/* Clear the section */
 	for (i = 0; i <= size; i++)
@@ -2846,7 +2851,7 @@ static void create_law_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_lawmap(ii, jj, randint(WILD_SIZE * 16), sea);
+						store_lawmap(ii, jj, randint(max_wild * 16), sea);
 					}
 			   		else
 					{
@@ -2876,7 +2881,7 @@ static void create_law_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_lawmap(ii, jj, randint(WILD_SIZE * 16), sea);
+						store_lawmap(ii, jj, randint(max_wild * 16), sea);
 					}
 		   			else
 					{
@@ -2905,7 +2910,7 @@ static void create_law_map(u16b sea)
 					if (hstep > grd)
 					{
 						/* If greater than 'grid' level then is random */
-						store_lawmap(ii, jj, randint(WILD_SIZE * 16), sea);
+						store_lawmap(ii, jj, randint(max_wild * 16), sea);
 					}
 		   			else
 					{
@@ -2945,9 +2950,9 @@ void create_wilderness(void)
 	hgt_min = hgt_max = pop_min = pop_max = law_min = law_max = 0;
 	
 	/* minimum height */
-	for (i = 0; i < WILD_SIZE; i++)
+	for (i = 0; i < max_wild; i++)
 	{
-		if (wild_temp_dist != 0)
+		if (wild_temp_dist[i] != 0)
 		{
 			hgt_min = i;
 			break;
@@ -2955,9 +2960,9 @@ void create_wilderness(void)
 	}
 	
 	/* maximum height */
-	for (i = WILD_SIZE - 1; i >= 0; i--)
+	for (i = max_wild - 1; i >= 0; i--)
 	{
-		if (wild_temp_dist != 0)
+		if (wild_temp_dist[i] != 0)
 		{
 			hgt_max = i;
 			break;
@@ -2973,9 +2978,9 @@ void create_wilderness(void)
 	/* work out extremes of population so it can be scaled. */
 	
 	/* minimum population */
-	for (i = 0; i < WILD_SIZE; i++)
+	for (i = 0; i < max_wild; i++)
 	{
-		if (wild_temp_dist != 0)
+		if (wild_temp_dist[i] != 0)
 		{
 			pop_min = i;
 			break;
@@ -2983,9 +2988,9 @@ void create_wilderness(void)
 	}
 	
 	/* maximum population */
-	for (i = WILD_SIZE - 1; i >= 0; i--)
+	for (i = max_wild - 1; i >= 0; i--)
 	{
-		if (wild_temp_dist != 0)
+		if (wild_temp_dist[i] != 0)
 		{
 			pop_max = i;
 			break;
@@ -2997,9 +3002,9 @@ void create_wilderness(void)
 	/* work out extremes of "lawfulness" so it can be scaled. */
 	
 	/* minimum lawfulness */
-	for (i = 0; i < WILD_SIZE; i++)
+	for (i = 0; i < max_wild; i++)
 	{
-		if (wild_temp_dist != 0)
+		if (wild_temp_dist[i] != 0)
 		{
 			law_min = i;
 			break;
@@ -3007,9 +3012,9 @@ void create_wilderness(void)
 	}
 	
 	/* maximum lawfulness */
-	for (i = WILD_SIZE - 1; i >= 0; i--)
+	for (i = max_wild - 1; i >= 0; i--)
 	{
-		if (wild_temp_dist != 0)
+		if (wild_temp_dist[i] != 0)
 		{
 			law_max = i;
 			break;
@@ -3018,9 +3023,9 @@ void create_wilderness(void)
 	
 	/* Fill wilderness with grass */
 	/* This will be replaced with a more inteligent routine later */
-	for (i = 0; i < WILD_SIZE; i++)
+	for (i = 0; i < max_wild; i++)
 	{
-		for (j = 0; j < WILD_SIZE; j++)
+		for (j = 0; j < max_wild; j++)
 		{
 			/* All grass */
 			wild[j][i].done.wild = 1;
@@ -3046,8 +3051,8 @@ void create_wilderness(void)
 		py = p_ptr->wilderness_y;
 
 		/* Determine number of panels */
-		max_panel_rows = WILD_SIZE * 16 * 2 - 2;
-		max_panel_cols = WILD_SIZE * 16 * 2 - 2;
+		max_panel_rows = max_wild * 16 * 2 - 2;
+		max_panel_cols = max_wild * 16 * 2 - 2;
 
 		/* Assume illegal panel */
 		panel_row = max_panel_rows;
@@ -3057,9 +3062,6 @@ void create_wilderness(void)
 		wipe_o_list();
 		wipe_m_list();
 	}
-
-	max_wild_y = WILD_SIZE * 16;
-	max_wild_x = WILD_SIZE * 16;
 
 	/* Clear cache */
 	wild_grid.cache_count = 0;
@@ -3075,4 +3077,10 @@ void create_wilderness(void)
 
 	/* Refresh random number seed */
 	wild_grid.wild_seed = rand_int(0x10000000);
+	
+	/* Free up memory used to create the wilderness */
+	#if 0
+	C_FREE(wild_choice_tree, max_w_node, wild_choice_tree_type);
+	C_FREE(wild_temp_dist, max_wild, byte);
+	#endif
 }

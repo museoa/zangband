@@ -2524,9 +2524,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			i++;
 			
 			/* Check to see if there is room in array */
-			/* Hack - need to use misc.txt XXX XXX XXX */
-			
-			if (i >= 27) return (2);
+			if (i >= max_w_block) return (7);
 			
 			/* point to new position in array */
 			w_ptr = &wild_gen_data[i];
@@ -2643,7 +2641,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			{
 				/* Add type to decision tree */
 				if(add_node_tree_root(&bound, i) == 0)
-					return (2);
+					return (7);
 			}
 			
 			/* Next... */
@@ -3398,18 +3396,20 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				max_m_idx = atoi(zz[1]);
 			}
 
-			/* Wilderness size */
+			/* Wilderness data */
 			else if (zz[0][0] == 'W')
 			{
-				/* Hack - this flag has been disabled. */
-#if 0
-				/* Maximum wild_x_size */
-				if (zz[0][1] == 'X')
-					max_wild_x = atoi(zz[1]);
-				/* Maximum wild_y_size */
-				if (zz[0][1] == 'Y')
-					max_wild_y = atoi(zz[1]);
-#endif
+				/* Maximum wild_size */
+				if (zz[0][1] == 'S')
+					max_wild = atoi(zz[1]);
+				
+				/* Maximum wild d_tree nodes */
+				if (zz[0][1] == 'N')
+					max_w_node = atoi(zz[1]);
+				
+				/* Maximum wild gen types */
+				if (zz[0][1] == 'T')
+					max_w_block = atoi(zz[1]);
 			}
 
 			return (0);

@@ -2632,6 +2632,11 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 	}
 }
 
+/*
+ * Size of the wilderness to load
+ */
+static	s32b wild_x_size;
+static	s32b wild_y_size;
 
 /*
  * Load wilderness data
@@ -2657,9 +2662,9 @@ static void load_wild_data(void)
 	rd_u32b(&wild_grid.wild_seed);
 
 	/* Load wilderness map */
-	for (i = 0; i < WILD_SIZE; i++)
+	for (i = 0; i < wild_x_size; i++)
 	{
-		for (j = 0; j < WILD_SIZE; j++)
+		for (j = 0; j < wild_y_size; j++)
 		{
 			if (sf_version < 8)
 			{
@@ -2721,7 +2726,6 @@ static errr rd_dungeon(void)
 
 	u16b limit;
 	cave_type *c_ptr;
-
 
 	/*** Basic info ***/
 
@@ -2964,9 +2968,6 @@ static errr rd_savefile_new_aux(void)
 {
 	int i, j;
 	int town_count;
-
-	s32b wild_x_size;
-	s32b wild_y_size;
 
 	byte tmp8u;
 	u16b tmp16u;
@@ -3308,12 +3309,19 @@ static errr rd_savefile_new_aux(void)
 		rd_s32b(&wild_y_size);
 
 		/* Incompatible save files */
-		/* Hack - ignore this for now. */
-		if ((wild_x_size > 16 * WILD_SIZE) || (wild_y_size > 16 * WILD_SIZE))
+		if ((wild_x_size > 16 * max_wild) || (wild_y_size > 16 * max_wild))
 		{
 			note(format("Wilderness is too big (%u/%u)!", wild_x_size, wild_y_size));
 			return (23);
 		}
+
+		/* Hack - if size is zero - set to max_wild */
+		if ((wild_x_size == 0) && (wild_y_size == 0))
+		{			
+			wild_x_size = max_wild;
+			wild_y_size = max_wild;
+		}
+
 
 		/* Ignore the seeds from old versions */
 		if (sf_version < 9)

@@ -1882,14 +1882,12 @@ errr init_w_info(bool new_game)
 
 	/* General buffer */
 	char buf[1024];
+
 	
-	
-	/* Massive hack XXX XXX XXX */
-	
-	/* Later must add in raw file + misc.txt support. */
-	C_MAKE(wild_choice_tree, 100, wild_choice_tree_type);
-	C_MAKE(wild_gen_data, 27, wild_gen_data_type);
-	C_MAKE(wild_temp_dist, WILD_SIZE, byte);
+	/* Later must add in raw file support later. */
+	C_MAKE(wild_choice_tree, max_w_node, wild_choice_tree_type);
+	C_MAKE(wild_gen_data, max_w_block, wild_gen_data_type);
+	C_MAKE(wild_temp_dist, max_wild, byte);
 	
 	/*
 	 * Hack XXX XXXX
@@ -1935,6 +1933,7 @@ errr init_w_info(bool new_game)
 		quit("Error in 'w_info.txt' file.");
 	}
 	
+	
 	/* Create the random wilderness */
 	if (new_game)
 	{
@@ -1943,13 +1942,7 @@ errr init_w_info(bool new_game)
 		/* Make the function pointers point the the correct data type */
 		change_level(dun_level);
 	}
-	
-	#if 0
-	/* Free decision tree now that are done with it */
-	C_FREE(wild_choice_tree, 100, wild_choice_tree_type);
-	#endif
-	
-	
+		
 	/* Success */
 	return(0);
 }
@@ -2674,10 +2667,12 @@ static errr init_other(void)
 	 */
 
 	/* Allocate the wilderness itself */
-	for (i = 0; i < WILD_SIZE ; i++)
+	C_MAKE(wild, max_wild, wild_tp_ptr);
+	
+	for (i = 0; i < max_wild ; i++)
 	{
 		/* Allocate one row of the wilderness */
-		C_MAKE(wild[i], WILD_SIZE, wild_type);
+		C_MAKE(wild[i], max_wild, wild_type);
 	}
 
 

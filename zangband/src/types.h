@@ -578,6 +578,7 @@ union wild_type
 	wild_done_type	done;
 };
 
+typedef wild_type *wild_tp_ptr;
 
 /* 
  * An array of this structure is used to work out what wilderness type
