@@ -4943,7 +4943,10 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 
 				/* Paranoia */
 				if (!o_ptr) continue;
-			}
+            }
+
+            /* Skip cursed items */
+            if (cursed_p(o_ptr)) continue;
 
 			/* Check to see if the object is worth anything */
 			if (object_value_real(o_ptr) > 0) break;
