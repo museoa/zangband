@@ -3617,6 +3617,10 @@ void play_game(bool new_game)
 	/* Reset the visual mappings */
 	reset_visuals();
 	
+	/* Set or clear "rogue_like_commands" if requested */
+	if (arg_force_original) rogue_like_commands = FALSE;
+	if (arg_force_roguelike) rogue_like_commands = TRUE;
+	
 	/* Roll new character */
 	if (new_game)
 	{
@@ -3690,7 +3694,11 @@ void play_game(bool new_game)
 	/* Load the "pref" files */
 	load_all_pref_files();
 
-	/* Set or clear "rogue_like_commands" if requested */
+	/*
+	 * Set or clear "rogue_like_commands" if requested
+	 * (Do it again, because of loading the pref files 
+	 *  can stomp on the options.)
+	 */
 	if (arg_force_original) rogue_like_commands = FALSE;
 	if (arg_force_roguelike) rogue_like_commands = TRUE;
 
