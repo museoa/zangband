@@ -2211,7 +2211,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	}
 
 	/* Possibly apply a power typical for the item's slot */
-	if (one_in_(3))
+	if (one_in_(2))
 	{
 		switch (o_ptr->tval)
 		{
@@ -2222,28 +2222,101 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 					SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
 				else
 					SET_FLAG(o_ptr->flags, 2, TR2_FEATHER);
-				powers--;
 				given++;
 				break;
 
 			case TV_GLOVES:
-				if (one_in_(2))
+				switch (randint1(3))
+				{
+				case 1:
 					SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
-				else
+					break;
+				case 2:
 					SET_FLAG(o_ptr->flags, 0, TR0_DEX);
-				powers--;
+					break;
+				case 3:
+					SET_FLAG(o_ptr->flags, 0, TR0_STR);
+					break;
+				}
 				given++;
 				break;
 
 			case TV_HELM:
 			case TV_CROWN:
-				if (one_in_(3))
+				switch (randint1(5))
+				{
+				case 1:
 					SET_FLAG(o_ptr->flags, 2, TR2_TELEPATHY);
-				else if (one_in_(2))
+					break;
+				case 2:
 					SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
-				else
+					break;
+				case 3:
 					SET_FLAG(o_ptr->flags, 0, TR0_INFRA);
-				powers--;
+					break;
+				case 4:
+					SET_FLAG(o_ptr->flags, 0, TR0_INT);
+					break;
+				case 5:
+					SET_FLAG(o_ptr->flags, 0, TR0_WIS);
+					break;
+				}
+				given++;
+				break;
+
+			case TV_CLOAK:
+				if (one_in_(2))
+					SET_FLAG(o_ptr->flags, 3, TR3_LUCK_10);
+				else
+					SET_FLAG(o_ptr->flags, 0, TR0_STEALTH);
+				given++;
+				break;
+
+			case TV_SOFT_ARMOR:
+				switch (randint1(3))
+				{
+				case 1:
+					SET_FLAG(o_ptr->flags, 0, TR0_DEX);
+					break;
+				case 2:
+					SET_FLAG(o_ptr->flags, 0, TR0_CON);
+					break;
+				case 3:
+					SET_FLAG(o_ptr->flags, 0, TR0_STEALTH);
+					break;
+				}
+				given++;
+				break;
+
+			case TV_HARD_ARMOR:
+				switch (randint1(3))
+				{
+				case 1:
+					SET_FLAG(o_ptr->flags, 1, TR1_HOLD_LIFE);
+					break;
+				case 2:
+					SET_FLAG(o_ptr->flags, 0, TR0_CON);
+					break;
+				case 3:
+					SET_FLAG(o_ptr->flags, 2, TR2_REGEN);
+					break;
+				}
+				given++;
+				break;
+
+			case TV_SHIELD:
+				switch (randint1(3))
+				{
+				case 1:
+					SET_FLAG(o_ptr->flags, 1, TR1_REFLECT);
+					break;
+				case 2:
+					SET_FLAG(o_ptr->flags, 2, TR2_LITE);
+					break;
+				case 3:
+					SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
+					break;
+				}
 				given++;
 				break;
 		}
