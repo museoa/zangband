@@ -1506,7 +1506,7 @@ void py_attack(int y, int x)
 		}
 
 		/* Stunning. */
-		if (bash_quality + p_ptr->lev > randint(200 + r_ptr->level * 4))
+		if (bash_quality + p_ptr->lev > randint(200 + r_ptr->level * 8))
 		{
 			msg_format("%^s is stunned.", m_name);
 
