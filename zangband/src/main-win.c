@@ -3423,6 +3423,9 @@ static void process_menus(WORD wCmd)
 			{
 				arg_graphics = GRAPHICS_NONE;
 
+				/* Fields have to notice the change. */
+				init_fields();
+
 				/* React to changes */
 				Term_xtra_win_react();
 
@@ -3446,6 +3449,9 @@ static void process_menus(WORD wCmd)
 			if (arg_graphics != GRAPHICS_ORIGINAL)
 			{
 				arg_graphics = GRAPHICS_ORIGINAL;
+
+				/* Fields have to notice the change. */
+				init_fields();
 
 				/* React to changes */
 				Term_xtra_win_react();
@@ -3471,6 +3477,9 @@ static void process_menus(WORD wCmd)
 			{
 				arg_graphics = GRAPHICS_ADAM_BOLT;
 
+				/* Fields have to notice the change. */
+				init_fields();
+				
 				/* React to changes */
 				Term_xtra_win_react();
 
