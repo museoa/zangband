@@ -744,6 +744,46 @@ int borg_wield_slot(list_item *l_ptr)
 	return (-1);
 }
 
+/*
+ * Find the index of the object_kind with the given tval and sval
+ */
+object_kind *borg_get_kind(int tval, int sval)
+{
+	int k;
+	int num = 0;
+	object_kind *kb_ptr = &k_info[0];
+
+	/* Look for it */
+	for (k = 1; k < z_info->k_max; k++)
+	{
+		object_kind *k_ptr = &k_info[k];
+
+		/* Require correct tval */
+		if (k_ptr->tval != tval) continue;
+
+		/* Found a match */
+		if (k_ptr->sval == sval) return (k_ptr);
+
+		/* Ignore illegal items */
+		if (sval != SV_ANY) continue;
+
+		/* Apply the randomizer */
+		if (!one_in_(++num)) continue;
+
+		/* Use this value */
+		kb_ptr = k_ptr;
+	}
+	
+	/* Failure? */
+	if (sval != SV_ANY)
+	{
+		/* Oops */
+		borg_note_fmt("No object (%d,%d)", tval, sval);
+	}
+
+	return (kb_ptr);
+}
+
 
 /*
  * Find the slot of an item with the given tval/sval, if available.

@@ -1569,8 +1569,8 @@ bool borg_crush_junk(void)
 				  strstr(l_ptr->o_name, "{cursed") ||
 				  strstr(l_ptr->o_name, "{bad"))) continue;
 
-			/* Pretend one item isn't there */
-			l_ptr->treat_as = TREAT_AS_LESS;
+			/* Pretend pile isn't there */
+			l_ptr->treat_as = TREAT_AS_GONE;
 
 			/* Evaluate the inventory */
 			p = borg_power();
@@ -1624,7 +1624,7 @@ bool borg_crush_junk(void)
 		borg_note_fmt("# Junking junk (valued at %d)", value);
 
 		/* Destroy the item */
-		borg_destroy_item(l_ptr, i, 1);
+		borg_destroy_item(l_ptr, i, l_ptr->number);
 
 		/* Success */
 		return (TRUE);

@@ -139,36 +139,15 @@ extern borg_magic borg_magics[8][4][8];	/* Spell info, including realm */
 extern borg_mind borg_minds[MINDCRAFT_MAX];
 
 
+/* Functions */
 
-/*
- * Determine which slot an item could be wielded into
- */
 extern int borg_wield_slot(list_item *item);
-
-/*
- * Count the items of a given tval/sval
- */
 extern int borg_count(int tval, int sval);
-
-/*
- * Find an item with a given tval/sval
- */
 extern list_item *borg_slot(int tval, int sval);
-
-/*
- * Find corresponding index of item
- */
+extern object_kind *borg_get_kind(int tval, int sval);
 extern int look_up_index(list_item *l_ptr);
-
-/*
- * Item usage functions
- */
 extern bool borg_refuel_torch(void);
 extern bool borg_refuel_lantern(void);
-
-/*
- * Item usage functions (by sval)
- */
 extern bool borg_eat_food(int sval);
 extern bool borg_quaff_crit(bool no_check);
 extern bool borg_quaff_potion(int sval);
@@ -183,18 +162,9 @@ extern bool borg_aim_wand(int sval);
 extern bool borg_use_staff(int sval);
 extern bool borg_use_staff_fail(int sval);
 extern bool borg_equips_staff_fail(int sval);
-
-/*
- * Artifact usage function (by index)
- */
 extern bool borg_activate_artifact(int name1, bool secondary);	/* apw */
 extern bool borg_activate_dragon(int drag_sval);	/* apw */
 extern bool borg_equips_dragon(int drag_sval);	/* apw */
-
-
-/*
- * Spell functions
- */
 extern bool borg_spell_legal(int realm, int book, int what);
 extern bool borg_spell_okay(int realm, int book, int what);
 extern bool borg_spell(int realm, int book, int what);
@@ -202,32 +172,15 @@ extern bool borg_spell_fail(int realm, int book, int what, int allow_fail);
 extern bool borg_spell_okay_fail(int realm, int book, int what, int allow_fail);
 extern bool borg_spell_legal_fail(int realm, int book, int what,
 								  int allow_fail);
-
-/*
- * Mindcraft Spell functions
- */
 extern bool borg_mindcr_legal(int spell, int level);
 extern bool borg_mindcr_okay(int spell, int level);
 extern bool borg_mindcr(int spell, int level);
 extern bool borg_mindcr_fail(int spell, int level, int allow_fail);
 extern bool borg_mindcr_okay_fail(int spell, int level, int allow_fail);
 extern bool borg_mindcr_legal_fail(int spell, int level, int allow_fail);
-
-/*
- * Racial abilities
- */
 extern bool borg_racial_check(int race, bool check_fail);
 extern bool borg_racial(int race);
-
-
-/*
- * Cheat/Parse the "spell" screen
- */
 extern void borg_cheat_spell(int realm);
-
-/*
- * Hack -- prepare stuff based on the race/class
- */
 extern void prepare_race_class_info(void);
 
 /*

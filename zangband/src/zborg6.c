@@ -2081,7 +2081,7 @@ static bool borg_heal(int danger)
 		{
 			/* Check my skill, drink a potion */
 			if ((borg_skill[BI_DEV] -
-				 k_info[borg_slot(TV_STAFF, SV_STAFF_TELEPORTATION)->k_idx].
+				 borg_get_kind(TV_STAFF, SV_STAFF_TELEPORTATION)->
 				 level > 7) && (danger < (avoidance + 35) * 15 / 10) &&
 				(borg_quaff_crit(FALSE) ||
 				 borg_quaff_potion(SV_POTION_HEALING)))
@@ -2090,7 +2090,8 @@ static bool borg_heal(int danger)
 				return (TRUE);
 			}
 			/*
-			 * However, if I am in really big trouble and there is no way I am going to be able to
+			 * However, if I am in really big trouble and there is
+			 * no way I am going to be able to
 			 * survive another round, take my chances on the staff.
 			 */
 			else if (danger >= avoidance * 15 / 10)
@@ -2382,7 +2383,7 @@ static bool borg_heal(int danger)
 		danger / 2 < borg_skill[BI_CURHP] + 200 &&
 		(((!borg_skill[BI_ATELEPORT] ||
 		   borg_skill[BI_DEV] -
-		   k_info[borg_slot(TV_ROD, SV_ROD_HEALING)->k_idx].level > 7) &&
+		   borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) &&
 		  borg_zap_rod(SV_ROD_HEALING)) ||
 		 borg_activate_artifact(ART_SOULKEEPER, FALSE) ||
 		 borg_activate_artifact(ART_GONDOR, FALSE) ||
@@ -2405,7 +2406,7 @@ static bool borg_heal(int danger)
 																	  1, 6,
 																	  allow_fail)
 																	 ||
-																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - k_info[borg_slot(TV_ROD, SV_ROD_HEALING)->k_idx].level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_zap_rod(SV_ROD_HEALING) || borg_quaff_potion(SV_POTION_HEALING)))
+																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_zap_rod(SV_ROD_HEALING) || borg_quaff_potion(SV_POTION_HEALING)))
 	{
 		borg_note("# Healing Level 7.");
 		return (TRUE);
@@ -2414,7 +2415,7 @@ static bool borg_heal(int danger)
 	/* Healing step three (300hp).  */
 	if (hp_down < 650 && danger / 2 < borg_skill[BI_CURHP] + 300 && ((borg_fighting_evil_unique && borg_spell_fail(REALM_LIFE, 2, 6, allow_fail)) ||	/* holy word */
 /* Vamp Drain ? */
-																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - k_info[borg_slot(TV_ROD, SV_ROD_HEALING)->k_idx].level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) || borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) || borg_use_staff_fail(SV_STAFF_HOLINESS) || borg_use_staff_fail(SV_STAFF_HEALING) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE)))
+																	 ((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_spell_fail(REALM_LIFE, 1, 6, allow_fail) || borg_spell_fail(REALM_NATURE, 1, 7, allow_fail) || borg_use_staff_fail(SV_STAFF_HOLINESS) || borg_use_staff_fail(SV_STAFF_HEALING) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE)))
 	{
 		borg_note("# Healing Level 8.");
 		return (TRUE);
@@ -2434,7 +2435,7 @@ static bool borg_heal(int danger)
 																		borg_use_staff_fail
 																		(SV_STAFF_HEALING)
 																		||
-																		((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - k_info[borg_slot(TV_ROD, SV_ROD_HEALING)->k_idx].level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE) || (borg_fighting_unique && (borg_quaff_potion(SV_POTION_HEALING) || borg_quaff_potion(SV_POTION_LIFE)))))
+																		((!borg_skill[BI_ATELEPORT] || borg_skill[BI_DEV] - borg_get_kind(TV_ROD, SV_ROD_HEALING)->level > 7) && borg_zap_rod(SV_ROD_HEALING)) || borg_quaff_potion(SV_POTION_HEALING) || borg_activate_artifact(ART_SOULKEEPER, FALSE) || borg_activate_artifact(ART_GONDOR, FALSE) || (borg_fighting_unique && (borg_quaff_potion(SV_POTION_HEALING) || borg_quaff_potion(SV_POTION_LIFE)))))
 	{
 		borg_note("# Healing Level 9.");
 		return (TRUE);
@@ -12234,9 +12235,9 @@ bool borg_recover(void)
 	if (borg_has[374] || borg_has[354])
 	{
 		/* Step 1.  Recharge just 1 rod. */
-		if ((borg_has[374] &&
+		if ((borg_slot(TV_ROD, SV_ROD_HEALING) &&
 			 !borg_slot(TV_ROD, SV_ROD_HEALING)->pval) ||
-			(borg_has[354] && !borg_slot(TV_ROD, SV_ROD_RECALL)->pval))
+			(borg_slot(TV_ROD, SV_ROD_RECALL) && !borg_slot(TV_ROD, SV_ROD_RECALL)->pval))
 		{
 			/* Mages can cast the recharge spell */
 
