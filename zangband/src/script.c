@@ -98,7 +98,7 @@ static int xxx_get_aim_dir(lua_State *L)
 	bool success;
 
 	success = get_aim_dir(&dir);
-	lua_pushnumber(L, success);
+	tolua_pushbool(L, success);
 	lua_pushnumber(L, dir);
 
 	return 2;
@@ -114,7 +114,7 @@ static int xxx_fire_beam(lua_State *L)
 	dir = (int)luaL_check_number(L, 2);
 	dam = (int)luaL_check_number(L, 3);
 	result = fire_beam(typ, dir, dam);
-	lua_pushnumber(L, result);
+	tolua_pushbool(L, result);
 
 	return 1;
 }
