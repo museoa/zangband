@@ -298,7 +298,7 @@ static void build_type1(int by0, int bx0)
 			for (x = x1; x <= x2; x += 2)
 			{
 				c_ptr = &cave[y][x];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = FEAT_PILLAR;
 			}
 		}
 	}
@@ -309,16 +309,16 @@ static void build_type1(int by0, int bx0)
 		if ((y1 + 4 < y2) && (x1 + 4 < x2))
 		{
 			c_ptr = &cave[y1 + 1][x1 + 1];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = FEAT_PILLAR;
 
 			c_ptr = &cave[y1 + 1][x2 - 1];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = FEAT_PILLAR;
 
 			c_ptr = &cave[y2 - 1][x1 + 1];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = FEAT_PILLAR;
 
 			c_ptr = &cave[y2 - 1][x2 - 1];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = FEAT_PILLAR;
 		}
 	}
 	
@@ -344,16 +344,16 @@ static void build_type1(int by0, int bx0)
 		for (y = y1 + 2; y <= y2 - 2; y += 2)
 		{
 			c_ptr = &cave[y][x1];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = FEAT_PILLAR;
 			c_ptr = &cave[y][x2];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = FEAT_PILLAR;
 		}
 		for (x = x1 + 2; x <= x2 - 2; x += 2)
 		{
 			c_ptr = &cave[y1][x];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = FEAT_PILLAR;
 			c_ptr = &cave[y2][x];
-			c_ptr->feat = FEAT_WALL_INNER;
+			c_ptr->feat = FEAT_PILLAR;
 		}
 	}
 	
@@ -604,7 +604,7 @@ static void build_type3(int by0, int bx0)
 			else if (rand_int(3) == 0)
 			{
 				c_ptr = &cave[yval][xval];
-				c_ptr->feat = FEAT_WALL_INNER;
+				c_ptr->feat = FEAT_PILLAR;
 			}
 
 			break;
