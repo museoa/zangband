@@ -20,7 +20,12 @@
  * system may have problems because the user can't stop the
  * autoroller for this number of rolls.
  */
-#define AUTOROLLER_STEP 25L
+#define AUTOROLLER_STEP		25L
+
+/*
+ * Define this to cut down processor use while autorolling
+ */
+#define AUTOROLLER_DELAY
 
 /*
  * Maximum number of tries for selection of a proper quest monster
@@ -2321,17 +2326,17 @@ static bool player_birth_aux(void)
 
 	/* Extra info */
 	Term_putstr(5, 15, -1, TERM_WHITE,
-		"You can input yourself the number of quest you'd like to");
+		"You can enter the number of quests you'd like to perform in addition");
 	Term_putstr(5, 16, -1, TERM_WHITE,
-		"perform next to two obligatory ones ( Oberon and the Serpent of Chaos )");
+		"to the two obligatory ones ( Oberon and the Serpent of Chaos )");
 	Term_putstr(5, 17, -1, TERM_WHITE,
-		"In case you do not want any additional quest, just enter 0");
+		"In case you do not want any additional quests, just enter 0");
 
 	/* Ask the number of additional quests */
 	while (TRUE)
 	{
 
-		put_str(format("Number of additional quest? (<%u) ", MAX_RANDOM_QUEST - MIN_RANDOM_QUEST + 2), 20, 2);
+		put_str(format("Number of additional quests? (<%u) ", MAX_RANDOM_QUEST - MIN_RANDOM_QUEST + 2), 20, 2);
 
 		/* Get a the number of additional quest */
 		while (TRUE)
@@ -2406,10 +2411,17 @@ static bool player_birth_aux(void)
 
 			q_ptr->max_num = 1;
 		}
+		else if (quest_r_ptr->flags3 & RF3_UNIQUE_7)
+		{
+			/* Mark uniques */
+			quest_r_ptr->flags1 |= RF1_QUESTOR;
+
+			q_ptr->max_num = randint(quest_r_ptr->max_num);
+		}
 		else
 		{
 			q_ptr->max_num = 5 + (s16b)rand_int(q_ptr->level / 3 + 5) /
-			                  quest_r_ptr->rarity;
+									quest_r_ptr->rarity;
 		}
 	}
 
@@ -2491,7 +2503,15 @@ static bool player_birth_aux(void)
 			auto_round++;
 
 			/* Hack -- Prevent overflow */
-			if (auto_round >= 1000000L) break;
+			if (auto_round >= 1000000L)
+			{
+				auto_round = 1;
+
+				for (i = 0; i < 6; i++)
+				{
+					stat_match[i] = 0;
+				}
+			}
 
 			/* Check and count acceptable stats */
 			for (i = 0; i < 6; i++)
@@ -2524,11 +2544,13 @@ static bool player_birth_aux(void)
 				/* Dump round */
 				put_str(format("%10ld", auto_round), 10, col+20);
 
-				/* Make sure they see everything */
-				Term_fresh();
-
+#ifdef AUTOROLLER_DELAY
 				/* Delay 1/10 second */
 				if (flag) Term_xtra(TERM_XTRA_DELAY, 100);
+#endif
+
+				/* Make sure they see everything */
+				Term_fresh();
 
 				/* Do not wait for a key */
 				inkey_scan = TRUE;
