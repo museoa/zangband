@@ -10,7 +10,7 @@
  * included in all such copies.
  */
 
-#include <string.h>
+#include "angband.h"
 #include <tk.h>
 #include "util-dll.h"
 #include "widget-dll.h"
@@ -18,76 +18,11 @@
 
 typedef unsigned char IconValue, *IconPtr;
 
-/*
- * Support for and transparent items (only on  8-bit bitmaps)
- */
-/* #define WIDGET_TRANSPARENCY */
 
 #define XSetRect(r,x1,y1,w,h) (*r).x=x1,(*r).y=y1,(*r).width=w,(*r).height=h
 
 #define BAD_COLOR(c) (((c) < 0) || ((c) > 255))
 
-
-#ifdef WIDGET_TRANSPARENCY
-
-/*
- * Draws a 2-color bevel into a bitmap
- */
-static void Bevel(XRectangle *rect, BitmapPtr bitmapPtr, IconValue topLeft,
-	IconValue botRight)
-{
-	int y, x;
-	IconPtr topPtr, botPtr, leftPtr, rightPtr;
-
-	/* Calculate the address of the top-left corner */
-	topPtr = bitmapPtr->pixelPtr + rect->x +
-		rect->y * bitmapPtr->pitch;
-
-	/* Calculate the address of the bottom-left corner */
-	botPtr = bitmapPtr->pixelPtr + rect->x +
-		(rect->y + rect->height - 1) * bitmapPtr->pitch;
-
-	/* Draw top and bottom lines */
-	for (x = rect->x; x < rect->x + rect->width; x++)
-	{
-		*topPtr++ = topLeft;
-		*botPtr++ = botRight;
-	}
-
-	/* Calculate the address of the top-(left+1) corner */
-	leftPtr = bitmapPtr->pixelPtr + rect->x +
-		(rect->y + 1) * bitmapPtr->pitch;
-
-	/* Calculate the address of the (top+1)-right corner */
-	rightPtr = bitmapPtr->pixelPtr + (rect->x + rect->width - 1) +
-		(rect->y + 1) * bitmapPtr->pitch;
-
-	/* Draw left and right lines */
-	for (y = rect->y + 1; y < rect->y + rect->height - 1; y++)
-	{
-		*leftPtr = topLeft;
-		*rightPtr = botRight;
-		leftPtr += bitmapPtr->pitch;
-		rightPtr += bitmapPtr->pitch;
-	}
-}
-
-#include <limits.h>
-#ifndef USHRT_MAX
-#define USHRT_MAX 65535
-#endif
-
-static int XColor2PaletteIndex(XColor *xColorPtr)
-{
-	if (xColorPtr == NULL)
-		return 0;
-	return Palette_RGB2Index(
-		((double) xColorPtr->red / USHRT_MAX) * 255,
-		((double) xColorPtr->green / USHRT_MAX) * 255,
-		((double) xColorPtr->blue / USHRT_MAX) * 255);
-}
-
-#endif /* WIDGET_TRANSPARENCY */
 
 /*
  * Calculate rows/columns covered in parent Widget.
@@ -114,9 +49,9 @@ static void CalcLimits(Widget *widgetPtr, WidgetItem *itemPtr)
 		--itemPtr->maxX;
 }
 
-#define DEF_BEVEL_LIGHT "Black"
-#define DEF_BEVEL_DARK "White"
-#define DEF_BEVEL_OPACITY "127"
+#define DEF_BEVEL_LIGHT ((char *) "Black")
+#define DEF_BEVEL_DARK ((char *) "White")
+#define DEF_BEVEL_OPACITY ((char *) "127")
 
 /*
  * The structure below defines the record for each progress bar item.
@@ -134,11 +69,6 @@ typedef struct ProgressItem {
 /* WIDGET_TRANSPARENCY */
 	int done1, todo1, done2, todo2; /* */
 	int bevelLight1, bevelDark1, bevelLight2, bevelDark2; /* */
-#ifdef WIDGET_TRANSPARENCY
-	t_widget_color *tints[4];
-	BitmapType bitmap; /* Bitmap to draw into */
-	IconPtr srcBits, dstBits; /* Pixel addresses for reading/writing */
-#endif
 } ProgressItem;
 
 /*
@@ -155,57 +85,57 @@ typedef struct ProgressItem {
 #define PROGRESS_DISPLAY 0x8000
 
 static Tk_OptionSpec optionSpecProgress[] = {
-    {TK_OPTION_INT, "-x", NULL, NULL,
-     "0", -1, Tk_Offset(ProgressItem, x), 0, 0,
+    {TK_OPTION_INT, (char *) "-x", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(ProgressItem, x), 0, 0,
      PROGRESS_MOVE | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-y", NULL, NULL,
-     "0", -1, Tk_Offset(ProgressItem, y), 0, 0,
+    {TK_OPTION_INT, (char *) "-y", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(ProgressItem, y), 0, 0,
      PROGRESS_MOVE | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-width", NULL, NULL,
-     "160", -1, Tk_Offset(ProgressItem, width), 0, 0,
+    {TK_OPTION_INT, (char *) "-width", NULL, NULL,
+     (char *) "160", -1, Tk_Offset(ProgressItem, width), 0, 0,
      PROGRESS_SIZE | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-height", NULL, NULL,
-     "7", -1, Tk_Offset(ProgressItem, height), 0, 0,
+    {TK_OPTION_INT, (char *) "-height", NULL, NULL,
+     (char *) "7", -1, Tk_Offset(ProgressItem, height), 0, 0,
      PROGRESS_SIZE | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_COLOR, "-done", NULL, NULL,
-     "Black", -1, Tk_Offset(ProgressItem, done), 0, 0,
+    {TK_OPTION_COLOR, (char *) "-done", NULL, NULL,
+     (char *) "Black", -1, Tk_Offset(ProgressItem, done), 0, 0,
      PROGRESS_DONE | PROGRESS_DISPLAY},
-    {TK_OPTION_COLOR, "-todo", NULL, NULL,
-     "White", -1, Tk_Offset(ProgressItem, todo), 0, 0,
+    {TK_OPTION_COLOR, (char *) "-todo", NULL, NULL,
+     (char *) "White", -1, Tk_Offset(ProgressItem, todo), 0, 0,
      PROGRESS_TODO | PROGRESS_DISPLAY},
-    {TK_OPTION_BOOLEAN, "-bevel", NULL, NULL,
-     "1", -1, Tk_Offset(ProgressItem, bevel), 0, 0, 0},
-    {TK_OPTION_COLOR, "-bevellight", NULL, NULL,
+    {TK_OPTION_BOOLEAN, (char *) "-bevel", NULL, NULL,
+     (char *) "1", -1, Tk_Offset(ProgressItem, bevel), 0, 0, 0},
+    {TK_OPTION_COLOR, (char *) "-bevellight", NULL, NULL,
      DEF_BEVEL_LIGHT, -1, Tk_Offset(ProgressItem, bevelLight), 0, 0,
      PROGRESS_BEVEL_L | PROGRESS_DISPLAY},
-    {TK_OPTION_COLOR, "-beveldark", NULL, NULL,
+    {TK_OPTION_COLOR, (char *) "-beveldark", NULL, NULL,
      DEF_BEVEL_DARK, -1, Tk_Offset(ProgressItem, bevelDark), 0, 0,
      PROGRESS_BEVEL_D | PROGRESS_DISPLAY},
 /* WIDGET_TRANSPARENCY */
-    {TK_OPTION_INT, "-done2", NULL, NULL,
-     "0", -1, Tk_Offset(ProgressItem, done2), 0, 0,
+    {TK_OPTION_INT, (char *) "-done2", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(ProgressItem, done2), 0, 0,
      PROGRESS_DONE | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-todo2", NULL, NULL,
-     "0", -1, Tk_Offset(ProgressItem, todo2), 0, 0,
+    {TK_OPTION_INT, (char *) "-todo2", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(ProgressItem, todo2), 0, 0,
      PROGRESS_TODO | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-bevellight2", NULL, NULL,
+    {TK_OPTION_INT, (char *) "-bevellight2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(ProgressItem, bevelLight2), 0, 0,
      PROGRESS_BEVEL_L | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-beveldark2", NULL, NULL,
+    {TK_OPTION_INT, (char *) "-beveldark2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(ProgressItem, bevelDark2), 0, 0,
      PROGRESS_BEVEL_D | PROGRESS_DISPLAY},
 /* */
-    {TK_OPTION_INT, "-current", NULL, NULL,
-     "0", -1, Tk_Offset(ProgressItem, cur), 0, 0,
+    {TK_OPTION_INT, (char *) "-current", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(ProgressItem, cur), 0, 0,
      PROGRESS_VAL | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_INT, "-maximum", NULL, NULL,
-     "1", -1, Tk_Offset(ProgressItem, max), 0, 0, 
+    {TK_OPTION_INT, (char *) "-maximum", NULL, NULL,
+     (char *) "1", -1, Tk_Offset(ProgressItem, max), 0, 0, 
      PROGRESS_VAL | PROGRESS_DRAW | PROGRESS_DISPLAY},
-    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
-     "1", -1, Tk_Offset(WidgetItem, visible), 0, 0,
+    {TK_OPTION_BOOLEAN, (char *) "-visible", NULL, NULL,
+     (char *) "1", -1, Tk_Offset(WidgetItem, visible), 0, 0,
      PROGRESS_DISPLAY},
-    {TK_OPTION_ANCHOR, "-anchor", NULL, NULL,
-	 "center", -1, Tk_Offset(ProgressItem, anchor), 0, 0,
+    {TK_OPTION_ANCHOR, (char *) "-anchor", NULL, NULL,
+	 (char *) "center", -1, Tk_Offset(ProgressItem, anchor), 0, 0,
 	 PROGRESS_MOVE | PROGRESS_DISPLAY},
     {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
@@ -223,9 +153,6 @@ static int	ChangedProgress _ANSI_ARGS_((Tcl_Interp *interp,
 		    Widget *widgetPtr, WidgetItem *itemPtr));
 static void	DeleteProgress _ANSI_ARGS_((Widget *widgetPtr,
 			WidgetItem *itemPtr));
-#ifdef WIDGET_TRANSPARENCY
-static void SetBitsOfProgress(WidgetItem *itemPtr);
-#endif /* WIDGET_TRANSPARENCY */
 static void ComputeProgressBbox(ProgressItem *barPtr);
 
 WidgetItemType ProgressType = {
@@ -248,9 +175,6 @@ static int CreateProgress(Tcl_Interp *interp, Widget *widgetPtr,
 	WidgetItem *itemPtr, int objc, Tcl_Obj *CONST objv[])
 {
 	ProgressItem *barPtr = (ProgressItem *) itemPtr;
-#ifdef WIDGET_TRANSPARENCY
-	int i;
-#endif
 
 	barPtr->header.visible = FALSE;
 	barPtr->anchor = TK_ANCHOR_CENTER;
@@ -270,10 +194,6 @@ static int CreateProgress(Tcl_Interp *interp, Widget *widgetPtr,
 	barPtr->todo2 = 0;
 	barPtr->bevelLight2 = 0;
 	barPtr->bevelDark2 = 0;
-#ifdef WIDGET_TRANSPARENCY
-	for (i = 0; i < 4; i++) barPtr->tints[i] = NULL;
-	barPtr->bitmap.pixelPtr = NULL;
-#endif
 	barPtr->cur = 0;
 	barPtr->max = 0;
 	barPtr->length = 0;
@@ -282,13 +202,11 @@ static int CreateProgress(Tcl_Interp *interp, Widget *widgetPtr,
 	if (Tk_InitOptions(interp, (char *) itemPtr,
 		itemPtr->typePtr->optionTable, widgetPtr->tkwin) != TCL_OK)
 	{
-		DeleteProgress(widgetPtr, itemPtr);
 		return TCL_ERROR;
 	}
 
 	if (ConfigureProgress(interp, widgetPtr, itemPtr, objc, objv) != TCL_OK)
 	{
-		DeleteProgress(widgetPtr, itemPtr);
 		return TCL_ERROR;
 	}
 
@@ -362,42 +280,6 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 		
 			/* Calculate which grids are covered by us */
 			CalcLimits(widgetPtr, itemPtr);
-
-#ifdef WIDGET_TRANSPARENCY
-
-			if (widgetPtr->bitmap.depth == 8)
-			{
-				barPtr->bitmap.width = barPtr->width;
-				barPtr->bitmap.height = barPtr->height;
-				barPtr->bitmap.depth = 8;
-				Bitmap_New(interp, &barPtr->bitmap);
-	
-				barPtr->srcBits = barPtr->bitmap.pixelPtr;
-				barPtr->dstBits = widgetPtr->bitmap.pixelPtr +
-					(widgetPtr->bx + barPtr->header.x1) * widgetPtr->bitmap.pixelSize +
-					(widgetPtr->by + barPtr->header.y1) * widgetPtr->bitmap.pitch;
-	
-				barPtr->done1 = XColor2PaletteIndex(barPtr->done);
-				barPtr->todo1 = XColor2PaletteIndex(barPtr->todo);
-				barPtr->bevelLight1 = XColor2PaletteIndex(barPtr->bevelLight);
-				barPtr->bevelDark1 = XColor2PaletteIndex(barPtr->bevelDark);
-				
-				if (BAD_COLOR(barPtr->done2) || BAD_COLOR(barPtr->todo2))
-				{
-					Tcl_AppendResult(interp, "bad opacity", NULL);
-					continue;
-				}
-			
-				barPtr->tints[0] = WidgetColor_Alloc(barPtr->done1,
-					barPtr->done2);
-				barPtr->tints[1] = WidgetColor_Alloc(barPtr->todo1,
-					barPtr->todo2);
-				barPtr->tints[2] = WidgetColor_Alloc(barPtr->bevelLight1,
-					barPtr->bevelLight2);
-				barPtr->tints[3] = WidgetColor_Alloc(barPtr->bevelDark1,
-					barPtr->bevelDark2);
-			}
-#endif /* */
 		
 			if ((barPtr->cur < 0) || (barPtr->cur > barPtr->max) ||
 				(barPtr->max < 1))
@@ -441,73 +323,6 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 				CalcLimits(widgetPtr, itemPtr);
 			}
 		
-#ifdef WIDGET_TRANSPARENCY
-
-			if (widgetPtr->bitmap.depth == 8)
-			{
-				/* Create the bitmap if we resized */
-				if (resize)
-				{
-					if (barPtr->bitmap.pixelPtr != NULL)
-					{
-						Bitmap_Delete(&barPtr->bitmap);
-						barPtr->bitmap.pixelPtr = NULL;
-					}
-					barPtr->bitmap.width = barPtr->width;
-					barPtr->bitmap.height = barPtr->height;
-					barPtr->bitmap.depth = 8;
-					Bitmap_New(interp, &barPtr->bitmap);
-				}
-			
-				if (resize || move)
-				{
-					barPtr->srcBits = barPtr->bitmap.pixelPtr;
-					barPtr->dstBits = widgetPtr->bitmap.pixelPtr +
-						(widgetPtr->bx + barPtr->header.x1) * widgetPtr->bitmap.pixelSize +
-						(widgetPtr->by + barPtr->header.y1) * widgetPtr->bitmap.pitch;
-				}
-			
-				if (BAD_COLOR(barPtr->done1) || BAD_COLOR(barPtr->done2) ||
-					BAD_COLOR(barPtr->todo1) || BAD_COLOR(barPtr->todo2))
-				{
-					Tcl_AppendResult(interp, "bad color or opacity", NULL);
-					continue;
-				}
-			
-				if (mask & PROGRESS_DONE)
-				{
-					barPtr->done1 = XColor2PaletteIndex(barPtr->done);
-					WidgetColor_Deref(barPtr->tints[0]);
-					barPtr->tints[0] = WidgetColor_Alloc(barPtr->done1,
-						barPtr->done2);
-				}
-				
-				if (mask & PROGRESS_TODO)
-				{
-					barPtr->todo1 = XColor2PaletteIndex(barPtr->todo);
-					WidgetColor_Deref(barPtr->tints[1]);
-					barPtr->tints[1] = WidgetColor_Alloc(barPtr->todo1,
-						barPtr->todo2);
-				}
-			
-				if (mask & PROGRESS_BEVEL_L)
-				{
-					barPtr->bevelLight1 = XColor2PaletteIndex(barPtr->bevelLight);
-					WidgetColor_Deref(barPtr->tints[2]);
-					barPtr->tints[2] = WidgetColor_Alloc(barPtr->bevelLight1,
-						barPtr->bevelLight2);
-				}
-				
-				if (mask & PROGRESS_BEVEL_D)
-				{
-					barPtr->bevelDark1 = XColor2PaletteIndex(barPtr->bevelDark);
-					WidgetColor_Deref(barPtr->tints[3]);
-					barPtr->tints[3] = WidgetColor_Alloc(barPtr->bevelDark1,
-						barPtr->bevelDark2);
-				}
-			}
-#endif /* */
-
 			/* Current/Maximum */
 			if (resize || (mask & PROGRESS_VAL))
 			{
@@ -534,15 +349,6 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 
 	Tk_FreeSavedOptions(&savedOptions);
 
-#ifdef WIDGET_TRANSPARENCY
-	if (widgetPtr->bitmap.depth == 8)
-	{
-		if (redraw)
-			SetBitsOfProgress(itemPtr);
-	}
-#endif /* */
-
-#if 1
 	if (redisplay && (itemPtr->visible || wasVisible))
 	{
 		Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
@@ -550,19 +356,6 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
 		widgetPtr->flags |= WIDGET_DRAW_INVALID;
 		Widget_EventuallyRedraw(widgetPtr);
 	}
-#else
-	if (redisplay && (itemPtr->visible || wasVisible))
-	{
-		if (itemPtr->visible && (!wasVisible || resize || move))
-		{
-			Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
-				itemPtr->maxY, itemPtr->maxX);
-		}
-
-		widgetPtr->flags |= WIDGET_DRAW_INVALID;
-		Widget_EventuallyRedraw(widgetPtr);
-	}
-#endif
 
 	/* Success */
 	return TCL_OK;
@@ -573,20 +366,9 @@ static int ConfigureProgress(Tcl_Interp *interp, Widget *widgetPtr,
  */
 static void	DeleteProgress(Widget *widgetPtr, WidgetItem *itemPtr)
 {
-#ifdef WIDGET_TRANSPARENCY
-	ProgressItem *barPtr = (ProgressItem *) itemPtr;
-	int i;
-
-	if (barPtr->bitmap.pixelPtr != NULL)
-	{
-		Bitmap_Delete(&barPtr->bitmap);
-	}
-
-	for (i = 0; i < 4; i++)
-	{
-		WidgetColor_Deref(barPtr->tints[i]);
-	}
-#endif /* */
+	/* Do nothing? */
+	(void) widgetPtr;
+	(void) itemPtr;
 }
 
 /*
@@ -648,71 +430,6 @@ static void ComputeProgressBbox(ProgressItem *barPtr)
 	barPtr->header.y2 = topY + height;
 }
 
-#ifdef WIDGET_TRANSPARENCY
-
-/*
- * Item display callback
- */
-static int DisplayProgress_Transparent(Tcl_Interp *interp, Widget *widgetPtr,
-	WidgetItem *itemPtr)
-{
-	ProgressItem *barPtr = (ProgressItem *) itemPtr;
-	int y, x, i;
-	int width = barPtr->width;
-	int height = barPtr->height;
-	IconPtr srcBits = barPtr->srcBits;
-	IconPtr dstBits = barPtr->dstBits;
-	TintPtr tints[4];
-	
-	for (i = 0; i < 4; i++)
-	{
-		tints[i] = barPtr->tints[i]->tint;
-	}
-
-	for (y = 0; y < height; y++)
-	{
-		for (x = 0; x < width; x++)
-		{
-			i = *(srcBits + x); if (i > 3) continue;
-			*(dstBits + x) = tints[i][*(dstBits + x)];
-		}
-		srcBits += barPtr->bitmap.pitch;
-		dstBits += widgetPtr->bitmap.pitch;
-	}
-
-	return TCL_OK;
-}
-
-/*
- * Draws the progress bar into the item bitmap
- */
-static void SetBitsOfProgress(WidgetItem *itemPtr)
-{
-	ProgressItem *barPtr = (ProgressItem *) itemPtr;
-	XRectangle rect;
-	int y, x;
-	IconPtr bits1;
-
-	XSetRect(&rect, 0, 0, barPtr->width, barPtr->height);
-	Bevel(&rect, &barPtr->bitmap, 2, 3);
-
-	/* Done Part/ Todo part */
-	bits1 = barPtr->srcBits + 1 + barPtr->bitmap.pitch;
-	for (y = 0; y < barPtr->height - 2; y++)
-	{
-		for (x = 0; x < barPtr->length; x++)
-		{
-			*(bits1 + x) = 0;
-		}
-		for (; x < barPtr->width - 2; x++)
-		{
-			*(bits1 + x) = 1;
-		}
-		bits1 += barPtr->bitmap.pitch;
-	}
-}
-
-#endif /* not WIDGET_TRANSPARENCY */
 
 /*
  * Item display callback
@@ -726,6 +443,9 @@ static int DisplayProgress_Solid(Tcl_Interp *interp, Widget *widgetPtr,
 	GC gc;
 	Display *display = widgetPtr->display;
 	Pixmap pixmap = widgetPtr->bitmap.pixmap;
+
+	/* Hack - ignore unused parameter */
+	(void) interp;
 
 	gc = Tk_GCForColor(barPtr->done, pixmap);
 	XFillRectangle(display, pixmap, gc,
@@ -763,14 +483,6 @@ static int DisplayProgress_Solid(Tcl_Interp *interp, Widget *widgetPtr,
 static int DisplayProgress(Tcl_Interp *interp, Widget *widgetPtr,
 	WidgetItem *itemPtr)
 {
-#ifdef WIDGET_TRANSPARENCY
-
-	/* Transparent */
-	if (widgetPtr->bitmap.depth == 8)
-		return DisplayProgress_Transparent(interp, widgetPtr, itemPtr);
-
-#endif /* WIDGET_TRANSPARENCY */
-
 	/* Not transparent */
 	return DisplayProgress_Solid(interp, widgetPtr, itemPtr);
 }
@@ -781,10 +493,10 @@ static int DisplayProgress(Tcl_Interp *interp, Widget *widgetPtr,
 static int ChangedProgress(Tcl_Interp *interp, Widget *widgetPtr,
 	WidgetItem *itemPtr)
 {
-#ifdef WIDGET_TRANSPARENCY
-	ProgressItem *barPtr = (ProgressItem *) itemPtr;
-#endif
 	int delta;
+
+	/* Hack - ignore unused parameter */
+	(void) interp;
 
 	if (itemPtr->x2 >= widgetPtr->width)
 	{
@@ -800,21 +512,12 @@ static int ChangedProgress(Tcl_Interp *interp, Widget *widgetPtr,
 	/* Calculate which grids are covered by us */
 	CalcLimits(widgetPtr, itemPtr);
 
-#ifdef WIDGET_TRANSPARENCY
-	if (widgetPtr->bitmap.depth == 8)
-	{
-		barPtr->dstBits = widgetPtr->bitmap.pixelPtr +
-			(widgetPtr->bx + itemPtr->x1) * widgetPtr->bitmap.pixelSize +
-			(widgetPtr->by + itemPtr->y1) * widgetPtr->bitmap.pitch;
-	}
-#endif /* */
-
 	return TCL_OK;
 }
 
-#define DEF_TEXT_FILL "Black"
-#define DEF_TEXT_BACK "White"
-#define DEF_TEXT_OPACITY "127"
+#define DEF_TEXT_FILL ((char *) "Black")
+#define DEF_TEXT_BACK ((char *) "White")
+#define DEF_TEXT_OPACITY ((char *) "127")
 
 /*
  * The structure below defines the record for each text item.
@@ -836,11 +539,6 @@ typedef struct TextItem {
 	int padLeft, padRight, padTop, padBottom; /* Text padding */
 	int fill1, background1, fill2, background2; /* */
 	int bevelLight1, bevelDark1, bevelLight2, bevelDark2; /* */
-#ifdef WIDGET_TRANSPARENCY
-	t_widget_color *tints[4]; /* Tint tables */
-	BitmapType bitmap; /* Bitmap to draw into */
-	IconPtr srcBits, dstBits; /* Pixel addresses for reading/writing */
-#endif
 	int textHeight, textWidth, textLeft; /* Height & width of text, left of text */
 	int textAscent;
 	GC textGC;
@@ -859,82 +557,76 @@ typedef struct TextItem {
 #define TEXT_BEVEL_D 0x0200
 
 #define TEXT_EXPAND 0x0400
-
-static char *keyword_config_text[] = {
-	"size", "move", "draw", "display",
-	"text", "font", "fill", "background",
-	"bevel_light", "bevel_dark", "expand",
-	NULL};
 	
 static Tk_OptionSpec optionSpecText[] = {
-    {TK_OPTION_PIXELS, "-x", NULL, NULL,
-     "0", -1, Tk_Offset(TextItem, x), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-y", NULL, NULL,
-     "0", -1, Tk_Offset(TextItem, y), 0, 0, 0},
-    {TK_OPTION_ANCHOR, "-anchor", NULL, NULL,
-	 "center", -1, Tk_Offset(TextItem, anchor), 0, 0, 0},
-    {TK_OPTION_FONT, "-font", NULL, NULL,
-	 "{MS Sans Serif} 8", -1, Tk_Offset(TextItem, tkfont), 0, 0,
+    {TK_OPTION_PIXELS, (char *) "-x", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(TextItem, x), 0, 0, 0},
+    {TK_OPTION_PIXELS, (char *) "-y", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(TextItem, y), 0, 0, 0},
+    {TK_OPTION_ANCHOR, (char *) "-anchor", NULL, NULL,
+	 (char *) "center", -1, Tk_Offset(TextItem, anchor), 0, 0, 0},
+    {TK_OPTION_FONT, (char *) "-font", NULL, NULL,
+	 (char *) "{MS Sans Serif} 8", -1, Tk_Offset(TextItem, tkfont), 0, 0,
 	 TEXT_FONT | TEXT_TEXT | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_JUSTIFY, "-justify", NULL, NULL,
-	 "left", -1, Tk_Offset(TextItem, justify), 0, 0,
+    {TK_OPTION_JUSTIFY, (char *) "-justify", NULL, NULL,
+	 (char *) "left", -1, Tk_Offset(TextItem, justify), 0, 0,
 	 TEXT_TEXT | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_STRING, "-text", NULL, NULL,
-	 "", -1, Tk_Offset(TextItem, text), 0, 0,
+    {TK_OPTION_STRING, (char *) "-text", NULL, NULL,
+	 (char *) "", -1, Tk_Offset(TextItem, text), 0, 0,
 	 TEXT_TEXT | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_PIXELS, "-width", NULL, NULL,
-     "160", -1, Tk_Offset(TextItem, width), 0, 0,
+    {TK_OPTION_PIXELS, (char *) "-width", NULL, NULL,
+     (char *) "160", -1, Tk_Offset(TextItem, width), 0, 0,
      TEXT_SIZE | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_PIXELS, "-height", NULL, NULL,
-     "7", -1, Tk_Offset(TextItem, height), 0, 0,
+    {TK_OPTION_PIXELS, (char *) "-height", NULL, NULL,
+     (char *) "7", -1, Tk_Offset(TextItem, height), 0, 0,
      TEXT_SIZE | TEXT_DRAW | TEXT_DISPLAY},
-    {TK_OPTION_COLOR, "-fill", NULL, NULL,
+    {TK_OPTION_COLOR, (char *) "-fill", NULL, NULL,
      DEF_TEXT_FILL, -1, Tk_Offset(TextItem, fill), 0, 0,
      TEXT_FILL | TEXT_DISPLAY},
-    {TK_OPTION_COLOR, "-background", NULL, NULL,
+    {TK_OPTION_COLOR, (char *) "-background", NULL, NULL,
      DEF_TEXT_BACK, -1, Tk_Offset(TextItem, background),
      TK_OPTION_NULL_OK, 0,
      TEXT_BACKGROUND | TEXT_DISPLAY},
-    {TK_OPTION_BOOLEAN, "-bevel", NULL, NULL,
-     "1", -1, Tk_Offset(TextItem, bevel), 0, 0, 0},
-    {TK_OPTION_COLOR, "-bevellight", NULL, NULL,
+    {TK_OPTION_BOOLEAN, (char *) "-bevel", NULL, NULL,
+     (char *) "1", -1, Tk_Offset(TextItem, bevel), 0, 0, 0},
+    {TK_OPTION_COLOR, (char *) "-bevellight", NULL, NULL,
      DEF_BEVEL_LIGHT, -1, Tk_Offset(TextItem, bevelLight), 0, 0,
      TEXT_BEVEL_L | TEXT_DISPLAY},
-    {TK_OPTION_COLOR, "-beveldark", NULL, NULL,
+    {TK_OPTION_COLOR, (char *) "-beveldark", NULL, NULL,
      DEF_BEVEL_DARK, -1, Tk_Offset(TextItem, bevelDark), 0, 0,
      TEXT_BEVEL_D | TEXT_DISPLAY},
 /* WIDGET_TRANSPARENCY */
-    {TK_OPTION_INT, "-fill2", NULL, NULL,
+    {TK_OPTION_INT, (char *) "-fill2", NULL, NULL,
      DEF_TEXT_OPACITY, -1, Tk_Offset(TextItem, fill2), 0, 0,
      TEXT_FILL | TEXT_DISPLAY},
-    {TK_OPTION_INT, "-background2", NULL, NULL,
+    {TK_OPTION_INT, (char *) "-background2", NULL, NULL,
      DEF_TEXT_OPACITY, -1, Tk_Offset(TextItem, background2), 0, 0,
      TEXT_BACKGROUND | TEXT_DISPLAY},
-    {TK_OPTION_INT, "-bevellight2", NULL, NULL,
+    {TK_OPTION_INT, (char *) "-bevellight2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(TextItem, bevelLight2), 0, 0,
      TEXT_BEVEL_L | TEXT_DISPLAY},
-    {TK_OPTION_INT, "-beveldark2", NULL, NULL,
+    {TK_OPTION_INT, (char *) "-beveldark2", NULL, NULL,
      DEF_BEVEL_OPACITY, -1, Tk_Offset(TextItem, bevelDark2), 0, 0,
      TEXT_BEVEL_D | TEXT_DISPLAY},
 /* */
-    {TK_OPTION_BOOLEAN, "-clipx", NULL, NULL,
-     "0", -1, Tk_Offset(TextItem, clipX), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-clipy", NULL, NULL,
-     "0", -1, Tk_Offset(TextItem, clipY), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-expandx", NULL, NULL,
-     "0", -1, Tk_Offset(TextItem, expandX), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-expandy", NULL, NULL,
-     "0", -1, Tk_Offset(TextItem, expandY), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padleft", NULL, NULL,
-     "2", -1, Tk_Offset(TextItem, padLeft), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padright", NULL, NULL,
-     "2", -1, Tk_Offset(TextItem, padRight), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padtop", NULL, NULL,
-     "0", -1, Tk_Offset(TextItem, padTop), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-padbottom", NULL, NULL,
-     "0", -1, Tk_Offset(TextItem, padBottom), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
-     "0", -1, Tk_Offset(WidgetItem, visible), 0, 0,
+    {TK_OPTION_BOOLEAN, (char *) "-clipx", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(TextItem, clipX), 0, 0, 0},
+    {TK_OPTION_BOOLEAN, (char *) "-clipy", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(TextItem, clipY), 0, 0, 0},
+    {TK_OPTION_BOOLEAN, (char *) "-expandx", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(TextItem, expandX), 0, 0, 0},
+    {TK_OPTION_BOOLEAN, (char *) "-expandy", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(TextItem, expandY), 0, 0, 0},
+    {TK_OPTION_PIXELS, (char *) "-padleft", NULL, NULL,
+     (char *) "2", -1, Tk_Offset(TextItem, padLeft), 0, 0, 0},
+    {TK_OPTION_PIXELS, (char *) "-padright", NULL, NULL,
+     (char *) "2", -1, Tk_Offset(TextItem, padRight), 0, 0, 0},
+    {TK_OPTION_PIXELS, (char *) "-padtop", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(TextItem, padTop), 0, 0, 0},
+    {TK_OPTION_PIXELS, (char *) "-padbottom", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(TextItem, padBottom), 0, 0, 0},
+    {TK_OPTION_BOOLEAN, (char *) "-visible", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(WidgetItem, visible), 0, 0,
      TEXT_DISPLAY},
     {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
@@ -952,9 +644,6 @@ static int	ChangedText _ANSI_ARGS_((Tcl_Interp *interp,
 		    Widget *widgetPtr, WidgetItem *itemPtr));
 static void	DeleteText _ANSI_ARGS_((Widget *widgetPtr,
 			WidgetItem *itemPtr));
-#ifdef WIDGET_TRANSPARENCY
-static void SetBitsOfText(Widget *widgetPtr, WidgetItem *itemPtr);
-#endif /* WIDGET_TRANSPARENCY */
 static int SanityCheckText(Widget *widgetPtr, TextItem *textPtr);
 static void ComputeTextLayout(TextItem *textPtr, int *maskPtr);
 
@@ -978,9 +667,6 @@ static int CreateText(Tcl_Interp *interp, Widget *widgetPtr,
 	WidgetItem *itemPtr, int objc, Tcl_Obj *CONST objv[])
 {
 	TextItem *textPtr = (TextItem *) itemPtr;
-#ifdef WIDGET_TRANSPARENCY
-	int i;
-#endif
 
 	textPtr->header.visible = FALSE;
 	textPtr->x = 0;
@@ -1006,11 +692,6 @@ static int CreateText(Tcl_Interp *interp, Widget *widgetPtr,
 	textPtr->bevelDark1 = 0;
 	textPtr->bevelLight2 = 0;
 	textPtr->bevelDark2 = 0;
-#ifdef WIDGET_TRANSPARENCY
-	for (i = 0; i < 4; i++) textPtr->tints[i] = NULL;
-	textPtr->bitmap.pixelPtr = NULL;
-	textPtr->srcBits = textPtr->dstBits = NULL;
-#endif
 	textPtr->clipX = FALSE;
 	textPtr->clipY = FALSE;
 	textPtr->expandX = FALSE;
@@ -1107,18 +788,6 @@ static int ConfigureText(Tcl_Interp *interp, Widget *widgetPtr,
 			textPtr->textAscent = fm.ascent;
 
 			gcValues.foreground = textPtr->fill->pixel;
-#ifdef WIDGET_TRANSPARENCY
-			if (widgetPtr->bitmap.depth == 8)
-			{
-#ifdef PLATFORM_X11
-				gcValues.foreground = 0;
-#endif
-#ifdef PLATFORM_WIN
-				unsigned char *rgb = Colormap_GetRGB();
-				gcValues.foreground = Plat_RGB2XPixel(rgb[0], rgb[1], rgb[2]);
-#endif
-			}
-#endif /* */
 			gcValues.graphics_exposures = False;
 			gcValues.font = Tk_FontId(textPtr->tkfont);
 			gcMask = GCForeground | GCFont | GCGraphicsExposures;
@@ -1134,36 +803,6 @@ static int ConfigureText(Tcl_Interp *interp, Widget *widgetPtr,
 			/* Calculate which grids are covered by us */
 			CalcLimits(widgetPtr, itemPtr);
 
-#ifdef WIDGET_TRANSPARENCY
-
-			if (widgetPtr->bitmap.depth == 8)
-			{
-				/* Create the bitmap */
-				textPtr->bitmap.width = textPtr->width;
-				textPtr->bitmap.height = textPtr->height;
-				textPtr->bitmap.depth = 8;
-				Bitmap_New(interp, &textPtr->bitmap);
-				textPtr->srcBits = textPtr->bitmap.pixelPtr;
-				textPtr->dstBits = widgetPtr->bitmap.pixelPtr +
-					(widgetPtr->bx + itemPtr->x1) * widgetPtr->bitmap.pixelSize +
-					(widgetPtr->by + itemPtr->y1) * widgetPtr->bitmap.pitch;
-	
-				textPtr->fill1 = XColor2PaletteIndex(textPtr->fill);
-				textPtr->background1 = XColor2PaletteIndex(textPtr->background);
-				textPtr->bevelLight1 = XColor2PaletteIndex(textPtr->bevelLight);
-				textPtr->bevelDark1 = XColor2PaletteIndex(textPtr->bevelDark);
-	
-				textPtr->tints[0] = WidgetColor_Alloc(textPtr->fill1,
-					textPtr->fill2);
-				textPtr->tints[1] = WidgetColor_Alloc(textPtr->background1,
-					textPtr->background2);
-				textPtr->tints[2] = WidgetColor_Alloc(textPtr->bevelLight1,
-					textPtr->bevelLight2);
-				textPtr->tints[3] = WidgetColor_Alloc(textPtr->bevelDark1,
-					textPtr->bevelDark2);
-			}
-
-#endif /* WIDGET_TRANSPARENCY */
 		}
 		else
 		{
@@ -1195,18 +834,6 @@ static int ConfigureText(Tcl_Interp *interp, Widget *widgetPtr,
 					Tk_FreeGC(Tk_Display(widgetPtr->tkwin), textPtr->textGC);
 				}
 				gcValues.foreground = textPtr->fill->pixel;
-#ifdef WIDGET_TRANSPARENCY
-				if (widgetPtr->bitmap.depth == 8)
-				{
-#ifdef PLATFORM_X11
-					gcValues.foreground = 0;
-#endif
-#ifdef PLATFORM_WIN
-					unsigned char *rgb = Colormap_GetRGB();
-					gcValues.foreground = Plat_RGB2XPixel(rgb[0], rgb[1], rgb[2]);
-#endif
-				}
-#endif /* */
 				gcValues.graphics_exposures = False;
 				gcValues.font = Tk_FontId(textPtr->tkfont);
 				gcMask = GCForeground | GCFont | GCGraphicsExposures;
@@ -1226,21 +853,6 @@ static int ConfigureText(Tcl_Interp *interp, Widget *widgetPtr,
 			{
 				/* Calculate which grids are covered by us */
 				CalcLimits(widgetPtr, itemPtr);
-
-#ifdef WIDGET_TRANSPARENCY
-
-				if (widgetPtr->bitmap.depth == 8)
-				{
-					/* The display position changed */
-					if (layout & TEXT_MOVE)
-					{
-						textPtr->dstBits = widgetPtr->bitmap.pixelPtr +
-							(widgetPtr->bx + itemPtr->x1) * widgetPtr->bitmap.pixelSize +
-							(widgetPtr->by + itemPtr->y1) * widgetPtr->bitmap.pitch;
-					}
-				}
-
-#endif /* WIDGET_TRANSPARENCY */
 	
 				/* The display size changed */
 				if (layout & TEXT_SIZE)
@@ -1258,71 +870,6 @@ static int ConfigureText(Tcl_Interp *interp, Widget *widgetPtr,
 				/* Update display if visible */
 				redisplay = TRUE;
 			}
-
-#ifdef WIDGET_TRANSPARENCY
-
-			if (widgetPtr->bitmap.depth == 8)
-			{
-				/* The bitmap changed size */
-				if (resize)
-				{
-					if (textPtr->bitmap.pixelPtr != NULL)
-					{
-						/* Delete the old bitmap */
-						Bitmap_Delete(&textPtr->bitmap);
-		
-						/* Forget the old bitmap */
-						textPtr->bitmap.pixelPtr = NULL;
-					}
-		
-					/* Create a new bitmap */
-					textPtr->bitmap.width = textPtr->width;
-					textPtr->bitmap.height = textPtr->height;
-					textPtr->bitmap.depth = 8;
-					Bitmap_New(interp, &textPtr->bitmap);
-			
-					/* Get the address to read from */
-					textPtr->srcBits = textPtr->bitmap.pixelPtr;
-				}
-	
-				/* The text foreground color/opacity changed */
-				if (mask & TEXT_FILL)
-				{
-					textPtr->fill1 = XColor2PaletteIndex(textPtr->fill);
-					WidgetColor_Deref(textPtr->tints[0]);
-					textPtr->tints[0] = WidgetColor_Alloc(textPtr->fill1,
-						textPtr->fill2);
-				}
-		
-				/* The text background color/opacity changed */
-				if (mask & TEXT_BACKGROUND)
-				{
-					textPtr->background1 = XColor2PaletteIndex(textPtr->background);
-					WidgetColor_Deref(textPtr->tints[1]);
-					textPtr->tints[1] = WidgetColor_Alloc(textPtr->background1,
-						textPtr->background2);
-				}
-		
-				/* The bevel color/opacity changed */
-				if (mask & TEXT_BEVEL_L)
-				{
-					textPtr->bevelLight1 = XColor2PaletteIndex(textPtr->bevelLight);
-					WidgetColor_Deref(textPtr->tints[2]);
-					textPtr->tints[2] = WidgetColor_Alloc(textPtr->bevelLight1,
-						textPtr->bevelLight2);
-				}
-		
-				/* The bevel color/opacity changed */
-				if (mask & TEXT_BEVEL_D)
-				{
-					textPtr->bevelDark1 = XColor2PaletteIndex(textPtr->bevelDark);
-					WidgetColor_Deref(textPtr->tints[3]);
-					textPtr->tints[3] = WidgetColor_Alloc(textPtr->bevelDark1,
-						textPtr->bevelDark2);
-				}
-			}
-
-#endif /* WIDGET_TRANSPARENCY */
 		}
 		break;
 	}
@@ -1338,21 +885,7 @@ static int ConfigureText(Tcl_Interp *interp, Widget *widgetPtr,
 
 	Tk_FreeSavedOptions(&savedOptions);
 
-#ifdef WIDGET_TRANSPARENCY
-
-	if (widgetPtr->bitmap.depth == 8)
-	{
-		/* Redraw the bitmap */
-		if (redraw)
-		{
-			SetBitsOfText(widgetPtr, itemPtr);
-		}
-	}
-
-#endif /* WIDGET_TRANSPARENCY */
-
 	/* Update display (later) */
-#if 1
 	if (redisplay && (itemPtr->visible || wasVisible))
 	{
 		/* Was drawn, and size or position changed */
@@ -1370,19 +903,6 @@ static int ConfigureText(Tcl_Interp *interp, Widget *widgetPtr,
 		widgetPtr->flags |= WIDGET_DRAW_INVALID;
 		Widget_EventuallyRedraw(widgetPtr);
 	}
-#else
-	if (redisplay && (itemPtr->visible || wasVisible))
-	{
-		if (itemPtr->visible && (!wasVisible || layout))
-		{
-			Widget_InvalidateArea(widgetPtr, itemPtr->minY, itemPtr->minX,
-				itemPtr->maxY, itemPtr->maxX);
-		}
-
-		widgetPtr->flags |= WIDGET_DRAW_INVALID;
-		Widget_EventuallyRedraw(widgetPtr);
-	}
-#endif
 
 	/* Success */
 	return TCL_OK;
@@ -1394,25 +914,6 @@ static int ConfigureText(Tcl_Interp *interp, Widget *widgetPtr,
 static void	DeleteText(Widget *widgetPtr, WidgetItem *itemPtr)
 {
 	TextItem *textPtr = (TextItem *) itemPtr;
-#ifdef WIDGET_TRANSPARENCY
-	int i;
-#endif
-
-#ifdef WIDGET_TRANSPARENCY
-    /* Our bitmap exists */
-	if (textPtr->bitmap.pixelPtr != NULL)
-	{
-		/* Free the bitmap */
-		Bitmap_Delete(&textPtr->bitmap);
-	}
-
-	/* Free colors */
-	for (i = 0; i < 4; i++)
-	{
-		/* Free this color (if exists) */
-		WidgetColor_Deref(textPtr->tints[i]);
-	}
-#endif
 
 	if (textPtr->textGC)
 	{
@@ -1562,16 +1063,6 @@ static int SanityCheckText(Widget *widgetPtr, TextItem *textPtr)
 {
 	WidgetItem *itemPtr = (WidgetItem *) textPtr;
 
-#ifdef WIDGET_TRANSPARENCY
-	/* Prevent illegal colors */
-	if (BAD_COLOR(textPtr->fill1) || BAD_COLOR(textPtr->background1) ||
-		BAD_COLOR(textPtr->fill2) || BAD_COLOR(textPtr->background2))
-	{
-		Tcl_AppendResult(widgetPtr->interp, "bad color or opacity",
-			NULL);
-		return TCL_ERROR;
-	}
-#endif
 	/* Prevent illegal x size or position */
 	if ((itemPtr->x1 < 0) || (textPtr->width < 0) ||
 		(itemPtr->x2 > widgetPtr->width) ||
@@ -1596,46 +1087,6 @@ static int SanityCheckText(Widget *widgetPtr, TextItem *textPtr)
 	return TCL_OK;
 }
 
-#ifdef WIDGET_TRANSPARENCY
-
-/*
- * Item display callback
- */
-static int DisplayText_Transparent(Tcl_Interp *interp, Widget *widgetPtr,
-	WidgetItem *itemPtr)
-{
-	TextItem *textPtr = (TextItem *) itemPtr;
-	int y, x;
-	int width = textPtr->header.x2 - textPtr->header.x1;
-	int height = textPtr->header.y2 - textPtr->header.y1;
-	IconPtr srcBits = textPtr->srcBits;
-	IconPtr dstBits = textPtr->dstBits;
-	IconValue i;
-	TintPtr tints[4];
-	
-	for (i = 0; i < 4; i++) tints[i] = textPtr->tints[i]->tint;
-
-	for (y = 0; y < height; y++)
-	{
-		for (x = 0; x < width; x++)
-		{
-			/* Get the pixel */
-			i = srcBits[x];
-
-			/* Sanity check */
-			if (i > 3) continue;
-
-			/* Put the pixel */
-			dstBits[x] = tints[i][dstBits[x]];
-		}
-		srcBits += textPtr->bitmap.pitch;
-		dstBits += widgetPtr->bitmap.pitch;
-	}
-
-	return TCL_OK;
-}
-
-#endif /* WIDGET_TRANSPARENCY */
 
 /*
  * Item display callback
@@ -1649,6 +1100,9 @@ static int DisplayText_Solid(Tcl_Interp *interp, Widget *widgetPtr,
 	Display *display = widgetPtr->display;
 	GC gc;
 	Pixmap pixmap = widgetPtr->bitmap.pixmap;
+
+	/* Hack - ignore unused parameter */
+	(void) interp;
 
 	if (textPtr->background != NULL)
 	{
@@ -1699,58 +1153,10 @@ textPtr->hasDirty = TRUE;
 static int DisplayText(Tcl_Interp *interp, Widget *widgetPtr,
 	WidgetItem *itemPtr)
 {
-#ifdef WIDGET_TRANSPARENCY
-
-	/* Transparent */
-	if (widgetPtr->bitmap.depth == 8)
-		return DisplayText_Transparent(interp, widgetPtr, itemPtr);
-
-#endif /* WIDGET_TRANSPARENCY */
-
 	/* Not transparent */
 	return DisplayText_Solid(interp, widgetPtr, itemPtr);
 }
 
-#ifdef WIDGET_TRANSPARENCY
-
-/*
- * Draws the text into the item bitmap
- */
-static void SetBitsOfText(Widget *widgetPtr, WidgetItem *itemPtr)
-{
-	TextItem *textPtr = (TextItem *) itemPtr;
-	Tk_Window tkwin = widgetPtr->tkwin;
-	Display *display = Tk_Display(tkwin);
-	int height, width;
-	int y, x;
-
-	height = textPtr->header.y2 - textPtr->header.y1;
-	width = textPtr->header.x2 - textPtr->header.x1;
-
-	/* Erase the background */
-	for (y = 0; y < height; y++)
-	{
-		for (x = 0; x < width; x++)
-		{
-			textPtr->bitmap.pixelPtr[y * textPtr->bitmap.pitch + x] = 1;
-		}
-	}
-
-	/* Draw text */	
-	Tk_DrawChars(display, textPtr->bitmap.pixmap, textPtr->textGC,
-		textPtr->tkfont, textPtr->text, textPtr->numChars,
-		textPtr->textLeft,
-		(textPtr->bevel != 0) + textPtr->padTop + textPtr->textAscent);
-
-	if (textPtr->bevel)
-	{
-		XRectangle rect;
-		XSetRect(&rect, 0, 0, width, height);
-		Bevel(&rect, &textPtr->bitmap, 2, 3);
-	}
-}
-
-#endif /* WIDGET_TRANSPARENCY */
 
 /*
  * Item changed callback
@@ -1758,10 +1164,10 @@ static void SetBitsOfText(Widget *widgetPtr, WidgetItem *itemPtr)
 static int ChangedText(Tcl_Interp *interp, Widget *widgetPtr,
 	WidgetItem *itemPtr)
 {
-#ifdef WIDGET_TRANSPARENCY
-	TextItem *textPtr = (TextItem *) itemPtr;
-#endif
 	int delta;
+
+	/* Hack - ignore unused parameter */
+	(void) interp;
 
 	if (itemPtr->x2 >= widgetPtr->width)
 	{
@@ -1776,15 +1182,6 @@ static int ChangedText(Tcl_Interp *interp, Widget *widgetPtr,
 
 	/* Calculate which grids are covered by us */
 	CalcLimits(widgetPtr, itemPtr);
-
-#ifdef WIDGET_TRANSPARENCY
-	if (widgetPtr->bitmap.depth == 8)
-	{
-		textPtr->dstBits = widgetPtr->bitmap.pixelPtr +
-			(widgetPtr->bx + itemPtr->x1) * widgetPtr->bitmap.pixelSize +
-			(widgetPtr->by + itemPtr->y1) * widgetPtr->bitmap.pitch;
-	}
-#endif
 
 	return TCL_OK;
 }
@@ -1802,16 +1199,16 @@ typedef struct CursorItem {
 } CursorItem;
 
 static Tk_OptionSpec optionSpecCursor[] = {
-    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
-     "1", -1, Tk_Offset(WidgetItem, visible), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-x", NULL, NULL,
-     "0", -1, Tk_Offset(CursorItem, x), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-y", NULL, NULL,
-     "0", -1, Tk_Offset(CursorItem, y), 0, 0, 0},
-    {TK_OPTION_COLOR, "-color", NULL, NULL,
-     "yellow", -1, Tk_Offset(CursorItem, color), 0, 0, 0},
-    {TK_OPTION_INT, "-linewidth", NULL, NULL,
-     "2", -1, Tk_Offset(CursorItem, lineWidth), 0, 0, 0},
+    {TK_OPTION_BOOLEAN, (char *) "-visible", NULL, NULL,
+     (char *) "1", -1, Tk_Offset(WidgetItem, visible), 0, 0, 0},
+    {TK_OPTION_PIXELS, (char *) "-x", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(CursorItem, x), 0, 0, 0},
+    {TK_OPTION_PIXELS, (char *) "-y", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(CursorItem, y), 0, 0, 0},
+    {TK_OPTION_COLOR, (char *) "-color", NULL, NULL,
+     (char *) "yellow", -1, Tk_Offset(CursorItem, color), 0, 0, 0},
+    {TK_OPTION_INT, (char *) "-linewidth", NULL, NULL,
+     (char *) "2", -1, Tk_Offset(CursorItem, lineWidth), 0, 0, 0},
     {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
 };
@@ -1860,14 +1257,12 @@ static int KreateCursor(Tcl_Interp *interp, Widget *widgetPtr,
 	if (Tk_InitOptions(interp, (char *) itemPtr,
 		itemPtr->typePtr->optionTable, widgetPtr->tkwin) != TCL_OK)
 	{
-		DeleteCursor(widgetPtr, itemPtr);
 		return TCL_ERROR;
 	}
 
 	if (ConfigureCursor(interp, widgetPtr, itemPtr, objc, objv)
 		!= TCL_OK)
 	{
-		DeleteCursor(widgetPtr, itemPtr);
 		return TCL_ERROR;
 	}
 
@@ -1959,6 +1354,9 @@ static int ConfigureCursor(Tcl_Interp *interp, Widget *widgetPtr,
  */
 static void	DeleteCursor(Widget *widgetPtr, WidgetItem *itemPtr)
 {
+	/* Do nothing? */
+	(void) widgetPtr;
+	(void) itemPtr;
 }
 
 /*
@@ -1971,6 +1369,9 @@ static int DisplayCursor(Tcl_Interp *interp, Widget *widgetPtr,
 	int col, row;
 	XGCValues gcValues;
 	GC gc;
+	
+	/* Hack - ignore parameter */
+	(void) interp;
 
 	if (CalcCursorPosition(widgetPtr, cursorPtr))
 	{
@@ -2051,20 +1452,20 @@ typedef struct RectItem {
 } RectItem;
 
 static Tk_OptionSpec optionSpecRect[] = {
-    {TK_OPTION_BOOLEAN, "-visible", NULL, NULL,
-     "0", -1, Tk_Offset(WidgetItem, visible), 0, 0, 0},
-    {TK_OPTION_PIXELS, "-x1", NULL, NULL,
-     "0", -1, Tk_Offset(RectItem, x1), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_PIXELS, "-y1", NULL, NULL,
-     "0", -1, Tk_Offset(RectItem, y1), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_PIXELS, "-x2", NULL, NULL,
-     "0", -1, Tk_Offset(RectItem, x2), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_PIXELS, "-y2", NULL, NULL,
-     "0", -1, Tk_Offset(RectItem, y2), 0, 0, RECT_BOUNDS},
-    {TK_OPTION_COLOR, "-color", NULL, NULL,
-     "yellow", -1, Tk_Offset(RectItem, color), 0, 0, 0},
-    {TK_OPTION_INT, "-linewidth", NULL, NULL,
-     "2", -1, Tk_Offset(RectItem, lineWidth), 0, 0, 0},
+    {TK_OPTION_BOOLEAN, (char *) "-visible", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(WidgetItem, visible), 0, 0, 0},
+    {TK_OPTION_PIXELS, (char *) "-x1", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(RectItem, x1), 0, 0, RECT_BOUNDS},
+    {TK_OPTION_PIXELS, (char *) "-y1", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(RectItem, y1), 0, 0, RECT_BOUNDS},
+    {TK_OPTION_PIXELS, (char *) "-x2", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(RectItem, x2), 0, 0, RECT_BOUNDS},
+    {TK_OPTION_PIXELS, (char *) "-y2", NULL, NULL,
+     (char *) "0", -1, Tk_Offset(RectItem, y2), 0, 0, RECT_BOUNDS},
+    {TK_OPTION_COLOR, (char *) "-color", NULL, NULL,
+     (char *) "yellow", -1, Tk_Offset(RectItem, color), 0, 0, 0},
+    {TK_OPTION_INT, (char *) "-linewidth", NULL, NULL,
+     (char *) "2", -1, Tk_Offset(RectItem, lineWidth), 0, 0, 0},
     {TK_OPTION_END, NULL, NULL, NULL,
      NULL, 0, -1, 0, 0, 0}
 };
@@ -2117,13 +1518,11 @@ static int CreateRect(Tcl_Interp *interp, Widget *widgetPtr,
 	if (Tk_InitOptions(interp, (char *) itemPtr,
 		itemPtr->typePtr->optionTable, widgetPtr->tkwin) != TCL_OK)
 	{
-		DeleteRect(widgetPtr, itemPtr);
 		return TCL_ERROR;
 	}
 
 	if (ConfigureRect(interp, widgetPtr, itemPtr, objc, objv) != TCL_OK)
 	{
-		DeleteRect(widgetPtr, itemPtr);
 		return TCL_ERROR;
 	}
 
@@ -2220,6 +1619,9 @@ static int ConfigureRect(Tcl_Interp *interp, Widget *widgetPtr,
  */
 static void	DeleteRect(Widget *widgetPtr, WidgetItem *itemPtr)
 {
+	/* Do nothing? */
+	(void) widgetPtr;
+	(void) itemPtr;
 }
 
 /*
@@ -2231,6 +1633,9 @@ static int DisplayRect(Tcl_Interp *interp, Widget *widgetPtr,
 	RectItem *rectPtr = (RectItem *) itemPtr;
 	XGCValues gcValues;
 	GC gc;
+
+	/* Hack - ignore parameter */
+	(void) interp;
 
 	if (CalcRectPosition(widgetPtr, rectPtr))
 	{

@@ -148,7 +148,7 @@ typedef void WidgetItem_DeleteProc _ANSI_ARGS_((Widget *widgetPtr,
 
 typedef struct WidgetItemType
 {
-	char *name;
+	cptr name;
 	int itemSize;
 	Tk_OptionSpec *optionSpecs;
 	Tk_OptionTable optionTable;
