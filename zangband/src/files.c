@@ -1552,7 +1552,7 @@ static void display_player_abilities(void)
 	{
 		/* Is there a vorpal effect we know about? */
 		object_flags(o_ptr, &f1, &f2, &f3);
-		if ((o_ptr->ident & IDENT_MENTAL) &&
+		if (object_known_p(o_ptr) &&
 			(o_ptr->activate - 128 == ART_VORPAL_BLADE))
 		{
 			/* vorpal blade */
@@ -4147,7 +4147,6 @@ static void show_info(void)
 		/* Aware and Known */
 		object_aware(o_ptr);
 		object_known(o_ptr);
-		o_ptr->ident |= IDENT_MENTAL;
 
 		/* Save all the known flags */
 		o_ptr->kn_flags1 = o_ptr->flags1;
@@ -4174,7 +4173,6 @@ static void show_info(void)
 					/* Aware and Known */
 					object_aware(o_ptr);
 					object_known(o_ptr);
-					o_ptr->ident |= IDENT_MENTAL;
 
 					/* Save all the known flags */
 					o_ptr->kn_flags1 = o_ptr->flags1;

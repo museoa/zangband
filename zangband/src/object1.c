@@ -144,7 +144,7 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 
 
 	/* Identified? */
-	if (o_ptr->ident & (IDENT_KNOWN | IDENT_MENTAL))
+	if (object_known_p(o_ptr))
 	{
 		/* 
 		 * *Identify* sets these flags,
@@ -837,7 +837,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 	object_flags_known(o_ptr, &f1, &f2, &f3);
 
 	/* Indicate if fully known */
-	if (o_ptr->ident & IDENT_MENTAL)
+	if (object_known_full(o_ptr))
 	{
 		info[i++] = "You have full knowledge of this item.";
 	}

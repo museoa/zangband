@@ -1571,9 +1571,6 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		object_aware(o_ptr);
 		object_known(o_ptr);
 
-		/* Mark the item as fully known */
-		o_ptr->ident |= (IDENT_MENTAL);
-
 		/* Save all the known flags */
 		o_ptr->kn_flags1 = o_ptr->flags1;
 		o_ptr->kn_flags2 = o_ptr->flags2;

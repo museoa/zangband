@@ -1208,9 +1208,6 @@ bool compare_weapons(void)
 	/* Identify the weapon */
 	identify_item(o_ptr);
 
-	/* *Identify* the weapon for the player */
-	o_ptr->ident |= IDENT_MENTAL;
-
 	/* Save all the known flags */
 	o_ptr->kn_flags1 = o_ptr->flags1;
 	o_ptr->kn_flags2 = o_ptr->flags2;

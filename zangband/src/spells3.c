@@ -2053,7 +2053,7 @@ void identify_item(object_type *o_ptr)
 		bad_luck(o_ptr);
 	}
 
-	if (!(o_ptr->ident & (IDENT_MENTAL)))
+	if (!object_known_full(o_ptr))
 	{
 		if (o_ptr->flags3 & TR3_INSTA_ART)
 			chg_virtue(V_KNOWLEDGE, 3);
@@ -2124,7 +2124,7 @@ static bool item_tester_unknown_star(const object_type *o_ptr)
 	if (k_ptr->flavor && !k_ptr->aware) return (TRUE);
 
 	/* Check to see if we have identified the item */
-	if (o_ptr->ident & IDENT_MENTAL) return (FALSE);
+	if (object_known_full(o_ptr)) return (FALSE);
 
 	return (TRUE);
 }
@@ -2315,9 +2315,6 @@ bool identify_fully(void)
 
 	/* Identify it */
 	identify_item(o_ptr);
-
-	/* Mark the item as fully known */
-	o_ptr->ident |= (IDENT_MENTAL);
 
 	/* Save all the known flags */
 	o_ptr->kn_flags1 = o_ptr->flags1;

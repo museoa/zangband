@@ -1692,7 +1692,9 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 	}
 
 	/* Hack -- blend "mental" status */
-	if (j_ptr->ident & (IDENT_MENTAL)) o_ptr->ident |= (IDENT_MENTAL);
+	o_ptr->kn_flags1 |= j_ptr->kn_flags1;
+	o_ptr->kn_flags2 |= j_ptr->kn_flags2;
+	o_ptr->kn_flags3 |= j_ptr->kn_flags3;
 
 	/* Hack -- blend "inscriptions" */
 	if (j_ptr->inscription) o_ptr->inscription = j_ptr->inscription;

@@ -1257,11 +1257,11 @@ void borg_item_analyze(borg_item *item, object_type *real_item, cptr desc)
 	/* Item has been ID'd (store, scroll, spell) */
 	if ((real_item->ident & IDENT_KNOWN) ||
 		(real_item->ident & IDENT_STOREB) ||
-		(real_item->ident & IDENT_MENTAL)) item->able = TRUE;
+		object_known_full(real_item)) item->able = TRUE;
 
 	/* Item has been *ID*'d (store, scroll, spell) */
 	if ((real_item->ident & IDENT_STOREB) ||
-		(real_item->ident & IDENT_MENTAL)) item->fully_identified = TRUE;
+		object_known_full(real_item)) item->fully_identified = TRUE;
 
 	/* Kind index -- Only if partially ID */
 	if (item->able) item->kind = real_item->k_idx;
@@ -3328,7 +3328,7 @@ void borg_cheat_equip(void)
 		borg_item_analyze(&borg_items[i], &inventory[i], buf);
 
 		/* get the fully id stuff */
-		if ((inventory[i].ident & IDENT_MENTAL) ||
+		if (object_known_full(&inventory[i]) ||
 			(inventory[i].ident & IDENT_STOREB))
 		{
 			borg_items[i].fully_identified = TRUE;
@@ -3375,7 +3375,7 @@ void borg_cheat_inven(void)
 		borg_item_analyze(&borg_items[i], &inventory[i], buf);
 
 		/* get the fully id stuff */
-		if ((inventory[i].ident & IDENT_MENTAL) ||
+		if (object_known_full(&inventory[i]) ||
 			(inventory[i].ident & IDENT_STOREB))
 		{
 			borg_items[i].fully_identified = TRUE;

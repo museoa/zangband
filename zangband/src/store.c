@@ -927,9 +927,6 @@ static int store_carry(object_type *o_ptr)
 	/* Identify it fully */
 	object_known(o_ptr);
 
-	/* All store items are fully *identified* */
-	o_ptr->ident |= IDENT_MENTAL;
-
 	/* Save all the known flags */
 	o_ptr->kn_flags1 = o_ptr->flags1;
 	o_ptr->kn_flags2 = o_ptr->flags2;
@@ -2950,7 +2947,7 @@ static void store_examine(int store_top)
 	o_ptr = &st_ptr->stock[item];
 
 	/* Require full knowledge */
-	if (!(o_ptr->ident & IDENT_MENTAL))
+	if (!object_known_full(o_ptr))
 	{
 		/* This can only happen in the home */
 		msg_print("You have no special knowledge about that item.");

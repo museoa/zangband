@@ -2785,9 +2785,9 @@
 #define IDENT_EMPTY     0x04	/* Item charges are known */
 #define IDENT_KNOWN     0x08	/* Item abilities are known */
 #define IDENT_STOREB    0x10	/* Item is storebought !!!! */
-#define IDENT_MENTAL    0x20	/* Item information is known */
-#define IDENT_DUMMY1    0x40
-#define IDENT_DUMMY2    0x80
+#define IDENT_DUMMY1    0x20
+#define IDENT_DUMMY2    0x40
+#define IDENT_DUMMY3    0x80
 
 
 
@@ -3843,6 +3843,15 @@
 #define object_known_p(T) \
     (((T)->ident & (IDENT_KNOWN)) || \
      (k_info[(T)->k_idx].easy_know && k_info[(T)->k_idx].aware))
+
+/*
+ * Is the object fully known?
+ */
+#define object_known_full(T) \
+	(((T)->flags1 | (T)->flags2 | (T)->flags3) && \
+		((T)->flags1 == (T)->kn_flags1) && \
+		((T)->flags2 == (T)->kn_flags2) && \
+		((T)->flags3 == (T)->kn_flags3)) \
 
 
 /*
