@@ -222,7 +222,6 @@ bool alert_failure;		/* Alert user to various failures */
 bool last_words;		/* Get last words upon dying */
 bool speak_unique;		/* Speaking uniques */
 bool small_levels;		/* Allow unusually small dungeon levels */
-bool always_small_levels;		/* Use always unusually small dungeon levels */
 bool empty_levels;		/* Allow empty 'arena' levels */
 bool plain_descriptions;	/* Plain object descriptions */
 bool stupid_monsters;		/* Monsters use old AI */

@@ -1366,37 +1366,6 @@ static void rd_options(void)
 			}
 		}
 	}
-	
-	/* Mega - Hack  The option flags were re-arranged after 2.3.5 */
-	if (sf_version > 9) return;
-	
-	/* Scan the options and restore to defaults */
-	for (i = 0; option_info[i].o_desc; i++)
-	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
-
-		/* Set the "default" options */
-		if (option_info[i].o_var)
-		{
-			/* Accept */
-			option_mask[os] |= (1L << ob);
-
-			/* Set */
-			if (option_info[i].o_norm)
-			{
-				/* Set */
-				option_flag[os] |= (1L << ob);
-			}
-
-			/* Clear */
-			else
-			{
-				/* Clear */
-				option_flag[os] &= ~(1L << ob);
-			}
-		}
-	}
 }
 
 
@@ -2767,6 +2736,7 @@ static errr rd_dungeon(void)
 
 	u16b limit;
 	cave_type *c_ptr;
+	u16b dun_level_backup;
 
 	/*** Basic info ***/
 
@@ -2800,9 +2770,17 @@ static errr rd_dungeon(void)
 	}
 	else if (sf_version < 7)
 	{
+		/* Make the wilderness */
+		dun_level_backup = dun_level;
+		dun_level = 0;
+		
+		create_wilderness();
+		
 		/* Hack - do not load data into wilderness */
 		change_level(1);
 
+		dun_level = dun_level_backup;
+		
 		/* Load dungeon map*/
 		load_map(cur_hgt, 0, cur_wid, 0);
 	}
@@ -2981,11 +2959,7 @@ static errr rd_dungeon(void)
 
 	/* Hack - make new level only after objects + monsters are loaded */
 	if (sf_version < 7)
-	{
-		dun_level = 0;
-		
-		create_wilderness();
-		
+	{		
 		change_level(dun_level);
 	}
 
@@ -3318,7 +3292,7 @@ static errr rd_savefile_new_aux(void)
 			if (ironman_hard_quests)
 			{
 				/* Set the option by hand */
-				option_flag[5] |= (1L << 6);
+				option_flag[6] |= (1L << 6);
 			}
 
 			/* Inverted "Wilderness" flag */
@@ -3329,7 +3303,7 @@ static errr rd_savefile_new_aux(void)
 			if (vanilla_town)
 			{
 				/* Set the option by hand */
-				option_flag[5] |= (1L);
+				option_flag[6] |= (1L);
 			}
 		}
 

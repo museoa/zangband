@@ -2998,10 +2998,8 @@ errr file_character(cptr name, bool full)
 
 	if (ironman_small_levels)
 		fprintf(fff, "\n Small Levels:       ALWAYS");
-	else if (always_small_levels)
-		fprintf(fff, "\n Small Levels:       ON");
 	else if (small_levels)
-		fprintf(fff, "\n Small Levels:       ENABLED");
+		fprintf(fff, "\n Small Levels:       ON");
 	else
 		fprintf(fff, "\n Small Levels:       OFF");
 
@@ -4129,7 +4127,7 @@ long total_points(void)
 	if (stupid_monsters) mult -= 50;
 	if (vanilla_town)    mult += 30; /* Vanilla town is harder */
 	if (ironman_hard_quests) mult += 30; /* so are hard quests */
-	if (small_levels)    mult += ((always_small_levels || ironman_small_levels) ? 20 : 50);
+	if (small_levels)    mult += ((ironman_small_levels) ? 20 : 50);
 	if (empty_levels)    mult += 10;
 	if (smart_learn) mult += 20;
 	if (smart_cheat) mult += 20;

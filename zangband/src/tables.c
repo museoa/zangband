@@ -5925,205 +5925,205 @@ option_type option_info[] =
 	{ &always_repeat,               TRUE, 1, 0, 6,
 	"always_repeat",                "Repeat obvious commands" },
 
-	{ &stack_force_notes,           TRUE, 1, 0, 7,
+	{ &stack_force_notes,           TRUE, 1, 0, 8,
 	"stack_force_notes",            "Merge inscriptions when stacking" },
 
-	{ &stack_force_costs,           FALSE, 1, 0, 8,
+	{ &stack_force_costs,           FALSE, 1, 0, 9,
 	"stack_force_costs",            "Merge discounts when stacking" },
+	
+	{ &stack_allow_items,           FALSE, 1, 1, 2,
+	"stack_allow_items",            "Allow weapons and armor to stack" },
 
-	{ &ring_bell,                   FALSE, 1, 0, 9,
-	"ring_bell",                    "Audible bell (on errors, etc)" },
+	{ &stack_allow_wands,           TRUE, 1, 1, 3,
+	"stack_allow_wands",            "Allow wands/staffs/rods to stack" },
 
-	{ &plain_descriptions,          FALSE, 1, 0, 11,
-	"plain_descriptions",           "Plain object descriptions" },
-
-        { &auto_destroy,                FALSE, 1, 0, 12,
+        { &auto_destroy,                FALSE, 1, 5, 3,
 	"auto_destroy",                 "No query to destroy known worthless items" },
 
-	{ &wear_confirm,                FALSE, 1, 0, 13,
+	{ &wear_confirm,                FALSE, 1, 5, 4,
 	"confirm_wear",                 "Confirm to wear/wield known cursed items" },
 
-	{ &confirm_stairs,              FALSE, 1, 0, 14,
+	{ &confirm_stairs,              FALSE, 1, 5, 5,
 	"confirm_stairs",               "Prompt before exiting a dungeon level" },
+	{ &expand_look,                 TRUE, 1, 1, 4,
+	"expand_look",                  "Expand the power of the look command" },
+
+	{ &expand_list,                 TRUE, 1, 1, 5,
+	"expand_list",                  "Expand the power of the list commands" },
 
 #ifdef ALLOW_EASY_OPEN
-	{ &easy_open,                   TRUE, 1, 0, 15,
+	{ &easy_open,                   TRUE, 1, 5, 7,
 	"easy_open",                    "Automatically open doors" },
 #endif /* ALLOW_EASY_OPEN */
 
 #ifdef ALLOW_EASY_DISARM
-	{ &easy_disarm,                 TRUE, 1, 0, 16,
+	{ &easy_disarm,                 TRUE, 1, 5, 8,
 	"easy_disarm",                  "Automatically disarm traps" },
 #endif /* ALLOW_EASY_DISARM */
 
+	{ &auto_haggle,                 TRUE, 1, 1, 0,
+	"auto_haggle",                  "Auto-haggle in stores" },
+	
+	#ifdef ALLOW_EASY_FLOOR /* TNB */
+	{ &easy_floor,                  FALSE, 1, 5, 9,
+	"easy_floor",                   "Display floor stacks in a list" },
+#endif /* ALLOW_EASY_FLOOR -- TNB */
+
+	{ &use_command,                 FALSE, 1, 5, 10,
+	"use_command",                  "Allow unified use command" },
+
+	
 	/*** Disturbance ***/
 
-	{ &find_ignore_stairs,          FALSE, 2, 1, 0,
+	{ &find_ignore_stairs,          FALSE, 2, 0, 16,
 	"find_ignore_stairs",           "Run past stairs" },
 
-	{ &find_ignore_doors,           TRUE, 2, 1, 1,
+	{ &find_ignore_doors,           TRUE, 2, 0, 17,
 	"find_ignore_doors",            "Run through open doors" },
 
-	{ &find_cut,                    FALSE, 2, 1, 2,
+	{ &find_cut,                    FALSE, 2, 0, 18,
 	"find_cut",                     "Run past known corners" },
 
-	{ &find_examine,                TRUE, 2, 1, 3,
+	{ &find_examine,                TRUE, 2, 0, 19,
 	"find_examine",                 "Run into potential corners" },
 
-	{ &disturb_move,                TRUE, 2, 1, 4,
+	{ &disturb_move,                TRUE, 2, 0, 20,
 	"disturb_move",                 "Disturb whenever any monster moves" },
 
-	{ &disturb_near,                TRUE, 2, 1, 5,
+	{ &disturb_near,                TRUE, 2, 0, 21,
 	"disturb_near",                 "Disturb whenever viewable monster moves" },
 
-	{ &disturb_panel,               TRUE, 2, 1, 6,
+	{ &disturb_panel,               TRUE, 2, 0, 22,
 	"disturb_panel",                "Disturb whenever map panel changes" },
 
-	{ &disturb_state,               TRUE, 2, 1, 7,
+	{ &disturb_state,               TRUE, 2, 0, 23,
 	"disturb_state",                "Disturb whenever player state changes" },
 
-	{ &disturb_minor,               TRUE, 2, 1, 8,
+	{ &disturb_minor,               TRUE, 2, 0, 24,
 	"disturb_minor",                "Disturb whenever boring things happen" },
 
-        { &disturb_other,               TRUE, 2, 1, 9,
+        { &disturb_other,               TRUE, 2, 0, 25,
 	"disturb_other",                "Disturb whenever random things happen" },
 
-	{ &alert_failure,               FALSE, 2, 1, 11,
+	{ &alert_failure,               FALSE, 2, 0, 27,
 	"alert_failure",                "Alert user to various failures" },
+	
+	{ &ring_bell,                   FALSE, 2, 0, 14,
+	"ring_bell",                    "Audible bell (on errors, etc)" },
+
 
 	/*** Game-Play ***/
 
-	{ &auto_haggle,                 TRUE, 3, 2, 0,
-	"auto_haggle",                  "Auto-haggle in stores" },
-
-	{ &auto_scum,                   FALSE, 3, 2, 1,
+	{ &auto_scum,                   FALSE, 3, 1, 1,
 	"auto_scum",                    "Auto-scum for good levels" },
 
-	{ &stack_allow_items,           FALSE, 3, 2, 2,
-	"stack_allow_items",            "Allow weapons and armor to stack" },
-
-	{ &stack_allow_wands,           TRUE, 3, 2, 3,
-	"stack_allow_wands",            "Allow wands/staffs/rods to stack" },
-
-	{ &expand_look,                 TRUE, 3, 2, 4,
-	"expand_look",                  "Expand the power of the look command" },
-
-	{ &expand_list,                 TRUE, 3, 2, 5,
-	"expand_list",                  "Expand the power of the list commands" },
-
-	{ &view_perma_grids,            TRUE, 3, 2, 6,
+	{ &view_perma_grids,            TRUE, 3, 1, 6,
 	"view_perma_grids",             "Map remembers all perma-lit grids" },
 
-	{ &view_torch_grids,            FALSE, 3, 2, 7,
+	{ &view_torch_grids,            FALSE, 3, 1, 7,
 	"view_torch_grids",             "Map remembers all torch-lit grids" },
 
-	{ &dungeon_align,               FALSE, 3, 2, 8,
+	{ &dungeon_align,               FALSE, 3, 1, 8,
 	"dungeon_align",                "Generate dungeons with aligned rooms" },
 
-	{ &dungeon_stair,               TRUE, 3, 2, 9,
+	{ &dungeon_stair,               TRUE, 3, 1, 9,
 	"dungeon_stair",                "Generate dungeons with connected stairs" },
 
-        { &last_words,                  TRUE, 3, 2, 10,
+        { &last_words,                  TRUE, 3, 0, 28,
 	"last_words",                   "Get last words when the character dies" },
 
-	{ &speak_unique,                TRUE, 3, 2, 11,
-	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
+	{ &speak_unique,                TRUE, 3, 0, 29,
+	"speak_unique",                 "Allow uniques to speak" },
 
-	{ &small_levels,                TRUE, 3, 2, 12,
+	{ &small_levels,                TRUE, 3, 0, 30,
 	"small_levels",                 "Allow unusually small dungeon levels" },
 
-	{ &always_small_levels,         FALSE, 3, 2, 13,
-	"always_small_levels",          "Always create unusually small dungeon levels" },
-
-	{ &empty_levels,                TRUE, 3, 2, 14,
+	{ &empty_levels,                TRUE, 3, 0, 31,
 	"empty_levels",                 "Allow empty 'arena' levels" },
 
-	{ &testing_stack,               TRUE, 3, 2, 15,
+	{ &testing_stack,               TRUE, 3, 7, 30,
 	"testing_stack",                "Allow objects to stack on floor" },
 
-	{ &testing_carry,               TRUE, 3, 2, 16,
+	{ &testing_carry,               TRUE, 3, 7, 31,
 	"testing_carry",                "Allow monsters to carry objects" },
 
-        { &take_notes,                  FALSE, 3, 2, 17,
+        { &take_notes,                  FALSE, 3, 7, 28,
            "take_notes",                "Allow notes to be appended to a file" },
 
-        { &auto_notes,                  FALSE, 3, 2, 18,
+        { &auto_notes,                  FALSE, 3, 7, 27,
            "auto_notes",                 "Automatically note important events" },
 
 
 
 	/*** Efficiency ***/
 
-	{ &view_reduce_lite,            FALSE, 4, 3, 1,
+	{ &view_reduce_lite,            FALSE, 4, 1, 16,
 	"view_reduce_lite",             "Reduce lite-radius when running" },
 
-	{ &view_reduce_view,            FALSE, 4, 3, 2,
+	{ &view_reduce_view,            FALSE, 4, 1, 17,
 	"view_reduce_view",             "Reduce view-radius in town" },
 
-	{ &avoid_abort,                 FALSE, 4, 3, 3,
+	{ &avoid_abort,                 FALSE, 4, 1, 18,
 	"avoid_abort",                  "Avoid checking for user abort" },
 
-	{ &avoid_other,                 FALSE, 4, 3, 4,
+	{ &avoid_other,                 FALSE, 4, 1, 19,
 	"avoid_other",                  "Avoid processing special colors" },
 
-	{ &flush_failure,               TRUE, 4, 3, 5,
+	{ &flush_failure,               TRUE, 4, 1, 20,
 	"flush_failure",                "Flush input on various failures" },
 
-	{ &flush_disturb,               FALSE, 4, 3, 6,
+	{ &flush_disturb,               FALSE, 4, 1, 21,
 	"flush_disturb",                "Flush input whenever disturbed" },
 
-	{ &flush_command,               FALSE, 4, 3, 7,
+	{ &flush_command,               FALSE, 4, 1, 22,
 	"flush_command",                "Flush input before every command" },
 
-	{ &fresh_before,                TRUE, 4, 3, 8,
+	{ &fresh_before,                TRUE, 4, 1, 23,
 	"fresh_before",                 "Flush output before every command" },
 
-	{ &fresh_after,                 FALSE, 4, 3, 9,
+	{ &fresh_after,                 FALSE, 4, 1, 24,
 	"fresh_after",                  "Flush output after every command" },
 
-	{ &fresh_message,               FALSE, 4, 3, 10,
+	{ &fresh_message,               FALSE, 4, 1, 25,
 	"fresh_message",                "Flush output after every message" },
 
-	{ &compress_savefile,           TRUE, 4, 3, 11,
+	{ &compress_savefile,           TRUE, 4, 1, 26,
 	"compress_savefile",            "Compress messages in savefiles" },
-
-	{ &hilite_player,               TRUE, 4, 3, 12,
-	"hilite_player",                "Hilite the player with the cursor" },
-
-	{ &view_yellow_lite,            FALSE, 4, 3, 13,
-	"view_yellow_lite",             "Use special colors for torch-lit grids" },
-
-	{ &view_bright_lite,            FALSE, 4, 3, 14,
-	"view_bright_lite",             "Use special colors for 'viewable' grids" },
-
-	{ &view_granite_lite,           FALSE, 4, 3, 15,
-	"view_granite_lite",            "Use special colors for wall grids (slow)" },
-
-	{ &view_special_lite,           FALSE, 4, 3, 16,
-	"view_special_lite",            "Use special colors for floor grids (slow)" },
-
+	
 	/*** Display Options ***/
 
 	{ &depth_in_feet,               FALSE, 5, 4, 1,
 	"depth_in_feet",                "Show dungeon level in feet" },
 
-        { &show_labels,                 TRUE, 5, 4, 2,
+        { &show_labels,                 TRUE, 5, 0, 10,
 	"show_labels",                  "Show labels in object listings" },
 
-	{ &show_weights,                TRUE, 5, 4, 3,
+	{ &show_weights,                TRUE, 5, 0, 11,
 	"show_weights",                 "Show weights in object listings" },
+	
+	{ &plain_descriptions,          FALSE, 5, 5, 1,
+	"plain_descriptions",           "Plain object descriptions" },
 
-	{ &use_color,                   TRUE, 5, 4, 9,
+	{ &use_color,                   TRUE, 5, 0, 15,
 	"use_color",                    "Use color if possible (slow)" },
+	
+	{ &view_yellow_lite,            FALSE, 5, 1, 28,
+	"view_yellow_lite",             "Use special colors for torch-lit grids" },
 
-#ifdef ALLOW_EASY_FLOOR /* TNB */
-	{ &easy_floor,                  FALSE, 5, 4, 12,
-	"easy_floor",                   "Display floor stacks in a list" },
-#endif /* ALLOW_EASY_FLOOR -- TNB */
+	{ &view_bright_lite,            FALSE, 5, 1, 29,
+	"view_bright_lite",             "Use special colors for 'viewable' grids" },
 
-	{ &use_command,                 FALSE, 5, 5, 10,
-	"use_command",                  "Allow unified use command" },
+	{ &view_granite_lite,           FALSE, 5, 1, 30,
+	"view_granite_lite",            "Use special colors for wall grids (slow)" },
 
+	{ &view_special_lite,           FALSE, 5, 1, 31,
+	"view_special_lite",            "Use special colors for floor grids (slow)" },
+
+
+
+	{ &hilite_player,               TRUE, 5, 1, 27,
+	"hilite_player",                "Hilite the player with the cursor" },
+	
 	{ &center_player,               FALSE, 5, 5, 11,
 	"center_player",                "Always center on the player (*slow*)" },
 
@@ -6132,66 +6132,66 @@ option_type option_info[] =
 
 	/* Birth options */
 	
-	{ &vanilla_town,                FALSE, 6, 5, 0,
+	{ &vanilla_town,                FALSE, 6, 6, 0,
 	"vanilla_town",                 "Use 'vanilla' town without quests and wilderness" },
-	{ &stupid_monsters,             FALSE, 6, 6, 5,
+	{ &stupid_monsters,             FALSE, 6, 5, 2,
 	"stupid_monsters",              "Monsters behave stupidly" },
 	
-	{ &ironman_shops,               FALSE, 6, 5, 2,
+	{ &ironman_shops,               FALSE, 6, 6, 2,
 	"ironman_shops",                "Stores are permanently closed" },
 
-	{ &ironman_small_levels,        FALSE, 6, 5, 3,
+	{ &ironman_small_levels,        FALSE, 6, 6, 3,
 	"ironman_small_levels",         "Always create unusually small dungeon levels" },
 
-	{ &ironman_downward,            FALSE, 6, 5, 4,
+	{ &ironman_downward,            FALSE, 6, 6, 4,
 	"ironman_downward",             "Don't allow climbing upwards/recalling" },
 
-	{ &ironman_autoscum,            FALSE, 6, 5, 5,
+	{ &ironman_autoscum,            FALSE, 6, 6, 5,
 	"ironman_autoscum",             "Permanently enable the autoscummer" },
 
-	{ &ironman_hard_quests,         FALSE, 6, 5, 6,
+	{ &ironman_hard_quests,         FALSE, 6, 6, 6,
 	"ironman_hard_quests",          "Quest monsters get reinforcements" },
 
-	{ &ironman_empty_levels,        FALSE, 6, 5, 8,
+	{ &ironman_empty_levels,        FALSE, 6, 6, 8,
 	"ironman_empty_levels",         "Always create empty 'arena' levels" },
 
-	{ &terrain_streams,             TRUE, 6, 5, 9,
+	{ &terrain_streams,             TRUE, 6, 6, 9,
 	"terrain_streams",              "Create terrain 'streamers' in the dungeon" },
 
-	{ &munchkin_death,              FALSE, 6, 5, 10,
+	{ &munchkin_death,              FALSE, 6, 6, 11,
 	"munchkin_death",               "Ask for saving death" },
 
-	{ &ironman_rooms,               FALSE, 6, 5, 12,
+	{ &ironman_rooms,               FALSE, 6, 6, 12,
 	"ironman_rooms",                "Always generate very unusual rooms" },
 
-	{ &ironman_nightmare,           FALSE, 6, 5, 13,
+	{ &ironman_nightmare,           FALSE, 6, 6, 18,
 	 "ironman_nightmare",           "Nightmare mode (this isn't even remotely fair!)" },
 
-	{ &maximize_mode,               TRUE, 6, 5, 14,
+	{ &maximize_mode,               TRUE, 6, 6, 13,
 	"maximize_mode",                "Maximize stats" },
 
-	{ &preserve_mode,               TRUE, 6, 5, 15,
+	{ &preserve_mode,               TRUE, 6, 6, 14,
 	"preserve_mode",                "Preserve artifacts" },
 
-	{ &autoroller,                  TRUE, 6, 5, 16,
+	{ &autoroller,                  TRUE, 6, 6, 15,
 	"autoroller",                   "Specify 'minimal' stats" },
 
-       	{ &point_based,                 FALSE, 6, 5, 17,
+       	{ &point_based,                 FALSE, 6, 6, 16,
 	  "point_based",                 "Generate character using a point system" },
 
 
         /*** Artificial Intelligence Options ***/
 
-	{ &flow_by_sound,               TRUE, 7, 6, 1,
+	{ &flow_by_sound,               TRUE, 7, 1, 10,
 	"flow_by_sound",                "Monsters chase current location (v.slow)" },
 
-	{ &flow_by_smell,               TRUE, 7, 6, 2,
+	{ &flow_by_smell,               TRUE, 7, 1, 11,
 	"flow_by_smell",                "Monsters chase recent locations (v.slow)" },
 
-	{ &smart_learn,                 TRUE, 7, 6, 3,
+	{ &smart_learn,                 TRUE, 7, 1, 14,
 	"smart_learn",                  "Monsters learn from their mistakes" },
 
-	{ &smart_cheat,                 FALSE, 7, 6, 4,
+	{ &smart_cheat,                 FALSE, 7, 1, 15,
 	"smart_cheat",                  "Monsters exploit players weaknesses" },
 
 	/*** Testing options ***/

@@ -1096,7 +1096,7 @@ static bool level_gen(cptr *why)
 {
 	int level_height, level_width;
 
-	if (always_small_levels || ironman_small_levels ||
+	if (ironman_small_levels || 
 		((randint(SMALL_LEVEL) == 1) && small_levels))
 	{
 		if (cheat_room)
@@ -1204,7 +1204,7 @@ void generate_cave(void)
 		/* Add monsters to the wilderness */
 		repopulate_wilderness();
 		
-		/* The "dungeon" is nready */
+		/* The "dungeon" is ready */
 		character_dungeon = TRUE;
 				
 		return;
