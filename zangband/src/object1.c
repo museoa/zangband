@@ -2212,12 +2212,12 @@ static bool item_is_recharging(object_type *o_ptr)
 			/* Only darken fully-charging stacks. */
 			if (power >= o_ptr->number) return (TRUE);
 		}
+		else
+		{
+			return (TRUE);
+		}
 	}
-	else
-	{
-		return (TRUE);
-	}
-
+	
 	return (FALSE);
 }
 
