@@ -26,7 +26,7 @@
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) | mail scarblac
 
-CVSROOT $CVSROOT/CVSROOT/syncmail %{s} rr9@angband.org
+CVSROOT $CVSROOT/CVSROOT/syncmail %s rr9@angband.org
 
-DEFAULT $CVSROOT/CVSROOT/syncmail %{s} zangband-checkins@lists.sourceforge.net
+DEFAULT $CVSROOT/CVSROOT/syncmail %s zangband-checkins@lists.sourceforge.net
 
