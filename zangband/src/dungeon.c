@@ -4107,9 +4107,6 @@ void play_game(bool new_game)
 		seed_town = 0;
 	}
 	
-	/* Init the fields */
-	init_fields();
-	
 	/* Normal machine (process player name) */
 	if (savefile[0])
 	{
@@ -4154,7 +4151,7 @@ void play_game(bool new_game)
 #endif
 
 	/* Load the "pref" files */
-	load_all_pref_files();	
+	load_all_pref_files();
 	
 
 	/* Set or clear "rogue_like_commands" if requested */
@@ -4167,6 +4164,9 @@ void play_game(bool new_game)
 	
 	/* React to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
+	
+	/* Hack - Init the fields */
+	init_fields();
 	
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
