@@ -638,7 +638,7 @@ static void wild_magic(int spell)
 		}
 		case 38:
 		{
-			(void)summon_cyber(-1, py, px);
+			(void)summon_cyber(-1, px, py);
 			break;
 		}
 		default:

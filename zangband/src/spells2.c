@@ -3861,7 +3861,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				 */
 				if ((p_ptr->depth > 65) && !stop_ty)
 				{
-					(*count) += summon_cyber(-1, py, px);
+					(*count) += summon_cyber(-1, px, py);
 					stop_ty = TRUE;
 					break;
 				}
@@ -3953,7 +3953,7 @@ int activate_hi_summon(void)
 
 
 /* ToDo: check */
-int summon_cyber(int who, int y, int x)
+int summon_cyber(int who, int x, int y)
 {
 	int i;
 	int max_cyber = (p_ptr->depth / 50) + randint1(6);
