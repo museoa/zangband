@@ -632,14 +632,17 @@ z-virt.o: z-virt.h z-util.h
 ## Hack - the dependance on the .o files encodes this.
 
 zborg1.o: zborg1.h maid-grf.h
-zborg2.o: zborg2.h zborg1.o
-zborg3.o: zborg3.h zborg2.o
-zborg4.o: zborg4.h zborg3.o
-zborg5.o: zborg5.h zborg4.o
-zborg6.o: zborg6.h zborg5.o
-zborg7.o: zborg7.h zborg6.o
-zborg8.o: zborg8.h zborg7.o
-zborg9.o: zborg9.h zborg8.o
+zborg2.o: zborg1.h zborg2.h maid-grf.h
+zborg3.o: zborg1.h zborg3.h maid-grf.h
+zborg4.o: zborg1.h zborg2.h zborg3.h zborg4.h maid-grf.h
+zborg5.o: zborg1.h zborg2.h zborg3.h zborg4.h zborg5.h maid-grf.h
+zborg6.o: zborg1.h zborg2.h zborg3.h zborg4.h zborg5.h zborg6.h maid-grf.h
+zborg7.o: zborg1.h zborg2.h zborg3.h zborg4.h zborg5.h zborg6.h zborg7.h \
+			maid-grf.h
+zborg8.o: zborg1.h zborg2.h zborg3.h zborg4.h zborg5.h zborg6.h zborg7.h \
+			zborg8.h maid-grf.h
+zborg9.o: zborg1.h zborg2.h zborg3.h zborg4.h zborg5.h zborg6.h zborg7.h \
+			zborg8.h zborg9.h maid-grf.h
 
 ##
 ## Compiling angband.rc

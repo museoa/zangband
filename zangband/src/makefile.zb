@@ -170,14 +170,22 @@ src/z-virt.o: src/z-virt.h src/z-util.h
 ## Hack - the dependance on the .o files encodes this.
 
 src/zborg1.o: src/zborg1.h src/maid-grf.h
-src/zborg2.o: src/zborg2.h src/zborg1.o
-src/zborg3.o: src/zborg3.h src/zborg2.o
-src/zborg4.o: src/zborg4.h src/zborg3.o
-src/zborg5.o: src/zborg5.h src/zborg4.o
-src/zborg6.o: src/zborg6.h src/zborg5.o
-src/zborg7.o: src/zborg7.h src/zborg6.o
-src/zborg8.o: src/zborg8.h src/zborg7.o
-src/zborg9.o: src/zborg9.h src/zborg8.o
+src/zborg2.o: src/zborg1.h src/zborg2.h src/maid-grf.h
+src/zborg3.o: src/zborg1.h src/zborg3.h src/maid-grf.h
+src/zborg4.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \
+				src/maid-grf.h
+src/zborg5.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \
+				src/zborg5.h src/maid-grf.h
+src/zborg6.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \
+				src/zborg5.h src/zborg6.h src/maid-grf.h
+src/zborg7.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \
+				src/zborg5.h src/zborg6.h src/zborg7.h src/maid-grf.h
+src/zborg8.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \
+				src/zborg5.h src/zborg6.h src/zborg7.h src/zborg8.h \
+				src/maid-grf.h
+src/zborg9.o: src/zborg1.h src/zborg2.h src/zborg3.h src/zborg4.h \
+				src/zborg5.h src/zborg6.h src/zborg7.h src/zborg8.h \
+				src/zborg9.h src/maid-grf.h
 
 ##
 ## Build wrappers
