@@ -841,9 +841,6 @@ static void store_create(void)
 	/* Prepare allocation table */
 	get_obj_num_prep(kind_is_theme);
 
-	/* Limit table with store-only items */
-	get_obj_store_prep();
-
 	/* Hack -- consider up to fifty items */
 	for (tries = 0; tries < 50; tries++)
     {

@@ -593,7 +593,6 @@ extern void move_object(s16b *tgt_list_ptr, s16b *cur_list_ptr,
 						object_type *o_ptr);
 extern void swap_objects(object_type *o1_ptr, object_type *o2_ptr);
 extern void get_obj_num_prep(object_hook_type object_hook);
-extern errr get_obj_store_prep(void);
 extern s16b get_obj_num(int level, int min_level);
 extern void object_known(object_type *o_ptr);
 extern void object_aware(object_type *o_ptr);
