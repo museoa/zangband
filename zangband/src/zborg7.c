@@ -1509,6 +1509,8 @@ bool borg_obj_star_id_able(list_item *l_ptr)
 	 	k_info[l_ptr->k_idx].sval == SV_DRAGON_HELM) return (TRUE);
 	if (l_ptr->tval == TV_CLOAK &&
 	 	k_info[l_ptr->k_idx].sval == SV_SHADOW_CLOAK) return (TRUE);
+	if (l_ptr->tval == TV_RING &&
+	 	k_info[l_ptr->k_idx].sval == SV_RING_LORDLY) return (TRUE);
 
 	/* not an ego object */
 	if (!borg_obj_is_ego_art(l_ptr)) return (FALSE);
