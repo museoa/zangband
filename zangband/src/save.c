@@ -1031,9 +1031,6 @@ static void wr_extra(void)
 	/* Write death */
 	wr_byte(p_ptr->state.is_dead);
 
-	/* Write feeling */
-	wr_byte(dun_ptr->feeling);
-
 	/* Turn of last "feeling" */
 	wr_s32b(old_turn);
 
@@ -1643,6 +1640,38 @@ static bool wr_savefile_new(void)
 
 		/* Name */
 		wr_string(pl_ptr->name);
+
+		if (pl_ptr->dungeon)
+		{
+			dun_type *dun_ptr;
+		
+			/* Is dungeon here */
+			wr_byte(TRUE);
+			
+			dun_ptr = pl_ptr->dungeon;
+			
+			/* Object theme */
+			wr_byte(dun_ptr->theme.treasure);
+			wr_byte(dun_ptr->theme.combat);
+			wr_byte(dun_ptr->theme.magic);
+			wr_byte(dun_ptr->theme.tools);
+					
+			/* Habitat */
+			wr_u32b(dun_ptr->habitat);
+					
+			/* Levels in dungeon */
+			wr_byte(dun_ptr->min_level);
+			wr_byte(dun_ptr->max_level);
+					
+			/* Rating + feeling */
+			wr_s16b(dun_ptr->rating);
+			wr_byte(dun_ptr->feeling);
+		}
+		else
+		{
+			/* No dungeon here */
+			wr_byte(FALSE);
+		}
 
 		/* Dump the stores of all towns */
 		for (j = 0; j < pl_ptr->numstores; j++)

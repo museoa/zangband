@@ -1380,24 +1380,31 @@ bool init_places(int xx, int yy)
 			if (create_city(x, y, place_count))
 			{
 				w_ptr = &wild[y][x].trans;
-
-				/* Select easiest town */
-				if (w_ptr->law_map > town_value)
+				
+				/* Check to see if the town has stairs */
+				for (i = 0; i < place[place_count].numstores; i++)
 				{
-					/* Check to see if the town has stairs */
-					for (i = 0; i < place[place_count].numstores; i++)
+					if (place[place_count].store[i].type == BUILD_STAIRS)
 					{
-						if (place[place_count].store[i].type == BUILD_STAIRS)
+						/* Create dungeon information */
+						if (!place[place_count].dungeon)
+						{
+							MAKE(place[place_count].dungeon, dun_type);
+						}
+				
+						/* Select easiest town */
+						if (w_ptr->law_map > town_value)
 						{
 							/* Save this town */
 							town_value = w_ptr->law_map;
 							best_town = place_count;
 
 							/* Done */
-							break;
+							continue;
 						}
 					}
 				}
+				
 			}
 			else
 			{
@@ -1763,6 +1770,9 @@ void init_vanilla_town(void)
 			wild[j][i].done.place = 1;
 		}
 	}
+	
+	/* Create dungeon */
+	MAKE(pl_ptr->dungeon, dun_type);
 
 	/* Make the town - and get the location of the stairs */
 	van_town_gen(1);
@@ -3882,10 +3892,10 @@ void change_level(int level)
 
 	if (level == 0)
 	{
-		if (dun_ptr->region)
+		if (dundata->region)
 		{
 			/* Delete dungeon */
-			dun_ptr->region = unref_region(dun_ptr->region);
+			dundata->region = unref_region(dundata->region);
 		}
 
 		/* In the wilderness */
@@ -3932,10 +3942,10 @@ void change_level(int level)
 	else
 	{
 		/* In the dungeon */
-		if (dun_ptr->region)
+		if (dundata->region)
 		{
 			/* Delete old dungeon */
-			dun_ptr->region = unref_region(dun_ptr->region);
+			dundata->region = unref_region(dundata->region);
 
 			/* New dungeon is created in generate.c */
 		}
@@ -3943,7 +3953,6 @@ void change_level(int level)
 		/* Used to be in the wilderness? */
 		if (area == access_wild) switched = TRUE;
 
-		/* Change dun_ptr? */
 
 		/* 
 		 * Zero bounds - allocated in generate.c
@@ -4037,7 +4046,7 @@ void wipe_all_list(void)
 		wipe_rg_list();
 
 		/* No more dungeon */
-		dun_ptr->region = 0;
+		dundata->region = 0;
 	}
 	else
 	{

@@ -1378,10 +1378,12 @@ static void rd_extra(void)
 	rd_byte(&tmp8u);
 	p_ptr->state.is_dead = tmp8u;
 
-	/* Read "feeling" */
-	rd_byte(&tmp8u);
-	dun_ptr->feeling = tmp8u;
-
+	if (sf_version < 42)
+	{
+		/* Read (and ignore) old "feeling" */
+		rd_byte(&tmp8u);
+	}
+	
 	/* Turn of last "feeling" */
 	rd_s32b(&old_turn);
 
@@ -2072,12 +2074,6 @@ static errr rd_dungeon(void)
 
 	s16b cur_wid, cur_hgt;
 
-	/* Hack - Reset the object theme */
-	dun_ptr->theme.treasure = 20;
-	dun_ptr->theme.combat = 20;
-	dun_ptr->theme.magic = 20;
-	dun_ptr->theme.tools = 20;
-
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 
@@ -2144,7 +2140,7 @@ static errr rd_dungeon(void)
 		change_level(1);
 
 		/* Get the new region */
-		dun_ptr->region = (s16b)create_region(cur_wid, cur_hgt, REGION_CAVE);
+		dundata->region = (s16b)create_region(cur_wid, cur_hgt, REGION_CAVE);
 		incref_region(cur_region);
 
 		/* Load dungeon map */
@@ -2179,8 +2175,7 @@ static errr rd_dungeon(void)
 			change_level(p_ptr->depth);
 
 			/* Get the new region */
-			dun_ptr->region = (s16b)create_region(cur_wid, cur_hgt,
-												  REGION_CAVE);
+			dundata->region = (s16b)create_region(cur_wid, cur_hgt, REGION_CAVE);
 			incref_region(cur_region);
 
 			/* Load dungeon map */
@@ -2238,8 +2233,7 @@ static errr rd_dungeon(void)
 			change_level(p_ptr->depth);
 
 			/* Get the new region */
-			dun_ptr->region = (s16b)create_region(cur_wid, cur_hgt,
-												  REGION_CAVE);
+			dundata->region = (s16b)create_region(cur_wid, cur_hgt, REGION_CAVE);
 			incref_region(cur_region);
 
 			/* Load dungeon map */
@@ -2280,8 +2274,7 @@ static errr rd_dungeon(void)
 		if (p_ptr->depth)
 		{
 			/* Get the new region */
-			dun_ptr->region = (s16b)create_region(cur_wid, cur_hgt,
-												  REGION_CAVE);
+			dundata->region = (s16b)create_region(cur_wid, cur_hgt, REGION_CAVE);
 			incref_region(cur_region);
 
 			/* Load dungeon map */
@@ -3094,6 +3087,9 @@ static errr rd_savefile_new_aux(void)
 					rd_store(i, j);
 				}
 			}
+			
+			/* Assume we have a dungeon here */
+			MAKE(place[i].dungeon, dun_type);
 		}
 	}
 	else
@@ -3175,7 +3171,46 @@ static errr rd_savefile_new_aux(void)
 			{
 				rd_string(pl_ptr->name, T_NAME_LEN);
 			}
-
+			
+			if (sf_version < 42)
+			{
+				/* Assume we have a dungeon here */
+				MAKE(place[i].dungeon, dun_type);
+			}
+			else
+			{
+				byte dungeon;
+			
+				rd_byte(&dungeon);
+				
+				if (dungeon)
+				{
+					dun_type *dun_ptr;
+				
+					/* Create a dungeon here */
+					MAKE(place[i].dungeon, dun_type);
+				
+					dun_ptr = place[i].dungeon;
+				
+					/* Object theme */
+					rd_byte(&dun_ptr->theme.treasure);
+					rd_byte(&dun_ptr->theme.combat);
+					rd_byte(&dun_ptr->theme.magic);
+					rd_byte(&dun_ptr->theme.tools);
+					
+					/* Habitat */
+					rd_u32b(&dun_ptr->habitat);
+					
+					/* Levels in dungeon */
+					rd_byte(&dun_ptr->min_level);
+					rd_byte(&dun_ptr->max_level);
+					
+					/* Rating + feeling */
+					rd_s16b(&dun_ptr->rating);
+					rd_byte(&dun_ptr->feeling);
+				}
+			}
+			
 			/* Allocate the stores */
 			C_MAKE(pl_ptr->store, pl_ptr->numstores, store_type);
 

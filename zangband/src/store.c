@@ -1131,7 +1131,7 @@ static void store_maint(void)
 {
 	int i = 0, j;
 
-	int old_rating = dun_ptr->rating;
+	int old_rating = dundata->rating;
 
 	/* Ignore home + locker */
 	if (st_ptr->type == BUILD_STORE_HOME) return;
@@ -1208,7 +1208,7 @@ static void store_maint(void)
 
 
 	/* Hack -- Restore the rating */
-	dun_ptr->rating = old_rating;
+	dundata->rating = old_rating;
 }
 
 

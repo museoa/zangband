@@ -45,7 +45,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 41
+#define SAVEFILE_VERSION 42
 
 /* Added for ZAngband */
 /* Why do we need a fake version number? */
@@ -3894,6 +3894,11 @@
  * Hack -- The main "screen"
  */
 #define term_screen     (angband_term[0])
+
+/*
+ * The current dungeon data
+ */
+#define dundata			(place[p_ptr->place_num].dungeon)
 
 
 /*

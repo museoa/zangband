@@ -3135,6 +3135,12 @@ static void wipe_wilderness(void)
 			/* Free the stores */
 			FREE(pl_ptr->store);
 		}
+		
+		/* Free the dungeon data */
+		if (pl_ptr->dungeon)
+		{
+			FREE(pl_ptr->dungeon);
+		}
 
 		/* Wipe the place */
 		(void)WIPE(pl_ptr, place_type);

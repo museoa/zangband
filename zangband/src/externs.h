@@ -204,7 +204,6 @@ extern wild_choice_tree_type *wild_choice_tree;
 extern bool (*in_bounds) (int, int);
 extern bool (*in_bounds2) (int, int);
 extern bool (*in_boundsp) (int, int);
-extern dun_type *dun_ptr;
 extern region_type cave_data;
 extern int cur_region;
 extern maxima *z_info;

@@ -700,7 +700,7 @@ static int filter_mon_loc(int x, int y)
 				r_ptr = &r_info[entry->index];
 				
 				/* Not a monster for this dungeon? */
-				if (!(r_ptr->flags8 & dun_ptr->habitat))
+				if (!(r_ptr->flags8 & dundata->habitat))
 				{
 					entry->prob2 = 0;
 				}
@@ -1753,7 +1753,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 			if (cheat_hear) msgf("Deep Unique (%s).", name);
 
 			/* Boost rating by twice delta-depth */
-			dun_ptr->rating += (r_ptr->level - p_ptr->depth) * 2;
+			dundata->rating += (r_ptr->level - p_ptr->depth) * 2;
 		}
 
 		/* Normal monsters */
@@ -1763,7 +1763,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 			if (cheat_hear) msgf("Deep Monster (%s).", name);
 
 			/* Boost rating by delta-depth */
-			dun_ptr->rating += (r_ptr->level - p_ptr->depth);
+			dundata->rating += (r_ptr->level - p_ptr->depth);
 		}
 	}
 
@@ -1972,7 +1972,7 @@ static bool place_monster_group(int x, int y, int r_idx, bool slp,
 
 
 	/* Save the rating */
-	old = dun_ptr->rating;
+	old = dundata->rating;
 
 	/* Start on the monster */
 	hack_n = 1;
@@ -2015,7 +2015,7 @@ static bool place_monster_group(int x, int y, int r_idx, bool slp,
 	}
 
 	/* Hack -- restore the rating */
-	dun_ptr->rating = old;
+	dundata->rating = old;
 
 
 	/* Success */

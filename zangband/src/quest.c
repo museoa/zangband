@@ -688,12 +688,12 @@ static void quest_reward(int num, int x, int y)
 		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
-			o_ptr = make_object(base_level(), 30, &dun_ptr->theme);
+			o_ptr = make_object(base_level(), 30, &dundata->theme);
 		}
 		else
 		{
 			/* Make a good object */
-			o_ptr = make_object(base_level(), 15, &dun_ptr->theme);
+			o_ptr = make_object(base_level(), 15, &dundata->theme);
 		}
 
 		if (!o_ptr) continue;

@@ -438,12 +438,6 @@ bool (*in_boundsp) (int, int);
 s32b max_wild;
 
 /*
- * The dungeon data itself
- */
-dun_type dun_data;
-dun_type *dun_ptr = &dun_data;
-
-/*
  * The current global region.
  */
 region_type cave_data;

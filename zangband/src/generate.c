@@ -771,7 +771,7 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 		 * The more boring the dungeon is right now,
 		 * the more out of depth to pick monsters.
 		 */
-		delta_level = (dun_ptr->rating - 100) / 10;
+		delta_level = (dundata->rating - 100) / 10;
 		if (delta_level < 0) delta_level = 0;
 		
 		(void)alloc_monster(0, TRUE, delta_level);
@@ -918,7 +918,7 @@ static bool level_gen(cptr *why, const dun_gen_type *d_type_ptr)
 	}
 
 	/* Get the new region */
-	dun_ptr->region = (s16b)create_region(p_ptr->max_wid, p_ptr->max_hgt,
+	dundata->region = (s16b)create_region(p_ptr->max_wid, p_ptr->max_hgt,
 										  REGION_CAVE);
 
 	/* Grab the reference to it */
@@ -941,16 +941,16 @@ static byte extract_feeling(void)
 	if (!p_ptr->depth) return 0;
 
 	/* Hack -- Have a special feeling sometimes */
-	if (dun_ptr->good_item_flag && !preserve_mode) return 1;
+	if (dundata->good_item_flag && !preserve_mode) return 1;
 
-	if (dun_ptr->rating > 100) return 2;
-	if (dun_ptr->rating > 80) return 3;
-	if (dun_ptr->rating > 60) return 4;
-	if (dun_ptr->rating > 40) return 5;
-	if (dun_ptr->rating > 30) return 6;
-	if (dun_ptr->rating > 20) return 7;
-	if (dun_ptr->rating > 10) return 8;
-	if (dun_ptr->rating > 0) return 9;
+	if (dundata->rating > 100) return 2;
+	if (dundata->rating > 80) return 3;
+	if (dundata->rating > 60) return 4;
+	if (dundata->rating > 40) return 5;
+	if (dundata->rating > 30) return 6;
+	if (dundata->rating > 20) return 7;
+	if (dundata->rating > 10) return 8;
+	if (dundata->rating > 0) return 9;
 
 	if ((turn - old_turn) > 50000L)
 		chg_virtue(V_PATIENCE, 1);
@@ -1220,7 +1220,7 @@ static const dun_gen_type dungeons[] =
 		LQ_WATER | LQ_LAVA},
 
 	{{20, 0, 80, 0}, RF8_DUN_TOWER, 20, 1,
-		RT_SIMPLE, RT_COMPLEX | RT_BUILDING | RT_RVAULT,
+		RT_SIMPLE | RT_COMPLEX | RT_BUILDING | RT_RVAULT,
 		FEAT_FLOOR_WOOD,
 		LQ_ACID | LQ_LAVA},
 
@@ -1327,13 +1327,13 @@ void generate_cave(void)
 	int type = pick_dungeon_type();
 
 	/* Set the object theme */
-	dun_ptr->theme.treasure = 20;
-	dun_ptr->theme.combat = 20;
-	dun_ptr->theme.magic = 20;
-	dun_ptr->theme.tools = 20;
+	dundata->theme.treasure = 20;
+	dundata->theme.combat = 20;
+	dundata->theme.magic = 20;
+	dundata->theme.tools = 20;
 	
 	/* Hack - Reset the dungeon habitat to be everything */
-	dun_ptr->habitat = RF8_DUNGEON;
+	dundata->habitat = RF8_DUNGEON;
 
 	/* Build the wilderness */
 	if (!p_ptr->depth)
@@ -1348,10 +1348,10 @@ void generate_cave(void)
 	}
 	
 	/* Set the object theme (structure copy) */
-	dun_ptr->theme = dungeons[type].theme;
+	dundata->theme = dungeons[type].theme;
 	
 	/* Hack - Reset the dungeon habitat to be everything */
-	dun_ptr->habitat = dungeons[type].habitat;
+	dundata->habitat = dungeons[type].habitat;
 
 	/* Generate */
 	for (num = 0; TRUE; num++)
@@ -1361,15 +1361,15 @@ void generate_cave(void)
 		cptr why = NULL;
 
 		/* Nothing special here yet */
-		dun_ptr->good_item_flag = FALSE;
+		dundata->good_item_flag = FALSE;
 
 		/* Nothing good here yet */
-		dun_ptr->rating = 0;
+		dundata->rating = 0;
 
 		okay = level_gen(&why, &dungeons[type]);
 
 		/* Extract the feeling */
-		dun_ptr->feeling = extract_feeling();
+		dundata->feeling = extract_feeling();
 
 		/* Prevent object over-flow */
 		if (o_max >= z_info->o_max)
@@ -1397,7 +1397,7 @@ void generate_cave(void)
 		if (why) msgf("Generation restarted (%s)", why);
 
 		/* Delete the level - not good enough */
-		dun_ptr->region = unref_region(dun_ptr->region);
+		dundata->region = unref_region(dundata->region);
 	}
 
 	/* The dungeon is ready */

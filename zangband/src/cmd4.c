@@ -3050,7 +3050,7 @@ static cptr do_cmd_feeling_text[11] =
 void do_cmd_feeling(void)
 {
 	/* Verify the feeling */
-	if (dun_ptr->feeling > 10) dun_ptr->feeling = 10;
+	if (dundata->feeling > 10) dundata->feeling = 10;
 
 	if (p_ptr->place_num && !p_ptr->depth)
 	{
@@ -3085,7 +3085,7 @@ void do_cmd_feeling(void)
 	/* Display the feeling */
 	if (turn - old_turn >= 1000)
 	{
-		msgf(do_cmd_feeling_text[dun_ptr->feeling]);
+		msgf(do_cmd_feeling_text[dundata->feeling]);
 	}
 	else
 	{
@@ -3858,8 +3858,6 @@ static bool do_cmd_knowledge_wild(int dummy)
 	
 	cptr build_name;
 
-	bool stairs_exist = FALSE;
-
 	bool visited = FALSE;
 	
 	/* Hack - ignore parameter */
@@ -3895,7 +3893,6 @@ static bool do_cmd_knowledge_wild(int dummy)
 			{
 				/* Clear stores and place information */
 				stores_info[0] = '\0';
-				stairs_exist = FALSE;
 
 				/* Build stores information */
 				for (j = 0; j < place[k].numstores; j++)
@@ -3909,16 +3906,10 @@ static bool do_cmd_knowledge_wild(int dummy)
 						strnfmt(stores_info, 2048, "%s     %s\n",
 								stores_info, build_name);
 					}
-
-					/* Note if there are stairs in this town */
-					if (place[k].store[j].type == BUILD_STAIRS)
-					{
-						stairs_exist = TRUE;
-					}
 				}
 				
 				/* Write stairs information to file */
-				if (stairs_exist)
+				if (place[k].dungeon)
 				{
 					froff(fff, "%s -- Stairs\n", place[k].name);
 				}

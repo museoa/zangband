@@ -1705,6 +1705,25 @@ struct store_type
 };
 
 
+/* Dungeons */
+typedef struct dun_type dun_type;
+struct dun_type
+{
+	obj_theme theme;	/* Dungeon object theme */
+	
+	u32b habitat;	/* Flags describing habitat */
+
+	byte min_level;	/* Minimum level in the dungeon */
+	byte max_level;	/* Maximum dungeon level allowed */
+
+	s16b rating;	/* Level's current rating */
+
+	s16b region;	/* Hack - Region for current level */
+
+	byte feeling;	/* Most recent feeling */
+	bool good_item_flag;	/* True if "Artifact" on this level */
+};
+
 
 /*
  * A structure describing a place with
@@ -1715,6 +1734,8 @@ struct place_type
 {
 	u32b seed;	/* Seed for RNG */
 	store_type *store;	/* The stores[numstores] */
+
+	dun_type *dungeon;
 
 	byte type;	/* Type of place */
 
@@ -1738,31 +1759,6 @@ struct place_type
 	char name[T_NAME_LEN];	/* Town name */
 };
 
-/* Dungeons */
-typedef struct dun_type dun_type;
-struct dun_type
-{
-	obj_theme theme;	/* Dungeon object theme */
-	
-	u32b habitat;	/* Flags describing habitat */
-
-	byte min_level;	/* Minimum level in the dungeon */
-	byte max_level;	/* Maximum dungeon level allowed */
-
-	s16b rating;	/* Level's current rating */
-
-	s16b min_hgt;	/* Current y bounds of area() */
-	s16b max_hgt;
-	s16b min_wid;	/* Current x bounds of area() */
-	s16b max_wid;
-
-	s16b region;	/* Hack - Region for current level */
-
-	byte feeling;	/* Most recent feeling */
-	bool good_item_flag;	/* True if "Artifact" on this level */
-
-	cptr name;	/* The name of the dungeon */
-};
 
 /* Various function pointer types */
 typedef bool (*monster_hook_type) (int r_idx);
