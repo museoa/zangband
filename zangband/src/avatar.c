@@ -121,7 +121,7 @@ void get_virtues(void)
 
 	/* Get pre-defined types */
 	/* One or more virtues based on class */
-	switch (p_ptr->pclass)
+	switch (p_ptr->rp.pclass)
 	{
 		case CLASS_WARRIOR:
 			p_ptr->vir_types[i++] = V_VALOUR;
@@ -176,7 +176,7 @@ void get_virtues(void)
 
 
 	/* Get one virtue based on race */
-	switch (p_ptr->prace)
+	switch (p_ptr->rp.prace)
 	{
 		case RACE_HUMAN:  case RACE_HALF_ELF:
 			p_ptr->vir_types[i++] = V_INDIVIDUALISM;

@@ -1540,11 +1540,11 @@ static void display_player_abilities(void)
 	}
 
 	/* normal players get two 1d1 punches */
-	if (!o_ptr->k_idx && (p_ptr->pclass != CLASS_MONK)) avgdam = 2;
+	if (!o_ptr->k_idx && (p_ptr->rp.pclass != CLASS_MONK)) avgdam = 2;
 
 	if (avgdam == 0)
 	{
-		if ((p_ptr->pclass == CLASS_MONK) && (!o_ptr->k_idx))
+		if ((p_ptr->rp.pclass == CLASS_MONK) && (!o_ptr->k_idx))
 			put_fstr(COL_SKILLS3, 18, "Avg.Dam./Rnd: %d",
 					 monk_avg_damage[p_ptr->lev] * blows / 100);
 		else
@@ -1569,7 +1569,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 	(*f1) = (*f2) = (*f3) = (*f4) = 0L;
 
 	/* Classes */
-	switch (p_ptr->pclass)
+	switch (p_ptr->rp.pclass)
 	{
 		case CLASS_WARRIOR:
 			if (p_ptr->lev > 29)
@@ -1611,7 +1611,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 	}
 
 	/* Races */
-	switch (p_ptr->prace)
+	switch (p_ptr->rp.prace)
 	{
 		case RACE_ELF:
 			(*f2) |= (TR2_RES_LITE);
@@ -1633,7 +1633,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			if (p_ptr->lev > 14)
 			{
 				(*f3) |= (TR3_REGEN);
-				if (p_ptr->pclass == CLASS_WARRIOR)
+				if (p_ptr->rp.pclass == CLASS_WARRIOR)
 				{
 					(*f3) |= (TR3_SLOW_DIGEST);
 					/*
@@ -2356,7 +2356,7 @@ static void display_player_top(void)
 		put_fstr(COL_NAME, 6, "Magic    : " CLR_L_BLUE "%s", realm_names[p_ptr->realm1]);
 	}
 
-	if (p_ptr->pclass == CLASS_CHAOS_WARRIOR)
+	if (p_ptr->rp.pclass == CLASS_CHAOS_WARRIOR)
 	{
 		put_fstr(COL_NAME, 7, "Patron   : ", CLR_L_BLUE "%s",
 					 chaos_patrons[p_ptr->chaos_patron]);
@@ -2369,10 +2369,10 @@ static void display_player_top(void)
 	}
 
 	/* Age, Height, Weight, Social */
-	prt_num(COL_AGE, 2, "Age         " CLR_L_BLUE, (int)p_ptr->age, 3);
-	prt_num(COL_AGE, 3, "Height      " CLR_L_BLUE, (int)p_ptr->ht, 3);
-	prt_num(COL_AGE, 4, "Weight      " CLR_L_BLUE, (int)p_ptr->wt, 3);
-	prt_num(COL_AGE, 5, "Social Class" CLR_L_BLUE, (int)p_ptr->sc, 3);
+	prt_num(COL_AGE, 2, "Age         " CLR_L_BLUE, (int)p_ptr->rp.age, 3);
+	prt_num(COL_AGE, 3, "Height      " CLR_L_BLUE, (int)p_ptr->rp.ht, 3);
+	prt_num(COL_AGE, 4, "Weight      " CLR_L_BLUE, (int)p_ptr->rp.wt, 3);
+	prt_num(COL_AGE, 5, "Social Class" CLR_L_BLUE, (int)p_ptr->rp.sc, 3);
 
 	/* Display the stats */
 	for (i = 0; i < A_MAX; i++)
@@ -4027,7 +4027,7 @@ static void print_tomb(void)
 		else
 		{
 			put_fstr(11, 8, "%v", center_string, 31,
-					 player_title[p_ptr->pclass][(p_ptr->lev - 1) / 5]);
+					 player_title[p_ptr->rp.pclass][(p_ptr->lev - 1) / 5]);
 		}
 
 		put_fstr(11, 10, "%v", center_string, 31, cp_ptr->title);

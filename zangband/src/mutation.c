@@ -302,7 +302,7 @@ static bool select_mutation(int choose_mut, bool gain, int *mutation)
 				break;
 			case 110:  case 111:
 				/* Chaos warriors already have a chaos deity */
-				if (p_ptr->pclass != CLASS_CHAOS_WARRIOR)
+				if (p_ptr->rp.pclass != CLASS_CHAOS_WARRIOR)
 				{
 					/* Patron */
 					num = 57;
@@ -513,31 +513,31 @@ bool gain_mutation(int choose_mut)
 	{
 		chg_virtue(V_CHANCE, 1);
 
-		if (p_ptr->prace == RACE_VAMPIRE &&
+		if (p_ptr->rp.prace == RACE_VAMPIRE &&
 			!(p_ptr->muta1 & MUT1_HYPN_GAZE) && (randint1(10) < 7))
 		{
 			num = M1_HYPN_GAZE;
 		}
 
-		else if (p_ptr->prace == RACE_IMP &&
+		else if (p_ptr->rp.prace == RACE_IMP &&
 				 !(p_ptr->muta2 & MUT2_HORNS) && (randint1(10) < 7))
 		{
 			num = M2_HORNS;
 		}
 
-		else if (p_ptr->prace == RACE_YEEK &&
+		else if (p_ptr->rp.prace == RACE_YEEK &&
 				 !(p_ptr->muta1 & MUT1_SHRIEK) && (randint1(10) < 7))
 		{
 			num = M1_SHRIEK;
 		}
 
-		else if (p_ptr->prace == RACE_BEASTMAN &&
+		else if (p_ptr->rp.prace == RACE_BEASTMAN &&
 				 !(p_ptr->muta1 & MUT1_POLYMORPH) && (randint1(10) < 2))
 		{
 			num = M1_POLYMORPH;
 		}
 
-		else if (p_ptr->prace == RACE_MIND_FLAYER &&
+		else if (p_ptr->rp.prace == RACE_MIND_FLAYER &&
 				 !(p_ptr->muta2 & MUT2_TENTACLES) && (randint1(10) < 7))
 		{
 			num = M2_TENTACLES;
@@ -845,7 +845,7 @@ int calc_mutant_regenerate_mod(void)
 	 * Beastman get 10 "free" mutations and
 	 * only 5% decrease per additional mutation
 	 */
-	if (p_ptr->prace == RACE_BEASTMAN)
+	if (p_ptr->rp.prace == RACE_BEASTMAN)
 	{
 		count -= 10;
 		mod = 5;
@@ -1773,7 +1773,7 @@ void mutation_random_aux(const mutation_type *mut_ptr)
 
 		disturb(FALSE);
 		msgf("You trip over your own feet!");
-		take_hit(randint1(p_ptr->wt / 6), "tripping");
+		take_hit(randint1(p_ptr->rp.wt / 6), "tripping");
 
 		message_flush();
 		o_ptr = &p_ptr->equipment[EQUIP_WIELD];

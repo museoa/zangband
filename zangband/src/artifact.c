@@ -41,7 +41,7 @@ static void curse_artifact(object_type *o_ptr)
 	if (one_in_(2)) o_ptr->flags3 |= TR3_TELEPORT;
 	else if (one_in_(3)) o_ptr->flags3 |= TR3_NO_TELE;
 
-	if ((p_ptr->pclass != CLASS_WARRIOR) && one_in_(3))
+	if ((p_ptr->rp.pclass != CLASS_WARRIOR) && one_in_(3))
 		o_ptr->flags3 |= TR3_NO_MAGIC;
 }
 
@@ -1390,7 +1390,7 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 
 	if (a_scroll && one_in_(4))
 	{
-		switch (p_ptr->pclass)
+		switch (p_ptr->rp.pclass)
 		{
 			case CLASS_WARRIOR:
 				artifact_bias = BIAS_WARRIOR;
@@ -3072,7 +3072,7 @@ void random_artifact_resistance(object_type *o_ptr)
 	/* Terror Mask is for warriors... */
 	if (o_ptr->activate == ART_TERROR + 128)
 	{
-		if (p_ptr->pclass == CLASS_WARRIOR)
+		if (p_ptr->rp.pclass == CLASS_WARRIOR)
 		{
 			give_power = TRUE;
 			give_resistance = TRUE;

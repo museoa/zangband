@@ -122,23 +122,30 @@ struct player_class
 	byte pet_upkeep_div; /* Pet upkeep divider */
 };
 
+struct player_data
+{
+	s16b age;	/* Characters age */
+	s16b ht;	/* Height */
+	s16b wt;	/* Weight */
+	s16b sc;	/* Social Class */
+	
+	byte hitdie;	/* Hit dice (sides) */
+
+	byte psex;	/* Sex index */
+	byte prace;	/* Race index */
+	byte pclass;	/* Class index */
+};
+
 struct player_type
 {
 	s16b px;			/* Player location */
 	s16b py;			/* Player location */
+	
+	player_data rp;	/* Role-play information */
 
-	byte psex;			/* Sex index */
-	byte prace;			/* Race index */
-	byte pclass;		/* Class index */
-	byte realm1;		/* First magic realm */
-	
+	byte realm1;		/* First magic realm */	
 	byte realm2;		/* Second magic realm */
-	byte hitdie;		/* Hit dice (sides) */
-	s16b age;			/* Characters age */
-	
-	s16b ht;			/* Height */
-	s16b wt;			/* Weight */
-	s16b sc;			/* Social Class */
+
 	s16b max_depth;		/* Max depth */
 	s16b depth;			/* Cur depth */
 	s16b max_lev;		/* Max level */

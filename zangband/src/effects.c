@@ -1317,7 +1317,7 @@ bool set_stun(int v)
 	 * a hard game - they lose this advantage.  (Golems are
 	 * designed for newbies - not scummers.)
 	 */
-	if ((p_ptr->prace == RACE_GOLEM) &&
+	if ((p_ptr->rp.prace == RACE_GOLEM) &&
 		!(ironman_shops || ironman_downward || ironman_hard_quests ||
 		  ironman_empty_levels || ironman_rooms || ironman_nightmare ||
 		  ironman_deep_quests))
@@ -1412,7 +1412,7 @@ bool set_stun(int v)
 		 * something...
 		 */
 		if ((randint1(1000) < v || one_in_(16)) &&
-			(!(p_ptr->pclass == CLASS_MINDCRAFTER)))
+			(!(p_ptr->rp.pclass == CLASS_MINDCRAFTER)))
 		{
 			msgf("A vicious blow hits your head.");
 			if (one_in_(3))
@@ -1490,10 +1490,10 @@ bool set_cut(int v)
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
 
-	if (p_ptr->prace == RACE_GOLEM ||
-		p_ptr->prace == RACE_SKELETON ||
-		p_ptr->prace == RACE_SPECTRE ||
-		(p_ptr->prace == RACE_ZOMBIE && p_ptr->lev > 11))
+	if (p_ptr->rp.prace == RACE_GOLEM ||
+		p_ptr->rp.prace == RACE_SKELETON ||
+		p_ptr->rp.prace == RACE_SPECTRE ||
+		(p_ptr->rp.prace == RACE_ZOMBIE && p_ptr->lev > 11))
 		v = 0;
 
 	/* Mortal wound */
@@ -2519,16 +2519,16 @@ void do_poly_self(void)
 			/* sex change */
 			power -= 2;
 
-			if (p_ptr->psex == SEX_MALE)
+			if (p_ptr->rp.psex == SEX_MALE)
 			{
-				p_ptr->psex = SEX_FEMALE;
-				sp_ptr = &sex_info[p_ptr->psex];
+				p_ptr->rp.psex = SEX_FEMALE;
+				sp_ptr = &sex_info[p_ptr->rp.psex];
 				strnfmt(effect_msg, 80, "female ");
 			}
 			else
 			{
-				p_ptr->psex = SEX_MALE;
-				sp_ptr = &sex_info[p_ptr->psex];
+				p_ptr->rp.psex = SEX_MALE;
+				sp_ptr = &sex_info[p_ptr->rp.psex];
 				strnfmt(effect_msg, 80, "male ");
 			}
 		}
@@ -2586,7 +2586,7 @@ void do_poly_self(void)
 			new_race = randint0(MAX_RACES);
 			expfact = race_info[new_race].r_exp;
 		}
-		while ((new_race == p_ptr->prace) && (expfact > goalexpfact));
+		while ((new_race == p_ptr->rp.prace) && (expfact > goalexpfact));
 
 		if (!effect_msg[0])
 		{
@@ -2604,9 +2604,9 @@ void do_poly_self(void)
 
 		chg_virtue(V_CHANCE, 2);
 
-		old_race = p_ptr->prace;
-		p_ptr->prace = new_race;
-		rp_ptr = &race_info[p_ptr->prace];
+		old_race = p_ptr->rp.prace;
+		p_ptr->rp.prace = new_race;
+		rp_ptr = &race_info[p_ptr->rp.prace];
 
 		/* Adjust the stats */
 		for (i = 0; i < A_MAX; i++)
@@ -2627,17 +2627,17 @@ void do_poly_self(void)
 		p_ptr->expfact = rp_ptr->r_exp + cp_ptr->c_exp;
 
 		/* Calculate the height/weight for males */
-		if (p_ptr->psex == SEX_MALE)
+		if (p_ptr->rp.psex == SEX_MALE)
 		{
-			p_ptr->ht = Rand_normal(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
-			p_ptr->wt = Rand_normal(rp_ptr->m_b_wt, rp_ptr->m_m_wt);
+			p_ptr->rp.ht = Rand_normal(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
+			p_ptr->rp.wt = Rand_normal(rp_ptr->m_b_wt, rp_ptr->m_m_wt);
 		}
 
 		/* Calculate the height/weight for females */
-		else if (p_ptr->psex == SEX_FEMALE)
+		else if (p_ptr->rp.psex == SEX_FEMALE)
 		{
-			p_ptr->ht = Rand_normal(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
-			p_ptr->wt = Rand_normal(rp_ptr->f_b_wt, rp_ptr->f_m_wt);
+			p_ptr->rp.ht = Rand_normal(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
+			p_ptr->rp.wt = Rand_normal(rp_ptr->f_b_wt, rp_ptr->f_m_wt);
 		}
 
 		check_experience();

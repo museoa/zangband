@@ -1171,21 +1171,21 @@ static void rd_extra(void)
 	}
 
 	/* Class/Race/Gender/Spells */
-	rd_byte(&p_ptr->prace);
-	rd_byte(&p_ptr->pclass);
-	rd_byte(&p_ptr->psex);
+	rd_byte(&p_ptr->rp.prace);
+	rd_byte(&p_ptr->rp.pclass);
+	rd_byte(&p_ptr->rp.psex);
 	rd_byte(&p_ptr->realm1);
 	rd_byte(&p_ptr->realm2);
 	rd_byte(&tmp8u);			/* oops */
 
 	/* Special Race/Class info */
-	rd_byte(&p_ptr->hitdie);
+	rd_byte(&p_ptr->rp.hitdie);
 	rd_u16b(&p_ptr->expfact);
 
 	/* Age/Height/Weight */
-	rd_s16b(&p_ptr->age);
-	rd_s16b(&p_ptr->ht);
-	rd_s16b(&p_ptr->wt);
+	rd_s16b(&p_ptr->rp.age);
+	rd_s16b(&p_ptr->rp.ht);
+	rd_s16b(&p_ptr->rp.wt);
 
 	/* Read the stat info */
 	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_max[i]);
@@ -1195,13 +1195,13 @@ static void rd_extra(void)
 	if (sf_version < 39)
 	{
 		/* This will be initialized again later, but we need it now for adjust_stat to work */
-		rp_ptr = &race_info[p_ptr->prace];
-		cp_ptr = &class_info[p_ptr->pclass];
+		rp_ptr = &race_info[p_ptr->rp.prace];
+		cp_ptr = &class_info[p_ptr->rp.pclass];
 
 		for (i = 0; i < 6; i++)
 		{
-			int bonus = race_info[p_ptr->prace].r_adj[i] +
-				class_info[p_ptr->pclass].c_adj[i];
+			int bonus = race_info[p_ptr->rp.prace].r_adj[i] +
+				class_info[p_ptr->rp.pclass].c_adj[i];
 
 			p_ptr->stat_max[i] = adjust_stat(i, p_ptr->stat_max[i], bonus);
 			/* Hack - Restore all stats... */
@@ -1260,7 +1260,7 @@ static void rd_extra(void)
 
 	/* More info */
 	strip_bytes(8);
-	rd_s16b(&p_ptr->sc);
+	rd_s16b(&p_ptr->rp.sc);
 	strip_bytes(2);
 
 	/* Read the flags */
@@ -3027,14 +3027,14 @@ static errr rd_savefile_new_aux(void)
 
 
 	/* Important -- Initialize the sex */
-	sp_ptr = &sex_info[p_ptr->psex];
+	sp_ptr = &sex_info[p_ptr->rp.psex];
 
 	/* Important -- Initialize the race/class */
-	rp_ptr = &race_info[p_ptr->prace];
-	cp_ptr = &class_info[p_ptr->pclass];
+	rp_ptr = &race_info[p_ptr->rp.prace];
+	cp_ptr = &class_info[p_ptr->rp.pclass];
 
 	/* Important -- Initialize the magic */
-	mp_ptr = &magic_info[p_ptr->pclass];
+	mp_ptr = &magic_info[p_ptr->rp.pclass];
 
 
 	/* Read spell info */

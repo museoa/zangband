@@ -886,19 +886,19 @@ static void wr_extra(void)
 	}
 
 	/* Race/Class/Gender/Spells */
-	wr_byte(p_ptr->prace);
-	wr_byte(p_ptr->pclass);
-	wr_byte(p_ptr->psex);
+	wr_byte(p_ptr->rp.prace);
+	wr_byte(p_ptr->rp.pclass);
+	wr_byte(p_ptr->rp.psex);
 	wr_byte(p_ptr->realm1);
 	wr_byte(p_ptr->realm2);
 	wr_byte(0);					/* oops */
 
-	wr_byte(p_ptr->hitdie);
+	wr_byte(p_ptr->rp.hitdie);
 	wr_u16b(p_ptr->expfact);
 
-	wr_s16b(p_ptr->age);
-	wr_s16b(p_ptr->ht);
-	wr_s16b(p_ptr->wt);
+	wr_s16b(p_ptr->rp.age);
+	wr_s16b(p_ptr->rp.ht);
+	wr_s16b(p_ptr->rp.wt);
 
 	/* Dump the stats (maximum and current) */
 	for (i = 0; i < A_MAX; ++i) wr_s16b(p_ptr->stat_max[i]);
@@ -947,7 +947,7 @@ static void wr_extra(void)
 	wr_s16b(0);					/* oops */
 	wr_s16b(0);					/* oops */
 	wr_s16b(0);					/* oops */
-	wr_s16b(p_ptr->sc);
+	wr_s16b(p_ptr->rp.sc);
 	wr_s16b(0);					/* oops */
 
 	wr_s16b(0);					/* old "rest" */

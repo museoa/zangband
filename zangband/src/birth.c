@@ -612,10 +612,10 @@ static void save_prev_data(void)
 	/*** Save the current data ***/
 
 	/* Save the data */
-	prev.age = p_ptr->age;
-	prev.wt = p_ptr->wt;
-	prev.ht = p_ptr->ht;
-	prev.sc = p_ptr->sc;
+	prev.age = p_ptr->rp.age;
+	prev.wt = p_ptr->rp.wt;
+	prev.ht = p_ptr->rp.ht;
+	prev.sc = p_ptr->rp.sc;
 	prev.au = p_ptr->au;
 
 	/* Save the stats */
@@ -654,10 +654,10 @@ static void load_prev_data(void)
 	/*** Save the current data ***/
 
 	/* Save the data */
-	temp.age = p_ptr->age;
-	temp.wt = p_ptr->wt;
-	temp.ht = p_ptr->ht;
-	temp.sc = p_ptr->sc;
+	temp.age = p_ptr->rp.age;
+	temp.wt = p_ptr->rp.wt;
+	temp.ht = p_ptr->rp.ht;
+	temp.sc = p_ptr->rp.sc;
 	temp.au = p_ptr->au;
 
 	/* Save the stats */
@@ -685,10 +685,10 @@ static void load_prev_data(void)
 	/*** Load the previous data ***/
 
 	/* Load the data */
-	p_ptr->age = prev.age;
-	p_ptr->wt = prev.wt;
-	p_ptr->ht = prev.ht;
-	p_ptr->sc = prev.sc;
+	p_ptr->rp.age = prev.age;
+	p_ptr->rp.wt = prev.wt;
+	p_ptr->rp.ht = prev.ht;
+	p_ptr->rp.sc = prev.sc;
 	p_ptr->au = prev.au;
 
 	/* Load the stats */
@@ -814,21 +814,21 @@ static void get_extra(void)
 	p_ptr->expfact = rp_ptr->r_exp + cp_ptr->c_exp;
 
 	/* Hitdice */
-	p_ptr->hitdie = rp_ptr->r_mhp + cp_ptr->c_mhp;
+	p_ptr->rp.hitdie = rp_ptr->r_mhp + cp_ptr->c_mhp;
 
 	/* Initial hitpoints */
-	p_ptr->mhp = p_ptr->hitdie;
+	p_ptr->mhp = p_ptr->rp.hitdie;
 
 	/* Minimum hitpoints at highest level */
-	min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 3) / 8;
+	min_value = (PY_MAX_LEVEL * (p_ptr->rp.hitdie - 1) * 3) / 8;
 	min_value += PY_MAX_LEVEL;
 
 	/* Maximum hitpoints at highest level */
-	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 5) / 8;
+	max_value = (PY_MAX_LEVEL * (p_ptr->rp.hitdie - 1) * 5) / 8;
 	max_value += PY_MAX_LEVEL;
 
 	/* Pre-calculate level 1 hitdice */
-	p_ptr->player_hp[0] = p_ptr->hitdie;
+	p_ptr->player_hp[0] = p_ptr->rp.hitdie;
 
 	/* Roll out the hitpoints */
 	while (TRUE)
@@ -860,8 +860,8 @@ static void get_extra(void)
 #ifdef SHOW_LIFE_RATE
 
 	percent = (int)(((long)p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
-					(2 * p_ptr->hitdie +
-					 ((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
+					(2 * p_ptr->rp.hitdie +
+					 ((PY_MAX_LEVEL - 1) * (p_ptr->rp.hitdie + 1))));
 
 	msgf("Current Life Rating is %d/100.", percent);
 	message_flush();
@@ -894,7 +894,7 @@ static void get_history(void)
 	social_class = randint1(4);
 
 	/* Starting place */
-	switch (p_ptr->prace)
+	switch (p_ptr->rp.prace)
 	{
 		case RACE_AMBERITE:
 		{
@@ -1081,7 +1081,7 @@ static void get_history(void)
 	else if (social_class < 1) social_class = 1;
 
 	/* Save the social class */
-	p_ptr->sc = social_class;
+	p_ptr->rp.sc = social_class;
 
 
 	/* Skip leading spaces */
@@ -1139,23 +1139,23 @@ static void get_ahw(void)
 	int h_percent;
 
 	/* Calculate the age */
-	p_ptr->age = rp_ptr->b_age + randint1(rp_ptr->m_age);
+	p_ptr->rp.age = rp_ptr->b_age + randint1(rp_ptr->m_age);
 
 	/* Calculate the height/weight for males */
-	if (p_ptr->psex == SEX_MALE)
+	if (p_ptr->rp.psex == SEX_MALE)
 	{
-		p_ptr->ht = Rand_normal(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
-		h_percent = (int)(p_ptr->ht) * 100 / (int)(rp_ptr->m_b_ht);
-		p_ptr->wt = Rand_normal((int)(rp_ptr->m_b_wt) * h_percent / 100,
+		p_ptr->rp.ht = Rand_normal(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
+		h_percent = (int)(p_ptr->rp.ht) * 100 / (int)(rp_ptr->m_b_ht);
+		p_ptr->rp.wt = Rand_normal((int)(rp_ptr->m_b_wt) * h_percent / 100,
 								(int)(rp_ptr->m_m_wt) * h_percent / 300);
 	}
 	/* Calculate the height/weight for females */
-	else if (p_ptr->psex == SEX_FEMALE)
+	else if (p_ptr->rp.psex == SEX_FEMALE)
 	{
-		p_ptr->ht = Rand_normal(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
+		p_ptr->rp.ht = Rand_normal(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
 
-		h_percent = (int)(p_ptr->ht) * 100 / (int)(rp_ptr->f_b_ht);
-		p_ptr->wt = Rand_normal((int)(rp_ptr->f_b_wt) * h_percent / 100,
+		h_percent = (int)(p_ptr->rp.ht) * 100 / (int)(rp_ptr->f_b_ht);
+		p_ptr->rp.wt = Rand_normal((int)(rp_ptr->f_b_wt) * h_percent / 100,
 								(int)(rp_ptr->f_m_wt) * h_percent / 300);
 	}
 }
@@ -1169,7 +1169,7 @@ static void get_money(void)
 	int i, gold;
 
 	/* Social Class determines starting gold */
-	gold = (p_ptr->sc * 6) + rand_range(300, 400);
+	gold = (p_ptr->rp.sc * 6) + rand_range(300, 400);
 
 	/* Process the stats */
 	for (i = 0; i < A_MAX; i++)
@@ -1382,7 +1382,7 @@ static void player_outfit(void)
 	object_type *q_ptr;
 
 	/* Give the player some food */
-	switch (p_ptr->prace)
+	switch (p_ptr->rp.prace)
 	{
 		case RACE_GOLEM:
 		case RACE_SKELETON:
@@ -1417,7 +1417,7 @@ static void player_outfit(void)
 		}
 	}
 
-	if (p_ptr->prace == RACE_VAMPIRE)
+	if (p_ptr->rp.prace == RACE_VAMPIRE)
 	{
 		/* Hack -- Give the player scrolls of DARKNESS! */
 		q_ptr = object_prep(lookup_kind(TV_SCROLL, SV_SCROLL_DARKNESS));
@@ -1445,7 +1445,7 @@ static void player_outfit(void)
 		(void)inven_carry(q_ptr);
 	}
 
-	if (p_ptr->pclass == CLASS_RANGER)
+	if (p_ptr->rp.pclass == CLASS_RANGER)
 	{
 		/* Hack -- Give the player some arrows */
 		q_ptr = object_prep(lookup_kind(TV_ARROW, SV_AMMO_NORMAL));
@@ -1470,7 +1470,7 @@ static void player_outfit(void)
 
 		(void)inven_carry(q_ptr);
 	}
-	else if (p_ptr->pclass == CLASS_HIGH_MAGE)
+	else if (p_ptr->rp.pclass == CLASS_HIGH_MAGE)
 	{
 		/* Hack -- Give the player a wand of magic missile */
 		q_ptr = object_prep(lookup_kind(TV_WAND, SV_WAND_MAGIC_MISSILE));
@@ -1490,15 +1490,15 @@ static void player_outfit(void)
 	for (i = 0; i < 3; i++)
 	{
 		/* Look up standard equipment */
-		tv = player_init[p_ptr->pclass][i][0];
-		sv = player_init[p_ptr->pclass][i][1];
+		tv = player_init[p_ptr->rp.pclass][i][0];
+		sv = player_init[p_ptr->rp.pclass][i][1];
 
 		/* Hack to initialize spellbooks */
 		if (tv == TV_SORCERY_BOOK) tv = TV_LIFE_BOOK + p_ptr->realm1 - 1;
 		else if (tv == TV_DEATH_BOOK) tv = TV_LIFE_BOOK + p_ptr->realm2 - 1;
 
 		else if (tv == TV_RING && sv == SV_RING_RES_FEAR &&
-				 p_ptr->prace == RACE_BARBARIAN)
+				 p_ptr->rp.prace == RACE_BARBARIAN)
 		{
 			/* Barbarians do not need a ring of resist fear */
 			sv = SV_RING_SUSTAIN_STR;
@@ -1508,7 +1508,7 @@ static void player_outfit(void)
 		q_ptr = object_prep(lookup_kind(tv, sv));
 
 		/* Assassins begin the game with a poisoned dagger */
-		if (tv == TV_SWORD && p_ptr->pclass == CLASS_ROGUE &&
+		if (tv == TV_SWORD && p_ptr->rp.pclass == CLASS_ROGUE &&
 			p_ptr->realm1 == REALM_DEATH)
 		{
 			add_ego_flags(q_ptr, EGO_BRAND_POIS);
@@ -1553,18 +1553,18 @@ static bool get_player_sex(void)
 		genders[i] = sex_info[i].title;
 	}
 
-	p_ptr->psex = get_player_choice(genders, MAX_SEXES, SEX_COL, 15,
+	p_ptr->rp.psex = get_player_choice(genders, MAX_SEXES, SEX_COL, 15,
 									"charattr.txt#TheSexes", NULL);
 
 	/* No selection? */
-	if (p_ptr->psex == INVALID_CHOICE)
+	if (p_ptr->rp.psex == INVALID_CHOICE)
 	{
-		p_ptr->psex = 0;
+		p_ptr->rp.psex = 0;
 		return (FALSE);
 	}
 
 	/* Save the sex pointer */
-	sp_ptr = &sex_info[p_ptr->psex];
+	sp_ptr = &sex_info[p_ptr->rp.psex];
 
 	return (TRUE);
 }
@@ -1626,19 +1626,19 @@ static bool get_player_race(void)
 		races[i] = race_info[i].title;
 	}
 
-	p_ptr->prace = get_player_sort_choice(races, MAX_RACES, RACE_COL, 15,
+	p_ptr->rp.prace = get_player_sort_choice(races, MAX_RACES, RACE_COL, 15,
 										  "charattr.txt#TheRaces",
 										  race_aux_hook);
 
 	/* No selection? */
-	if (p_ptr->prace == INVALID_CHOICE)
+	if (p_ptr->rp.prace == INVALID_CHOICE)
 	{
-		p_ptr->prace = 0;
+		p_ptr->rp.prace = 0;
 		return (FALSE);
 	}
 
 	/* Give beastman a mutation at character birth */
-	if (p_ptr->prace == RACE_BEASTMAN)
+	if (p_ptr->rp.prace == RACE_BEASTMAN)
 	{
 		hack_mutation = TRUE;
 	}
@@ -1648,7 +1648,7 @@ static bool get_player_race(void)
 	}
 
 	/* Save the race pointer */
-	rp_ptr = &race_info[p_ptr->prace];
+	rp_ptr = &race_info[p_ptr->rp.prace];
 
 	/* Success */
 	return (TRUE);
@@ -1728,14 +1728,14 @@ static bool get_player_class(void)
 		classes[i] = string_make(buf);
 	}
 
-	p_ptr->pclass = get_player_choice(classes, MAX_CLASS, CLASS_COL, 20,
+	p_ptr->rp.pclass = get_player_choice(classes, MAX_CLASS, CLASS_COL, 20,
 									  "charattr.txt#TheClasses",
 									  class_aux_hook);
 
 	/* No selection? */
-	if (p_ptr->pclass == INVALID_CHOICE)
+	if (p_ptr->rp.pclass == INVALID_CHOICE)
 	{
-		p_ptr->pclass = 0;
+		p_ptr->rp.pclass = 0;
 
 		for (i = 0; i < MAX_CLASS; i++)
 		{
@@ -1747,8 +1747,8 @@ static bool get_player_class(void)
 	}
 
 	/* Set class */
-	cp_ptr = &class_info[p_ptr->pclass];
-	mp_ptr = &magic_info[p_ptr->pclass];
+	cp_ptr = &class_info[p_ptr->rp.pclass];
+	mp_ptr = &magic_info[p_ptr->rp.pclass];
 
 	for (i = 0; i < MAX_CLASS; i++)
 	{
@@ -1778,7 +1778,7 @@ static bool get_player_realms(void)
 	for (i = 1; i < MAX_REALM; i++)
 	{
 		/* Can we use this realm? */
-		if (realm_choices1[p_ptr->pclass] & (1 << (i - 1)))
+		if (realm_choices1[p_ptr->rp.pclass] & (1 << (i - 1)))
 		{
 			/* Save the information */
 			select[count] = i;
@@ -1816,7 +1816,7 @@ static bool get_player_realms(void)
 	for (i = 1; i < MAX_REALM; i++)
 	{
 		/* Can we use this realm? */
-		if ((realm_choices2[p_ptr->pclass] & (1 << (i - 1)))
+		if ((realm_choices2[p_ptr->rp.pclass] & (1 << (i - 1)))
 			&& (i != p_ptr->realm1))
 		{
 			/* Save the information */

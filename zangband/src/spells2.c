@@ -50,8 +50,8 @@ void self_knowledge(void)
 	Liferating[0] = 0;
 
 	percent = (int)(((long)p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) /
-					(2 * p_ptr->hitdie +
-					 ((PY_MAX_LEVEL - 1) * (p_ptr->hitdie + 1))));
+					(2 * p_ptr->rp.hitdie +
+					 ((PY_MAX_LEVEL - 1) * (p_ptr->rp.hitdie + 1))));
 
 	strnfmt(Liferating, 80, "Your current Life Rating is %d/100.", percent);
 	info[i++] = Liferating;
@@ -132,7 +132,7 @@ void self_knowledge(void)
 	{
 		mut_ptr = &race_powers[x];
 
-		if ((mut_ptr->which == p_ptr->prace) && (plev >= mut_ptr->level))
+		if ((mut_ptr->which == p_ptr->rp.prace) && (plev >= mut_ptr->level))
 		{
 			info[i++] = mut_ptr->desc_text;
 		}

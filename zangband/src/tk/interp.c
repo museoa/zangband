@@ -590,7 +590,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_AGE: /* age */
-			Tcl_SetIntObj(resultPtr, p_ptr->age);
+			Tcl_SetIntObj(resultPtr, p_ptr->rp.age);
 			break;
 
 		case IDX_ARMOR_CLASS: /* armor_class */
@@ -635,7 +635,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_HEIGHT: /* height */
-			Tcl_SetIntObj(resultPtr, p_ptr->ht);
+			Tcl_SetIntObj(resultPtr, p_ptr->rp.ht);
 			break;
 
 		case IDX_HISTORY: /* history */
@@ -693,12 +693,12 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		}
 
 		case IDX_SOCIAL_CLASS: /* social_class */
-			Tcl_SetIntObj(resultPtr, p_ptr->sc);
+			Tcl_SetIntObj(resultPtr, p_ptr->rp.sc);
 			break;
 
 		case IDX_TITLE: /* title */
 			ExtToUtf_SetResult(interp,
-				player_title[p_ptr->pclass][(p_ptr->lev-1)/5]);
+				player_title[p_ptr->rp.pclass][(p_ptr->lev-1)/5]);
 			break;
 
 		case IDX_TO_DAM: /* to_dam */
@@ -710,7 +710,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			break;
 
 		case IDX_WEIGHT: /* weight */
-			Tcl_SetIntObj(resultPtr, p_ptr->wt);
+			Tcl_SetIntObj(resultPtr, p_ptr->rp.wt);
 			break;
 
 		case IDX_TOTAL_WEIGHT: /* total_weight */
@@ -832,8 +832,8 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 		case IDX_LIFE_RATING: /* life_rating */
 			i = (int) (((long) p_ptr->player_hp[PY_MAX_LEVEL - 1] * 200L) / 
-				(2 * p_ptr->hitdie + ((PY_MAX_LEVEL - 1) *
-				(p_ptr->hitdie + 1))));
+				(2 * p_ptr->rp.hitdie + ((PY_MAX_LEVEL - 1) *
+				(p_ptr->rp.hitdie + 1))));
 			Tcl_SetIntObj(resultPtr, i);
 			break;
 			

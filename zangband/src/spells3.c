@@ -1440,7 +1440,7 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 	o_ptr->kn_flags3 &= ~(TR3_CURSED | TR3_HEAVY_CURSE);
 	
 	/* Heavy sensing? */
-	heavy = class_info[p_ptr->pclass].heavy_sense;
+	heavy = class_info[p_ptr->rp.pclass].heavy_sense;
 	
 	/* Hack -- assume no feeling */
 	o_ptr->feeling = FEEL_NONE;
@@ -2465,8 +2465,8 @@ bool recharge(int power)
 			/*** Determine Seriousness of Failure ***/
 
 			/* (High) Mages recharge objects more safely. */
-			if ((p_ptr->pclass == CLASS_MAGE) ||
-				(p_ptr->pclass == CLASS_HIGH_MAGE))
+			if ((p_ptr->rp.pclass == CLASS_MAGE) ||
+				(p_ptr->rp.pclass == CLASS_HIGH_MAGE))
 			{
 				/* 10% chance to blow up one rod, otherwise draining. */
 				if (o_ptr->tval == TV_ROD)
@@ -2933,7 +2933,7 @@ void display_spell_list(void)
 	if (!mp_ptr->spell_book) return;
 
 	/* Mindcrafter spell-list */
-	if (p_ptr->pclass == CLASS_MINDCRAFTER)
+	if (p_ptr->rp.pclass == CLASS_MINDCRAFTER)
 	{
 		int minfail;
 		int plev = p_ptr->lev;
@@ -3114,16 +3114,16 @@ s16b spell_chance(int spell, int realm)
 	 * Non mage/priest characters never get too good
 	 * (added high mage, mindcrafter)
 	 */
-	if ((p_ptr->pclass != CLASS_PRIEST) &&
-		(p_ptr->pclass != CLASS_MAGE) &&
-		(p_ptr->pclass != CLASS_MINDCRAFTER) &&
-		(p_ptr->pclass != CLASS_HIGH_MAGE))
+	if ((p_ptr->rp.pclass != CLASS_PRIEST) &&
+		(p_ptr->rp.pclass != CLASS_MAGE) &&
+		(p_ptr->rp.pclass != CLASS_MINDCRAFTER) &&
+		(p_ptr->rp.pclass != CLASS_HIGH_MAGE))
 	{
 		if (minfail < 5) minfail = 5;
 	}
 
 	/* Hack -- Priest prayer penalty for "edged" weapons  -DGK */
-	if ((p_ptr->pclass == CLASS_PRIEST) && p_ptr->icky_wield) chance += 25;
+	if ((p_ptr->rp.pclass == CLASS_PRIEST) && p_ptr->icky_wield) chance += 25;
 
 	/* Minimum failure rate */
 	if (chance < minfail) chance = minfail;
@@ -3197,8 +3197,8 @@ void spell_info(char *p, int spell, int realm)
 		int plev = p_ptr->lev;
 
 		/* See below */
-		int orb = (plev / ((p_ptr->pclass == CLASS_PRIEST ||
-							p_ptr->pclass == CLASS_HIGH_MAGE) ? 2 : 4));
+		int orb = (plev / ((p_ptr->rp.pclass == CLASS_PRIEST ||
+							p_ptr->rp.pclass == CLASS_HIGH_MAGE) ? 2 : 4));
 
 		/* Analyze the spell */
 		switch (realm)
@@ -3479,9 +3479,9 @@ void spell_info(char *p, int spell, int realm)
 					case 4:
 					{
 						strnfmt(p, 80, " dam %d+3d5", plev + (plev /
-														  (((p_ptr->pclass ==
+														  (((p_ptr->rp.pclass ==
 															 CLASS_MAGE)
-															|| (p_ptr->pclass ==
+															|| (p_ptr->rp.pclass ==
 																CLASS_HIGH_MAGE))
 														   ? 2 : 4)));
 						break;
@@ -3609,8 +3609,8 @@ void spell_info(char *p, int spell, int realm)
 					case 8:
 					{
 						strnfmt(p, 80, " dam %d+3d6", plev +
-								(plev / (((p_ptr->pclass == CLASS_MAGE) ||
-										  (p_ptr->pclass ==
+								(plev / (((p_ptr->rp.pclass == CLASS_MAGE) ||
+										  (p_ptr->rp.pclass ==
 										   CLASS_HIGH_MAGE)) ? 2 : 4)));
 						break;
 					}
@@ -4822,14 +4822,14 @@ void sanity_blast(const monster_type *m_ptr)
 	r_ptr->r_flags4 |= RF4_ELDRITCH_HORROR;
 
 	/* Demon characters are unaffected */
-	if (p_ptr->prace == RACE_IMP) return;
+	if (p_ptr->rp.prace == RACE_IMP) return;
 
 	/* Undead characters are 50% likely to be unaffected */
-	if (((p_ptr->prace == RACE_SKELETON) ||
-		 (p_ptr->prace == RACE_ZOMBIE) ||
-		 (p_ptr->prace == RACE_VAMPIRE) ||
-		 (p_ptr->prace == RACE_SPECTRE) ||
-		 (p_ptr->prace == RACE_GHOUL)) && saving_throw(25 + p_ptr->lev)) return;
+	if (((p_ptr->rp.prace == RACE_SKELETON) ||
+		 (p_ptr->rp.prace == RACE_ZOMBIE) ||
+		 (p_ptr->rp.prace == RACE_VAMPIRE) ||
+		 (p_ptr->rp.prace == RACE_SPECTRE) ||
+		 (p_ptr->rp.prace == RACE_GHOUL)) && saving_throw(25 + p_ptr->lev)) return;
 
 	/* Mind blast */
 	if (!saving_throw(p_ptr->skill_sav * 100 / power))

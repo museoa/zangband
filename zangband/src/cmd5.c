@@ -659,8 +659,8 @@ static bool cast_life_spell(int spell)
 
 			(void)fire_ball(GF_HOLY_FIRE, dir,
 							(damroll(3, 6) + plev +
-							 (plev / ((p_ptr->pclass == CLASS_PRIEST ||
-									   p_ptr->pclass ==
+							 (plev / ((p_ptr->rp.pclass == CLASS_PRIEST ||
+									   p_ptr->rp.pclass ==
 									   CLASS_HIGH_MAGE) ? 2 : 4))),
 							((plev < 30) ? 2 : 3));
 
@@ -925,8 +925,8 @@ static bool cast_nature_spell(int spell)
 	int plev = p_ptr->lev;
 	bool no_trump = FALSE;
 
-	if (p_ptr->pclass == CLASS_MAGE) beam = plev;
-	else if (p_ptr->pclass == CLASS_HIGH_MAGE) beam = plev + 10;
+	if (p_ptr->rp.pclass == CLASS_MAGE) beam = plev;
+	else if (p_ptr->rp.pclass == CLASS_HIGH_MAGE) beam = plev + 10;
 	else
 		beam = plev / 2;
 
@@ -949,7 +949,7 @@ static bool cast_nature_spell(int spell)
 			break;
 		case 4:				/* Daylight */
 			(void)lite_area(damroll(2, (plev / 2)), (plev / 10) + 1);
-			if ((p_ptr->prace == RACE_VAMPIRE) && !p_ptr->resist_lite)
+			if ((p_ptr->rp.prace == RACE_VAMPIRE) && !p_ptr->resist_lite)
 			{
 				msgf("The daylight scorches your flesh!");
 				take_hit(damroll(2, 2), "daylight");
@@ -1081,7 +1081,7 @@ static bool cast_nature_spell(int spell)
 		case 29:				/* Call Sunlight */
 			(void)fire_ball(GF_LITE, 0, 150, 8);
 			wiz_lite();
-			if ((p_ptr->prace == RACE_VAMPIRE) && !p_ptr->resist_lite)
+			if ((p_ptr->rp.prace == RACE_VAMPIRE) && !p_ptr->resist_lite)
 			{
 				msgf("The sunlight scorches your flesh!");
 				take_hit(50, "sunlight");
@@ -1119,8 +1119,8 @@ static bool cast_chaos_spell(int spell)
 	int dir, i, beam;
 	int plev = p_ptr->lev;
 
-	if (p_ptr->pclass == CLASS_MAGE) beam = plev;
-	else if (p_ptr->pclass == CLASS_HIGH_MAGE) beam = plev + 10;
+	if (p_ptr->rp.pclass == CLASS_MAGE) beam = plev;
+	else if (p_ptr->rp.pclass == CLASS_HIGH_MAGE) beam = plev + 10;
 	else
 		beam = plev / 2;
 
@@ -1151,8 +1151,8 @@ static bool cast_chaos_spell(int spell)
 
 			(void)fire_ball(GF_MISSILE, dir,
 							(damroll(3, 5) + plev +
-							 (plev / (((p_ptr->pclass == CLASS_MAGE) ||
-									   (p_ptr->pclass ==
+							 (plev / (((p_ptr->rp.pclass == CLASS_MAGE) ||
+									   (p_ptr->rp.pclass ==
 										CLASS_HIGH_MAGE)) ? 2 : 4))),
 							((plev < 30) ? 2 : 3));
 			/* Shouldn't actually use GF_MANA, as it will destroy all
@@ -1405,8 +1405,8 @@ static bool cast_death_spell(int spell)
 	int dummy = 0;
 	int i;
 
-	if (p_ptr->pclass == CLASS_MAGE) beam = plev;
-	else if (p_ptr->pclass == CLASS_HIGH_MAGE) beam = plev + 10;
+	if (p_ptr->rp.pclass == CLASS_MAGE) beam = plev;
+	else if (p_ptr->rp.pclass == CLASS_HIGH_MAGE) beam = plev + 10;
 	else
 		beam = plev / 2;
 
@@ -1471,8 +1471,8 @@ static bool cast_death_spell(int spell)
 
 			(void)fire_ball(GF_OLD_DRAIN, dir,
 							(damroll(3, 6) + plev +
-							 (plev / (((p_ptr->pclass == CLASS_MAGE) ||
-									   (p_ptr->pclass ==
+							 (plev / (((p_ptr->rp.pclass == CLASS_MAGE) ||
+									   (p_ptr->rp.pclass ==
 										CLASS_HIGH_MAGE)) ? 2 : 4))),
 							((plev < 30) ? 2 : 3));
 			break;
@@ -1826,8 +1826,8 @@ static bool cast_trump_spell(int spell, bool success)
 	char tmp_val[160];
 
 
-	if (p_ptr->pclass == CLASS_MAGE) beam = plev;
-	else if (p_ptr->pclass == CLASS_HIGH_MAGE) beam = plev + 10;
+	if (p_ptr->rp.pclass == CLASS_MAGE) beam = plev;
+	else if (p_ptr->rp.pclass == CLASS_HIGH_MAGE) beam = plev + 10;
 	else
 		beam = plev / 2;
 
@@ -1853,8 +1853,8 @@ static bool cast_trump_spell(int spell, bool success)
 				/* A limited power 'wonder' spell */
 				int die = randint1(120);
 
-				if ((p_ptr->pclass == CLASS_ROGUE) ||
-					(p_ptr->pclass == CLASS_HIGH_MAGE))
+				if ((p_ptr->rp.pclass == CLASS_ROGUE) ||
+					(p_ptr->rp.pclass == CLASS_HIGH_MAGE))
 					die = (randint1(110)) + plev / 5;
 				/* Card sharks and high mages get a level bonus */
 
@@ -2505,8 +2505,8 @@ static bool cast_arcane_spell(int spell)
 	int plev = p_ptr->lev;
 	int dummy = 0;
 
-	if (p_ptr->pclass == CLASS_MAGE) beam = plev;
-	else if (p_ptr->pclass == CLASS_HIGH_MAGE) beam = plev + 10;
+	if (p_ptr->rp.pclass == CLASS_MAGE) beam = plev;
+	else if (p_ptr->rp.pclass == CLASS_HIGH_MAGE) beam = plev + 10;
 	else
 		beam = plev / 2;
 

@@ -1229,6 +1229,26 @@ struct player_class
 };
 
 
+/*
+ * Data describing the character.
+ *
+ * (Mostly roll-playing information)
+ */
+typedef struct player_data player_data;
+
+struct player_data
+{
+	s16b age;	/* Characters age */
+	s16b ht;	/* Height */
+	s16b wt;	/* Weight */
+	s16b sc;	/* Social Class */
+	
+	byte hitdie;	/* Hit dice (sides) */
+
+	byte psex;	/* Sex index */
+	byte prace;	/* Race index */
+	byte pclass;	/* Class index */
+};
 
 /*
  * Most of the "player" information goes here.
@@ -1251,19 +1271,12 @@ struct player_type
 {
 	s16b px;	/* Player location */
 	s16b py;	/* Player location */
-
-	byte psex;	/* Sex index */
-	byte prace;	/* Race index */
-	byte pclass;	/* Class index */
+	
+	player_data rp;	/* Role-play information */
+		
 	byte realm1;	/* First magic realm */
-
 	byte realm2;	/* Second magic realm */
-	byte hitdie;	/* Hit dice (sides) */
-	s16b age;	/* Characters age */
-
-	s16b ht;	/* Height */
-	s16b wt;	/* Weight */
-	s16b sc;	/* Social Class */
+	
 	s16b max_depth;	/* Max depth */
 	s16b depth;	/* Cur depth */
 	s16b max_lev;	/* Max level */

@@ -97,7 +97,7 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 
 
 	/* Food can feed the player */
-	if (p_ptr->prace == RACE_VAMPIRE)
+	if (p_ptr->rp.prace == RACE_VAMPIRE)
 	{
 		/* Reduced nutritional benefit */
 		(void)set_food(p_ptr->food + (o_ptr->pval / 10));
@@ -106,7 +106,7 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 		if (p_ptr->food < PY_FOOD_ALERT)	/* Hungry */
 			msgf("Your hunger can only be satisfied with fresh blood!");
 	}
-	else if (p_ptr->prace == RACE_SKELETON)
+	else if (p_ptr->rp.prace == RACE_SKELETON)
 	{
 		if (!((o_ptr->sval == SV_FOOD_WAYBREAD) ||
 			  (o_ptr->sval < SV_FOOD_BISCUIT)))
@@ -126,9 +126,9 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 			msgf("The food falls through your jaws and vanishes!");
 		}
 	}
-	else if ((p_ptr->prace == RACE_GOLEM) ||
-			 (p_ptr->prace == RACE_ZOMBIE) ||
-			 (p_ptr->prace == RACE_SPECTRE) || (p_ptr->prace == RACE_GHOUL))
+	else if ((p_ptr->rp.prace == RACE_GOLEM) ||
+			 (p_ptr->rp.prace == RACE_ZOMBIE) ||
+			 (p_ptr->rp.prace == RACE_SPECTRE) || (p_ptr->rp.prace == RACE_GHOUL))
 	{
 		msgf("The food of mortals is poor sustenance for you.");
 		(void)set_food(p_ptr->food + ((o_ptr->pval) / 20));
@@ -190,7 +190,7 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 	/* Quaff the potion */
 	(void)use_object(o_ptr, &ident);
 
-	if (p_ptr->prace == RACE_SKELETON)
+	if (p_ptr->rp.prace == RACE_SKELETON)
 	{
 		msgf("Some of the fluid falls through your jaws!");
 		(void)potion_smash_effect(0, p_ptr->px, p_ptr->py, o_ptr->k_idx);
@@ -222,7 +222,7 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Potions can feed the player */
-	switch (p_ptr->prace)
+	switch (p_ptr->rp.prace)
 	{
 		case RACE_VAMPIRE:
 			(void)set_food(p_ptr->food + (o_ptr->pval / 10));

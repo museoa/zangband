@@ -152,8 +152,8 @@ void add_note_type(int note_number)
 
 			/* Build the string containing the player information */
 			len = strnfmt(player, 100, "the %s %s",
-						  race_info[p_ptr->prace].title,
-						  class_info[p_ptr->pclass].title);
+						  race_info[p_ptr->rp.prace].title,
+						  class_info[p_ptr->rp.pclass].title);
 
 			if (p_ptr->realm1 != REALM_NONE)
 			{

@@ -186,7 +186,7 @@ static long total_points(void)
 
 	temp = p_ptr->max_exp + (100 * p_ptr->max_depth);
 
-	temp = (temp * mult) / race_info[p_ptr->prace].r_exp;
+	temp = (temp * mult) / race_info[p_ptr->rp.prace].r_exp;
 
 	temp += equip_value() / 10;
 
@@ -515,9 +515,9 @@ void enter_score(void)
 
 	/* Save the player info XXX XXX XXX */
 	strnfmt(the_score.uid, 8, "%7u", (uint)player_uid);
-	strnfmt(the_score.sex, 2, "%c", (p_ptr->psex ? 'm' : 'f'));
-	strnfmt(the_score.p_r, 3, "%2d", (int)p_ptr->prace);
-	strnfmt(the_score.p_c, 3, "%2d", (int)p_ptr->pclass);
+	strnfmt(the_score.sex, 2, "%c", (p_ptr->rp.psex ? 'm' : 'f'));
+	strnfmt(the_score.p_r, 3, "%2d", (int)p_ptr->rp.prace);
+	strnfmt(the_score.p_c, 3, "%2d", (int)p_ptr->rp.pclass);
 
 	/* Save the level and such */
 	strnfmt(the_score.cur_lev, 4, "%3d", p_ptr->lev);
@@ -628,9 +628,9 @@ void predict_score(void)
 
 	/* Save the player info XXX XXX XXX */
 	strnfmt(the_score.uid, 8, "%7u", (uint)player_uid);
-	strnfmt(the_score.sex, 2, "%c", (p_ptr->psex ? 'm' : 'f'));
-	strnfmt(the_score.p_r, 3, "%2d", (int)p_ptr->prace);
-	strnfmt(the_score.p_c, 3, "%2d", (int)p_ptr->pclass);
+	strnfmt(the_score.sex, 2, "%c", (p_ptr->rp.psex ? 'm' : 'f'));
+	strnfmt(the_score.p_r, 3, "%2d", (int)p_ptr->rp.prace);
+	strnfmt(the_score.p_c, 3, "%2d", (int)p_ptr->rp.pclass);
 
 	/* Save the level and such */
 	strnfmt(the_score.cur_lev, 4, "%3d", p_ptr->lev);
@@ -708,7 +708,7 @@ void show_highclass(void)
 	}
 
 	prtf(0, m + 8, "You) %s the %s (Level %2d)",
-			player_name, race_info[p_ptr->prace].title, p_ptr->lev);
+			player_name, race_info[p_ptr->rp.prace].title, p_ptr->lev);
 
 	(void)fd_close(highscore_fd);
 	highscore_fd = -1;
@@ -776,10 +776,10 @@ void race_score(int race_num)
 	}
 
 	/* add player if qualified */
-	if ((p_ptr->prace == race_num) && (p_ptr->lev >= lastlev))
+	if ((p_ptr->rp.prace == race_num) && (p_ptr->lev >= lastlev))
 	{
 		prtf(0, m + 8, "You) %s the %s (Level %3d)",
-				player_name, race_info[p_ptr->prace].title, p_ptr->lev);
+				player_name, race_info[p_ptr->rp.prace].title, p_ptr->lev);
 	}
 
 	(void)fd_close(highscore_fd);

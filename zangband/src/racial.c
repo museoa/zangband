@@ -218,7 +218,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 
 	if (racial_aux(mut_ptr->level, mut_ptr->cost, mut_ptr->stat, mut_ptr->diff))
 	{
-		switch (p_ptr->prace)
+		switch (p_ptr->rp.prace)
 		{
 			case RACE_DWARF:
 			{
@@ -408,7 +408,7 @@ static void cmd_racial_power_aux(const mutation_type *mut_ptr)
 
 				if (randint1(100) < plev)
 				{
-					switch (p_ptr->pclass)
+					switch (p_ptr->rp.pclass)
 					{
 						case CLASS_WARRIOR:
 						case CLASS_RANGER:
@@ -710,7 +710,7 @@ void do_cmd_racial_power(void)
 	{
 		mut_ptr = &race_powers[i];
 
-		if (mut_ptr->which == p_ptr->prace)
+		if (mut_ptr->which == p_ptr->rp.prace)
 		{
 			power_desc[num].name = mut_ptr->name;
 			power_desc[num].level = mut_ptr->level;

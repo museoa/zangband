@@ -285,7 +285,7 @@ static void sense_inventory(void)
 	if (p_ptr->confused) return;
 	
 	/* Analyze the class */
-	switch (p_ptr->pclass)
+	switch (p_ptr->rp.pclass)
 	{
 		case CLASS_WARRIOR:
 		{
@@ -402,7 +402,7 @@ static void sense_inventory(void)
 	if (!(one_in_(difficulty))) return;
 	
 	/* Heavy sensing? */
-	heavy = class_info[p_ptr->pclass].heavy_sense;
+	heavy = class_info[p_ptr->rp.pclass].heavy_sense;
 
 	/*** Sense everything ***/
 
@@ -535,7 +535,7 @@ static bool pattern_effect(void)
 		(c_ptr->feat > FEAT_PATTERN_XTRA2))
 		return FALSE;
 
-	if ((p_ptr->prace == RACE_AMBERITE) && (p_ptr->cut > 0) && one_in_(10))
+	if ((p_ptr->rp.prace == RACE_AMBERITE) && (p_ptr->cut > 0) && one_in_(10))
 	{
 		wreck_the_pattern();
 	}
@@ -583,7 +583,7 @@ static bool pattern_effect(void)
 	}
 	else
 	{
-		if ((p_ptr->prace == RACE_AMBERITE) && one_in_(2))
+		if ((p_ptr->rp.prace == RACE_AMBERITE) && one_in_(2))
 			return TRUE;
 		else if (!p_ptr->invuln)
 			take_hit(damroll(1, 3), "walking the Pattern");
@@ -1014,7 +1014,7 @@ static void process_world(void)
 
 
 	/* (Vampires) Take damage from sunlight */
-	if (p_ptr->prace == RACE_VAMPIRE)
+	if (p_ptr->rp.prace == RACE_VAMPIRE)
 	{
 		if (!p_ptr->depth && !p_ptr->resist_lite && !p_ptr->invuln &&
 			(!((turn / ((10L * TOWN_DAWN) / 2)) % 2)))
@@ -2228,7 +2228,7 @@ static void process_command(void)
 			if (p_ptr->anti_magic)
 			{
 				cptr which_power = "magic";
-				if (p_ptr->pclass == CLASS_MINDCRAFTER)
+				if (p_ptr->rp.pclass == CLASS_MINDCRAFTER)
 					which_power = "psionic powers";
 				else if (mp_ptr->spell_book == TV_LIFE_BOOK)
 					which_power = "prayer";
@@ -2240,7 +2240,7 @@ static void process_command(void)
 			}
 			else
 			{
-				if (p_ptr->pclass == CLASS_MINDCRAFTER)
+				if (p_ptr->rp.pclass == CLASS_MINDCRAFTER)
 					do_cmd_mindcraft();
 				else
 					do_cmd_cast();
@@ -3362,10 +3362,11 @@ void play_game(bool new_game)
 		player_birth();
 
 		/* Hack -- enter the world */
-		if ((p_ptr->prace == RACE_VAMPIRE) ||
-			(p_ptr->prace == RACE_SKELETON) ||
-			(p_ptr->prace == RACE_ZOMBIE) ||
-			(p_ptr->prace == RACE_SPECTRE) || (p_ptr->prace == RACE_GHOUL))
+		if ((p_ptr->rp.prace == RACE_VAMPIRE) ||
+			(p_ptr->rp.prace == RACE_SKELETON) ||
+			(p_ptr->rp.prace == RACE_ZOMBIE) ||
+			(p_ptr->rp.prace == RACE_SPECTRE) ||
+			(p_ptr->rp.prace == RACE_GHOUL))
 		{
 			/* Undead start just after midnight */
 			turn = (30L * TOWN_DAWN) / 4 + 1;
@@ -3521,10 +3522,10 @@ void play_game(bool new_game)
 			if ((p_ptr->wizard || cheat_live) && !get_check("Die? "))
 			{
 				/* Mark social class, reset age, if needed */
-				if (p_ptr->sc) p_ptr->sc = p_ptr->age = 0;
+				if (p_ptr->rp.sc) p_ptr->rp.sc = p_ptr->rp.age = 0;
 
 				/* Increase age */
-				p_ptr->age++;
+				p_ptr->rp.age++;
 
 				/* Mark savefile */
 				p_ptr->noscore |= 0x0001;

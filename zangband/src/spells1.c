@@ -3327,7 +3327,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 
 			if (p_ptr->resist_nethr)
 			{
-				if (p_ptr->prace != RACE_SPECTRE)
+				if (p_ptr->rp.prace != RACE_SPECTRE)
 					dam *= 6;
 				dam /= rand_range(7, 12);
 			}
@@ -3349,7 +3349,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				}
 			}
 
-			if (p_ptr->prace == RACE_SPECTRE)
+			if (p_ptr->rp.prace == RACE_SPECTRE)
 			{
 				msgf("You feel invigorated!");
 				(void)hp_player(dam / 4);
@@ -3590,7 +3590,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			{
 				(void)set_blind(p_ptr->blind + rand_range(2, 7));
 			}
-			if (p_ptr->prace == RACE_VAMPIRE)
+			if (p_ptr->rp.prace == RACE_VAMPIRE)
 			{
 				msgf("The light scorches your flesh!");
 				dam *= 2;
@@ -3621,7 +3621,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 				dam *= 4;
 				dam /= rand_range(7, 12);
 
-				if (p_ptr->prace == RACE_VAMPIRE) dam = 0;
+				if (p_ptr->rp.prace == RACE_VAMPIRE) dam = 0;
 			}
 			else if (!blind && !p_ptr->resist_blind)
 			{
@@ -3849,7 +3849,7 @@ static bool project_p(int who, int r, int x, int y, int dam, int typ, int a_rad)
 			/* Death Ray */
 			if (fuzzy) msgf("You are hit by something extremely cold!");
 
-			switch (p_ptr->prace)
+			switch (p_ptr->rp.prace)
 			{
 					/* Some races are immune */
 				case RACE_GOLEM:

@@ -111,7 +111,7 @@ static int critical_melee(int chance, int sleeping_bonus, cptr m_name,
 		 * Encourage the player to make sneak attacks on
 		 * sleeping monsters. -LM-
 		 */
-		if ((sleeping_bonus) && (p_ptr->pclass == CLASS_ROGUE))
+		if ((sleeping_bonus) && (p_ptr->rp.pclass == CLASS_ROGUE))
 			msgf("You ruthlessly sneak attack!");
 
 		/* Determine level of critical hit x 10. */
@@ -1162,17 +1162,17 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 	else
 		bash_chance = p_ptr->skill_thn +
 			(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128 +
-			(((p_ptr->pclass == CLASS_WARRIOR) ||
-			  (p_ptr->pclass == CLASS_PALADIN) ||
-			  (p_ptr->pclass == CLASS_WARRIOR_MAGE) ||
-			  (p_ptr->pclass == CLASS_CHAOS_WARRIOR)) ? p_ptr->lev : 0);
+			(((p_ptr->rp.pclass == CLASS_WARRIOR) ||
+			  (p_ptr->rp.pclass == CLASS_PALADIN) ||
+			  (p_ptr->rp.pclass == CLASS_WARRIOR_MAGE) ||
+			  (p_ptr->rp.pclass == CLASS_CHAOS_WARRIOR)) ? p_ptr->lev : 0);
 
 	/* Players bash more often when they see a real need. */
 	if (bash_chance)
 	{
 		o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 
-		if ((!o_ptr->k_idx) && (p_ptr->pclass != CLASS_MONK))
+		if ((!o_ptr->k_idx) && (p_ptr->rp.pclass != CLASS_MONK))
 			bash_chance *= 3;
 		else if ((o_ptr->dd * o_ptr->ds * (*blows)) <
 				 (p_ptr->equipment[EQUIP_ARM].dd *
@@ -1188,7 +1188,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 		msgf("You get in a shield bash!");
 
 		/* Calculate attack quality, a mix of momentum and accuracy. */
-		bash_quality = p_ptr->skill_thn + (p_ptr->wt / 8) +
+		bash_quality = p_ptr->skill_thn + (p_ptr->rp.wt / 8) +
 			(p_ptr->total_weight / 80) + (o_ptr->weight / 3);
 
 		/* Calculate damage.  Big shields are deadly. */
@@ -1433,7 +1433,7 @@ void py_attack(int x, int y)
 	blows = p_ptr->num_blow;
 
 	/* Prepare for ghoul paralysis? */
-	if (!(o_ptr->k_idx) && (p_ptr->prace == RACE_GHOUL))
+	if (!(o_ptr->k_idx) && (p_ptr->rp.prace == RACE_GHOUL))
 	{
 		ghoul_paral = 0;
 
@@ -1445,10 +1445,10 @@ void py_attack(int x, int y)
 	if ((m_ptr->csleep) && (ghoul_paral > -1))
 	{
 		chg_virtue(V_COMPASSION, -1);
-		if (!(p_ptr->pclass == CLASS_ROGUE)) chg_virtue(V_HONOUR, -1);
+		if (!(p_ptr->rp.pclass == CLASS_ROGUE)) chg_virtue(V_HONOUR, -1);
 	}
 
-	if (p_ptr->pclass == CLASS_ROGUE)
+	if (p_ptr->rp.pclass == CLASS_ROGUE)
 	{
 		if (m_ptr->csleep && m_ptr->ml)
 		{
@@ -1534,7 +1534,7 @@ void py_attack(int x, int y)
 	 * Monsters in trees can take advantage of cover,
 	 * except from rangers.
 	 */
-	else if ((c_ptr->feat == FEAT_TREES) && (p_ptr->pclass != CLASS_RANGER))
+	else if ((c_ptr->feat == FEAT_TREES) && (p_ptr->rp.pclass != CLASS_RANGER))
 	{
 		terrain_bonus = r_ptr->ac / 7 + 5;
 	}
@@ -1619,7 +1619,7 @@ void py_attack(int x, int y)
 			}
 
 			/* Monk attack? */
-			if ((p_ptr->pclass == CLASS_MONK) && (!o_ptr->k_idx))
+			if ((p_ptr->rp.pclass == CLASS_MONK) && (!o_ptr->k_idx))
 			{
 				/* Make a special monk attack */
 				monk_attack(m_ptr, &k, m_name);
@@ -1753,7 +1753,7 @@ void py_attack(int x, int y)
 			else
 			{
 				msgf("You %s %s.",
-						   ((p_ptr->prace == RACE_GHOUL) ? "claw" : "punch"),
+						   ((p_ptr->rp.prace == RACE_GHOUL) ? "claw" : "punch"),
 						   m_name);
 			}
 
@@ -1775,8 +1775,8 @@ void py_attack(int x, int y)
 				/* Hack -- High-level warriors can spread their attacks out
 				 * among weaker foes. -LM-
 				 */
-				if (((p_ptr->pclass == CLASS_WARRIOR) ||
-					 (p_ptr->pclass == CLASS_CHAOS_WARRIOR)) &&
+				if (((p_ptr->rp.pclass == CLASS_WARRIOR) ||
+					 (p_ptr->rp.pclass == CLASS_CHAOS_WARRIOR)) &&
 					(p_ptr->lev > 39) && (num < p_ptr->num_blow) &&
 					(p_ptr->energy_use))
 				{
@@ -2348,7 +2348,7 @@ void move_player(int dir, int do_pickup)
 			 (c_ptr->feat == FEAT_PINE_TREE) || (c_ptr->feat == FEAT_SNOW_TREE))
 	{
 		oktomove = TRUE;
-		if (p_ptr->pclass != CLASS_RANGER) p_ptr->energy_use += 10;
+		if (p_ptr->rp.pclass != CLASS_RANGER) p_ptr->energy_use += 10;
 	}
 
 	/* Some terrains are hard to move through */

@@ -355,7 +355,7 @@ static void prt_title(void)
 	/* Normal */
 	else
 	{
-		p = player_title[p_ptr->pclass][(p_ptr->lev - 1) / 5];
+		p = player_title[p_ptr->rp.pclass][(p_ptr->lev - 1) / 5];
 
 	}
 
@@ -1727,7 +1727,7 @@ static void calc_mana(void)
 	/* Hack -- Must be literate */
 	if (!mp_ptr->spell_book) return;
 
-	if (p_ptr->pclass == CLASS_MINDCRAFTER)
+	if (p_ptr->rp.pclass == CLASS_MINDCRAFTER)
 	{
 		levels = p_ptr->lev;
 	}
@@ -1748,7 +1748,7 @@ static void calc_mana(void)
 	if (msp) msp++;
 
 	/* Hack: High mages have a 25% mana bonus */
-	if (msp && (p_ptr->pclass == CLASS_HIGH_MAGE)) msp += msp / 4;
+	if (msp && (p_ptr->rp.pclass == CLASS_HIGH_MAGE)) msp += msp / 4;
 
 
 	/* Only mages are affected */
@@ -1799,7 +1799,7 @@ static void calc_mana(void)
 		 * The addition of one is to make sure the
 		 * mana total is decreased by some amount.
 		 */
-		switch (p_ptr->pclass)
+		switch (p_ptr->rp.pclass)
 		{
 			case CLASS_MAGE:
 			case CLASS_HIGH_MAGE:
@@ -2328,7 +2328,7 @@ static void calc_bonuses(void)
 	extra_blows = extra_shots = 0;
 
 	/* Calculate monk armour status */
-	if (p_ptr->pclass == CLASS_MONK)
+	if (p_ptr->rp.pclass == CLASS_MONK)
 	{
 		u16b monk_arm_wgt = 0;
 
@@ -2488,7 +2488,7 @@ static void calc_bonuses(void)
 	/* Base skill -- digging */
 	p_ptr->skill_dig = 0;
 
-	switch (p_ptr->pclass)
+	switch (p_ptr->rp.pclass)
 	{
 		case CLASS_WARRIOR:
 		{
@@ -2521,8 +2521,8 @@ static void calc_bonuses(void)
 			if (!p_ptr->monk_armour_stat)
 			{
 #ifndef MONK_HACK
-				if (!((p_ptr->prace == RACE_KLACKON) ||
-					  (p_ptr->prace == RACE_SPRITE)))
+				if (!((p_ptr->rp.prace == RACE_KLACKON) ||
+					  (p_ptr->rp.prace == RACE_SPRITE)))
 #endif /* MONK_HACK */
 				{
 					p_ptr->pspeed += (p_ptr->lev) / 10;
@@ -2537,7 +2537,7 @@ static void calc_bonuses(void)
 	}
 
 	/***** Races ****/
-	switch (p_ptr->prace)
+	switch (p_ptr->rp.prace)
 	{
 		case RACE_ELF:
 		{
@@ -2573,7 +2573,7 @@ static void calc_bonuses(void)
 				/* High level trolls heal fast... */
 				p_ptr->regenerate = TRUE;
 
-				if (p_ptr->pclass == CLASS_WARRIOR)
+				if (p_ptr->rp.pclass == CLASS_WARRIOR)
 				{
 					p_ptr->slow_digest = TRUE;
 					/*
@@ -2926,7 +2926,7 @@ static void calc_bonuses(void)
 	}
 
 	/* Monks get extra ac for armour _not worn_ */
-	if ((p_ptr->pclass == CLASS_MONK) && (!p_ptr->monk_armour_stat))
+	if ((p_ptr->rp.pclass == CLASS_MONK) && (!p_ptr->monk_armour_stat))
 	{
 		if (!(p_ptr->equipment[EQUIP_BODY].k_idx))
 		{
@@ -2964,7 +2964,7 @@ static void calc_bonuses(void)
 	if (p_ptr->sh_fire) p_ptr->lite = TRUE;
 
 	/* Golems also get an intrinsic AC bonus */
-	if (p_ptr->prace == RACE_GOLEM)
+	if (p_ptr->rp.prace == RACE_GOLEM)
 	{
 		p_ptr->to_a += 20 + (p_ptr->lev / 5);
 		p_ptr->dis_to_a += 20 + (p_ptr->lev / 5);
@@ -3315,7 +3315,7 @@ static void calc_bonuses(void)
 			p_ptr->num_fire += extra_shots;
 
 			/* Hack -- Rangers love Bows */
-			if ((p_ptr->pclass == CLASS_RANGER) &&
+			if ((p_ptr->rp.pclass == CLASS_RANGER) &&
 				(p_ptr->ammo_tval == TV_ARROW))
 			{
 				/* Extra shot at level 15 */
@@ -3329,7 +3329,7 @@ static void calc_bonuses(void)
 			}
 
 			/* Hack -- Rangers can use XBows as well */
-			if ((p_ptr->pclass == CLASS_RANGER) &&
+			if ((p_ptr->rp.pclass == CLASS_RANGER) &&
 				(p_ptr->ammo_tval == TV_BOLT))
 			{
 				/* Extra shot at level 30 */
@@ -3337,7 +3337,7 @@ static void calc_bonuses(void)
 			}
 
 			/* Hack -- Rogues love Slings */
-			if ((p_ptr->pclass == CLASS_ROGUE) && (p_ptr->ammo_tval == TV_SHOT))
+			if ((p_ptr->rp.pclass == CLASS_ROGUE) && (p_ptr->ammo_tval == TV_SHOT))
 			{
 				/* Extra shot at level 20 */
 				if (p_ptr->lev >= 20) p_ptr->num_fire++;
@@ -3350,7 +3350,7 @@ static void calc_bonuses(void)
 			 * Addendum -- also "Reward" high level warriors,
 			 * with _any_ missile weapon -- TY
 			 */
-			if (p_ptr->pclass == CLASS_WARRIOR &&
+			if (p_ptr->rp.pclass == CLASS_WARRIOR &&
 				(p_ptr->ammo_tval <= TV_BOLT) && (p_ptr->ammo_tval >= TV_SHOT))
 			{
 				/* Extra shot at level 40 */
@@ -3360,19 +3360,19 @@ static void calc_bonuses(void)
 		}
 	}
 	/* Add all class and race-specific adjustments to missile Skill. -LM- */
-	p_ptr->skill_thb += add_special_missile_skill(p_ptr->pclass);
+	p_ptr->skill_thb += add_special_missile_skill(p_ptr->rp.pclass);
 
 	/* Examine the "main weapon" */
 	o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 
 	/* Add all other class-specific adjustments to melee Skill. -LM- */
-	p_ptr->skill_thn += add_special_melee_skill(p_ptr->pclass, o_ptr);
+	p_ptr->skill_thn += add_special_melee_skill(p_ptr->rp.pclass, o_ptr);
 
 	/* Assume okay */
 	p_ptr->icky_wield = FALSE;
 
 	/* Extra bonus for warriors... */
-	if (p_ptr->pclass == CLASS_WARRIOR)
+	if (p_ptr->rp.pclass == CLASS_WARRIOR)
 	{
 		p_ptr->to_h += (p_ptr->lev / 5);
 		p_ptr->to_d += (p_ptr->lev / 5);
@@ -3382,7 +3382,7 @@ static void calc_bonuses(void)
 	}
 
 	/* Priest weapon penalty for non-blessed edged weapons */
-	if ((p_ptr->pclass == CLASS_PRIEST) && (!p_ptr->bless_blade) &&
+	if ((p_ptr->rp.pclass == CLASS_PRIEST) && (!p_ptr->bless_blade) &&
 		((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM)))
 	{
 		/* Reduce the real bonuses */
@@ -3534,7 +3534,7 @@ static void calc_bonuses(void)
 	else
 	{
 		/* Different calculation for monks with empty hands */
-		if (p_ptr->pclass == CLASS_MONK)
+		if (p_ptr->rp.pclass == CLASS_MONK)
 		{
 			p_ptr->num_blow = 2;
 
@@ -3626,7 +3626,7 @@ static void calc_bonuses(void)
 		}
 	}
 
-	if (p_ptr->pclass == CLASS_MONK &&
+	if (p_ptr->rp.pclass == CLASS_MONK &&
 		(p_ptr->monk_armour_stat != old_monk_armour))
 	{
 		if (p_ptr->monk_armour_stat)

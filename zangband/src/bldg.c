@@ -76,7 +76,7 @@ void have_nightmare(int r_idx)
 
 	r_ptr->r_flags4 |= RF4_ELDRITCH_HORROR;
 
-	switch (p_ptr->prace)
+	switch (p_ptr->rp.prace)
 	{
 		case RACE_IMP:
 		{
@@ -298,7 +298,7 @@ static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 	cptr race_name = race_info[bo_ptr->owner_race].title;
 
 	/* Compute the racial factor */
-	factor = rgold_adj[bo_ptr->owner_race][p_ptr->prace];
+	factor = rgold_adj[bo_ptr->owner_race][p_ptr->rp.prace];
 
 	/* Add in the charisma factor */
 	factor += adj_chr_gold[p_ptr->stat_ind[A_CHR]];
@@ -1786,7 +1786,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 	int factor;
 
 	/* Compute the racial factor */
-	factor = rgold_adj[bo_ptr->owner_race][p_ptr->prace];
+	factor = rgold_adj[bo_ptr->owner_race][p_ptr->rp.prace];
 
 	/* Add in the charisma factor */
 	factor += adj_chr_gold[p_ptr->stat_ind[A_CHR]];
