@@ -120,14 +120,7 @@ bool monst_spell_monst(int m_idx)
 		if (!are_enemies(m_ptr, t_ptr)) continue;
 
 		/* Monster must be projectable */
-		if (stupid_monsters)
-		{
-			if (!projectable(t_ptr->fy, t_ptr->fx, m_ptr->fy, m_ptr->fx)) continue;
-		}
-		else
-		{
-			if (!clean_shot(t_ptr->fy, t_ptr->fx, m_ptr->fy, m_ptr->fx, is_pet(m_ptr))) continue;
-		}
+		if (!projectable(t_ptr->fy, t_ptr->fx, m_ptr->fy, m_ptr->fx)) continue;
 
 		/* OK -- we've got a target */
 		y = t_ptr->fy;
@@ -140,6 +133,19 @@ bool monst_spell_monst(int m_idx)
 		f4 = r_ptr->flags4;
 		f5 = r_ptr->flags5;
 		f6 = r_ptr->flags6;
+
+		/* Remove some spells if necessary */
+		if (!stupid_monsters &&
+			 ((f4 & RF4_BOLT_MASK) ||
+			  (f5 & RF5_BOLT_MASK) ||
+			  (f6 & RF6_BOLT_MASK)) &&
+			 !(r_ptr->flags2 & RF2_STUPID) &&
+			 !clean_shot(t_ptr->fy, t_ptr->fx, m_ptr->fy, m_ptr->fx, is_pet(m_ptr)))
+		{
+			f4 &= ~(RF4_BOLT_MASK);
+			f5 &= ~(RF5_BOLT_MASK);
+			f6 &= ~(RF6_BOLT_MASK);
+		}
 
 		/* Hack -- allow "desperate" spells */
 		if ((r_ptr->flags2 & RF2_SMART) &&
