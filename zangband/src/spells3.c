@@ -1987,7 +1987,8 @@ void identify_item(object_type *o_ptr)
 	object_aware(o_ptr);
 	object_known(o_ptr);
 
-	if (o_ptr->flags3 & TR3_INSTA_ART)
+	if ((o_ptr->flags3 & TR3_INSTA_ART) 
+		&& (a_info[o_ptr->activate - 128].cur_num != 2))
 	{
 		/*
 		 * If the item was an artifact, and if the
