@@ -546,8 +546,8 @@ void activate_quests(int level)
 	{
 		q_ptr = &quest[i];
 		
-		/* Assume no longer created or active */
-		q_ptr->flags &= ~(QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED);
+		/* Assume no longer active */
+		q_ptr->flags &= ~(QUEST_FLAG_ACTIVE);
 
 		/* Is the quest relevant? */
 		switch (q_ptr->type)
@@ -559,7 +559,8 @@ void activate_quests(int level)
 				
 				/* Follow through */
 			}
-		
+			
+
 			case QUEST_TYPE_BOUNTY:
 			{
 				q_ptr->flags |= QUEST_FLAG_ACTIVE;
@@ -569,6 +570,14 @@ void activate_quests(int level)
 				
 				break;
 			}
+			
+			case QUEST_TYPE_WILD:
+			{
+				/* In Wilderness? */
+				if (!level) q_ptr->flags |= QUEST_FLAG_ACTIVE;
+				break;
+			}
+
 			
 			case QUEST_TYPE_FIND_ITEM:
 			{
@@ -793,9 +802,6 @@ void trigger_quest_create(byte c_type, vptr data)
 				continue;
 			}
 		}
-
-		/* The quest is created */
-		q_ptr->flags |= QUEST_FLAG_CREATED;
 	}
 }
 
@@ -2394,8 +2400,8 @@ void draw_quest(place_type *pl_ptr)
 		}
 	}
 
-	/* Activate quest + create quest + we know about the quest */
-	q_ptr->flags |= (QUEST_FLAG_ACTIVE | QUEST_FLAG_CREATED);
+	/* Activate quest + we know about the quest */
+	q_ptr->flags |= (QUEST_FLAG_ACTIVE);
 
 	/* Hack - we now take this quest */
 	if (q_ptr->status == QUEST_STATUS_UNTAKEN)

@@ -1795,14 +1795,6 @@ static void del_block(int x, int y)
 	{
 		/* Decrease refcount region */
 		pl_ptr->region = unref_region(pl_ptr->region);
-
-		/* Unref quest? */
-		if ((!pl_ptr->region) && (pl_ptr->quest_num))
-		{
-			/* No longer active or created */
-			quest[pl_ptr->quest_num].flags &= ~(QUEST_FLAG_ACTIVE
-												| QUEST_FLAG_CREATED);
-		}
 	}
 
 	/* Time to delete it - get block pointer */
