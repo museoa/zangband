@@ -1354,8 +1354,11 @@ static void roff_top(int r_idx)
 	a2 = r_ptr->x_attr;
 
 	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria) a1 = TERM_WHITE;
-	if (!use_color || ironman_moria) a2 = TERM_WHITE;
+	if (!use_color || ironman_moria)
+	{
+		a1 = TERM_WHITE;
+		a2 = TERM_WHITE;
+	}
 
 
 	/* Clear the top line */
@@ -1442,6 +1445,106 @@ void display_roff(int r_idx)
 	/* Describe monster */
 	roff_top(r_idx);
 }
+
+
+/*
+ * Hack -- show a list of the visible monsters in the current "term" window
+ */
+void display_visible(void)
+{
+	int i, y;
+	char c1, c2;
+	byte a1, a2;
+	monster_race *r_ptr;
+
+
+	/* Erase the window */
+	for (y = 0; y < Term->hgt; y++)
+	{
+		/* Erase the line */
+		Term_erase(0, y, 255);
+	}
+
+	i = p_ptr->max_seen_r_idx;
+
+	/* Show the list */
+	for (y = 0; y < Term->hgt; y++)
+	{
+		/* No more to display */
+		if (!i) return;
+		
+		/* Go to left of screen */
+		Term_gotoxy(0, y);
+		
+		/* Note we have assumed that r_info.txt has been sorted */
+		
+		/* Access monster */
+		r_ptr = &r_info[i];
+		
+		/* Access the chars */
+		c1 = r_ptr->d_char;
+		c2 = r_ptr->x_char;
+
+		/* Access the attrs */
+		a1 = r_ptr->d_attr;
+		a2 = r_ptr->x_attr;
+
+		/* Hack -- fake monochrome */
+		if (!use_color || ironman_moria)
+		{
+			a1 = TERM_WHITE;
+			a2 = TERM_WHITE;
+		}
+
+		/* Dump the name */
+		if (r_ptr->flags1 & RF1_UNIQUE)
+		{
+			Term_addstr(-1, TERM_L_BLUE, (r_name + r_ptr->name));
+		}
+		else
+		{
+			Term_addstr(-1, TERM_WHITE, (r_name + r_ptr->name));
+		}		
+
+		/* Append the "standard" attr/char info */
+		Term_addstr(-1, TERM_WHITE, " ('");
+		Term_addch(a1, c1);
+		Term_addstr(-1, TERM_WHITE, "')");
+
+		/* Append the "optional" attr/char info */
+		Term_addstr(-1, TERM_WHITE, "/('");
+		Term_addch(a2, c2);
+		Term_addstr(-1, TERM_WHITE, "'):");
+
+		/* Wizards get extra info */
+		if (p_ptr->wizard)
+		{
+			char buf[6];
+
+			sprintf(buf, "%d", i);
+	
+			Term_addstr(-1, TERM_WHITE, " (");
+			Term_addstr(-1, TERM_L_BLUE, buf);
+			Term_addch(TERM_WHITE, ')');
+		}
+		
+		/* Append count */
+		roff(format("[%d]",r_ptr->r_see));
+		
+		/* Look for the next one */
+		while (i > 0)
+		{
+			i--;
+			
+			if (r_info[i].r_see)
+			{
+				break;
+			}
+		}
+	}
+}
+
+
 
 static byte mon_wild;
 static monster_hook_type wild_mon_hook;

@@ -549,6 +549,7 @@ extern void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note);
 /* monster1.c */
 extern void screen_roff(int r_idx, int remember);
 extern void display_roff(int r_idx);
+extern void display_visible(void);
 extern void create_name(int type, char *name);
 
 /* monster2.c */
@@ -566,6 +567,7 @@ extern s16b get_mon_num(int level);
 extern void monster_desc(char *desc, monster_type *m_ptr, int mode);
 extern void lore_do_probe(int m_idx);
 extern void lore_treasure(int m_idx, int num_item, int num_gold);
+extern void update_mon_vis(u16b r_idx, int increment);
 extern void update_mon(int m_idx, bool full);
 extern void update_monsters(bool full);
 extern bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool friendly, bool pet);

@@ -1428,6 +1428,40 @@ static void fix_monster(void)
 
 
 /*
+ * Hack -- display visible monster list in sub-windows
+ */
+static void fix_visible(void)
+{
+	int j;
+
+	/* Scan windows */
+	for (j = 0; j < 8; j++)
+	{
+		term *old = Term;
+
+		/* No window */
+		if (!angband_term[j]) continue;
+
+		/* No relevant flags */
+		if (!(window_flag[j] & (PW_VISIBLE))) continue;
+
+		/* Activate */
+		Term_activate(angband_term[j]);
+
+		/* Display monster list */
+		display_visible();
+
+		/* Fresh */
+		Term_fresh();
+
+		/* Restore */
+		Term_activate(old);
+	}
+}
+
+
+
+/*
  * Hack -- display object recall in sub-windows
  */
 static void fix_object(void)
@@ -3933,6 +3967,13 @@ void window_stuff(void)
 	{
 		p_ptr->window &= ~(PW_MONSTER);
 		fix_monster();
+	}
+	
+	/* Display monster list */
+	if (p_ptr->window & (PW_VISIBLE))
+	{
+		p_ptr->window &= ~(PW_VISIBLE);
+		fix_visible();
 	}
 
 	/* Display object recall */

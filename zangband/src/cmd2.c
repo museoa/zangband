@@ -2515,7 +2515,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	object_type *o_ptr;
 
 	int tdis, thits, tmul;
-	int cur_dis, visible;
+	int cur_dis;
 
 	int chance2;
 
@@ -2715,16 +2715,13 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-			/* Check the visibility */
-			visible = m_ptr->ml;
-
 			chance2 = chance - cur_dis;
 
 			/* Note the collision */
 			hit_body = TRUE;
 
 			/* Sleeping, visible monsters are easier to hit. -LM- */
-			if ((m_ptr->csleep) && (visible))
+			if ((m_ptr->csleep) && (m_ptr->ml))
 				sleeping_bonus = 5 + p_ptr->lev / 5;
 
 			/* Monsters in rubble can take advantage of cover. -LM- */
@@ -2776,14 +2773,11 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				/* Get "the monster" or "it" */
 				monster_desc(m_name, m_ptr, 0);
 
-				if (visible)
-				{
-					/* Hack -- Track this monster race */
-					if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
+				/* Hack -- Track this monster race */
+				if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
 
-					/* Hack -- Track this monster */
-					if (m_ptr->ml) health_track(c_ptr->m_idx);
-				}
+				/* Hack -- Track this monster */
+				if (m_ptr->ml) health_track(c_ptr->m_idx);
 
 				/* The basic damage-determination formula is the same in
 				 * archery as it is in melee (apart from the launcher mul-
@@ -2803,7 +2797,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 				/* multiply by critical shot. (10x inflation) + level damage bonus */
 				tdam *= critical_shot(chance2, sleeping_bonus,
-					o_name, m_name, visible);
+					o_name, m_name, m_ptr->ml);
 
 				/*
 				 * Convert total Deadliness into a percentage, and apply
@@ -2939,7 +2933,7 @@ void do_cmd_throw_aux(int mult)
 	int chance, chance2, tdis;
 	int breakage;
 	int mul, div;
-	int cur_dis, visible;
+	int cur_dis;
 
 	long tdam;
 	int tdam_remainder, tdam_whole;
@@ -3139,9 +3133,6 @@ void do_cmd_throw_aux(int mult)
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-			/* Check the visibility */
-			visible = m_ptr->ml;
-
 			/* Calculate the projectile accuracy, modified by distance. */
 			chance2 = chance - distance(py, px, y, x);
 
@@ -3186,15 +3177,11 @@ void do_cmd_throw_aux(int mult)
 				/* Get "the monster" or "it" */
 				monster_desc(m_name, m_ptr, 0);
 
-				/* Handle visible monster */
-				if (visible)
-				{
-					/* Hack -- Track this monster race */
-					if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
+				/* Hack -- Track this monster race */
+				if (m_ptr->ml) monster_race_track(m_ptr->r_idx);
 
-					/* Hack -- Track this monster */
-					if (m_ptr->ml) health_track(c_ptr->m_idx);
-				}
+				/* Hack -- Track this monster */
+				if (m_ptr->ml) health_track(c_ptr->m_idx);
 
 				/* sum all the applicable additions to Deadliness. */
 				total_deadliness = p_ptr->to_d + q_ptr->to_d;
@@ -3227,7 +3214,7 @@ void do_cmd_throw_aux(int mult)
 				 * (10x inflation)
 				 */
 				if (f2 & (TR2_THROW)) tdam *= critical_shot
-					(chance2, sleeping_bonus, o_name, m_name, visible);
+					(chance2, sleeping_bonus, o_name, m_name, m_ptr->ml);
 				else tdam *= 10;
 
 				/* Convert total or object-only Deadliness into a percen-

@@ -168,8 +168,6 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 
 	char m_name[160];
 
-	bool seen = m_ptr->ml;
-
 	/* Can the player be aware of this attack? */
 	bool known = (m_ptr->cdis <= MAX_SIGHT);
 
@@ -184,7 +182,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 
 	if (m_ptr->invulner && randint0(PENETRATE_INVULNERABILITY))
 	{
-		if (seen)
+		if (m_ptr->ml)
 		{
 			msg_format("%^s is unharmed.", m_name);
 		}
@@ -219,7 +217,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 			if (known)
 			{
 				/* Unseen death by normal attack */
-				if (!seen)
+				if (!m_ptr->ml)
 				{
 					p_ptr->mon_fight = TRUE;
 				}
@@ -242,7 +240,7 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 
 			/* Generate treasure */
 			(void) monster_death(m_idx);
-
+			
 			/* Delete the monster */
 			delete_monster_idx(m_idx);
 
@@ -1767,7 +1765,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 						{
 							blinked = FALSE;
 							msg_format("%^s is suddenly very hot!", m_name);
-							if (t_ptr->ml)
+							if (see_t)
 								tr_ptr->r_flags2 |= RF2_AURA_FIRE;
 						}
 						project(t_idx, 0, m_ptr->fy, m_ptr->fx,
@@ -1784,7 +1782,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 						{
 							blinked = FALSE;
 							msg_format("%^s is suddenly very cold!", m_name);
-							if (t_ptr->ml)
+							if (see_t)
 								tr_ptr->r_flags3 |= RF3_AURA_COLD;
 						}
 						project(t_idx, 0, m_ptr->fy, m_ptr->fx,
@@ -1800,7 +1798,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 						{
 							blinked = FALSE;
 							msg_format("%^s gets zapped!", m_name);
-							if (t_ptr->ml)
+							if (see_t)
 								tr_ptr->r_flags2 |= RF2_AURA_ELEC;
 						}
 						project(t_idx, 0, m_ptr->fy, m_ptr->fx,

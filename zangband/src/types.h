@@ -408,6 +408,8 @@ struct monster_race
 	u32b r_flags7;			/* Observed racial flags */
 	
 	obj_theme obj_drop;		/* Type of objects to drop when killed */
+
+	u16b r_see;				/* Number of monsters of this type visible */
 };
 
 
@@ -1507,8 +1509,10 @@ struct player_type
 	bool birth[OPT_BIRTH];
 	
 	/* Extra player-specific flags */
-	bool skip_more;		/* Skip the --more-- prompt */
+	bool skip_more;			/* Skip the --more-- prompt */
 	bool mon_fight;			/* Monster fighting indicator */
+	
+	u16b max_seen_r_idx;	/* Most powerful monster visible */
 };
 
 

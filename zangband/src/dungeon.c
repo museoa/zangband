@@ -3112,6 +3112,9 @@ static void process_player(void)
 							/* Assume invisible */
 							m_ptr->ml = FALSE;
 
+							/* Decrement monster visible counter */
+							update_mon_vis(m_ptr->r_idx, -1);
+
 							/* Update the monster */
 							update_mon(i, FALSE);
 

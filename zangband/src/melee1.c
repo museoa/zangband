@@ -166,7 +166,6 @@ bool make_attack_normal(int m_idx)
 	/* Scan through all four blows */
 	for (ap_cnt = 0; ap_cnt < 4; ap_cnt++)
 	{
-		bool visible = FALSE;
 		bool obvious = FALSE;
 
 		int power = 0;
@@ -190,9 +189,6 @@ bool make_attack_normal(int m_idx)
 
 		/* Handle "leaving" */
 		if (p_ptr->leaving) break;
-
-		/* Extract visibility (before blink) */
-		if (m_ptr->ml) visible = TRUE;
 
 		/* Extract the attack "power" */
 		switch (effect)
@@ -1561,7 +1557,7 @@ bool make_attack_normal(int m_idx)
 
 
 		/* Analyze "visible" monsters only */
-		if (visible)
+		if (m_ptr->ml)
 		{
 			/* Count "obvious" attacks (and ones that cause damage) */
 			if (obvious || damage || (r_ptr->r_blows[ap_cnt] > 10))

@@ -1826,7 +1826,7 @@ static bool cast_death_spell(int spell)
 				/* Update some things */
 				p_ptr->update |= (PU_MON_LITE);
 			}
-
+			
 			/* Delete the monster */
 			delete_monster_idx(i);
 
@@ -3207,7 +3207,7 @@ void do_cmd_pet(void)
 							/* Update some things */
 							p_ptr->update |= (PU_MON_LITE);
 						}
-						
+												
 						delete_monster_idx(pet_ctr);
 						Dismissed++;
 					}

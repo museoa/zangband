@@ -105,6 +105,8 @@ void delete_monster_idx(int i)
 	/* Hack -- count the number of "reproducers" */
 	if (r_ptr->flags2 & (RF2_MULTIPLY)) num_repro--;
 
+	/* Decrement visibility count */
+	if (m_ptr->ml) update_mon_vis(m_ptr->r_idx, -1);
 
 	/* Hack -- remove target monster */
 	if (i == p_ptr->target_who) p_ptr->target_who = 0;
@@ -387,6 +389,10 @@ void wipe_m_list(void)
 
 	/* Hack -- no more tracking */
 	health_track(0);
+	
+	/* Hack -- reset "visible" counter */
+	p_ptr->max_seen_r_idx = 0;
+	p_ptr->window |= PW_VISIBLE;
 }
 
 
@@ -678,6 +684,9 @@ s16b get_mon_num(int level)
  *
  * If no m_ptr arg is given (?), the monster is assumed to be hidden,
  * unless the "Assume Visible" mode is requested.
+ * Does this really work???  It looks like r_ptr is initialised even
+ * if m_ptr is NULL.  Perhaps this craziness can be removed. -SF-
+ *
  *
  * If no r_ptr arg is given, it is extracted from m_ptr and r_info
  * If neither m_ptr nor r_ptr is given, the monster is assumed to
@@ -1117,6 +1126,45 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 }
 
 
+void update_mon_vis(u16b r_idx, int increment)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+	int i;
+
+	/* Changes on screen */
+	p_ptr->window |= PW_VISIBLE;
+
+	/* Update the counter */
+	r_ptr->r_see += increment;
+	
+	/* Update 'most powerful seen monster' */
+	if (r_ptr->r_see)
+	{
+		/* Check to see if we have spotted a more powerful monster */
+		if (r_idx > p_ptr->max_seen_r_idx)
+		{
+			/* Track this monster */
+			p_ptr->max_seen_r_idx = r_idx;
+		}
+	}
+	else
+	{
+		/* Look to see if we need to recalculate max_seen_ridx */
+		if (r_idx == p_ptr->max_seen_r_idx)
+		{
+			for (i = r_idx - 1; i > 0; i--)
+			{
+				/* Can we see this monster? */
+				if (r_info[i].r_see) break;
+			}
+			
+			/* Record it */
+			p_ptr->max_seen_r_idx = i;
+		}
+	}
+}
+
+
 /*
  * This function updates the monster record of the given monster
  *
@@ -1346,6 +1394,9 @@ void update_mon(int m_idx, bool full)
 			/* Mark as visible */
 			m_ptr->ml = TRUE;
 
+			/* Increment monster visibility counter */
+			update_mon_vis(m_ptr->r_idx, 1);
+
 			/* Draw the monster */
 			lite_spot(fy, fx);
 
@@ -1379,6 +1430,9 @@ void update_mon(int m_idx, bool full)
 			/* Mark as not visible */
 			m_ptr->ml = FALSE;
 
+			/* Decrement monster visibility counter */
+			update_mon_vis(m_ptr->r_idx, -1);
+			
 			/* Erase the monster */
 			lite_spot(fy, fx);
 
