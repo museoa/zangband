@@ -1995,7 +1995,7 @@ void display_map(int *cy, int *cx)
 
 	int yrat = cur_hgt / SCREEN_HGT;
 	int xrat = cur_wid / SCREEN_WID;
-
+	
 	/* Save lighting effects */
 	old_view_special_lite = view_special_lite;
 	old_view_granite_lite = view_granite_lite;
@@ -2195,6 +2195,8 @@ void do_cmd_view_map(void)
 {
 	int cy, cx;
 
+	/* No overhead map in vanilla town mode. */
+	if (!dun_level && vanilla_town) return;
 
 	/* Save the screen */
 	screen_save();
