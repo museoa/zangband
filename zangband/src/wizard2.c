@@ -221,13 +221,18 @@ static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 		rarity[i] /= 0x100;
 }
 
+#endif /* USE_64B */
 
 /*
  * Output a rarity graph for a type of object.
  *
  * Use a monte-carlo method to calculate the probabilities.
  */
+#ifndef USE_64B
 static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
+#else /* !USE_64B */
+static void prt_alloc(const object_type *o_ptr, int col, int row)
+#endif /* USE_64B */
 {
 	u32b i, j;
 	u32b maxd = 1, maxr = 1, maxt = 1;
@@ -250,27 +255,27 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	/* Refresh */
 	Term_fresh();
 
-	if (monte > 0)
+#ifndef USE_64B
+
+	/* Scan all entries */
+	for (i = 0; i < MAX_DEPTH; i++)
 	{
-		/* Scan all entries */
-		for (i = 0; i < MAX_DEPTH; i++)
+		for (j = 0; j < monte; j++)
 		{
-			for (j = 0; j < monte; j++)
-			{
-				if (get_obj_num(i, 0) == kind) rarity[i]++;
-			}
-
-			total[i] = monte;
+			if (get_obj_num(i, 0) == kind) rarity[i]++;
 		}
+		total[i] = monte;
 	}
-	else
-	{
-		/* Calculate */
-		get_obj_dist(0, kind, rarity);
 
-		for (i = 0; i < MAX_DEPTH; i++)
-			total[i] = 0x10000;
-	}
+#else /* !USE_64B */
+
+	/* Calculate */
+	get_obj_dist(0, kind, rarity);
+
+	for (i = 0; i < MAX_DEPTH; i++)
+		total[i] = 0x10000;
+
+#endif /* USE_64B */
 
 	/* Find maxima */
 	for (i = 0; i < MAX_DEPTH; i++)
@@ -348,7 +353,6 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	prtf(col, row + 21, "+");
 }
 
-#endif /* USE_64B */
 
 /*
  * Hack -- Teleport to the target
@@ -1003,8 +1007,6 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 }
 
 
-#ifdef USE_64B
-
 /*
  * Redraw the rarity graph with a different number of rolls
  * per level.  This changes the sqrt(n) poisson error.
@@ -1012,6 +1014,8 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
  */
 static void wiz_statistics(object_type *o_ptr)
 {
+#ifndef USE_64B
+
 	u32b test_roll = 100000;
 
 	char tmp_val[80];
@@ -1025,9 +1029,15 @@ static void wiz_statistics(object_type *o_ptr)
 
 	/* Display the rarity graph */
 	prt_alloc(o_ptr, 0, 2, test_roll);
-}
+
+#else /* !USE_64B */
+
+	/* Display the rarity graph */
+	prt_alloc(o_ptr, 0, 2);
 
 #endif /* USE_64B */
+
+}
 
 
 /*
@@ -1115,7 +1125,7 @@ static void do_cmd_wiz_play(void)
 		wiz_display_item(o_ptr);
 
 		/* Get choice */
-		if (!get_com("[a]ccept [r]eroll [t]weak [q]uantity? ", &ch))
+		if (!get_com("[a]ccept [r]eroll [t]weak [q]uantity [s]tatistics? ", &ch))
 		{
 			/* Ignore changes */
 			msgf("Changes ignored.");
@@ -1145,12 +1155,10 @@ static void do_cmd_wiz_play(void)
 			break;
 		}
 
-#ifdef USE_64B
 		if (ch == 's' || ch == 'S')
 		{
 			wiz_statistics(o_ptr);
 		}
-#endif /* USE_64B */
 
 		if (ch == 'r' || ch == 'r')
 		{
