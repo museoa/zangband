@@ -2912,8 +2912,8 @@ D:the air, you....
 
 N:214:Abyss worm mass
 G:w:D
-I:100:4d7:10:7:3
-W:16:4:0:81
+I:100:5d7:10:7:3
+W:28:4:0:110
 O:0:0:0
 B:CRAWL:EXP_10
 F:RAND_50 | RAND_25 |
