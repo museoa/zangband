@@ -65,12 +65,9 @@ extern void PixelSet_RGB(IconPtr dst, int r, int g, int b, int bypp);
 extern int Image2Bits(Tcl_Interp *interp, t_icon_data *iconDataPtr,
 	Tk_PhotoHandle photoH, int imageW, int imageH, XColor *xColorPtr);
 
-extern void Icon_AddType(t_icon_data *data);
 extern int Icon_Init(Tcl_Interp *interp, int size, int depth);
 extern int Icon_Validate(Tcl_Interp *interp, char *typeName, int index, int ascii,
 	IconSpec *specPtr);
-extern int Icon_ParseArgs(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[],
-	int offset, IconSpec *spectr);
 extern IconPtr Icon_GetAsciiData(IconSpec *specPtr, IconPtr dstPtr);
 extern int Icon_FindTypeByName(Tcl_Interp *interp, int *typeIndexPtr,
 	char *typeName);
