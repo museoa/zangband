@@ -499,7 +499,7 @@ errr enter_score(void)
 		long_day[i-2] = long_day[i];
 
 		/* Exit if get a zero */
-		if (long_day[i]) break;
+		if (!long_day[i] || i==11) break;
 	}
 
 	/* Save the date in standard form (8 chars) */
