@@ -1042,7 +1042,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 				(*cp) = c;
 
 				/* Use semi-random attr */
-				(*ap) = c_ptr->m_idx % 16 + 1;
+				(*ap) = c_ptr->m_idx % 15 + 1;
 			}
 
 			/* Special attr/char codes */
