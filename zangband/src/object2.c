@@ -742,7 +742,7 @@ errr get_obj_store_prep(void)
 		result = FALSE;
 
 		/* Will the store !not! buy this item? */
-		field_hook(c_ptr, FIELD_ACT_STORE_ACT1, o_ptr, &result);
+		field_script(c_ptr, FIELD_ACT_STORE_ACT1, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
 
 		/* We don't want this item type? */
 		if (result == TRUE)
@@ -756,7 +756,7 @@ errr get_obj_store_prep(void)
 		result = TRUE;
 
 		/* Will the store buy this item? */
-		field_hook(c_ptr, FIELD_ACT_STORE_ACT2, o_ptr, &result);
+		field_script(c_ptr, FIELD_ACT_STORE_ACT2, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
 
 		/* We don't want this item type? */
 		if (result == FALSE)
