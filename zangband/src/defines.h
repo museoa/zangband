@@ -3860,12 +3860,6 @@
 
 /*** Macro Definitions ***/
 
-/* Compile with -DBUG="abort()" to enable extra sanity checks */
-#ifndef BUG
-# define BUG
-#endif /* BUG */
-
-
 /*
  * Hack -- The main "screen"
  */
@@ -3945,7 +3939,7 @@
 		for (_this_o_idx = (OSTART); _this_o_idx; _this_o_idx = _next_o_idx) \
 		{ \
 			(O) = &o_list[_this_o_idx];\
-			if (!(O)->k_idx) BUG; \
+			assert((O)->k_idx); \
 			\
 			_next_o_idx = (O)->next_o_idx;
 

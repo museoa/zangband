@@ -104,22 +104,46 @@
 #define SGN(a)		(((a) < 0)   ? (-1) : ((a) != 0))
 
 /*
+ * Turn on aborts for the assert macro for now
+ */
+#define DEBUG_ABORT
+
+
+
+/*
  * An assertion macro
  */
 #undef assert
 
 #ifdef NDEBUG
-#define assert(ignore)	((void) 0)
-#else
+# define assert(ignore)	((void) 0)
+#else /* NDEBUG */
+
+# ifdef DEBUG_ABORT
+#  define assert(expr) \
+	do\
+	{\
+		if (!(expr)) \
+		{\
+			quit_fmt("\n%s%s\n%s%s\n%s%d\n\n",\
+			"Assertion failed: ", #expr,\
+			"in file ", __FILE__,\
+			"on line ", __LINE__);\
+		}\
+	}\
+	while (FALSE)
+
+# else /* DEBUG_ABORT */
+
 	/* Pick which type of output to use */
-#ifdef DEBUG_CORE
-#define __assert_fmt core_fmt
-#else
-#define __assert_fmt quit_fmt
-#endif
+#  ifdef DEBUG_CORE
+#   define __assert_fmt core_fmt
+#  else /* DEBUG_CORE */
+#   define __assert_fmt quit_fmt
+#  endif /* DEBUG_CORE */
 
 	/* Save the game, and then abort. */
-#define assert(expr)\
+#  define assert(expr)\
 	do\
 	{\
 		signals_ignore_tstp();\
@@ -133,7 +157,8 @@
 		}\
 	}\
 	while (FALSE)
-#endif
+# endif /* DEBUG_ABORT */
+#endif /* NDEBUG */
 
 
 
