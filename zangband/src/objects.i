@@ -103,7 +103,7 @@ typedef struct object_type
 
 	s16b timeout;		/* Timeout Counter */
 
-	byte dd, ds;		/* Damage dice/sides */	
+	byte dd, ds;		/* Damage dice/sides */
 
 	byte ident;			/* Special flags  */
 
@@ -115,7 +115,7 @@ typedef struct object_type
 	u32b flags1;        /* Flags, set 1 */
 	u32b flags2;        /* Flags, set 2 */
 	u32b flags3;        /* Flags, set 3 */
-	
+
 	u32b kn_flags1;     /* Known Flags, set 1 */
 	u32b kn_flags2;     /* Known Flags, set 2 */
 	u32b kn_flags3;     /* Known Flags, set 3 */
@@ -125,7 +125,7 @@ typedef struct object_type
 	s16b held_m_idx;	/* Monster holding us (if any) */
 
 	s32b cost;			/* Object "base cost" */
-	
+
 	byte feeling;       /* Game generated inscription number (eg, pseudo-id) */
 
 	byte activate;		/* Activation type */

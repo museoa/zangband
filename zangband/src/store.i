@@ -65,9 +65,6 @@ struct store_type
 	
 	u16b x;					/* Location x coord. */
 	u16b y;					/* Location y coord. */
-	
-	field_type *f_ptr;		/* Field corresponding to this store */
-	byte	info_flags;		/* Info flags - obtained from the field data[] */
 };
 
 typedef store_type *store_ptr;

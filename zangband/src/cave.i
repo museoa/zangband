@@ -6,14 +6,6 @@
 
 %}
 
-%{
-	errr load_layout(cptr name)
-	{
-		init_flags = INIT_CREATE_DUNGEON | INIT_ASSIGN;
-		return process_dungeon_file(name, 0, 0, MAX_HGT, MAX_WID);
-	}
-%}
-
 typedef const char *cptr;
 typedef unsigned char byte;
 typedef signed short s16b;
@@ -72,8 +64,6 @@ typedef unsigned int u32b;
  */
 #define MAX_WID         198
 
-
-errr load_layout(cptr name);
 
 %name (set_feat) void cave_set_feat(int y, int x, int feat);
 
