@@ -3173,6 +3173,7 @@ void update_view(void)
 					bits1 &= ~(p->bits_1);
 					bits2 &= ~(p->bits_2);
 					bits3 &= ~(p->bits_3);
+					bits4 &= ~(p->bits_4);
 
 					/* All ready seen.  Next... */
 					if (info & CAVE_VIEW) continue;
