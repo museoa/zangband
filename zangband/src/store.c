@@ -2867,14 +2867,17 @@ static void store_sell(void)
 	/* Get a copy of the object */
 	object_copy(q_ptr, o_ptr);
 
-	/*
-	 * If a rod or wand, allocate total maximum
-	 * timeouts or charges to those being sold.
-	 */
-	reduce_charges(q_ptr, amt);
-
 	/* Modify quantity */
 	q_ptr->number = amt;
+
+	/*
+	 * Hack -- If a rod or wand, allocate total maximum
+	 * timeouts or charges to those being sold. -LM-
+	 */
+	if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
+	{
+		q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
+	}
 
 	/* Get a full description */
 	object_desc(o_name, q_ptr, TRUE, 3);
@@ -2940,14 +2943,17 @@ static void store_sell(void)
 			/* Get a copy of the object */
 			object_copy(q_ptr, o_ptr);
 
-			/*
-			 * If a rod or wand, let the shopkeeper know just
-			 * how many charges he really paid for.
-			 */
-			reduce_charges(q_ptr, amt);
-
 			/* Modify quantity */
 			q_ptr->number = amt;
+
+			/*
+			 * Hack -- If a rod or wand, let the shopkeeper know just
+			 * how many charges he really paid for. -LM-
+			 */
+			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
+			{
+				q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
+			}
 
 			/* Get the "actual" value */
 			value = object_value(q_ptr) * q_ptr->number;
@@ -2965,12 +2971,10 @@ static void store_sell(void)
 			 * Hack -- Allocate charges between those wands or rods sold
 			 * and retained, unless all are being sold. -LM-
 			 */
-			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-			{
-				q_ptr->pval = o_ptr->pval * amt / o_ptr->number;
+			distribute_charges(o_ptr, q_ptr, amt);
 
-				if (o_ptr->number > amt) o_ptr->pval -= q_ptr->pval;
-			}
+			/* Reset timeouts of the sold items */
+			q_ptr->timeout = 0;
 
 			/* Take the item from the player, describe the result */
 			inven_item_increase(item, -amt);
