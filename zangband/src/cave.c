@@ -2359,6 +2359,17 @@ static const byte priority_table[][2] =
 
 	/* Walls */
 	{FEAT_SECRET, 10},
+	{FEAT_WALL_EXTRA, 10},
+	{FEAT_WALL_INNER, 10},
+	{FEAT_WALL_OUTER, 10},
+	{FEAT_WALL_SOLID, 10},
+	
+	
+	/* Perm Walls */
+	{FEAT_PERM_EXTRA, 10},
+	{FEAT_PERM_INNER, 10},
+	{FEAT_PERM_OUTER, 10},
+	{FEAT_PERM_SOLID, 10},
 
 	/* Quartz */
 	{FEAT_QUARTZ, 11},
