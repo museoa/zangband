@@ -161,11 +161,10 @@ static void prt_binary(u32b flags, int col, int row)
 	}
 }
 
-#if 0
-static double pow4(double n)
+static ufix40_24 pow4(ufix40_24 n)
 {
-    double pow2 = n * n;
-    return pow2 * pow2;
+    ufix40_24 pow2 = (n * n) >> 24;
+    return (pow2 * pow2) >> 24;
 }
 
 static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
@@ -173,15 +172,12 @@ static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 	int i;
 	long value1, total;
     alloc_entry *table = alloc_kind_table;
-    double p;
-
-    /* We need to do the intermediate math in floating point... */
-    double r_db[MAX_DEPTH];
+    ufix40_24 p;  /* Fixed point: 40 bits integer 24 bits fractional */
 
     int level;
 
     for (i = 0; i < MAX_DEPTH; i++)
-        r_db[i] = 0;
+        rarity[i] = 0;
 
     for (level = 0; level < MAX_DEPTH * 2; level++)
     {
@@ -218,8 +214,8 @@ static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 
             if (table[i].index == obj_num)
             {
-                p += (pow4(value1 + table[i].prob2) - pow4(value1)) /
-                    pow4(total);
+                p += pow4(0x1000000LL * (value1 + table[i].prob2) / total) -
+                    pow4(0x1000000LL * value1 / total);
             }
 
             /* Increment */
@@ -228,7 +224,7 @@ static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 
         /* Add base probability */
         if (level < MAX_DEPTH)
-            r_db[level] += p * (GREAT_OBJ - 1) / GREAT_OBJ;
+            rarity[level] += (u32b)(p * (GREAT_OBJ - 1) / GREAT_OBJ);
 
         /* Add the probability for out-of-depth objects */
         for (i = 1; i <= MAX_DEPTH; i++)
@@ -236,16 +232,16 @@ static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
             if (level - MAX_DEPTH / i >= 0 &&
                 level - MAX_DEPTH / i < MAX_DEPTH)
             {
-                r_db[level - MAX_DEPTH / i] += p / GREAT_OBJ / MAX_DEPTH;
+                rarity[level - MAX_DEPTH / i] +=
+                    (u32b)((p / MAX_DEPTH) / GREAT_OBJ);
             }
         }
     }
 
-    /* Convert to fixed point */
+    /* Scale down the final result */
     for (i = 0; i < MAX_DEPTH; i++)
-        rarity[i] = (int)(0x10000 * r_db[i]);
+        rarity[i] /= 0x100;
 }
-#endif /* 0 */
 
 /*
  * Output a rarity graph for a type of object.
@@ -290,15 +286,11 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
     }
     else
     {
-#if 0
         /* Calculate */
         get_obj_dist(0, kind, rarity);
 
         for (i = 0; i < MAX_DEPTH; i++)
             total[i] = 0x10000;
-#else /* 0 */
-        return;
-#endif /* 0 */
     }
 
 	/* Find maxima */
