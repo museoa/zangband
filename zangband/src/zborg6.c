@@ -1337,9 +1337,6 @@ bool borg_caution_phase(int emergency, int turns)
 			/* Skip unknown grids */
 			if (!mb_ptr->feat) continue;
 
-			/* Skip weird grids */
-			if (mb_ptr->feat == FEAT_INVIS) continue;
-
 			/* Skip walls */
 			if (borg_cave_wall_grid(mb_ptr)) continue;
 
@@ -1419,9 +1416,6 @@ static bool borg_dim_door(int emergency, int p1)
 
 			/* Skip unknown grids */
 			if (!mb_ptr->feat) continue;
-
-			/* Skip weird grids */
-			if (mb_ptr->feat == FEAT_INVIS) continue;
 
 			/* Skip walls, trees, water, lava */
 			if (borg_cave_wall_grid(mb_ptr)) continue;
@@ -5156,8 +5150,6 @@ static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
 	/* Hack -- Unknown grids should be avoided some of the time */
 	if (!mb_ptr->feat && ((borg_t % 8) == 0)) return (0);
 
-	/* Hack -- Weird grids should be avoided some of the time */
-	if ((mb_ptr->feat == FEAT_INVIS) && ((borg_t % 8) == 0)) return (0);
 #endif
 
 	/* dont shoot at ghosts in walls, not perfect */
@@ -5184,8 +5176,6 @@ static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
 
 				if (mb_ptr->feat >= FEAT_MAGMA &&
 					mb_ptr->feat <= FEAT_PERM_SOLID) walls++;
-
-				if (mb_ptr->feat & FEAT_INVIS) unknown++;
 			}
 		}
 		/* Is the ghost likely in a wall? */
@@ -5367,15 +5357,7 @@ static int borg_launch_bolt_aux(int x, int y, int rad, int dam, int typ,
 					else
 						return (n);
 				}
-				/* Stop at weird grids (see above) */
-				/* note if beam, this is the end of the beam */
-				if (mb_ptr->feat == FEAT_INVIS)
-				{
-					if (rad != -1)
-						return (0);
-					else
-						return (n);
-				}
+
 				/* Stop at unseen walls */
 				/* We just shot and missed, this is our next shot */
 				if (successful_target < 0)
@@ -5441,15 +5423,6 @@ static int borg_launch_bolt_aux(int x, int y, int rad, int dam, int typ,
 					}
 				}
 
-				/* Stop at weird grids (see above) */
-				/* note if beam, this is the end of the beam */
-				if (mb_ptr->feat == FEAT_INVIS)
-				{
-					if (rad != -1)
-						return (0);
-					else
-						return (n);
-				}
 				/* Stop at unseen walls */
 				/* We just shot and missed, this is our next shot */
 				if (successful_target < 0)

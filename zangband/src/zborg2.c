@@ -2785,12 +2785,6 @@ void borg_map_erase(void)
  * the grid is on the current panel, and is currently "lit" in some
  * manner, and does not contain a monster.
  *
- * Note that we use the "feat" code of "FEAT_INVIS" for grids which
- * once contained a wall/door, but then contained a monster or object.
- * These grids are probably floors, unless the grid contains a monster
- * which can pass through walls, in which case note that missiles and
- * spells may not affect a monster in the grid.
- *
  * Note that we use the other "feat" codes for grids which probably
  * contain the given feature type, unless several feature types use
  * the same symbol, in which case we use some "default" code, changing
@@ -2816,19 +2810,6 @@ void borg_map_erase(void)
  * grid, and objects hide any feature in their grid, and objects are
  * memorized when they are seen, and monsters can be detected by a
  * variety of methods, including infravision and telepathy.
- *
- * So we ignore most non-floor grids, and we mark any floor grids which
- * are "known" to be perma-lit as "BORG_GLOW", and any which are "known"
- * to be dark as "BORG_DARK".  These flags are used for many purposes,
- * most importantly, to determine when "call lite" would be useful, and
- * to help determine when a monster is standing in a viewable perma-lit
- * grid, and should thus be "visible", and to determine when the player
- * has "lite", even though his torch has gone out.
- *
- * When a "call lite" spell succeeds, we mark the grids around the
- * player as "BORG_GLOW" and not "BORG_DARK", but we do not attempt
- * to "spread" the lite to the entire room, since, in general, it is
- * not possible to know what grids are in the "room".
  *
  * Note that we assume that normally, when the player steps onto
  * something, it disappears, and turns into a normal floor, unless

@@ -3600,11 +3600,6 @@ void do_cmd_borg(void)
 					feat = FEAT_FLOOR;
 					break;
 				}
-				case 'i':
-				{
-					feat = FEAT_INVIS;
-					break;
-				}
 				case ',':
 				{
 					feat = FEAT_OPEN;

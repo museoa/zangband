@@ -46,8 +46,6 @@
     (map_in_bounds((X),(Y)) && \
 	 borg_cave_floor_grid(map_loc((X),(Y))))
 
-/* Hack - this is a field, so define it here */
-#define FEAT_INVIS	0x02
 
 /* Types of monster list */
 #define BORG_MON_USED	1
