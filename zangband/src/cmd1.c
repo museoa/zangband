@@ -1800,6 +1800,7 @@ void py_attack(int y, int x)
 	/* Attempt to shield bash the monster */
 	if (monster_bash(&blows, sleeping_bonus, c_ptr, &fear, m_name)) return;
 
+
 	/* Access the weapon */
 	o_ptr = &inventory[INVEN_WIELD];
 

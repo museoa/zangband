@@ -4263,16 +4263,16 @@ static void amiga_map( void )
 		/* Work out offset of corner of dungeon-sized segment of the wilderness */ 
 		int xoffset, yoffset;
 		
-		xoffset = (wild_grid.x_min + wild_grid.x_max - MAX_WID) / 2;
+		xoffset = (wild_grid.x_min + wild_grid.x_max - WILD_GRID_SIZE * 16) / 2;
 		yoffset = (wild_grid.y_min + wild_grid.y_max - MAX_HGT) / 2;
 		
 		/* Draw all "interesting" features */
-		for ( i = xoffset; i < xoffset + MAX_WID; i++ )
+		for ( i = xoffset; i < xoffset + WILD_GRID_SIZE * 16; i++ )
 		{
 			for ( j = yoffset; j < yoffset + MAX_HGT; j++ )
 			{
 				/* Get frame tile */
-				if ( (i == xoffset) || (i == xoffset + MAX_WID - 1) ||
+				if ( (i == xoffset) || (i == xoffset + WILD_GRID_SIZE * 16 - 1) ||
 					(j == yoffset) || (j == yoffset + MAX_HGT - 1) )
 				{
 					ta = f_info[63].x_attr;

@@ -72,7 +72,7 @@
  * Note that, on some machines, for example, the Macintosh, the standard
  * "malloc()" function cannot handle more than 32767 bytes at one time,
  * but we may assume that the "ralloc()" function can handle up to 65535
- * butes at one time.  We should not, however, assume that the "ralloc()"
+ * bytes at one time.  We should not, however, assume that the "ralloc()"
  * function can handle more than 65536 bytes at a time, since this might
  * result in segmentation problems on certain older machines, and in fact,
  * we should not assume that it can handle exactly 65536 bytes at a time,
@@ -835,6 +835,46 @@ struct monster_type
 	u32b smart;			/* Field for "smart_learn" */
 
 #endif /* DRS_SMART_OPTIONS */
+
+};
+
+
+
+
+typedef struct field_type field_type;
+
+/* Pointer to a field */
+typedef field_type *field_ptr;
+
+/*
+ * A function pointer to an action.  The function takes two values:
+ * 1) the field that is undergoing the action.
+ * 2) a pointer to a structure cast to void that contains the
+ *	information the action needs to complete its job.
+ */
+typedef void (*field_action_type)(field_ptr, void*);
+
+struct field_type
+{	
+	byte f_attr;			/* attribute */
+	char f_char;			/* character */
+	
+	s16b t_idx;			/* field type index */
+
+	s16b fy;			/* Y location on map */
+	s16b fx;			/* X location on map */
+
+	byte info;			/* quick access flags */
+	byte priority;			/* LOS priority higher = more visible */
+	
+	s16b counter;			/* Counter for timed effects */
+	
+	field_ptr next;			/* Pointer to next field on square */
+	
+	/* Storage space for the actions to interact with. */
+	byte data[8];			
+	
+	field_action_type action[FIELD_ACTION_MAX]; /* Function pointers for the actions */
 
 };
 
