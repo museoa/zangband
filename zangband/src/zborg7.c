@@ -4097,7 +4097,9 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
  */
 bool borg_best_stuff(void)
 {
-	int hole = INVEN_PACK - 1;
+#if 0
+    int hole = INVEN_PACK - 1;
+#endif
 
 	int k;
 

@@ -18,7 +18,7 @@ byte *test;
 byte *best;
 s32b *b_home_power;
 
-
+#if 0
 /*
  * Determine if an item can "absorb" a second item
  *
@@ -211,6 +211,7 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
 	/* They match, so they must be similar */
 	return (TRUE);
 }
+#endif /* 0 */
 
 /*
  * Find the mininum amount of some item to buy/sell. For most
