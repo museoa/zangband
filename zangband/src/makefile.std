@@ -171,7 +171,7 @@ linux: CFLAGS += -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ" -D"USE_X11" \
                  -D"USE_XAW" `gtk-config --cflags` -D"USE_GTK" \
                  -pedantic -W -Wmissing-prototypes -Wmissing-declarations \
 				 -Wno-long-long -Wwrite-strings -Wpointer-arith \
-				 -Wbad-function-cast -Wsign-compare \
+				 -Wbad-function-cast -Wsign-compare -DHAVE_MKSTEMP\
 				 -Waggregate-return -Wstrict-prototypes \
 				 -Wredundant-decls #-Wunreachable-code
  
@@ -182,8 +182,8 @@ linux: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib \
 ## Linux with the (depreciated) svga port.
 ##
 linux_svga: CFLAGS += -Wno-long-long -D"USE_GCU" -D"USE_VCS" -D"USE_XPJ"\
-                 -D"USE_X11" -D"USE_XAW" -D"USE_LSL"\
-                  `gtk-config --cflags` -D"USE_GTK" \
+                 -D"USE_X11" -D"USE_XAW" -D"USE_LSL" \
+                  `gtk-config --cflags` -D"USE_GTK" -DHAVE_MKSTEMP\
                  -pedantic -W -Wmissing-prototypes -Wmissing-declarations
  
 linux_svga: LIBS := -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl \
@@ -597,8 +597,8 @@ $(LUAWSRCS): %.c: %.pkg $(LUA)tolua$(EXEC)
 ##
 ## Hack... .o files can be created from .obj files
 ##
-#%.o:%.obj
-#	move $@ $<
+%.o:%.obj
+	move $@ $<
 
 #LUALIST := basic.lua feature.lua verbatim.lua code.lua typedef.lua \
 #	container.lua package.lua module.lua define.lua enumerate.lua \
