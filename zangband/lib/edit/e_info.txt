@@ -444,6 +444,7 @@ F:SLAY_EVIL | SLAY_UNDEAD | SLAY_DEMON |
 F:SEE_INVIS | BLESSED | RES_FEAR
 L:MAKE:	if player.rp.pclass == CLASS_PALADIN then 
 L:MAKE:		set_obj_flag(object, 3, TR3_LUCK_10) 
+L:MAKE:		object.cost = object.cost - 3000
 L:MAKE:	end
 L:MAKE:	add_ego_power(EGO_XTRA_SUSTAIN, object)
 L:MAKE:	if (one_in_(4) ~= 0) then
@@ -537,6 +538,7 @@ F:CHAOTIC | RES_CHAOS | PATRON | IGNORE_ELEC | IGNORE_ACID | IGNORE_FIRE
 L:MAKE:	if player.rp.pclass == CLASS_CHAOS_WARRIOR then 
 L:MAKE:		set_obj_flag(object, 0, TR0_SP) 
 L:MAKE:		object.pval = 1
+L:MAKE:		object.cost = object.cost - 2500
 L:MAKE:	end
 L:MAKE:	add_ego_power(EGO_XTRA_ANY_RESIST, object)
 
