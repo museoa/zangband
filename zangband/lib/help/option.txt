@@ -653,3 +653,4 @@ Updated    : Zangband 2.1.* by Topi Ylinen
 Updated    : Zangband 2.2.0 through 2.2.6c by Robert Ruehlman
 Updated    : Zangband DevTeam
 Last update: November 16, 1999
+
