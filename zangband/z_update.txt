@@ -3,21 +3,16 @@ the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
 Zangband 2.3.4:
--Fixed the excessive disturbing messages produced by monsters fighting 
- each other.
--Additional refinements to the help-file code.
 -Extended the online helpfile system significantly (also added The
  Angband Newbie Guide by Chris Weisiger and amended it somewhat for
  ZAngband).
 -Resting at the Inn now restores hit-points and mana.
--Added some new monsters.
+-Added some new monsters and amended others.
 -Replaced the 'Resist Time' and 'Sustain Stats' mutations with two new
  ones.
--Fixed some probelems with makefile.std and amended pref-emx.prf.
 -Upgraded the TY_CURSE and nightmare mode somewhat.
 -Enhanced compatability with lcc-win32 compiler.
 -New wizard command to delete all monsters on the current level.
--Numerous improvements to the in-game documentation.
 -Illumination now works on all open areas and not just rooms.
 -Increased the ratings of the 'miniature cell' and 'interlock' vaults.
 -Reduced all monster hit-points and armor class in preparation for
@@ -32,6 +27,7 @@ Zangband 2.3.4:
     been decreased for larger weapons. However, the formula is such
     that the larger weapons will still do more damage than the smaller,
     lighter ones.
+  - Downgraded some artifacts and normal weapons.
   - Most players will be able to get 2 blows from the start.
   - Wielding a weapon that is too heavy will mean that a player can
     only get 1 blow.
@@ -41,7 +37,7 @@ Zangband 2.3.4:
   - Rangers get 1 extra shot at plev 20 and 40 (total of 2) for bows.
     They also get an extra shot at plev 20 for crossbows.
   - Rogues get 1 extra shot at plev 20 and 40 (total of 2) for slings.
-  - Warriors get 1 extra shot at plev 40 for all shooter types.
+  - Warriors get 1 extra shot at plev 40 for all launcher types.
   - Normal classes now get 2* 1d1 for unarmed combat (punches) (Except
     for monks who still start with 1 attack).
   - Monks do less damage than before (scaled down by 25-30%) per attack
@@ -49,13 +45,14 @@ Zangband 2.3.4:
     bonus extra attack structure to max out at 8 attacks.
   - Shield bashes have made a return, bashing does some damage and may
     stun and confuse your oponent.
-  - New critical hit structure.
+  - New critical hit structure and messages.
   - Damage multipliers for slays and brands amended. Slay Evil and Slay
     Animal do x1.7, Kill Dragon x3 and all others x2.
   - Added the 'THROW' flag to various objects and artifacts. These
     items will do more damage when thrown.
+  - Strength no longer affects your combat skill (was to_hit).
 -Further amendments and refinements to the dungeon generation code
- including:
+ including (by sfuerst):
   - Rooms of all types can be packed closer together.
   - 5 new room types added.
   - 2 new corridor types (the pillared tunnel is optional).
@@ -66,21 +63,12 @@ Zangband 2.3.4:
     and reflected.
 -You will no longer receive rewards for killing non-unique monsters.
 -Added a small tribute to Lev Zakrevski.
--Fixed a problem with makefile.ibm.
--Fixed a problem with pet summoners.
--Fixed a bug with critical shots.
 -Trees will now only block LOS half the time.
--Increased the maximum number of pits to 2 per level
--Fixed a bug that caused thrown/fired objects to look strange with
- graphics turned on.
--Fixed a bug that could mess up character dumps when the player had
- drained stats.
+-Increased the maximum number of pits to 2 per level.
 -Changed the compiler optimization flags for the DOS version to work-
  around a bug in DJGPP that could cause ZAngband to hang when
  compacting items.
 -Artifacts now have a higher activation failure rate when cursed.
--Fixed a bug that caused thrown/fired objects to look strange with
- graphics switched on.
 -Added some new vaults by Eric Bock and tweaked a couple of others.
 -Added some more monsters including Storm Trolls and Bats of Gorgoroth
  from Oangband.
@@ -92,13 +80,47 @@ Zangband 2.3.4:
  [Note: include details of how to do this?]
 -Players may now walk the pattern incorrectly but should be cautious
  doing so.
--Fixed some problems with the 'easy patch' option.
 -Lice can no longer fly and are no longer denoted by the 'l' character.
 -'Enlightement' will now detect all walls and monsters.
 -Rings of Extra Attacks will now normaly be +1 and occasionally +2.
  They are also rarer.
 -Removed some items from silly.txt and rumors.txt and added some new
  entries.
+-Adjusted missile launcher damage multipliers and the energy required
+ to fire them.
+-Pebbles and shots have been upgraded. Rarity, damage and weight for
+ various missile types have been adjusted.
+-The scoring function now considers various things such as options
+ chosen at birth, etc. (Modified from GSNBand).
+-The 'M'ap now scales to the level size.
+-The auto-roller delay is now optional.
+-Allowed random artifact rings and amulets - these are very rare. Note
+ that Scrolls of Artifact Creation will not work on non-artifact rings
+ and amulets.
+-Enhanced pack monster AI.
+-Level feelings will now be generated based on the length of time you
+ have spent on the current level rather than the previous level.
+-Monster memory is now sorted by monster level regardless of the
+ monsters' entries in r_info.txt.
+-Reworked the 'C'haracter information screen to remove duplicate
+ information and reformatted character dumps to prevent line wrapping.
+-Fixed the excessive disturbing messages produced by monsters fighting 
+ each other.
+-Fixed some probelems with makefile.std and amended pref-emx.prf.
+-Fixed a problem with makefile.ibm.
+-Fixed a problem with pet summoners.
+-Fixed a bug with critical shots.
+-Fixed a bug that caused thrown/fired objects to look strange with
+ graphics turned on.
+-Fixed a bug that could mess up character dumps when the player had
+ drained stats.
+-Fixed a bug that caused thrown/fired objects to look strange with
+ graphics switched on.
+-Fixed some problems with the 'easy patch' option.
+-Fixed a bug that prevented Sprites from getting food at the inn.
+-Fixed the buffer overrun if players became too fast.
+-Fixed the sources of most of the compiler warnings with gcc.
+-Wands and staves will now stack properly when emptied.
 -Made some changes to enhance compatability with Mac compilers.
 
 
