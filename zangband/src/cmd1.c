@@ -66,7 +66,7 @@
  * Determine if the player "hits" a monster (normal combat).
  * Note -- Always miss 5%, always hit 5%, otherwise random.
  */
-bool test_hit_combat(int chance, int ac, int vis)
+static bool test_hit_combat(int chance, int ac, int vis)
 {
 	int k;
 
@@ -1117,7 +1117,7 @@ static void hit_trap(void)
 }
 
 
-void touch_zap_player(monster_type *m_ptr)
+static void touch_zap_player(monster_type *m_ptr)
 {
 	int aura_damage = 0;
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -2059,7 +2059,7 @@ void py_attack(int y, int x)
 }
 
 
-bool player_can_enter(byte feature)
+static bool player_can_enter(byte feature)
 {
 	bool pass_wall;
 
@@ -2123,13 +2123,6 @@ static void summon_pattern_vortex(int y, int x)
 {
 	int i;
 
-	/* Remember our position */
-	int opy = py;
-	int opx = px;
-
-	/* Hack - do not summon where we will move to */
-	py = y;
-	px = x;
 
 	/* Find the pattern vortex */
 	for (i = 1; i < max_r_idx; i++)
@@ -2147,17 +2140,13 @@ static void summon_pattern_vortex(int y, int x)
 			break;
 		}
 	}
-
-	/* Restore our position */
-	py = opy;
-	px = opx;
 }
 
 
 static bool pattern_tile(int y, int x)
 {
 	return ((cave[y][x].feat <= FEAT_PATTERN_XTRA2) &&
-		 (cave[y][x].feat >= FEAT_PATTERN_START));
+	        (cave[y][x].feat >= FEAT_PATTERN_START));
 }
 
 
