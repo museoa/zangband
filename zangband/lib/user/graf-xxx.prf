@@ -4728,6 +4728,8 @@ K:562:0xCE:0x8D
 # Haramakido~
 K:563:0xCE:0x8E
 
+# Diamond Edge~
+K:565:0xCE:0x90
 
 # Load the special player pictures
 %:xtra-xxx.prf
