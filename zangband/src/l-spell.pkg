@@ -168,7 +168,7 @@ extern bool dispel_undead(int dam);
 extern bool dispel_monsters(int dam);
 extern bool dispel_living(int dam);
 extern bool dispel_demons(int dam);
-extern bool raise_dead(int y, int x, bool pet);
+extern bool raise_dead(int x, int y, bool pet);
 extern bool turn_undead(void);
 extern bool destroy_area(int y1, int x1, int r);
 extern bool earthquake(int cy, int cx, int r);

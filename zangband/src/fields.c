@@ -2957,7 +2957,7 @@ bool field_action_hit_trap_raise_mon(field_type *f_ptr, vptr nothing)
 	
 	msg_print("You smell something musty.");
 	
-	(void)raise_dead(p_ptr->py, p_ptr->px, FALSE);
+	(void)raise_dead(p_ptr->px, p_ptr->py, FALSE);
 	
 	/* Done */
 	return (FALSE);

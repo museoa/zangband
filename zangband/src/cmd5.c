@@ -1732,7 +1732,7 @@ static bool cast_death_spell(int spell)
 		break;
 	case 25: /* Raise the Dead */
 		{
-			if (raise_dead(py, px, (bool)(!one_in_(3))))
+			if (raise_dead(px, py, (bool)(!one_in_(3))))
 			{
 				msg_print("Cold winds begin to blow around you, carrying with them the stench of decay...");
 				chg_virtue(V_UNLIFE, 1);

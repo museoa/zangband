@@ -1874,7 +1874,7 @@ bool dispel_demons(int dam)
 /*
  * Raise the dead
  */
-bool raise_dead(int y, int x, bool pet)
+bool raise_dead(int x, int y, bool pet)
 {
 	s16b i;
 	int fx, fy;

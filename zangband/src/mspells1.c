@@ -2102,7 +2102,7 @@ bool make_attack_spell(int m_idx)
 			disturb(TRUE);
 			msg_format("%^s mutters quietly.", m_name);
 
-			(void)raise_dead(m_ptr->fy, m_ptr->fx, FALSE);
+			(void)raise_dead(m_ptr->fx, m_ptr->fy, FALSE);
 			break;
 		}
 
