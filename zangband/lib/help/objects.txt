@@ -4,7 +4,7 @@ The Zangband dungeons are full of objects and many monsters you meet
 will be carrying one or more items about their person which you may
 retrieve from their corpse should you be skillful enough to defeat
 them. You may pick up objects by moving on top of them. By setting
-various options (see option.txt#UserInteface [1]) you may choose to
+various options (see option.txt#UserInterface [1]) you may choose to
 pick up items automatically or to be prompted before picking up
 objects.
 
@@ -13,6 +13,23 @@ use. Wands must be 'a'imed, staves must be 'u'sed, scrolls must be
 'r'ead, and potions must be 'q'uaffed. You may, in general, not only
 use items in your pack, but also items on the ground, if you are
 standing on top of them.
+
+
+***** <ObjectSymbols>
+=== Object Symbols ===
+
+ 
+  !   A potion (or flask)             /   A pole-arm
+  ?   A scroll (or book)              |   An edged weapon
+  ,   A mushroom (or food)            \   A hafted weapon
+  -   A wand or rod                   }   A sling, bow, or x-bow
+  _   A staff                         {   A shot, arrow, or bolt
+  =   A ring                          (   Soft armor
+  "   An amulet                       [   Hard armor
+  $   Gold or gems                    ]   Misc. armor
+  ~   Lites, Tools, Chests, etc       )   A shield
+  ~   Junk, Sticks, Skeletons, etc    &   Chests
+  `   Statues or Figurines 
 
 
 ***** <EquipInvent>

@@ -30,34 +30,16 @@ Note that you can use a "user pref file" to change any of these symbols
 to something you are more comfortable with.
    
  
---- Town and Wilderness Symbols ---
-
-  # (Green)        A Tree             1   Entrance to General Store
-  # (Light Blue)   Shallow Water      2   Entrance to Armory
-  # (Dark Blue)    Deep Water         3   Entrance to Weapon Smith
-  # (Orange)       Shallow Lava       4   Entrance to Temple
-  # (Red)          Deep Lava          5   Entrance to Alchemy Shop
-  ^ (Brown)        Mountains          6   Entrance to Magic Shop
-  . (White)        Floor / Road       7   Entrance to the Black Market
-  . (Brown)        Dirt               8   Entrance to your Home
-  . (Green)        Grass              
-  > (White)        Dungeon Entrance
-  > (Yellow)       Quest Entrance
-  < (Yellow)       Quest Exit
-
-Note that trees, water and lave may also appear in the dungeon.
-
-
 --- Features that do not block line of sight ---
  
-  .   A floor space                   1   Entrance to General Store
-  .   A trap (hidden)                 2   Entrance to Armory
-  ^   A trap (known)                  3   Entrance to Weapon Smith
-  ;   A glyph of warding              4   Entrance to Temple
-  '   An open door                    5   Entrance to Alchemy Shop
-  '   A broken door                   6   Entrance to Magic Shop
-  <   A staircase up                  7   Entrance to the Black Market
-  >   A staircase down                8   Entrance to your Home
+  .   A floor space                   # (Green)        A Tree
+  .   A trap (hidden)                 # (Light Blue)   Shallow Water
+  ^   A trap (known)                  # (Dark Blue)    Deep Water
+  ;   A glyph of warding              # (Orange)       Shallow Lava
+  '   An open door                    # (Red)          Deep Lava
+  '   A broken door
+  <   A staircase up
+  >   A staircase down
 
 
 --- Features that block line of sight ---
@@ -66,56 +48,6 @@ Note that trees, water and lave may also appear in the dungeon.
   +   A closed door                   %   A mineral vein
   +   A locked door                   *   Treasure in wall / Pattern
   +   A jammed door                   :   A pile of rubble
-
-
---- Objects ---
- 
-  !   A potion (or flask)             /   A pole-arm
-  ?   A scroll (or book)              |   An edged weapon
-  ,   A mushroom (or food)            \   A hafted weapon
-  -   A wand or rod                   }   A sling, bow, or x-bow
-  _   A staff                         {   A shot, arrow, or bolt
-  =   A ring                          (   Soft armor
-  "   An amulet                       [   Hard armor
-  $   Gold or gems                    ]   Misc. armor
-  ~   Lites, Tools, Chests, etc       )   A shield
-  ~   Junk, Sticks, Skeletons, etc    &   Chests
-  `   Statues or Figuerines 
- 
---- Monsters ---
- 
-  $   Creeping Coins                  ,   Mushroom Patch
-  a   Giant Ant                       A   Angelic being
-  b   Giant Bat                       B   Bird
-  c   Giant Centipede                 C   Canine
-  d   Dragon                          D   Ancient Dragon
-  e   Floating Eye                    E   Elemental
-  f   Feline                          F   Dragon Fly
-  g   Golem                           G   Ghost
-  h   Humanoids                       H   Hybrid
-  i   Icky-Thing                      I   Insect
-  j   Jelly                           J   Snake
-  k   Kobold                          K   Killer Beetle
-  l   Giant Louse                     L   Lich
-  m   Mold                            M   Multi-Headed Hydra
-  n   Naga                            N   (unused)
-  o   Orc                             O   Ogre
-  p   Human                           P   Giant Human(oid)
-  q   Quadruped                       Q   Quylthulg
-  r   Rodent                          R   Reptile/Amphibian
-  s   Skeleton                        S   Spider/Scorpion/Tick
-  t   Townsperson                     T   Troll
-  u   Minor demon                     U   Major demon
-  v   Vortex                          V   Vampire
-  w   Worm or Worm Mass               W   Wight/Wraith
-  x   (unused)                        X   Xorn/Xaren
-  y   Yeek                            Y   Yeti
-  z   Zombie/Mummy                    Z   Zephyr Hound
-  ~   Aquatic monsters
-
-Note that some monsters disguise themselves by assuming the shape (ie.
-symbol) of common objects found in the dungeon. These include the
-|, ), ?, !, &, $ and * symbols.
 
 
 ***** <WithinDungeon>
