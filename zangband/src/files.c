@@ -3649,13 +3649,13 @@ bool show_file(cptr name, cptr what, int line, int mode)
 				/* Display matches */
 				while ((str = strstr(str, shower)) != NULL)
 				{
-					int len = strlen(shower);
-
+					int offset = fmt_offset(lc_buf, str);
+				
 					/* Display the match */
-					put_fstr(str - lc_buf, i + 2, CLR_YELLOW "%s", shower);
+					put_fstr(offset, i + 2, CLR_YELLOW "%s", shower);
 
 					/* Advance */
-					str += len;
+					str += strlen(shower);
 				}
 			}
 
@@ -3692,7 +3692,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			{
 				/* Wait for it */
 				prtf(0, hgt - 1,
-				"[Press a Number, Return, Space, -, =, /, or ESC to exit.]");
+				"[Press a Number, Return, Space, -, =, /, \\, or ESC to exit.]");
 			}
 		}
 		else
@@ -3708,7 +3708,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			else
 			{
 				/* Wait for it */
-				prtf(0, hgt - 1, "[Press Return, Space, -, =, /, or ESC to exit.]");
+				prtf(0, hgt - 1, "[Press Return, Space, -, =, /, \\, or ESC to exit.]");
 			}
 		}
 
@@ -3752,6 +3752,21 @@ bool show_file(cptr name, cptr what, int line, int mode)
 				{
 					finder[cnt] = tolower(finder[cnt]);
 				}
+
+				/* Show it */
+				strcpy(shower, finder);
+			}
+		}
+		
+		/* Hack -- try finding again */
+		if (k == '\\')
+		{
+			if (finder)
+			{
+				/* Find it */
+				find = finder;
+				back = 0;
+				line = line + 1;
 
 				/* Show it */
 				strcpy(shower, finder);
