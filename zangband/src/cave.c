@@ -981,8 +981,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	info = c_ptr->info;
 
 	/* Is this feature memorized? */
-	if ((info & (CAVE_MARK | CAVE_LITE)) ||
-		 ((info & (CAVE_VIEW | CAVE_MNLT)) == (CAVE_VIEW | CAVE_MNLT)))
+	if (info & (CAVE_MARK | CAVE_LITE | CAVE_MNLT))
 	{
 		feat = c_ptr->feat;
 
