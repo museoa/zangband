@@ -1016,7 +1016,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 					 &&  view_torch_grids))
 			{
 				/* If is ascii graphics */
-				if (!(a & 0x80))
+				if (a < 16)
 				{
 					/* Use darkened colour */
 					a = darking_colours[a];
@@ -1030,7 +1030,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			else if ((info & (CAVE_LITE | CAVE_MNLT)) && view_yellow_lite)
 			{
 				/* Use the torch effect */
-				if (!(a & 0x80))
+				if (a < 16)
 				{
 					/* Use bright colour */
 					a = lighting_colours[a];
