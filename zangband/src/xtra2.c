@@ -903,24 +903,30 @@ bool monster_death(int m_idx, bool explode)
 	 */
 	if (reward)
 	{
-		/* Get local object */
-		q_ptr = &forge;
-
-		/* Wipe the object */
-		object_wipe(q_ptr);
-
-		/* Average of 20 great objects per game */
-		if (randint0(number_of_quests()) < 20)
+		while (TRUE)
 		{
-			/* Make a great object */
-			make_object(q_ptr, 30, dun_theme);
-		}
-		else
-		{
-			/* Make a good object */
-			make_object(q_ptr, 15, dun_theme);
-		}
+			/* Get local object */
+			q_ptr = &forge;
 
+			/* Wipe the object */
+			object_wipe(q_ptr);
+
+			/* Average of 20 great objects per game */
+			if (randint0(number_of_quests()) < 20)
+			{
+				/* Make a great object */
+				make_object(q_ptr, 30, dun_theme);
+			}
+			else
+			{
+				/* Make a good object */
+				make_object(q_ptr, 15, dun_theme);
+			}
+		
+			/* We need a 'good' item - so check the price */
+			if (object_value_real(q_ptr) > 0) break;
+		}
+		
 #ifdef USE_SCRIPT
 		q_ptr->python = object_create_callback(q_ptr);
 #endif /* USE_SCRIPT */
