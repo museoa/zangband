@@ -508,7 +508,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (!cave_floor_grid(c_ptr)) break;
 
 			/* Add the glyph here as a field */
-			(void)place_field(y, x, FT_GLYPH_WARDING);
+			(void)place_field(x, y, FT_GLYPH_WARDING);
 			
 			/* Notice it */
 			note_spot(x, y);

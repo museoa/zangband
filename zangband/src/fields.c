@@ -1013,7 +1013,7 @@ u16b fields_have_flags(s16b fld_idx, u16b info)
 /*
  * Place a field of a given type on a square
  */
-s16b place_field(int y, int x, s16b t_idx)
+s16b place_field(int x, int y, s16b t_idx)
 {
 	field_type *f_ptr;
 
@@ -2019,7 +2019,7 @@ void place_trap(int y, int x)
 	}
 
 	/* Activate the trap */
-	if (place_field(y, x, t_idx))
+	if (place_field(x, y, t_idx))
 	{
 		/* Initialise it */
 		(void)field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, NULL);
@@ -3131,12 +3131,12 @@ void make_lockjam_door(int y, int x, int power, bool jam)
 	if (jam)
 	{
 		/* Add a jammed door field */
-		fld_idx = place_field(y, x, FT_JAM_DOOR);
+		fld_idx = place_field(x, y, FT_JAM_DOOR);
 	}
 	else
 	{	
 		/* Add a locked door field */
-		fld_idx = place_field(y, x, FT_LOCK_DOOR);
+		fld_idx = place_field(x, y, FT_LOCK_DOOR);
 	}
 		
 	if (!fld_idx)

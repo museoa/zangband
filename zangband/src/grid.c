@@ -126,7 +126,7 @@ void place_random_door(int y, int x)
 	{
 		/* Create invisible wall */
 		cave_set_feat(x, y, FEAT_FLOOR);
-		(void)place_field(y, x, FT_WALL_INVIS);
+		(void)place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
 
@@ -171,7 +171,7 @@ void place_closed_door(int y, int x)
 	{
 		/* Create invisible wall */
 		cave_set_feat(x, y, FEAT_FLOOR);
-		(void)place_field(y, x, FT_WALL_INVIS);
+		(void)place_field(x, y, FT_WALL_INVIS);
 		return;
 	}
 

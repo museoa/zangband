@@ -277,7 +277,7 @@ static void alloc_object(int set, int typ, int num)
 			{
 				/* Create invisible wall */
 				cave_set_feat(x, y, FEAT_FLOOR);
-				(void)place_field(y, x, FT_WALL_INVIS);
+				(void)place_field(x, y, FT_WALL_INVIS);
 				break;
 			}
 		}

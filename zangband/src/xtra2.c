@@ -359,7 +359,7 @@ bool monster_death(int m_idx, bool explode)
 			if (corpse)
 			{
 				/* Make a corpse */
-				if (place_field(y, x, FT_CORPSE))
+				if (place_field(x, y, FT_CORPSE))
 				{
 					/* Initialise it */
 					(void)field_hook_single(hack_fld_ptr,
@@ -369,7 +369,7 @@ bool monster_death(int m_idx, bool explode)
 			else
 			{
 				/* Make a skeleton */
-				if (place_field(y, x, FT_SKELETON))
+				if (place_field(x, y, FT_SKELETON))
 				{
 					/* Initialise it */
 					(void)field_hook_single(hack_fld_ptr,

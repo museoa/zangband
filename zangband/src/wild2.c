@@ -851,8 +851,8 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 				case FTYPE_TRAP:
 				{
 					/* Activate the trap */
-					if (place_field(y * WILD_BLOCK_SIZE + j,
-						 x * WILD_BLOCK_SIZE + i, c_ptr->fld_idx))
+					if (place_field(x * WILD_BLOCK_SIZE + i,
+						 y * WILD_BLOCK_SIZE + j, c_ptr->fld_idx))
 					{
 						/* Hack - Initialise it (without "extra" information) */
 						(void)field_hook_single(&block_ptr[j][i].fld_idx,
@@ -867,8 +867,8 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 					int data = 9;
 
 					/* Add a door field */
-					if (place_field(y * WILD_BLOCK_SIZE + j,
-						 x * WILD_BLOCK_SIZE + i, c_ptr->fld_idx))
+					if (place_field(x * WILD_BLOCK_SIZE + i,
+						 y * WILD_BLOCK_SIZE + j, c_ptr->fld_idx))
 					{
 						/* Add "power" of lock / jam to the field */
 						(void)field_hook_single(&block_ptr[j][i].fld_idx,
@@ -881,8 +881,8 @@ static void overlay_town(int y, int x, u16b w_town, blk_ptr block_ptr)
 				case FTYPE_BUILD:
 				{
 					/* Stores + buildings */
-					(void) place_field(y * WILD_BLOCK_SIZE + j,
-						 x * WILD_BLOCK_SIZE + i, c_ptr->fld_idx);
+					(void) place_field(x * WILD_BLOCK_SIZE + i,
+						 y * WILD_BLOCK_SIZE + j, c_ptr->fld_idx);
 
 					break;
 				}

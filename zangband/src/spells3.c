@@ -1271,7 +1271,7 @@ bool warding_glyph(void)
 	}
 
 	/* Add the glyph here as a field */
-	(void)place_field(py, px, FT_GLYPH_WARDING);
+	(void)place_field(px, py, FT_GLYPH_WARDING);
 	
 	/* Notice it */
 	note_spot(px, py);
@@ -1305,7 +1305,7 @@ bool explosive_rune(void)
 	}
 
 	/* Add the glyph here as a field */
-	(void)place_field(py, px, FT_GLYPH_EXPLODE);
+	(void)place_field(px, py, FT_GLYPH_EXPLODE);
 	
 	/* Notice it */
 	note_spot(px, py);

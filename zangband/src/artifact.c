@@ -2415,7 +2415,7 @@ bool activate_effect(object_type *o_ptr)
 
 				/* Hack -- attack monsters */
 				if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr)))
-					py_attack(y, x);
+					py_attack(x, y);
 			}
 			o_ptr->timeout = 250;
 			break;

@@ -1106,7 +1106,7 @@ extern s16b *field_first_known(s16b *fld_ptr, byte typ);
 extern u16b fields_have_flags(s16b fld_idx, u16b info);
 extern bool field_detect_type(s16b fld_idx, byte typ);
 extern void field_destroy_type(s16b fld_idx, byte typ);
-extern s16b place_field(int y, int x, s16b t_idx);
+extern s16b place_field(int x, int y, s16b t_idx);
 extern bool field_hook_single(s16b *field_ptr, int action, vptr action_struct);
 extern void field_hook(s16b *field_ptr, int action, vptr action_struct);
 extern bool field_hook_special(s16b *field_ptr, u16b t_idx, vptr action_struct);
