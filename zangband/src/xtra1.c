@@ -81,22 +81,13 @@ static int bar_count = 0;
 
 static void clear_status_bar(void)
 {
-	Term_putstr(COL_STATBAR, ROW_STATBAR, 12, TERM_WHITE, "            ");
+	put_cstr(COL_STATBAR, ROW_STATBAR, "            ");
 }
 
 
-static void show_status_bar(cptr letter, byte *colour, int num)
+static void show_status_bar(cptr *letter, int num)
 {
 	int i;
-
-	if (!use_color || ironman_moria)
-	{
-		/* Make the symbols white if colour is not used */
-		for (i = 0; i < num; i++)
-		{
-			colour[i] = TERM_WHITE;
-		}
-	}
 
 	if (num <= 12)
 	{
@@ -107,7 +98,7 @@ static void show_status_bar(cptr letter, byte *colour, int num)
 		/* Display the flags */
 		for (i = 0; i < num; i++)
 		{
-			Term_putch(COL_STATBAR + i, ROW_STATBAR, colour[i], letter[i]);
+			put_cstr(COL_STATBAR + i, ROW_STATBAR, letter[i]);
 		}
 	}
 	else
@@ -122,8 +113,7 @@ static void show_status_bar(cptr letter, byte *colour, int num)
 			/* Simple case - all in a row */
 			for (i = 0; i < 12; i++)
 			{
-				Term_putch(COL_STATBAR + i, ROW_STATBAR,
-						   colour[i + bar_count], letter[i + bar_count]);
+				put_cstr(COL_STATBAR + i, ROW_STATBAR, letter[i + bar_count]);
 			}
 		}
 		else
@@ -131,13 +121,12 @@ static void show_status_bar(cptr letter, byte *colour, int num)
 			/* Split over boundary */
 			for (i = 0; i < num - bar_count; i++)
 			{
-				Term_putch(COL_STATBAR + i, ROW_STATBAR,
-						   colour[i + bar_count], letter[i + bar_count]);
+				put_cstr(COL_STATBAR + i, ROW_STATBAR, letter[i + bar_count]);
 			}
 			for (i = 0; i < 12 + bar_count - num; i++)
 			{
-				Term_putch(COL_STATBAR + i + num - bar_count, ROW_STATBAR,
-						   colour[i], letter[i]);
+				put_cstr(COL_STATBAR + i + num - bar_count, ROW_STATBAR,
+						   letter[i]);
 			}
 		}
 	}
@@ -150,199 +139,175 @@ static void show_status_bar(cptr letter, byte *colour, int num)
 static void prt_status(void)
 {
 	int num = 0;
-	char letter[30];
-	byte colour[30];
+	cptr letter[30];
 
 	/* Collate active flags */
 
 	/* Hack -- Hallucinating */
 	if (p_ptr->image)
 	{
-		letter[num] = 'H';
-		colour[num] = TERM_VIOLET;
+		letter[num] = CLR_VIOLET "H";
 		num++;
 	}
 
 	/* Blindness */
 	if (p_ptr->blind)
 	{
-		letter[num] = 'B';
-		colour[num] = TERM_L_DARK;
+		letter[num] = CLR_L_DARK "B";
 		num++;
 	}
 
 	/* Times see-invisible */
 	if (p_ptr->tim_invis)
 	{
-		letter[num] = 'I';
-		colour[num] = TERM_L_BLUE;
+		letter[num] = CLR_L_BLUE "I";
 		num++;
 	}
 
 	/* Timed esp */
 	if (p_ptr->tim_esp)
 	{
-		letter[num] = 'E';
-		colour[num] = TERM_ORANGE;
+		letter[num] = CLR_ORANGE "E";
 		num++;
 	}
 
 	/* Timed infra-vision */
 	if (p_ptr->tim_infra)
 	{
-		letter[num] = 'I';
-		colour[num] = TERM_L_RED;
+		letter[num] = CLR_L_RED "I";
 		num++;
 	}
 
 	/* Paralysis */
 	if (p_ptr->paralyzed)
 	{
-		letter[num] = 'P';
-		colour[num] = TERM_RED;
+		letter[num] = CLR_RED "P";
 		num++;
 	}
 
 	/* Confusion */
 	if (p_ptr->confused)
 	{
-		letter[num] = 'C';
-		colour[num] = TERM_VIOLET;
+		letter[num] = CLR_VIOLET "C";
 		num++;
 	}
 
 	/* Fast */
 	if (p_ptr->fast)
 	{
-		letter[num] = 'S';
-		colour[num] = TERM_GREEN;
+		letter[num] = CLR_GREEN "S";
 		num++;
 	}
 
 	/* Slow */
 	if (p_ptr->slow)
 	{
-		letter[num] = 'S';
-		colour[num] = TERM_RED;
+		letter[num] = CLR_RED "S";
 		num++;
 	}
 
 	/* Protection from evil */
 	if (p_ptr->protevil)
 	{
-		letter[num] = 'E';
-		colour[num] = TERM_L_DARK;
+		letter[num] = CLR_L_DARK "E";
 		num++;
 	}
 
 	/* Invulnerability */
 	if (p_ptr->invuln)
 	{
-		letter[num] = 'I';
-		colour[num] = TERM_YELLOW;
+		letter[num] = CLR_YELLOW "I";
 		num++;
 	}
 
 	/* Wraith form */
 	if (p_ptr->wraith_form)
 	{
-		letter[num] = 'W';
-		colour[num] = TERM_L_DARK;
+		letter[num] = CLR_L_DARK "W";
 		num++;
 	}
 
 	/* Heroism */
 	if (p_ptr->hero)
 	{
-		letter[num] = 'H';
-		colour[num] = TERM_WHITE;
+		letter[num] = CLR_WHITE "H";
 		num++;
 	}
 
 	/* Super Heroism / berserk */
 	if (p_ptr->shero)
 	{
-		letter[num] = 'B';
-		colour[num] = TERM_RED;
+		letter[num] = CLR_RED "B";
 		num++;
 	}
 
 	/* Blessed */
 	if (p_ptr->blessed)
 	{
-		letter[num] = 'B';
-		colour[num] = TERM_WHITE;
+		letter[num] = CLR_WHITE "B";
 		num++;
 	}
 
 	/* Shield */
 	if (p_ptr->shield)
 	{
-		letter[num] = 'S';
-		colour[num] = TERM_WHITE;
+		letter[num] = CLR_WHITE "S";
 		num++;
 	}
 
 	/* Oppose Acid */
 	if (p_ptr->oppose_acid)
 	{
-		letter[num] = 'A';
-		colour[num] = TERM_GREEN;
+		letter[num] = CLR_GREEN "A";
 		num++;
 	}
 
 	/* Oppose Lightning */
 	if (p_ptr->oppose_elec)
 	{
-		letter[num] = 'E';
-		colour[num] = TERM_BLUE;
+		letter[num] = CLR_BLUE "E";
 		num++;
 	}
 
 	/* Oppose Fire */
 	if (p_ptr->oppose_fire)
 	{
-		letter[num] = 'F';
-		colour[num] = TERM_RED;
+		letter[num] = CLR_RED "F";
 		num++;
 	}
 
 	/* Oppose Cold */
 	if (p_ptr->oppose_cold)
 	{
-		letter[num] = 'C';
-		colour[num] = TERM_WHITE;
+		letter[num] = CLR_WHITE "C";
 		num++;
 	}
 
 	/* Oppose Poison */
 	if (p_ptr->oppose_pois)
 	{
-		letter[num] = 'P';
-		colour[num] = TERM_GREEN;
+		letter[num] = CLR_GREEN "P";
 		num++;
 	}
 
 	/* Word of Recall */
 	if (p_ptr->word_recall)
 	{
-		letter[num] = 'W';
-		colour[num] = TERM_WHITE;
+		letter[num] = CLR_WHITE "W";
 		num++;
 	}
 
 	/* Confusing Hands */
 	if (p_ptr->confusing)
 	{
-		letter[num] = 'C';
-		colour[num] = TERM_RED;
+		letter[num] = CLR_RED "C";
 		num++;
 	}
 
 	if (num)
 	{
 		/* Display the status bar if there are flags set */
-		show_status_bar(letter, colour, num);
+		show_status_bar(letter, num);
 	}
 	else
 		clear_status_bar();
@@ -402,15 +367,15 @@ static void prt_level(void)
  */
 static void prt_exp(void)
 {
-	byte attr;
+	cptr attr;
 
 	if (p_ptr->exp >= p_ptr->max_exp)
 	{
-		attr = TERM_L_GREEN;
+		attr = CLR_L_GREEN;
 	}
 	else
 	{
-		attr = TERM_YELLOW;
+		attr = CLR_YELLOW;
 	}
 
 	if (toggle_xp)
@@ -420,12 +385,12 @@ static void prt_exp(void)
 
 		if (p_ptr->lev >= PY_MAX_LEVEL)
 		{
-			put_fstr(COL_EXP + 4, ROW_EXP, "%s********", color_seq[attr]);
+			put_fstr(COL_EXP + 4, ROW_EXP, "%s********", attr);
 		}
 		else
 		{
 			/* Print the amount of experience to go until the next level */
-			put_fstr(COL_EXP + 4, ROW_EXP, "%s%8ld", color_seq[attr],
+			put_fstr(COL_EXP + 4, ROW_EXP, "%s%8ld", attr,
 						  (long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact /
 								 100L) - (long)p_ptr->exp);
 		}
@@ -433,8 +398,7 @@ static void prt_exp(void)
 	else
 	{
 		/* Use the 'old' experience display */
-		put_fstr(COL_EXP, ROW_EXP, "EXP %s%8ld", color_seq[attr],
-				 (long)p_ptr->exp);
+		put_fstr(COL_EXP, ROW_EXP, "EXP %s%8ld", attr, (long)p_ptr->exp);
 	}
 }
 
@@ -464,7 +428,8 @@ static void prt_ac(void)
  */
 static void prt_hp(void)
 {
-	byte color;
+	cptr color;
+	byte color_player;
 
 #ifndef VARIABLE_PLAYER_GRAPH
 
@@ -477,22 +442,25 @@ static void prt_hp(void)
 
 	put_fstr(COL_CURHP, ROW_CURHP, "Cur HP ");
 
-	color = TERM_L_GREEN;
+	color = CLR_L_GREEN;
 	
 	if (p_ptr->chp >= p_ptr->mhp)
 	{
-		color = TERM_L_GREEN;
+		color = CLR_L_GREEN;
+		color_player = TERM_WHITE;
 	}
 	else if (p_ptr->chp > (p_ptr->mhp * hitpoint_warn) / 10)
 	{
-		color = TERM_YELLOW;
+		color = CLR_YELLOW;
+		color_player = TERM_ORANGE;
 	}
 	else
 	{
-		color = TERM_RED;
+		color = CLR_RED;
+		color_player = TERM_RED;
 	}
 
-	put_fstr(COL_CURHP + 7, ROW_CURHP, "%s%5d", color_seq[color], p_ptr->chp);
+	put_fstr(COL_CURHP + 7, ROW_CURHP, "%s%5d", color, p_ptr->chp);
 
 #ifndef VARIABLE_PLAYER_GRAPH
 
@@ -504,22 +472,14 @@ static void prt_hp(void)
 	if (!view_player_colour)
 	{
 		/* Normal colour is white */
-		color = TERM_WHITE;
-	}
-	else
-	{
-		/* Normal colour is white */
-		if (color == TERM_L_GREEN) color = TERM_WHITE;
-
-		/* Orange is better than yellow */
-		if (color == TERM_YELLOW) color = TERM_ORANGE;
+		color_player = TERM_WHITE;
 	}
 
 	/* Redraw the player ? */
-	if (old_attr != color)
+	if (old_attr != color_player)
 	{
 		/* Change the player colour */
-		r_ptr->x_attr = color;
+		r_ptr->x_attr = color_player;
 
 		/* Show the change */
 		if (character_dungeon) lite_spot(p_ptr->px, p_ptr->py);
@@ -533,7 +493,7 @@ static void prt_hp(void)
  */
 static void prt_sp(void)
 {
-	byte color;
+	cptr color;
 
 
 	/* Do not show mana unless it matters */
@@ -543,23 +503,23 @@ static void prt_sp(void)
 
 	put_fstr(COL_CURSP, ROW_CURSP, "Cur SP ");
 
-	color = TERM_L_GREEN;
+	color = CLR_L_GREEN;
 
 	if (p_ptr->csp >= p_ptr->msp)
 	{
-		color = TERM_L_GREEN;
+		color = CLR_L_GREEN;
 	}
 	else if (p_ptr->csp > (p_ptr->msp * hitpoint_warn) / 10)
 	{
-		color = TERM_YELLOW;
+		color = CLR_YELLOW;
 	}
 	else
 	{
-		color = TERM_RED;
+		color = CLR_RED;
 	}
 
 	/* Show mana */
-	put_fstr(COL_CURSP + 7, ROW_CURSP, "%s%5d", color_seq[color], p_ptr->csp);
+	put_fstr(COL_CURSP + 7, ROW_CURSP, "%s%5d", color, p_ptr->csp);
 }
 
 
@@ -716,8 +676,6 @@ static void prt_poisoned(void)
  */
 static void prt_state(void)
 {
-	byte attr = TERM_WHITE;
-
 	char text[16];
 
 	/* Resting */
@@ -810,7 +768,7 @@ static void prt_state(void)
 	}
 
 	/* Display the info (or blanks) */
-	put_fstr(COL_STATE, Term->hgt - 1, "%s%s", color_seq[attr], text);
+	put_fstr(COL_STATE, Term->hgt - 1, text);
 }
 
 
@@ -821,7 +779,6 @@ static void prt_speed(void)
 {
 	int i = p_ptr->pspeed;
 
-	byte attr = TERM_WHITE;
 	char buf[32] = "";
 
 	/* Hack -- Visually "undo" the Search Mode Slowdown */
@@ -830,47 +787,41 @@ static void prt_speed(void)
 	/* Paralysis */
 	if (p_ptr->paralyzed)
 	{
-		attr = TERM_RED;
-
-		strcpy(buf, "Paralyzed!");
+		strcpy(buf, CLR_RED "Paralyzed!");
 	}
 
 	/* Fast */
 	else if (i > 110)
 	{
-		attr = TERM_L_GREEN;
-
 		if (i <= 110 + 99)
 		{
 			/* Two digits */
-			sprintf(buf, "Fast (+%d)", (i - 110));
+			sprintf(buf, CLR_L_GREEN "Fast (+%d)", (i - 110));
 		}
 		else
 		{
 			/* Hack - save space */
-			sprintf(buf, "Fast (***)");
+			sprintf(buf, CLR_L_GREEN "Fast (***)");
 		}
 	}
 
 	/* Slow */
 	else if (i < 110)
 	{
-		attr = TERM_L_UMBER;
-
 		if (i >= 110 - 99)
 		{
 			/* Two digits */
-			sprintf(buf, "Slow (-%d)", (110 - i));
+			sprintf(buf, CLR_L_UMBER "Slow (-%d)", (110 - i));
 		}
 		else
 		{
 			/* Hack - save space */
-			sprintf(buf, "Slow (***)");
+			sprintf(buf, CLR_L_UMBER "Slow (***)");
 		}
 	}
 
 	/* Display the speed */
-	put_fstr(COL_SPEED, Term->hgt - 1, "%s%-10s", color_seq[attr], buf);
+	put_fstr(COL_SPEED, Term->hgt - 1, "%-10s", buf);
 }
 
 
@@ -1002,31 +953,31 @@ static void health_redraw(void)
 		monster_type *m_ptr = &m_list[p_ptr->health_who];
 
 		/* Default to almost dead */
-		byte attr = TERM_RED;
+		cptr attr = CLR_RED;
 
 		/* Extract the "percent" of health */
 		pct = 100L * m_ptr->hp / m_ptr->maxhp;
 
 		/* Badly wounded */
-		if (pct >= 10) attr = TERM_L_RED;
+		if (pct >= 10) attr = CLR_L_RED;
 
 		/* Wounded */
-		if (pct >= 25) attr = TERM_ORANGE;
+		if (pct >= 25) attr = CLR_ORANGE;
 
 		/* Somewhat Wounded */
-		if (pct >= 60) attr = TERM_YELLOW;
+		if (pct >= 60) attr = CLR_YELLOW;
 
 		/* Healthy */
-		if (pct >= 100) attr = TERM_L_GREEN;
+		if (pct >= 100) attr = CLR_L_GREEN;
 
 		/* Afraid */
-		if (m_ptr->monfear) attr = TERM_VIOLET;
+		if (m_ptr->monfear) attr = CLR_VIOLET;
 
 		/* Asleep */
-		if (m_ptr->csleep) attr = TERM_BLUE;
+		if (m_ptr->csleep) attr = CLR_BLUE;
 
 		/* Invulnerable */
-		if (m_ptr->invulner) attr = TERM_WHITE;
+		if (m_ptr->invulner) attr = CLR_WHITE;
 
 		/* Convert percent into "health" */
 		len = (pct < 10) ? 1 : (pct < 90) ? (pct / 10 + 1) : 10;
@@ -1035,10 +986,10 @@ static void health_redraw(void)
 		Term_putstr(COL_INFO, ROW_INFO, 12, TERM_WHITE, "[----------]");
 
 		/* Hack -- fake monochrome */
-		if (!use_color || ironman_moria) attr = TERM_WHITE;
+		if (!use_color || ironman_moria) attr = CLR_WHITE;
 
 		/* Dump the current "health" (use '*' symbols) */
-		Term_putstr(COL_INFO + 1, ROW_INFO, len, attr, "**********");
+		put_fstr(COL_INFO + 1, ROW_INFO, "%s**********", attr);
 	}
 }
 
