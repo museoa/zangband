@@ -1467,11 +1467,11 @@ static void display_store(int store_top)
 
 		/* Put the owner name and race */
 		sprintf(buf, "%s (%s)", owner_name, race_name);
-		put_str(buf, 3, 10);
+		put_str(buf, 3, 5);
 
 		/* Show the max price in the store (above prices) */
 		sprintf(buf, "%s (%ld)", store_name, (long)(ot_ptr->max_cost) * 100);
-		prt(buf, 3, 50);
+		prt(buf, 3, 45);
 
 		/* Label the item descriptions */
 		put_str("Item Description", 5, 3);
