@@ -6150,7 +6150,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 1, "stack_force_costs",		"Merge discounts when stacking" },
 	{TRUE,  5, "show_labels",			"Show labels in object listings" },
 	{TRUE,  5, "show_weights",			"Show weights in object listings" },
-	{TRUE,  0, NULL,					"Number 12" },
+	{FALSE, 8, "view_monster_grids",	"Map remembers monster-lit grids" },
 	{TRUE,  0, NULL,					"Number 13" },
 	{FALSE, 2, "ring_bell",				"Audible bell (on errors, etc)" },
 	{TRUE,  5, "use_color",				"Use color if possible (slow)" },

@@ -3443,7 +3443,7 @@
 #define stack_force_costs		p_ptr->options[9]
 #define show_labels				p_ptr->options[10]
 #define show_weights			p_ptr->options[11]
-/* {TRUE,  0, NULL,					"Number 12" }, p_ptr->options[12] */
+#define view_monster_grids		p_ptr->options[12]
 /* {TRUE,  0, NULL,					"Number 13" }, p_ptr->options[13] */
 #define ring_bell				p_ptr->options[14]
 #define use_color				p_ptr->options[15]

@@ -4111,6 +4111,9 @@ static void mon_lite_hack(int y, int x)
 
 	/* Light it */
 	c_ptr->info |= CAVE_MNLT;
+	
+	/* Remember it if view_monster_grids is set. */
+	if (view_monster_grids) c_ptr->info |= CAVE_MARK;
 }
 
 
