@@ -3070,11 +3070,11 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	/* General buffer */
 	char buf[1024];
 
-        /* Lower case version of the buffer, for searching */
-        char lc_buf[1024];
+	/* Lower case version of the buffer, for searching */
+	char lc_buf[1024];
    
-        /* Aux pointer for making lc_buf (and find!) lowercase */
-        cptr lc_buf_ptr;
+	/* Aux pointer for making lc_buf (and find!) lowercase */
+	cptr lc_buf_ptr;
    
 	/* Sub-menu information */
 	char hook[10][32];
@@ -3232,12 +3232,12 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			/* Count the "real" lines */
 			next++;
 
-		        /* Make a lower case version of buf for searching */
-		        strcpy(lc_buf, buf);
-		        for (lc_buf_ptr = lc_buf; *lc_buf_ptr != 0; lc_buf_ptr++)
-		        {
-			        lc_buf[lc_buf_ptr-lc_buf] = tolower(*lc_buf_ptr);
-			}
+			/* Make a lower case version of buf for searching */
+			strcpy(lc_buf, buf);
+			for (lc_buf_ptr = lc_buf; *lc_buf_ptr != 0; lc_buf_ptr++)
+			{
+				lc_buf[lc_buf_ptr-lc_buf] = tolower(*lc_buf_ptr);
+			}		   
 		   
 			/* Hack -- keep searching */
 			if (find && !i && !strstr(lc_buf, find)) continue;
@@ -3257,10 +3257,10 @@ bool show_file(cptr name, cptr what, int line, int mode)
 				while ((str = strstr(str, shower)) != NULL)
 				{
 					int len = strlen(shower);
-
+					
 					/* Display the match */
 					Term_putstr(str-lc_buf, i+2, len, TERM_YELLOW, &buf[str-lc_buf]);
-
+					
 					/* Advance */
 					str += len;
 				}
