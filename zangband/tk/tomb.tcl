@@ -291,8 +291,6 @@ proc NSTomb::TombWindow {} {
 
 	button $win.messages \
 		-text [mc Messages] -width 9 -command "MessageDump $win"
-	button $win.file \
-		-text [mc File] -width 9 -command "FileCharacter $win"
 	button $win.continue \
 		-text [mc Continue] -width 11  -default active \
 		-command "set AngbandPriv(result) 1"
@@ -311,8 +309,6 @@ proc NSTomb::TombWindow {} {
 	if {[Platform windows]} {
 		pack $win.continue \
 			-side bottom -anchor e -pady 10 -padx 10
-		place $win.file \
-			-in $win.continue -bordermode outside -relx 0.0 -x -10 -anchor ne
 		place $win.messages \
 			-in $win.file -bordermode outside -relx 0.0 -x -10 -anchor ne
 	}

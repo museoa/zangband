@@ -313,8 +313,6 @@ proc NSCharacterWindow::InitMenus {oop} {
 		incr i
 	}
 	lappend entries [list -type separator]
-	lappend entries [list -type command -label [mc "File Character"] \
-		-underline 0 -identifier E_DUMP]
 	lappend entries [list -type separator]
 	lappend entries [list -type command -label [mc Close] \
 		-underline 0 -accelerator $mod+W -identifier E_CLOSE]
@@ -323,8 +321,6 @@ proc NSCharacterWindow::InitMenus {oop} {
 
 	set MenuString(M_CHARACTER) \
 		"Contains character-related commands."
-	set MenuString(E_DUMP) \
-		"Dumps a character record to a text file."
 	set MenuString(E_CLOSE) \
 		"Closes the window."
 
@@ -350,7 +346,7 @@ proc NSCharacterWindow::SetupMenus {oop mbarID} {
 		lappend identList E_HOOK_[incr i]
 	}
 
-	lappend identList E_DUMP E_CLOSE
+	lappend identList E_CLOSE
 
 	NSMenu::MenuEnable $mbarID $identList
 
@@ -420,7 +416,6 @@ proc NSCharacterWindow::MenuInvoke {oop menuId ident} {
 			scan $ident "E_HOOK_%d" hookNum
 			SetHook $oop [lindex $Priv(hook) [expr {($hookNum - 1) * 2}]]
 		}
-		E_DUMP {FileCharacter [Info $oop win]}
 		E_CLOSE {Close $oop}
 	}
 

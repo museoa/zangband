@@ -609,7 +609,6 @@ proc NSMainWindow::InitMenus {oop} {
 	set entries {}
 	lappend entries [list -type command -label [mc "Character Info"] -identifier E_OTHER_INFO]
 	lappend entries [list -type command -label [mc Feeling] -identifier E_OTHER_FEELING]
-	lappend entries [list -type command -label [mc "File Character"] -identifier E_OTHER_FILE]
 	lappend entries [list -type command -label [mc Knowledge] -identifier E_OTHER_KNOWLEDGE]
 	lappend entries [list -type command -label [mc "Message History"] -identifier E_OTHER_MESSAGES]
 	lappend entries [list -type cascade -menu MENU_PREFERENCES -label [mc Preferences] -identifier M_PREFERENCES]
@@ -720,7 +719,7 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 
 	if {[string equal [angband inkey_flags] INKEY_CMD]} {
 		lappend identList E_GAME_SAVE E_GAME_EXIT E_OTHER_FEELING \
-			E_OTHER_INFO E_OTHER_FILE E_OTHER_KNOWLEDGE \
+			E_OTHER_INFO E_OTHER_KNOWLEDGE \
 			E_OTHER_MESSAGES E_PREF_OPTIONS E_HELP \
 			E_OTHER_QUEST E_OTHER_TIME
 	}
@@ -840,7 +839,6 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 
 		E_OTHER_INFO {DoUnderlyingCommand C}
 		E_OTHER_FEELING {DoUnderlyingCommand ^F}
-		E_OTHER_FILE {FileCharacter [Info $oop win]}
 		E_OTHER_KNOWLEDGE {DoUnderlyingCommand ~}
 		E_OTHER_MESSAGES {DoUnderlyingCommand ^p}
 		E_OTHER_QUEST {DoUnderlyingCommand ^Q}

@@ -216,31 +216,6 @@ proc fmt_wgt {wgt {showUnits 0}} {
 	return $result
 }
 
-# FileCharacter --
-#
-#	Allow the user to choose a location, and save a character dump.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc FileCharacter {parent} {
-
-	global Angband
-
-	set initial [angband player base_name].txt
-	set filename [tk_getSaveFile -initialfile $initial \
-		-initialdir [PathUser] -parent $parent]
-	if {![string length $filename]} return
-
-	if {[catch {angband game file_character $filename} result]} {
-		tk_messageBox -icon error -message $result
-	}
-
-	return
-}
 
 # MessageDumpAux --
 #

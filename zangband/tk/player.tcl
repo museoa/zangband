@@ -200,7 +200,6 @@ proc NSPlayer::InitWindow {oop} {
 		angband keypress %A
 	}
 
-	bind $win <KeyPress-f> "FileCharacter $win"
 	bind $win <KeyPress-h> {
 		angband_display playerflags show
 	}
