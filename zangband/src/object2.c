@@ -3950,6 +3950,9 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 
 	/* Base level for the object */
 	base = object_level + delta_level;
+	
+	/* Paranoia - don't let this get too high */
+	if (base > 110) base = 110;
 
 	/* Hack - Set flags based on delta_level */
 	if (delta_level > 15)
