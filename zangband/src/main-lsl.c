@@ -463,7 +463,7 @@ static void term_load_bitmap(void)
 	/* Blit bitmap into buffer */
 	gl_putbox(0, 0, bw, bh, temp);
 	
-	FREE(temp, byte);
+	FREE(temp);
 
 	return;
 }
