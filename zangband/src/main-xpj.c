@@ -1826,7 +1826,9 @@ static errr Term_xtra_xpj(int n, int v)
 		case TERM_XTRA_CLEAR: Infowin_wipe(); return (0);
 
 		/* Delay for some milliseconds */
-		case TERM_XTRA_DELAY: usleep(1000 * v); return (0);
+		case TERM_XTRA_DELAY:
+			if (v > 0) usleep(1000 * v);
+			return (0);
 
 		/* React to changes */
 		case TERM_XTRA_REACT: return (Term_xtra_xpj_react());

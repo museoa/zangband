@@ -1015,7 +1015,7 @@ static errr Term_xtra_gtk(int n, int v)
 		case TERM_XTRA_DELAY:
 		{
 			/* Delay */
-			usleep(1000 * v);
+			if (v > 0) usleep(1000 * v);
 			
 			return (0);
 		}

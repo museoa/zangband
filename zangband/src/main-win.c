@@ -2027,7 +2027,7 @@ static int Term_xtra_win_delay(int v)
 #ifdef WIN32
 
 	/* Sleep */
-	Sleep(v);
+	if (v > 0) Sleep(v);
 
 #else /* WIN32 */
 

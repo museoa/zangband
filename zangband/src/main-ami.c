@@ -2644,6 +2644,7 @@ static errr amiga_xtra( int n, int v )
 			return( 0 );
 
 		case TERM_XTRA_DELAY:
+			if (v <= 0) return (0);
 
 			v *= 1000;
 
