@@ -2142,36 +2142,16 @@ bool borg_spell(int realm, int book, int what)
 /* Determines if a book contains spells that can be reliably cast */
 bool borg_uses_book(int realm, int book)
 {
-	int spell, fail, b_fail = 100;
-	int real_mana;
-
-	/* Remember how much mana there was */
-	real_mana = bp_ptr->csp;
-
-	/* Use the max_mana to get the optimal fail_rate */
-	bp_ptr->csp = bp_ptr->msp;
+	int spell;
 
 	/* Loop through the spells */
 	for (spell = 0; spell < 8; spell++)
 	{
-		/* get the fail_rate for this spell */
-		fail = borg_spell_fail_rate(realm, book, spell);
-
-		/* Collect the minimum fail_rate */
-		b_fail = MIN(b_fail, fail);
+		/* Is this an easy spell? */
+		if (borg_spell_legal_fail(realm, book, spell, 40)) return (TRUE);
 	}
 
-	/* Restore the real amount of mana */
-	bp_ptr->csp = real_mana;
-
-	/* Does this book have easy spells? */
-	if (b_fail <= 40)
-	{
-		/* it is a usable book */
-		return (TRUE);
-	}
-
-	/* Only hard spells */
+	/* Only hard / impossible spells */
 	return (FALSE);
 }
 
