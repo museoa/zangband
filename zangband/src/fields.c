@@ -777,7 +777,7 @@ void field_sort_priority(s16b *fld_idx_ptr)
 /*
  * Prepare a field based on kind.
  */
-void field_prep(field_type *f_ptr, int t_idx)
+void field_prep(field_type *f_ptr, s16b t_idx)
 {
 	field_thaum *t_ptr;
 	int i;
