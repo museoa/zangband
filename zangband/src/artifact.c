@@ -272,7 +272,7 @@ static void random_misc(object_type *o_ptr)
 		case 24:
 		case 25:
 		case 26:
-			if (o_ptr->tval >= TV_BOOTS)
+			if (o_ptr->tval >= TV_BOOTS && o_ptr->tval < TV_LITE)
 			{
 				o_ptr->flags3 |= TR3_SLOW_DIGEST;
 			}
@@ -1354,7 +1354,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		target_flags += rand_range(10, 50) * (level + 5);
 
 	/* Sometimes select a major theme - or two */
-	while (randint1(powers) > 3)
+	while (o_ptr->tval < TV_LITE && randint1(powers) > 3)
 	{
 		if (o_ptr->tval < TV_BOOTS)
 		{
@@ -1407,6 +1407,10 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				break;
 		}
 	}
+
+	/* Lights already have permanent light */
+	if (o_ptr->tval == TV_LITE)
+		given++;
 
 	total_flags = flag_cost(o_ptr, 1);
 
@@ -1472,9 +1476,9 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		o_ptr->pval = 0;
 
 	/* give it some plusses... */
-	if (o_ptr->tval >= TV_BOOTS)
+	if (o_ptr->tval >= TV_BOOTS && o_ptr->tval < TV_LITE)
 		o_ptr->to_a += randint1(o_ptr->to_a > 19 ? 1 : 20 - o_ptr->to_a);
-	else
+	else if (o_ptr->tval < TV_BOOTS)
 	{
 		o_ptr->to_h += randint1(o_ptr->to_h > 19 ? 1 : 20 - o_ptr->to_h);
 		o_ptr->to_d += randint1(o_ptr->to_d > 19 ? 1 : 20 - o_ptr->to_d);

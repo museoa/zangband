@@ -3640,7 +3640,7 @@ F:INSTA_ART
 N:500:& Phial~
 G:!:y
 I:39:4:0
-W:10:20:10:10000
+W:5:20:10:10000
 P:0:1d1:0:0:0
 F:INSTA_ART | LITE
 
@@ -3649,7 +3649,7 @@ F:INSTA_ART | LITE
 N:501:& Star~
 G:*:y
 I:39:5:0
-W:30:30:5:25000
+W:20:30:5:25000
 P:0:1d1:0:0:0
 F:INSTA_ART | LITE
 
@@ -3658,7 +3658,7 @@ F:INSTA_ART | LITE
 N:502:& Jewel~
 G:*:R
 I:39:6:0
-W:60:50:5:60000
+W:50:50:5:60000
 P:0:1d1:0:0:0
 F:INSTA_ART | LITE
 
@@ -3667,7 +3667,7 @@ F:INSTA_ART | LITE
 N:503:& Amulet~
 G:":d
 I:40:10:0
-W:5:30:3:60000
+W:10:30:3:60000
 F:INSTA_ART
 
 # The Amulet of Ingwe -- see artifact list
@@ -3691,7 +3691,7 @@ F:INSTA_ART
 N:506:& Ring~
 G:=:d
 I:45:32:0
-W:5:30:2:65000
+W:10:30:2:65000
 F:INSTA_ART
 
 # The Ring of Tulkas -- see artifact list
@@ -3699,7 +3699,7 @@ F:INSTA_ART
 N:507:& Ring~
 G:=:d
 I:45:33:0
-W:10:30:2:150000
+W:30:30:2:150000
 F:INSTA_ART
 
 # The Ring of Power (Narya) -- see artifact list
@@ -3707,7 +3707,7 @@ F:INSTA_ART
 N:508:& Ring~
 G:=:d
 I:45:34:0
-W:20:30:2:100000
+W:50:30:2:100000
 F:INSTA_ART
 
 # The Ring of Power (Nenya) -- see artifact list
@@ -3715,7 +3715,7 @@ F:INSTA_ART
 N:509:& Ring~
 G:=:d
 I:45:35:0
-W:40:30:2:200000
+W:70:30:2:200000
 F:INSTA_ART
 
 # The Ring of Power (Vilya) -- see artifact list
@@ -3723,7 +3723,7 @@ F:INSTA_ART
 N:510:& Ring~
 G:=:d
 I:45:36:0
-W:70:30:2:300000
+W:90:30:2:300000
 F:INSTA_ART
 
 # The Ring of Power (The One Ring) -- see artifact list
@@ -4149,7 +4149,7 @@ P:17:1d4:-2:0:0
 N:564:& Incandescent Globe~
 G:!:y
 I:39:3:0
-W:20:50:5:20000
+W:30:50:5:20000
 P:0:1d1:0:0:0
 F:INSTA_ART
 
