@@ -282,7 +282,7 @@ void quest_discovery(int q_idx)
 	msg_print(find_quest[rand_range(0, 5)]);
 	msg_print(NULL);
 
-	if (q_num == 1)
+	if (r_ptr->flags1 & RF1_UNIQUE)
 	{
 		/* Unique */
 		msg_format("Beware, this level is protected by %s!", name);
