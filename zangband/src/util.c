@@ -1763,9 +1763,6 @@ void sound(int val)
  *
  * Note that "quark zero" is NULL and should never be "dereferenced".
  *
- * ToDo: Add reference counting for quarks, so that unused quarks can
- * be overwritten.
- *
  * ToDo: Automatically resize the array if necessary.
  */
 
