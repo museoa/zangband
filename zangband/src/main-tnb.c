@@ -13,7 +13,7 @@
 #include "angband.h"
 #ifdef USE_TNB
 
-#include "tnb.h"
+#include "tk/tnb.h"
 
 cptr help_tnb[] =
 {
