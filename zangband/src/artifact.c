@@ -332,22 +332,22 @@ static void random_misc(object_type *o_ptr)
 
 static void random_curse(object_type *o_ptr, bool evil)
 {
-	switch (randint1(evil ? 30 : 16))
+	switch (randint1(evil ? 32 : 18))
 	{
 		case 1:
-		case 17:
+		case 19:
 			o_ptr->flags4 |= TR4_HURT_ACID;
 			break;
 		case 2:
-		case 18:
+		case 20:
 			o_ptr->flags4 |= TR4_HURT_ELEC;
 			break;
 		case 3:
-		case 19:
+		case 21:
 			o_ptr->flags4 |= TR4_HURT_FIRE;
 			break;
 		case 4:
-		case 20:
+		case 22:
 			o_ptr->flags4 |= TR4_HURT_COLD;
 			break;
 		case 5:
@@ -364,7 +364,7 @@ static void random_curse(object_type *o_ptr, bool evil)
 			o_ptr->flags4 |= TR4_SLOW_HEAL;
 			break;
 		case 10:
-		case 21:
+		case 23:
 			o_ptr->flags4 |= TR4_DRAIN_STATS;
 			break;
 		case 11:
@@ -379,23 +379,30 @@ static void random_curse(object_type *o_ptr, bool evil)
 		case 16:
 			o_ptr->flags3 |= TR3_CURSED;
 			break;
-		case 22:
-		case 23:
-			o_ptr->flags3 |= TR3_TELEPORT;
+		case 17:
+			o_ptr->to_a -= rand_range(5, 15);
+			break;
+		case 18:
+			o_ptr->to_h -= rand_range(5, 10);
+			o_ptr->to_d -= rand_range(5, 10);
 			break;
 		case 24:
-			o_ptr->flags3 |= TR3_DRAIN_EXP;
-			break;
 		case 25:
+			o_ptr->flags3 |= TR3_TELEPORT;
+			break;
 		case 26:
-			o_ptr->flags3 |= TR3_TY_CURSE;
+			o_ptr->flags3 |= TR3_DRAIN_EXP;
 			break;
 		case 27:
 		case 28:
+			o_ptr->flags3 |= TR3_TY_CURSE;
+			break;
 		case 29:
+		case 30:
+		case 31:
 			o_ptr->flags3 |= TR3_CURSED | TR3_HEAVY_CURSE;
 			break;
-		case 30:
+		case 32:
 			o_ptr->flags3 |= TR3_NO_MAGIC;
 			break;
 	}
@@ -2140,14 +2147,14 @@ static void curse_artifact(object_type *o_ptr)
 {
 	int i;
 	
-	if (o_ptr->pval) o_ptr->pval = 0 - (o_ptr->pval + randint1(4));
-	if (o_ptr->to_a) o_ptr->to_a = 0 - (o_ptr->to_a + randint1(4));
-	if (o_ptr->to_h) o_ptr->to_h = 0 - (o_ptr->to_h + randint1(4));
-	if (o_ptr->to_d) o_ptr->to_d = 0 - (o_ptr->to_d + randint1(4));
+	if (o_ptr->pval > 0) o_ptr->pval = 0 - (o_ptr->pval + randint1(4));
+	if (o_ptr->to_a > 0) o_ptr->to_a = 0 - (o_ptr->to_a + randint1(4));
+	if (o_ptr->to_h > 0) o_ptr->to_h = 0 - (o_ptr->to_h + randint1(4));
+	if (o_ptr->to_d > 0) o_ptr->to_d = 0 - (o_ptr->to_d + randint1(4));
 
 	o_ptr->flags3 |= (TR3_CURSED);
 
-	for (i = rand_range(2, 5); i > 0; --i)
+	for (i = rand_range(2, 6); i > 0; --i)
 		random_curse(o_ptr, TRUE);
 }
 
