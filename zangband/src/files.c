@@ -1190,6 +1190,7 @@ static void prt_num(cptr header, int num, int row, int col, byte color)
  */
 static void display_player_middle(void)
 {
+	int percentdam;
 	int show_tohit = p_ptr->dis_to_h;
 	int show_todam = p_ptr->dis_to_d;
 
@@ -1199,9 +1200,17 @@ static void display_player_middle(void)
 	if (object_known_p(o_ptr)) show_tohit += o_ptr->to_h;
 	if (object_known_p(o_ptr)) show_todam += o_ptr->to_d;
 
+	/* convert to oangband "deadliness" */
+	if (show_todam > 0)
+		percentdam = (100 + deadliness_conversion[show_todam]);
+	else if (show_todam > -31)
+		percentdam = (100 - deadliness_conversion[ABS(show_todam)]);
+	else
+		percentdam = 0;
+
 	/* Dump the bonuses to hit/dam */
 	prt_num("+ To Hit    ", show_tohit, 9, 1, TERM_L_BLUE);
-	prt_num("  Deadliness", show_todam, 10, 1, TERM_L_BLUE);
+	prt_num("% Deadliness", percentdam, 10, 1, TERM_L_BLUE);
 
 	/* Dump the armor class bonus */
 	prt_num("+ To AC     ", p_ptr->dis_to_a, 11, 1, TERM_L_BLUE);
