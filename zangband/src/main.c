@@ -486,49 +486,53 @@ int main(int argc, char *argv[])
 				puts("  -u<who>  Use your <who> savefile");
 				puts("  -d<def>  Define a 'lib' dir sub-path");
 				
-				#ifdef USE_XAW
+#ifdef USE_XAW
 				puts("  -mxaw    To use XAW");
 				puts("  --       Sub options");
 				puts("  -- -d    Set display name");
 				puts("  -- -s    Turn off smoothscaling graphics");
 				puts("  -- -n#   Number of terms to use");
-				#endif /* USE_XAW */
+#endif /* USE_XAW */
 				
-				#ifdef USE_X11
+#ifdef USE_X11
 				puts("  -mx11    To use X11");
 				puts("  --       Sub options");
 				puts("  -- -d    Set display name");
 				puts("  -- -s    Turn off smoothscaling graphics");
 				puts("  -- -n#   Number of terms to use");
-				#endif /* USE_X11 */
+#endif /* USE_X11 */
 
-				#ifdef USE_GCU
+#ifdef USE_GCU
 				puts("  -mgcu    To use GCU (GNU Curses)");
-				#endif /* USE_GCU */
+#endif /* USE_GCU */
 
-				#ifdef USE_CAP
+#ifdef USE_CAP
 				puts("  -mcap    To use CAP (\"Termcap\" calls)");
-				#endif /* USE_CAP */
+#endif /* USE_CAP */
 
-				#ifdef USE_DOS
+#ifdef USE_DOS
 				puts("  -mdos    To use DOS (Graphics)");
-				#endif /* USE_DOS */
+#endif /* USE_DOS */
 
-				#ifdef USE_IBM
+#ifdef USE_IBM
 				puts("  -mibm    To use IBM (BIOS text mode)");
-				#endif /* USE_IBM */
+#endif /* USE_IBM */
 
-				#ifdef USE_SLA
+#ifdef USE_SLA
 				puts("  -msla    To use SLA (SLANG)");
-				#endif /* USE_SLA */
+#endif /* USE_SLA */
 
-				#ifdef USE_LSL
+#ifdef USE_LSL
 				puts("  -mlsl    To use LSL (Linux-SVGALIB)");
-				#endif /* USE_LSL */
+#endif /* USE_LSL */
 
-				#ifdef USE_VME
+#ifdef USE_AMI
+				puts("  -mami    To use AMI (Amiga)");
+#endif /* USE_AMI */
+
+#ifdef USE_VME
 				puts("  -mvme    To use VME (VAX/ESA)");
-				#endif /* USE_VME */
+#endif /* USE_VME */
 				
 				/* Actually abort the process */
 				quit(NULL);
