@@ -1224,12 +1224,15 @@ static bool init_graphics(void)
 
 #ifdef USE_TRANSPARENCY
 
-		path_build(buf, 1024, ANGBAND_DIR_XTRA_GRAF, "mask.bmp");
-		/* Load the bitmap or quit */
-		if (!ReadDIB(data[0].w, buf, &infMask))
+		if (arg_graphics == GRAPHICS_ADAM_BOLT)
 		{
-			plog_fmt("Cannot read bitmap file '%s'", name);
-			return (FALSE);
+			path_build(buf, 1024, ANGBAND_DIR_XTRA_GRAF, "mask.bmp");
+			/* Load the bitmap or quit */
+			if (!ReadDIB(data[0].w, buf, &infMask))
+			{
+				plog_fmt("Cannot read bitmap file '%s'", name);
+				return (FALSE);
+			}
 		}
 
 #endif /* USE_TRANSPARENCY */
@@ -3944,12 +3947,12 @@ static void hook_quit(cptr str)
 	}
 
 	/* Free the bitmap stuff */
-	DeleteObject(infGraph.hPalette);
-	DeleteObject(infGraph.hBitmap);
+	if (infGraph.hPalette) DeleteObject(infGraph.hPalette);
+	if (infGraph.hBitmap) DeleteObject(infGraph.hBitmap);
 
 #ifdef USE_TRANSPARENCY
-	DeleteObject(infMask.hPalette);
-	DeleteObject(infMask.hBitmap);
+	if (infMask.hPalette) DeleteObject(infMask.hPalette);
+	if (infMask.hBitmap) DeleteObject(infMask.hBitmap);
 #endif /* USE_TRANSPARENCY */
 
 
