@@ -1296,8 +1296,8 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		m_ptr = &m_list[c_ptr->m_idx];
 		r_ptr = &r_info[m_ptr->r_idx];
 
-		if ((RF_FLAG(r_ptr->flags, 2, EVIL)) &&
-			!(RF_FLAG(r_ptr->flags, 0, QUESTOR)) && !(RF_FLAG(r_ptr->flags, 0, UNIQUE)))
+		if (MON_FLAG(r_ptr, 2, EVIL) &&
+			!MON_FLAG(r_ptr, 0, QUESTOR) && !MON_FLAG(r_ptr, 0, UNIQUE))
 		{
 			/* Delete the monster, rather than killing it. */
 			delete_monster_idx(c_ptr->m_idx);

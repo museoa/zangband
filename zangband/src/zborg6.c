@@ -823,11 +823,11 @@ static bool borg_surrounded(void)
 		if (kill->m_flags & MONST_ASLEEP) continue;
 
 		/* Monsters with Pass Wall are dangerous, no escape from them */
-		if (RF_FLAG(r_ptr->flags, 1, PASS_WALL)) continue;
-		if (RF_FLAG(r_ptr->flags, 1, KILL_WALL)) continue;
+		if (MON_FLAG(r_ptr, 1, PASS_WALL)) continue;
+		if (MON_FLAG(r_ptr, 1, KILL_WALL)) continue;
 
 		/* Monsters who never move cant surround */
-		if (RF_FLAG(r_ptr->flags, 0, NEVER_MOVE)) continue;
+		if (MON_FLAG(r_ptr, 0, NEVER_MOVE)) continue;
 
 		/* keep track of monsters touching me */
 		if (d == 1) adjacent_monsters++;
@@ -1249,13 +1249,13 @@ static void borg_near_monster_type(int dist)
 		/*** Scan for Uniques ***/
 
 		/* this is a unique. */
-		if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)))
+		if (MON_FLAG(r_ptr, 0, UNIQUE))
 		{
 			/* Set a flag for use with certain types of spells */
 			unique_on_level = TRUE;
 
 			/* return 1 if not Morgy, +10 if it is Morgy or Sauron */
-			if (RF_FLAG(r_ptr->flags, 0, QUESTOR))
+			if (MON_FLAG(r_ptr, 0, QUESTOR))
 			{
 				borg_fighting_unique += 10;
 			}
@@ -1264,7 +1264,7 @@ static void borg_near_monster_type(int dist)
 			borg_fighting_unique++;
 
 			/* Note that fighting a Questor would result in a 11 value */
-			if (RF_FLAG(r_ptr->flags, 2, EVIL)) borg_fighting_evil_unique = TRUE;
+			if (MON_FLAG(r_ptr, 2, EVIL)) borg_fighting_evil_unique = TRUE;
 
 		}
 	}
@@ -4020,21 +4020,21 @@ static int borg_thrust_damage_one(int i)
 	/* here is the place for slays and such */
 	mult = 1;
 
-	if (((OBJ_FLAG(bp_ptr, 0, SLAY_ANIMAL)) && (RF_FLAG(r_ptr->flags, 2, ANIMAL))) ||
-		((OBJ_FLAG(bp_ptr, 0, SLAY_EVIL)) && (RF_FLAG(r_ptr->flags, 2, EVIL))))
+	if (((OBJ_FLAG(bp_ptr, 0, SLAY_ANIMAL)) && (MON_FLAG(r_ptr, 2, ANIMAL))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_EVIL)) && (MON_FLAG(r_ptr, 2, EVIL))))
 		mult = 2;
-	if (((OBJ_FLAG(bp_ptr, 0, SLAY_UNDEAD)) && (RF_FLAG(r_ptr->flags, 2, ANIMAL))) ||
-		((OBJ_FLAG(bp_ptr, 0, SLAY_DEMON)) && (RF_FLAG(r_ptr->flags, 2, DEMON))) ||
-		((OBJ_FLAG(bp_ptr, 0, SLAY_ORC)) && (RF_FLAG(r_ptr->flags, 2, ORC))) ||
-		((OBJ_FLAG(bp_ptr, 0, SLAY_TROLL)) && (RF_FLAG(r_ptr->flags, 2, TROLL))) ||
-		((OBJ_FLAG(bp_ptr, 0, SLAY_GIANT)) && (RF_FLAG(r_ptr->flags, 2, GIANT))) ||
-		((OBJ_FLAG(bp_ptr, 0, SLAY_DRAGON)) && (RF_FLAG(r_ptr->flags, 2, DRAGON))) ||
-		((OBJ_FLAG(bp_ptr, 0, BRAND_ACID)) && !(RF_FLAG(r_ptr->flags, 2, IM_ACID))) ||
-		((OBJ_FLAG(bp_ptr, 0, BRAND_FIRE)) && !(RF_FLAG(r_ptr->flags, 2, IM_FIRE))) ||
-		((OBJ_FLAG(bp_ptr, 0, BRAND_COLD)) && !(RF_FLAG(r_ptr->flags, 2, IM_COLD))) ||
-		((OBJ_FLAG(bp_ptr, 0, BRAND_ELEC)) && !(RF_FLAG(r_ptr->flags, 2, IM_ELEC))))
+	if (((OBJ_FLAG(bp_ptr, 0, SLAY_UNDEAD)) && (MON_FLAG(r_ptr, 2, ANIMAL))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_DEMON)) && (MON_FLAG(r_ptr, 2, DEMON))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_ORC)) && (MON_FLAG(r_ptr, 2, ORC))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_TROLL)) && (MON_FLAG(r_ptr, 2, TROLL))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_GIANT)) && (MON_FLAG(r_ptr, 2, GIANT))) ||
+		((OBJ_FLAG(bp_ptr, 0, SLAY_DRAGON)) && (MON_FLAG(r_ptr, 2, DRAGON))) ||
+		((OBJ_FLAG(bp_ptr, 0, BRAND_ACID)) && !(MON_FLAG(r_ptr, 2, IM_ACID))) ||
+		((OBJ_FLAG(bp_ptr, 0, BRAND_FIRE)) && !(MON_FLAG(r_ptr, 2, IM_FIRE))) ||
+		((OBJ_FLAG(bp_ptr, 0, BRAND_COLD)) && !(MON_FLAG(r_ptr, 2, IM_COLD))) ||
+		((OBJ_FLAG(bp_ptr, 0, BRAND_ELEC)) && !(MON_FLAG(r_ptr, 2, IM_ELEC))))
 		mult = 3;
-	if ((OBJ_FLAG(bp_ptr, 0, KILL_DRAGON)) && (RF_FLAG(r_ptr->flags, 2, DRAGON)))
+	if ((OBJ_FLAG(bp_ptr, 0, KILL_DRAGON)) && (MON_FLAG(r_ptr, 2, DRAGON)))
 		mult = 5;
 
 	/* add the multiplier */
@@ -4077,13 +4077,13 @@ static int borg_thrust_damage_one(int i)
 	 * the town uniques (maggot does no damage)
 	 *
 	 */
-	if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) && bp_ptr->depth >= 1) dam += (dam * 5);
+	if (MON_FLAG(r_ptr, 0, UNIQUE) && bp_ptr->depth >= 1) dam += (dam * 5);
 
 	/* Hack -- ignore Maggot until later.  Player will chase Maggot
 	 * down all accross the screen waking up all the monsters.  Then
 	 * he is stuck in a comprimised situation.
 	 */
-	if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) && bp_ptr->depth == 0)
+	if (MON_FLAG(r_ptr, 0, UNIQUE) && bp_ptr->depth == 0)
 	{
 		dam = dam * 2 / 3;
 
@@ -4092,28 +4092,28 @@ static int borg_thrust_damage_one(int i)
 	}
 
 	/* give a small bonus for whacking a breeder */
-	if (RF_FLAG(r_ptr->flags, 1, MULTIPLY))
+	if (MON_FLAG(r_ptr, 1, MULTIPLY))
 		dam = (dam * 3 / 2);
 
 	/* Enhance the preceived damgage to summoner in order to influence the
 	 * choice of targets.
 	 */
-	if ((RF_FLAG(r_ptr->flags, 5, S_KIN)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_CYBER)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_MONSTER)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_MONSTERS)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_ANT)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_SPIDER)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_HOUND)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_HYDRA)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_ANGEL)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_DEMON)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_UNDEAD)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_DRAGON)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_HI_UNDEAD)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_HI_DRAGON)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_AMBERITES)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_UNIQUE)) || (RF_FLAG(r_ptr->flags, 0, QUESTOR)))
+	if (MON_FLAG(r_ptr, 5, S_KIN) ||
+		MON_FLAG(r_ptr, 5, S_CYBER) ||
+		MON_FLAG(r_ptr, 5, S_MONSTER) ||
+		MON_FLAG(r_ptr, 5, S_MONSTERS) ||
+		MON_FLAG(r_ptr, 5, S_ANT) ||
+		MON_FLAG(r_ptr, 5, S_SPIDER) ||
+		MON_FLAG(r_ptr, 5, S_HOUND) ||
+		MON_FLAG(r_ptr, 5, S_HYDRA) ||
+		MON_FLAG(r_ptr, 5, S_ANGEL) ||
+		MON_FLAG(r_ptr, 5, S_DEMON) ||
+		MON_FLAG(r_ptr, 5, S_UNDEAD) ||
+		MON_FLAG(r_ptr, 5, S_DRAGON) ||
+		MON_FLAG(r_ptr, 5, S_HI_UNDEAD) ||
+		MON_FLAG(r_ptr, 5, S_HI_DRAGON) ||
+		MON_FLAG(r_ptr, 5, S_AMBERITES) ||
+		MON_FLAG(r_ptr, 5, S_UNIQUE) || MON_FLAG(r_ptr, 0, QUESTOR))
 		dam += ((dam * 3) / 2);
 
 	/* To conserve mana, for keeping GOI up, increase the value of melee */
@@ -4349,61 +4349,61 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		{
 			/* Standard Arrow */
 			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
-				!(RF_FLAG(r_ptr->flags, 0, UNIQUE))) dam /= 5;
+				!(MON_FLAG(r_ptr, 0, UNIQUE))) dam /= 5;
 			break;
 		}
 
 		case GF_ARROW_FLAME:
 		{
 			/* Arrow of Flame */
-			if (!(RF_FLAG(r_ptr->flags, 2, IM_FIRE))) dam *= 3;
+			if (!(MON_FLAG(r_ptr, 2, IM_FIRE))) dam *= 3;
 			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
-				!(RF_FLAG(r_ptr->flags, 0, UNIQUE))) dam /= 5;
+				!(MON_FLAG(r_ptr, 0, UNIQUE))) dam /= 5;
 			break;
 		}
 
 		case GF_ARROW_FROST:
 		{
 			/* Arrow of Frost */
-			if (!(RF_FLAG(r_ptr->flags, 2, IM_COLD))) dam *= 3;
+			if (!(MON_FLAG(r_ptr, 2, IM_COLD))) dam *= 3;
 			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
-				!(RF_FLAG(r_ptr->flags, 0, UNIQUE))) dam /= 5;
+				!(MON_FLAG(r_ptr, 0, UNIQUE))) dam /= 5;
 			break;
 		}
 
 		case GF_ARROW_SHOCKING:
 		{
 			/* Arrow of Shocking */
-			if (!(RF_FLAG(r_ptr->flags, 2, IM_ELEC))) dam *= 3;
+			if (!(MON_FLAG(r_ptr, 2, IM_ELEC))) dam *= 3;
 			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
-				!(RF_FLAG(r_ptr->flags, 0, UNIQUE))) dam /= 5;
+				!(MON_FLAG(r_ptr, 0, UNIQUE))) dam /= 5;
 			break;
 		}
 
 		case GF_ARROW_ANIMAL:
 		{
 			/* Arrow of Hurt Animal */
-			if (RF_FLAG(r_ptr->flags, 2, ANIMAL)) dam *= 2;
+			if (MON_FLAG(r_ptr, 2, ANIMAL)) dam *= 2;
 			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
-				!(RF_FLAG(r_ptr->flags, 0, UNIQUE))) dam /= 5;
+				!(MON_FLAG(r_ptr, 0, UNIQUE))) dam /= 5;
 			break;
 		}
 
 		case GF_ARROW_EVIL:
 		{
 			/* Arrow of hurt evil */
-			if (RF_FLAG(r_ptr->flags, 2, EVIL)) dam *= 2;
+			if (MON_FLAG(r_ptr, 2, EVIL)) dam *= 2;
 			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
-				!(RF_FLAG(r_ptr->flags, 0, UNIQUE))) dam /= 5;
+				!(MON_FLAG(r_ptr, 0, UNIQUE))) dam /= 5;
 			break;
 		}
 
 		case GF_ARROW_DRAGON:
 		{
 			/* Arrow of slay dragon */
-			if (RF_FLAG(r_ptr->flags, 2, DRAGON)) dam *= 3;
+			if (MON_FLAG(r_ptr, 2, DRAGON)) dam *= 3;
 			if (distance(c_y, c_x, kill->y, kill->x) == 1 &&
-				!(RF_FLAG(r_ptr->flags, 0, UNIQUE))) dam /= 5;
+				!(MON_FLAG(r_ptr, 0, UNIQUE))) dam /= 5;
 			break;
 		}
 
@@ -4424,74 +4424,74 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_ACID:
 		{
 			/* Acid */
-			if (RF_FLAG(r_ptr->flags, 2, IM_ACID)) dam /= 9;
+			if (MON_FLAG(r_ptr, 2, IM_ACID)) dam /= 9;
 			break;
 		}
 
 		case GF_ELEC:
 		{
 			/* Electricity */
-			if (RF_FLAG(r_ptr->flags, 2, IM_ELEC)) dam /= 9;
+			if (MON_FLAG(r_ptr, 2, IM_ELEC)) dam /= 9;
 			break;
 		}
 
 		case GF_FIRE:
 		{
 			/* Fire damage */
-			if (RF_FLAG(r_ptr->flags, 2, IM_FIRE)) dam /= 9;
+			if (MON_FLAG(r_ptr, 2, IM_FIRE)) dam /= 9;
 			break;
 		}
 
 		case GF_COLD:
 		{
 			/* Cold */
-			if (RF_FLAG(r_ptr->flags, 2, IM_COLD)) dam /= 9;
+			if (MON_FLAG(r_ptr, 2, IM_COLD)) dam /= 9;
 			break;
 		}
 
 		case GF_ELEMENTS:
 		{
 			/* Hack -- Equal chance of all elements to be cast */
-			if (RF_FLAG(r_ptr->flags, 2, IM_COLD)) dam /= 4;
-			if (RF_FLAG(r_ptr->flags, 2, IM_ELEC)) dam /= 4;
-			if (RF_FLAG(r_ptr->flags, 2, IM_FIRE)) dam /= 4;
-			if (RF_FLAG(r_ptr->flags, 2, IM_ACID)) dam /= 4;
+			if (MON_FLAG(r_ptr, 2, IM_COLD)) dam /= 4;
+			if (MON_FLAG(r_ptr, 2, IM_ELEC)) dam /= 4;
+			if (MON_FLAG(r_ptr, 2, IM_FIRE)) dam /= 4;
+			if (MON_FLAG(r_ptr, 2, IM_ACID)) dam /= 4;
 			break;
 		}
 
 		case GF_POIS:
 		{
 			/* Poison */
-			if (RF_FLAG(r_ptr->flags, 2, IM_POIS)) dam /= 9;
+			if (MON_FLAG(r_ptr, 2, IM_POIS)) dam /= 9;
 			break;
 		}
 
 		case GF_NUKE:
 		{
 			/* Nuke */
-			if (RF_FLAG(r_ptr->flags, 2, IM_POIS)) dam = (dam * 3) / 9;
+			if (MON_FLAG(r_ptr, 2, IM_POIS)) dam = (dam * 3) / 9;
 			break;
 		}
 
 		case GF_ICE:
 		{
 			/* Ice */
-			if (RF_FLAG(r_ptr->flags, 2, IM_COLD)) dam /= 9;
+			if (MON_FLAG(r_ptr, 2, IM_COLD)) dam /= 9;
 			break;
 		}
 
 		case GF_HELL_FIRE:
 		{
 			/* Holy Orb */
-			if (RF_FLAG(r_ptr->flags, 2, EVIL)) dam *= 2;
+			if (MON_FLAG(r_ptr, 2, EVIL)) dam *= 2;
 			break;
 		}
 
 		case GF_HOLY_FIRE:
 		{
 			/* Holy Orb */
-			if (RF_FLAG(r_ptr->flags, 2, GOOD)) dam = 0;
-			else if (RF_FLAG(r_ptr->flags, 2, EVIL)) dam *= 2;
+			if (MON_FLAG(r_ptr, 2, GOOD)) dam = 0;
+			else if (MON_FLAG(r_ptr, 2, EVIL)) dam *= 2;
 			else
 				dam = (dam * 3) / 9;
 			break;
@@ -4500,43 +4500,43 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_DISP_UNDEAD:
 		{
 			/* dispel undead */
-			if (!(RF_FLAG(r_ptr->flags, 2, UNDEAD))) dam = 0;
+			if (!(MON_FLAG(r_ptr, 2, UNDEAD))) dam = 0;
 			break;
 		}
 
 		case GF_DISP_DEMON:
 		{
 			/* Dispel Demon */
-			if (!(RF_FLAG(r_ptr->flags, 2, DEMON))) dam = 0;
+			if (!(MON_FLAG(r_ptr, 2, DEMON))) dam = 0;
 			break;
 		}
 
 		case GF_DISP_UNDEAD_DEMON:
 		{
 			/* Dispel Demons and Undead (Exorcism Spell) */
-			if (!(RF_FLAG(r_ptr->flags, 2, UNDEAD))) dam = 0;
-			if (!(RF_FLAG(r_ptr->flags, 2, DEMON))) dam = 0;
+			if (!(MON_FLAG(r_ptr, 2, UNDEAD))) dam = 0;
+			if (!(MON_FLAG(r_ptr, 2, DEMON))) dam = 0;
 			break;
 		}
 
 		case GF_DISP_EVIL:
 		{
 			/*  Dispel Evil */
-			if (!(RF_FLAG(r_ptr->flags, 2, EVIL))) dam = 0;
+			if (!(MON_FLAG(r_ptr, 2, EVIL))) dam = 0;
 			break;
 		}
 
 		case GF_HOLY_WORD:
 		{
 			/*  Holy Word */
-			if (!(RF_FLAG(r_ptr->flags, 2, EVIL))) dam = 0;
+			if (!(MON_FLAG(r_ptr, 2, EVIL))) dam = 0;
 			break;
 		}
 
 		case GF_LITE_WEAK:
 		{
 			/* Weak Lite */
-			if (!(RF_FLAG(r_ptr->flags, 2, HURT_LITE))) dam = 0;
+			if (!(MON_FLAG(r_ptr, 2, HURT_LITE))) dam = 0;
 			break;
 		}
 
@@ -4560,19 +4560,19 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_PSI:
 		case GF_PSI_DRAIN:
 		{
-			if (RF_FLAG(r_ptr->flags, 1, EMPTY_MIND))
+			if (MON_FLAG(r_ptr, 1, EMPTY_MIND))
 			{
 				dam = 0;
 			}
-			else if ((RF_FLAG(r_ptr->flags, 1, STUPID)) ||
-					 (RF_FLAG(r_ptr->flags, 1, WEIRD_MIND)) ||
-					 (RF_FLAG(r_ptr->flags, 2, ANIMAL)) ||
+			else if ((MON_FLAG(r_ptr, 1, STUPID)) ||
+					 (MON_FLAG(r_ptr, 1, WEIRD_MIND)) ||
+					 (MON_FLAG(r_ptr, 2, ANIMAL)) ||
 					 (r_ptr->level > (3 * dam / 2)))
 			{
 				dam /= 3;
 			}
-			else if (((RF_FLAG(r_ptr->flags, 2, UNDEAD)) ||
-					  (RF_FLAG(r_ptr->flags, 2, DEMON))) &&
+			else if (((MON_FLAG(r_ptr, 2, UNDEAD)) ||
+					  (MON_FLAG(r_ptr, 2, DEMON))) &&
 					 (r_ptr->level > bp_ptr->lev / 2))
 			{
 				dam = 0;
@@ -4583,7 +4583,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_KILL_WALL:
 		{
 			/* Stone to Mud */
-			if (!(RF_FLAG(r_ptr->flags, 2, HURT_ROCK))) dam = 0;
+			if (!(MON_FLAG(r_ptr, 2, HURT_ROCK))) dam = 0;
 			break;
 		}
 
@@ -4591,16 +4591,16 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		{
 			/* Nether */
 
-			if (RF_FLAG(r_ptr->flags, 2, UNDEAD))
+			if (MON_FLAG(r_ptr, 2, UNDEAD))
 			{
 				dam = 0;
 			}
-			else if (RF_FLAG(r_ptr->flags, 3, BR_NETH))
+			else if (MON_FLAG(r_ptr, 3, BR_NETH))
 			{
 				dam *= 3;
 				dam /= 9;
 			}
-			else if (RF_FLAG(r_ptr->flags, 2, EVIL))
+			else if (MON_FLAG(r_ptr, 2, EVIL))
 			{
 				dam /= 2;
 			}
@@ -4611,7 +4611,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		{
 			/* Chaos */
 
-			if ((RF_FLAG(r_ptr->flags, 3, BR_CHAO)) || (RF_FLAG(r_ptr->flags, 2, DEMON)))
+			if ((MON_FLAG(r_ptr, 3, BR_CHAO)) || (MON_FLAG(r_ptr, 2, DEMON)))
 			{
 				dam *= 3;
 				dam /= 9;
@@ -4623,7 +4623,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		{
 			/* Gravity */
 
-			if (RF_FLAG(r_ptr->flags, 3, BR_GRAV))
+			if (MON_FLAG(r_ptr, 3, BR_GRAV))
 			{
 				dam *= 2;
 				dam /= 9;
@@ -4634,7 +4634,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_SHARDS:
 		{
 			/* Shards */
-			if (RF_FLAG(r_ptr->flags, 3, BR_SHAR))
+			if (MON_FLAG(r_ptr, 3, BR_SHAR))
 			{
 				dam *= 3;
 				dam /= 9;
@@ -4645,7 +4645,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_ROCKET:
 		{
 			/* Rockets */
-			if (RF_FLAG(r_ptr->flags, 3, BR_SHAR))
+			if (MON_FLAG(r_ptr, 3, BR_SHAR))
 			{
 				dam /= 2;
 			}
@@ -4655,7 +4655,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_SOUND:
 		{
 			/* Sound */
-			if (RF_FLAG(r_ptr->flags, 3, BR_SOUN))
+			if (MON_FLAG(r_ptr, 3, BR_SOUN))
 			{
 				dam *= 2;
 				dam /= 9;
@@ -4666,7 +4666,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_PLASMA:
 		{
 			/* Plasma */
-			if ((RF_FLAG(r_ptr->flags, 3, BR_PLAS)) || (RF_FLAG(r_ptr->flags, 2, RES_PLAS)))
+			if ((MON_FLAG(r_ptr, 3, BR_PLAS)) || (MON_FLAG(r_ptr, 2, RES_PLAS)))
 			{
 				dam *= 2;
 				dam /= 9;
@@ -4677,7 +4677,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_FORCE:
 		{
 			/* Force */
-			if (RF_FLAG(r_ptr->flags, 3, BR_WALL))
+			if (MON_FLAG(r_ptr, 3, BR_WALL))
 			{
 				dam *= 2;
 				dam /= 9;
@@ -4688,7 +4688,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_DARK:
 		{
 			/* Dark */
-			if (RF_FLAG(r_ptr->flags, 3, BR_DARK))
+			if (MON_FLAG(r_ptr, 3, BR_DARK))
 			{
 				dam *= 2;
 				dam /= 9;
@@ -4699,7 +4699,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_WATER:
 		{
 			/* Water */
-			if (RF_FLAG(r_ptr->flags, 2, RES_WATE))
+			if (MON_FLAG(r_ptr, 2, RES_WATE))
 			{
 				dam *= 2;
 				dam /= 9;
@@ -4710,7 +4710,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_DISINTEGRATE:
 		{
 			/* Disintegrate */
-			if (RF_FLAG(r_ptr->flags, 2, RES_DISE))
+			if (MON_FLAG(r_ptr, 2, RES_DISE))
 			{
 				dam *= 2;
 				dam /= 9;
@@ -4719,7 +4719,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		}
 		case GF_TELEKINESIS:
 		{
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) dam /= 3;
+			if (MON_FLAG(r_ptr, 0, UNIQUE)) dam /= 3;
 			break;
 		}
 
@@ -4732,7 +4732,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_DISP_GOOD:
 		{
 			/* Dispel Good */
-			if (!(RF_FLAG(r_ptr->flags, 2, GOOD))) dam = 0;
+			if (!(MON_FLAG(r_ptr, 2, GOOD))) dam = 0;
 			break;
 		}
 
@@ -4804,7 +4804,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 
 			/* try not to teleport away uniques.   These are the guys you are trying */
 			/* to kill! */
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+			if (MON_FLAG(r_ptr, 0, UNIQUE))
 			{
 				/* If this unique is causing the danger, get rid of it */
 				if (dam > avoidance * 3 && bp_ptr->depth <= 95)
@@ -4826,8 +4826,8 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_OLD_CONF:
 		{
 			dam = 0;
-			if (RF_FLAG(r_ptr->flags, 2, NO_CONF)) break;
-			if (RF_FLAG(r_ptr->flags, 1, MULTIPLY)) break;
+			if (MON_FLAG(r_ptr, 2, NO_CONF)) break;
+			if (MON_FLAG(r_ptr, 1, MULTIPLY)) break;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
 			if ((r_ptr->level >=
@@ -4835,7 +4835,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 										4) * 3) + 10)) break;
 			dam = -999;
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) break;
+			if (MON_FLAG(r_ptr, 0, UNIQUE)) break;
 			borg_confuse_spell = FALSE;
 			p1 = borg_danger_aux(c_x, c_y, 1, i, TRUE);
 			borg_confuse_spell = TRUE;
@@ -4848,7 +4848,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_TURN_ALL:
 		{
 			dam = 0;
-			if (RF_FLAG(r_ptr->flags, 2, NO_FEAR)) break;
+			if (MON_FLAG(r_ptr, 2, NO_FEAR)) break;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
 			if ((r_ptr->level >=
@@ -4856,7 +4856,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 										4) * 3) + 10)) break;
 			dam = -999;
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) break;
+			if (MON_FLAG(r_ptr, 0, UNIQUE)) break;
 			borg_fear_mon_spell = FALSE;
 			p1 = borg_danger_aux(c_x, c_y, 1, i, TRUE);
 			borg_fear_mon_spell = TRUE;
@@ -4876,7 +4876,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 										4) * 3) + 10)) break;
 			dam = -999;
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) break;
+			if (MON_FLAG(r_ptr, 0, UNIQUE)) break;
 			borg_slow_spell = FALSE;
 			p1 = borg_danger_aux(c_x, c_y, 1, i, TRUE);
 			borg_slow_spell = TRUE;
@@ -4890,7 +4890,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_STASIS:
 		{
 			dam = 0;
-			if (RF_FLAG(r_ptr->flags, 2, NO_SLEEP)) break;
+			if (MON_FLAG(r_ptr, 2, NO_SLEEP)) break;
 			if (kill->
 				m_flags & (MONST_ASLEEP | MONST_CONFUSED | MONST_FEAR)) break;
 			if ((r_ptr->level >=
@@ -4898,7 +4898,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 										4) * 3) + 10)) break;
 			dam = -999;
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) break;
+			if (MON_FLAG(r_ptr, 0, UNIQUE)) break;
 			borg_sleep_spell = FALSE;
 			p1 = borg_danger_aux(c_x, c_y, 1, i, TRUE);
 			borg_sleep_spell = TRUE;
@@ -4916,7 +4916,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 				  13) ? bp_ptr->lev : (((bp_ptr->lev - 10) /
 										4) * 3) + 10)) break;
 			dam = -999;
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) break;
+			if (MON_FLAG(r_ptr, 0, UNIQUE)) break;
 			dam = borg_danger_aux(c_x, c_y, 2, i, TRUE);
 			/* dont bother unless he is a scary monster */
 			if (dam < avoidance * 2) dam = 0;
@@ -4925,7 +4925,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 
 		case GF_TURN_UNDEAD:
 		{
-			if (RF_FLAG(r_ptr->flags, 2, UNDEAD))
+			if (MON_FLAG(r_ptr, 2, UNDEAD))
 			{
 				dam = 0;
 				if (kill->
@@ -4949,13 +4949,13 @@ int borg_launch_damage_one(int i, int dam, int typ)
 		case GF_AWAY_EVIL:
 		{
 			/* Banishment-- cast when in extreme danger (checked in borg_defense). */
-			if (RF_FLAG(r_ptr->flags, 2, EVIL))
+			if (MON_FLAG(r_ptr, 2, EVIL))
 			{
 				/* try not teleport away uniques. */
-				if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+				if (MON_FLAG(r_ptr, 0, UNIQUE))
 				{
 					/* Banish ones with escorts */
-					if (RF_FLAG(r_ptr->flags, 0, ESCORT))
+					if (MON_FLAG(r_ptr, 0, ESCORT))
 					{
 						dam = 0;
 					}
@@ -4983,11 +4983,11 @@ int borg_launch_damage_one(int i, int dam, int typ)
 
 	/* use Missiles on certain types of monsters */
 	if ((borg_danger_aux(kill->x, kill->y, 1, i, TRUE) >= avoidance * 3 / 10) ||
-		(RF_FLAG(r_ptr->flags, 0, FRIENDS) /* monster has friends */  &&
+		(MON_FLAG(r_ptr, 0, FRIENDS) /* monster has friends */  &&
 		 r_ptr->level >= bp_ptr->lev - 5 /* close levels */ ) ||
 		(kill->ranged_attack /* monster has a ranged attack */ ) ||
-		(RF_FLAG(r_ptr->flags, 0, UNIQUE)) ||
-		(RF_FLAG(r_ptr->flags, 1, MULTIPLY)) ||
+		(MON_FLAG(r_ptr, 0, UNIQUE)) ||
+		(MON_FLAG(r_ptr, 1, MULTIPLY)) ||
 		(bp_ptr->lev <= 5 /* stil very weak */ ))
 	{
 		borg_use_missile = TRUE;
@@ -5010,7 +5010,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 
 	/* give a small bonus for whacking a unique */
 	/* this should be just enough to give prefrence to wacking uniques */
-	if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) && bp_ptr->depth >= 1)
+	if ((MON_FLAG(r_ptr, 0, UNIQUE)) && bp_ptr->depth >= 1)
 		dam = (dam * 5);
 
 	/*
@@ -5018,7 +5018,7 @@ int borg_launch_damage_one(int i, int dam, int typ)
 	 * down all accross the screen waking up all the monsters.  Then
 	 * he is stuck in a comprimised situation.
 	 */
-	if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) && bp_ptr->depth == 0)
+	if ((MON_FLAG(r_ptr, 0, UNIQUE)) && bp_ptr->depth == 0)
 	{
 		dam = dam * 2 / 3;
 
@@ -5027,29 +5027,29 @@ int borg_launch_damage_one(int i, int dam, int typ)
 	}
 
 	/* give a small bonus for whacking a breeder */
-	if (RF_FLAG(r_ptr->flags, 1, MULTIPLY))
+	if (MON_FLAG(r_ptr, 1, MULTIPLY))
 		dam = (dam * 3 / 2);
 
 	/*
 	 * Enhance the preceived damage to summoner in order to influence the
 	 * choice of targets.
 	 */
-	if ((RF_FLAG(r_ptr->flags, 5, S_KIN)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_CYBER)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_MONSTER)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_MONSTERS)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_ANT)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_SPIDER)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_HOUND)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_HYDRA)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_ANGEL)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_DEMON)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_UNDEAD)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_DRAGON)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_HI_UNDEAD)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_HI_DRAGON)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_AMBERITES)) ||
-		(RF_FLAG(r_ptr->flags, 5, S_UNIQUE)) || (RF_FLAG(r_ptr->flags, 0, QUESTOR)))
+	if ((MON_FLAG(r_ptr, 5, S_KIN)) ||
+		(MON_FLAG(r_ptr, 5, S_CYBER)) ||
+		(MON_FLAG(r_ptr, 5, S_MONSTER)) ||
+		(MON_FLAG(r_ptr, 5, S_MONSTERS)) ||
+		(MON_FLAG(r_ptr, 5, S_ANT)) ||
+		(MON_FLAG(r_ptr, 5, S_SPIDER)) ||
+		(MON_FLAG(r_ptr, 5, S_HOUND)) ||
+		(MON_FLAG(r_ptr, 5, S_HYDRA)) ||
+		(MON_FLAG(r_ptr, 5, S_ANGEL)) ||
+		(MON_FLAG(r_ptr, 5, S_DEMON)) ||
+		(MON_FLAG(r_ptr, 5, S_UNDEAD)) ||
+		(MON_FLAG(r_ptr, 5, S_DRAGON)) ||
+		(MON_FLAG(r_ptr, 5, S_HI_UNDEAD)) ||
+		(MON_FLAG(r_ptr, 5, S_HI_DRAGON)) ||
+		(MON_FLAG(r_ptr, 5, S_AMBERITES)) ||
+		(MON_FLAG(r_ptr, 5, S_UNIQUE)) || (MON_FLAG(r_ptr, 0, QUESTOR)))
 		dam += ((dam * 3) / 2);
 
 	/* Try to conserve missiles. */
@@ -5116,7 +5116,7 @@ static int borg_launch_bolt_aux_hack(int i, int dam, int typ)
 #endif
 
 	/* dont shoot at ghosts in walls, not perfect */
-	if (RF_FLAG(r_ptr->flags, 1, PASS_WALL))
+	if (MON_FLAG(r_ptr, 1, PASS_WALL))
 	{
 		/* if 2 walls and 1 unknown skip this monster */
 		/* Acquire location */
@@ -8225,7 +8225,7 @@ bool borg_attack(bool boosted_bravery)
 
 		/* Ignore multiplying monsters and when fleeing from scaries */
 		if (goal_ignoring && !bp_ptr->status.afraid &&
-			(RF_FLAG(r_info[kill->r_idx].flags, 1, MULTIPLY))) continue;
+			(MON_FLAG(&r_info[kill->r_idx], 1, MULTIPLY))) continue;
 
 		/* no attacking most scaryguys, try to get off the level */
 		if (scaryguy_on_level)
@@ -9639,7 +9639,7 @@ static int borg_defend_aux_mass_genocide(void)
 		if (distance(c_y, c_x, kill->y, kill->x) > 20) continue;
 
 		/* we try not to genocide uniques */
-		if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) continue;
+		if (MON_FLAG(r_ptr, 0, UNIQUE)) continue;
 
 		/* Calculate danger */
 		borg_full_damage = TRUE;
@@ -9783,7 +9783,7 @@ static int borg_defend_aux_genocide(void)
 		if (!kill->r_idx) continue;
 
 		/* we try not to genocide uniques */
-		if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) continue;
+		if (MON_FLAG(r_ptr, 0, UNIQUE)) continue;
 
 		/* Calculate danger */
 		borg_full_damage = TRUE;
@@ -10189,7 +10189,7 @@ static int borg_defend_aux_banishment(int p1)
 		if (!borg_projectable(c_x, c_y, kill->x, kill->y)) continue;
 
 		/* get rid of evil monsters */
-		if (RF_FLAG(r_ptr->flags, 2, EVIL)) continue;
+		if (MON_FLAG(r_ptr, 2, EVIL)) continue;
 
 		/* Calculate danger of who is left over */
 		borg_full_damage = TRUE;
@@ -11612,7 +11612,7 @@ bool borg_check_rest(void)
 		if (d < 2) return (FALSE);
 
 		/* If too close, don't rest */
-		if (d < 3 && !(RF_FLAG(r_ptr->flags, 0, NEVER_MOVE))) return (FALSE);
+		if (d < 3 && !(MON_FLAG(r_ptr, 0, NEVER_MOVE))) return (FALSE);
 
 		/* one call for dangers */
 		borg_full_damage = TRUE;
@@ -11632,11 +11632,11 @@ bool borg_check_rest(void)
 		/* Perhaps borg should check and see if the previous grid was los */
 
 		/* if absorbs mana, not safe */
-		if ((RF_FLAG(r_ptr->flags, 4, DRAIN_MANA)) && (bp_ptr->msp > 1)) return FALSE;
+		if ((MON_FLAG(r_ptr, 4, DRAIN_MANA)) && (bp_ptr->msp > 1)) return FALSE;
 
 		/* if it walks through walls, not safe */
-		if (RF_FLAG(r_ptr->flags, 1, PASS_WALL)) return FALSE;
-		if (RF_FLAG(r_ptr->flags, 1, KILL_WALL)) return FALSE;
+		if (MON_FLAG(r_ptr, 1, PASS_WALL)) return FALSE;
+		if (MON_FLAG(r_ptr, 1, KILL_WALL)) return FALSE;
 	}
 
 	/* Otherwise ok */
@@ -12177,7 +12177,7 @@ static bool borg_play_step(int y2, int x2)
 			return (FALSE);
 
 		/* Hack -- ignore Maggot until later.  */
-		if ((RF_FLAG(r_info[mb_ptr->monster].flags, 0, UNIQUE)) &&
+		if ((MON_FLAG(&r_info[mb_ptr->monster], 0, UNIQUE)) &&
 			bp_ptr->depth == 0 && bp_ptr->lev < 5)
 			return (FALSE);
 
@@ -13195,7 +13195,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 
 		/* Ignore multiplying monsters */
 		if (goal_ignoring && !bp_ptr->status.afraid &&
-			(RF_FLAG(r_info[kill->r_idx].flags, 1, MULTIPLY))) continue;
+			(MON_FLAG(&r_info[kill->r_idx], 1, MULTIPLY))) continue;
 
 		/* Avoid fighting if a scary guy is on the level */
 		if (scaryguy_on_level) continue;
@@ -13205,13 +13205,13 @@ bool borg_flow_kill(bool viewable, int nearness)
 
 		/* Avoid multiplying monsters when low level */
 		if (bp_ptr->lev < 10 &&
-			(RF_FLAG(r_info[kill->r_idx].flags, 1, MULTIPLY))) continue;
+			(MON_FLAG(&r_info[kill->r_idx], 1, MULTIPLY))) continue;
 
 		/* Hack -- ignore Maggot until later.  Player will chase Maggot
 		 * down all accross the screen waking up all the monsters.  Then
 		 * he is stuck in a comprimised situation.
 		 */
-		if ((RF_FLAG(r_info[kill->r_idx].flags, 0, UNIQUE)) &&
+		if ((MON_FLAG(&r_info[kill->r_idx], 0, UNIQUE)) &&
 			bp_ptr->depth == 0 && bp_ptr->lev < 5) continue;
 
 		/* Access the location */
@@ -13234,7 +13234,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 
 
 		/* Hack -- Skip "deadly" monsters unless uniques */
-		if (bp_ptr->lev > 15 && (!RF_FLAG(r_info->flags, 0, UNIQUE)) &&
+		if (bp_ptr->lev > 15 && (!MON_FLAG(&r_info[kill->r_idx], 0, UNIQUE)) &&
 			p > avoidance / 2) continue;
 		if (bp_ptr->lev <= 15 && p > avoidance / 3) continue;
 
@@ -13249,7 +13249,7 @@ bool borg_flow_kill(bool viewable, int nearness)
 		}
 
 		/* Hack -- Avoid getting surrounded */
-		if (borg_in_hall && (RF_FLAG(r_info[kill->r_idx].flags, 0, FRIENDS)))
+		if (borg_in_hall && (MON_FLAG(&r_info[kill->r_idx], 0, FRIENDS)))
 		{
 			/* check to see if monster is in a hall, */
 			for (hall_x = -1; hall_x <= 1; hall_x++)

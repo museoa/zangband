@@ -1531,7 +1531,7 @@ static void display_player_abilities(void)
 			avgdam *= 786;
 			avgdam /= 500;
 		}
-		else if (object_known_p(o_ptr) && (TR_FLAG(o_ptr->flags, 0, VORPAL)))
+		else if (object_known_p(o_ptr) && (OBJ_FLAG(o_ptr, 0, VORPAL)))
 		{
 			/* vorpal flag only */
 			avgdam *= 609;
@@ -1541,7 +1541,7 @@ static void display_player_abilities(void)
 		/* Estimate the effect of increased criticals */
 		/* The average critical does 1.8345 * normal damage... */
 		if (object_known_p(o_ptr) && (p_ptr->msp >= PSI_COST) &&
-				(TEST_FLAG(o_ptr->flags, 3, TR3_PSI_CRIT)))
+				(OBJ_FLAG(o_ptr, 3, PSI_CRIT)))
 		{
 			avgdam *= 640;
 			avgdam /= 500;
@@ -2502,7 +2502,7 @@ static void display_player_skill_info(void)
 			c = '.';
 
 			/* Boost */
-			if (TR_FLAG(ff, 0, SP) << skill)
+			if (ff[0] & (1L << skill))
 			{
 				/* Default */
 				c = '*';
@@ -2652,7 +2652,7 @@ static void display_player_top(void)
 		put_fstr(COL_NAME + WID_NAME, 7, CLR_L_BLUE "%s",
 				 realm_names[p_ptr->spell.r[1].realm]);
 	}
-	else if (TEST_FLAG(p_ptr->flags, 3, TR3_PATRON))
+	else if (OBJ_FLAG(p_ptr, 3, PATRON))
 	{
 		put_fstr(COL_NAME, 7, "Patron   : " CLR_L_BLUE "%s",
 					 chaos_patrons[p_ptr->chaos_patron]);
@@ -3174,7 +3174,7 @@ errr file_character(cptr name, bool full)
 		{
 			monster_race *r_ptr = &r_info[k];
 
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+			if (MON_FLAG(r_ptr, 0, UNIQUE))
 			{
 				if (r_ptr->max_num == 0) Total++;
 			}

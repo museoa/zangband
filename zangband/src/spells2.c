@@ -1378,8 +1378,8 @@ static bool norm_mon_tester(const monster_type *m_ptr, vptr data)
 	if (m_ptr->smart & (SM_MIMIC)) return (FALSE);
 	
 	/* Detect all non-invisible monsters */
-	if ((!(RF_FLAG(r_ptr->flags, 1, INVISIBLE))) ||
-		(OBJ_FLAG(p_ptr, 2, SEE_INVIS)) || p_ptr->tim.invis) return (TRUE);
+	if (!MON_FLAG(r_ptr, 1, INVISIBLE) ||
+		OBJ_FLAG(p_ptr, 2, SEE_INVIS) || p_ptr->tim.invis) return (TRUE);
 		
 	return (FALSE);
 }
@@ -1404,7 +1404,7 @@ static bool invis_mon_tester(const monster_type *m_ptr, vptr data)
 	(void) data;
 	
 	/* Detect invisible monsters */
-	return ((RF_FLAG(r_ptr->flags, 1, INVISIBLE)) ? TRUE : FALSE);
+	return (MON_FLAG(r_ptr, 1, INVISIBLE));
 }
 
 /*
@@ -1426,7 +1426,7 @@ static bool evil_mon_tester(const monster_type *m_ptr, vptr data)
 	(void) data;
 	
 	/* Detect evil monsters */
-	if (RF_FLAG(r_ptr->flags, 1, INVISIBLE))
+	if (MON_FLAG(r_ptr, 1, INVISIBLE))
 	{
 		/* Take note that they are evil */
 		r_ptr->r_flags[2] |= (RF2_EVIL);
@@ -1522,7 +1522,7 @@ static bool flag_mon_tester(const monster_type *m_ptr, vptr data)
 	/* Get flags to compare with */
 	flag = *((u32b *) data);
 	
-	if (TEST_FLAG(r_ptr->flags, 2, flag))
+	if (r_ptr->flags[2] & flag)
 	{
 		/* Take note that they are something */
 		r_ptr->r_flags[2] |= (flag);
@@ -1865,16 +1865,16 @@ bool genocide(int player_cast)
 		if (!m_ptr->r_idx) continue;
 
 		/* Hack -- Skip Unique Monsters */
-		if (TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE)) continue;
+		if (MON_FLAG(r_ptr, 0, UNIQUE)) continue;
 
 		/* Hack -- Skip Quest Monsters */
-		if (RF_FLAG(r_ptr->flags, 0, QUESTOR)) continue;
+		if (MON_FLAG(r_ptr, 0, QUESTOR)) continue;
 
 		/* Skip "wrong" monsters */
 		if (r_ptr->d_char != typ) continue;
 
 		/* Notice changes in view */
-		if (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_1 | RF6_LITE_2))
+		if (MON_FLAG(r_ptr, 6, LITE_1) || MON_FLAG(r_ptr, 6, LITE_2))
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_MON_LITE);
@@ -1939,16 +1939,16 @@ bool mass_genocide(int player_cast)
 		if (!m_ptr->r_idx) continue;
 
 		/* Hack -- Skip unique monsters */
-		if (TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE)) continue;
+		if (MON_FLAG(r_ptr, 0, UNIQUE)) continue;
 
 		/* Hack -- Skip Quest Monsters */
-		if (RF_FLAG(r_ptr->flags, 0, QUESTOR)) continue;
+		if (MON_FLAG(r_ptr, 0, QUESTOR)) continue;
 
 		/* Skip distant monsters */
 		if (m_ptr->cdis > MAX_SIGHT) continue;
 
 		/* Notice changes in view */
-		if (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_1 | RF6_LITE_2))
+		if (MON_FLAG(r_ptr, 6, LITE_1) || MON_FLAG(r_ptr, 6, LITE_2))
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_MON_LITE);
@@ -2103,7 +2103,7 @@ bool destroy_area(int x1, int y1, int r)
 			/* Hack -- Skip the epicenter */
 			if ((y == y1) && (x == x1)) continue;
 
-			if (RF_FLAG(r_info[m_list[c_ptr->m_idx].r_idx].flags, 0, QUESTOR))
+			if (MON_FLAG(&r_info[m_list[c_ptr->m_idx].r_idx], 0, QUESTOR))
 			{
 				/* Heal the monster */
 				m_list[c_ptr->m_idx].hp = m_list[c_ptr->m_idx].maxhp;
@@ -2444,7 +2444,7 @@ bool earthquake(int cx, int cy, int r)
 				monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 				/* Quest monsters */
-				if (RF_FLAG(r_ptr->flags, 0, QUESTOR))
+				if (MON_FLAG(r_ptr, 0, QUESTOR))
 				{
 					/* No wall on quest monsters */
 					map[16 + yy - cy][16 + xx - cx] = FALSE;
@@ -2453,14 +2453,14 @@ bool earthquake(int cx, int cy, int r)
 				}
 
 				/* Most monsters cannot co-exist with rock */
-				if (!(TEST_FLAG(r_ptr->flags, 1, RF1_KILL_WALL)) &&
-					!(TEST_FLAG(r_ptr->flags, 1, RF1_PASS_WALL)))
+				if (!MON_FLAG(r_ptr, 1, KILL_WALL) &&
+					!MON_FLAG(r_ptr, 1, PASS_WALL))
 				{
 					/* Assume not safe */
 					sn = 0;
 
 					/* Monster can move to escape the wall */
-					if (!(TEST_FLAG(r_ptr->flags, 0, RF0_NEVER_MOVE)))
+					if (!MON_FLAG(r_ptr, 0, NEVER_MOVE))
 					{
 						/* Look for safety */
 						for (i = 0; i < 8; i++)
@@ -2708,10 +2708,10 @@ static void cave_temp_room_lite(void)
 				monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 				/* Stupid monsters rarely wake up */
-				if (TEST_FLAG(r_ptr->flags, 1, RF1_STUPID)) chance = 10;
+				if (MON_FLAG(r_ptr, 1, STUPID)) chance = 10;
 
 				/* Smart monsters always wake up */
-				if (TEST_FLAG(r_ptr->flags, 1, RF1_SMART)) chance = 100;
+				if (MON_FLAG(r_ptr, 1, SMART)) chance = 100;
 
 				/* Sometimes monsters wake up */
 				if (m_ptr->csleep && (randint0(100) < chance))
@@ -3146,7 +3146,7 @@ bool teleport_swap(int dir)
 	m_ptr = &m_list[c_ptr->m_idx];
 	r_ptr = &r_info[m_ptr->r_idx];
 
-	if (RF_FLAG(r_ptr->flags, 2, RES_TELE))
+	if (MON_FLAG(r_ptr, 2, RES_TELE))
 	{
 		msgf("Your teleportation is blocked!");
 
@@ -3218,7 +3218,7 @@ bool teleport_swap(int dir)
 	p_ptr->update |= (PU_VIEW | PU_FLOW);
 
 	/* Notice changes in view */
-	if (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_1 | RF6_LITE_2))
+	if (MON_FLAG(r_ptr, 6, LITE_1) || MON_FLAG(r_ptr, 6, LITE_2))
 	{
 		/* Update some things */
 		p_ptr->update |= (PU_MON_LITE);

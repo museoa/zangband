@@ -3125,7 +3125,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, byte flags)
 				if (!r_ptr->rarity) continue;
 
 				/* No uniques */
-				if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) continue;
+				if (MON_FLAG(r_ptr, 0, UNIQUE)) continue;
 
 				break;
 			}

@@ -28,12 +28,12 @@ static void have_nightmare_aux(int r_idx)
 	cptr desc = r_name + r_ptr->name;
 
 
-	if (!(RF_FLAG(r_ptr->flags, 0, UNIQUE)))
+	if (!MON_FLAG(r_ptr, 0, UNIQUE))
 	{
 		/* Describe it */
 		strnfmt(m_name, 80, "%s %s", (is_a_vowel(desc[0]) ? "an" : "a"), desc);
 
-		if (RF_FLAG(r_ptr->flags, 0, FRIENDS))
+		if (MON_FLAG(r_ptr, 0, FRIENDS))
 		{
 			power /= 2;
 		}
@@ -263,7 +263,7 @@ bool get_nightmare(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Require eldritch horrors */
-	if (!(TEST_FLAG(r_ptr->flags, 3, RF3_ELDRITCH_HORROR))) return (FALSE);
+	if (!MON_FLAG(r_ptr, 3, ELDRITCH_HORROR)) return (FALSE);
 
 	/* Require high level */
 	if (r_ptr->level <= p_ptr->lev) return (FALSE);

@@ -506,11 +506,11 @@ static void add_monsters(int count)
 		r_ptr = &r_info[best_r_idx];
 
 		/* Get the number of monsters */
-		if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+		if (MON_FLAG(r_ptr, 0, UNIQUE))
 		{
 			num = 1;
 		}
-		else if (RF_FLAG(r_ptr->flags, 2, UNIQUE_7))
+		else if (MON_FLAG(r_ptr, 2, UNIQUE_7))
 		{
 			num = randint1(r_ptr->max_num);
 		}
@@ -540,7 +540,7 @@ static void add_monsters(int count)
 					break;
 			}
 
-			if (RF_FLAG(r_ptr->flags, 0, FRIENDS))
+			if (MON_FLAG(r_ptr, 0, FRIENDS))
 				group = FALSE;
 			else
 				group = TRUE;

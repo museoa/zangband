@@ -119,7 +119,7 @@ void flee_message(cptr m_name, u16b r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 	
 	/* Immobile monsters can never flee */
-	if (RF_FLAG(r_ptr->flags, 0, NEVER_MOVE)) return;
+	if (MON_FLAG(r_ptr, 0, NEVER_MOVE)) return;
 	
 	/* Sound */
 	sound(SOUND_FLEE);
@@ -161,7 +161,7 @@ bool make_attack_normal(int m_idx)
 	bool visible = m_ptr->ml;
 
 	/* Not allowed to attack */
-	if (TEST_FLAG(r_ptr->flags, 0, RF0_NEVER_BLOW)) return (FALSE);
+	if (MON_FLAG(r_ptr, 0, NEVER_BLOW)) return (FALSE);
 
 	/* ...nor if friendly */
 	if (!is_hostile(m_ptr)) return FALSE;
@@ -380,32 +380,32 @@ bool make_attack_normal(int m_idx)
 			/* Always disturbing */
 			disturb(TRUE);
 
-			if ((OBJ_FLAG(p_ptr, 0, SLAY_DRAGON)) &&
-					(RF_FLAG(r_ptr->flags, 2, DRAGON)))
+			if (OBJ_FLAG(p_ptr, 0, SLAY_DRAGON) &&
+					MON_FLAG(r_ptr, 2, DRAGON))
 				protect = 5;
-			else if ((OBJ_FLAG(p_ptr, 0, SLAY_DEMON)) &&
-					(RF_FLAG(r_ptr->flags, 2, DEMON)))
+			else if (OBJ_FLAG(p_ptr, 0, SLAY_DEMON) &&
+					MON_FLAG(r_ptr, 2, DEMON))
 				protect = 5;
-			else if ((OBJ_FLAG(p_ptr, 0, SLAY_UNDEAD)) &&
-					(RF_FLAG(r_ptr->flags, 2, UNDEAD)))
+			else if (OBJ_FLAG(p_ptr, 0, SLAY_UNDEAD) &&
+					MON_FLAG(r_ptr, 2, UNDEAD))
 				protect = 4;
-			else if ((OBJ_FLAG(p_ptr, 0, SLAY_ORC)) &&
-					(RF_FLAG(r_ptr->flags, 2, ORC)))
+			else if (OBJ_FLAG(p_ptr, 0, SLAY_ORC) &&
+					MON_FLAG(r_ptr, 2, ORC))
 				protect = 4;
-			else if ((OBJ_FLAG(p_ptr, 0, SLAY_TROLL)) &&
-					(RF_FLAG(r_ptr->flags, 2, TROLL)))
+			else if (OBJ_FLAG(p_ptr, 0, SLAY_TROLL) &&
+					MON_FLAG(r_ptr, 2, TROLL))
 				protect = 4;
-			else if ((OBJ_FLAG(p_ptr, 0, SLAY_GIANT)) &&
-					(RF_FLAG(r_ptr->flags, 2, GIANT)))
+			else if (OBJ_FLAG(p_ptr, 0, SLAY_GIANT) &&
+					MON_FLAG(r_ptr, 2, GIANT))
 				protect = 4;
-			else if ((OBJ_FLAG(p_ptr, 0, SLAY_ANIMAL)) &&
-					(RF_FLAG(r_ptr->flags, 2, ANIMAL)))
+			else if (OBJ_FLAG(p_ptr, 0, SLAY_ANIMAL) &&
+					MON_FLAG(r_ptr, 2, ANIMAL))
 				protect = 3;
-			else if ((OBJ_FLAG(p_ptr, 0, SLAY_EVIL)) &&
-					(RF_FLAG(r_ptr->flags, 2, EVIL)))
+			else if (OBJ_FLAG(p_ptr, 0, SLAY_EVIL) &&
+					MON_FLAG(r_ptr, 2, EVIL))
 				protect = 3;
 			else if ((p_ptr->tim.protevil > 0) &&
-					(RF_FLAG(r_ptr->flags, 2, EVIL)))
+					MON_FLAG(r_ptr, 2, EVIL))
 				protect = 3;
 
 			/* Protection gets stronger with experience */
@@ -1524,7 +1524,7 @@ bool make_attack_normal(int m_idx)
 			{
 				if ((OBJ_FLAG(p_ptr, 2, SH_FIRE)) && alive)
 				{
-					if (!(RF_FLAG(r_ptr->flags, 2, IM_FIRE)))
+					if (!MON_FLAG(r_ptr, 2, IM_FIRE))
 					{
 						int dam = damroll(2, 6);
 
@@ -1549,7 +1549,7 @@ bool make_attack_normal(int m_idx)
 
 				if ((OBJ_FLAG(p_ptr, 2, SH_ELEC)) && alive)
 				{
-					if (!(RF_FLAG(r_ptr->flags, 2, IM_ELEC)))
+					if (!MON_FLAG(r_ptr, 2, IM_ELEC))
 					{
 						int dam = damroll(2, 6);
 
@@ -1574,7 +1574,7 @@ bool make_attack_normal(int m_idx)
 
 				if ((OBJ_FLAG(p_ptr, 3, SH_ACID)) && alive)
 				{
-					if (!(RF_FLAG(r_ptr->flags, 2, IM_ACID)))
+					if (!MON_FLAG(r_ptr, 2, IM_ACID))
 					{
 						int dam = damroll(2, 6);
 
@@ -1599,7 +1599,7 @@ bool make_attack_normal(int m_idx)
 
 				if ((OBJ_FLAG(p_ptr, 3, SH_COLD)) && alive)
 				{
-					if (!(RF_FLAG(r_ptr->flags, 2, IM_COLD)))
+					if (!MON_FLAG(r_ptr, 2, IM_COLD))
 					{
 						int dam = damroll(2, 6);
 

@@ -150,7 +150,7 @@ bool teleport_away(int m_idx, int dis)
 	lite_spot(nx, ny);
 
 	/* Notice changes in view */
-	if (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_1 | RF6_LITE_2))
+	if (MON_FLAG(r_ptr, 6, LITE_1) ||  MON_FLAG(r_ptr, 6, LITE_2))
 	{
 		/* Update some things */
 		p_ptr->update |= (PU_MON_LITE);
@@ -297,7 +297,7 @@ void teleport_to_player(int m_idx)
 	lite_spot(nx, ny);
 
 	/* Notice changes in view */
-	if (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_1 | RF6_LITE_2))
+	if (MON_FLAG(r_ptr, 6, LITE_1) || MON_FLAG(r_ptr, 6, LITE_2))
 	{
 		/* Update some things */
 		p_ptr->update |= (PU_MON_LITE);
@@ -463,8 +463,8 @@ void teleport_player(int dis)
 					m_idx = area(x, y)->m_idx;
 					m_ptr = &m_list[m_idx];
 
-					if ((RF_FLAG(r_info[m_ptr->r_idx].flags, 5, TPORT)) &&
-						!(RF_FLAG(r_info[m_ptr->r_idx].flags, 2, RES_TELE)) &&
+					if ((MON_FLAG(&r_info[m_ptr->r_idx], 5, TPORT)) &&
+						!(MON_FLAG(&r_info[m_ptr->r_idx], 2, RES_TELE)) &&
 						!(m_ptr->csleep))
 						/*
 						 * The RES_TELE limitation is to avoid
@@ -4299,7 +4299,7 @@ static s16b poly_r_idx(int r_idx)
 	int i, r, lev1, lev2;
 
 	/* Hack -- Uniques/Questors never polymorph */
-	if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) || (RF_FLAG(r_ptr->flags, 0, QUESTOR)))
+	if (MON_FLAG(r_ptr, 0, UNIQUE) || MON_FLAG(r_ptr, 0, QUESTOR))
 		return (r_idx);
 
 	/* Allowable range of "levels" for resulting monster */
@@ -4319,7 +4319,7 @@ static s16b poly_r_idx(int r_idx)
 		r_ptr = &r_info[r];
 
 		/* Ignore unique monsters */
-		if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) continue;
+		if (MON_FLAG(r_ptr, 0, UNIQUE)) continue;
 
 		/* Ignore monsters with incompatible levels */
 		if ((r_ptr->level < lev1) || (r_ptr->level > lev2)) continue;
@@ -4452,9 +4452,9 @@ void sanity_blast(const monster_type *m_ptr)
 
 	power = r_ptr->level + 10;
 
-	if (!(RF_FLAG(r_ptr->flags, 0, UNIQUE)))
+	if (!MON_FLAG(r_ptr, 0, UNIQUE))
 	{
-		if (RF_FLAG(r_ptr->flags, 0, FRIENDS))
+		if (MON_FLAG(r_ptr, 0, FRIENDS))
 			power /= 2;
 	}
 	else
@@ -4464,7 +4464,7 @@ void sanity_blast(const monster_type *m_ptr)
 	if (!m_ptr->ml) return;
 
 	/* Paranoia */
-	if (!(RF_FLAG(r_ptr->flags, 3, ELDRITCH_HORROR))) return;
+	if (!MON_FLAG(r_ptr, 3, ELDRITCH_HORROR)) return;
 
 	/* Pet eldritch horrors are safe most of the time */
 	if (is_pet(m_ptr) && !one_in_(8)) return;

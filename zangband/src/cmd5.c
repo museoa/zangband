@@ -1705,13 +1705,13 @@ static bool cast_death_spell(int spell)
 				if (!m_ptr->r_idx) continue;
 
 				/* Hack -- Skip Unique Monsters */
-				if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) continue;
+				if (MON_FLAG(r_ptr, 0, UNIQUE)) continue;
 
 				/* Hack -- Skip Quest Monsters */
-				if (RF_FLAG(r_ptr->flags, 0, QUESTOR)) continue;
+				if (MON_FLAG(r_ptr, 0, QUESTOR)) continue;
 
 				/* Notice changes in view */
-				if (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_1 | RF6_LITE_2))
+				if (MON_FLAG(r_ptr, 6, LITE_1) || MON_FLAG(r_ptr, 6, LITE_2))
 				{
 					/* Update some things */
 					p_ptr->update |= (PU_MON_LITE);

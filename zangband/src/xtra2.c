@@ -204,13 +204,13 @@ bool monster_death(int m_idx, bool explode)
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-	bool visible = (m_ptr->ml || (RF_FLAG(r_ptr->flags, 0, UNIQUE)));
+	bool visible = (m_ptr->ml || (MON_FLAG(r_ptr, 0, UNIQUE)));
 
 	bool good = (r_ptr->flags[0] & RF0_DROP_GOOD) ? TRUE : FALSE;
 	bool great = (r_ptr->flags[0] & RF0_DROP_GREAT) ? TRUE : FALSE;
 
-	bool do_gold = (!(RF_FLAG(r_ptr->flags, 0, ONLY_ITEM)));
-	bool do_item = (!(RF_FLAG(r_ptr->flags, 0, ONLY_GOLD)));
+	bool do_gold = (!(MON_FLAG(r_ptr, 0, ONLY_ITEM)));
+	bool do_item = (!(MON_FLAG(r_ptr, 0, ONLY_GOLD)));
 	bool cloned = FALSE;
 	bool dropped_corpse = FALSE;
 	int force_coin = get_coin_type(r_ptr);
@@ -220,7 +220,7 @@ bool monster_death(int m_idx, bool explode)
 	int level;
 
 	/* Notice changes in view */
-	if (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_1 | RF6_LITE_2))
+	if (MON_FLAG(r_ptr, 6, LITE_1) || MON_FLAG(r_ptr, 6, LITE_2))
 	{
 		/* Update some things */
 		p_ptr->update |= (PU_MON_LITE);
@@ -411,7 +411,7 @@ bool monster_death(int m_idx, bool explode)
 	}
 
 	/* Complete quests */
-	if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+	if (MON_FLAG(r_ptr, 0, UNIQUE))
 	{
 		trigger_quest_complete(QX_KILL_UNIQUE, (vptr)m_ptr);
 	}
@@ -428,10 +428,10 @@ bool monster_death(int m_idx, bool explode)
 
 
 	/* Hack: Do not drop a corpse in a random quest.  */
-	if ((one_in_(RF_FLAG(r_ptr->flags, 0, UNIQUE) ? 1 : 2) &&
-		 ((RF_FLAG(r_ptr->flags, 8, DROP_CORPSE)) ||
-		  (RF_FLAG(r_ptr->flags, 8, DROP_SKELETON))))
-		&& !(RF_FLAG(r_ptr->flags, 0, QUESTOR)))
+	if ((one_in_(MON_FLAG(r_ptr, 0, UNIQUE) ? 1 : 2) &&
+		 ((MON_FLAG(r_ptr, 8, DROP_CORPSE)) ||
+		  (MON_FLAG(r_ptr, 8, DROP_SKELETON))))
+		&& !(MON_FLAG(r_ptr, 0, QUESTOR)))
 	{
 		/* Assume skeleton */
 		bool corpse = FALSE;
@@ -440,11 +440,11 @@ bool monster_death(int m_idx, bool explode)
 		 * We cannot drop a skeleton? Note, if we are in this check,
 		 * we *know* we can drop at least a corpse or a skeleton
 		 */
-		if (!(RF_FLAG(r_ptr->flags, 8, DROP_SKELETON)))
+		if (!(MON_FLAG(r_ptr, 8, DROP_SKELETON)))
 			corpse = TRUE;
 
 		/* Else, a corpse is more likely unless we did a "lot" of damage */
-		else if (RF_FLAG(r_ptr->flags, 8, DROP_CORPSE))
+		else if (MON_FLAG(r_ptr, 8, DROP_CORPSE))
 		{
 			/* Lots of damage in one blow */
 			if ((0 - ((m_ptr->maxhp) / 4)) > m_ptr->hp)
@@ -617,7 +617,7 @@ bool monster_death(int m_idx, bool explode)
 	}
 
 	/* Mega-Hack -- drop "winner" treasures */
-	else if (RF_FLAG(r_ptr->flags, 0, DROP_CHOSEN))
+	else if (MON_FLAG(r_ptr, 0, DROP_CHOSEN))
 	{
 		if (strstr((r_name + r_ptr->name), "Serpent of Chaos"))
 		{
@@ -732,12 +732,12 @@ bool monster_death(int m_idx, bool explode)
 	}
 
 	/* Determine how much we can drop */
-	if ((RF_FLAG(r_ptr->flags, 0, DROP_60)) && (randint0(100) < 60)) number++;
-	if ((RF_FLAG(r_ptr->flags, 0, DROP_90)) && (randint0(100) < 90)) number++;
-	if (RF_FLAG(r_ptr->flags, 0, DROP_1D2)) number += damroll(1, 2);
-	if (RF_FLAG(r_ptr->flags, 0, DROP_2D2)) number += damroll(2, 2);
-	if (RF_FLAG(r_ptr->flags, 0, DROP_3D2)) number += damroll(3, 2);
-	if (RF_FLAG(r_ptr->flags, 0, DROP_4D2)) number += damroll(4, 2);
+	if ((MON_FLAG(r_ptr, 0, DROP_60)) && (randint0(100) < 60)) number++;
+	if ((MON_FLAG(r_ptr, 0, DROP_90)) && (randint0(100) < 90)) number++;
+	if (MON_FLAG(r_ptr, 0, DROP_1D2)) number += damroll(1, 2);
+	if (MON_FLAG(r_ptr, 0, DROP_2D2)) number += damroll(2, 2);
+	if (MON_FLAG(r_ptr, 0, DROP_3D2)) number += damroll(3, 2);
+	if (MON_FLAG(r_ptr, 0, DROP_4D2)) number += damroll(4, 2);
 
 	if (cloned) number = 0;		/* Clones drop no stuff */
 
@@ -902,7 +902,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* Extract monster name */
 		monster_desc(m_name, m_ptr, 0, 80);
 
-		if (RF_FLAG(r_ptr->flags, 1, CAN_SPEAK))
+		if (MON_FLAG(r_ptr, 1, CAN_SPEAK))
 		{
 			char line_got[1024];
 
@@ -913,8 +913,8 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 					msgf("%^s says: %s", m_name, line_got);
 			}
 
-			if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) && one_in_(REWARD_CHANCE) &&
-				!(RF_FLAG(r_ptr->flags, 6, FRIENDLY)))
+			if ((MON_FLAG(r_ptr, 0, UNIQUE)) && one_in_(REWARD_CHANCE) &&
+				!(MON_FLAG(r_ptr, 6, FRIENDLY)))
 			{
 				if (!get_rnd_line("crime.txt", m_ptr->r_idx, line_got))
 				{
@@ -945,18 +945,18 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		if (r_ptr->level >= 2 * (p_ptr->lev))
 			chg_virtue(V_VALOUR, 1);
 
-		if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) && ((RF_FLAG(r_ptr->flags, 2, EVIL)) ||
-											 (RF_FLAG(r_ptr->flags, 2, GOOD))))
+		if ((MON_FLAG(r_ptr, 0, UNIQUE)) && ((MON_FLAG(r_ptr, 2, EVIL)) ||
+											 (MON_FLAG(r_ptr, 2, GOOD))))
 
 			chg_virtue(V_HARMONY, 2);
 
-		if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) && (RF_FLAG(r_ptr->flags, 2, GOOD)))
+		if ((MON_FLAG(r_ptr, 0, UNIQUE)) && (MON_FLAG(r_ptr, 2, GOOD)))
 		{
 			chg_virtue(V_UNLIFE, 2);
 			chg_virtue(V_VITALITY, -2);
 		}
 
-		if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) && one_in_(3))
+		if ((MON_FLAG(r_ptr, 0, UNIQUE)) && one_in_(3))
 			chg_virtue(V_INDIVIDUALISM, -1);
 
 		if ((strstr((r_name + r_ptr->name), "beggar")) ||
@@ -965,15 +965,15 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			chg_virtue(V_COMPASSION, -1);
 		}
 
-		if ((RF_FLAG(r_ptr->flags, 2, GOOD)) &&
+		if ((MON_FLAG(r_ptr, 2, GOOD)) &&
 			((r_ptr->level) / 10 + (3 * p_ptr->depth) >= randint1(100)))
 
 			chg_virtue(V_UNLIFE, 1);
 
 		/* "Good" angels */
-		if ((r_ptr->d_char == 'A') && !(RF_FLAG(r_ptr->flags, 2, EVIL)))
+		if ((r_ptr->d_char == 'A') && !(MON_FLAG(r_ptr, 2, EVIL)))
 		{
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+			if (MON_FLAG(r_ptr, 0, UNIQUE))
 				chg_virtue(V_FAITH, -2);
 			else if ((r_ptr->level) / 10 + (3 * p_ptr->depth) >= randint1(100))
 				chg_virtue(V_FAITH, -1);
@@ -981,20 +981,20 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		/* "Evil" angel or a demon (what's the theological difference,
 		   anyway...) */
-		else if ((r_ptr->d_char == 'A') || (RF_FLAG(r_ptr->flags, 2, DEMON)))
+		else if ((r_ptr->d_char == 'A') || (MON_FLAG(r_ptr, 2, DEMON)))
 		{
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+			if (MON_FLAG(r_ptr, 0, UNIQUE))
 				chg_virtue(V_FAITH, 2);
 			else if ((r_ptr->level) / 10 + (3 * p_ptr->depth) >= randint1(100))
 				chg_virtue(V_FAITH, 1);
 		}
 
-		if ((RF_FLAG(r_ptr->flags, 2, UNDEAD)) && (RF_FLAG(r_ptr->flags, 0, UNIQUE)))
+		if ((MON_FLAG(r_ptr, 2, UNDEAD)) && (MON_FLAG(r_ptr, 0, UNIQUE)))
 			chg_virtue(V_VITALITY, 2);
 
 		if (r_ptr->r_deaths)
 		{
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+			if (MON_FLAG(r_ptr, 0, UNIQUE))
 			{
 				chg_virtue(V_HONOUR, 10);
 			}
@@ -1018,7 +1018,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 
 		if (thief)
 		{
-			if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+			if (MON_FLAG(r_ptr, 0, UNIQUE))
 				chg_virtue(V_JUSTICE, 3);
 			else if (1 + (r_ptr->level / 10 + (2 * p_ptr->depth)) >=
 					 randint1(100))
@@ -1029,7 +1029,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			chg_virtue(V_JUSTICE, -1);
 		}
 
-		if ((RF_FLAG(r_ptr->flags, 2, ANIMAL)) && !(RF_FLAG(r_ptr->flags, 2, EVIL)))
+		if ((MON_FLAG(r_ptr, 2, ANIMAL)) && !(MON_FLAG(r_ptr, 2, EVIL)))
 		{
 			if (one_in_(3)) chg_virtue(V_NATURE, -1);
 		}
@@ -1092,23 +1092,23 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		gain_exp(new_exp);
 
 		/* When the player kills a Unique, it stays dead */
-		if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) r_ptr->max_num = 0;
+		if (MON_FLAG(r_ptr, 0, UNIQUE)) r_ptr->max_num = 0;
 
 		/*
 		 * If the player kills a Unique,
 		 * and the notes options are on, write a note
 		 */
-		if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) && take_notes && auto_notes)
+		if ((MON_FLAG(r_ptr, 0, UNIQUE)) && take_notes && auto_notes)
 		{
 			/* Get true name even if blinded/hallucinating and write note */
 			add_note('U', "Killed %s", r_name + r_ptr->name);
 		}
 
 		/* When the player kills a Nazgul, it stays dead */
-		if (RF_FLAG(r_ptr->flags, 2, UNIQUE_7)) r_ptr->max_num--;
+		if (MON_FLAG(r_ptr, 2, UNIQUE_7)) r_ptr->max_num--;
 
 		/* Recall even invisible uniques or winners */
-		if (visible || (RF_FLAG(r_ptr->flags, 0, UNIQUE)) || corpse)
+		if (visible || (MON_FLAG(r_ptr, 0, UNIQUE)) || corpse)
 		{
 			/* Count kills this life */
 			if (r_ptr->r_pkills < MAX_SHORT) r_ptr->r_pkills++;
@@ -1121,7 +1121,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		}
 
 		/* Don't kill Amberites */
-		if ((RF_FLAG(r_ptr->flags, 2, AMBERITE)) && one_in_(2))
+		if ((MON_FLAG(r_ptr, 2, AMBERITE)) && one_in_(2))
 		{
 			int curses = rand_range(2, 4);
 			bool stop_ty = FALSE;
@@ -1171,7 +1171,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	}
 
 	/* Sometimes a monster gets scared by damage */
-	if (!m_ptr->monfear && !(TEST_FLAG(r_ptr->flags, 2, RF2_NO_FEAR)) && (dam > 0))
+	if (!m_ptr->monfear && !MON_FLAG(r_ptr, 2, NO_FEAR) && (dam > 0))
 	{
 		int percentage;
 
@@ -2252,8 +2252,8 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 					s1 = "It is ";
 
 					/* Hack -- take account of gender */
-					if (TEST_FLAG(r_ptr->flags, 0, RF0_FEMALE)) s1 = "She is ";
-					else if (TEST_FLAG(r_ptr->flags, 0, RF0_MALE)) s1 = "He is ";
+					if (MON_FLAG(r_ptr, 0, FEMALE)) s1 = "She is ";
+					else if (MON_FLAG(r_ptr, 0, MALE)) s1 = "He is ";
 
 					/* Use a preposition */
 					s2 = "carrying ";

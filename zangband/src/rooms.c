@@ -792,9 +792,9 @@ static void build_type4(int bx0, int by0)
  * Line 3 -- forbid aquatic monsters
  */
 #define vault_monster_okay(I) \
-	(!(RF_FLAG(r_info[I].flags, 7, WILD_TOWN)) && \
-	 !(RF_FLAG(r_info[I].flags, 0, UNIQUE)) && \
-	 !(RF_FLAG(r_info[I].flags, 6, AQUATIC)))
+	(!MON_FLAG(&r_info[I], 7, WILD_TOWN) && \
+	 !MON_FLAG(&r_info[I], 0, UNIQUE) && \
+	 !MON_FLAG(&r_info[I], 6, AQUATIC))
 
 
 /* Race index for "monster pit (clone)" */
@@ -834,7 +834,7 @@ static bool vault_aux_jelly(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Also decline evil jellies (like death molds and shoggoths) */
-	if (TEST_FLAG(r_ptr->flags, 2, RF2_EVIL)) return (FALSE);
+	if (MON_FLAG(r_ptr, 2, EVIL)) return (FALSE);
 
 	/* Require icky thing, jelly, mold, or mushroom */
 	if (!strchr("ijm,", r_ptr->d_char)) return (FALSE);
@@ -855,10 +855,10 @@ static bool vault_aux_animal(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Decline unique monsters */
-	if (TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE)) return (FALSE);
+	if (MON_FLAG(r_ptr, 0, UNIQUE)) return (FALSE);
 
 	/* Require "animal" flag */
-	if (!(TEST_FLAG(r_ptr->flags, 2, RF2_ANIMAL))) return (FALSE);
+	if (!MON_FLAG(r_ptr, 2, ANIMAL)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -876,7 +876,7 @@ static bool vault_aux_undead(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Require Undead */
-	if (!(TEST_FLAG(r_ptr->flags, 2, RF2_UNDEAD))) return (FALSE);
+	if (!MON_FLAG(r_ptr, 2, UNDEAD)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -978,10 +978,10 @@ static bool vault_aux_orc(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Require orc */
-	if (!(RF_FLAG(r_ptr->flags, 2, ORC))) return (FALSE);
+	if (!MON_FLAG(r_ptr, 2, ORC)) return (FALSE);
 
 	/* Decline undead */
-	if (RF_FLAG(r_ptr->flags, 2, UNDEAD)) return (FALSE);
+	if (MON_FLAG(r_ptr, 2, UNDEAD)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -999,10 +999,10 @@ static bool vault_aux_troll(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Require troll */
-	if (!(RF_FLAG(r_ptr->flags, 2, TROLL))) return (FALSE);
+	if (!MON_FLAG(r_ptr, 2, TROLL)) return (FALSE);
 
 	/* Decline undead */
-	if (RF_FLAG(r_ptr->flags, 2, UNDEAD)) return (FALSE);
+	if (MON_FLAG(r_ptr, 2, UNDEAD)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -1020,10 +1020,10 @@ static bool vault_aux_giant(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Require giant */
-	if (!(RF_FLAG(r_ptr->flags, 2, GIANT))) return (FALSE);
+	if (!MON_FLAG(r_ptr, 2, GIANT)) return (FALSE);
 
 	/* Decline undead */
-	if (RF_FLAG(r_ptr->flags, 2, UNDEAD)) return (FALSE);
+	if (MON_FLAG(r_ptr, 2, UNDEAD)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -1041,13 +1041,13 @@ static bool vault_aux_dragon(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Require dragon */
-	if (!(RF_FLAG(r_ptr->flags, 2, DRAGON))) return (FALSE);
+	if (!MON_FLAG(r_ptr, 2, DRAGON)) return (FALSE);
 
 	/* Hack -- Require correct "breath attack" */
 	if (r_ptr->flags[3] != vault_aux_dragon_mask4) return (FALSE);
 
 	/* Decline undead */
-	if (RF_FLAG(r_ptr->flags, 2, UNDEAD)) return (FALSE);
+	if (MON_FLAG(r_ptr, 2, UNDEAD)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -1065,7 +1065,7 @@ static bool vault_aux_demon(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Require demon */
-	if (!(RF_FLAG(r_ptr->flags, 2, DEMON))) return (FALSE);
+	if (!MON_FLAG(r_ptr, 2, DEMON)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -1083,7 +1083,7 @@ static bool vault_aux_cthulhu(int r_idx)
 	if (!vault_monster_okay(r_idx)) return (FALSE);
 
 	/* Require eldritch horror */
-	if (!(RF_FLAG(r_ptr->flags, 3, ELDRITCH_HORROR))) return (FALSE);
+	if (!MON_FLAG(r_ptr, 3, ELDRITCH_HORROR)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -1543,8 +1543,8 @@ static void build_type5(int bx0, int by0)
 			r_idx = get_mon_num(p_ptr->depth + 10);
 
 			/* Decline incorrect alignment */
-			if (((align < 0) && (RF_FLAG(r_info[r_idx].flags, 2, GOOD))) ||
-				((align > 0) && (RF_FLAG(r_info[r_idx].flags, 2, EVIL))))
+			if (((align < 0) && MON_FLAG(&r_info[r_idx], 2, GOOD)) ||
+				((align > 0) && MON_FLAG(&r_info[r_idx], 2, EVIL)))
 			{
 				continue;
 			}
@@ -1557,8 +1557,8 @@ static void build_type5(int bx0, int by0)
 		if (!r_idx || !attempts) return;
 
 		/* Note the alignment */
-		if (RF_FLAG(r_info[r_idx].flags, 2, GOOD)) align++;
-		else if (RF_FLAG(r_info[r_idx].flags, 2, EVIL)) align--;
+		if (MON_FLAG(&r_info[r_idx], 2, GOOD)) align++;
+		else if (MON_FLAG(&r_info[r_idx], 2, EVIL)) align--;
 
 		what[i] = r_idx;
 	}
@@ -1751,8 +1751,8 @@ static void build_type6(int bx0, int by0)
 			r_idx = get_mon_num(p_ptr->depth + 10);
 
 			/* Decline incorrect alignment */
-			if (((align < 0) && (RF_FLAG(r_info[r_idx].flags, 2, GOOD))) ||
-				((align > 0) && (RF_FLAG(r_info[r_idx].flags, 2, EVIL))))
+			if (((align < 0) && MON_FLAG(&r_info[r_idx], 2, GOOD)) ||
+				((align > 0) && MON_FLAG(&r_info[r_idx], 2, EVIL)))
 			{
 				continue;
 			}
@@ -1765,8 +1765,8 @@ static void build_type6(int bx0, int by0)
 		if (!r_idx || !attempts) return;
 
 		/* Note the alignment */
-		if (RF_FLAG(r_info[r_idx].flags, 2, GOOD)) align++;
-		else if (RF_FLAG(r_info[r_idx].flags, 2, EVIL)) align--;
+		if (MON_FLAG(&r_info[r_idx], 2, GOOD)) align++;
+		else if (MON_FLAG(&r_info[r_idx], 2, EVIL)) align--;
 
 		what[i] = r_idx;
 	}

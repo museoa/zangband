@@ -285,7 +285,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 		case TV_DIGGING:
 		{
 			/* Slay Animal */
-			if ((f1 & TR0_SLAY_ANIMAL) && (RF_FLAG(r_ptr->flags, 2, ANIMAL)))
+			if ((f1 & TR0_SLAY_ANIMAL) && (MON_FLAG(r_ptr, 2, ANIMAL)))
 			{
 				if (m_ptr->ml)
 				{
@@ -296,7 +296,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			}
 
 			/* Slay Evil */
-			if ((f1 & TR0_SLAY_EVIL) && (RF_FLAG(r_ptr->flags, 2, EVIL)))
+			if ((f1 & TR0_SLAY_EVIL) && (MON_FLAG(r_ptr, 2, EVIL)))
 			{
 				if (m_ptr->ml)
 				{
@@ -307,7 +307,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			}
 
 			/* Slay Undead */
-			if ((f1 & TR0_SLAY_UNDEAD) && (RF_FLAG(r_ptr->flags, 2, UNDEAD)))
+			if ((f1 & TR0_SLAY_UNDEAD) && (MON_FLAG(r_ptr, 2, UNDEAD)))
 			{
 				if (m_ptr->ml)
 				{
@@ -318,7 +318,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			}
 
 			/* Slay Demon */
-			if ((f1 & TR0_SLAY_DEMON) && (RF_FLAG(r_ptr->flags, 2, DEMON)))
+			if ((f1 & TR0_SLAY_DEMON) && (MON_FLAG(r_ptr, 2, DEMON)))
 			{
 				if (m_ptr->ml)
 				{
@@ -329,7 +329,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			}
 
 			/* Slay Orc */
-			if ((f1 & TR0_SLAY_ORC) && (RF_FLAG(r_ptr->flags, 2, ORC)))
+			if ((f1 & TR0_SLAY_ORC) && (MON_FLAG(r_ptr, 2, ORC)))
 			{
 				if (m_ptr->ml)
 				{
@@ -340,7 +340,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			}
 
 			/* Slay Troll */
-			if ((f1 & TR0_SLAY_TROLL) && (RF_FLAG(r_ptr->flags, 2, TROLL)))
+			if ((f1 & TR0_SLAY_TROLL) && (MON_FLAG(r_ptr, 2, TROLL)))
 			{
 				if (m_ptr->ml)
 				{
@@ -351,7 +351,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			}
 
 			/* Slay Giant */
-			if ((f1 & TR0_SLAY_GIANT) && (RF_FLAG(r_ptr->flags, 2, GIANT)))
+			if ((f1 & TR0_SLAY_GIANT) && (MON_FLAG(r_ptr, 2, GIANT)))
 			{
 				if (m_ptr->ml)
 				{
@@ -362,7 +362,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			}
 
 			/* Slay Dragon */
-			if ((f1 & TR0_SLAY_DRAGON) && (RF_FLAG(r_ptr->flags, 2, DRAGON)))
+			if ((f1 & TR0_SLAY_DRAGON) && (MON_FLAG(r_ptr, 2, DRAGON)))
 			{
 				if (m_ptr->ml)
 				{
@@ -373,7 +373,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			}
 
 			/* Execute Dragon */
-			if ((f1 & TR0_KILL_DRAGON) && (RF_FLAG(r_ptr->flags, 2, DRAGON)))
+			if ((f1 & TR0_KILL_DRAGON) && (MON_FLAG(r_ptr, 2, DRAGON)))
 			{
 				if (m_ptr->ml)
 				{
@@ -387,7 +387,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			if (f1 & TR0_BRAND_ACID)
 			{
 				/* Notice immunity */
-				if (RF_FLAG(r_ptr->flags, 2, IM_ACID))
+				if (MON_FLAG(r_ptr, 2, IM_ACID))
 				{
 					if (m_ptr->ml)
 					{
@@ -406,7 +406,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			if (f1 & TR0_BRAND_ELEC)
 			{
 				/* Notice immunity */
-				if (RF_FLAG(r_ptr->flags, 2, IM_ELEC))
+				if (MON_FLAG(r_ptr, 2, IM_ELEC))
 				{
 					if (m_ptr->ml)
 					{
@@ -425,7 +425,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			if (f1 & TR0_BRAND_FIRE)
 			{
 				/* Notice immunity */
-				if (RF_FLAG(r_ptr->flags, 2, IM_FIRE))
+				if (MON_FLAG(r_ptr, 2, IM_FIRE))
 				{
 					if (m_ptr->ml)
 					{
@@ -444,7 +444,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			if (f1 & TR0_BRAND_COLD)
 			{
 				/* Notice immunity */
-				if (RF_FLAG(r_ptr->flags, 2, IM_COLD))
+				if (MON_FLAG(r_ptr, 2, IM_COLD))
 				{
 					if (m_ptr->ml)
 					{
@@ -462,7 +462,7 @@ int tot_dam_aux(const object_type *o_ptr, const monster_type *m_ptr)
 			if (f1 & TR0_BRAND_POIS)
 			{
 				/* Notice immunity */
-				if (RF_FLAG(r_ptr->flags, 2, IM_POIS))
+				if (MON_FLAG(r_ptr, 2, IM_POIS))
 				{
 					if (m_ptr->ml)
 					{
@@ -944,7 +944,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 	int aura_damage;
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-	if (RF_FLAG(r_ptr->flags, 1, AURA_FIRE))
+	if (MON_FLAG(r_ptr, 1, AURA_FIRE))
 	{
 		if (!(OBJ_FLAG(p_ptr, 1, IM_FIRE)))
 		{
@@ -964,7 +964,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 		}
 	}
 
-	if (RF_FLAG(r_ptr->flags, 2, AURA_COLD))
+	if (MON_FLAG(r_ptr, 2, AURA_COLD))
 	{
 		if (!(OBJ_FLAG(p_ptr, 1, IM_COLD)))
 		{
@@ -984,7 +984,7 @@ static void touch_zap_player(const monster_type *m_ptr)
 		}
 	}
 
-	if (RF_FLAG(r_ptr->flags, 1, AURA_ELEC))
+	if (MON_FLAG(r_ptr, 1, AURA_ELEC))
 	{
 		if (!(OBJ_FLAG(p_ptr, 1, IM_ELEC)))
 		{
@@ -1072,7 +1072,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	chance = (p_ptr->skills[SKILL_THN] + (bonus * BTH_PLUS_ADJ));
 
 	/* Test for hit */
-	if ((!(RF_FLAG(r_ptr->flags, 1, QUANTUM)) || one_in_(2)) &&
+	if ((!(MON_FLAG(r_ptr, 1, QUANTUM)) || one_in_(2)) &&
 		test_hit_combat(chance, r_ptr->ac, m_ptr->ml))
 	{
 		/* Sound */
@@ -1252,7 +1252,7 @@ static bool monster_bash(int *blows, int sleeping_bonus, const cave_type *c_ptr,
 
 		/* Confusion. */
 		if (bash_quality + p_ptr->lev > randint1(300 + r_ptr->level * 6) &&
-			!(RF_FLAG(r_ptr->flags, 2, NO_CONF)))
+			!(MON_FLAG(r_ptr, 2, NO_CONF)))
 		{
 			msgf("%^s appears confused.", m_name);
 
@@ -1282,10 +1282,10 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
-	if (RF_FLAG(r_ptr->flags, 0, UNIQUE)) resist_stun += 88;
-	if (RF_FLAG(r_ptr->flags, 2, NO_CONF)) resist_stun += 44;
-	if (RF_FLAG(r_ptr->flags, 2, NO_SLEEP)) resist_stun += 44;
-	if ((RF_FLAG(r_ptr->flags, 2, UNDEAD)) || (RF_FLAG(r_ptr->flags, 2, NONLIVING)))
+	if (MON_FLAG(r_ptr, 0, UNIQUE)) resist_stun += 88;
+	if (MON_FLAG(r_ptr, 2, NO_CONF)) resist_stun += 44;
+	if (MON_FLAG(r_ptr, 2, NO_SLEEP)) resist_stun += 44;
+	if ((MON_FLAG(r_ptr, 2, UNDEAD)) || (MON_FLAG(r_ptr, 2, NONLIVING)))
 		resist_stun += 88;
 
 	/* Attempt 'times' */
@@ -1319,7 +1319,7 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 
 	if (ma_ptr->effect == MA_KNEE)
 	{
-		if (RF_FLAG(r_ptr->flags, 0, MALE))
+		if (MON_FLAG(r_ptr, 0, MALE))
 		{
 			msgf(MSGT_HIT, "You hit %s in the groin with your knee!", m_name);
 			msg_effect(MSG_HIT, m_ptr->r_idx);
@@ -1335,7 +1335,7 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 
 	else if (ma_ptr->effect == MA_SLOW)
 	{
-		if (!((RF_FLAG(r_ptr->flags, 0, NEVER_MOVE)) ||
+		if (!((MON_FLAG(r_ptr, 0, NEVER_MOVE)) ||
 			  strchr("~#{}.UjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
 		{
 			msgf(MSGT_HIT, "You kick %s in the ankle.",
@@ -1371,7 +1371,7 @@ static void monk_attack(monster_type *m_ptr, long *k, cptr m_name)
 
 	else if ((special_effect == MA_SLOW) && (*k < m_ptr->hp))
 	{
-		if (!(RF_FLAG(r_ptr->flags, 0, UNIQUE)) &&
+		if (!(MON_FLAG(r_ptr, 0, UNIQUE)) &&
 			(randint1(p_ptr->lev) > r_ptr->level) && m_ptr->mspeed > 60)
 		{
 			msgf("%^s starts limping slower.", m_name);
@@ -1657,7 +1657,7 @@ void py_attack(int x, int y)
 			drain_result = m_ptr->hp;
 
 			/* Ghoul paralysis */
-			if ((ghoul_paral > -1) && !(RF_FLAG(r_ptr->flags, 2, NO_SLEEP)) &&
+			if ((ghoul_paral > -1) && !(MON_FLAG(r_ptr, 2, NO_SLEEP)) &&
 				(r_ptr->level < randint0(1 + ((p_ptr->lev) * 2))))
 			{
 				ghoul_paral += 25 + randint1(p_ptr->lev / 2);
@@ -1904,7 +1904,7 @@ void py_attack(int x, int y)
 				}
 
 				/* Confuse the monster */
-				if (RF_FLAG(r_ptr->flags, 2, NO_CONF))
+				if (MON_FLAG(r_ptr, 2, NO_CONF))
 				{
 					if (m_ptr->ml)
 					{
@@ -1927,9 +1927,9 @@ void py_attack(int x, int y)
 			{
 				bool resists_tele = FALSE;
 
-				if (RF_FLAG(r_ptr->flags, 2, RES_TELE))
+				if (MON_FLAG(r_ptr, 2, RES_TELE))
 				{
-					if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+					if (MON_FLAG(r_ptr, 0, UNIQUE))
 					{
 						if (m_ptr->ml) r_ptr->r_flags[2] |= RF2_RES_TELE;
 						msgf("%^s is unaffected!", m_name);
@@ -1954,9 +1954,9 @@ void py_attack(int x, int y)
 			else if (do_poly && cave_floor_grid(c_ptr) &&
 					 (randint1(90) > r_ptr->level))
 			{
-				if (!(RF_FLAG(r_ptr->flags, 0, UNIQUE)) &&
-					!(RF_FLAG(r_ptr->flags, 3, BR_CHAO)) &&
-					!(RF_FLAG(r_ptr->flags, 0, QUESTOR)))
+				if (!(MON_FLAG(r_ptr, 0, UNIQUE)) &&
+					!(MON_FLAG(r_ptr, 3, BR_CHAO)) &&
+					!(MON_FLAG(r_ptr, 0, QUESTOR)))
 				{
 					if (polymorph_monster(x, y))
 					{
@@ -2360,7 +2360,7 @@ void move_player(int dir, int do_pickup)
 				py_attack(x, y);
 			}
 			else if (cave_floor_grid(area(px, py)) ||
-					 (RF_FLAG(r_info[m_ptr->r_idx].flags, 1, PASS_WALL)))
+					 MON_FLAG(&r_info[m_ptr->r_idx], 1, PASS_WALL))
 			{
 				msgf("You push past %s.", m_name);
 				m_ptr->fy = py;

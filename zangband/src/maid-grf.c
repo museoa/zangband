@@ -1399,7 +1399,7 @@ static int breath_gf[32] =
 static byte breath_attr(const monster_race *r_ptr)
 {
 	/* Mask out the breath flags */
-	u32b flags = RF_FLAG(r_ptr->flags, 3, BREATHS);
+	u32b flags = r_ptr->flags[3] & RF3_BREATHS;
 	u32b mask;
 
 	/* See if we breathe anything at all */
@@ -1519,13 +1519,13 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 			feat_not_ascii = ((*a) & 0x80);
 
 			/* Desired attr */
-			if (!(TEST_FLAG(r_ptr->flags, 0, RF0_ATTR_CLEAR)) || feat_not_ascii)
+			if (!MON_FLAG(r_ptr, 0, ATTR_CLEAR) || feat_not_ascii)
 			{
 				ma = r_ptr->x_attr;
 			}
 
 			/* Desired char */
-			if (!(TEST_FLAG(r_ptr->flags, 0, RF0_CHAR_CLEAR)) || feat_not_ascii)
+			if (!MON_FLAG(r_ptr, 0, CHAR_CLEAR) || feat_not_ascii)
 			{
 				mc = r_ptr->x_char;
 			}
@@ -1534,10 +1534,10 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 			if (!(ma & 0x80))
 			{
 				/* Multi-hued monster */
-				if (TEST_FLAG(r_ptr->flags, 0, RF0_ATTR_MULTI))
+				if (MON_FLAG(r_ptr, 0, ATTR_MULTI))
 				{
 					/* Is it a shapechanger? */
-					if (TEST_FLAG(r_ptr->flags, 1, RF1_SHAPECHANGER))
+					if (MON_FLAG(r_ptr, 1, SHAPECHANGER))
 					{
 						if (use_graphics)
 						{
@@ -1555,7 +1555,7 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 					}
 
 					/* Multi-hued attr */
-					if (RF_FLAG(r_ptr->flags, 1, ATTR_ANY))
+					if (MON_FLAG(r_ptr, 1, ATTR_ANY))
 						ma = randint1(15);
 					else
 					{
@@ -1565,7 +1565,7 @@ static void map_mon_info(monster_type *m_ptr, monster_race *r_ptr, byte *a, char
 				}
 				/* Mimics' colors vary */
 				else if (((mc == '\"') || (mc == '!') || (mc == '='))
-						 && !(RF_FLAG(r_ptr->flags, 0, UNIQUE)))
+						 && !MON_FLAG(r_ptr, 0, UNIQUE))
 				{
 					/* Use char */ ;
 
@@ -1918,7 +1918,7 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 		map_mon_info(m_ptr, r_ptr, &a, &c, &map);
 		
 		/* Not hallucinating and Mimic in los? */
-		if (!halluc && visible && !m_ptr->ml && (RF_FLAG(r_ptr->flags, 0, CHAR_MIMIC)))
+		if (!halluc && visible && !m_ptr->ml && MON_FLAG(r_ptr, 0, CHAR_MIMIC))
 		{
 			/* Keep this grid */
 			map.flags |= MAP_ONCE;

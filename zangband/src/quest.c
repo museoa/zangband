@@ -140,7 +140,7 @@ u16b insert_dungeon_monster_quest(u16b r_idx, u16b num, u16b level)
 	q_ptr->c_type = QC_DUN_MONST;
 
 	/* We need to trigger when the monsters are killed */
-	if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+	if (MON_FLAG(r_ptr, 0, UNIQUE))
 	{
 		q_ptr->x_type = QX_KILL_UNIQUE;
 	}
@@ -445,7 +445,7 @@ void quest_discovery(void)
 				/* Assume the quest is a 'kill n monsters quest' for now. */
 				strcpy(name, (r_name + r_ptr->name));
 
-				if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+				if (MON_FLAG(r_ptr, 0, UNIQUE))
 				{
 					/* Unique */
 					msgf("%s: Beware, this level is protected by %s!",
@@ -659,7 +659,7 @@ static void display_monster_quest(quest_type *q_ptr)
 	monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
 
 	/* Hack -- "unique" monsters must be "unique" */
-	if ((RF_FLAG(r_ptr->flags, 0, UNIQUE)) &&
+	if ((MON_FLAG(r_ptr, 0, UNIQUE)) &&
 		(r_ptr->cur_num >= r_ptr->max_num))
 	{
 		/* Hack - the unique is already dead */
@@ -692,7 +692,7 @@ static void display_monster_quest(quest_type *q_ptr)
 						break;
 				}
 
-				if (RF_FLAG(r_ptr->flags, 0, FRIENDS))
+				if (MON_FLAG(r_ptr, 0, FRIENDS))
 					group = FALSE;
 				else
 					group = TRUE;
@@ -1195,17 +1195,16 @@ static bool request_find_item(int dummy)
 static bool monster_quest(const monster_race *r_ptr)
 {
 	/* No bounty quests for multiplying monsters */
-	if (RF_FLAG(r_ptr->flags, 1, MULTIPLY)) return FALSE;
+	if (MON_FLAG(r_ptr, 1, MULTIPLY)) return FALSE;
 
 	/* No bounty to kill friendly monsters */
-	if (RF_FLAG(r_ptr->flags, 6, FRIENDLY)) return FALSE;
+	if (MON_FLAG(r_ptr, 6, FRIENDLY)) return FALSE;
 	
 	/* Only "hard" monsters for quests */
-	if (TEST_FLAG(r_ptr->flags, 0, RF0_NEVER_MOVE | RF0_FRIENDS)) return FALSE;
+	if (MON_FLAG(r_ptr, 0, NEVER_MOVE) || MON_FLAG(r_ptr, 0, FRIENDS)) return FALSE;
 	
 	/* No uniques that are already dead */
-	if (((TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE))
-		 || (TEST_FLAG(r_ptr->flags, 2, RF2_UNIQUE_7)))
+	if ((MON_FLAG(r_ptr, 0, UNIQUE) || MON_FLAG(r_ptr, 2, UNIQUE_7))
 			&& (r_ptr->cur_num >= r_ptr->max_num))
 		{
 			return FALSE;
@@ -1256,7 +1255,7 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 	q_ptr->c_type = QC_NONE;
 
 	/* We need to trigger when the monsters are killed */
-	if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+	if (MON_FLAG(r_ptr, 0, UNIQUE))
 	{
 		q_ptr->x_type = QX_KILL_UNIQUE;
 	}
@@ -1318,11 +1317,11 @@ static bool request_bounty(int dummy)
 	r_ptr = &r_info[best_r_idx];
 
 	/* Get the number of monsters */
-	if (RF_FLAG(r_ptr->flags, 0, UNIQUE))
+	if (MON_FLAG(r_ptr, 0, UNIQUE))
 	{
 		num = 1;
 	}
-	else if (RF_FLAG(r_ptr->flags, 2, UNIQUE_7))
+	else if (MON_FLAG(r_ptr, 2, UNIQUE_7))
 	{
 		num = randint1(r_ptr->max_num - r_ptr->cur_num);
 	}
@@ -1692,9 +1691,9 @@ bool do_cmd_knowledge_quests(int dummy)
  * Line 3 -- forbid aquatic monsters
  */
 #define quest_monster_okay(I) \
-	(!(RF_FLAG(r_info[I].flags, 7, WILD_TOWN)) && \
-	 !(RF_FLAG(r_info[I].flags, 0, UNIQUE)) && \
-	 !(RF_FLAG(r_info[I].flags, 6, AQUATIC)))
+	(!MON_FLAG(&r_info[I], 7, WILD_TOWN) && \
+	 !MON_FLAG(&r_info[I], 0, UNIQUE) && \
+	 !MON_FLAG(&r_info[I], 6, AQUATIC))
 
 
 #ifdef UNUSED_FUNC
@@ -1721,7 +1720,7 @@ static bool quest_aux_undead(int r_idx)
 	if (!quest_monster_okay(r_idx)) return (FALSE);
 
 	/* Require Undead */
-	if (!(TEST_FLAG(r_ptr->flags, 2, RF2_UNDEAD))) return (FALSE);
+	if (!MON_FLAG(r_ptr, 2, UNDEAD)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -1739,10 +1738,10 @@ static bool quest_aux_orc(int r_idx)
 	if (!quest_monster_okay(r_idx)) return (FALSE);
 
 	/* Require orc */
-	if (!(RF_FLAG(r_ptr->flags, 2, ORC))) return (FALSE);
+	if (!(MON_FLAG(r_ptr, 2, ORC))) return (FALSE);
 
 	/* Decline undead */
-	if (RF_FLAG(r_ptr->flags, 2, UNDEAD)) return (FALSE);
+	if (MON_FLAG(r_ptr, 2, UNDEAD)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -1760,10 +1759,10 @@ static bool quest_aux_troll(int r_idx)
 	if (!quest_monster_okay(r_idx)) return (FALSE);
 
 	/* Require troll */
-	if (!(RF_FLAG(r_ptr->flags, 2, TROLL))) return (FALSE);
+	if (!(MON_FLAG(r_ptr, 2, TROLL))) return (FALSE);
 
 	/* Decline undead */
-	if (RF_FLAG(r_ptr->flags, 2, UNDEAD)) return (FALSE);
+	if (MON_FLAG(r_ptr, 2, UNDEAD)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -1781,10 +1780,10 @@ static bool quest_aux_giant(int r_idx)
 	if (!quest_monster_okay(r_idx)) return (FALSE);
 
 	/* Require giant */
-	if (!(RF_FLAG(r_ptr->flags, 2, GIANT))) return (FALSE);
+	if (!(MON_FLAG(r_ptr, 2, GIANT))) return (FALSE);
 
 	/* Decline undead */
-	if (RF_FLAG(r_ptr->flags, 2, UNDEAD)) return (FALSE);
+	if (MON_FLAG(r_ptr, 2, UNDEAD)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -1802,10 +1801,10 @@ static bool quest_aux_dragon(int r_idx)
 	if (!quest_monster_okay(r_idx)) return (FALSE);
 
 	/* Require dragon */
-	if (!(RF_FLAG(r_ptr->flags, 2, DRAGON))) return (FALSE);
+	if (!(MON_FLAG(r_ptr, 2, DRAGON))) return (FALSE);
 
 	/* Decline undead */
-	if (RF_FLAG(r_ptr->flags, 2, UNDEAD)) return (FALSE);
+	if (MON_FLAG(r_ptr, 2, UNDEAD)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);

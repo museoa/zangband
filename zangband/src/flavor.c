@@ -801,7 +801,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			
 			char idol_name[512];
 
-			if (!(RF_FLAG(r_ptr->flags, 0, UNIQUE)))
+			if (!MON_FLAG(r_ptr, 0, UNIQUE))
 			{
 				strnfmt(idol_name, 512, "%s%s",
 						(is_a_vowel(*tmp) ? "an " : "a "), tmp);

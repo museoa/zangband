@@ -1258,10 +1258,10 @@ void do_cmd_query_symbol(void)
 		if (!cheat_know && !r_ptr->r_sights) continue;
 
 		/* Require non-unique monsters if needed */
-		if (norm && (TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE))) continue;
+		if (norm && MON_FLAG(r_ptr, 0, UNIQUE)) continue;
 
 		/* Require unique monsters if needed */
-		if (uniq && !(TEST_FLAG(r_ptr->flags, 0, RF0_UNIQUE))) continue;
+		if (uniq && !MON_FLAG(r_ptr, 0, UNIQUE)) continue;
 
 		/* Require killed monsters if needed */
 		if (killed && !r_ptr->r_pkills) continue;

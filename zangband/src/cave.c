@@ -2521,8 +2521,8 @@ void update_mon_lite(void)
 		rad = 0;
 
 		/* Note the radii are cumulative */
-		if (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_1)) rad++;
-		if (TEST_FLAG(r_ptr->flags, 6, RF6_LITE_2)) rad += 2;
+		if (MON_FLAG(r_ptr, 6, LITE_1)) rad++;
+		if (MON_FLAG(r_ptr, 6, LITE_2)) rad += 2;
 
 		/* Exit if has no light */
 		if (!rad) continue;

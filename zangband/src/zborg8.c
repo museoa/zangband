@@ -1410,15 +1410,19 @@ bool borg_think_dungeon(void)
 	for (j = 0, i = 1; i < borg_kills_nxt; i++)
 	{
 		borg_kill *kill = &borg_kills[i];
+		
+		monster_race *r_ptr;
 
 		/* Skip dead monsters */
 		if (!kill->r_idx) continue;
 
 		/* Skip sleeping monsters */
 		if (kill->m_flags & MONST_ASLEEP) continue;
+		
+		r_ptr = &r_info[kill->r_idx];
 
 		/* Count the monsters which are "breeders" */
-		if (RF_FLAG(r_info[kill->r_idx].flags, 1, MULTIPLY)) j++;
+		if (MON_FLAG(r_ptr, 1, MULTIPLY)) j++;
 	}
 
 	/* hack -- close doors on breeder levles */
