@@ -33,7 +33,7 @@ bool teleport_away(int m_idx, int dis)
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	cave_type *c_ptr = NULL;
 
-	field_mon_test mon_enter_test;
+	byte flags;
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return (FALSE);
@@ -100,15 +100,14 @@ bool teleport_away(int m_idx, int dis)
 			 */
 
 			/* Initialise information to pass to action functions */
-			mon_enter_test.m_ptr = NULL;
-			mon_enter_test.flags = MEG_DO_MOVE;
+			flags = MEG_DO_MOVE;
 
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-					   (vptr)&mon_enter_test);
+					   (monster_type *) NULL, &flags);
 
 			/* Get result */
-			if (!(mon_enter_test.flags & (MEG_DO_MOVE))) continue;
+			if (!(flags & (MEG_DO_MOVE))) continue;
 
 			/* No teleporting into vaults and such */
 			if (c_ptr->info & CAVE_ICKY) continue;
@@ -134,7 +133,7 @@ bool teleport_away(int m_idx, int dis)
 	sound(SOUND_TPOTHER);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, (vptr)m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, m_ptr);
 
 	/* Update the new location */
 	area(nx, ny)->m_idx = m_idx;
@@ -150,7 +149,7 @@ bool teleport_away(int m_idx, int dis)
 	update_mon(m_idx, TRUE);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, (vptr)m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, m_ptr);
 
 	/* Redraw the old grid */
 	lite_spot(ox, oy);
@@ -182,7 +181,7 @@ void teleport_to_player(int m_idx)
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	cave_type *c_ptr = NULL;
-	field_mon_test mon_enter_test;
+	byte flags;
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return;
@@ -240,15 +239,14 @@ void teleport_to_player(int m_idx)
 			 */
 
 			/* Initialise information to pass to action functions */
-			mon_enter_test.m_ptr = NULL;
-			mon_enter_test.flags = MEG_DO_MOVE;
+			flags = MEG_DO_MOVE;
 
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-					   (vptr)&mon_enter_test);
+					   (monster_type *) NULL, &flags);
 
 			/* Get result */
-			if (!(mon_enter_test.flags & (MEG_DO_MOVE))) continue;
+			if (!(flags & (MEG_DO_MOVE))) continue;
 
 			/* Require "empty" floor space */
 			if (!cave_empty_grid(c_ptr)) continue;
@@ -282,7 +280,7 @@ void teleport_to_player(int m_idx)
 	sound(SOUND_TPOTHER);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, (vptr)m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, m_ptr);
 
 	/* Update the new location */
 	area(nx, ny)->m_idx = m_idx;
@@ -298,7 +296,7 @@ void teleport_to_player(int m_idx)
 	update_mon(m_idx, TRUE);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, (vptr)m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, m_ptr);
 
 	/* Redraw the old grid */
 	lite_spot(ox, oy);
@@ -424,7 +422,7 @@ void teleport_player(int dis)
 	ox = px;
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
+	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE);
 
 	/* Move the player */
 	py = y;
@@ -452,7 +450,7 @@ void teleport_player(int dis)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER);
 
 	/* Monsters with teleport ability may follow the player */
 	for (xx = -1; xx <= 1; xx++)
@@ -566,7 +564,7 @@ void teleport_player_to(int nx, int ny)
 	ox = px;
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
+	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE);
 
 	/* Move the player */
 	py = y;
@@ -594,7 +592,7 @@ void teleport_player_to(int nx, int ny)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER);
 
 	/* Check for new panel (redraw map) */
 	verify_panel();

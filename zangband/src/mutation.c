@@ -1053,7 +1053,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		ox = px;
 
 		/* Process fields under the player. */
-		field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
+		field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE);
 
 		/* Move the player */
 		py = y;
@@ -1078,7 +1078,7 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		lite_spot(ox, oy);
 
 		/* Process fields under the player. */
-		field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+		field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER);
 
 		verify_panel();
 

@@ -4552,8 +4552,6 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 	/* Check features */
 	if (flg & (PROJECT_GRID))
 	{
-		field_magic_target f_m_t;
-
 		/* Start with "dist" of zero */
 		dist = 0;
 
@@ -4575,40 +4573,21 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 				/* Affect the grid */
 				if (project_f(who, d, x, y, dam, typ)) notice = TRUE;
 
-				/* Store information into structure to pass to action */
-				f_m_t.who = who;
-				f_m_t.dist = d;
-				f_m_t.dam = dam;
-				f_m_t.typ = typ;
-				f_m_t.notice = notice;
-				f_m_t.known = player_can_see_bold(x, y);
 
 				/* Affect fields on the grid */
-				field_hook(&area(x, y)->fld_idx,
-						   FIELD_ACT_MAGIC_TARGET, (vptr)&f_m_t);
-
-				/* Restore notice variable */
-				notice = f_m_t.notice;
+				field_hook(&area(x, y)->fld_idx, FIELD_ACT_MAGIC_TARGET,
+                			who, d, dam, typ, player_can_see_bold(x, y),
+                            &notice);
 			}
 			else
 			{
 				/* Affect the grid */
 				if (project_f(who, dist, x, y, dam, typ)) notice = TRUE;
 
-				/* Store information into structure to pass to action */
-				f_m_t.who = who;
-				f_m_t.dist = dist;
-				f_m_t.dam = dam;
-				f_m_t.typ = typ;
-				f_m_t.notice = notice;
-				f_m_t.known = player_can_see_bold(x, y);
-
 				/* Affect fields on the grid */
-				field_hook(&area(x, y)->fld_idx,
-						   FIELD_ACT_MAGIC_TARGET, (vptr)&f_m_t);
-
-				/* Restore notice variable */
-				notice = f_m_t.notice;
+				field_hook(&area(x, y)->fld_idx, FIELD_ACT_MAGIC_TARGET,
+                			who, dist, dam, typ, player_can_see_bold(x, y),
+                            &notice);
 			}
 		}
 	}

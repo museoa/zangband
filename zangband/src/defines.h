@@ -4375,7 +4375,7 @@ extern int PlayerUID;
 
 /* To make the declarations in externs.h simpler */
 #define DECL_FIELD_ACTION(N) \
-	extern bool field_action_##N (field_type *f_ptr, vptr nothing)
+	extern bool field_action_##N (field_type *f_ptr, va_list vp)
 
 
 /*

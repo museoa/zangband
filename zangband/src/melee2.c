@@ -2174,7 +2174,7 @@ static void take_move(int m_idx, int *mm)
 
 	char m_name[80];
 
-	field_mon_test mon_enter_test;
+	byte flags;
 
 	/* Assume nothing */
 	bool do_turn = FALSE;
@@ -2298,22 +2298,25 @@ static void take_move(int m_idx, int *mm)
 		 * specific monster to pass.  (i.e. Glyph of warding)
 		 */
 
-		/* Initialise information to pass to action functions */
-		mon_enter_test.m_ptr = m_ptr;
-
 		/* Set up flags */
-		mon_enter_test.flags = 0x00;
-		if (do_move) mon_enter_test.flags |= MEG_DO_MOVE;
-
+		flags = 0x00;
+		if (do_move)
+        {
+        	flags = MEG_DO_MOVE;
+		}
+        else
+        {
+        	flags = 0x00;
+        }
+        
 		/* Call the hook */
-		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-				   (vptr)&mon_enter_test);
+		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST, m_ptr, &flags);
 
 		/* Get result */
-		if (mon_enter_test.flags & (MEG_DO_MOVE)) do_move = TRUE;
-		if (mon_enter_test.flags & (MEG_OPEN)) did_open_door = TRUE;
-		if (mon_enter_test.flags & (MEG_BASH)) did_bash_door = TRUE;
-		if (mon_enter_test.flags & (MEG_DO_TURN)) do_turn = TRUE;
+		if (flags & (MEG_DO_MOVE)) do_move = TRUE;
+		if (flags & (MEG_OPEN)) did_open_door = TRUE;
+		if (flags & (MEG_BASH)) did_bash_door = TRUE;
+		if (flags & (MEG_DO_TURN)) do_turn = TRUE;
 
 		/* Some monsters never attack */
 		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
@@ -2468,7 +2471,7 @@ static void take_move(int m_idx, int *mm)
 			}
 
 			/* Process fields under the monster. */
-			field_hook(&old_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, (vptr)m_ptr);
+			field_hook(&old_ptr->fld_idx, FIELD_ACT_MONSTER_LEAVE, m_ptr);
 
 			/* Hack -- Update the old location */
 			old_ptr->m_idx = c_ptr->m_idx;
@@ -2498,7 +2501,7 @@ static void take_move(int m_idx, int *mm)
 			update_mon(m_idx, TRUE);
 
 			/* Process fields under the monster. */
-			field_hook(&old_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, (vptr)m_ptr);
+			field_hook(&old_ptr->fld_idx, FIELD_ACT_MONSTER_ENTER, m_ptr);
 
 			/* Redraw the old grid */
 			lite_spot(ox, oy);
@@ -2782,7 +2785,7 @@ static void process_monster(int m_idx)
 	c_ptr = area(ox, oy);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ON, (vptr)m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ON, m_ptr);
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep)

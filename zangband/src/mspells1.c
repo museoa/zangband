@@ -292,7 +292,7 @@ static bool summon_possible(int x1, int y1)
 	int dy, dx;
 
 	cave_type *c_ptr;
-	field_mon_test mon_enter_test;
+	byte flags;
 
 	/* Start at the player's location, and check 2 grids in each dir */
 	for (dy = -2; dy <= 2; dy++)
@@ -331,15 +331,14 @@ static bool summon_possible(int x1, int y1)
 			 */
 
 			/* Initialise information to pass to action functions */
-			mon_enter_test.m_ptr = NULL;
-			mon_enter_test.flags = MEG_DO_MOVE;
+			flags = MEG_DO_MOVE;
 
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-					   (vptr)&mon_enter_test);
+					   (monster_type *) NULL, &flags);
 
 			/* Get result */
-			if (!(mon_enter_test.flags & (MEG_DO_MOVE))) return (FALSE);
+			if (!(flags & (MEG_DO_MOVE))) return (FALSE);
 
 			/* Require empty floor grid in line of sight of player */
 			if (cave_empty_grid(c_ptr)

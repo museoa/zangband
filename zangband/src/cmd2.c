@@ -745,7 +745,7 @@ bool do_cmd_open_aux(int x, int y)
 		if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 		/* Success? */
-		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&i))
+		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, i))
 		{
 			/* Sound */
 			sound(SOUND_OPENDOOR);
@@ -1067,7 +1067,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	int dig = p_ptr->skill_dig;
 
 	s16b *fld_ptr = field_hook_find(&c_ptr->fld_idx,
-									FIELD_ACT_INTERACT_TEST, (vptr)&action);
+									FIELD_ACT_INTERACT_TEST, &action);
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
@@ -1087,7 +1087,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 
 	if (*fld_ptr && (action == 0))
 	{
-		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&dig))
+		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, dig))
 		{
 			/* Finished tunneling */
 			return (FALSE);
@@ -1565,7 +1565,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 	/* Success */
-	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&i))
+	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, i))
 	{
 		/* Message */
 		msg_format("You have disarmed the %s.", t_ptr->name);
@@ -1772,7 +1772,7 @@ void do_cmd_alter(void)
 		}
 
 		else if (*field_hook_find(&c_ptr->fld_idx, FIELD_ACT_INTERACT_TEST,
-								  (vptr)&action))
+								  &action))
 		{
 			switch (action)
 			{
@@ -2059,8 +2059,7 @@ void do_cmd_stay(int pickup)
 	/* 
 	 * Fields you are standing on may do something.
 	 */
-	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx, FIELD_ACT_PLAYER_ENTER,
-			   NULL);
+	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx, FIELD_ACT_PLAYER_ENTER);
 }
 
 

@@ -2530,7 +2530,7 @@ void move_player(int dir, int do_pickup)
 		ox = px;
 
 		/* Process fields under the player. */
-		field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
+		field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE);
 
 		/* Move the player */
 		p_ptr->py = y;
@@ -2554,7 +2554,7 @@ void move_player(int dir, int do_pickup)
 		lite_spot(ox, oy);
 
 		/* Process fields under the player. */
-		field_hook(&area(x, y)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+		field_hook(&area(x, y)->fld_idx, FIELD_ACT_PLAYER_ENTER);
 
 		/* Sound */
 		/* sound(SOUND_WALK); */

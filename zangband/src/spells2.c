@@ -1931,7 +1931,7 @@ bool raise_dead(int x, int y, bool pet)
 		c_ptr = area(fx, fy);
 
 		/* Raise Corpses / Skeletons */
-		if (field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (vptr)&pet))
+		if (field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, pet))
 		{
 			if (player_has_los_grid(parea(fx, fy))) obvious = TRUE;
 		}
@@ -2397,7 +2397,7 @@ bool earthquake(int cx, int cy, int r)
 	pcave_type *pc_ptr;
 
 	bool map[32][32];
-	field_mon_test mon_enter_test;
+	byte flags;
 
 	/* Prevent destruction of quest levels and town */
 	if (!p_ptr->depth || is_quest_level(p_ptr->depth))
@@ -2555,7 +2555,7 @@ bool earthquake(int cx, int cy, int r)
 			ox = px;
 
 			/* Process fields under the player. */
-			field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
+			field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE);
 
 			/* Move the player */
 			py = sy;
@@ -2583,7 +2583,7 @@ bool earthquake(int cx, int cy, int r)
 			lite_spot(px, py);
 
 			/* Process fields under the player. */
-			field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+			field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER);
 
 			/* Check for new panel */
 			verify_panel();
@@ -2670,16 +2670,15 @@ bool earthquake(int cx, int cy, int r)
 							 */
 
 							/* Initialise info to pass to action functions */
-							mon_enter_test.m_ptr = NULL;
-							mon_enter_test.flags = MEG_DO_MOVE;
+							flags = MEG_DO_MOVE;
 
 							/* Call the hook */
 							field_hook(&c_ptr->fld_idx,
 									   FIELD_ACT_MON_ENTER_TEST,
-									   (vptr)&mon_enter_test);
+									   (monster_type *) NULL, &flags);
 
 							/* Get result */
-							if (!(mon_enter_test.flags & MEG_DO_MOVE)) continue;
+							if (!(flags & MEG_DO_MOVE)) continue;
 
 							/* ... nor on the Pattern */
 							if (cave_pattern_grid(c_ptr))
@@ -3357,7 +3356,7 @@ bool teleport_swap(int dir)
 	sound(SOUND_TELEPORT);
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
+	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_LEAVE);
 
 	/* Process fields under the monster. */
 	field_hook(&area(m_ptr->fx, m_ptr->fy)->fld_idx,
@@ -3405,11 +3404,11 @@ bool teleport_swap(int dir)
 	lite_spot(px, py);
 
 	/* Process fields under the player. */
-	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER, NULL);
+	field_hook(&area(px, py)->fld_idx, FIELD_ACT_PLAYER_ENTER);
 
 	/* Process fields under the monster. */
 	field_hook(&area(m_ptr->fx, m_ptr->fy)->fld_idx,
-			   FIELD_ACT_MONSTER_ENTER, (vptr)m_ptr);
+			   FIELD_ACT_MONSTER_ENTER, m_ptr);
 
 	/* Check for new panel (redraw map) */
 	verify_panel();

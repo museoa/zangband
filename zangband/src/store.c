@@ -586,37 +586,25 @@ static bool store_will_buy(const object_type *o_ptr)
  */
 static bool store_will_stock(const object_type *o_ptr)
 {
-	/* Thing to pass to the action functions */
-	field_obj_test f_o_t;
-
-	/*
-	 * Save information to pass to the field action function
-	 *
-	 * Hack - remove const specifier...
-	 * (store_will_stock needs const due to the item_hook
-	 * which is really annoying.)
-	 */
-	f_o_t.o_ptr = (object_type *)o_ptr;
-
 	/* Default is to reject this rejection */
-	f_o_t.result = FALSE;
+	bool result = FALSE;
 
 	/* Will the store !not! buy this item? */
 	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
-			   FIELD_ACT_STORE_ACT1, (vptr)&f_o_t);
+			   FIELD_ACT_STORE_ACT1, o_ptr, &result);
 
 	/* We don't want this item type? */
-	if (f_o_t.result == TRUE) return (FALSE);
+	if (result == TRUE) return (FALSE);
 
 	/* Change the default to acceptance */
-	f_o_t.result = TRUE;
+	result = TRUE;
 
 	/* Will the store buy this item? */
 	field_hook(&area(p_ptr->px, p_ptr->py)->fld_idx,
-			   FIELD_ACT_STORE_ACT2, (vptr)&f_o_t);
+			   FIELD_ACT_STORE_ACT2, o_ptr, &result);
 
 	/* Finally check to see if we will buy the item */
-	return (f_o_t.result && store_will_buy(o_ptr));
+	return (result && store_will_buy(o_ptr));
 }
 
 

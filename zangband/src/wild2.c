@@ -1866,9 +1866,9 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 					/* Activate the trap */
 					if (place_field(x2, y2, c_ptr->fld_idx))
 					{
-						/* Hack - Initialise it (without "extra" information) */
+						/* Initialise it */
 						(void)field_hook_single(&block_ptr[j][i].fld_idx,
-												FIELD_ACT_INIT, NULL);
+												FIELD_ACT_INIT);
 					}
 
 					break;
@@ -1884,7 +1884,7 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 					{
 						/* Add "power" of lock / jam to the field */
 						(void)field_hook_single(&block_ptr[j][i].fld_idx,
-												FIELD_ACT_INIT, &data);
+												FIELD_ACT_INIT, data);
 					}
 
 					break;

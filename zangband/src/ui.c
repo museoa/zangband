@@ -885,8 +885,6 @@ bool get_check(cptr prompt)
 {
 	int i;
 
-	char buf[80];
-
 	/* Do not skip */
 	p_ptr->skip_more = FALSE;
 

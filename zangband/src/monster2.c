@@ -1406,7 +1406,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	monster_race *r_ptr = &r_info[r_idx];
 
 	cptr name = (r_name + r_ptr->name);
-	field_mon_test mon_enter_test;
+	byte flags;
 
 
 	/* Verify location */
@@ -1475,15 +1475,14 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	 */
 
 	/* Initialise information to pass to action functions */
-	mon_enter_test.m_ptr = NULL;
-	mon_enter_test.flags = MEG_DO_MOVE;
+	flags = MEG_DO_MOVE;
 
 	/* Call the hook */
 	field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-			   (vptr)&mon_enter_test);
+			   (monster_type *) NULL, &flags);
 
 	/* Get result */
-	if (!(mon_enter_test.flags & (MEG_DO_MOVE))) return (FALSE);
+	if (!(flags & (MEG_DO_MOVE))) return (FALSE);
 
 
 	/* Powerful monster */
@@ -2372,7 +2371,7 @@ bool summon_specific(int who, int x1, int y1, int lev, int type, bool group,
 {
 	int i, x, y, r_idx;
 	cave_type *c_ptr;
-	field_mon_test mon_enter_test;
+	byte flags;
 
 	/* Look for a location */
 	for (i = 0; i < 20; ++i)
@@ -2405,15 +2404,14 @@ bool summon_specific(int who, int x1, int y1, int lev, int type, bool group,
 		 */
 
 		/* Initialise info to pass to action functions */
-		mon_enter_test.m_ptr = NULL;
-		mon_enter_test.flags = MEG_DO_MOVE;
+		flags = MEG_DO_MOVE;
 
 		/* Call the hook */
 		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-				   (vptr)&mon_enter_test);
+				   (monster_type *) NULL, &flags);
 
 		/* Get result */
-		if (!(mon_enter_test.flags & (MEG_DO_MOVE))) continue;
+		if (!(flags & (MEG_DO_MOVE))) continue;
 
 		/* Okay */
 		break;

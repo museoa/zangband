@@ -676,7 +676,7 @@ errr get_obj_store_prep(void)
 	s16b *fld_ptr = &area(p_ptr->px, p_ptr->py)->fld_idx;
 
 	/* Thing to pass to the action functions */
-	field_obj_test f_o_t;
+	bool result;
 
 	/* Get the entry */
 	alloc_entry *table = alloc_kind_table;
@@ -692,17 +692,14 @@ errr get_obj_store_prep(void)
 		o_ptr->tval = k_info[table[i].index].tval;
 		o_ptr->sval = k_info[table[i].index].sval;
 
-		/* Save information to pass to the field action function */
-		f_o_t.o_ptr = o_ptr;
-
 		/* Default is to reject this rejection */
-		f_o_t.result = FALSE;
+		result = FALSE;
 
 		/* Will the store !not! buy this item? */
-		field_hook(fld_ptr, FIELD_ACT_STORE_ACT1, (vptr)&f_o_t);
+		field_hook(fld_ptr, FIELD_ACT_STORE_ACT1, o_ptr, &result);
 
 		/* We don't want this item type? */
-		if (f_o_t.result == TRUE)
+		if (result == TRUE)
 		{
 			/* Clear the probability */
 			table[i].prob2 = 0;
@@ -710,13 +707,13 @@ errr get_obj_store_prep(void)
 		}
 
 		/* Change the default to acceptance */
-		f_o_t.result = TRUE;
+		result = TRUE;
 
 		/* Will the store buy this item? */
-		field_hook(fld_ptr, FIELD_ACT_STORE_ACT2, (vptr)&f_o_t);
+		field_hook(fld_ptr, FIELD_ACT_STORE_ACT2, o_ptr, &result);
 
 		/* We don't want this item type? */
-		if (f_o_t.result == FALSE)
+		if (result == FALSE)
 		{
 			/* Clear the probability */
 			table[i].prob2 = 0;
@@ -4901,7 +4898,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	}
 
 	/* Fields may interact with an object in some way */
-	field_hook(&area(bx, by)->fld_idx, FIELD_ACT_OBJECT_DROP, (vptr)o_ptr);
+	field_hook(&area(bx, by)->fld_idx, FIELD_ACT_OBJECT_DROP, o_ptr);
 }
 
 

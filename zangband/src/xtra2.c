@@ -2420,7 +2420,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 				{
 					/* Get the name */
 					(void)field_hook_single(this_f_ptr, FIELD_ACT_LOOK,
-											(vptr)fld_name);
+											fld_name);
 
 					/* Point to it */
 					name = fld_name;
