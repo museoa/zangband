@@ -16,6 +16,15 @@ AC_ARG_WITH(setgid,
 esac])
 AC_SUBST(GAMEGROUP)
 
+
+AC_ARG_WITH(tcltk,
+[  --with-tcltk=DIR        Use DIR/include and DIR/lib for tcl and tk])
+
+AC_ARG_WITH(tkdir,
+[  --with-tkdir=TKDIR      Use TKDIR/include and TKDIR/lib for tk if
+                          is in a different place from tcl directory
+						  and is not auto-detected properly])
+
 AC_LANG_C
 
 basedir=`pwd`
@@ -40,6 +49,10 @@ if test "$GCC" = yes; then
   CFLAGS="$CFLAGS -fno-strength-reduce"
 fi
 
+
+AC_HEADER_STDC
+AC_CHECK_HEADERS(fcntl.h limits.h strings.h sys/file.h sys/ioctl.h \
+sys/time.h termio.h unistd.h)
 
 dnl Checks for libraries.
 
@@ -80,11 +93,106 @@ else
 
   dnl Check for the Athena widget set
   AC_CHECK_LIB(Xaw, XawInitializeWidgetSet, [AC_DEFINE(USE_XAW, 1, [XAW port]) LIBS="$LIBS -lXaw"])
+  
+  
+  dnl We need to check in lots of places for the tk port. :-/
+  if test -z "$with_tcltk" || test "$with_tcltk" = yes; then
+    AC_CHECK_HEADER(/usr/local/include/tcl.h,
+	  [BASE_TCL_DIR="/usr/local/include"],
+  	  [AC_CHECK_HEADER(/usr/local/include/tcl/tcl.h,
+	    [BASE_TCL_DIR="/usr/local/include/tcl"],
+	    [AC_CHECK_HEADER(/usr/include/tcl.h,
+	      [BASE_TCL_DIR="/usr/include"],
+	      [AC_CHECK_HEADER(/usr/include/tcl8.4/tcl.h,
+	        [BASE_TCL_DIR="/usr/include/tcl8.4"],
+	        [AC_CHECK_HEADER(/usr/local/include/tcl8.4/tcl.h,
+	          [BASE_TCL_DIR="/usr/local/include/tcl8.4"],
+	        [])
+	      ])
+	    ])
+	  ])
+	])
+	
+	BASE_TK_DIR=$BASE_TCL_DIR
+	
+	AC_CHECK_HEADER(/usr/local/include/tk.h,
+	  [BASE_TK_DIR="/usr/local/include"],
+  	  [AC_CHECK_HEADER(/usr/local/include/tcl/tk.h,
+	    [BASE_TK_DIR="/usr/local/include/tk"],
+	    [AC_CHECK_HEADER(/usr/include/tk.h,
+	      [BASE_TK_DIR="/usr/include"],
+	      [AC_CHECK_HEADER(/usr/include/tk8.4/tk.h,
+	        [BASE_TK_DIR="/usr/include/tk8.4"],
+	        [AC_CHECK_HEADER(/usr/local/include/tk8.4/tk.h,
+	          [BASE_TK_DIR="/usr/local/include/tk8.4"],
+	        [])
+	      ])
+	    ])
+	  ])
+	])
+	
+    test -d /usr/local/lib && CFLAGS="-L/usr/local/lib $CFLAGS"
+  else
+    BASE_TCL_DIR="$with_tcltk/include"
+    CFLAGS="-L$with_tcltk/lib $CFLAGS"
+  fi
+
+  if test -n "$with_tkdir"; then
+    BASE_TK_DIR="$CPPFLAGS -I$with_tkdir/include"
+    CFLAGS="-L$with_tkdir/lib $CFLAGS"
+  fi
+  
+  CPPFLAGS="-I$BASE_TCL_DIR -I$BASE_TK_DIR $CPPFLAGS"
+  
+  dnl Checks for libraries.
+  AC_CHECK_HEADER(tcl.h,,[AC_MSG_WARN(Can't find tcl.h)])
+  AC_CHECK_HEADER(tk.h,,[AC_MSG_WARN(Can't find tk.h)])
+  
+  AC_SEARCH_LIBS(Tcl_CreateInterp, tcl8.4 tcl84,[],[],[])
+  AC_SEARCH_LIBS(Tk_Init, tk8.4 tk84,[],[],[])
+  
+  dnl FreeBSD locations of headers
+  AC_CHECK_HEADER($BASE_TCL_DIR/generic/tclInt.h,
+    [CPPFLAGS="$CPPFLAGS -I$BASE_TCL_DIR/generic"],
+  	[])
+  AC_CHECK_HEADER($BASE_TCL_DIR/unix/tclUnixPort.h,
+    [CPPFLAGS="$CPPFLAGS -I$BASE_TCL_DIR/unix"],
+  	[])
+  AC_CHECK_HEADER($BASE_TK_DIR/generic/tkPort.h,
+    [CPPFLAGS="$CPPFLAGS -I$BASE_TK_DIR/generic"],
+  	[])
+  AC_CHECK_HEADER($BASE_TK_DIR/generic/tkInt.h,
+    [CPPFLAGS="$CPPFLAGS -I$BASE_TK_DIR/generic"],
+  	[])
+  
+  dnl Debian location of headers
+  
+  AC_CHECK_HEADER($BASE_TCL_DIR/tcl-private/generic/tclInt.h,
+    [CPPFLAGS="-I$BASE_TCL_DIR/tcl-private/generic $CPPFLAGS"],
+  	[])
+  AC_CHECK_HEADER($BASE_TCL_DIR/tcl-private/unix/tclUnixPort.h,
+    [CPPFLAGS="-I$BASE_TCL_DIR/tcl-private/unix $CPPFLAGS"],
+  	[])
+  AC_CHECK_HEADER($BASE_TK_DIR/tk-private/generic/tkPort.h,
+    [CPPFLAGS="-I$BASE_TK_DIR/tk-private/generic $CPPFLAGS"],
+  	[])
+  AC_CHECK_HEADER($BASE_TK_DIR/tk-private/generic/tkInt.h,
+    [CPPFLAGS="-I$BASE_TK_DIR/tk-private/generic $CPPFLAGS"],
+  	[])
+  
+  AC_TRY_COMPILE([#include "tcl.h"],[Tcl_Obj x;],
+  [
+	AC_CHECK_HEADER(tkInt.h,,[AC_MSG_ERROR(Can't find tkInt.h)])
+    AC_CHECK_HEADER(tkCanvas.h,,[AC_MSG_ERROR(Can't find tkCanvas.h)])
+	
+	TK_PORT="y"
+	AC_SUBST(TK_PORT)
+	AC_DEFINE(USE_TNB, 1, [Tk port])
+	AC_DEFINE(PLATFORM_X11, 1, [Force use of X11 version of tk port])
+  ]
+  ,[AC_MSG_WARN(Can't compile tk port)])
 fi
 
-AC_HEADER_STDC
-AC_CHECK_HEADERS(fcntl.h limits.h strings.h sys/file.h sys/ioctl.h \
-sys/time.h termio.h unistd.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

@@ -3,7 +3,7 @@
 ##
 
 TKOBJS = $(addprefix src/tk/,\
-			canv.ocmdinfo.o icon.o \
+			canv.o cmdinfo.o icon.o \
 			describe.o interp.o plat.o \
 			widget.o tk-util.o tcltk.o)
 

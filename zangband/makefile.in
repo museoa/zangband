@@ -9,6 +9,8 @@
 ## Please do not edit "makefile", as it is auto-generated
 ## by ./configure from makefile.in  Edit makefile.in instead.
 ##
+# @configure_input@
+
 
 
 CFLAGS := @CFLAGS@ @DEFS@
@@ -25,6 +27,7 @@ datadir = @datadir@
 #DESTDIR = datadir
 
 cygwin = @cygwin@
+TK_PORT = @TK_PORT@
 
 
 ##

@@ -75,7 +75,7 @@ static void roll_em(cptr *vp, int vn, cptr joiner, cptr finish)
  */
 long angtk_describe_object(object_type *o_ptr, char *buf, bool in_store)
 {
-    u32b f1, f2, f3;
+    u32b f1, f2, f3, f4;
 
 	cptr vp[128];
 	int vn;
@@ -91,7 +91,7 @@ long angtk_describe_object(object_type *o_ptr, char *buf, bool in_store)
 	s_buffer[0] = '\0';
 
     /* Extract the (known) flags */
-    object_flags_known(o_ptr, &f1, &f2, &f3);
+    object_flags_known(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* See if the object is "known" */
 	if (object_known_p(o_ptr)) known = TRUE;
@@ -502,11 +502,11 @@ int SetArrayValueString(cptr varName, cptr field, cptr value)
 static int DumpObjectInfo(object_type *o_ptr, char *varName)
 {
 	int known;
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4;
 	cptr note;
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4);
 
 	/* Known? */
 	known = object_known_p(o_ptr) ? 1 : 0;
