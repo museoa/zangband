@@ -1807,6 +1807,9 @@ static void process_world(void)
 		p_ptr->tim.word_recall--;
 
 		p_ptr->redraw |= (PR_STATUS);
+		
+		/* Hack - no recalling in the middle of the wilderness */
+		if ((!p_ptr->depth) && (!p_ptr->place_num)) return;
 
 		/* Activate the recall */
 		if (!p_ptr->tim.word_recall)
@@ -1828,8 +1831,11 @@ static void process_world(void)
 			{
 				msgf("You feel yourself yanked downwards!");
 
-				/* New depth */
-				p_ptr->depth = p_ptr->max_depth;
+				/* Not lower than bottom of dungeon */
+				p_ptr->depth = max_dun_level();
+				
+				/* Not further than we have already gone. */
+				if (p_ptr->depth > p_ptr->max_depth) p_ptr->depth = p_ptr->max_depth;
 
 				if (p_ptr->depth < 1) p_ptr->depth = 1;
 
