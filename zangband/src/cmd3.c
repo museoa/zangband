@@ -272,6 +272,12 @@ void do_cmd_wield(void)
 
 	/* Wear the new stuff */
 	object_copy(o_ptr, q_ptr);
+	
+	/* Forget stack */
+	o_ptr->next_o_idx = 0;
+	
+	/* Forget location */
+	o_ptr->iy = o_ptr->ix = 0;
 
 	/* Increase the weight */
 	p_ptr->total_weight += q_ptr->weight;
