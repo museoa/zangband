@@ -34,14 +34,8 @@ function do_dream()
 	if ironman_nightmare then
 		msgf("A horrible vision enters your mind.")
 
-		-- Pick a nightmare
-		get_mon_num_prep(get_nightmare, NULL)
-
 		-- Have some nightmares
-		have_nightmare(get_mon_num(MAX_DEPTH))
-
-		-- Remove the monster restriction
-		get_mon_num_prep(NULL, NULL)
+		have_nightmare()
 
 		return TRUE
 	else
