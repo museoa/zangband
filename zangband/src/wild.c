@@ -130,7 +130,7 @@ static bool in_bounds2_cave(int y, int x)
 }
 
 /*
- * Wilderness bounds funcitons.
+ * Wilderness bounds functions.
  * These functions check to see if a square is accessable on the grid
  * of wilderness blocks in the cache.
  */
@@ -140,7 +140,6 @@ static bool in_bounds2_cave(int y, int x)
  */
 static bool in_bounds_wild(int y, int x)
 {
-	/* Multiply block bounds by 16 to get bounds in normal coords. */
 	return ((y > wild_grid.y_min) &&
 	        (x > wild_grid.x_min) &&
 	        (y < wild_grid.y_max - 1) &&
@@ -262,9 +261,9 @@ static void build_store(int n, int yy, int xx)
 	tmp = rand_int(4);
 
 	/* Re-roll "annoying" doors */
-	if (((tmp == 0) && (yy == 1)) ||
+	if (((tmp == 0) && (yy == 2)) ||
 	    ((tmp == 1) && (yy == 0)) ||
-	    ((tmp == 2) && (xx == 3)) ||
+	    ((tmp == 2) && (xx == 2)) ||
 	    ((tmp == 3) && (xx == 0)))
 	{
 		/* Pick a new direction */
@@ -547,9 +546,9 @@ static bool town_blank(int x, int y, int xsize, int ysize)
 	int i, j;
 	wild_done_type *w_ptr;
 
-	for (i = x; i < x + xsize + 1; i++)
+	for (i = x - 1; i < x + xsize + 2; i++)
 	{
-		for (j = y; j < y + ysize + 1; j++)
+		for (j = y - 1; j < y + ysize + 2; j++)
 		{
 			/* Hack - Not next to boundary */
 			if ((i <= 0) || (i >= max_wild - 1)
@@ -580,14 +579,8 @@ static bool town_blank(int x, int y, int xsize, int ysize)
 
 /*
  * Initialise the town structures
- * At the moment there is only one town generator
- * and four towns.
+ * At the moment there is only one type of town generator.
  *
- * The four towns are right next to each other. This is
- * a test of the speed of the switching mechanism.
- * Hopefully it will be fast enough so that towns can be placed
- * anywhere in the wilderness.  It will also be possible to
- * have *HUGE* towns (cities) composed of smaller parts.
  */
 static void init_towns(void)
 {
@@ -4262,11 +4255,11 @@ static void wild_done(void)
 	/* Change back to inside wilderness */
 	dun_level = 0;	
 
-	/* Make the wilderness block cache. */
-	move_wild();
-
 	/* Refresh random number seed */
 	wild_grid.wild_seed = rand_int(0x10000000);
+	
+	/* Make the wilderness block cache. */
+	move_wild();
 }
 
 /*
