@@ -138,6 +138,14 @@ extern long atol();
 	#define USE_XMAID
 #endif 
 
+
+/* Hack - this should be in h-types.h, but we need errr here */
+
+/* Error codes for function return values */
+/* Success = 0, Failure = -N, Problem = +N */
+typedef int errr;
+
+
 /* The init functions for each port called from main.c */
 
 #ifdef USE_XAW
