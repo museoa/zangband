@@ -1150,68 +1150,71 @@ void update_mon(int m_idx, bool full)
 			}
 		}
 
-		pc_ptr = parea(fx, fy);
-
-		/* Normal line of sight, and not blind */
-		if (player_has_los_grid(pc_ptr) && !p_ptr->blind)
+		/* Paranoia */
+		if (in_boundsp(fx, fy))
 		{
-			bool do_invisible = FALSE;
-			bool do_cold_blood = FALSE;
-
-			/* Use "infravision" */
-			if (d <= p_ptr->see_infra)
+			pc_ptr = parea(fx, fy);
+	
+			/* Normal line of sight, and not blind */
+			if (player_has_los_grid(pc_ptr) && !p_ptr->blind)
 			{
-				/* Handle "cold blooded" monsters */
-				if (r_ptr->flags2 & (RF2_COLD_BLOOD))
+				bool do_invisible = FALSE;
+				bool do_cold_blood = FALSE;
+	
+				/* Use "infravision" */
+				if (d <= p_ptr->see_infra)
 				{
-					/* Take note */
-					do_cold_blood = TRUE;
-				}
+					/* Handle "cold blooded" monsters */
+					if (r_ptr->flags2 & (RF2_COLD_BLOOD))
+					{
+						/* Take note */
+						do_cold_blood = TRUE;
+					}
 
-				/* Handle "warm blooded" monsters */
-				else
-				{
-					/* Easy to see */
-					easy = flag = TRUE;
-				}
-			}
-
-			/* Use "illumination" */
-			if ((player_can_see_grid(pc_ptr)) ||
-				 (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2)))
-			{
-				/* Handle "invisible" monsters */
-				if (r_ptr->flags2 & (RF2_INVISIBLE))
-				{
-					/* Take note */
-					do_invisible = TRUE;
-
-					/* See invisible */
-					if (p_ptr->see_inv)
+					/* Handle "warm blooded" monsters */
+					else
 					{
 						/* Easy to see */
 						easy = flag = TRUE;
 					}
 				}
 
-				/* Handle "normal" monsters */
-				else
+				/* Use "illumination" */
+				if ((player_can_see_grid(pc_ptr)) ||
+					 (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2)))
 				{
-					/* Easy to see */
-					easy = flag = TRUE;
-				}
-			}
+					/* Handle "invisible" monsters */
+					if (r_ptr->flags2 & (RF2_INVISIBLE))
+					{
+						/* Take note */
+						do_invisible = TRUE;
 
-			/* Visible */
-			if (flag)
-			{
-				/* Memorize flags */
-				if (do_invisible) r_ptr->r_flags2 |= (RF2_INVISIBLE);
-				if (do_cold_blood) r_ptr->r_flags2 |= (RF2_COLD_BLOOD);
+						/* See invisible */
+						if (p_ptr->see_inv)
+						{
+							/* Easy to see */
+							easy = flag = TRUE;
+						}
+					}
+
+					/* Handle "normal" monsters */
+					else
+					{
+						/* Easy to see */
+						easy = flag = TRUE;
+					}
+				}
+
+				/* Visible */
+				if (flag)
+				{
+					/* Memorize flags */
+					if (do_invisible) r_ptr->r_flags2 |= (RF2_INVISIBLE);
+					if (do_cold_blood) r_ptr->r_flags2 |= (RF2_COLD_BLOOD);
+				}
 			}
 		}
 	}
-
 
 	/* The monster is now visible */
 	if (flag)

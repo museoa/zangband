@@ -4192,9 +4192,16 @@ void update_mon_lite(void)
 		fx = m_ptr->fx;
 		fy = m_ptr->fy;
 
-		/* Is the monster visible? */
-		mon_invis = !player_has_los_grid(parea(fx, fy));
-
+		if (in_boundsp(fx, fy))
+		{
+			/* Is the monster visible? */
+			mon_invis = !player_has_los_grid(parea(fx, fy));
+		}
+		else
+		{
+			mon_invis = TRUE;
+		}
+		
 		/* The square it is on */
 		mon_lite_hack(fx, fy);
 
