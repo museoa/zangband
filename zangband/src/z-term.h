@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: z-term.h */
 
 /*
@@ -325,6 +324,10 @@ extern errr Term_activate(term *t);
 extern errr term_nuke(term *t);
 extern errr term_init(term *t, int w, int h, int k);
 
+
+/**** Available Function hooks ****/
+
+extern errr (*Term_resize_hook)(void);
 
 #endif
 
