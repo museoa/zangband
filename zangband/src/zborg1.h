@@ -209,12 +209,12 @@ extern bool borg_plays_risky;
 extern bool borg_uses_swaps;
 extern bool borg_slow_optimizehome;
 extern bool borg_scums_uniques;
-extern bool borg_engage_cloak;
 
 /* HACK... this should really be a parm into borg_prepared */
 /*         I am just being lazy */
 extern bool borg_slow_return;
 
+/* Borg has is intrinsically broken */
 extern int *borg_has;
 extern int *borg_has_on;
 extern int *borg_artifact;

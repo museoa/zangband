@@ -3109,9 +3109,6 @@ void borg_init_9(void)
 	/* We do not haggle */
 	auto_haggle = TRUE;
 
-	/* We do not start Scumming */
-	auto_scum = FALSE;
-
 	/* We need space */
 	show_labels = FALSE;
 	show_weights = FALSE;

@@ -9769,8 +9769,6 @@ cptr borg_prepared(int depth)
 		}
 		/* scum for the uniques and report */
 		r_ptr = &r_info[living_unique_index];
-		if (borg_scums_uniques &&
-			borg_skill[BI_MAXCLEVEL] >= 35) auto_scum = TRUE;
 #if 0
 		return ("Living uniques >= 3");
 #endif
@@ -9833,15 +9831,10 @@ cptr borg_prepared(int depth)
 			 borg_spell_legal_fail(REALM_SORCERY, 2, 6, 40) ||
 			 borg_spell_legal_fail(REALM_TRUMP, 1, 5, 40) || borg_has[187]))
 		{
-			if (borg_scums_uniques &&
-				borg_skill[BI_MAXCLEVEL] >= 35) auto_scum = TRUE;
 			return ((cptr)NULL);
 		}
 		/* Report */
 		r_ptr = &r_info[living_unique_index];
-
-		if (borg_scums_uniques &&
-			borg_skill[BI_MAXCLEVEL] >= 35) auto_scum = TRUE;
 
 		/* To avoid double calls to format(); */
 		strnfmt(borg_prepared_buffer, MAX_REASON, "Must kill %s.",

@@ -58,7 +58,6 @@ bool borg_uses_swaps;
 bool borg_plays_risky;
 bool borg_slow_optimizehome;
 bool borg_scums_uniques;
-bool borg_engage_cloak;
 
 /* HACK... this should really be a parm into borg_prepared */
 /*         I am just being lazy */

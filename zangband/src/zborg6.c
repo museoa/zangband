@@ -3139,13 +3139,6 @@ bool borg_caution(void)
 		/* Usable stairs */
 		if (mb_ptr->feat == FEAT_LESS)
 		{
-			if ((borg_skill[BI_MAXDEPTH] - 4) > borg_skill[BI_CDEPTH] &&
-				borg_skill[BI_MAXCLEVEL] >= 35)
-			{
-				borg_note("scumming");
-				auto_scum = TRUE;
-			}
-
 			borg_keypress('<');
 
 			/* Success */
@@ -3163,14 +3156,6 @@ bool borg_caution(void)
 		/* Usable stairs */
 		if (mb_ptr->feat == FEAT_MORE)
 		{
-			if ((borg_skill[BI_MAXDEPTH] - 5) > borg_skill[BI_CDEPTH] &&
-				borg_skill[BI_MAXCLEVEL] >= 35)
-			{
-				borg_note("scumming");
-				auto_scum = TRUE;
-			}
-
-
 			/* Cast GOI just before returning to dungeon */
 			if (borg_skill[BI_CURSP] > borg_skill[BI_MAXSP] * 6 / 10 &&
 				!borg_goi &&
