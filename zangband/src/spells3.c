@@ -2207,9 +2207,11 @@ bool recharge(int power)
 	/* Get the object kind. */
 	k_ptr = &k_info[o_ptr->k_idx];
 
-	/* Extract the object "level" */
-	lev = k_info[o_ptr->k_idx].level;
-
+	/* 
+	 * Extract the object "level"
+	 * (Rescaled due to change in dungeon distribtuion)
+	 */
+	lev = k_info[o_ptr->k_idx].level / 2;
 
 	/* Recharge a rod */
 	if (o_ptr->tval == TV_ROD)
@@ -2254,11 +2256,9 @@ bool recharge(int power)
 		else recharge_strength = (100 + power - lev -
 			(8 * o_ptr->pval)) / 15;
 
-		/* Paranoia */
-		if (recharge_strength < 0) recharge_strength = 0;
-
 		/* Back-fire */
-		if (rand_int(recharge_strength) == 0)
+		if ((recharge_strength < 0) ||
+			 (rand_int(recharge_strength) == 0))
 		{
 			/* Activate the failure code. */
 			fail = TRUE;
@@ -2268,7 +2268,7 @@ bool recharge(int power)
 		else
 		{
 			/* Recharge based on the standard number of charges. */
-			recharge_amount = randint(1 + k_ptr->pval / 2);
+			recharge_amount = randint(1 + k_ptr->pval);
 
 			/* Multiple wands in a stack increase recharging somewhat. */
 			if ((o_ptr->tval == TV_WAND) && (o_ptr->number > 1))
@@ -2325,8 +2325,9 @@ bool recharge(int power)
 
 			/*** Determine Seriousness of Failure ***/
 
-			/* Mages recharge objects more safely. */
-			if (p_ptr->pclass == CLASS_MAGE)
+			/* (High) Mages recharge objects more safely. */
+			if ((p_ptr->pclass == CLASS_MAGE) ||
+				 (p_ptr->class == CLASS_HIGH_MAGE))
 			{
 				/* 10% chance to blow up one rod, otherwise draining. */
 				if (o_ptr->tval == TV_ROD)
