@@ -999,12 +999,5 @@ proc InitOther {} {
 	return
 }
 
-if {[catch {
-
-	# Main initialization command
-	InitOther
-
-} error]} {
-	HandleError $error
-}
-
+# Main initialization command
+InitOther

@@ -48,11 +48,11 @@ proc NSStatus::InitModule {} {
 	set statusHeight [expr {$fontHeight + 2}]
 
 	# Hack -- Check each translation string, and save it for speed
-	foreach loc $::msgcat::loclist {
+	foreach loc $::msgcat::Loclist {
 		set prefix "$loc,::NSStatus,"
 		set len [string length $prefix]
-		foreach name [array names ::msgcat::msgs $prefix*] {
-			lappend strings $::msgcat::msgs($name)
+		foreach name [array names ::msgcat::Msgs $prefix*] {
+			lappend strings $::msgcat::Msgs($name)
 			set srcString [string range $name $len end]
 #			set Trans($srcString) $::msgcat::msgs($name)
 			set Trans($srcString) [mc $srcString]
@@ -177,131 +177,6 @@ proc NSStatus::CreateItem {status} {
 	set Priv($status,itemId) $itemId
 
 	SetColor $status
-
-	return
-}
-
-# NSStatus::SetText --
-#
-#	Called as a qebind <Status> script. Sets the text of one of
-#	the status items.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSStatus::SetText {status format value} {
-
-	variable Priv
-	variable Trans
-	variable Color
-
-	# Get the Main Window widget
-	set widget [Global main,widget]
-
-	# Default to not arranging items
-	set arrange 0
-
-	# There is some text
-	if {[string length $format]} {
-
-		# The item is not showing
-		if {!$Priv($status,showing)} {
-
-			# Create item if needed
-			if {!$Priv($status,itemId)} {
-				CreateItem $status
-			}
-
-			# Show the item
-			$widget itemconfigure $Priv($status,itemId) -visible yes
-
-			# Remember item is showing
-			set Priv($status,showing) 1
-
-			# Arrange items later
-			set arrange 1
-		}
-
-		# Get the text, formatted for this locale
-#		set text [format [mc $format] $value]
-		set text [format $Trans($format) $value]
-
-		# The text changed
-		if {[string compare $text $Priv($status,text)]} {
-
-			set doColor 0
-			set type $Priv($status,type)
-			switch -- $status {
-				hunger {
-					switch -- $format {
-						Weak -
-						Hungry -
-						Gorged {
-							set type bad
-						}
-						Full {
-							set type info
-						}
-					}
-					set doColor 1
-				}
-				speed {
-					if {$value > 0} {
-						# Perhaps temporary fast is "good", otherwise "info"
-						set type info
-					} else {
-						set type bad
-					}
-					set doColor 1
-				}
-				state {
-					if {[string equal Paralyzed! $format]} {
-						set type bad
-					} else {
-						set type info
-					}
-					set doColor 1
-				}
-			}
-			if {$doColor} {
-				SetColor $status $type
-			}
-
-			# Set the item text
-			$widget itemconfigure $Priv($status,itemId) -text $text
-
-			# Remember the text
-			set Priv($status,text) $text
-
-			# Hack -- Big status message
-			SetStatusMessage $text $format $type
-		}
-
-	# Empty string, and the item is showing
-	} elseif {$Priv($status,showing)} {
-
-		# Hide the item
-		$widget itemconfigure $Priv($status,itemId) -visible no
-
-		# Remember the item is not showing
-		set Priv($status,showing) 0
-
-		# Arrange items later
-		set arrange 1
-
-		# Remember the text
-		set Priv($status,text) ""
-	}
-
-	# Arrange the items
-	if {$arrange} {
-
-		# Arrange the items
-		Arrange 0
-	}
 
 	return
 }
@@ -471,9 +346,9 @@ proc NSStatus::InitStatusMessage {} {
 
 	# Hack -- Calculate the maximum dimensions of a status message
 	set maxWidth 0
-	foreach loc $::msgcat::loclist {
-		foreach name [array names ::msgcat::msgs $loc,::NSStatus,*] {
-			lappend strings $::msgcat::msgs($name)
+	foreach loc $::msgcat::Loclist {
+		foreach name [array names ::msgcat::Msgs $loc,::NSStatus,*] {
+			lappend strings $::msgcat::Msgs($name)
 		}
 	}
 	foreach string $strings {
@@ -616,9 +491,9 @@ proc NSStatus::ValueChanged_font_status {} {
 
 	# Calculate the minimum required width of a status item
 	set maxWidth 0
-	foreach loc $::msgcat::loclist {
-		foreach name [array names ::msgcat::msgs $loc,::NSStatus,*] {
-			set string $::msgcat::msgs($name)
+	foreach loc $::msgcat::Loclist {
+		foreach name [array names ::msgcat::Msgs $loc,::NSStatus,*] {
+			set string $::msgcat::Msgs($name)
 			lappend strings [format $string 9999]
 		}
 	}

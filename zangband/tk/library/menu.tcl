@@ -630,13 +630,6 @@ proc NSMenu::_MenuPostCommand {toop} {
 	global NSMenu
 	variable Priv
 
-	if {[Platform unix]} {
-		global tkPriv
-		if {[string compare $tkPriv(menuBar) ""]} {
-			return
-		}
-	}
-
 	if {$Priv(debug)} {
 		Debug "_MenuPostCommand $toop"
 	}

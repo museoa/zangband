@@ -27,6 +27,8 @@ if {!$JAPANESE} {
 	::msgcat::mclocale ja
 }
 
+
+
 # MsgCatInit --
 #
 #	Sets up msgcat support for a module.
