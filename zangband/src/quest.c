@@ -1735,6 +1735,7 @@ bool do_cmd_knowledge_quests(int dummy)
 	int i;
 	
 	bool taken;
+	bool finished;
 	
 	/* Hack - ignore parameter */
 	(void) dummy;
@@ -1753,6 +1754,7 @@ bool do_cmd_knowledge_quests(int dummy)
 		if (!(q_ptr->flags & QUEST_FLAG_KNOWN)) continue;
 		
 		taken = (q_ptr->status == QUEST_STATUS_TAKEN);
+		finished = (q_ptr->status == QUEST_STATUS_FINISHED);
 
 		/* See what type of quest it is */
 		switch (q_ptr->type)
@@ -1835,6 +1837,11 @@ bool do_cmd_knowledge_quests(int dummy)
 				{
 					/* Hack - this is simple */
 					strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
+				}
+				else if (finished)
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s (Completed)\n", q_ptr->name);
 				}
 				else
 				{

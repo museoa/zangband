@@ -4603,6 +4603,12 @@ bool field_action_castlequest2(field_type *f_ptr, va_list vp)
 
 		/* Hack, use factor as a return value */
 		*factor = TRUE;
+		
+		/* Display messages */
+		message_flush();
+			
+		/* Redraw screen */
+		display_build(f_ptr, b_ptr);
 	}
 	else
 	{
