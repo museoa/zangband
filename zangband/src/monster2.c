@@ -942,7 +942,7 @@ void update_mon_vis(u16b r_idx, int increment)
 	p_ptr->window |= PW_VISIBLE;
 
 	/* Paranoia */
-	if (!r_ptr->r_see && (increment == -1)) quit("Monster visibility error!");
+	if (!r_ptr->r_see && (increment == -1)) core("Monster visibility error!");
 
 	/* Update the counter */
 	r_ptr->r_see += increment;
