@@ -1297,7 +1297,10 @@ static void save_wild_data(void)
 			wr_byte(wild[j][i].done.info);
 
 			/* Monster Gen type */
-			wr_u16b(wild[j][i].done.mon_gen);
+			wr_byte(wild[j][i].done.mon_gen);
+			
+			/* Monster Probability */
+			wr_byte(wild[j][i].done.mon_prob);
 		}
 	}
 }

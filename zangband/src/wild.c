@@ -2153,17 +2153,17 @@ static void set_temp_mid(u16b val)
 static bool wild_info_bounds(u16b x, u16b y, byte info)
 {
 	int i, x1, y1;
-	bool grad[4], any;
+	bool grad[10], any;
 
 	/* No flags set yet */
 	any = FALSE;
 	
 	/* Check each orthogonally adjacent square to see if flag is set */
-	for (i = 0; i < 4; i++)
+	for (i = 1; i < 10; i++)
 	{
-		/* Hack - get only orthogonal directions */
-		x1 = x + ddx[i * 2 + 2];
-		y1 = y + ddy[i * 2 + 2];
+		/* Get direction */
+		x1 = x + ddx[i];
+		y1 = y + ddy[i];
 		
 		grad[i] = FALSE;
 		
@@ -2205,7 +2205,7 @@ static bool wild_info_bounds(u16b x, u16b y, byte info)
 		x1 = (1 + ddx[i * 2 + 2]) * WILD_BLOCK_SIZE / 2;
 		y1 = (1 + ddy[i * 2 + 2]) * WILD_BLOCK_SIZE / 2;
 	
-		if (grad[i])
+		if (grad[i * 2 + 2])
 		{	
 			temp_block[y1][x1] = WILD_BLOCK_SIZE * 256;
 		}
@@ -2215,10 +2215,10 @@ static bool wild_info_bounds(u16b x, u16b y, byte info)
 		}
 	}
 	
-	/* Set corners based on pairs of sides */
+	/* Hack - Set corners based on pairs of sides */
 	
 	/* Upper left */
-	if (grad[1] && grad[3])
+	if ((grad[4] && grad[8]) || (grad[7] && grad[5]))
 	{
 		temp_block[0][0] = WILD_BLOCK_SIZE * 256;
 	}
@@ -2228,7 +2228,7 @@ static bool wild_info_bounds(u16b x, u16b y, byte info)
 	}
 	
 	/* Lower left */
-	if (grad[0] && grad[3])
+	if ((grad[2] && grad[8]) || (grad[1] && grad[5]))
 	{
 		temp_block[WILD_BLOCK_SIZE][0] = WILD_BLOCK_SIZE * 256;
 	}
@@ -2238,7 +2238,7 @@ static bool wild_info_bounds(u16b x, u16b y, byte info)
 	}
 	
 	/* Upper right */
-	if (grad[1] && grad[2])
+	if ((grad[4] && grad[6]) || (grad[9] && grad[5]))
 	{
 		temp_block[0][WILD_BLOCK_SIZE] = WILD_BLOCK_SIZE * 256;
 	}
@@ -2248,7 +2248,7 @@ static bool wild_info_bounds(u16b x, u16b y, byte info)
 	}
 	
 	/* Lower right */
-	if (grad[0] && grad[2])
+	if ((grad[2] && grad[6]) || (grad[3] && grad[5]))
 	{
 		temp_block[WILD_BLOCK_SIZE][WILD_BLOCK_SIZE] = WILD_BLOCK_SIZE * 256;
 	}
@@ -2258,7 +2258,7 @@ static bool wild_info_bounds(u16b x, u16b y, byte info)
 	}
 	
 	/* Set middle based on current square */
-	if (wild[y][x].done.info & info)
+	if (grad[5])
 	{
 		temp_block[WILD_BLOCK_SIZE / 2][WILD_BLOCK_SIZE / 2] = WILD_BLOCK_SIZE * 256;
 	}
@@ -2862,6 +2862,35 @@ static void	fill_grass(blk_ptr block_ptr)
 	}
 }
 
+/* Add monsters to the wilderness block */
+static void	add_monsters_block(int x, int y)
+{
+	int i, j, xx, yy;
+	long prob;
+	
+	/* 
+	 * Probability of a monster being on a certain sqaure.
+	 * Perhaps this should include the effects of stealth.
+	 */
+		
+	prob = 16384 / (wild[y][x].done.mon_prob + 1);
+		
+	xx = (x + wild_grid.x) * 16 - wild_grid.x_min;
+	yy = (y + wild_grid.y) * 16 - wild_grid.y_min;
+		
+	for(i = 0; i < 16; i++)
+	{
+		for(j = 0; j < 16; j++)
+		{
+			/* See if monster should go on square */
+			if (!rand_int(prob))
+			{
+				(void) place_monster(yy + j, xx + i, FALSE, TRUE);
+			}
+		}
+	}
+}
+
 /* Make a new block based on the terrain type */
 static void gen_block(int x, int y, blk_ptr block_ptr)
 {
@@ -2945,8 +2974,11 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 
 	/* Set the monster generation level */
 
-	/*Hack - just a number. (No themes yet.) */
+	/*Hack - use a number based on "law" statistic */
 	monster_level = wild[y][x].done.mon_gen;
+	
+	/* Add monsters to block */
+	add_monsters_block(x , y);
 
 	/* Set the object generation level */
 
@@ -4020,8 +4052,11 @@ void create_wilderness(void)
 				/* No town yet */
 				wild[j][i].done.town = 0;
 
-				/* No monsters */
+				/* Monsters are easy */
 				wild[j][i].done.mon_gen = 0;
+				
+				/* Monsters are fairly common */
+				wild[j][i].done.mon_prob = 4;
 			}
 		}
 		
@@ -4140,6 +4175,14 @@ void create_wilderness(void)
 	{
 		for (j = 0; j < max_wild; j++)
 		{
+			/* 
+			 * Store parameters before change the information
+			 * in the union.  (Want to scale values to be 0 - 255)
+			 */
+			pop = (wild[j][i].gen.pop_map - pop_min) * 16 / pop_scale;
+			law = (wild[j][i].gen.law_map - law_min) * 16 / law_scale;
+			
+			
 			/* If above sea level - use decision tree to get terrain. */
 			if (wild[j][i].gen.hgt_map <= sea_level)			
 			{
@@ -4165,12 +4208,10 @@ void create_wilderness(void)
 				/* Terrains from decision tree */
 				
 				/* 
-				 * Store parameters before change the information
-				 * in the union.  (Want to scale values to be 0 - 255)
+				 * Get height from (0 - 255)
 				 */
 				hgt = (wild[j][i].gen.hgt_map - sea_level) * 16 / hgt_scale;
-				pop = (wild[j][i].gen.pop_map - pop_min) * 16 / pop_scale;
-				law = (wild[j][i].gen.law_map - law_min) * 16 / law_scale;	
+				
 				
 				/* Get wilderness type. */
 				wild[j][i].done.wild = get_gen_type(hgt, pop, law);
@@ -4182,8 +4223,13 @@ void create_wilderness(void)
 			/* No town yet */
 			wild[j][i].done.town = 0;
 
-			/* No monsters */
-			wild[j][i].done.mon_gen = 0;
+			/* Mega hack - set monster toughness and density */
+
+			/* Toughness (level 0 - 80) */
+			wild[j][i].done.mon_gen = law * 5 / 16;
+			
+			/* No monsters (probability 1 - 17) */
+			wild[j][i].done.mon_prob = pop / 16;
 		}
 	}
 		

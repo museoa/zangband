@@ -2696,7 +2696,10 @@ static void load_wild_data(void)
 				rd_byte(&wild[j][i].done.info);
 
 				/* Monster Gen type */
-				rd_u16b(&wild[j][i].done.mon_gen);
+				rd_byte(&wild[j][i].done.mon_gen);
+				
+				/* Monster Probability */
+				rd_byte(&wild[j][i].done.mon_prob);
 			}
 		}
 	}

@@ -562,7 +562,8 @@ struct wild_done_type
 	u16b	wild;
 	byte	town;
 	byte	info;
-	u16b	mon_gen;
+	byte	mon_gen;
+	byte	mon_prob;
 };
 
 /*
