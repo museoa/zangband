@@ -41,7 +41,7 @@ struct monster_type
 	s16b hold_o_idx;	/* Object being held (if any) */
 
 	u32b smart;			/* Field for "smart_learn" */
-
+	
 	%addmethods
 	{
 		monster_type(void)
@@ -55,6 +55,8 @@ struct monster_type
 		}
 	}
 };
+
+
 
 %{
 	monster_type *get_monster(int i)

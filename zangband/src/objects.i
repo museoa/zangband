@@ -164,8 +164,9 @@ typedef struct object_type
 		void object_prep(int k_idx)
 		{
 			object_prep(self, k_idx);
-
+#ifdef USE_SCRIPT
 			self->python = object_create_callback(self);
+#endif
 		}
 
 		s16b drop_near(int chance, int y, int x)
@@ -195,7 +196,9 @@ typedef struct object_type
 
 		void set_python(PyObject *python)
 		{
+#ifdef USE_SCRIPT
 			self->python = python;
+#endif
 		}
 	}
 } object_type;

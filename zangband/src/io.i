@@ -291,7 +291,7 @@ extern errr term_init(term *t, int w, int h, int k);
 extern u32b option_mask[8];
 extern u32b window_flag[8];
 extern u32b window_mask[8];
-extern term *angband_term[8];
+/* extern term *angband_term[8];  :This doesn't work for me -SF- */
 extern char angband_term_name[8][16];
 extern byte angband_color_table[256][4];
 extern char angband_sound_name[SOUND_MAX][16];

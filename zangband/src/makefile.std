@@ -34,6 +34,51 @@
 # This Makefile comes with "default" dependancies that may be obsolete.
 #
 
+##
+## Compile for python?
+##
+#
+# PYTHON = TRUE
+#
+
+
+#
+# The interface files
+#
+
+ifdef PYTHON
+
+INTER = \
+	cave.i io.i pclass.i random.i store.i typemap.i \
+	commands.i monster.i player.i realms.i system.i util.i \
+	event.i objects.i prace.i spells.i terrain.i
+
+
+#
+# The generated source files
+#
+
+
+PSRCS = \
+	cave_wrap.c monster_wrap.c prace_wrap.c store_wrap.c \
+	commands_wrap.c objects_wrap.c random_wrap.c system_wrap.c \
+	event_wrap.c pclass_wrap.c realms_wrap.c terrain_wrap.c \
+	io_wrap.c player_wrap.c spells_wrap.c util_wrap.c
+
+
+#
+# The generated object files
+#	
+
+
+POBJS = \
+	cave_wrap.o monster_wrap.o prace_wrap.o store_wrap.o \
+	commands_wrap.o objects_wrap.o random_wrap.o system_wrap.o \
+	event_wrap.o pclass_wrap.o realms_wrap.o terrain_wrap.o \
+	io_wrap.o player_wrap.o spells_wrap.o util_wrap.o
+	
+endif
+
 
 #
 # The "source" and "object" files.
@@ -54,7 +99,7 @@ SRCS = \
 	mspells1.c mspells2.c scores.c mind.c maid-x11.c\
 	bldg.c obj_kind.c wild1.c wild2.c avatar.c notes.c\
 	main-cap.c main-gcu.c main-x11.c main-xaw.c main-xpj.c\
-	main-lsl.c main.c
+	main-lsl.c main.c $(PSRCS)
 
 OBJS = \
 	z-util.o z-virt.o z-form.o z-rand.o z-term.o \
@@ -71,7 +116,7 @@ OBJS = \
 	mspells1.o mspells2.o scores.o mind.o maid-x11.o\
 	bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
-	main-lsl.o main.o
+	main-lsl.o main.o $(POBJS)
 
 
 
@@ -103,6 +148,45 @@ OBJS = \
 CC = gcc
 
 
+
+#
+# The python version to use. (I have 1.5)
+#
+
+PYVERSION = python1.5
+
+
+#
+# The name of the swig tool.
+#
+
+SWIG = swig
+
+
+#
+# The flags to pass to SWIG
+#
+
+SFLAGS = -python -dnone
+
+#
+# The flags used to compile for python
+#
+
+PYFLAGS = -I/usr/include/$(PYVERSION) -w
+
+#
+# The libraries needed for python
+# (I have Python 1.5)
+#
+
+ifdef PYTHON
+
+PYLIB = -L/usr/local/lib/$(PYVERSION)/ -l$(PYVERSION)
+
+endif
+
+
 #
 # Standard version (see main-x11.c and main-gcu.c)
 #
@@ -129,12 +213,13 @@ CC = gcc
 ##
 CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
          -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
-LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
+LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib $(PYLIB)
 
 ## Option: Use XAW instead of pure X11
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
 #          -D"USE_XAW" -D"USE_GCU" -D"USE_TRANSPARENCY"
-#LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lcurses
+#LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt\
+# -lX11 -lcurses $(PYLIB)
 
 
 ##
@@ -143,7 +228,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 #
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
 #         -D"USE_GCU" -D"USE_TRANSPARENCY" -D"USE_XPJ" -D"USE_X11"
-#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib
+#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib $(PYLIB)
 
 
 ##
@@ -153,7 +238,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
 #         -D"USE_GCU" -D"USE_TRANSPARENCY" -D"USE_XPJ"
 #		 
-#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib
+#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib $(PYLIB)
 
 
 ##
@@ -164,7 +249,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 #         -D"USE_TRANSPARENCY" -D"USE_XPJ" -D"USE_X11" -D"USE_XAW" -D"USE_LSL"
 #
 #		 
-#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl -lvga
+#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl -lvga $(PYLIB)
 
 ##
 ## Variation -- OpenBSD 
@@ -172,35 +257,35 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 #
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g -I/usr/x11r6/include \
 #         -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
-#LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
+#LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib $(PYLIB)
 
 
 ##
 ## Variation -- Only support "main-x11.c" (not "main-gcu.c")
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11"
-#LIBS = -lX11
+#LIBS = -lX11 $(PYLIB)
 
 
 ##
 ## Variation -- Only support "main-gcu.c" (not "main-x11.c")
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU"
-#LIBS = -lcurses -ltermcap
+#LIBS = -lcurses -ltermcap $(PYLIB)
 
 
 ##
 ## Variation -- Use "main-xaw.c" instead of "main-x11.c"
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_XAW" -D"USE_GCU"
-#LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap
+#LIBS = -lXaw -lXmu -lXt -lX11 -lcurses -ltermcap $(PYLIB)
 
 
 ##
 ## Variation -- Use "main-cap.c" instead of "main-gcu.c"
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_CAP"
-#LIBS = -lX11 -ltermcap
+#LIBS = -lX11 -ltermcap $(PYLIB)
 
 
 ##
@@ -215,7 +300,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 #CFLAGS = -I/usr/X11R6/include -I/usr/include/ncurses \
 #         -Wall -O2 -fno-strength-reduce -fomit-frame-pointer \
 #         -D"USE_X11" -D"USE_GCU"
-#LIBS = -L/usr/X11R6/lib -lX11 -lncurses -ltermcap
+#LIBS = -L/usr/X11R6/lib -lX11 -lncurses -ltermcap $(PYLIB)
 
 ##
 ## Variation -- this might work better than the suggestion above
@@ -224,7 +309,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 #         -Wall -O2 -fno-strength-reduce -fomit-frame-pointer \
 #         -D"USE_X11" -D"USE_GCU" \
 #         -D"USE_TPOSIX" -D"USE_CURS_SET"
-#LIBS = -lX11 -lncurses
+#LIBS = -lX11 -lncurses $(PYLIB)
 #LDFLAGS = -s
 
 
@@ -232,14 +317,14 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 ## Variation -- compile for Solaris
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"SOLARIS"
-#LIBS = -lX11 -lsocket -lcurses
+#LIBS = -lX11 -lsocket -lcurses $(PYLIB)
 
 
 ##
 ## Variation -- compile for SGI Indigo runnig Irix
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"SGI"
-#LIBS = -lX11 -lcurses -ltermcap -lsun
+#LIBS = -lX11 -lcurses -ltermcap -lsun $(PYLIB)
 
 
 
@@ -249,21 +334,21 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 #CC     = cc
 ##CFLAGS = -std -O -g3 -Olimit 4000 -D"USE_X11" -D"USE_GCU"
 #CFLAGS = -std -g -D"USE_X11" -D"USE_GCU"
-#LIBS   = -lX11 -lcurses -ltermcap -lrpcsvc
+#LIBS   = -lX11 -lcurses -ltermcap -lrpcsvc $(PYLIB)
 
 
 ##
 ## Variation -- compile for Interactive Unix (ISC) systems
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_X11" -D"USE_GCU" -D"ISC"
-#LIBS = -lX11 -lcurses -lnsl_s -linet -lcposix
+#LIBS = -lX11 -lcurses -lnsl_s -linet -lcposix $(PYLIB)
 
 
 ##
 ## Variation -- Support fat binaries under NEXTSTEP
 ##
 #CFLAGS = -Wall -O1 -pipe -g -D"USE_GCU" -arch m68k -arch i386
-#LIBS = -lcurses -ltermcap
+#LIBS = -lcurses -ltermcap $(PYLIB)
 
 
 ##
@@ -273,8 +358,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 #
 #CC = cc
 #CFLAGS = -bnoquiet -O2  -D"USE_X11" -D"SYS_V"
-#LIBS = -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
-
+#LIBS = -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt $(PYLIB)
 
 
 ##
@@ -285,7 +369,7 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 ## use the normal scaled graphics?
 #
 #CFLAGS = -Wall -D"USE_LSL"
-#LIBS = -lz -lvgagl -lvga
+#LIBS = -lz -lvgagl -lvga $(PYLIB)
 
 
 
@@ -400,3 +484,16 @@ z-term.o: z-term.c $(HDRS) z-term.h z-virt.h
 z-util.o: z-util.c $(HDRS) z-util.h
 z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
 
+#
+# Python wrapper files
+#
+
+ifdef PYTHON
+
+$(POBJS): %.o: %.c $(INCS)
+	$(CC) $(CFLAGS) -c -o $@ $< $(PYFLAGS)
+
+$(PSRCS): %_wrap.c: %.i
+	$(SWIG) $(SFLAGS) $<
+
+endif

@@ -792,7 +792,7 @@ void store_examine_callback(const object_type *o_ptr)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_p_object_type);
+		SWIG_MakePtr(_ptemp, o_ptr, "_object_type_p");
 		arglist = Py_BuildValue("(s)", _ptemp);
 
 		/* Call the object with the correct arguments */
@@ -1089,7 +1089,7 @@ bool destroy_object_callback(object_type *o_ptr, int number)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_p_object_type);
+		SWIG_MakePtr(_ptemp, o_ptr, "_object_type_p");
 		arglist = Py_BuildValue("((si))", _ptemp, number);
 
 		/* Call the object with the correct arguments */
@@ -1124,7 +1124,7 @@ PyObject* object_create_callback(object_type *o_ptr)
 	if (func)
 	{
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, o_ptr, SWIGTYPE_p_object_type);
+		SWIG_MakePtr(_ptemp, o_ptr, "_object_type_p");
 		arglist = Py_BuildValue("(s)", _ptemp);
 
 		/* Call the object with the correct arguments */
@@ -1175,6 +1175,8 @@ bool object_eat_callback(object_type *o_ptr)
 	PyObject *result;
 	bool res = FALSE;
 
+#ifdef USE_SCRIPT
+
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "object_eat_hook"))
 	{
@@ -1188,7 +1190,7 @@ bool object_eat_callback(object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1197,6 +1199,8 @@ bool object_browse_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	bool res = FALSE;
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "object_browse_hook"))
@@ -1211,7 +1215,7 @@ bool object_browse_callback(const object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1220,6 +1224,8 @@ bool object_cast_callback(object_type *o_ptr)
 {
 	PyObject *result;
 	bool res = FALSE;
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "object_cast_hook"))
@@ -1234,7 +1240,7 @@ bool object_cast_callback(object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1243,6 +1249,8 @@ cptr object_save_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	cptr res = NULL;
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "object_save_hook"))
@@ -1257,13 +1265,16 @@ cptr object_save_callback(const object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
 
 void object_delete_callback(object_type *o_ptr)
 {
+
+#ifdef USE_SCRIPT
+
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "object_delete_hook"))
 	{
@@ -1277,6 +1288,7 @@ void object_delete_callback(object_type *o_ptr)
 		/* Free the Python object */
 		Py_XDECREF(o_ptr->python);
 	}
+#endif
 }
 
 
@@ -1284,19 +1296,21 @@ PyObject* object_copy_callback(object_type *o_ptr, const object_type *j_ptr)
 {
 	PyObject *result = NULL;
 
+#ifdef USE_SCRIPT
+
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "object_copy_hook"))
 	{
 		char _ptemp[128];
 
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, j_ptr, SWIGTYPE_p_object_type);
+		SWIG_MakePtr(_ptemp, j_ptr, "_object_type_p");
 
 		result = PyObject_CallMethod(o_ptr->python, "object_copy_hook", "(s)", _ptemp);
 
 		/* We don't free the result, since we store it! */
 	}
-
+#endif
 	/* Return the object */
 	return result;
 }
@@ -1306,6 +1320,8 @@ long get_object_level_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	long res = 0;
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "get_object_level_hook"))
@@ -1320,7 +1336,7 @@ long get_object_level_callback(const object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1329,6 +1345,8 @@ long get_object_cost_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	long res = 0;
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "get_object_cost_hook"))
@@ -1343,7 +1361,7 @@ long get_object_cost_callback(const object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1352,6 +1370,8 @@ cptr get_object_name_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	cptr res = "test";
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "get_object_name_hook"))
@@ -1367,6 +1387,8 @@ cptr get_object_name_callback(const object_type *o_ptr)
 		Py_XDECREF(result);
 	}
 
+#endif
+
 	return res;
 }
 
@@ -1375,6 +1397,8 @@ byte get_object_d_attr_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	byte res = 0;
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "get_object_d_attr_hook"))
@@ -1389,7 +1413,7 @@ byte get_object_d_attr_callback(const object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1398,6 +1422,8 @@ byte get_object_x_attr_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	byte res = 0;
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "get_object_x_attr_hook"))
@@ -1412,7 +1438,7 @@ byte get_object_x_attr_callback(const object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1421,6 +1447,8 @@ char get_object_d_char_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	char res = '\0';
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "get_object_d_char_hook"))
@@ -1435,7 +1463,7 @@ char get_object_d_char_callback(const object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1444,6 +1472,8 @@ char get_object_x_char_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	char res = '\0';
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "get_object_x_char_hook"))
@@ -1458,7 +1488,7 @@ char get_object_x_char_callback(const object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1467,6 +1497,8 @@ bool get_object_aware_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	bool res = FALSE;
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "get_object_aware_hook"))
@@ -1481,7 +1513,7 @@ bool get_object_aware_callback(const object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1490,6 +1522,8 @@ bool get_object_tried_callback(const object_type *o_ptr)
 {
 	PyObject *result;
 	bool res = FALSE;
+
+#ifdef USE_SCRIPT
 
 	if (o_ptr && o_ptr->python &&
 	    PyObject_HasAttrString(o_ptr->python, "get_object_tried_hook"))
@@ -1504,7 +1538,7 @@ bool get_object_tried_callback(const object_type *o_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
@@ -1650,6 +1684,9 @@ bool init_object_kind_list_callback(void)
 
 void field_delete_callback(field_type *f_ptr)
 {
+
+#ifdef USE_SCRIPT
+
 	if (f_ptr && f_ptr->python &&
 	    PyObject_HasAttrString(f_ptr->python, "field_delete_hook"))
 	{
@@ -1663,6 +1700,7 @@ void field_delete_callback(field_type *f_ptr)
 		/* Free the Python object */
 		Py_XDECREF(f_ptr->python);
 	}
+#endif
 }
 
 
@@ -1670,19 +1708,21 @@ PyObject* field_copy_callback(field_type *f_ptr, field_type *g_ptr)
 {
 	PyObject *result = NULL;
 
+#ifdef USE_SCRIPT
+
 	if (f_ptr && f_ptr->python &&
 	    PyObject_HasAttrString(f_ptr->python, "field_copy_hook"))
 	{
 		char _ptemp[128];
 
 		/* Build the argument-list */
-		SWIG_MakePtr(_ptemp, g_ptr, SWIGTYPE_p_field_type);
+		SWIG_MakePtr(_ptemp, g_ptr, "_field_type_p");
 
 		result = PyObject_CallMethod(f_ptr->python, "field_copy_hook", "(s)", _ptemp);
 
 		/* We don't free the result, since we store it! */
 	}
-
+#endif
 	/* Return the object */
 	return result;
 }
@@ -1692,6 +1732,8 @@ cptr field_save_callback(const field_type *f_ptr)
 {
 	PyObject *result;
 	cptr res = NULL;
+
+#ifdef USE_SCRIPT
 
 	if (f_ptr && f_ptr->python &&
 	    PyObject_HasAttrString(f_ptr->python, "field_save_hook"))
@@ -1706,7 +1748,7 @@ cptr field_save_callback(const field_type *f_ptr)
 		/* Free the result */
 		Py_XDECREF(result);
 	}
-
+#endif
 	return res;
 }
 
