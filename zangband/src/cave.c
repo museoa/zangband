@@ -1590,7 +1590,7 @@ void prt_map(void)
 	
 #ifdef USE_TRANSPARENCY	
 	/* Bottom section of screen */
-	for (y = 1; y < ymin - panel_row_prt; y++)
+	for (y = 1; y <= ymin - panel_row_prt; y++)
 	{
 		for (x = 13; x < map_wid + 13; x++)
 		{
@@ -1600,7 +1600,7 @@ void prt_map(void)
 	}
 	
 	/* Top section of screen */
-	for (y = ymax - panel_row_prt; y < map_hgt; y++)
+	for (y = ymax - panel_row_prt; y <= map_hgt; y++)
 	{
 		for (x = 13; x < map_wid + 13; x++)
 		{
