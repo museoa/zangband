@@ -159,7 +159,7 @@ static int get_mindcraft_power(int *sn)
 				screen_save();
 
 				/* Display a list of spells */
-				prt("", y, x);
+				prt("", x, y);
 				put_str("Name", x + 5, y);
 				put_str("Lv Mana Fail Info", x + 35, y);
 
@@ -204,11 +204,11 @@ static int get_mindcraft_power(int *sn)
 					sprintf(psi_desc, "  %c) %-30s%2d %4d %3d%%%s",
 					        I2A(i), spell.name,
 					        spell.min_lev, spell.mana_cost, chance, comment);
-					prt(psi_desc, y + i + 1, x);
+					prt(psi_desc, x, y + i + 1);
 				}
 
 				/* Clear the bottom line */
-				prt("", y + i + 1, x);
+				prt("", x, y + i + 1);
 			}
 
 			/* Hide the list */

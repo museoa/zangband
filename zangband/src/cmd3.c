@@ -1724,7 +1724,7 @@ bool research_mon(void)
 	}
 
 	/* Display the result */
-	prt(buf, 16, 10);
+	prt(buf, 10, 16);
 
 
 	/* Collect matching monsters */

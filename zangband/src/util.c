@@ -2706,7 +2706,7 @@ void put_str(cptr str, int col, int row)
  * Display a string on the screen using an attribute, and clear
  * to the end of the line.
  */
-void c_prt(byte attr, cptr str, int row, int col)
+void c_prt(byte attr, cptr str, int col, int row)
 {
 	/* Hack -- fake monochrome */
 	if (!use_color || ironman_moria) attr = TERM_WHITE;
@@ -2722,10 +2722,10 @@ void c_prt(byte attr, cptr str, int row, int col)
 /*
  * As above, but in "white"
  */
-void prt(cptr str, int row, int col)
+void prt(cptr str, int col, int row)
 {
 	/* Spawn */
-	c_prt(TERM_WHITE, str, row, col);
+	c_prt(TERM_WHITE, str, col, row);
 }
 
 

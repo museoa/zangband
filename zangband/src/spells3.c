@@ -3429,7 +3429,7 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 		msg_print("Warning! print_spells called with null realm");
 
 	/* Title the list */
-	prt("", y, x);
+	prt("", x, y);
 	put_str("Name", x + 5, y);
 	put_str("Lv Mana Fail Info", x + 35, y);
 
@@ -3447,7 +3447,7 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 		if (s_ptr->slevel >= 99)
 		{
 				sprintf(out_val, "  %c) %-30s", I2A(i), "(illegible)");
-				c_prt(TERM_L_DARK, out_val, y + i + 1, x);
+				c_prt(TERM_L_DARK, out_val, x, y + i + 1);
 				continue;
 		}
 
@@ -3497,11 +3497,11 @@ void print_spells(byte *spells, int num, int x, int y, int realm)
 		    I2A(i), spell_names[realm][spell], /* realm, spell */
 		    (int)s_ptr->slevel, (int)s_ptr->smana,
 			spell_chance(spell, realm), comment);
-		c_prt(line_attr, out_val, y + i + 1, x);
+		c_prt(line_attr, out_val, x, y + i + 1);
 	}
 
 	/* Clear the bottom line */
-	prt("", y + i + 1, x);
+	prt("", x, y + i + 1);
 }
 
 

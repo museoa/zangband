@@ -3030,22 +3030,22 @@ void do_cmd_pet(void)
 	/* Save the screen */
 	Term_save();
 
-	prt("", y++, x);
+	prt("", x, y++);
 
 	while (ctr < num)
 	{
 		sprintf(buf, "%s%c) %s", (ctr == mode) ? "*" : " ", I2A(ctr), power_desc[ctr]);
-		prt(buf, y + ctr, x);
+		prt(buf, x, y + ctr);
 		ctr++;
 	}
 
 	if (ctr < 17)
 	{
-		prt("", y + ctr, x);
+		prt("", x, y + ctr);
 	}
 	else
 	{
-		prt("", y + 17, x);
+		prt("", x, y + 17);
 	}
 
 	/* Get a command from the user */
@@ -3067,22 +3067,22 @@ void do_cmd_pet(void)
 				/* Save the screen */
 				Term_save();
 
-				prt("", y++, x);
+				prt("", x, y++);
 
 				while (ctr < num)
 				{
 					sprintf(buf, "%s%c) %s", (ctr == mode) ? "*" : " ", I2A(ctr), power_desc[ctr]);
-					prt(buf, y + ctr, x);
+					prt(buf, x, y + ctr);
 					ctr++;
 				}
 
 				if (ctr < 17)
 				{
-					prt("", y + ctr, x);
+					prt("", x, y + ctr);
 				}
 				else
 				{
-					prt("", y + 17, x);
+					prt("", x, y + 17);
 				}
 			}
 

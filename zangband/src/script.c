@@ -322,17 +322,17 @@ void do_cmd_script(void)
 	Term_clear();
 
 	/* Ask for a choice */
-	prt("Debug scripts", 2, 0);
+	prt("Debug scripts", 0, 2);
 
 	/* Give some choices */
-	prt("(1) Execute a script file", 4, 5);
+	prt("(1) Execute a script file", 5, 4);
 	prt("(2) Execute a script command", 5, 5);
-	prt("(3) Start tracing scripts", 6, 5);
-	prt("(4) Stop tracing scripts", 7, 5);
-	prt("(5) Re-initialize scripts", 8, 5);
+	prt("(3) Start tracing scripts", 5, 6);
+	prt("(4) Stop tracing scripts", 5, 7);
+	prt("(5) Re-initialize scripts", 5, 8);
 
 	/* Prompt */
-	prt("Command: ", 15, 0);
+	prt("Command: ", 0, 15);
 
 	/* Prompt */
 	ch = inkey();

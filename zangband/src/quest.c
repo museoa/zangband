@@ -886,9 +886,9 @@ static void get_questinfo(int questnum)
 
 	/* Print the quest info */
 	sprintf(tmp_str, "Quest Information (Danger level: %d)", quest[questnum].level);
-	prt(tmp_str, 5, 0);
+	prt(tmp_str, 0, 5);
 
-	prt(quest[questnum].name, 7, 0);
+	prt(quest[questnum].name, 0, 7);
 
 	for (i = 0; i < 10; i++)
 	{

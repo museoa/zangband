@@ -751,9 +751,9 @@ void do_cmd_racial_power(void)
 
 					/* Print header(s) */
 					if (num < 17)
-						prt("                            Lv Cost Fail", y++, x);
+						prt("                            Lv Cost Fail", x, y++);
 					else
-						prt("                            Lv Cost Fail                            Lv Cost Fail", y++, x);
+						prt("                            Lv Cost Fail                            Lv Cost Fail", x, y++);
 
 					/* Print list */
 					while (ctr < num)
@@ -772,7 +772,7 @@ void do_cmd_racial_power(void)
 							power_desc[ctr].level,
 							power_desc[ctr].cost,
 							power_desc[ctr].fail);
-						prt(dummy, y1, x1);
+						prt(dummy, x1, y1);
 						ctr++;
 					}
 				}

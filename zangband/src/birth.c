@@ -2887,7 +2887,7 @@ static bool player_birth_aux(void)
 	display_player(DISPLAY_PLAYER_STANDARD);
 
 	/* Prompt for it */
-	prt("['Ctrl-X' to suicide, 'Del' to start over, or Enter to continue]", 23, 10);
+	prt("['Ctrl-X' to suicide, 'Del' to start over, or Enter to continue]", 10, 23);
 
 	/* Get a key */
 	ch = inkey();

@@ -1289,7 +1289,7 @@ static void display_entry(int pos)
 
 	/* Label it, clear the line --(-- */
 	(void)sprintf(out_val, "%c) ", I2A(i));
-	prt(out_val, i + 6, 0);
+	prt(out_val, 0, i + 6);
 
 	/* Show_store_graph perm on. */
 	a = object_attr(o_ptr);
@@ -1408,7 +1408,7 @@ static void display_inventory(int store_top)
 	}
 
 	/* Erase the extra lines and the "more" prompt */
-	for (i = k; i < 13; i++) prt("", i + 6, 0);
+	for (i = k; i < 13; i++) prt("", 0, i + 6);
 
 	/* Assume "no current page" */
 	put_str("        ", 20, 5);
@@ -1417,7 +1417,7 @@ static void display_inventory(int store_top)
 	if (st_ptr->stock_num > 12)
 	{
 		/* Show "more" reminder (after the last item) */
-		prt("-more-", k + 6, 3);
+		prt("-more-", 3, k + 6);
 
 		/* Indicate the "current page" */
 		put_str(format("(Page %d)", store_top/12 + 1), 20, 5);
@@ -1432,10 +1432,10 @@ static void store_prt_gold(void)
 {
 	char out_val[64];
 
-	prt("Gold Remaining: ", 19, 53);
+	prt("Gold Remaining: ", 53, 19);
 
 	sprintf(out_val, "%9ld", (long)p_ptr->au);
-	prt(out_val, 19, 68);
+	prt(out_val, 68, 19);
 }
 
 
@@ -1480,7 +1480,7 @@ static void display_store(int store_top)
 
 		/* Show the max price in the store (above prices) */
 		sprintf(buf, "%s (%ld)", store_name, (long)(ot_ptr->max_cost) * 100);
-		prt(buf, 3, 45);
+		prt(buf, 45, 3);
 
 		/* Label the item descriptions */
 		put_str("Item Description", 3, 5);
@@ -2086,7 +2086,7 @@ static bool purchase_haggle(object_type *o_ptr, s32b *price)
 			{
 				last_offer = offer;
 				allow_inc = TRUE;
-				prt("", 1, 0);
+				prt("", 0, 1);
 				(void)sprintf(out_val, "Your last offer: %ld",
 							  (long)last_offer);
 				put_str(out_val, 39, 1);
@@ -2279,7 +2279,7 @@ static bool sell_haggle(object_type *o_ptr, s32b *price)
 			{
 				last_offer = offer;
 				allow_inc = TRUE;
-				prt("", 1, 0);
+				prt("", 0, 1);
 				(void)sprintf(out_val,
 							  "Your last bid %ld", (long)last_offer);
 				put_str(out_val, 39, 1);
@@ -3500,7 +3500,7 @@ void do_cmd_store(field_type *f1_ptr)
 	while (!leave_store)
 	{
 		/* Hack -- Clear line 1 */
-		prt("", 1, 0);
+		prt("", 0, 1);
 
 		/* Hack -- Check the charisma */
 		tmp_chr = p_ptr->stat_use[A_CHR];
@@ -3510,33 +3510,33 @@ void do_cmd_store(field_type *f1_ptr)
 
 
 		/* Basic commands */
-		prt(" ESC) Exit from Building.", 22, 0);
+		prt(" ESC) Exit from Building.", 0, 22);
 
 		/* Browse if necessary */
 		if (st_ptr->stock_num > 12)
 		{
-			prt(" SPACE) Next page of stock", 23, 0);
+			prt(" SPACE) Next page of stock", 0, 23);
 		}
 
 		/* Home commands */
 		if (st_ptr->type == BUILD_STORE_HOME)
 		{
-		   prt(" g) Get an item.", 22, 31);
-		   prt(" d) Drop an item.", 23, 31);
+		   prt(" g) Get an item.", 31, 22);
+		   prt(" d) Drop an item.", 31, 23);
 		}
 
 		/* Shop commands XXX XXX XXX */
 		else
 		{
-		   prt(" p) Purchase an item.", 22, 31);
-		   prt(" s) Sell an item.", 23, 31);
+		   prt(" p) Purchase an item.", 31, 22);
+		   prt(" s) Sell an item.", 31, 23);
 		}
 
 		/* Add in the eXamine option */
-		prt(" x) eXamine an item.", 22, 56);
+		prt(" x) eXamine an item.", 56, 22);
 
 		/* Prompt */
-		prt("You may: ", 21, 0);
+		prt("You may: ", 0, 21);
 
 		/* Get a command */
 		request_command(TRUE);

@@ -8,6 +8,18 @@
  * are included in all such copies.
  */
 
+/*
+ * Robert Ruehlmann wrote the original Gtk port. Since an initial work is
+ * much harder than enhancements, his effort worth more credits than
+ * others.
+ *
+ * Steven Fuerst implemented colour-depth independent X server support,
+ * graphics, resizing and big screen support for ZAngband as well as
+ * fast image rescaling that is included here.
+ *
+ * "pelpel" added GtkItemFactory based menu system and added comments.
+ */
+
 #include "angband.h"
 
 #ifdef USE_GTK
@@ -15,9 +27,14 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-
+/*
+ * Number of pixels inserted between the menu bar and the main screen
+ */
 #define NO_PADDING 0
 
+/*
+ * Largest possible number of terminal windows supported by the game
+ */
 #define MAX_TERM_DATA 8
 
 /*
@@ -39,9 +56,15 @@ struct term_data
 	GdkFont *font;
 	GdkPixmap *pixmap;
 	GdkGC *gc;
-	
+
+#ifdef USE_GRAPHICS	
 	GdkImage *tiles;
+
+#ifdef USE_TRANSPARENCY
 	GdkImage *temp;
+#endif /* USE_TRANSPARENCY */
+
+#endif /* USE_GRAPHICS */
 
 	int font_wid;
 	int font_hgt;
@@ -52,6 +75,8 @@ struct term_data
 
 	cptr name;
 	cptr fontname;
+	
+	bool shown;
 };
 
 typedef struct infoclr infoclr;
@@ -100,7 +125,9 @@ static infoclr colours[256];
 
 #ifdef USE_GRAPHICS
 static GdkImage *tiles_norm;
-static int	tile_size;
+static int tile_size;
+
+static GdkColor black_pixel;
 #endif /* USE_GRAPHICS */
 
 /*
@@ -174,6 +201,10 @@ static errr Term_xtra_gtk_react(void)
 {
 	int i;
 	infoclr *clr;
+	
+	bool redraw = FALSE;
+	
+	/* Hack - check colours */
 	for (i = 0; i < 256; i++)
 	{
 		clr = &colours[i];
@@ -190,8 +221,14 @@ static errr Term_xtra_gtk_react(void)
 
 			/* Create the colour structure */
 			clr->pixel = create_pixel(clr->red, clr->green, clr->blue);
+			
+			/* Set flag */
+			redraw = TRUE;
 		}
 	}
+	
+	/* Hack - Redraw it if the colours have changed */
+	if (redraw) Term_redraw();
 	
 	/* Success */
 	return (0);
@@ -352,7 +389,9 @@ static void ReadBMP(char *Name)
 	    (fileheader.bfType != 19778) ||
 	    (infoheader.biSize != 40))
 	{
-		quit_fmt("Incorrect BMP file format %s", Name);
+		plog_fmt("Incorrect BMP file format %s", Name);
+		
+		return;
 	}
 
 	/* The two headers above occupy 54 bytes total */
@@ -395,19 +434,50 @@ static void ReadBMP(char *Name)
 			int ch = getc(f);
 
 			/* Verify not at end of file XXX XXX */
-			if (feof(f)) quit_fmt("Unexpected end of file in %s", Name);
+			if (feof(f))
+			{
+				plog_fmt("Unexpected end of file in %s", Name);
+				
+				/* Delete reference to image */
+				gdk_image_destroy(tiles_norm);
+				
+				/* Hack - clear tiles */
+				tile_norm = NULL;
+				return;
+			}	
+				
 
 			if (infoheader.biBitCount == 24)
 			{
 				int c3, c2 = getc(f);
 				
 				/* Verify not at end of file XXX XXX */
-				if (feof(f)) quit_fmt("Unexpected end of file in %s", Name);
+				if (feof(f))
+				{
+					plog_fmt("Unexpected end of file in %s", Name);
 				
+					/* Delete reference to image */
+					gdk_image_destroy(tiles_norm);
+				
+					/* Hack - clear tiles */
+					tile_norm = NULL;
+					return;
+				}	
+							
 				c3 = getc(f);
 
 				/* Verify not at end of file XXX XXX */
-				if (feof(f)) quit_fmt("Unexpected end of file in %s", Name);
+				if (feof(f))
+				{
+					plog_fmt("Unexpected end of file in %s", Name);
+				
+					/* Delete reference to image */
+					gdk_image_destroy(tiles_norm);
+				
+					/* Hack - clear tiles */
+					tile_norm = NULL;
+					return;
+				}
 				
 				gdk_image_put_pixel(tiles_norm, x, y2,
 					create_pixel(ch, c2, c3).pixel);
@@ -425,8 +495,16 @@ static void ReadBMP(char *Name)
 			else
 			{
 				/* Technically 1 bit is legal too */
-				quit_fmt("Illegal biBitCount %d in %s",
+				plot_fmt("Illegal biBitCount %d in %s",
 				         infoheader.biBitCount, Name);
+				{
+					/* Delete reference to image */
+					gdk_image_destroy(tiles_norm);
+				
+					/* Hack - clear tiles */
+					tile_norm = NULL;
+					return;
+				}
 			}
 		}
 	}
@@ -625,6 +703,9 @@ static GdkImage *resize_tiles(int tile_wid, int tile_hgt)
 static errr Term_wipe_gtk(int x, int y, int n)
 {
 	term_data *td = (term_data*)(Term->data);
+	
+	/* Don't draw to hidden windows */
+	if (!td->shown) return (0);
 
 	g_assert(td->pixmap != NULL);
 	g_assert(td->drawing_area->window != 0);
@@ -652,6 +733,9 @@ static errr Term_text_gtk(int x, int y, int n, byte a, cptr s)
 	int i;
 	term_data *td = (term_data*)(Term->data);
 	GdkColor color;
+	
+	/* Don't draw to hidden windows */
+	if (!td->shown) return (0);
 
 	/* Create the colour structure */
 	color = colours[a].pixel;
@@ -683,6 +767,34 @@ static errr Term_text_gtk(int x, int y, int n, byte a, cptr s)
 	return (0);
 }
 
+
+static errr Term_curs_gtk(int x, int y)
+{
+	term_data *td = (term_data*)(Term->data);
+	
+	/* Don't draw to hidden windows */
+	if (!td->shown) return (0);
+
+	g_assert(td->pixmap != NULL);
+	g_assert(td->drawing_area->window != 0);
+
+	gdk_gc_set_foreground(td->gc, &colours[TERM_YELLOW].pixel);
+
+	gdk_draw_rectangle(td->pixmap, td->gc, FALSE,
+	                   x * td->font_wid, y * td->font_hgt,
+					   td->font_wid - 1, td->font_hgt - 1);
+
+	/* Copy it to the window */
+	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
+	                x * td->font_wid, y * td->font_hgt,
+	                x * td->font_wid, y * td->font_hgt,
+	                td->font_wid, td->font_hgt);
+
+	/* Success */
+	return (0);
+}
+
+
 #ifdef USE_GRAPHICS
 
 /*
@@ -712,6 +824,9 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 #endif /* USE_TRANSPARENCY */
 
 	term_data *td = (term_data*)(Term->data);
+	
+	/* Don't draw to hidden windows */
+	if (!td->shown) return (0);
 
 	y *= td->font_hgt;
 	x *= td->font_wid;
@@ -744,16 +859,12 @@ static errr Term_pict_gtk(int x, int y, int n, const byte *ap, const char *cp)
 		}
 		else
 		{
-
-			/* Mega Hack^2 - assume the top left corner is "black" */
-			blank = gdk_image_get_pixel(td->tiles, 0, td->font_hgt * 6);
-
 			for (k = 0; k < td->font_wid; k++)
 			{
 				for (l = 0; l < td->font_hgt; l++)
 				{
 					/* If mask set... */
-					if ((pixel = gdk_image_get_pixel(td->tiles, x1 + k, y1 + l)) == blank)
+					if ((pixel = gdk_image_get_pixel(td->tiles, x1 + k, y1 + l)) == black_pixel)
 					{
 						/* Output from the terrain */
 						pixel = gdk_image_get_pixel(td->tiles, x2 + k, y2 + l);
@@ -812,7 +923,10 @@ static errr CheckEvent(bool wait)
 
 static errr Term_flush_gtk(void)
 {
-	/* XXX */
+	/* Flush the pending events */
+	while (gtk_events_pending()) gtk_main_iteration();
+	
+	/* Done */
 	return (0);
 }
 
@@ -826,13 +940,26 @@ static errr Term_xtra_gtk(int n, int v)
 	switch (n)
 	{
 		/* Make a noise */
-		case TERM_XTRA_NOISE: return (0);
-
+		case TERM_XTRA_NOISE:
+		{
+			/* Beep */
+			gdk_beep();
+			
+			/* Done */
+			return (0);
+		}
 		/* Flush the output */
-		case TERM_XTRA_FRESH: return (0);
-
+		case TERM_XTRA_FRESH:
+		{
+			/* Flush pending X requests - almost always no-op */
+			gdk_flush();
+			
+			/* Done */
+			return (0);
+		}
+		
 		/* Process random events */
-		case TERM_XTRA_BORED: return (CheckEvent(0));
+		case TERM_XTRA_BORED: return (CheckEvent(FALSE));
 
 		/* Process Events */
 		case TERM_XTRA_EVENT: return (CheckEvent(v));
@@ -847,7 +974,13 @@ static errr Term_xtra_gtk(int n, int v)
 		case TERM_XTRA_CLEAR: return (Term_clear_gtk());
 
 		/* Delay for some milliseconds */
-		case TERM_XTRA_DELAY: usleep(1000 * v); return (0);
+		case TERM_XTRA_DELAY:
+		{
+			/* Delay */
+			usleep(1000 * v);
+			
+			return (0);
+		}
 
 		/* React to changes */
 		case TERM_XTRA_REACT: return (Term_xtra_gtk_react());
@@ -857,28 +990,38 @@ static errr Term_xtra_gtk(int n, int v)
 	return (1);
 }
 
-
-static errr Term_curs_gtk(int x, int y)
+/*
+ * Display message in a modal dialog
+ */
+static void gtk_message(cptr msg)
 {
-	term_data *td = (term_data*)(Term->data);
+	GtkWidget *dialog, *label, *ok_button;
 
-	g_assert(td->pixmap != NULL);
-	g_assert(td->drawing_area->window != 0);
+	/* Create the widgets */
+	dialog = gtk_dialog_new();
+	g_assert(dialog != NULL);
 
-	gdk_gc_set_foreground(td->gc, &colours[TERM_YELLOW].pixel);
+	label = gtk_label_new(msg);
+	g_assert(label != NULL);
 
-	gdk_draw_rectangle(td->pixmap, td->gc, FALSE,
-	                   x * td->font_wid, y * td->font_hgt,
-					   td->font_wid - 1, td->font_hgt - 1);
+	ok_button = gtk_button_new_with_label("OK");
+	g_assert(ok_button != NULL);
 
-	/* Copy it to the window */
-	gdk_draw_pixmap(td->drawing_area->window, td->gc, td->pixmap,
-	                x * td->font_wid, y * td->font_hgt,
-	                x * td->font_wid, y * td->font_hgt,
-	                td->font_wid, td->font_hgt);
+	/* Ensure that the dialogue box is destroyed when OK is clicked */
+	gtk_signal_connect_object(GTK_OBJECT(ok_button), "clicked",
+		GTK_SIGNAL_FUNC(gtk_widget_destroy), (gpointer)dialog);
+	
+	/* Add the button */
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->action_area), ok_button);
 
-	/* Success */
-	return (0);
+	/* Add the label, and show the dialog */
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), label);
+
+	/* And make it modal */
+	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
+
+	/* Show the dialog */
+	gtk_widget_show_all(dialog);
 }
 
 
@@ -909,7 +1052,18 @@ static void cleanup_angband (void)
 	/* Do nothing, because zangband doesn't have this yet. */
 }
 
+/*
+ * Hook to tell the user something important
+ */
+static void hook_plog(cptr str)
+{
+	/* Warning message */
+	gtk_message(str);
+}
 
+/*
+ * Quit hook when exiting the game
+ */
 static void hook_quit(cptr str)
 {
 	/* Hack - Ignore parameter */
@@ -943,16 +1097,6 @@ static void destroy_event_handler(GtkButton *was_clicked, gpointer user_data)
 }
 
 
-static void hide_event_handler(GtkWidget *window, gpointer user_data)
-{
-	/* Hack - Ignore parameter */
-	(void) user_data;
-	
-	gtk_widget_hide(window);
-}
-
-
-
 static void new_event_handler(GtkButton *was_clicked, gpointer user_data)
 {
 	/* Hack - Ignore parameters */
@@ -967,13 +1111,30 @@ static void new_event_handler(GtkButton *was_clicked, gpointer user_data)
 		/* Start a new game */
 		gtk_newgame = TRUE;
 	}
+	else
+	{
+		plog("You can't start a new game while you're still playing!");
+	}
 }
 
 
 static void load_font(term_data *td, cptr fontname)
 {
+	GdkFont *old = td->font;
+
+	/* Load font */
 	td->font = gdk_font_load(fontname);
-	td->fontname = fontname;
+
+	if (td->font)
+	{
+		/* Free the old font */
+		if (old) gdk_font_unref(old);
+	}
+	else
+	{
+		/* Oops, but we can still use the old one */
+		td->font = old;
+	}
 
 	/* Calculate the size of the font XXX */
 	td->font_wid = gdk_char_width(td->font, '@');
@@ -992,13 +1153,15 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	(void) widget;
 	
 	g_assert(td != NULL);
-
+	
+	/* Retrieve font name from player's selection */
 	fontname = gtk_font_selection_dialog_get_font_name(
 						GTK_FONT_SELECTION_DIALOG(font_selector));
 
 	/* The user hasn't selected a font? */
 	if (fontname == NULL) return;
-
+	
+	/* Load font and update font size info */
 	load_font(td, fontname);
 	
 	/* Delete the old pixmap */
@@ -1029,7 +1192,6 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	td->pixmap = gdk_pixmap_new(td->drawing_area->window,
 					 td->cols * td->font_wid, td->rows * td->font_hgt, -1);
 	gtk_object_set_data(GTK_OBJECT(td->drawing_area), "pixmap", td->pixmap);
-	/* td->gc = gdk_gc_new(td->drawing_area->window); */
 	
 	/* Clear the pixmap */
 	gdk_draw_rectangle(td->pixmap, td->drawing_area->style->black_gc, TRUE,
@@ -1057,12 +1219,10 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	win_geom.min_height = 24 * td->font_hgt;
 	win_geom.max_width = 255 * td->font_wid;
 	win_geom.max_height = 255 * td->font_hgt;
-	win_geom.base_width = 1;
-	win_geom.base_height = 1;
 	gtk_window_set_geometry_hints(GTK_WINDOW(td->window),
 				 td->drawing_area, &win_geom,
 				 GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE
-				| GDK_HINT_BASE_SIZE | GDK_HINT_RESIZE_INC);
+				 | GDK_HINT_RESIZE_INC);
 	
 	/* Redraw the term */
 	Term_redraw();
@@ -1115,6 +1275,61 @@ static void change_font_event_handler(GtkWidget *widget, gpointer user_data)
 			(gpointer)font_selector);
 	
 	gtk_widget_show(GTK_WIDGET(font_selector));
+}
+
+
+/*
+ * Process Terms-* menu command - hide/show terminal window
+ */
+static void term_event_handler(GtkWidget *widget, gpointer user_data)
+{
+	term_data *td = (term_data *)user_data;
+
+	/* We don't mess with the Angband window */
+	if (td == &data[0]) return;
+
+	/* It's shown */
+	if (td->shown)
+	{
+		/* Hide the window */
+		gtk_widget_hide_all(td->window);
+	}
+
+	/* It's hidden */
+	else
+	{
+		/* Show the window */
+		gtk_widget_show_all(td->window);
+	}
+}
+
+/*
+ * Widget customisation (for drawing area) - "show" signal
+ */
+static void show_event_handler(GtkWidget *widget, gpointer user_data)
+{
+	term_data *td = (term_data *)user_data;
+	
+	/* Hack - ignore widget */
+	(void) widget;
+
+	/* Set the shown flag */
+	td->shown = TRUE;
+}
+
+
+/*
+ * Widget customisation (for drawing area) - "hide" signal
+ */
+static void hide_event_handler(GtkWidget *widget, gpointer user_data)
+{
+	term_data *td = (term_data *)user_data;
+
+	/* Hack - ignore widget */
+	(void) widget;
+	
+	/* Set the shown flag */
+	td->shown = FALSE;
 }
 
 
@@ -1173,9 +1388,180 @@ static void open_event_handler(GtkButton *was_clicked, gpointer user_data)
 	}
 }
 
+#ifdef USE_GRAPHICS
+
+/*
+ * Free all tiles and graphics buffers associated with windows
+ */
+static void graf_nuke(void)
+{
+	int i;
+
+	term_data *td;
+
+	/* Nuke all terms */
+	for (i = 0; i < MAX_TERM_DATA; i++)
+	{
+		/* Access term_data structure */
+		td = &data[i];
+
+		/* Free previously allocated tiles */
+		if (td->tiles) gdk_rgb_image_destroy(td->tiles);
+
+		/* Forget pointer */
+		td->tiles = NULL;
+
+# ifdef USE_TRANSPARENCY
+
+		/* Free previously allocated transparency buffer */
+		if (td->temp) gdk_rgb_image_destroy(td->temp);
+
+		/* Forget stale pointer */
+		td->temp = NULL;
+
+# endif /* USE_TRANSPARENCY */
+
+	}
+}
+
+/*
+ * Initialise the graphics
+ */
+static void graf_init(void)
+{
+	int i;
+	
+	term_data *td;
+	term *t;
+	
+	/* Mega Hack^2 - assume the top left corner is "black" */
+	black_pixel = gdk_image_get_pixel(tiles, 0, tile_size * 6);
+	
+	/* Initialize the windows */
+	for (i = 0; i < num_term; i++)
+	{
+		td = &data[i];
+		
+		t = &td->t;
+
+		if (use_graphics)
+		{
+			t->pict_hook = Term_pict_gtk;
+
+			t->higher_pict = TRUE;
+
+			/* Resize tiles */
+			td->tiles = resize_tiles(td->font_wid, td->font_hgt);
+
+#ifdef USE_TRANSPARENCY
+
+			/* Initialize the transparency temp storage*/			
+			td->temp = gdk_image_new(GDK_IMAGE_FASTEST, gdk_visual_get_system(),
+				td->font_wid, td->font_hgt);
+#endif /* USE_TRANSPARENCY */
+		}
+		else
+		{
+			t->pict_hook = NULL;
+			t->higher_pict = FALSE;
+		}
+	}
+}
+
+
+static bool set_graph_mode(int graphmode)
+{
+	char filename[1024];
+	
+	GdkImage *tiles_back = tiles_norm;
+	
+	int old_mode = use_graphics;
+	
+	/* See if can change tiles */
+	if (!pick_graphics(graphmode, &tile_size, filename))
+	{
+		/* Revert to the old settings */
+		pick_graphics(old_mode, &tile_size, filename);
+	
+		/* Failed */
+		return FALSE;
+	}
+	
+	/* Erase the old graphics */
+	graf_nuke();
+	
+	/* Init the new graphics */
+	graf_init();
+	
+	
+
+
+
+	/* Destroy old tiles */
+	if (tiles_back)
+	{
+		gdk_rgb_image_destroy(tiles_back);
+	}
+
+}
+
+
+/*
+ * Set graf_mode_request according to user selection,
+ * and let Term_xtra react to the change.
+ */
+static void change_graf_mode_event_handler(GtkButton *was_clicked,
+										gpointer user_data)
+{
+	/* Hack - ignore variable */
+	(void) was_clicked;
+	
+	/* Set request according to user selection */
+	if ((int)user_data != graf_mode)
+	{
+		/* Try to set mode */
+		if (set_graph_mode((int)user_data))
+		{
+			/* Change setting */
+			use_graphics = arg_graphics;
+			
+			/* Reset visuals */
+#ifdef ANGBAND_2_8_1
+			reset_visuals();
+#else /* ANGBAND_2_8_1 */
+			reset_visuals(TRUE);
+#endif /* ANGBAND_2_8_1 */
+			
+			
+			/* Redraw the screen if worked */
+			Term_redraw();
+		}
+	}
+}
+
+
+# ifdef USE_TRANSPARENCY
+
+/*
+ * Toggles the boolean value of use_transparency
+ */
+static void change_trans_mode_event_handler(GtkButton *was_clicked,
+										gpointer user_data)
+{
+	/* Toggle the transparency mode */
+	use_transparency = !use_transparency;
+
+	/* Hack - force redraw */
+	Term_key_push(KTRL('R'));
+}
+
+# endif /* USE_TRANSPARENCY */
+
+#endif /* USE_GRAPHICS */
+
 
 static gboolean delete_event_handler(GtkWidget *widget, GdkEvent *event,
-										 gpointer user_data)
+										gpointer user_data)
 {
 	/* Hack - ignore parameters */
 	(void) widget;
@@ -1401,6 +1787,27 @@ static gboolean expose_event_handler(GtkWidget *widget, GdkEventExpose *event,
 }
 
 
+/*
+ * Update the "Terms" menu
+ */
+static void term_menu_update_handler(GtkWidget *widget, gpointer user_data)
+{
+	int i;
+	char buf[64];
+
+	/* For each term */
+	for (i = 0; i < MAX_TERM_DATA; i++)
+	{
+		/* Build the path name */
+		strnfmt(buf, 64, "<Angband>/Terms/%s", data[i].name);
+
+		/* Update the check mark on the item */
+		check_menu_item(buf, data[i].shown);
+	}
+}
+
+
+
 static errr term_data_init(term_data *td, int i)
 {
 	cptr font;
@@ -1487,12 +1894,10 @@ static void init_gtk_window(term_data *td, int i)
 		win_geom.min_height = 24 * td->font_hgt;
 		win_geom.max_width = 255 * td->font_wid;
 		win_geom.max_height = 255 * td->font_hgt;
-		win_geom.base_width = 1;
-		win_geom.base_height = 1;
 		gtk_window_set_geometry_hints(GTK_WINDOW(td->window),
 					 td->drawing_area, &win_geom,
 					 GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE
-					| GDK_HINT_BASE_SIZE | GDK_HINT_RESIZE_INC);
+					 | GDK_HINT_RESIZE_INC);
 		
 		/* Register callbacks */
 		gtk_signal_connect(GTK_OBJECT(file_exit_item), "activate",
@@ -1597,7 +2002,7 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 #ifdef USE_GRAPHICS
 
 	char filename[1024];
-	int bitdepth = 0;
+	int graphmode = GRAPHICS_ANY;
 #endif /* USE_GRAPHICS */
 	
 	/* See if gtk exists and works */
@@ -1627,10 +2032,14 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 		
 		if (prefix(argv[i], "-b"))
 		{
+			int bitdepth = 0;
+			
 			bitdepth = atoi(&argv[i][2]);
 			
-			/* paranoia */
-			if ((bitdepth != 16) && (bitdepth != 8)) bitdepth = 0;
+			/* Paranoia */
+			if (bitdepth == 16) graphmode = GRAPHICS_ADAM_BOLT;
+			if (bitdepth == 8) graphmode = GRAPHICS_ORIGINAL;
+			
 			continue;
 		}
 
@@ -1644,44 +2053,7 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 	/* Try graphics */
 	if (arg_graphics)
 	{
-		use_graphics = FALSE;
-		
-		if ((bitdepth == 0) || (bitdepth == 16))
-		{
-			/* Try the "16x16.bmp" file */
-			path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/16x16.bmp");
-
-			/* Use the "16x16.bmp" file if it exists */
-			if (0 == fd_close(fd_open(filename, O_RDONLY)))
-			{
-				/* Use graphics */
-				use_graphics = TRUE;
-
-				use_transparency = TRUE;
-
-				tile_size = 16;
-
-				ANGBAND_GRAF = "new";
-			}
-		}
-		
-		/* We failed, or we want 8x8 graphics */
-		if (!use_graphics && ((bitdepth == 0) || (bitdepth == 8)))
-		{
-			/* Try the "8x8.bmp" file */
-			path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
-
-			/* Use the "8x8.bmp" file if it exists */
-			if (0 == fd_close(fd_open(filename, O_RDONLY)))
-			{
-				/* Use graphics */
-				use_graphics = TRUE;
-
-				tile_size = 8;
-
-				ANGBAND_GRAF = "old";
-			}
-		}
+		(void) pick_graphics(graphmode, &tile_size, filename);
 	}
 
 	/* Load graphics */
@@ -1691,7 +2063,14 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 		ReadBMP(filename);
 
 		/* Paranoia */
-		if (!tiles_norm) quit("Could not load tiles properly.");
+		if (!tiles_norm)
+		{
+			plog("Could not load tiles properly.");
+			
+			/* No tiles */
+			use_graphics = GRAPHICS_NONE;
+		}
+		
 	}
 
 #endif /* USE_GRAPHICS */
@@ -1700,10 +2079,6 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 	for (i = 0; i < num_term; i++)
 	{
 		term_data *td = &data[i];
-
-#ifdef USE_GRAPHICS		
-		term *t = &td->t;
-#endif /* USE_GRAPHICS */
 		
 		/* Initialize the term_data */
 		term_data_init(td, i);
@@ -1711,29 +2086,12 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 		/* Save global entry */
 		angband_term[i] = Term;
 
-#ifdef USE_GRAPHICS
-
-		if (use_graphics)
-		{
-			t->pict_hook = Term_pict_gtk;
-
-			t->higher_pict = TRUE;
-
-			/* Resize tiles */
-			td->tiles = resize_tiles(td->font_wid, td->font_hgt);
-
-#ifdef USE_TRANSPARENCY
-
-			/* Initialize the transparency temp storage*/			
-			td->temp = gdk_image_new(GDK_IMAGE_FASTEST, gdk_visual_get_system(),
-				td->font_wid, td->font_hgt);
-		}
-#endif /* USE_TRANSPARENCY */
-#endif /* USE_GRAPHICS */
-
 		/* Init the window */
 		init_gtk_window(td, i);
 	}
+	
+	/* Initialise the graphics */
+	graf_init();
 
 	/* Activate the "Angband" window screen */
 	Term_activate(&data[0].t);
@@ -1748,6 +2106,7 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 	data[0].t.resize_hook = Term_fresh;
 
 	/* Activate hooks */
+	plog_aux = hook_plog;
 	quit_aux = hook_quit;
 	core_aux = hook_quit;
 
@@ -1761,7 +2120,7 @@ errr init_gtk(unsigned char *new_game, int argc, char **argv)
 	init_angband();
 	
 	/* Prompt the user */
-	prt("[Choose 'New' or 'Open' from the 'File' menu]", 23, 17);
+	prt("[Choose 'New' or 'Open' from the 'File' menu]", 17, 23);
 	Term_fresh();
 	
 	while (!game_in_progress)

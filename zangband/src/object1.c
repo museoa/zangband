@@ -1325,28 +1325,28 @@ bool identify_fully_aux(const object_type *o_ptr)
 	screen_save();
 
 	/* Erase the screen */
-	for (k = 1; k < 24; k++) prt("", k, 13);
+	for (k = 1; k < 24; k++) prt("", 13, k);
 
 	/* Label the information */
-	prt("     Item Attributes:", 1, 15);
+	prt("     Item Attributes:", 15, 1);
 
 	/* We will print on top of the map (column 13) */
 	for (k = 2, j = 0; j < i; j++)
 	{
 		/* Show the info */
-		prt(info[j], k++, 15);
+		prt(info[j], 15, k++);
 
 		/* Every 20 entries (lines 2 to 21), start over */
 		if ((k == 22) && (j+1 < i))
 		{
-			prt("-- more --", k, 15);
+			prt("-- more --", 15, k);
 			(void)inkey();
-			for (; k > 2; k--) prt("", k, 15);
+			for (; k > 2; k--) prt("", 15, k);
 		}
 	}
 
 	/* Wait for it */
-	prt("[Press any key to continue]", k, 15);
+	prt("[Press any key to continue]", 15, k);
 	(void)inkey();
 
 	/* Restore the screen */
@@ -2289,7 +2289,7 @@ void show_inven(void)
 		o_ptr = &inventory[i];
 
 		/* Clear the line */
-		prt("", j + 1, col ? col - 2 : col);
+		prt("", col ? col - 2 : col, j + 1);
 
 		/* Prepare an index --(-- */
 		sprintf(tmp_val, "%c)", index_to_label(i));
@@ -2328,7 +2328,7 @@ void show_inven(void)
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
-	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
+	if (j && (j < 23)) prt("", col ? col - 2 : col, j + 1);
 }
 
 
@@ -2430,7 +2430,7 @@ void show_equip(void)
 		o_ptr = &inventory[i];
 
 		/* Clear the line */
-		prt("", j + 1, col ? col - 2 : col);
+		prt("", col ? col - 2 : col, j + 1);
 
 		/* Prepare an index --(-- */
 		sprintf(tmp_val, "%c)", index_to_label(i));
@@ -2485,7 +2485,7 @@ void show_equip(void)
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
-	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
+	if (j && (j < 23)) prt("", col ? col - 2 : col, j + 1);
 }
 
 
@@ -2826,7 +2826,7 @@ void show_floor(int x, int y)
 		o_ptr = &o_list[i];
 
 		/* Clear the line */
-		prt("", j + 1, col ? col - 2 : col);
+		prt("", col ? col - 2 : col, j + 1);
 
 		/* Prepare an index --(-- */
 		sprintf(tmp_val, "%c)", index_to_label(j));
@@ -2847,7 +2847,7 @@ void show_floor(int x, int y)
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
-	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
+	if (j && (j < 23)) prt("", col ? col - 2 : col, j + 1);
 }
 
 /*

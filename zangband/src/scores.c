@@ -339,9 +339,9 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 
 
 		/* Wait for response */
-		prt("[Press ESC to quit, any other key to continue.]", 23, 17);
+		prt("[Press ESC to quit, any other key to continue.]", 17, 23);
 		j = inkey();
-		prt("", 23, 0);
+		prt("", 0, 23);
 
 		/* Hack -- notice Escape */
 		if (j == ESCAPE) break;
@@ -699,21 +699,21 @@ void show_highclass(void)
 
 		sprintf(out_val, "%3d) %s the %s (Level %2d)",
 		    (m + 1), the_score.who, race_info[pr].title, clev);
-		prt(out_val, (m + 7), 0);
+		prt(out_val, 0, m + 7);
 		m++;
 		j++;
 	}
 
 	sprintf(out_val, "You) %s the %s (Level %2d)",
 	    player_name, race_info[p_ptr->prace].title, p_ptr->lev);
-	prt(out_val, (m + 8), 0);
+	prt(out_val, 0, m + 8);
 
 	(void)fd_close(highscore_fd);
 	highscore_fd = -1;
 	msg_print("Hit any key to continue");
 	message_flush();
 
-	for (j = 5; j < 18; j++) prt("", j, 0);
+	for (j = 5; j < 18; j++) prt("", 0, j);
 }
 
 
@@ -732,7 +732,7 @@ void race_score(int race_num)
 
 	/* rr9: TODO - pluralize the race */
 	sprintf(tmp_str,"The Greatest of all the %s", race_info[race_num].title);
-	prt(tmp_str, 5, 15);
+	prt(tmp_str, 15, 5);
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_APEX, "scores.raw");
@@ -769,7 +769,7 @@ void race_score(int race_num)
 			sprintf(out_val, "%3d) %s the %s (Level %3d)",
 			    (m + 1), the_score.who,
 			race_info[pr].title, clev);
-			prt(out_val, (m + 7), 0);
+			prt(out_val, 0, m + 7);
 			m++;
 			lastlev = clev;
 		}
@@ -781,7 +781,7 @@ void race_score(int race_num)
 	{
 		sprintf(out_val, "You) %s the %s (Level %3d)",
 		    player_name, race_info[p_ptr->prace].title, p_ptr->lev);
-		prt(out_val, (m + 8), 0);
+		prt(out_val, 0, m + 8);
 	}
 
 	(void)fd_close(highscore_fd);
@@ -803,7 +803,7 @@ void race_legends(void)
 		msg_print("Hit any key to continue");
 		message_flush();
 		for (j = 5; j < 19; j++)
-			prt("", j, 0);
+			prt("", 0, j);
 	}
 }
 

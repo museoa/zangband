@@ -267,7 +267,7 @@ void do_cmd_messages(void)
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", hgt-1, 0);
+		prt("[Press 'p' for older, 'n' for newer, ..., or ESCAPE]", 0, hgt - 1);
 
 		/* Get a command */
 		k = inkey();
@@ -302,7 +302,7 @@ void do_cmd_messages(void)
 		if (k == '=')
 		{
 			/* Prompt */
-			prt("Show: ", hgt-1, 0);
+			prt("Show: ", 0, hgt - 1);
 
 			/* Get a "shower" string, or continue */
 			if (!askfor_aux(shower, 80)) continue;
@@ -317,7 +317,7 @@ void do_cmd_messages(void)
 			s16b z;
 
 			/* Prompt */
-			prt("Find: ", hgt-1, 0);
+			prt("Find: ", 0, hgt - 1);
 
 			/* Get a "finder" string, or continue */
 			if (!askfor_aux(finder, 80)) continue;
@@ -548,7 +548,7 @@ static void do_cmd_options_cheat(cptr info)
 			    cheat_info[i].o_desc,
 			    (*cheat_info[i].o_var ? "yes" : "no "),
 			    cheat_info[i].o_text);
-			c_prt(a, buf, i + 2, 0);
+			c_prt(a, buf, 0, i + 2);
 		}
 
 		/* Hilite current option */
@@ -671,10 +671,10 @@ static void do_cmd_options_autosave(cptr info)
 			    autosave_info[i].o_desc,
 			    (*autosave_info[i].o_var ? "yes" : "no "),
 			    autosave_info[i].o_text);
-			c_prt(a, buf, i + 2, 0);
+			c_prt(a, buf, 0, i + 2);
 		}
 
-		prt(format("Timed autosave frequency: every %d turns",  autosave_freq), 5, 0);
+		prt(format("Timed autosave frequency: every %d turns",  autosave_freq), 0, 5);
 
 
 		/* Hilite current option */
@@ -731,7 +731,7 @@ static void do_cmd_options_autosave(cptr info)
 			{
 				autosave_freq = toggle_frequency(autosave_freq);
 				prt(format("Timed autosave frequency: every %d turns",
-				    autosave_freq), 5, 0);
+				    autosave_freq), 0, 5);
 				break;
 			}
 
@@ -801,7 +801,7 @@ static void do_cmd_options_aux(int page, cptr info)
 			        option_info[opt[i]].o_desc,
 			        (option_info[opt[i]].o_val ? "yes" : "no "),
 			        option_info[opt[i]].o_text);
-			c_prt(a, buf, i + 2, 0);
+			c_prt(a, buf, 0, i + 2);
 		}
 
 		/* Hilite current option */
@@ -1069,35 +1069,35 @@ void do_cmd_options(byte flags)
 		Term_clear();
 
 		/* Why are we here */
-		prt(format("%s options", VERSION_NAME), 2, 0);
+		prt(format("%s options", VERSION_NAME), 0, 2);
 
 		/* Give some choices */
-		prt("(1) User Interface Options", 4, 5);
+		prt("(1) User Interface Options", 5, 4);
 		prt("(2) Disturbance Options", 5, 5);
-		prt("(3) Game-Play Options", 6, 5);
-		prt("(4) Efficiency Options", 7, 5);
-		prt("(5) Display Options", 8, 5);
-		prt("(6) Birth Options", 9, 5);
-		prt("(7) Artificial Intelligence Options", 10, 5);
-		prt("(8) Testing Options", 11, 5);
+		prt("(3) Game-Play Options", 5, 6);
+		prt("(4) Efficiency Options", 5, 7);
+		prt("(5) Display Options", 5, 8);
+		prt("(6) Birth Options", 5, 9);
+		prt("(7) Artificial Intelligence Options", 5, 10);
+		prt("(8) Testing Options", 5, 11);
 
 		/* Special choices */
-		prt("(D) Base Delay Factor", 13, 5);
-		prt("(H) Hitpoint Warning", 14, 5);
-		prt("(A) Autosave Options", 15, 5);
+		prt("(D) Base Delay Factor", 5, 13);
+		prt("(H) Hitpoint Warning", 5, 14);
+		prt("(A) Autosave Options", 5, 15);
 
 
 		/* Window flags */
-		prt("(W) Window Flags", 16, 5);
+		prt("(W) Window Flags", 5, 16);
 
 		/* Cheating */
-		prt("(C) Cheating Options", 17, 5);
+		prt("(C) Cheating Options", 5, 17);
 
 		/* Dump Options */
-		prt("(|) Dump Options to a Pref File", 19, 5);
+		prt("(|) Dump Options to a Pref File", 5, 19);
 
 		/* Prompt */
-		prt("Command: ", 20, 0);
+		prt("Command: ", 0, 20);
 
 		/* Get command */
 		k = inkey();
@@ -1235,15 +1235,15 @@ void do_cmd_options(byte flags)
 				Term_clear();
 
 				/* Prompt */
-				prt("Command: Base Delay Factor", 18, 0);
+				prt("Command: Base Delay Factor", 0, 18);
 
 				/* Get a new value */
 				while (1)
 				{
 					int msec = delay_factor * delay_factor * delay_factor;
 					prt(format("Current base delay factor: %d (%d msec)",
-					           delay_factor, msec), 22, 0);
-					prt("Delay Factor (0-9 or ESC to accept): ", 20, 0);
+					           delay_factor, msec), 0, 22);
+					prt("Delay Factor (0-9 or ESC to accept): ", 0, 20);
 
 					k = inkey();
 
@@ -1265,14 +1265,14 @@ void do_cmd_options(byte flags)
 			case 'h':
 			{
 				/* Prompt */
-				prt("Command: Hitpoint Warning", 18, 0);
+				prt("Command: Hitpoint Warning", 0, 18);
 
 				/* Get a new value */
 				while (1)
 				{
 					prt(format("Current hitpoint warning: %d0%%",
-					           hitpoint_warn), 22, 0);
-					prt("Hitpoint Warning (0-9 or ESC to accept): ", 20, 0);
+					           hitpoint_warn), 0, 22);
+					prt("Hitpoint Warning (0-9 or ESC to accept): ", 0, 20);
 					k = inkey();
 					if (k == ESCAPE) break;
 					if (isdigit(k)) hitpoint_warn = D2I(k);
@@ -1650,35 +1650,35 @@ void do_cmd_macros(void)
 		Term_clear();
 
 		/* Describe */
-		prt("Interact with Macros", 2, 0);
+		prt("Interact with Macros", 0, 2);
 
 
 		/* Describe that action */
-		prt("Current action (if any) shown below:", 20, 0);
+		prt("Current action (if any) shown below:", 0, 20);
 
 		/* Analyze the current action */
 		ascii_to_text(buf, macro__buf);
 
 		/* Display the current action */
-		prt(buf, 22, 0);
+		prt(buf, 0, 22);
 
 
 		/* Selections */
-		prt("(1) Load a user pref file", 4, 5);
+		prt("(1) Load a user pref file", 5, 4);
 #ifdef ALLOW_MACROS
 		prt("(2) Append macros to a file", 5, 5);
-		prt("(3) Query a macro", 6, 5);
-		prt("(4) Create a macro", 7, 5);
-		prt("(5) Remove a macro", 8, 5);
-		prt("(6) Append keymaps to a file", 9, 5);
-		prt("(7) Query a keymap", 10, 5);
-		prt("(8) Create a keymap", 11, 5);
-		prt("(9) Remove a keymap", 12, 5);
-		prt("(0) Enter a new action", 13, 5);
+		prt("(3) Query a macro", 5, 6);
+		prt("(4) Create a macro", 5, 7);
+		prt("(5) Remove a macro", 5, 8);
+		prt("(6) Append keymaps to a file", 5, 9);
+		prt("(7) Query a keymap", 5, 10);
+		prt("(8) Create a keymap", 5, 11);
+		prt("(9) Remove a keymap", 5, 12);
+		prt("(0) Enter a new action", 5, 13);
 #endif /* ALLOW_MACROS */
 
 		/* Prompt */
-		prt("Command: ", 16, 0);
+		prt("Command: ", 0, 16);
 
 		/* Get a command */
 		i = inkey();
@@ -1690,10 +1690,10 @@ void do_cmd_macros(void)
 		else if (i == '1')
 		{
 			/* Prompt */
-			prt("Command: Load a user pref file", 16, 0);
+			prt("Command: Load a user pref file", 0, 16);
 
 			/* Prompt */
-			prt("File: ", 18, 0);
+			prt("File: ", 0, 18);
 
 			/* Default filename */
 			sprintf(tmp, "%s.prf", player_name);
@@ -1715,10 +1715,10 @@ void do_cmd_macros(void)
 		else if (i == '2')
 		{
 			/* Prompt */
-			prt("Command: Append macros to a file", 16, 0);
+			prt("Command: Append macros to a file", 0, 16);
 
 			/* Prompt */
-			prt("File: ", 18, 0);
+			prt("File: ", 0, 18);
 
 			/* Default filename */
 			sprintf(tmp, "%s.prf", player_name);
@@ -1739,10 +1739,10 @@ void do_cmd_macros(void)
 			int k;
 
 			/* Prompt */
-			prt("Command: Query a macro", 16, 0);
+			prt("Command: Query a macro", 0, 16);
 
 			/* Prompt */
-			prt("Trigger: ", 18, 0);
+			prt("Trigger: ", 0, 18);
 
 			/* Get a macro trigger */
 			do_cmd_macro_aux(buf);
@@ -1767,7 +1767,7 @@ void do_cmd_macros(void)
 				ascii_to_text(buf, macro__buf);
 
 				/* Display the current action */
-				prt(buf, 22, 0);
+				prt(buf, 0, 22);
 
 				/* Prompt */
 				msg_print("Found a macro.");
@@ -1778,10 +1778,10 @@ void do_cmd_macros(void)
 		else if (i == '4')
 		{
 			/* Prompt */
-			prt("Command: Create a macro", 16, 0);
+			prt("Command: Create a macro", 0, 16);
 
 			/* Prompt */
-			prt("Trigger: ", 18, 0);
+			prt("Trigger: ", 0, 18);
 
 			/* Get a macro trigger */
 			do_cmd_macro_aux(buf);
@@ -1790,7 +1790,7 @@ void do_cmd_macros(void)
 			clear_from(20);
 
 			/* Prompt */
-			prt("Action: ", 20, 0);
+			prt("Action: ", 0, 20);
 
 			/* Convert to text */
 			ascii_to_text(tmp, macro__buf);
@@ -1813,10 +1813,10 @@ void do_cmd_macros(void)
 		else if (i == '5')
 		{
 			/* Prompt */
-			prt("Command: Remove a macro", 16, 0);
+			prt("Command: Remove a macro", 0, 16);
 
 			/* Prompt */
-			prt("Trigger: ", 18, 0);
+			prt("Trigger: ", 0, 18);
 
 			/* Get a macro trigger */
 			do_cmd_macro_aux(buf);
@@ -1832,10 +1832,10 @@ void do_cmd_macros(void)
 		else if (i == '6')
 		{
 			/* Prompt */
-			prt("Command: Append keymaps to a file", 16, 0);
+			prt("Command: Append keymaps to a file", 0, 16);
 
 			/* Prompt */
-			prt("File: ", 18, 0);
+			prt("File: ", 0, 18);
 
 			/* Default filename */
 			sprintf(tmp, "%s.prf", player_name);
@@ -1856,10 +1856,10 @@ void do_cmd_macros(void)
 			cptr act;
 
 			/* Prompt */
-			prt("Command: Query a keymap", 16, 0);
+			prt("Command: Query a keymap", 0, 16);
 
 			/* Prompt */
-			prt("Keypress: ", 18, 0);
+			prt("Keypress: ", 0, 18);
 
 			/* Get a keymap trigger */
 			do_cmd_macro_aux_keymap(buf);
@@ -1884,7 +1884,7 @@ void do_cmd_macros(void)
 				ascii_to_text(buf, macro__buf);
 
 				/* Display the current action */
-				prt(buf, 22, 0);
+				prt(buf, 0, 22);
 
 				/* Prompt */
 				msg_print("Found a keymap.");
@@ -1895,10 +1895,10 @@ void do_cmd_macros(void)
 		else if (i == '8')
 		{
 			/* Prompt */
-			prt("Command: Create a keymap", 16, 0);
+			prt("Command: Create a keymap", 0, 16);
 
 			/* Prompt */
-			prt("Keypress: ", 18, 0);
+			prt("Keypress: ", 0, 18);
 
 			/* Get a keymap trigger */
 			do_cmd_macro_aux_keymap(buf);
@@ -1907,7 +1907,7 @@ void do_cmd_macros(void)
 			clear_from(20);
 
 			/* Prompt */
-			prt("Action: ", 20, 0);
+			prt("Action: ", 0, 20);
 
 			/* Convert to text */
 			ascii_to_text(tmp, macro__buf);
@@ -1933,10 +1933,10 @@ void do_cmd_macros(void)
 		else if (i == '9')
 		{
 			/* Prompt */
-			prt("Command: Remove a keymap", 16, 0);
+			prt("Command: Remove a keymap", 0, 16);
 
 			/* Prompt */
-			prt("Keypress: ", 18, 0);
+			prt("Keypress: ", 0, 18);
 
 			/* Get a keymap trigger */
 			do_cmd_macro_aux_keymap(buf);
@@ -1955,7 +1955,7 @@ void do_cmd_macros(void)
 		else if (i == '0')
 		{
 			/* Prompt */
-			prt("Command: Enter a new action", 16, 0);
+			prt("Command: Enter a new action", 0, 16);
 
 			/* Go to the correct location */
 			Term_gotoxy(0, 22);
@@ -2017,24 +2017,24 @@ void do_cmd_visuals(void)
 		Term_clear();
 
 		/* Ask for a choice */
-		prt("Interact with Visuals", 2, 0);
+		prt("Interact with Visuals", 0, 2);
 
 		/* Give some choices */
-		prt("(1) Load a user pref file", 4, 5);
+		prt("(1) Load a user pref file", 5, 4);
 #ifdef ALLOW_VISUALS
 		prt("(2) Dump monster attr/chars", 5, 5);
-		prt("(3) Dump object attr/chars", 6, 5);
-		prt("(4) Dump feature attr/chars", 7, 5);
-		prt("(5) Dump field attr/chars", 8, 5);
-		prt("(6) Change monster attr/chars", 9, 5);
-		prt("(7) Change object attr/chars", 10, 5);
-		prt("(8) Change feature attr/chars", 11, 5);
-		prt("(9) Change field attr/chars", 12, 5);
+		prt("(3) Dump object attr/chars", 5, 6);
+		prt("(4) Dump feature attr/chars", 5, 7);
+		prt("(5) Dump field attr/chars", 5, 8);
+		prt("(6) Change monster attr/chars", 5, 9);
+		prt("(7) Change object attr/chars", 5, 10);
+		prt("(8) Change feature attr/chars", 5, 11);
+		prt("(9) Change field attr/chars", 5, 12);
 #endif
-		prt("(0) Reset visuals", 13, 5);
+		prt("(0) Reset visuals", 5, 13);
 
 		/* Prompt */
-		prt("Command: ", 15, 0);
+		prt("Command: ", 0, 15);
 
 		/* Prompt */
 		i = inkey();
@@ -2046,10 +2046,10 @@ void do_cmd_visuals(void)
 		else if (i == '1')
 		{
 			/* Prompt */
-			prt("Command: Load a user pref file", 15, 0);
+			prt("Command: Load a user pref file", 0, 15);
 
 			/* Prompt */
-			prt("File: ", 17, 0);
+			prt("File: ", 0, 17);
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -2067,10 +2067,10 @@ void do_cmd_visuals(void)
 		else if (i == '2')
 		{
 			/* Prompt */
-			prt("Command: Dump monster attr/chars", 15, 0);
+			prt("Command: Dump monster attr/chars", 0, 15);
 
 			/* Prompt */
-			prt("File: ", 17, 0);
+			prt("File: ", 0, 17);
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -2121,10 +2121,10 @@ void do_cmd_visuals(void)
 		else if (i == '3')
 		{
 			/* Prompt */
-			prt("Command: Dump object attr/chars", 15, 0);
+			prt("Command: Dump object attr/chars", 0, 15);
 
 			/* Prompt */
-			prt("File: ", 17, 0);
+			prt("File: ", 0, 17);
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -2175,10 +2175,10 @@ void do_cmd_visuals(void)
 		else if (i == '4')
 		{
 			/* Prompt */
-			prt("Command: Dump feature attr/chars", 15, 0);
+			prt("Command: Dump feature attr/chars", 0, 15);
 
 			/* Prompt */
-			prt("File: ", 17, 0);
+			prt("File: ", 0, 17);
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -2229,10 +2229,10 @@ void do_cmd_visuals(void)
 		else if (i == '5')
 		{
 			/* Prompt */
-			prt("Command: Dump field attr/chars", 15, 0);
+			prt("Command: Dump field attr/chars", 0, 15);
 
 			/* Prompt */
-			prt("File: ", 17, 0);
+			prt("File: ", 0, 17);
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -2286,7 +2286,7 @@ void do_cmd_visuals(void)
 			static int r = 0;
 
 			/* Prompt */
-			prt("Command: Change monster attr/chars", 15, 0);
+			prt("Command: Change monster attr/chars", 0, 15);
 
 			/* Hack -- query until done */
 			while (1)
@@ -2341,7 +2341,7 @@ void do_cmd_visuals(void)
 			static int k = 0;
 
 			/* Prompt */
-			prt("Command: Change object attr/chars", 15, 0);
+			prt("Command: Change object attr/chars", 0, 15);
 
 			/* Hack -- query until done */
 			while (1)
@@ -2396,7 +2396,7 @@ void do_cmd_visuals(void)
 			static int f = 0;
 
 			/* Prompt */
-			prt("Command: Change feature attr/chars", 15, 0);
+			prt("Command: Change feature attr/chars", 0, 15);
 
 			/* Hack -- query until done */
 			while (1)
@@ -2451,7 +2451,7 @@ void do_cmd_visuals(void)
 			static int f = 0;
 
 			/* Prompt */
-			prt("Command: Change field attr/chars", 15, 0);
+			prt("Command: Change field attr/chars", 0, 15);
 
 			/* Hack -- query until done */
 			while (1)
@@ -2557,17 +2557,17 @@ void do_cmd_colors(void)
 		Term_clear();
 
 		/* Ask for a choice */
-		prt("Interact with Colors", 2, 0);
+		prt("Interact with Colors", 0, 2);
 
 		/* Give some choices */
-		prt("(1) Load a user pref file", 4, 5);
+		prt("(1) Load a user pref file", 5, 4);
 #ifdef ALLOW_COLORS
 		prt("(2) Dump colors", 5, 5);
-		prt("(3) Modify colors", 6, 5);
+		prt("(3) Modify colors", 5, 6);
 #endif
 
 		/* Prompt */
-		prt("Command: ", 8, 0);
+		prt("Command: ", 0, 8);
 
 		/* Prompt */
 		i = inkey();
@@ -2579,10 +2579,10 @@ void do_cmd_colors(void)
 		if (i == '1')
 		{
 			/* Prompt */
-			prt("Command: Load a user pref file", 8, 0);
+			prt("Command: Load a user pref file", 0, 8);
 
 			/* Prompt */
-			prt("File: ", 10, 0);
+			prt("File: ", 0, 10);
 
 			/* Default file */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -2606,10 +2606,10 @@ void do_cmd_colors(void)
 		else if (i == '2')
 		{
 			/* Prompt */
-			prt("Command: Dump colors", 8, 0);
+			prt("Command: Dump colors", 0, 8);
 
 			/* Prompt */
-			prt("File: ", 10, 0);
+			prt("File: ", 0, 10);
 
 			/* Default filename */
 			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -2670,7 +2670,7 @@ void do_cmd_colors(void)
 			static byte a = 0;
 
 			/* Prompt */
-			prt("Command: Modify colors", 8, 0);
+			prt("Command: Modify colors", 0, 8);
 
 			/* Hack -- query until done */
 			while (1)
@@ -3647,21 +3647,21 @@ void do_cmd_knowledge(void)
 		Term_clear();
 
 		/* Ask for a choice */
-		prt("Display current knowledge", 2, 0);
+		prt("Display current knowledge", 0, 2);
 
 		/* Give some choices */
-		prt("(1) Display known uniques", 4, 5);
+		prt("(1) Display known uniques", 5, 4);
 		prt("(2) Display known objects", 5, 5);
-		prt("(3) Display kill count", 6, 5);
-		prt("(4) Display mutations", 7, 5);
-		prt("(5) Display current pets", 8, 5);
-		prt("(6) Display current quests", 9, 5);
+		prt("(3) Display kill count", 5, 6);
+		prt("(4) Display mutations", 5, 7);
+		prt("(5) Display current pets", 5, 8);
+		prt("(6) Display current quests", 5, 9);
 		/* prt("(7) Display virtues", 10, 5); */
 		if (take_notes)
-			prt("(8) Display notes", 11, 5);
+			prt("(8) Display notes", 5, 11);
 
 		/* Prompt */
-		prt("Command: ", 13, 0);
+		prt("Command: ", 0, 13);
 
 		/* Prompt */
 		i = inkey();

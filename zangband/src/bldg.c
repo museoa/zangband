@@ -261,7 +261,7 @@ static void clear_bldg(int min_row, int max_row)
 	int   i;
 
 	for (i = min_row; i <= max_row; i++)
-		prt("", i, 0);
+		prt("", 0, i);
 }
 
 
@@ -269,10 +269,10 @@ static void building_prt_gold(void)
 {
 	char tmp_str[80];
 
-	prt("Gold Remaining: ", 23, 40);
+	prt("Gold Remaining: ", 40, 23);
 
 	sprintf(tmp_str, "%9ld", (long)p_ptr->au);
-	prt(tmp_str, 23, 55);
+	prt(tmp_str, 55, 23);
 }
 
 
@@ -301,15 +301,15 @@ static void display_build(const field_type *f_ptr, const store_type *b_ptr)
 
 	Term_clear();
 	sprintf(tmp_str, "%s (%s) %s", owner_name, race_name, build_name);
-	prt(tmp_str, 2, 1);
-	prt("You may:", 19, 0);
+	prt(tmp_str, 1, 2);
+	prt("You may:", 0, 19);
 	
 	
 	/* Display building-specific information */
 	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
 		 FIELD_ACT_STORE_ACT1, (vptr) &factor);
 		 
-	prt(" ESC) Exit building", 23, 0);
+	prt(" ESC) Exit building", 0, 23);
 		 
 	/* Show your gold */
 	building_prt_gold();
@@ -477,10 +477,10 @@ static s32b gamble_init(void)
 	message_flush();
 
 	sprintf(tmp_str, "Gold before game: %9ld", p_ptr->au);
-	prt(tmp_str, 20, 2);
+	prt(tmp_str, 2, 20);
 
 	sprintf(tmp_str, "Current Wager:    %9ld", wager);
-	prt(tmp_str, 21, 2);
+	prt(tmp_str, 2, 21);
 
 	/* Prevent savefile-scumming of the casino */
 	Rand_quick = TRUE;
@@ -498,21 +498,21 @@ static bool gamble_again(bool win, int odds, s32b wager)
 
 	if (win)
 	{
-		prt("YOU WON", 16, 37);
+		prt("YOU WON", 37, 16);
 		p_ptr->au += odds * wager;
 		sprintf(tmp_str, "Payoff: %ld", odds * wager);
-		prt(tmp_str, 17, 37);
+		prt(tmp_str, 37, 17);
 	}
 	else
 	{
-		prt("You Lost", 16, 37);
+		prt("You Lost", 37, 16);
 		p_ptr->au -= wager;
-		prt("", 17, 37);
+		prt("", 37, 17);
 	}
 	
 	sprintf(tmp_str, "Current Gold:     %9ld", p_ptr->au);
-	prt(tmp_str, 22, 2);
-	prt("Again(Y/N)?", 18, 37);
+	prt(tmp_str, 2, 22);
+	prt("Again(Y/N)?", 37, 18);
 	Term_gotoxy(49, 18);
 	again = inkey();
 		
@@ -540,7 +540,7 @@ static void gamble_done(void)
 	/* Switch back to complex RNG */
 	Rand_quick = FALSE;
 
-	prt("", 18, 37);
+	prt("", 37, 18);
 	if (p_ptr->au >= gamble_oldgold)
 		msg_print("You came out a winner! We'll win next time, I'm sure.");
 	else
@@ -586,10 +586,10 @@ void gamble_in_between(void)
 		choice = randint1(10);
 		
 		sprintf(tmp_str, "Black die: %d       Black Die: %d", roll1, roll2);
-		prt(tmp_str, 8, 3);
+		prt(tmp_str, 3, 8);
 		
 		sprintf(tmp_str, "Red die: %d", choice);
-		prt(tmp_str, 11, 14);
+		prt(tmp_str, 14, 11);
 		
 		if (((choice > roll1) && (choice < roll2)) ||
 			((choice < roll1) && (choice > roll2)))
@@ -625,7 +625,7 @@ void gamble_craps(void)
 		
 		sprintf(tmp_str, "First roll: %d %d    Total: %d", roll1,
 			 roll2, roll3);
-		prt(tmp_str, 7, 5);
+		prt(tmp_str, 5, 7);
 		
 		/* Is it is result straight away? */
 		if ((roll3 == 7) || (roll3 == 11))
@@ -645,7 +645,7 @@ void gamble_craps(void)
 
 				sprintf(tmp_str, "Roll result: %d %d   Total:     %d",
 					 roll1, roll2, roll3);
-				prt(tmp_str, 8, 5);
+				prt(tmp_str, 5, 8);
 
 				if (roll3 == choice)
 					win = TRUE;
@@ -681,8 +681,8 @@ void gamble_spin_wheel(void)
 		win = FALSE;
 
 		c_put_str(TERM_GREEN, "Wheel", 2, 5);
-		prt("1  2  3  4  5  6  7  8  9 10", 7, 5);
-		prt("--------------------------------", 8, 3);
+		prt("1  2  3  4  5  6  7  8  9 10", 5, 7);
+		prt("--------------------------------", 3, 8);
 		
 		choice = get_quantity("Pick a number (1-10): ", 10);
 		
@@ -690,9 +690,9 @@ void gamble_spin_wheel(void)
 		roll1 = randint1(10);
 		sprintf(tmp_str, "The wheel spins to a stop and the winner is %d",
 			roll1);
-		prt(tmp_str, 13, 3);
-		prt("", 9, 0);
-		prt("*", 9, (3 * roll1 + 2));
+		prt(tmp_str, 3, 13);
+		prt("", 0, 9);
+		prt("*", (3 * roll1 + 2), 9);
 
 		if (roll1 == choice) win = TRUE;
 		
@@ -733,9 +733,9 @@ void gamble_dice_slots(void)
 		/* Show the result */
 		sprintf(tmp_str, "%s %s %s", fruit[roll1 - 1], fruit[roll2 - 1],
 			 fruit[choice - 1]);
-		prt(tmp_str, 15, 37);
-		prt("/--------------------------\\", 7, 2);
-		prt("\\--------------------------/", 17, 2);
+		prt(tmp_str, 37, 15);
+		prt("/--------------------------\\", 2, 7);
+		prt("\\--------------------------/", 2, 17);
 		
 		display_fruit(3,  8, roll1 - 1);
 		display_fruit(12, 8, roll2 - 1);
@@ -1202,8 +1202,8 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac)
 
 
 	clear_bldg(5, 18);
-	prt(format("  Based on your skill, we can improve up to +%d.", maxenchant), 5, 0);
-	prt(format("  The price for the service is %d gold per item.", cost), 7, 0);
+	prt(format("  Based on your skill, we can improve up to +%d.", maxenchant), 0, 5);
+	prt(format("  The price for the service is %d gold per item.", cost), 0, 7);
 
 	/* Get an item */
 	q = "Improve which item? ";
@@ -1296,7 +1296,7 @@ void building_recharge(s32b cost)
 
 	/* Display some info */
 	clear_bldg(5, 18);
-	prt("  The prices of recharge depend on the type.", 6, 0);
+	prt("  The prices of recharge depend on the type.", 0, 6);
 
 	/* Only accept legal items */
 	item_tester_hook = item_tester_hook_recharge;
@@ -1947,13 +1947,13 @@ void do_cmd_bldg(field_type *f_ptr)
 	/* Interact with player */
 	while (!leave_build)
 	{
-		prt("", 1, 0);
+		prt("", 0, 1);
 
 		/* Clear */
 		clear_from(21);
 
 		/* Basic commands */
-		prt(" ESC) Exit building", 23, 0);
+		prt(" ESC) Exit building", 0, 23);
 		 
 		/* Show your gold */
 		building_prt_gold();

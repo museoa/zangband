@@ -4407,7 +4407,7 @@ int main(void)
 
 
 	/* Prompt the user */
-	prt("[Choose 'New' or 'Open' from the 'File' menu]", 23, 15);
+	prt("[Choose 'New' or 'Open' from the 'File' menu]", 15, 23);
 
 	/* Flush the prompt */
 	Term_fresh();

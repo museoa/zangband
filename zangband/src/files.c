@@ -1281,7 +1281,7 @@ errr check_load_init(void)
 /*
  * Print number with header at given row, column
  */
-static void prt_num(cptr header, s32b num, int row, int col, byte color, int wid)
+static void prt_num(cptr header, s32b num, int col, int row, byte color, int wid)
 {
 	int len = strlen(header);
 	char out_val[32];
@@ -2381,10 +2381,10 @@ static void display_player_top(void)
 	}
 
 	/* Age, Height, Weight, Social */
-	prt_num("Age         ", (int)p_ptr->age, 2, COL_AGE, TERM_L_BLUE, 3);
-	prt_num("Height      ", (int)p_ptr->ht , 3, COL_AGE, TERM_L_BLUE, 3);
-	prt_num("Weight      ", (int)p_ptr->wt , 4, COL_AGE, TERM_L_BLUE, 3);
-	prt_num("Social Class", (int)p_ptr->sc , 5, COL_AGE, TERM_L_BLUE, 3);
+	prt_num("Age         ", (int)p_ptr->age, COL_AGE, 2, TERM_L_BLUE, 3);
+	prt_num("Height      ", (int)p_ptr->ht , COL_AGE, 3, TERM_L_BLUE, 3);
+	prt_num("Weight      ", (int)p_ptr->wt , COL_AGE, 4, TERM_L_BLUE, 3);
+	prt_num("Social Class", (int)p_ptr->sc , COL_AGE, 5, TERM_L_BLUE, 3);
 
 	/* Display the stats */
 	for (i = 0; i < A_MAX; i++)
@@ -2458,15 +2458,15 @@ static void display_player_middle(void)
 
 	/*** Bonuses ***/
 
-	prt_num("+ Skill     ", show_tohit, 9, COL_BONUS, TERM_L_BLUE, 3);
-	prt_num("% Deadliness", percentdam, 10, COL_BONUS, TERM_L_BLUE, 3);
-	prt_num("+ To AC     ", p_ptr->dis_to_a, 11, COL_BONUS, TERM_L_BLUE, 3);
-	prt_num("  Base AC   ", p_ptr->dis_ac, 12, COL_BONUS, TERM_L_BLUE, 3);
+	prt_num("+ Skill     ", show_tohit, COL_BONUS, 9, TERM_L_BLUE, 3);
+	prt_num("% Deadliness", percentdam, COL_BONUS, 10, TERM_L_BLUE, 3);
+	prt_num("+ To AC     ", p_ptr->dis_to_a, COL_BONUS, 11, TERM_L_BLUE, 3);
+	prt_num("  Base AC   ", p_ptr->dis_ac, COL_BONUS, 12, TERM_L_BLUE, 3);
 
 
 	/*** Level, experience, gold ***/
 
-	prt_num("Level      ", (int)p_ptr->lev, 9, COL_VALUE, TERM_L_GREEN, 9);
+	prt_num("Level      ", (int)p_ptr->lev, COL_VALUE, 9, TERM_L_GREEN, 9);
 
 	if (p_ptr->exp >= p_ptr->max_exp)
 	{
@@ -2477,8 +2477,8 @@ static void display_player_middle(void)
 		attr = TERM_YELLOW;
 	}
 
-	prt_num("Experience ", p_ptr->exp, 10, COL_VALUE, attr, 9);
-	prt_num("Max Exp    ", p_ptr->max_exp, 11, COL_VALUE, TERM_L_GREEN, 9);
+	prt_num("Experience ", p_ptr->exp, COL_VALUE, 10, attr, 9);
+	prt_num("Max Exp    ", p_ptr->max_exp, COL_VALUE, 11, TERM_L_GREEN, 9);
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 	{
@@ -2491,23 +2491,23 @@ static void display_player_middle(void)
 		prt_num("Exp to Adv.",
 				(long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L
 					 - (long)p_ptr->exp),
-					12, COL_VALUE, TERM_L_GREEN, 9);
+					COL_VALUE, 12, TERM_L_GREEN, 9);
 	}
 	else
 	{
 		/* Print the total xp required for next level */
 		prt_num("Exp to Adv.",
 					(long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L),
-					12, COL_VALUE, TERM_L_GREEN, 9);
+					COL_VALUE, 12, TERM_L_GREEN, 9);
 	}
 	
 
-	prt_num("Gold       ", p_ptr->au, 13, COL_VALUE, TERM_L_GREEN, 9);
+	prt_num("Gold       ", p_ptr->au, COL_VALUE, 13, TERM_L_GREEN, 9);
 
 
 	/*** Hitpoints/spellpoints ***/
 
-	prt_num("Max Hit Points", p_ptr->mhp, 9, COL_LIFE, TERM_L_GREEN, 5);
+	prt_num("Max Hit Points", p_ptr->mhp, COL_LIFE, 9, TERM_L_GREEN, 5);
 
 	if (p_ptr->chp >= p_ptr->mhp)
 	{
@@ -2522,9 +2522,9 @@ static void display_player_middle(void)
 		attr = TERM_RED;
 	}
 
-	prt_num("Cur Hit Points", p_ptr->chp, 10, COL_LIFE, attr, 5);
+	prt_num("Cur Hit Points", p_ptr->chp, COL_LIFE, 10, attr, 5);
 
-	prt_num("Max SP (Mana) ", p_ptr->msp, 11, COL_LIFE, TERM_L_GREEN, 5);
+	prt_num("Max SP (Mana) ", p_ptr->msp, COL_LIFE, 11, TERM_L_GREEN, 5);
 
 	if (p_ptr->csp >= p_ptr->msp)
 	{
@@ -2539,7 +2539,7 @@ static void display_player_middle(void)
 		attr = TERM_RED;
 	}
 
-	prt_num("Cur SP (Mana) ", p_ptr->csp, 12, COL_LIFE, attr, 5);
+	prt_num("Cur SP (Mana) ", p_ptr->csp, COL_LIFE, 12, attr, 5);
 }
 
 
@@ -3387,7 +3387,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			if (size <= hgt - 4)
 			{
 				/* Wait for it */
-				prt("[Press a Number, or ESC to exit.]", hgt - 1, 0);
+				prt("[Press a Number, or ESC to exit.]", 0, hgt - 1);
 			}
 
 			/* Prompt -- large files */
@@ -3395,7 +3395,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			{
 				/* Wait for it */
 				prt("[Press a Number, Return, Space, -, =, /, or ESC to exit.]",
-				    hgt - 1, 0);
+				    0, hgt - 1);
 			}
 		}
 		else
@@ -3404,14 +3404,14 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			if (size <= hgt - 4)
 			{
 				/* Wait for it */
-				prt("[Press ESC to exit.]", hgt - 1, 0);
+				prt("[Press ESC to exit.]", 0, hgt - 1);
 			}
 
 			/* Prompt -- large files */
 			else
 			{
 				/* Wait for it */
-				prt("[Press Return, Space, -, =, /, or ESC to exit.]", hgt - 1, 0);
+				prt("[Press Return, Space, -, =, /, or ESC to exit.]", 0, hgt - 1);
 			}
 		}
 
@@ -3433,7 +3433,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		if (k == '=')
 		{
 			/* Get "shower" */
-			prt("Show: ", hgt - 1, 0);
+			prt("Show: ", 0, hgt - 1);
 			(void)askfor_aux(shower, 80);
 		}
 
@@ -3441,7 +3441,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		if (k == '/')
 		{
 			/* Get "finder" */
-			prt("Find: ", hgt - 1, 0);
+			prt("Find: ", 0, hgt - 1);
 
 			if (askfor_aux(finder, 80))
 			{
@@ -3465,7 +3465,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		if (k == '#')
 		{
 			char tmp[81];
-			prt("Goto Line: ", hgt - 1, 0);
+			prt("Goto Line: ", 0, hgt - 1);
 			strcpy(tmp, "0");
 
 			if (askfor_aux(tmp, 80))
@@ -3478,7 +3478,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		if (k == '%')
 		{
 			char tmp[81];
-			prt("Goto File: ", hgt - 1, 0);
+			prt("Goto File: ", 0, hgt - 1);
 			strcpy(tmp, "help.hlp");
 
 			if (askfor_aux(tmp, 80))
@@ -3728,7 +3728,7 @@ void change_player_name(void)
 	clear_from(22);
 
 	/* Prompt and ask */
-	prt("[Enter your player's name above, or hit ESCAPE]", 23, 2);
+	prt("[Enter your player's name above, or hit ESCAPE]", 2, 23);
 
 	/* Ask until happy */
 	while (1)
@@ -4182,7 +4182,7 @@ static void show_info(void)
 	display_player(DISPLAY_PLAYER_STANDARD);
 
 	/* Prompt for inventory */
-	prt("Hit any key to see more information (ESC to abort): ", 23, 0);
+	prt("Hit any key to see more information (ESC to abort): ", 0, 23);
 
 	/* Flush keys */
 	flush();
@@ -4254,7 +4254,7 @@ static void show_info(void)
 
 							/* Print header, clear line */
 							sprintf(tmp_val, "%c) ", I2A(j));
-							prt(tmp_val, j+2, 4);
+							prt(tmp_val, 4, j + 2);
 
 							/* Display object description */
 							object_desc(o_name, o_ptr, TRUE, 3);
@@ -4329,7 +4329,7 @@ static void close_game_handle_death(void)
 	print_tomb();
 
 	/* Describe options */
-	prt("(D) Dump char record  (C) Show char info  (T) Show top scores  (ESC) Exit", 22, 0);
+	prt("(D) Dump char record  (C) Show char info  (T) Show top scores  (ESC) Exit", 0, 22);
 
 	/* Flush messages */
 	message_flush();
@@ -4478,7 +4478,7 @@ void close_game(void)
 		}
 
 		/* Prompt for scores XXX XXX XXX */
-		prt("Press Return (or Escape).", 0, 40);
+		prt("Press Return (or Escape).", 40, 0);
 
 		/* Predict score (or ESCAPE) */
 		if (inkey() != ESCAPE) predict_score();
