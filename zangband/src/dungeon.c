@@ -422,19 +422,19 @@ static void pattern_teleport(void)
 
 		/* Only downward in ironman mode */
 		if (ironman_downward)
-			min_level = dun_level;
+			min_level = p_ptr->depth;
 
 		/* Maximum level */
-		if (dun_level > 100)
+		if (p_ptr->depth > 100)
 			max_level = MAX_DEPTH - 1;
-		else if (dun_level == 100)
+		else if (p_ptr->depth == 100)
 			max_level = 100;
 
 		/* Prompt */
 		sprintf(ppp, "Teleport to level (%d-%d): ", min_level, max_level);
 
 		/* Default */
-		sprintf(tmp_val, "%d", dun_level);
+		sprintf(tmp_val, "%d", p_ptr->depth);
 
 		/* Ask for a level */
 		if (!get_string(ppp, tmp_val, 10)) return;
@@ -464,7 +464,7 @@ static void pattern_teleport(void)
 	if (autosave_l) do_cmd_save_game(TRUE);
 
 	/* Change level */
-	dun_level = p_ptr->command_arg;
+	p_ptr->depth = p_ptr->command_arg;
 
 	/* Leaving */
 	p_ptr->leaving = TRUE;
@@ -897,7 +897,7 @@ static void process_world(void)
 	cave_type *c_ptr = area(py, px);
 
 	/* Announce the level feeling */
-	if ((turn - old_turn == 1000) && (dun_level)) do_cmd_feeling();
+	if ((turn - old_turn == 1000) && (p_ptr->depth)) do_cmd_feeling();
 
 	/* Every 10 game turns */
 	if (turn % 10) return;
@@ -954,7 +954,7 @@ static void process_world(void)
 	/*** Handle the wilderness/town (sunshine) ***/
 
 	/* While in town/wilderness */
-	if (!dun_level && !p_ptr->inside_quest)
+	if (!p_ptr->depth && !p_ptr->inside_quest)
 	{
 		/* Hack -- Daybreak/Nighfall in town */
 		if (!(turn % ((10L * TOWN_DAWN) / 2)))
@@ -1056,7 +1056,7 @@ static void process_world(void)
 	/* (Vampires) Take damage from sunlight */
 	if (p_ptr->prace == RACE_VAMPIRE)
 	{
-		if (!dun_level && !p_ptr->resist_lite && !p_ptr->invuln &&
+		if (!p_ptr->depth && !p_ptr->resist_lite && !p_ptr->invuln &&
 		    (!((turn / ((10L * TOWN_DAWN) / 2)) % 2)))
 		{
 			if (c_ptr->info & CAVE_GLOW)
@@ -1847,7 +1847,7 @@ static void process_world(void)
 			bool pet = (randint1(6) == 1);
 
 			if (summon_specific((pet ? -1 : 0), py, px,
-					 dun_level, SUMMON_DEMON, TRUE, FALSE, pet))
+					 p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted a demon!");
 				disturb(0, 0);
@@ -1888,7 +1888,7 @@ static void process_world(void)
 			disturb(0, 0);
 			msg_print("You suddenly feel almost lonely.");
 			banish_monsters(100);
-			if (!dun_level && p_ptr->town_num)
+			if (!p_ptr->depth && p_ptr->town_num)
 			{
 				msg_print("You see one of the shopkeepers running for the hills!");
 				store_shuffle(randint0(MAX_STORES));
@@ -1942,7 +1942,7 @@ static void process_world(void)
 		{
 			bool pet = (randint1(3) == 1);
 
-			if (summon_specific((pet ? -1 : 0), py, px, dun_level, SUMMON_ANIMAL,
+			if (summon_specific((pet ? -1 : 0), py, px, p_ptr->depth, SUMMON_ANIMAL,
 				 TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted an animal!");
@@ -2021,7 +2021,7 @@ static void process_world(void)
 		{
 			bool pet = (randint1(5) == 1);
 
-			if (summon_specific((pet ? -1 : 0), py, px, dun_level, SUMMON_DRAGON,
+			if (summon_specific((pet ? -1 : 0), py, px, p_ptr->depth, SUMMON_DRAGON,
 				 TRUE, FALSE, pet))
 			{
 				msg_print("You have attracted a dragon!");
@@ -2404,11 +2404,11 @@ static void process_world(void)
 			disturb(0, 0);
 
 			/* Determine the level */
-			if (dun_level || p_ptr->inside_quest)
+			if (p_ptr->depth || p_ptr->inside_quest)
 			{
 				msg_print("You feel yourself yanked upwards!");
 
-				dun_level = 0;
+				p_ptr->depth = 0;
 
 				leaving_quest = p_ptr->inside_quest;
 
@@ -2428,24 +2428,24 @@ static void process_world(void)
 				msg_print("You feel yourself yanked downwards!");
 
 				/* New depth */
-				dun_level = p_ptr->max_depth;
+				p_ptr->depth = p_ptr->max_depth;
 
-				if (dun_level < 1) dun_level = 1;
+				if (p_ptr->depth < 1) p_ptr->depth = 1;
 
 				/* Nightmare mode makes recall more dangerous */
 				if (ironman_nightmare && !randint0(666))
 				{
-					if (dun_level < 50)
+					if (p_ptr->depth < 50)
 					{
-						dun_level *= 2;
+						p_ptr->depth *= 2;
 					}
-					else if (dun_level < 99)
+					else if (p_ptr->depth < 99)
 					{
-						dun_level = (dun_level + 99) / 2;
+						p_ptr->depth = (p_ptr->depth + 99) / 2;
 					}
-					else if (dun_level > 100)
+					else if (p_ptr->depth > 100)
 					{
-						dun_level = MAX_DEPTH - 1;
+						p_ptr->depth = MAX_DEPTH - 1;
 					}
 				}
 
@@ -3725,7 +3725,7 @@ static void dungeon(void)
 	cave_type *c_ptr;
 
 	/* Set the base level */
-	base_level = dun_level;
+	base_level = p_ptr->depth;
 
 	/* Reset various flags */
 	hack_mind = FALSE;
@@ -3756,7 +3756,7 @@ static void dungeon(void)
 	disturb(1, 0);
 
 	/* Get index of current quest (if any) */
-	quest_num = quest_number(dun_level);
+	quest_num = quest_number(p_ptr->depth);
 
 	/* Inside a quest? */
 	if (quest_num)
@@ -3773,19 +3773,19 @@ static void dungeon(void)
 
 
 	/* Track maximum dungeon level (if not in quest -KMW-) */
-	if ((p_ptr->max_depth < dun_level) && !p_ptr->inside_quest)
+	if ((p_ptr->max_depth < p_ptr->depth) && !p_ptr->inside_quest)
 	{
-		p_ptr->max_depth = dun_level;
+		p_ptr->max_depth = p_ptr->depth;
 	}
 
 	/* No stairs down from Quest */
-	if (quest_number(dun_level))
+	if (quest_number(p_ptr->depth))
 	{
 		p_ptr->create_down_stair = FALSE;
 	}
 
 	/* Paranoia -- no stairs from town or wilderness */
-	if (!dun_level) p_ptr->create_down_stair = p_ptr->create_up_stair = FALSE;
+	if (!p_ptr->depth) p_ptr->create_down_stair = p_ptr->create_up_stair = FALSE;
 
 	/* Option -- no connected stairs */
 	if (!dungeon_stair) p_ptr->create_down_stair = p_ptr->create_up_stair = FALSE;
@@ -3823,7 +3823,7 @@ static void dungeon(void)
 	verify_panel();
 
 	/* Validate the panel */
-	if (vanilla_town && !dun_level)
+	if (vanilla_town && !p_ptr->depth)
 	{
 		panel_bounds_center();
 	}
@@ -3903,7 +3903,7 @@ static void dungeon(void)
 
 	/* Print quest message if appropriate */
 	if (!p_ptr->inside_quest)
-		quest_discovery(random_quest_number(dun_level));
+		quest_discovery(random_quest_number(p_ptr->depth));
 
 	/*** Process this dungeon level ***/
 
@@ -4238,7 +4238,7 @@ void play_game(bool new_game)
 			turn = 1;
 		}
 
-		dun_level = 0;
+		p_ptr->depth = 0;
 
 		/* Create a new wilderness for the player */
 		create_wilderness();
@@ -4300,7 +4300,7 @@ void play_game(bool new_game)
 #if 0
 
 	/* Initialize the town-buildings if necessary */
-	if (!dun_level && !p_ptr->inside_quest)
+	if (!p_ptr->depth && !p_ptr->inside_quest)
 	{
 		/* Init the town */
 		init_flags = INIT_ONLY_BUILDINGS;
@@ -4399,7 +4399,7 @@ void play_game(bool new_game)
 		wipe_m_list();
 		wipe_f_list();
 
-		change_level(dun_level);
+		change_level(p_ptr->depth);
 
 		/* XXX XXX XXX */
 		msg_print(NULL);
@@ -4462,8 +4462,8 @@ void play_game(bool new_game)
 				/* Do not die */
 				p_ptr->is_dead = FALSE;
 
-				dun_level = 0;
-				change_level(dun_level);
+				p_ptr->depth = 0;
+				change_level(p_ptr->depth);
 
 				p_ptr->inside_arena = 0;
 				leaving_quest = 0;

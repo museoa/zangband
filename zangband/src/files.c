@@ -4014,12 +4014,12 @@ static void make_bones(void)
 	if (!(p_ptr->noscore & 0x00FF))
 	{
 		/* Ignore people who die in town */
-		if (dun_level)
+		if (p_ptr->depth)
 		{
 			char tmp[128];
 
 			/* XXX XXX XXX "Bones" name */
-			sprintf(tmp, "bone.%03d", dun_level);
+			sprintf(tmp, "bone.%03d", p_ptr->depth);
 
 			/* Build the filename */
 			path_build(str, 1024, ANGBAND_DIR_BONE, tmp);
@@ -4154,7 +4154,7 @@ static void print_tomb(void)
 		center_string(buf, tmp);
 		put_str(buf, 13, 11);
 
-		(void)sprintf(tmp, "Killed on Level %d", dun_level);
+		(void)sprintf(tmp, "Killed on Level %d", p_ptr->depth);
 		center_string(buf, tmp);
 		put_str(buf, 14, 11);
 

@@ -643,7 +643,7 @@ static void wild_magic(int spell)
 
 			for (i = 0; i < 8; i++)
 			{
-				(void)summon_specific(0, py, px, (dun_level * 3) / 2, type, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, py, px, (p_ptr->depth * 3) / 2, type, TRUE, FALSE, FALSE);
 			}
 			break;
 		}
@@ -1589,7 +1589,7 @@ static bool cast_death_spell(int spell)
 			if (die < 8)
 			{
 				msg_print("Oh no! Mouldering forms rise from the earth around you!");
-				(void)summon_specific(0, py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, py, px, p_ptr->depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
 
 				chg_virtue(V_UNLIFE, 1);
 			}
@@ -1936,7 +1936,7 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 14)
 				{
 					msg_print("Oh no! It's the Devil!");
-					(void)summon_specific(0, py, px, dun_level, SUMMON_DEMON, TRUE, FALSE, FALSE);
+					(void)summon_specific(0, py, px, p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, FALSE);
 				}
 				else if (die < 18)
 				{
@@ -1959,7 +1959,7 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 30)
 				{
 					msg_print("It's the picture of a strange monster.");
-					if (!(summon_specific(0, py, px, (dun_level * 3) / 2, 32 + randint1(6), TRUE, FALSE, FALSE)))
+					if (!(summon_specific(0, py, px, (p_ptr->depth * 3) / 2, 32 + randint1(6), TRUE, FALSE, FALSE)))
 						no_trump = TRUE;
 				}
 				else if (die < 33)
@@ -2010,25 +2010,25 @@ static bool cast_trump_spell(int spell, bool success)
 				else if (die < 82)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (dun_level * 3) / 2, SUMMON_BIZARRE1, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, py, px, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE1, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 84)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (dun_level * 3) / 2, SUMMON_BIZARRE2, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, py, px, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE2, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 86)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (dun_level * 3) / 2, SUMMON_BIZARRE4, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, py, px, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE4, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 88)
 				{
 					msg_print("It's the picture of a friendly monster.");
-					if (!(summon_specific(-1, py, px, (dun_level * 3) / 2, SUMMON_BIZARRE5, FALSE, TRUE, TRUE)))
+					if (!(summon_specific(-1, py, px, (p_ptr->depth * 3) / 2, SUMMON_BIZARRE5, FALSE, TRUE, TRUE)))
 						no_trump = TRUE;
 				}
 				else if (die < 96)
@@ -2079,7 +2079,7 @@ static bool cast_trump_spell(int spell, bool success)
 				sprintf(ppp, "Reset to which level (1-%d): ", p_ptr->max_depth);
 
 				/* Default */
-				sprintf(tmp_val, "%d", MAX(dun_level, 1));
+				sprintf(tmp_val, "%d", MAX(p_ptr->depth, 1));
 
 				/* Ask for a level */
 				if (get_string(ppp, tmp_val, 10))

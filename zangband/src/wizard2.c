@@ -857,21 +857,21 @@ static void wiz_reroll_item(object_type *o_ptr)
 			case 'w': case 'W':
 			{
 				object_prep(q_ptr, o_ptr->k_idx);
-				apply_magic(q_ptr, dun_level, 0, OC_FORCE_BAD);
+				apply_magic(q_ptr, p_ptr->depth, 0, OC_FORCE_BAD);
 				break;
 			}
 			/* Apply normal magic, but first clear object */
 			case 'n': case 'N':
 			{
 				object_prep(q_ptr, o_ptr->k_idx);
-				apply_magic(q_ptr, dun_level, 0, OC_NORMAL);
+				apply_magic(q_ptr, p_ptr->depth, 0, OC_NORMAL);
 				break;
 			}
 			/* Apply great magic, but first clear object */
 			case 'e': case 'E':
 			{
 				object_prep(q_ptr, o_ptr->k_idx);
-				apply_magic(q_ptr, dun_level, 30, OC_FORCE_GOOD);
+				apply_magic(q_ptr, p_ptr->depth, 30, OC_FORCE_GOOD);
 				break;
 			}
 			case 's': case 'S':
@@ -1179,7 +1179,7 @@ static void wiz_create_item(void)
 	else
 	{
 		/* Apply magic */
-		apply_magic(q_ptr, dun_level, 0, 0);
+		apply_magic(q_ptr, p_ptr->depth, 0, 0);
 	}
 
 #ifdef USE_SCRIPT
@@ -1256,7 +1256,7 @@ static void do_cmd_wiz_jump(void)
 		sprintf(ppp, "Jump to level (0-%d): ", MAX_DEPTH-1);
 
 		/* Default */
-		sprintf(tmp_val, "%d", dun_level);
+		sprintf(tmp_val, "%d", p_ptr->depth);
 
 		/* Ask for a level */
 		if (!get_string(ppp, tmp_val, 10)) return;
@@ -1277,7 +1277,7 @@ static void do_cmd_wiz_jump(void)
 	if (autosave_l) do_cmd_save_game(TRUE);
 
 	/* Change level */
-	dun_level = p_ptr->command_arg;
+	p_ptr->depth = p_ptr->command_arg;
 
 	p_ptr->inside_arena = 0;
 	leaving_quest = p_ptr->inside_quest;
@@ -1341,7 +1341,7 @@ static void do_cmd_wiz_summon(int num)
 
 	for (i = 0; i < num; i++)
 	{
-		(void)summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
+		(void)summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 	}
 }
 
@@ -2006,7 +2006,7 @@ void do_cmd_debug(void)
 
 		/* Wizard Light the Level */
 		case 'w':
-			if (dun_level)
+			if (p_ptr->depth)
 			{
 				wiz_lite();
 			}

@@ -272,7 +272,7 @@ static void build_type1(int by0, int bx0)
 	if (!room_alloc(xsize + 2, ysize + 2, FALSE, by0, bx0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
-	light = (dun_level <= randint1(25));
+	light = (p_ptr->depth <= randint1(25));
 
 
 	/* Get corner values */
@@ -412,7 +412,7 @@ static void build_type2(int by0, int bx0)
 	if (!room_alloc(25, 11, FALSE, by0, bx0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
-	light = (dun_level <= randint1(25));
+	light = (p_ptr->depth <= randint1(25));
 
 	/* Determine number of rooms to overlay */
 	num = rand_range(2, MAX_ROOM_OVERLAY);
@@ -476,7 +476,7 @@ static void build_type3(int by0, int bx0)
 	if (!room_alloc(25, 11, FALSE, by0, bx0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
-	light = (dun_level <= randint1(25));
+	light = (p_ptr->depth <= randint1(25));
 
 	/* For now, always 3x3 */
 	wx = wy = 1;
@@ -636,7 +636,7 @@ static void build_type4(int by0, int bx0)
 	if (!room_alloc(25, 11, FALSE, by0, bx0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
-	light = (dun_level <= randint1(25));
+	light = (p_ptr->depth <= randint1(25));
 
 	/* Large room */
 	y1 = yval - 4;
@@ -1147,7 +1147,7 @@ static void vault_prep_clone(void)
 	get_mon_num_prep(vault_aux_simple, NULL);
 
 	/* Pick a race to clone */
-	vault_aux_race = get_mon_num(dun_level + 10);
+	vault_aux_race = get_mon_num(p_ptr->depth + 10);
 
 	/* Remove the monster restriction */
 	get_mon_num_prep(NULL, NULL);
@@ -1165,7 +1165,7 @@ static void vault_prep_symbol(void)
 	get_mon_num_prep(vault_aux_simple, NULL);
 
 	/* Pick a race to clone */
-	r_idx = get_mon_num(dun_level + 10);
+	r_idx = get_mon_num(p_ptr->depth + 10);
 
 	/* Remove the monster restriction */
 	get_mon_num_prep(NULL, NULL);
@@ -1274,10 +1274,10 @@ static vault_aux_type *pick_vault_type(vault_aux_type *l_ptr)
 		if (!n_ptr->name) break;
 
 		/* Ignore excessive depth */
-		if (n_ptr->level > dun_level) continue;
+		if (n_ptr->level > p_ptr->depth) continue;
 
 		/* Count this possibility */
-		total += n_ptr->chance * MAX_DEPTH / (dun_level - n_ptr->level + 5);
+		total += n_ptr->chance * MAX_DEPTH / (p_ptr->depth - n_ptr->level + 5);
 	}
 
 	/* Pick a random type */
@@ -1290,10 +1290,10 @@ static vault_aux_type *pick_vault_type(vault_aux_type *l_ptr)
 		if (!n_ptr->name) break;
 
 		/* Ignore excessive depth */
-		if (n_ptr->level > dun_level) continue;
+		if (n_ptr->level > p_ptr->depth) continue;
 
 		/* Count this possibility */
-		total += n_ptr->chance * MAX_DEPTH / (dun_level - n_ptr->level + 5);
+		total += n_ptr->chance * MAX_DEPTH / (p_ptr->depth - n_ptr->level + 5);
 
 		/* Found the type */
 		if (tmp < total) break;
@@ -1396,7 +1396,7 @@ static void build_type5(int by0, int bx0)
 		while (attempts--)
 		{
 			/* Get a (hard) monster type */
-			r_idx = get_mon_num(dun_level + 10);
+			r_idx = get_mon_num(p_ptr->depth + 10);
 
 			/* Decline incorrect alignment */
 			if (((align < 0) && (r_info[r_idx].flags3 & RF3_GOOD)) ||
@@ -1430,7 +1430,7 @@ static void build_type5(int by0, int bx0)
 	rating += 10;
 
 	/* (Sometimes) Cause a "special feeling" (for "Monster Nests") */
-	if ((dun_level <= 40) && (randint1(dun_level * dun_level + 50) < 300))
+	if ((p_ptr->depth <= 40) && (randint1(p_ptr->depth * p_ptr->depth + 50) < 300))
 	{
 		good_item_flag = TRUE;
 	}
@@ -1557,7 +1557,7 @@ static void build_type6(int by0, int bx0)
 		while (attempts--)
 		{
 			/* Get a (hard) monster type */
-			r_idx = get_mon_num(dun_level + 10);
+			r_idx = get_mon_num(p_ptr->depth + 10);
 
 			/* Decline incorrect alignment */
 			if (((align < 0) && (r_info[r_idx].flags3 & RF3_GOOD)) ||
@@ -1626,7 +1626,7 @@ static void build_type6(int by0, int bx0)
 	rating += 10;
 
 	/* (Sometimes) Cause a "special feeling" (for "Monster Pits") */
-	if ((dun_level <= 40) && (randint1(dun_level * dun_level + 50) < 300))
+	if ((p_ptr->depth <= 40) && (randint1(p_ptr->depth * p_ptr->depth + 50) < 300))
 	{
 		good_item_flag = TRUE;
 	}
@@ -2044,8 +2044,8 @@ static void build_type7(int by0, int bx0)
 	rating += v_ptr->rat;
 
 	/* (Sometimes) Cause a special feeling */
-	if ((dun_level <= 50) ||
-		(randint1((dun_level - 40) * (dun_level - 40) + 50) < 400))
+	if ((p_ptr->depth <= 50) ||
+		(randint1((p_ptr->depth - 40) * (p_ptr->depth - 40) + 50) < 400))
 	{
 		good_item_flag = TRUE;
 	}
@@ -2142,8 +2142,8 @@ static void build_type8(int by0, int bx0)
 	rating += v_ptr->rat;
 
 	/* (Sometimes) Cause a special feeling */
-	if ((dun_level <= 50) ||
-	    (randint1((dun_level - 40) * (dun_level - 40) + 50) < 400))
+	if ((p_ptr->depth <= 50) ||
+	    (randint1((p_ptr->depth - 40) * (p_ptr->depth - 40) + 50) < 400))
 	{
 		good_item_flag = TRUE;
 	}
@@ -2179,7 +2179,7 @@ static void build_type9(int by0, int bx0)
 
 	light = done = FALSE;
 
-	if (dun_level <= randint1(25)) light = TRUE;
+	if (p_ptr->depth <= randint1(25)) light = TRUE;
 
 	while (!done)
 	{
@@ -3340,17 +3340,17 @@ static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 	xsize = xhsize * 2;
 	ysize = yhsize * 2;
 
-	if (dun_level < 25)
+	if (p_ptr->depth < 25)
 	{
 		/* Earth vault  (Rubble) */
 		type = LAKE_EEARTH;
 	}
-	else if (dun_level < 50)
+	else if (p_ptr->depth < 50)
 	{
 		/* Air vault (Trees) */
 		type = LAKE_EAIR;
 	}
-	else if (dun_level < 75)
+	else if (p_ptr->depth < 75)
 	{
 		/* Water vault (shallow water) */
 		type = LAKE_EWATER;
@@ -3491,8 +3491,8 @@ static void build_type10(int by0, int bx0)
 	rating += 10;
 
 	/* (Sometimes) Cause a special feeling */
-	if ((dun_level <= 50) ||
-	    (randint1((dun_level - 40) * (dun_level - 40) + 1) < 400))
+	if ((p_ptr->depth <= 50) ||
+	    (randint1((p_ptr->depth - 40) * (p_ptr->depth - 40) + 1) < 400))
 	{
 		good_item_flag = TRUE;
 	}
@@ -3533,7 +3533,7 @@ static void build_type11(int by0, int bx0)
 	int light = FALSE;
 
 	/* Occasional light */
-	if (randint1(dun_level) <= 15) light = TRUE;
+	if (randint1(p_ptr->depth) <= 15) light = TRUE;
 
 	rad = randint0(9);
 
@@ -3584,7 +3584,7 @@ static void build_type12(int by0, int bx0)
 	h4 = randint1(32) - 16;
 
 	/* Occasional light */
-	if (randint1(dun_level) <= 5) light = TRUE;
+	if (randint1(p_ptr->depth) <= 5) light = TRUE;
 
 	rad = randint1(9);
 
@@ -3682,7 +3682,7 @@ static void build_type13(int by0, int bx0)
 
 	light = done = FALSE;
 
-	if (dun_level <= randint1(25)) light = TRUE;
+	if (p_ptr->depth <= randint1(25)) light = TRUE;
 
 	while (!done)
 	{
@@ -3807,7 +3807,7 @@ static void build_type14(int by0, int bx0)
 	if (!room_alloc(25, 11, FALSE, by0, bx0, &xval, &yval)) return;
 
 	/* Choose lite or dark */
-	light = (dun_level <= randint1(25));
+	light = (p_ptr->depth <= randint1(25));
 
 	/* Large room */
 	y1 = yval - 4;
@@ -3912,7 +3912,7 @@ static void build_type15(int by0, int bx0)
 	if (!room_alloc(w + h, h, FALSE, by0, bx0, &xval, &yval)) return;
 	
 	/* Choose lite or dark */
-	light = (dun_level <= randint1(25));
+	light = (p_ptr->depth <= randint1(25));
 
 	/* Get top left corner */
 	x1 = xval - (w + h) / 2;
@@ -3952,7 +3952,7 @@ static void build_type15(int by0, int bx0)
 bool room_build(int by0, int bx0, int typ)
 {
 	/* Restrict level */
-	if ((dun_level < roomdep[typ]) && !ironman_rooms) return (FALSE);
+	if ((p_ptr->depth < roomdep[typ]) && !ironman_rooms) return (FALSE);
 
 	/* Restrict "crowded" rooms */
 	if ((dun->crowded >= 2) && ((typ == 5) || (typ == 6))) return (FALSE);

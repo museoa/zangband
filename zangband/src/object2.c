@@ -2003,7 +2003,7 @@ bool make_artifact(object_type *o_ptr)
 	int k_idx = 0;
 
 	/* No artifacts in the town */
-	if (!dun_level) return (FALSE);
+	if (!p_ptr->depth) return (FALSE);
 
 	/* Check the artifact list (just the "specials") */
 	for (i = 1; i < max_a_idx; i++)
@@ -2019,10 +2019,10 @@ bool make_artifact(object_type *o_ptr)
 		if (a_ptr->flags3 & TR3_QUESTITEM) continue;
 
 		/* XXX XXX Enforce minimum "depth" (loosely) */
-		if (a_ptr->level > dun_level)
+		if (a_ptr->level > p_ptr->depth)
 		{
 			/* Acquire the "out-of-depth factor" */
-			int d = (a_ptr->level - dun_level) * 2;
+			int d = (a_ptr->level - p_ptr->depth) * 2;
 
 			/* Roll for out-of-depth creation */
 			if (randint0(d) != 0) continue;
@@ -3777,7 +3777,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 				r_ptr = &r_info[i];
 
-				check = (dun_level < r_ptr->level) ? (r_ptr->level - dun_level) : 0;
+				check = (p_ptr->depth < r_ptr->level) ? (r_ptr->level - p_ptr->depth) : 0;
 
 				/* Ignore dead monsters */
 				if (!r_ptr->rarity) continue;
@@ -4247,10 +4247,10 @@ bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme)
 
 	/* Notice "okay" out-of-depth objects */
 	if (!cursed_p(o_ptr) && !broken_p(o_ptr) &&
-	    (obj_level > dun_level))
+	    (obj_level > p_ptr->depth))
 	{
 		/* Rating increase */
-		rating += (obj_level - dun_level);
+		rating += (obj_level - p_ptr->depth);
 
 		/* Cheat -- peek at items */
 		if (cheat_peek) object_mention(o_ptr);

@@ -2730,14 +2730,14 @@ void do_cmd_feeling(void)
 	}
 
 	/* No useful feeling in town */
-	else if (p_ptr->town_num && !dun_level)
+	else if (p_ptr->town_num && !p_ptr->depth)
 	{
 		msg_print("Looks like a typical town.");
 		return;
 	}
 
 	/* No useful feeling in the wilderness */
-	else if (!dun_level)
+	else if (!p_ptr->depth)
 	{
 		msg_print("Looks like a typical wilderness.");
 		return;

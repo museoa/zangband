@@ -77,17 +77,17 @@ void add_note(char *note, char code)
 
 
 	/* Get depth */
-	if (!dun_level)
+	if (!p_ptr->depth)
 	{
 		strnfmt(depths, 32, "  Town");
 	}
 	else if (depth_in_feet)
 	{
-		strnfmt(depths, 32, "%4dft", dun_level * 50);
+		strnfmt(depths, 32, "%4dft", p_ptr->depth * 50);
 	}
  	else
 	{
-		strnfmt(depths, 32, "Lev%3d", dun_level);
+		strnfmt(depths, 32, "Lev%3d", p_ptr->depth);
 	}
 
 	/* Get the time */

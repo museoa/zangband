@@ -2609,7 +2609,7 @@ bool destroy_area(int y1, int x1, int r, int full)
 	bool      flag = FALSE;
 
 	/* Prevent destruction of quest levels and town */
-	if (p_ptr->inside_quest || !dun_level)
+	if (p_ptr->inside_quest || !p_ptr->depth)
 	{
 		return (FALSE);
 	}
@@ -2778,7 +2778,7 @@ bool earthquake(int cy, int cx, int r)
 	field_mon_test	mon_enter_test;
 
 	/* Prevent destruction of quest levels and town */
-	if (p_ptr->inside_quest || !dun_level)
+	if (p_ptr->inside_quest || !p_ptr->depth)
 	{
 		return (FALSE);
 	}
@@ -2942,7 +2942,7 @@ bool earthquake(int cy, int cx, int r)
 			p_ptr->py = sy;
 			p_ptr->px = sx;
 			
-			if (!dun_level)
+			if (!p_ptr->depth)
 			{
 				/* Scroll wilderness */
 				p_ptr->wilderness_x = px;
@@ -3748,7 +3748,7 @@ bool teleport_swap(int dir)
 	tx = m_ptr->fx;
 	ty = m_ptr->fy;
 	
-	if (!dun_level)
+	if (!p_ptr->depth)
 	{
 		/* Scroll wilderness */
 		p_ptr->wilderness_x = px;
@@ -4205,7 +4205,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			}
 			case 7: case 8: case 9: case 18:
 			{
-				(*count) += summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
+				(*count) += summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 				if (randint1(6) != 1) break;
 			}
 			case 10: case 11: case 12:
@@ -4251,7 +4251,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				/*
 				 * Only summon Cyberdemons deep in the dungeon.
 				 */
-				if ((dun_level > 65) && !stop_ty)
+				if ((p_ptr->depth > 65) && !stop_ty)
 				{
 					(*count) += summon_cyber(-1, py, px);
 					stop_ty = TRUE;
@@ -4288,51 +4288,51 @@ int activate_hi_summon(void)
 	int i;
 	int count = 0;
 
-	for (i = 0; i < (randint1(9) + (dun_level / 40)); i++)
+	for (i = 0; i < (randint1(9) + (p_ptr->depth / 40)); i++)
 	{
-		switch (randint1(26) + (dun_level / 20))
+		switch (randint1(26) + (p_ptr->depth / 20))
 		{
 			case 1: case 2:
-				count += summon_specific(0, py, px, dun_level, SUMMON_ANT, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_ANT, TRUE, FALSE, FALSE);
 				break;
 			case 3: case 4:
-				count += summon_specific(0, py, px, dun_level, SUMMON_SPIDER, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_SPIDER, TRUE, FALSE, FALSE);
 				break;
 			case 5: case 6:
-				count += summon_specific(0, py, px, dun_level, SUMMON_HOUND, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_HOUND, TRUE, FALSE, FALSE);
 				break;
 			case 7: case 8:
-				count += summon_specific(0, py, px, dun_level, SUMMON_HYDRA, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_HYDRA, TRUE, FALSE, FALSE);
 				break;
 			case 9: case 10:
-				count += summon_specific(0, py, px, dun_level, SUMMON_ANGEL, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_ANGEL, TRUE, FALSE, FALSE);
 				break;
 			case 11: case 12:
-				count += summon_specific(0, py, px, dun_level, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_UNDEAD, TRUE, FALSE, FALSE);
 				break;
 			case 13: case 14:
-				count += summon_specific(0, py, px, dun_level, SUMMON_DRAGON, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_DRAGON, TRUE, FALSE, FALSE);
 				break;
 			case 15: case 16:
-				count += summon_specific(0, py, px, dun_level, SUMMON_DEMON, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_DEMON, TRUE, FALSE, FALSE);
 				break;
 			case 17:
-				count += summon_specific(0, py, px, dun_level, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_AMBERITES, TRUE, FALSE, FALSE);
 				break;
 			case 18: case 19:
-				count += summon_specific(0, py, px, dun_level, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_UNIQUE, TRUE, FALSE, FALSE);
 				break;
 			case 20: case 21:
-				count += summon_specific(0, py, px, dun_level, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_HI_UNDEAD, TRUE, FALSE, FALSE);
 				break;
 			case 22: case 23:
-				count += summon_specific(0, py, px, dun_level, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, p_ptr->depth, SUMMON_HI_DRAGON, TRUE, FALSE, FALSE);
 				break;
 			case 24: case 25:
 				count += summon_specific(0, py, px, 100, SUMMON_CYBER, TRUE, FALSE, FALSE);
 				break;
 			default:
-				count += summon_specific(0, py, px, (((dun_level * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
+				count += summon_specific(0, py, px, (((p_ptr->depth * 3) / 2) + 5), 0, TRUE, FALSE, FALSE);
 		}
 	}
 
@@ -4344,7 +4344,7 @@ int activate_hi_summon(void)
 int summon_cyber(int who, int y, int x)
 {
 	int i;
-	int max_cyber = (dun_level / 50) + randint1(6);
+	int max_cyber = (p_ptr->depth / 50) + randint1(6);
 	int count = 0;
 
 	bool friendly = FALSE;

@@ -1987,7 +1987,7 @@ void display_map(int *cy, int *cx)
 		}
 	}
 
-	if (!dun_level)
+	if (!p_ptr->depth)
 	{
 		/* Plot wilderness */
 
@@ -2205,7 +2205,7 @@ void do_cmd_view_map(void)
 	int wid, hgt;
 
 	/* No overhead map in vanilla town mode. */
-	if (!dun_level && vanilla_town) return;
+	if (!p_ptr->depth && vanilla_town) return;
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
@@ -2222,7 +2222,7 @@ void do_cmd_view_map(void)
 	/* Clear the screen */
 	Term_clear();
 
-	if (dun_level)
+	if (p_ptr->depth)
 	{
 		/* In the dungeon - All we have to do is display the map */
 

@@ -87,7 +87,6 @@ s16b max_hgt;
 s16b min_wid;			/* Current x bounds of area() */
 s16b max_wid;
 
-s16b dun_level;			/* Current dungeon level */
 obj_theme dun_theme;	/* Current dungeon object theme */
 s16b num_repro;			/* Current reproducer count */
 

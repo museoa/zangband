@@ -436,7 +436,7 @@ void teleport_player(int dis)
 	p_ptr->py = y;
 	p_ptr->px = x;
 	
-	if (!dun_level)
+	if (!p_ptr->depth)
 	{
 		/* Scroll wilderness */
 		p_ptr->wilderness_x = px;
@@ -575,7 +575,7 @@ void teleport_player_to(int ny, int nx)
 	p_ptr->py = y;
 	p_ptr->px = x;
 	
-	if (!dun_level)
+	if (!p_ptr->depth)
 	{
 		/* Scroll wilderness */
 		p_ptr->wilderness_x = px;
@@ -618,7 +618,7 @@ void teleport_player_level(void)
 {
 	/* No effect in arena or quest */
 	if (p_ptr->inside_arena || p_ptr->inside_quest ||
-	    (quest_number(dun_level) && (dun_level > 1) && ironman_downward))
+	    (quest_number(p_ptr->depth) && (p_ptr->depth > 1) && ironman_downward))
 	{
 		msg_print("There is no effect.");
 		return;
@@ -630,24 +630,24 @@ void teleport_player_level(void)
 		return;
 	}
 
-	if (!dun_level || ironman_downward)
+	if (!p_ptr->depth || ironman_downward)
 	{
 		msg_print("You sink through the floor.");
 
 		if (autosave_l) do_cmd_save_game(TRUE);
 
-		dun_level++;
+		p_ptr->depth++;
 
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
-	else if (quest_number(dun_level) || (dun_level >= MAX_DEPTH - 1))
+	else if (quest_number(p_ptr->depth) || (p_ptr->depth >= MAX_DEPTH - 1))
 	{
 		msg_print("You rise up through the ceiling.");
 
 		if (autosave_l) do_cmd_save_game(TRUE);
 
-		dun_level--;
+		p_ptr->depth--;
 
 		/* Leaving */
 		p_ptr->leaving = TRUE;
@@ -658,7 +658,7 @@ void teleport_player_level(void)
 
 		if (autosave_l) do_cmd_save_game(TRUE);
 
-		dun_level--;
+		p_ptr->depth--;
 
 		/* Leaving */
 		p_ptr->leaving = TRUE;
@@ -669,7 +669,7 @@ void teleport_player_level(void)
 
 		if (autosave_l) do_cmd_save_game(TRUE);
 
-		dun_level++;
+		p_ptr->depth++;
 
 		/* Leaving */
 		p_ptr->leaving = TRUE;
@@ -698,10 +698,10 @@ void recall_player(int turns)
 		return;
 	}
 
-	if (dun_level && (p_ptr->max_depth > dun_level) && !p_ptr->inside_quest)
+	if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth) && !p_ptr->inside_quest)
 	{
 		if (get_check("Reset recall depth? "))
-			p_ptr->max_depth = dun_level;
+			p_ptr->max_depth = p_ptr->depth;
 
 	}
 	if (!p_ptr->word_recall)
@@ -1189,7 +1189,7 @@ void fetch(int dir, int wgt, bool require_los)
 
 void alter_reality(void)
 {
-	if (!quest_number(dun_level) && dun_level)
+	if (!quest_number(p_ptr->depth) && p_ptr->depth)
 	{
 		msg_print("The world changes!");
 
@@ -1516,12 +1516,12 @@ void stair_creation(void)
 		/* arena or quest */
 		msg_print("There is no effect!");
 	}
-	else if (!dun_level || ironman_downward)
+	else if (!p_ptr->depth || ironman_downward)
 	{
 		/* Town/wilderness or Ironman */
 		cave_set_feat(py, px, FEAT_MORE);
 	}
-	else if (quest_number(dun_level) || (dun_level >= MAX_DEPTH - 1))
+	else if (quest_number(p_ptr->depth) || (p_ptr->depth >= MAX_DEPTH - 1))
 	{
 		/* Quest level */
 		cave_set_feat(py, px, FEAT_LESS);
@@ -1924,7 +1924,7 @@ static void bad_luck(object_type *o_ptr)
 			o_ptr->number = number;
 
 			/* Apply bad magic */
-			apply_magic(o_ptr, dun_level, 0, OC_FORCE_BAD);
+			apply_magic(o_ptr, p_ptr->depth, 0, OC_FORCE_BAD);
 		}
 
 		/* Now curse it */
@@ -4180,7 +4180,7 @@ static s16b poly_r_idx(int r_idx)
 	for (i = 0; i < 1000; i++)
 	{
 		/* Pick a new race, using a level calculation */
-		r = get_mon_num((dun_level + r_ptr->level) / 2 + 5);
+		r = get_mon_num((p_ptr->depth + r_ptr->level) / 2 + 5);
 
 		/* Handle failure */
 		if (!r) break;

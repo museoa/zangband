@@ -1977,7 +1977,7 @@ void mutation_power_aux(u32b power)
 				p_ptr->py = y;
 				p_ptr->px = x;
 
-				if (!dun_level)
+				if (!p_ptr->depth)
 				{
 					/* Scroll wilderness */
 					p_ptr->wilderness_x = px;
@@ -2245,10 +2245,10 @@ void mutation_power_aux(u32b power)
 				}
 				else
 				{
-					if (dun_level && (p_ptr->max_depth > dun_level))
+					if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth))
 					{
 						if (get_check("Reset recall depth? "))
-							p_ptr->max_depth = dun_level;
+							p_ptr->max_depth = p_ptr->depth;
 					}
 					if (!p_ptr->word_recall)
 					{

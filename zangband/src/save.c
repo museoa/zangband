@@ -1320,7 +1320,7 @@ static void wr_dungeon(void)
 	/*** Basic info ***/
 
 	/* Dungeon specific info follows */
-	wr_u16b(dun_level);
+	wr_u16b(p_ptr->depth);
 	wr_u16b(base_level);
 	wr_u16b(num_repro);
 	wr_u16b(p_ptr->py);
@@ -1333,7 +1333,7 @@ static void wr_dungeon(void)
 	/* Save wilderness data */
 	save_wild_data();
 
-	if (dun_level)
+	if (p_ptr->depth)
 	{
 		/* Save dungeon map */
 		save_map(max_hgt, min_hgt, max_wid, min_wid);
@@ -1344,7 +1344,7 @@ static void wr_dungeon(void)
 		save_map(wild_grid.y_max, wild_grid.y_min,
 		         wild_grid.x_max, wild_grid.x_min);
 
-		change_level(dun_level);
+		change_level(p_ptr->depth);
 		
 		/* Restore bounds */
 		max_hgt = cur_hgt;

@@ -129,15 +129,15 @@ static bool alloc_stairs(int feat, int num, int walls)
 	if (feat == FEAT_LESS)
 	{
 		/* No up stairs in town or in ironman mode */
-		if (ironman_downward || !dun_level) return TRUE;
+		if (ironman_downward || !p_ptr->depth) return TRUE;
 	}
 	else if (feat == FEAT_MORE)
 	{
 		/* No downstairs on quest levels */
-		if ((dun_level > 1) && quest_number(dun_level)) return TRUE;
+		if ((p_ptr->depth > 1) && quest_number(p_ptr->depth)) return TRUE;
 
 		/* No downstairs at the bottom */
-		if (dun_level >= MAX_DEPTH - 1) return TRUE;
+		if (p_ptr->depth >= MAX_DEPTH - 1) return TRUE;
 	}
 
 	/* Place "num" stairs */
@@ -446,7 +446,7 @@ static bool cave_gen(void)
 	}
 
 	/* Possible "destroyed" level */
-	if ((dun_level > 15) && (randint0(DUN_DEST) == 0) && (small_levels))
+	if ((p_ptr->depth > 15) && (randint0(DUN_DEST) == 0) && (small_levels))
 	{
 		destroyed = TRUE;
 
@@ -458,10 +458,10 @@ static bool cave_gen(void)
 	if ((randint0(LAKE_LEVEL) == 0) && !empty_level && !destroyed && terrain_streams)
 	{
 		/* Lake of Water */
-		if (dun_level > 52) laketype = LAKE_WATER;
+		if (p_ptr->depth > 52) laketype = LAKE_WATER;
 
 		/* Lake of Lava */
-		if (dun_level > 90) laketype = LAKE_LAVA;
+		if (p_ptr->depth > 90) laketype = LAKE_LAVA;
 
 		if (laketype != 0)
 		{
@@ -471,8 +471,8 @@ static bool cave_gen(void)
 		}
 	}
 
-	if ((randint0(DUN_CAV1/(dun_level + DUN_CAV2)) == 0) && !empty_level &&
-	    (laketype == 0) && !destroyed && (dun_level >= MIN_CAVERN))
+	if ((randint0(DUN_CAV1/(p_ptr->depth + DUN_CAV2)) == 0) && !empty_level &&
+	    (laketype == 0) && !destroyed && (p_ptr->depth >= MIN_CAVERN))
 	{
 		cavern = TRUE;
 
@@ -485,7 +485,7 @@ static bool cave_gen(void)
 	}
 
 	/* Hack -- No destroyed "quest" levels */
-	if (quest_number(dun_level)) destroyed = FALSE;
+	if (quest_number(p_ptr->depth)) destroyed = FALSE;
 
 	/* Actual maximum number of rooms on this level */
 	dun->row_rooms = (max_hgt - min_hgt) / BLOCK_HGT;
@@ -526,14 +526,14 @@ static bool cave_gen(void)
 		}
 
 		/* Attempt an "unusual" room */
-		if (ironman_rooms || (randint0(DUN_UNUSUAL) < dun_level))
+		if (ironman_rooms || (randint0(DUN_UNUSUAL) < p_ptr->depth))
 		{
 			/* Roll for room type */
 			k = randint0(100);
 
 			/* Attempt a very unusual room */
-			if ((ironman_rooms && (randint0(DUN_UNUSUAL) < dun_level * 2)) ||
-				 (randint0(DUN_UNUSUAL) < dun_level))
+			if ((ironman_rooms && (randint0(DUN_UNUSUAL) < p_ptr->depth * 2)) ||
+				 (randint0(DUN_UNUSUAL) < p_ptr->depth))
 			{
 #ifdef FORCE_V_IDX
 				if (room_build(y, x, 8)) continue;
@@ -606,7 +606,7 @@ static bool cave_gen(void)
 		k = randint1(100);
 
 		/* No caves when a cavern exists: they look bad */
-		if ((k < dun_level) && (!cavern) && (!empty_level) && (laketype == 0))
+		if ((k < p_ptr->depth) && (!cavern) && (!empty_level) && (laketype == 0))
 		{
 			/* Type 9 -- Fractal cave */
 			if (room_build(y, x, 9)) continue;
@@ -619,7 +619,7 @@ static bool cave_gen(void)
 	}
 
 	/* Make a hole in the dungeon roof sometimes at level 1 */
-	if ((dun_level == 1) && terrain_streams)
+	if ((p_ptr->depth == 1) && terrain_streams)
 	{
 		while (randint1(DUN_MOS_DEN) == 1)
 		{
@@ -632,10 +632,10 @@ static bool cave_gen(void)
 	if (destroyed) destroy_level();
 
 	/* Hack -- Add some rivers */
-	if ((randint1(3) == 1) && (randint1(dun_level) > 5) && terrain_streams)
+	if ((randint1(3) == 1) && (randint1(p_ptr->depth) > 5) && terrain_streams)
 	{
 	 	/* Choose water or lava */
-		if (randint1(MAX_DEPTH * 2) - 1 > dun_level)
+		if (randint1(MAX_DEPTH * 2) - 1 > p_ptr->depth)
 		{
 			feat1 = FEAT_DEEP_WATER;
 			feat2 = FEAT_SHAL_WATER;
@@ -724,14 +724,14 @@ static bool cave_gen(void)
 		/* Connect the room to the previous room */
 #if PILLAR_TUNNELS
 
-		if ((randint1(20) > dun_level) && (randint1(100) < 25))
+		if ((randint1(20) > p_ptr->depth) && (randint1(100) < 25))
 		{
 			/* make catacomb-like tunnel */
 			build_tunnel2(dun->cent[i].x, dun->cent[i].y, x, y, 3, 30);
 		}
-		else if (randint1(dun_level) > 50)
+		else if (randint1(p_ptr->depth) > 50)
 #else
-		if (randint1(dun_level) > 50)
+		if (randint1(p_ptr->depth) > 50)
 #endif /* PILLAR_TUNNELS */
 		{
 			/* make cave-like tunnel */
@@ -832,7 +832,7 @@ static bool cave_gen(void)
 		if ((quest[i].status == QUEST_STATUS_TAKEN) &&
 		    ((quest[i].type == QUEST_TYPE_KILL_LEVEL) ||
 		    (quest[i].type == QUEST_TYPE_RANDOM)) &&
-		    (quest[i].level == dun_level) &&
+		    (quest[i].level == p_ptr->depth) &&
 			!(quest[i].flags & QUEST_FLAG_PRESET))
 		{
 			monster_race *r_ptr = &r_info[quest[i].r_idx];
@@ -896,7 +896,7 @@ static bool cave_gen(void)
 
 
 	/* Basic "amount" */
-	k = (dun_level / 3);
+	k = (p_ptr->depth / 3);
 	if (k > 10) k = 10;
 	if (k < 2) k = 2;
 
@@ -946,7 +946,7 @@ static bool cave_gen(void)
 		alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_INVIS, randnor(DUN_AMT_INVIS, 3));
 	}
 
-	if (empty_level && ((randint1(DARK_EMPTY) != 1) || (randint1(100) > dun_level)))
+	if (empty_level && ((randint1(DARK_EMPTY) != 1) || (randint1(100) > p_ptr->depth)))
 	{
 		/* Lite the cave */
 		for (y = min_hgt; y < max_hgt; y++)
@@ -987,7 +987,7 @@ static void quest_gen(void)
 
 	/* Set the quest level */
 	base_level = quest[p_ptr->inside_quest].level;
-	dun_level = base_level;
+	p_ptr->depth = base_level;
 	object_level = base_level;
 	monster_level = base_level;
 
@@ -1018,7 +1018,7 @@ void map_panel_size(void)
 	wid -= COL_MAP + 1;
 
 	/* reset panels */
-	if (dun_level)
+	if (p_ptr->depth)
 	{
 		/* Determine number of panels (dungeon) */
 		max_panel_rows = max_hgt - min_hgt;
@@ -1118,7 +1118,7 @@ static bool level_gen(cptr *why)
 static byte extract_feeling(void)
 {
 	/* Hack -- no feeling in the town */
-	if (!dun_level) return 0;
+	if (!p_ptr->depth) return 0;
 
 	/* Hack -- Have a special feeling sometimes */
 	if (good_item_flag && !preserve_mode) return 1;
@@ -1157,7 +1157,7 @@ void generate_cave(void)
 	dun_theme.tools = 20;
 	
 	/* Build the wilderness */
-	if (!dun_level)
+	if (!p_ptr->depth)
 	{
 		/* Hack XXX XXX */
 		/* Exit, information is already in other data type. */
@@ -1224,7 +1224,7 @@ void generate_cave(void)
 		}
 
 		/* Set the base level */
-		base_level = dun_level;
+		base_level = p_ptr->depth;
 
 		/* Reset the monster generation level */
 		monster_level = base_level;
@@ -1239,7 +1239,7 @@ void generate_cave(void)
 		rating = 0;
 
 #ifdef USE_SCRIPT
-		if (!generate_level_callback(dun_level))
+		if (!generate_level_callback(p_ptr->depth))
 #endif /* USE_SCRIPT */
 		{
 
@@ -1291,10 +1291,10 @@ void generate_cave(void)
 		{
 			/* Require "goodness" */
 			if ((feeling > 9) ||
-			    ((dun_level >= 7) && (feeling > 8)) ||
-			    ((dun_level >= 15) && (feeling > 7)) ||
-			    ((dun_level >= 35) && (feeling > 6)) ||
-			    ((dun_level >= 70) && (feeling > 5)))
+			    ((p_ptr->depth >= 7) && (feeling > 8)) ||
+			    ((p_ptr->depth >= 15) && (feeling > 7)) ||
+			    ((p_ptr->depth >= 35) && (feeling > 6)) ||
+			    ((p_ptr->depth >= 70) && (feeling > 5)))
 			{
 				/* Give message to cheaters */
 				if (cheat_room || cheat_hear ||

@@ -170,7 +170,7 @@ void change_level(int level)
 		/* Access the wilderness */
 		area = access_wild;
 
-		if (dun_level == 0)
+		if (p_ptr->depth == 0)
 		{
 			/* Lighten / darken wilderness */
 			day_night();
@@ -2182,7 +2182,7 @@ void test_mon_wild_integrity(void)
 	monster_type *m_ptr;
 
 	/* Only when in wilderness */
-	if (dun_level) return;
+	if (p_ptr->depth) return;
 
 	/* Check the wilderness */
 	for (i = min_wid; i < max_wid; i++)
@@ -5160,13 +5160,13 @@ static void wild_done(void)
 	wild_grid.y = max_wild + 1;
 
 	/* hack */
-	dun_level = 1;
+	p_ptr->depth = 1;
 
 	/* Change to the wilderness - but do not light anything yet.*/
 	change_level(0);
 
 	/* Change back to inside wilderness */
-	dun_level = 0;
+	p_ptr->depth = 0;
 
 	/* Refresh random number seed */
 	wild_grid.wild_seed = randint0(0x10000000);

@@ -2057,7 +2057,7 @@ bool activate_effect(object_type *o_ptr)
 			case ART_DAWN:
 			{
 				msg_print("You summon the Legion of the Dawn.");
-				(void)summon_specific(-1, py, px, dun_level, SUMMON_DAWN, TRUE, TRUE, TRUE);
+				(void)summon_specific(-1, py, px, p_ptr->depth, SUMMON_DAWN, TRUE, TRUE, TRUE);
 				o_ptr->timeout = 500 + randint1(500);
 				break;
 			}
@@ -2126,10 +2126,10 @@ bool activate_effect(object_type *o_ptr)
 
 			case ART_AVAVIR:
 			{
-				if (dun_level && (p_ptr->max_depth > dun_level))
+				if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth))
 				{
 					if (get_check("Reset recall depth? "))
-					p_ptr->max_depth = dun_level;
+					p_ptr->max_depth = p_ptr->depth;
 				}
 
 				msg_print("Your scythe glows soft white...");
@@ -2590,7 +2590,7 @@ bool activate_effect(object_type *o_ptr)
 		case ACT_SUMMON_PHANTOM:
 		{
 			msg_print("You summon a phantasmal servant.");
-			(void)summon_specific(-1, py, px, dun_level, SUMMON_PHANTOM, TRUE, TRUE, TRUE);
+			(void)summon_specific(-1, py, px, p_ptr->depth, SUMMON_PHANTOM, TRUE, TRUE, TRUE);
 			o_ptr->timeout = 200 + randint1(200);
 			break;
 		}
@@ -2956,10 +2956,10 @@ bool activate_effect(object_type *o_ptr)
 			}
 			else
 			{
-				if (dun_level && (p_ptr->max_depth > dun_level))
+				if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth))
 				{
 					if (get_check("Reset recall depth? "))
-					p_ptr->max_depth = dun_level;
+					p_ptr->max_depth = p_ptr->depth;
 				}
 
 				msg_print("It glows soft white...");

@@ -449,7 +449,7 @@ errr top_twenty(void)
 
 	/* Save the level and such */
 	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
-	sprintf(the_score.cur_dun, "%3d", dun_level);
+	sprintf(the_score.cur_dun, "%3d", p_ptr->depth);
 	sprintf(the_score.max_lev, "%3d", p_ptr->max_lev);
 	sprintf(the_score.max_dun, "%3d", p_ptr->max_depth);
 
@@ -532,7 +532,7 @@ errr predict_score(void)
 
 	/* Save the level and such */
 	sprintf(the_score.cur_lev, "%3d", p_ptr->lev);
-	sprintf(the_score.cur_dun, "%3d", dun_level);
+	sprintf(the_score.cur_dun, "%3d", p_ptr->depth);
 	sprintf(the_score.max_lev, "%3d", p_ptr->max_lev);
 	sprintf(the_score.max_dun, "%3d", p_ptr->max_depth);
 
@@ -758,7 +758,7 @@ void race_legends(void)
 void kingly(void)
 {
 	/* Hack -- retire in town */
-	dun_level = 0;
+	p_ptr->depth = 0;
 
 	/* Fake death */
 	(void)strcpy(p_ptr->died_from, "Ripe Old Age");

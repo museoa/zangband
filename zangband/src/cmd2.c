@@ -57,7 +57,7 @@ void do_cmd_go_up(void)
 		/* Leaving a quest */
 		if (!p_ptr->inside_quest)
 		{
-			dun_level = 0;
+			p_ptr->depth = 0;
 		}
 
 		/* Leaving */
@@ -75,7 +75,7 @@ void do_cmd_go_up(void)
 
 #endif /* 0 */
 	{
-		if (!dun_level)
+		if (!p_ptr->depth)
 		{
 			go_up = TRUE;
 		}
@@ -114,7 +114,7 @@ void do_cmd_go_up(void)
 
 			if (p_ptr->inside_quest)
 			{
-				dun_level = 1;
+				p_ptr->depth = 1;
 				leaving_quest = p_ptr->inside_quest;
 
 				/* Leaving an 'only once' quest marks it as failed */
@@ -133,10 +133,10 @@ void do_cmd_go_up(void)
 			p_ptr->create_down_stair = TRUE;
 
 			/* New depth */
-			dun_level--;
+			p_ptr->depth--;
 
 			/* Leaving the dungeon to town */
-			if (!dun_level && p_ptr->town_num && !leaving_quest)
+			if (!p_ptr->depth && p_ptr->town_num && !leaving_quest)
 				p_ptr->leaving_dungeon = TRUE;
 
 			/* Leaving */
@@ -193,7 +193,7 @@ void do_cmd_go_down(void)
 		/* Leaving a quest */
 		if (!p_ptr->inside_quest)
 		{
-			dun_level = 0;
+			p_ptr->depth = 0;
 		}
 
 		/* Leaving */
@@ -215,7 +215,7 @@ void do_cmd_go_down(void)
 	}
 	else
 	{
-		if (!dun_level)
+		if (!p_ptr->depth)
 		{
 			go_down = TRUE;
 
@@ -246,7 +246,7 @@ void do_cmd_go_down(void)
 			if (autosave_l) do_cmd_save_game(TRUE);
 
 			/* Go down */
-			dun_level++;
+			p_ptr->depth++;
 
 			/* Leaving */
 			p_ptr->leaving = TRUE;
@@ -594,10 +594,10 @@ static void chest_trap(int y, int x, s16b o_idx)
 
 		for (i = 0; i < num; i++)
 		{
-			if (randint1(100) < dun_level)
+			if (randint1(100) < p_ptr->depth)
 				(void)activate_hi_summon();
 			else
-				(void)summon_specific(0, y, x, dun_level, 0, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, y, x, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 		}
 	}
 
@@ -910,7 +910,7 @@ bool do_cmd_open_aux(int y, int x)
 			sound(SOUND_OPENDOOR);
 
 			/* Gain experience, but not for the locked doors in town */
-			if (dun_level) gain_exp(1);
+			if (p_ptr->depth) gain_exp(1);
 		}
 
 		/* Failure */
@@ -2331,7 +2331,7 @@ void do_cmd_stay(int pickup)
 		}
 
 		p_ptr->inside_quest = area(py, px)->special;
-		dun_level = 0;
+		p_ptr->depth = 0;
 		p_ptr->oldpx = 0;
 		p_ptr->oldpy = 0;
 		p_ptr->leaving = TRUE;

@@ -329,7 +329,7 @@ void monster_death(int m_idx)
 				continue;
 
 			/* Quest is not on this level */
-			if ((quest[i].level != dun_level) &&
+			if ((quest[i].level != p_ptr->depth) &&
 				 (quest[i].type != QUEST_TYPE_KILL_ANY_LEVEL))
 				continue;
 
@@ -852,7 +852,7 @@ void monster_death(int m_idx)
 	if (cloned) number = 0; /* Clones drop no stuff */
 
 	/* Average dungeon and monster levels */
-	object_level = (dun_level + r_ptr->level) / 2;
+	object_level = (p_ptr->depth + r_ptr->level) / 2;
 
 	/* Drop some objects */
 	for (j = 0; j < number; j++)
@@ -1083,9 +1083,9 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			}
 		}
 
-		if (r_ptr->level > dun_level)
+		if (r_ptr->level > p_ptr->depth)
 		{
-			if (randint1(10) <= (dun_level - r_ptr->level))
+			if (randint1(10) <= (p_ptr->depth - r_ptr->level))
 				chg_virtue(V_VALOUR, 1);
 		}
 		if (r_ptr->level >= 2 * (p_ptr->lev))
@@ -1112,7 +1112,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		}
 
 		if ((r_ptr->flags1 & RF3_GOOD) &&
-			((r_ptr->level) / 10 + (3 * dun_level) >= randint1(100)))
+			((r_ptr->level) / 10 + (3 * p_ptr->depth) >= randint1(100)))
 
 			chg_virtue(V_UNLIFE, 1);
 
@@ -1121,7 +1121,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		{
 			if (r_ptr->flags1 & RF1_UNIQUE)
 				chg_virtue(V_FAITH, -2);
-			else if ((r_ptr->level) / 10 + (3 * dun_level) >= randint1(100))
+			else if ((r_ptr->level) / 10 + (3 * p_ptr->depth) >= randint1(100))
 				chg_virtue(V_FAITH, -1);
 		}
 
@@ -1131,7 +1131,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		{
 			if (r_ptr->flags1 & RF1_UNIQUE)
 				chg_virtue(V_FAITH, 2);
-			else if ((r_ptr->level) / 10 + (3 * dun_level) >= randint1(100))
+			else if ((r_ptr->level) / 10 + (3 * p_ptr->depth) >= randint1(100))
 				chg_virtue(V_FAITH, 1);
 		}
 
@@ -1144,7 +1144,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			{
 				chg_virtue(V_HONOUR, 10);
 			}
-			else if ((r_ptr->level) / 10 + (2 * dun_level) >= randint1(100))
+			else if ((r_ptr->level) / 10 + (2 * p_ptr->depth) >= randint1(100))
 			{
 				chg_virtue(V_HONOUR, 1);
 			}
@@ -1166,7 +1166,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		{
 			if (r_ptr->flags1 & RF1_UNIQUE)
 				chg_virtue(V_JUSTICE, 3);
-			else if (1 + (r_ptr->level / 10 + (2 * dun_level)) >= randint1(100))
+			else if (1 + (r_ptr->level / 10 + (2 * p_ptr->depth)) >= randint1(100))
 				chg_virtue(V_JUSTICE, 1);
 		}
 		else if (innocent)
@@ -1399,7 +1399,7 @@ bool change_panel(int dy, int dx)
 	if (x > max_wid - wid) x = max_wid - wid;
 	if (x < min_wid) x = min_wid;
 	
-	if (vanilla_town && (!dun_level))
+	if (vanilla_town && (!p_ptr->depth))
 	{
 		x = max_wild * WILD_BLOCK_SIZE / 2 - wid / 2 - 15;
 		y = max_wild * WILD_BLOCK_SIZE / 2 - hgt / 2 - 5;
@@ -1459,7 +1459,7 @@ void verify_panel(void)
 
 
 	/* Hack - in vanilla town mode - do not move the screen */
-	if (vanilla_town && (!dun_level))
+	if (vanilla_town && (!p_ptr->depth))
 	{
 		(void)change_panel(0, 0);
 		return;
@@ -3433,8 +3433,8 @@ void gain_level_reward(int chosen_reward)
 
 			object_prep(q_ptr, lookup_kind(tval, sval));
 			
-			q_ptr->to_h = 3 + randint1(dun_level) % 10;
-			q_ptr->to_d = 3 + randint1(dun_level) % 10;
+			q_ptr->to_h = 3 + randint1(p_ptr->depth) % 10;
+			q_ptr->to_d = 3 + randint1(p_ptr->depth) % 10;
 			
 			(void) random_resistance(q_ptr, randint1(34) + 4, 0);
 			
@@ -3473,7 +3473,7 @@ void gain_level_reward(int chosen_reward)
 			msg_print("'My pets, destroy the arrogant mortal!'");
 			for (i = 0; i < randint1(5) + 1; i++)
 			{
-				(void)summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
+				(void)summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 			}
 			break;
 		case REW_H_SUMMON:
@@ -3641,17 +3641,17 @@ void gain_level_reward(int chosen_reward)
 			break;
 		case REW_SER_DEMO:
 			msg_format("%s rewards you with a demonic servant!", chaos_patrons[p_ptr->chaos_patron]);
-			if (!summon_specific(-1, py, px, dun_level, SUMMON_DEMON, FALSE, TRUE, TRUE))
+			if (!summon_specific(-1, py, px, p_ptr->depth, SUMMON_DEMON, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		case REW_SER_MONS:
 			msg_format("%s rewards you with a servant!", chaos_patrons[p_ptr->chaos_patron]);
-			if (!summon_specific(-1, py, px, dun_level, SUMMON_NO_UNIQUES, FALSE, TRUE, TRUE))
+			if (!summon_specific(-1, py, px, p_ptr->depth, SUMMON_NO_UNIQUES, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		case REW_SER_UNDE:
 			msg_format("%s rewards you with an undead servant!", chaos_patrons[p_ptr->chaos_patron]);
-			if (!summon_specific(-1, py, px, dun_level, SUMMON_UNDEAD, FALSE, TRUE, TRUE))
+			if (!summon_specific(-1, py, px, p_ptr->depth, SUMMON_UNDEAD, FALSE, TRUE, TRUE))
 				msg_print("Nobody ever turns up...");
 			break;
 		default:

@@ -591,7 +591,7 @@ s16b get_mon_num(int level)
 		}
 
 		/* Depth Monsters never appear out of depth */
-		if ((r_ptr->flags1 & (RF1_FORCE_DEPTH)) && (r_ptr->level > dun_level))
+		if ((r_ptr->flags1 & (RF1_FORCE_DEPTH)) && (r_ptr->level > p_ptr->depth))
 		{
 			continue;
 		}
@@ -1528,7 +1528,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 	}
 
 	/* Depth monsters may NOT be created out of depth, unless in Nightmare mode */
-	if ((r_ptr->flags1 & (RF1_FORCE_DEPTH)) && (dun_level < r_ptr->level) &&
+	if ((r_ptr->flags1 & (RF1_FORCE_DEPTH)) && (p_ptr->depth < r_ptr->level) &&
 		 (!ironman_nightmare || (r_ptr->flags1 & (RF1_QUESTOR))))
 	{
 		/* Cannot create */
@@ -1560,7 +1560,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 
 
 	/* Powerful monster */
-	if (r_ptr->level > dun_level)
+	if (r_ptr->level > p_ptr->depth)
 	{
 		/* Unique monsters */
 		if (r_ptr->flags1 & (RF1_UNIQUE))
@@ -1569,7 +1569,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 			if (cheat_hear) msg_format("Deep Unique (%s).", name);
 
 			/* Boost rating by twice delta-depth */
-			rating += (r_ptr->level - dun_level) * 2;
+			rating += (r_ptr->level - p_ptr->depth) * 2;
 		}
 
 		/* Normal monsters */
@@ -1579,7 +1579,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 			if (cheat_hear) msg_format("Deep Monster (%s).", name);
 
 			/* Boost rating by delta-depth */
-			rating += (r_ptr->level - dun_level);
+			rating += (r_ptr->level - p_ptr->depth);
 		}
 	}
 
@@ -1756,16 +1756,16 @@ static bool place_monster_group(int y, int x, int r_idx, bool slp, bool friendly
 	total = randint1(13);
 
 	/* Hard monsters, small groups */
-	if (r_ptr->level > dun_level)
+	if (r_ptr->level > p_ptr->depth)
 	{
-		extra = r_ptr->level - dun_level;
+		extra = r_ptr->level - p_ptr->depth;
 		extra = 0 - randint1(extra);
 	}
 
 	/* Easy monsters, large groups */
-	else if (r_ptr->level < dun_level)
+	else if (r_ptr->level < p_ptr->depth)
 	{
-		extra = dun_level - r_ptr->level;
+		extra = p_ptr->depth - r_ptr->level;
 		extra = randint1(extra);
 	}
 
@@ -2045,7 +2045,7 @@ bool alloc_horde(int y, int x)
 	{
 		scatter(&cy, &cx, y, x, 5, 0);
 
-		(void)summon_specific(m_idx, cy, cx, dun_level + 5, SUMMON_KIN,
+		(void)summon_specific(m_idx, cy, cx, p_ptr->depth + 5, SUMMON_KIN,
 		                      TRUE, FALSE, FALSE);
 
 		y = cy;
@@ -2104,7 +2104,7 @@ bool alloc_monster(int dis, bool slp)
 
 
 #ifdef MONSTER_HORDES
-	if (randint1(5000) <= dun_level)
+	if (randint1(5000) <= p_ptr->depth)
 	{
 		if (alloc_horde(y, x))
 		{
@@ -2517,7 +2517,7 @@ bool summon_specific(int who, int y1, int x1, int lev, int type,
 	get_mon_num_prep(summon_specific_okay, get_monster_hook2(y, x));
 
 	/* Pick a monster, using the level calculation */
-	r_idx = get_mon_num((dun_level + lev) / 2 + 5);
+	r_idx = get_mon_num((p_ptr->depth + lev) / 2 + 5);
 
 	/* Handle failure */
 	if (!r_idx) return (FALSE);
@@ -3060,7 +3060,7 @@ bool player_place(int y, int x)
 	p_ptr->py = y;
 	p_ptr->px = x;
 
-	if (!dun_level)
+	if (!p_ptr->depth)
 	{
 		/* Scroll wilderness */
 		p_ptr->wilderness_x = px;

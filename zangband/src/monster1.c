@@ -1664,7 +1664,7 @@ bool monster_swamp_wild(int r_idx)
 
 monster_hook_type get_monster_hook(void)
 {
-	if (dun_level)
+	if (p_ptr->depth)
 	{
 		/* In dungeon */
 		return &(monster_dungeon);
@@ -1680,7 +1680,7 @@ monster_hook_type get_monster_hook2(int y, int x)
 	wild_done_type *w_ptr;
 
 	/* In dungeon */
-	if (dun_level)
+	if (p_ptr->depth)
 	{
 		/* Set the monster list */
 		switch (area(y, x)->feat)

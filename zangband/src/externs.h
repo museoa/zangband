@@ -111,7 +111,6 @@ extern s16b min_hgt;
 extern s16b max_hgt;
 extern s16b min_wid;
 extern s16b max_wid;
-extern s16b dun_level;
 extern obj_theme dun_theme;
 extern s16b num_repro;
 extern bool mon_fight;

@@ -1902,10 +1902,10 @@ void place_trap(int y, int x)
 		if (!n_ptr->t_idx) break;
 
 		/* Ignore excessive depth */
-		if (n_ptr->level > dun_level) continue;
+		if (n_ptr->level > p_ptr->depth) continue;
 
 		/* Count this possibility */
-		total += MAX_DEPTH / (dun_level - n_ptr->level + 15);
+		total += MAX_DEPTH / (p_ptr->depth - n_ptr->level + 15);
 	}
 
 	/* Pick a trap */
@@ -1928,10 +1928,10 @@ void place_trap(int y, int x)
 			}
 
 			/* Ignore excessive depth */
-			if (n_ptr->level > dun_level) continue;
+			if (n_ptr->level > p_ptr->depth) continue;
 
 			/* Count this possibility */
-			i += MAX_DEPTH / (dun_level - n_ptr->level + 15);
+			i += MAX_DEPTH / (p_ptr->depth - n_ptr->level + 15);
 
 			/* Found the type */
 			if (tmp < i) break;
@@ -1943,13 +1943,13 @@ void place_trap(int y, int x)
 		if (t_idx != FT_TRAP_DOOR) break;
 
 		/* Hack -- no trap doors on special levels */
-		if (p_ptr->inside_arena || quest_number(dun_level)) continue;
+		if (p_ptr->inside_arena || quest_number(p_ptr->depth)) continue;
 
 		/* Hack -- no trap doors on the deepest level */
-		if (dun_level >= MAX_DEPTH-1) continue;
+		if (p_ptr->depth >= MAX_DEPTH-1) continue;
 		
 		/* Probably should prevent trap doors in the wilderness */
-		if (!dun_level) continue;
+		if (!p_ptr->depth) continue;
 
 		break;
 	}
@@ -2077,7 +2077,7 @@ void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
 			if (autosave_l && (p_ptr->chp >= 0))
 				do_cmd_save_game(TRUE);
 
-			dun_level++;
+			p_ptr->depth++;
 
 			/* Leaving */
 			p_ptr->leaving = TRUE;
@@ -2214,10 +2214,10 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 	msg_print("There is a flash of shimmering light!");
 	
 	/* Curse the equipment */
-	curse_equipment(dun_level, dun_level / 10);	
+	curse_equipment(p_ptr->depth, p_ptr->depth / 10);	
 	
 	/* TY Curse */
-	if (dun_level > randint1(100)) /* No nasty effect for low levels */
+	if (p_ptr->depth > randint1(100)) /* No nasty effect for low levels */
 	{
 		bool stop_ty = FALSE;
 		int count = 0;
@@ -2230,13 +2230,13 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 	}
 	
 	/* Blast weapon */
-	else if (dun_level > randint1(500)) /* No nasty effect for low levels */
+	else if (p_ptr->depth > randint1(500)) /* No nasty effect for low levels */
 	{
 		(void) curse_weapon();
 	}
 	
 	/* Blast armour */
-	else if (dun_level > randint1(500)) /* No nasty effect for low levels */
+	else if (p_ptr->depth > randint1(500)) /* No nasty effect for low levels */
 	{
 		(void) curse_armor();
 	}
@@ -2861,7 +2861,7 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 	msg_print("Zap!");
 	
 	/* Summon monsters */
-	summon_specific(0, py, px, dun_level, 0, TRUE, FALSE, FALSE);
+	summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 	
 	/* Delete the field */
 	delete_field_ptr(field_ptr);

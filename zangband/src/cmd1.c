@@ -2205,7 +2205,7 @@ void move_player(int dir, int do_pickup)
 	x = px + ddx[dir];
 
 	/* Do not exit the wilderness-area */
-	if (!dun_level)
+	if (!p_ptr->depth)
 	{
 		if (!in_bounds2(y, x))
 		{
@@ -2507,7 +2507,7 @@ void move_player(int dir, int do_pickup)
 		p_ptr->py = y;
 		p_ptr->px = x;
 
-		if (!dun_level)
+		if (!p_ptr->depth)
 		{
 			/* Scroll wilderness */
 			p_ptr->wilderness_x = px;
@@ -2629,7 +2629,7 @@ void move_player(int dir, int do_pickup)
 			}
 
 			p_ptr->inside_quest = area(y,x)->special;
-			dun_level = 0;
+			p_ptr->depth = 0;
 			p_ptr->oldpx = 0;
 			p_ptr->oldpy = 0;
 			p_ptr->leaving = TRUE;
@@ -2883,7 +2883,7 @@ static void run_init(int dir)
 	int             i, shortleft, shortright;
 
 
-	if (!dun_level)
+	if (!p_ptr->depth)
 	{
 		/* If in the wilderness - run max 32 squares at a time */
 		p_ptr->running = 32;

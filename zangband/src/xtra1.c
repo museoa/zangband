@@ -3,11 +3,11 @@
 /* Purpose: misc code */
 
 /*
- * Copyright (c) 1989 James E. Wilson, Robert A. Koeneke
+ * Copyright (c) 1997 Ben Harrison, James E. Wilson, Robert A. Koeneke
  *
- * This software may be copied and distributed for educational, research, and
- * not for profit purposes provided that this copyright and statement are
- * included in all such copies.
+ * This software may be copied and distributed for educational, research,
+ * and not for profit purposes provided that this copyright and statement
+ * are included in all such copies.  Other copyrights may also apply.
  */
 
 #include "angband.h"
@@ -604,7 +604,7 @@ static void prt_depth(void)
 	{
 		strcpy(depths, "Quest");
 	}
-	else if (!dun_level)
+	else if (!p_ptr->depth)
 	{
 		if (p_ptr->town_num)
 		{
@@ -616,11 +616,11 @@ static void prt_depth(void)
 	}
 	else if (depth_in_feet)
 	{
-		(void)sprintf(depths, "%d ft", dun_level * 50);
+		(void)sprintf(depths, "%d ft", p_ptr->depth * 50);
 	}
 	else
 	{
-		(void)sprintf(depths, "Lev %d", dun_level);
+		(void)sprintf(depths, "Lev %d", p_ptr->depth);
 	}
 
 	/* Right-Adjust the "depth", and clear old values */

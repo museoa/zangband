@@ -1817,7 +1817,7 @@ static void load_wild_data(void)
 	}
 	
 	/* If not in dungeon - reset the bounds */
-	if (!dun_level)
+	if (!p_ptr->depth)
 	{
 		min_hgt = wild_grid.y_min;
 		max_hgt = wild_grid.y_max;
@@ -1856,10 +1856,10 @@ static errr rd_dungeon(void)
 	/*** Basic info ***/
 
 	/* Header info */
-	rd_s16b(&dun_level);
+	rd_s16b(&p_ptr->depth);
 
 	/* Set the base level for old versions */
-	base_level = dun_level;
+	base_level = p_ptr->depth;
 
 	/* Read the base level */
 	if (!z_older_than(2, 2, 2))
@@ -1894,8 +1894,8 @@ static errr rd_dungeon(void)
 	if (sf_version < 7)
 	{
 		/* Make the wilderness */
-		dun_level_backup = dun_level;
-		dun_level = 0;
+		dun_level_backup = p_ptr->depth;
+		p_ptr->depth = 0;
 
 		/* Save player location */
 		px_back = px;
@@ -1910,10 +1910,10 @@ static errr rd_dungeon(void)
 		/* Hack - do not load data into wilderness */
 		change_level(1);
 
-		dun_level = dun_level_backup;
+		p_ptr->depth = dun_level_backup;
 
 		/* if in the dungeon - restore the player location */
-		if (dun_level)
+		if (p_ptr->depth)
 		{
 			px = px_back;
 			py = py_back;
@@ -1927,9 +1927,9 @@ static errr rd_dungeon(void)
 		/* Load wilderness data */
 		load_wild_data();
 
-		if (dun_level)
+		if (p_ptr->depth)
 		{
-			change_level(dun_level);
+			change_level(p_ptr->depth);
 
 			/* Load dungeon map */
 			load_map(cur_hgt, 0, cur_wid, 0);
@@ -1941,7 +1941,7 @@ static errr rd_dungeon(void)
 			load_map(wild_grid.y_max, wild_grid.y_min,
 			         wild_grid.x_max, wild_grid.x_min);
 
-			change_level(dun_level);
+			change_level(p_ptr->depth);
 			
 			/* Restore the bounds */
 			max_hgt = cur_hgt;
@@ -1952,7 +1952,7 @@ static errr rd_dungeon(void)
 		else
 		{
 			/* Hack - move to level without creating it */
-			dun_level = 1;
+			p_ptr->depth = 1;
 			change_level(0);
 
 			/* Load the wilderness */
@@ -1960,7 +1960,7 @@ static errr rd_dungeon(void)
 			         wild_grid.x_max, wild_grid.x_min);
 
 			/* Reset level */
-			dun_level = 0;
+			p_ptr->depth = 0;
 		}
 	}
 
@@ -2151,7 +2151,7 @@ static errr rd_dungeon(void)
 	if (sf_version < 7)
 	{
 		/* In the wilderness - old monsters in 'wrong' positions */
-		if (!dun_level)
+		if (!p_ptr->depth)
 		{
 			/* Clear old monsters / objects */
 			wipe_o_list();
@@ -2162,9 +2162,9 @@ static errr rd_dungeon(void)
 		}
 		
 		/* enter the level */
-		change_level(dun_level);
+		change_level(p_ptr->depth);
 		
-		if (dun_level)
+		if (p_ptr->depth)
 		{
 			/* Restore the bounds */
 			max_hgt = cur_hgt;

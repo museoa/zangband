@@ -74,7 +74,7 @@ void place_random_stairs(int y, int x)
 	if (!cave_clean_grid(c_ptr)) return;
 
 	/* Town */
-	if (!dun_level)
+	if (!p_ptr->depth)
 		up_stairs = FALSE;
 
 	/* Ironman */
@@ -82,11 +82,11 @@ void place_random_stairs(int y, int x)
 		up_stairs = FALSE;
 
 	/* Bottom */
-	if (dun_level >= MAX_DEPTH - 1)
+	if (p_ptr->depth >= MAX_DEPTH - 1)
 		down_stairs = FALSE;
 
 	/* Quest-level */
-	if (quest_number(dun_level) && (dun_level > 1))
+	if (quest_number(p_ptr->depth) && (p_ptr->depth > 1))
 		down_stairs = FALSE;
 
 	/* We can't place both */
@@ -189,14 +189,14 @@ void place_closed_door(int y, int x)
 	else if (tmp < 399)
 	{
 		/* Create locked door */
-		make_lockjam_door(y, x, randint1(10) + dun_level / 10, FALSE);
+		make_lockjam_door(y, x, randint1(10) + p_ptr->depth / 10, FALSE);
 	}
 
 	/* Stuck doors (1/400) */
 	else
 	{
 		/* Create jammed door */
-		make_lockjam_door(y, x, randint1(5) + dun_level / 10, TRUE);
+		make_lockjam_door(y, x, randint1(5) + p_ptr->depth / 10, TRUE);
 	}
 }
 
