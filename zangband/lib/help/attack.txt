@@ -423,9 +423,8 @@ undead creatures) and Scythes of Slicing (which may score vorpal hits).
 Note on Vorpal Weapons: A weapon with the vorpal flag will have a
 1-in-6 chance of doing additional damage each time it strikes. If it
 passes the roll it has a chance of doing it again. This continues until
-a roll is failed. The calculations are nasty but the net effect is a
-22% increase in damage (from the base damage of the weapon only and not
-on the slays, +to-dam, etc.)
+a roll is failed. The calculations are nasty but the net effect is an
+average 22% increase in damage output.
 
 
 ***** <MagicalAids>
@@ -694,7 +693,7 @@ monsters.
 Original   : (??) and Leon Marrick
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: January 6, 2000
+Last update: January 13, 2000
 
 ***** Begin Hyperlinks
 ***** [1] commdesc.txt#ThrowFire

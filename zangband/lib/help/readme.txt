@@ -7,7 +7,7 @@ documentation package produced by the Zangband DevTeam.
 --- Documentation Packages ---
 
 There are currently two documentation packages planned. The basic
-package will include non-spolier information necessary for a new player
+package will include non-spoiler information necessary for a new player
 to learn all he needs to know about playing Zangband and will be
 included in all official Zangband source and binary releases. The
 extended package will included additional spoiler files and will be
@@ -30,7 +30,7 @@ nice features.
 --- Reporting Errors / Suggestions for Improvement ---
 
 While every effort will be taken to ensure that the documentation
-packages are accurate and up to date, it is innevitable that some
+packages are accurate and up to date, it is inevitable that some
 errors will be made. If you find an error or have a suggestion to
 improve documentation, please post your report or idea to the Zangband
 Development list by mailing to zangband@onelist.com. Alternatively, you
@@ -108,5 +108,5 @@ filename of the current file in the link).
 
 -- 
 Original    : Zangband DevTeam
-Last update : January 11, 1999
+Last update : January 13, 2000
 

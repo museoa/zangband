@@ -624,7 +624,7 @@ Allow player to avoid death    [cheat_live]
 === Startup Options ===
 
 While cheating makes the game easier, the following options can make
-ZAngband harder. So if you think the game is too easy, or if you want
+Zangband harder. So if you think the game is too easy, or if you want
 to impress your friends, then switch on the following options. The
 startup-options can only be accessed while creating a new character
 (press '=' while creating the character). There is no way to turn them
@@ -632,8 +632,8 @@ off after the creation is finished!
 
 Use 'vanilla' town without quests and wilderness   [vanilla_town]
     Uses the basic town known from the standard Angband and older
-    versions of ZAngband. This town is only one screen in size and
-    contains only the 8 ZAngband stores, your home, and the stairs to
+    versions of Zangband. This town is only one screen in size and
+    contains only the 8 Zangband stores, your home, and the stairs to
     the dungeon. If you use the 'vanilla' town, then there is no
     wilderness, no special buildings and no set quests (but you can
     still use the random quests). This also speeds up the game on
@@ -656,8 +656,8 @@ Always create unusually small dungeon levels   [ironman_small_levels]
 
 Don't allow climbing upwards/recalling    [ironman_downward]
     You are not allowed to climb upwards, or recall to town. All stairs
-    are downstairs and everytime you teleport level, you'll teleport to
-    a deeper level.  This option may be dangerous in combination with
+    are downstairs and every time you teleport level, you'll teleport
+    to a deeper level. This option may be dangerous in combination with
     the 'small_levels' options, since the creation of quest-monsters
     may fail on very cramped levels, trapping you on the level with no
     stairs up or down.
@@ -666,7 +666,7 @@ Permanently enable the autoscummer   [ironman_autoscum]
     This option switches the "autoscummer" permanently on, so that only
     "good" levels are created.  This can mean, that there are good
     items on this level, or that the level is protected by especially
-    powerful monsters. In ZAngband it often is the later, so use this
+    powerful monsters. In Zangband it often is the later, so use this
     option with care.
 
 Quest monsters get reinforcements   [ironman_hard_quests]
@@ -696,4 +696,4 @@ Original   : Ben Harrison
 Updated    : Zangband 2.1.* by Topi Ylinen
 Updated    : Zangband 2.2.0 through 2.2.6c by Robert Ruehlmann
 Updated    : Zangband DevTeam
-Last update: December 12, 1999
+Last update: January 13, 2000

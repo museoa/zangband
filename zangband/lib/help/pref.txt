@@ -135,7 +135,7 @@ various things. See "command.txt" for the full set of underlying
 commands. Some uses for keymaps include the ability to "disable" a
 command by mapping it to "\x00".
 
-Keymaps can be specified in user pref files as line of the form
+Keymaps can be specified in user pref files as lines of the form
 "M:<T> <key> <str>", where <T> is the keyset (0 for original and 1 for
 roguelike), <key> is the encoded trigger key, and <str> is the encoded
 keymap action.
@@ -179,7 +179,7 @@ change the actual RGB values used to represent each of the 16 colors
 used by Zangband, and perhaps even allow you to define new colors which
 are not currently used by Zangband.
 
-Colors can be specified in user pref files as a line of the form
+Colors can be specified in user pref files as lines of the form
 "V:<N>:<V>:<R>:<G>:<B>".
 
 
@@ -197,4 +197,4 @@ Updated    : (2.7.6) by Russ Allbery (rra@cs.stanford.edu)
 Updated    : (2.7.9) by Ben Harrison (benh@phial.com)
 Updated    : Zangband 2.2.0 through 2.2.6c by Robert Ruehlmann
 Updated    : Zangband DevTeam
-Last update: December 12th, 1999
+Last update: January 13, 2000

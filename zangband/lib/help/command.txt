@@ -4,7 +4,7 @@
 Zangband commands are entered as an "underlying command" (a single key)
 plus a variety of optional or required arguments. You may choose how
 the "keyboard keys" are mapped to the "underlying commands" by choosing
-one of two standard "keysets", the "original" keyset or the "roguelike"
+one of two standard "keynotes", the "original" keyset or the "roguelike"
 keyset.
 
 The original keyset is very similar to the "underlying" command set,
@@ -351,4 +351,4 @@ Updated    : (2.7.6) by Russ Allbery (rra@cs.stanford.edu)
 Updated    : (2.7.9) by Ben Harrison (benh@phial.com)
 Updated    : Zangband 2.2.0 through 2.2.6c by Robert Ruehlmann
 Updated    : Zangband DevTeam
-Last update: December 12, 1999
+Last update: January 13, 2000

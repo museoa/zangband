@@ -23,7 +23,7 @@ follows:
 Each character has six primary statistics or 'stats'. These are
 strength, intelligence, wisdom, dexterity, constitution and charisma,
 which modify the abilities of the character in a variety of ways. For
-example, strength affects your carrying capacity, the ammount of damage
+example, strength affects your carrying capacity, the amount of damage
 you to a monster when you hit it and the number of blows per round you
 get with a weapon. A more complete discussion of the primary statistics
 is contained later in this document (see below [2]).
@@ -110,7 +110,7 @@ activations.
 ***** <TheRaces>
 === Races ===
 
-There are thirty different races that you can choose from in ZAngband.
+There are thirty different races that you can choose from in Zangband.
 Each race has various strengths and weaknesses and its own adjustments
 to a character's stats and abilities. Many races also have intrinsic
 abilities and powers.
@@ -438,7 +438,7 @@ Warrior
     but bad at most other skills. Warriors cannot learn magic and gain
     experience for destroying high level spellbooks.
 
-    As a warrior's experience increases, he becomes more profficient
+    As a warrior's experience increases, he becomes more proficient
     with his weapons gaining an additional attack per round with his
     missile weapon. As his skill improves, a warrior will become more
     confident in his ability to defeat his opponents and eventually
@@ -452,9 +452,9 @@ Mage
     easily than anyone else. A mage is also better able to resist the
     effects of spells cast at him by his enemies.
 
-    A mage's prime prime statistic is Intelligence as this determines
-    his spell casting ability. Good Wisdom and Dexterity also help.
-    There is no rule that says a mage cannot become a good fighter, but
+    A mage's prime statistic is Intelligence as this determines his
+    spell casting ability. Good Wisdom and Dexterity also help. There
+    is no rule that says a mage cannot become a good fighter, but
     spells are the mage's true strength. With two notable exceptions,
     mages should avoid wearing armor on their hands as this can
     restrict their spell casting ability. 
@@ -473,13 +473,13 @@ Priest
     this determine his success at praying to his deity. Since Priests
     receive new prayers as gifts from their patron deity, they cannot
     choose which ones they will learn. Priests are familiar with
-    magical devices which they believe act as focii for divine
+    magical devices which they believe act as foci for divine
     intervention in the natural order of things, but are not as good as
     a mage in their use.
 
     Priests are good at resisting spells cast at them and make decent
     fighters but prefer blunt weapons over edged ones. A priest
-    wielding an edged weapon will be so uncumfortable with it that his
+    wielding an edged weapon will be so uncomfortable with it that his
     fighting ability will be affected unless it has first been blessed
     by the Gods. High level priests who practice Life magic will learn
     to invoke the power of their patron deity to bless such weapons.
@@ -508,16 +508,16 @@ Rogue
     Intelligence and Dexterity but Strength and Constitution are
     important too.
 
-    There are several subtypes of Rogues in ZAngband and the exact type
+    There are several subtypes of Rogues in Zangband and the exact type
     is determined by the realm of magic chosen. The common Thief, will
     probably be content with Arcane magic and its wide applicability.
-    The Burglar, on the other hand, is more intersted in the Sorcery
+    The Burglar, on the other hand, is more interested in the Sorcery
     spells, which allow him or her to do the job fast and efficiently.
     Assassins' partiality for Death magic is well known, and they are
     feared for it. Finally, there is the Card Shark, who will opt for
     Trump magic, and shuffles the decks with amazing proficiency.
 
-    As a rogue increases in experience, his proficency with the sling
+    As a rogue increases in experience, his proficiency with the sling
     improves and he will ultimately gain two additional shots per round
     with his favorite missile launcher.
 
@@ -546,7 +546,7 @@ Ranger
     highest level spells.
 
 Paladin
-    A Paladin is a combaination of a warrior and a priest. Paladins are
+    A Paladin is a combination of a warrior and a priest. Paladins are
     very good fighters, second only to the warrior class, but not very
     good at missile weapons. A paladin lacks much in the way of
     abilities. He is poor at stealth, perception, searching, and
@@ -606,20 +606,20 @@ Chaos-Warrior
     and chance.
 
     Chaos Warriors are, as one might expect, trained in Chaos magic.
-    They are not interested in anyother form of magic. They can learn
+    They are not interested in any other form of magic. They can learn
     every Chaos spell.
 
     As a chaos-warrior gains in experience, he becomes more confident
     of his ability to defeat his enemies and will learn to resist fear
     at higher levels. In addition, as a result of their prolonged
-    service to the Demon Lords of Chaos, a chaos-warror will eventually
+    service to the Demon Lords of Chaos, a chaos-warrior will eventually
     become resistant to the effects of chaos.
 
 Monk
     The Monk character class is very different from all other classes.
-    Although they can use weapons and armour just like any other class,
+    Although they can use weapons and armor just like any other class,
     their training in martial arts makes them much more powerful with
-    no armour or weapons. To gain the resistances necessary for
+    no armor or weapons. To gain the resistances necessary for
     survival at higher levels a monk may need to wear some kind of
     armor, but if the armor he wears is too heavy, it will severely
     disturb his martial arts maneuvers. 
@@ -633,13 +633,13 @@ Monk
     In addition, the monk's agility allows him to resist paralyzing
     attacks once he reaches a high enough level (but only if his armor
     is not restricting his movement). Monk's are able to move quickly
-    and will become faster and be able to stike more quickly as they
+    and will become faster and be able to strike more quickly as they
     gain experience.
 
     The different sects of monks are devoted to different areas of
     magic. The typical monk is interested in the harmony of nature, and
     studies Nature magic. An idealist monk would select Life magic, and
-    try to work to benefit his neighbour. But there are also dark
+    try to work to benefit his neighbor. But there are also dark
     monks, who practice Death magic. A monk will eventually learn all
     prayers in the discipline of their choice.
 
@@ -677,12 +677,12 @@ High Mage
     substantial benefits in the mana costs, minimum levels, and failure
     rates in the spells of the realm of their specialty.
 
-    A high mage's prime prime statistic is intelligence as this
-    determines his spell casting ability. Good wisdom and dexterity
-    also help. There is no rule that says a high mage cannot become a
-    good fighter, but spells are the mage's true strength. With two
-    notable exceptions, high mages should avoid wearing armor on their
-    hands as this can restrict their spell casting ability.
+    A high mage's prime statistic is intelligence as this determines
+    his spell casting ability. Good wisdom and dexterity also help.
+    There is no rule that says a high mage cannot become a good
+    fighter, but spells are the mage's true strength. With two notable
+    exceptions, high mages should avoid wearing armor on their hands as
+    this can restrict their spell casting ability.
 
     High mages may freely choose any realm but it should be noted that
     a high mage specializing in Life Magic will not learn it as well as
@@ -718,7 +718,7 @@ Strength
      getting multiple blows with your melee weapon and, in addition,
      will dramatically increase the amount of damage done with each
      hit. Strength also has a marginal effect on your chance to hit
-     your oponent. Characters with low strength may receive penalties.
+     your opponent. Characters with low strength may receive penalties.
      Strength is also useful in tunneling, bashing and in carrying
      heavy items without being slowed down.
  
@@ -733,7 +733,7 @@ Intelligence
      locks and disarming traps.
  
 Wisdom
-     Wisdom afects the ability of priest-like spellcasters (priests,
+     Wisdom affects the ability of priest-like spellcasters (priests,
      paladins and monks) to use prayers. WIS will affect the number of
      spells these classes may learn each level, the number of spell
      points they receive and their spell fail rates. In addition, WIS
@@ -913,7 +913,7 @@ High Mage     -5   +4    0    0   -2   +1       0         +30%
 Each of the races and classes has certain modifications to their
 starting abilities. Players may also receive an additional level-based
 bonus to certain skills which is based on their class. For example
-mages improve teir magical device skill more rapidly than warriors. As
+mages improve their magical device skill more rapidly than warriors. As
 noted above, some skills will not improve unless magically enhanced.
 
 
@@ -972,7 +972,7 @@ High Mage     30+7  36+13 30+9   2    15/20       10+15  15+15
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: January 5, 1999
+Last update: January 13, 2000
 
 ***** Begin Hyperlinks
 ***** [1] birth.txt

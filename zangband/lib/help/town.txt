@@ -50,9 +50,9 @@ passes and if you enter the town at night, the town will be dark.
 Fortunately, the various shops and the other special buildings are open
 on a 24-hour basis.
 
-Later versions of Zangband have introduced a dramaticlly extended town
+Later versions of Zangband have introduced a dramatically extended town
 level to the game. In addition to the basic town and the standard nine
-shops, new buildings and multiple towns seperated by a wilderness were
+shops, new buildings and multiple towns separated by a wilderness were
 added. Fixed quests (see below [3]) were also added to the game and
 could be begun by entering certain buildings in the town(s).
 
@@ -72,7 +72,7 @@ during the creation of your next character.
 --- The 'Standard' Town ---
 
 The 'standard' town consists of a 10x10 square world. Each square
-(actually a rectangle) is the size of a standard ZAngband dungeon level
+(actually a rectangle) is the size of a standard Zangband dungeon level
 and contains themed wilderness terrain (mountainous areas, oceans,
 plains, etc). There are several towns located in various parts of the
 world and each town is situated in its own wilderness square.
@@ -82,7 +82,7 @@ unwary. As a general rule, the further your character gets from
 civilization the more cautious he or she should be.
 
 Each of the towns contains the standard nine shops where you can
-puchase your supplies for your trips into the dungeon and sell the
+purchase your supplies for your trips into the dungeon and sell the
 items you have collected. There are also special buildings offering
 services for a fee. The services available and the prices charged may
 vary from town to town so it can be worth hunting around for the best
@@ -108,7 +108,7 @@ for computer efficiency reasons.
 --- The 'Vanilla' Town ---
 
 The vanilla town consists of the nine standard shops only and an
-inpenetrable wall which surrounds the town. There are no other
+impenetrable wall which surrounds the town. There are no other
 embellishments. The special buildings and the fixed quests are
 unavailable if you select this option as is the wilderness.
 
@@ -134,7 +134,7 @@ though you may acquire treasure.
 
 One word of warning however, occasionally a creature who normally
 would inhabit only the wilderness and dungeons may wander into the
-town. These should generaly be handled with much more caution
+town. These should generally be handled with much more caution
 than the ordinary townspeople.
 
 
@@ -212,10 +212,11 @@ pricing are the race and charisma of the player.
 
 Each object has a base value which is contained in the game's source
 code. This value is modified based on the store owner's greed (greedy
-store owners charge moreand will pay less), your charisma (charismatic
-players pay less and can charge more) and whether or not the shopkeeper is friendly to your race
-(dwarves dislike elves so a dwarf shopkeeper will charge an elf player
-more and pay less for itmes the player is selling).
+store owners charge more and will pay less), your charisma (charismatic
+players pay less and can charge more) and whether or not the shopkeeper
+is friendly to your race (dwarves dislike elves so a dwarf shopkeeper
+will charge an elf player more and pay less for items the player is
+selling).
 
 Finally, when selling objects, the cap on the store owner's purse is
 applied so that even a favored race with a high charisma can not sell
@@ -282,7 +283,7 @@ guilds for the various classes and magic realms, gambling dens and
 casinos, temples, healers and more. Note that some buildings such as
 guilds may offer preferential prices to members of their guild or offer
 services which are only available to their guild. Some building owners
-may offer preferntial treatment to their own race or to a group of
+may offer preferential treatment to their own race or to a group of
 races.
 
 
@@ -298,10 +299,10 @@ escape from the quest level.
 
 When you request a quest, you will be given a brief description of the
 quest and your objective and also an indication of its danger level (a
-number which represents the dungeon level equivalnce of the quest).
+number which represents the dungeon level equivalence of the quest).
 Note that the danger indication can be somewhat misleading since the
 fixed nature of the quests allows you to apply tactics learned through
-several attempts to the same situation often making succesive attempts
+several attempts to the same situation often making successive attempts
 easier. It also allows the quest designers to set up some particularly
 nasty ambushes!
 
@@ -325,7 +326,7 @@ person until you have collected your reward or reported your failure.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: January 11, 1999
+Last update: January 13, 2000
 
 
 ***** Begin Hyperlinks

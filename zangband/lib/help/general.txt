@@ -66,7 +66,7 @@ restored. A tombstone showing information about your character will be
 displayed. You are also permitted to get a record of your character,
 and all your equipment (identified) either on the screen or in a file.
 
-Whether your charcter is killed or you retire victorious, it will
+Whether your character is killed or you retire victorious, it will
 leave behind a reduced save file, which contains only the monster
 memory (see attack.txt#MonsterMemory [4]) and your option choices. It
 may be restored, in which case the new character is generated exactly
@@ -188,7 +188,7 @@ likely to contain bugs of varying significance.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: December 30, 1999
+Last update: January 13, 2000
 
 
 ***** Begin Hyperlinks

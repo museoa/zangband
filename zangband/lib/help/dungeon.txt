@@ -6,7 +6,7 @@ towns and a large wilderness area, the bulk of your adventuring will
 take place in the dungeon. Symbols appearing on your screen will
 represent the dungeon's walls, floor, objects, features, and creatures
 lurking about. In order to direct your character through his adventure,
-you will enter single character commands (see "commands.txt").
+you will enter single character commands (see command.txt [1]).
 
 
 ***** <MapSymbols>
@@ -24,13 +24,13 @@ The "@" symbol (by default) is used to represent the character.
 
 It will not be necessary to remember all of the symbols and their
 meanings. The "slash" command ("/") will identify any character
-appearing on your map (see "commands.txt").
+appearing on your map
 
 Note that you can use a "user pref file" to change any of these symbols
 to something you are more comfortable with.
    
  
---- Town and Wilderness Sybols ---
+--- Town and Wilderness Symbols ---
 
   # (Green)        A Tree             1   Entrance to General Store
   # (Light Blue)   Shallow Water      2   Entrance to Armory
@@ -369,7 +369,7 @@ kill (for example, 'This level is guarded by 10 young green
 dragons').
 
 On random quest levels, no down staircases are generated until the
-last monster is killed whcih means that you cannot continue further
+last monster is killed which means that you cannot continue further
 into the dungeon until you have completed your quests. When you
 kill the last quest monster, the down staircase will be created and
 the monster will drop an item of 'excellent' quality or above. This
@@ -400,4 +400,8 @@ and should be noted in any 'winner' post to the newsgroup.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: January 11, 1999
+Last update: January 13, 2000
+
+***** Begin Hyperlinks
+***** [1] command.txt
+

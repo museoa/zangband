@@ -231,7 +231,7 @@ name (see below [c]). If not, you may press 'r' to resume rolling and
 searching for the next match or, if this is not your first match, 'p'
 to return to the previous character which met your criteria.
 
-Note: The statistics are not independant of each other and trying to
+Note: The statistics are not independent of each other and trying to
 maximize each one using the auto-roller will not work. A good idea is
 to specify statistics close to maximum that are critical for your class
 (for example, high wisdom for priests, intelligence for mages and
@@ -290,7 +290,7 @@ a magical item although there is some variance from this.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: December 27, 1999
+Last update: January 13, 2000
 
 ***** Begin Hyperlinks
 ***** [1] birth.txt#AutoRoller

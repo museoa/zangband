@@ -575,4 +575,4 @@ exhaustive list is not provided in this document.
 Original   : (??), Leon Marrick and Chris Weisiger
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: January 6, 1999
+Last update: January 13, 2000
