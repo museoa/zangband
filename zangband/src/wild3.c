@@ -2294,19 +2294,23 @@ void change_level(int level)
 
 
 		/* 
-		 * Zero bounds - allocated in generate.c
+		 * Default bounds - allocated in generate.c
 		 *
 		 * Should these be set here at all???
 		 */
 		p_ptr->min_hgt = 0;
-		p_ptr->max_hgt = 1;
+		p_ptr->max_hgt = MAX_HGT;
 		p_ptr->min_wid = 0;
-		p_ptr->max_wid = 1;
+		p_ptr->max_wid = MAX_WID;
 
 		/* Access the cave */
 		area_aux = access_cave;
 		parea_aux = access_pcave;
-
+		
+		/* Bounds checking */
+		in_bounds = in_bounds_cave;
+		in_bounds2 = in_bounds2_cave;
+		in_boundsp = in_bounds2_cave;
 
 		for (i = 0; i < MAX_WID; i++)
 		{
@@ -2321,12 +2325,6 @@ void change_level(int level)
 				pc_ptr->player = 0x00;
 			}
 		}
-
-		/* Bounds checking */
-		in_bounds = in_bounds_cave;
-		in_bounds2 = in_bounds2_cave;
-		in_boundsp = in_bounds2_cave;
-
 
 		if (switched)
 		{
