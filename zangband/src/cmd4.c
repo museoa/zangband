@@ -3422,6 +3422,7 @@ static void do_cmd_knowledge_kill_count(void)
 	char file_name[1024];
 
 	s32b Total = 0;
+	s32b temp;
 
 	int i, n;
 
@@ -3511,6 +3512,10 @@ static void do_cmd_knowledge_kill_count(void)
 			fprintf(fff, "You have defeated %lu enemies.\n\n", Total);
 	}
 
+	/* Save total kills for later */
+	temp = Total;
+	
+	/* Zero out total so we can calculate kills of known monsters */
 	Total = 0;
 
 	/* Scan the monster races */
@@ -3564,6 +3569,17 @@ static void do_cmd_knowledge_kill_count(void)
 	fprintf(fff, "   Total: %lu creature%s killed.\n",
 	        Total, (Total == 1 ? "" : "s"));
 
+	/* Subtract off monsters you know you have killed */
+	temp -= Total;
+	
+	/* Have we killed any monsters we did not see? */
+	if (temp)
+	{
+		fprintf(fff, "\n");
+		fprintf(fff, " Unseen: %lu creature%s killed.\n",
+	       temp, (temp == 1 ? "" : "s"));
+	}
+	
 	/* Free the "who" array */
 	C_KILL(who, max_r_idx, u16b);
 
