@@ -661,15 +661,11 @@ s16b get_obj_num(int level, int min_level)
 	long            value1, value2, total;
 	alloc_entry     *table = alloc_kind_table;
 
-	/* Boost level */
-	if (level > 0)
+	/* Occasional "boost" */
+	if (one_in_(GREAT_OBJ))
 	{
-		/* Occasional "boost" */
-		if (one_in_(GREAT_OBJ))
-		{
-			/* What a bizarre calculation */
-			level = 1 + (level * MAX_DEPTH / randint1(MAX_DEPTH));
-		}
+		/* What a bizarre calculation */
+		level = 1 + (level * MAX_DEPTH / randint1(MAX_DEPTH));
 	}
 
 
@@ -2403,12 +2399,12 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 					case EGO_SLAYING_WEAPON:
 					{
-						while (one_in_(o_ptr->dd) && (o_ptr->dd < 10));
+						while (one_in_(o_ptr->dd) && (o_ptr->dd < 10))
 						{
 							o_ptr->dd++;
 						}
 						
-						while (one_in_(o_ptr->ds) && (o_ptr->ds < 10));
+						while (one_in_(o_ptr->ds) && (o_ptr->ds < 10))
 						{
 							o_ptr->ds++;
 						}
