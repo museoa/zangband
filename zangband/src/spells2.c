@@ -2891,9 +2891,6 @@ static void cave_temp_room_lite(void)
 
 				monster_race    *r_ptr = &r_info[m_ptr->r_idx];
 
-				/* Update the monster */
-				update_mon(c_ptr->m_idx, FALSE);
-
 				/* Stupid monsters rarely wake up */
 				if (r_ptr->flags2 & (RF2_STUPID)) chance = 10;
 
@@ -2936,7 +2933,7 @@ static void cave_temp_room_lite(void)
 	 * light affects walls.  We simply don't know which squares
 	 * are lit until the effect has completed
 	 */
-	p_ptr->update |= PU_VIEW;
+	p_ptr->update |= PU_VIEW | PU_MONSTERS;
 	
 	
 	/* Window stuff */
@@ -2986,13 +2983,6 @@ static void cave_temp_room_unlite(void)
 			/* Darken the grid */
 			c_ptr->info &= ~(CAVE_GLOW);
 
-			/* Process affected monsters */
-			if (c_ptr->m_idx)
-			{
-				/* Update the monster */
-				update_mon(c_ptr->m_idx, FALSE);
-			}
-
 			/* Hack -- Forget "boring" grids */
 			if (c_ptr->feat == FEAT_FLOOR)
 			{
@@ -3017,7 +3007,7 @@ static void cave_temp_room_unlite(void)
 	 * light affects walls.  We simply don't know which squares
 	 * are unlit until the effect has completed.
 	 */
-	p_ptr->update |= PU_VIEW;
+	p_ptr->update |= PU_VIEW | PU_MONSTERS;
 	
 	
 	/* Window stuff */
