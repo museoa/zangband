@@ -2354,6 +2354,9 @@ static errr rd_dungeon(void)
 			{
 				/* The monster does not exist any more! */
 				o_ptr->held_m_idx = 0;
+				
+				/* Hack - get rid of item - will crash otherwise */
+				o_ptr->k_idx = 0;
 			}
 		}
 
