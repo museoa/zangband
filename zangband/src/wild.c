@@ -3143,6 +3143,8 @@ void create_wilderness(void)
 	u16b hgt_min, hgt_max, pop_min, pop_max, law_min, law_max;
 	u16b sea_level;
 	
+	long hgt, pop, law, hgt_scale, pop_scale, law_scale;
+	
 	/* Create "height" information of wilderness */
 	create_hgt_map();
 	
@@ -3172,6 +3174,12 @@ void create_wilderness(void)
 	/* The sea covers 1/3 of the wilderness */
 	sea_level = hgt_min + (hgt_max - hgt_min) / 3;
 	
+	/* Height scale factor */
+	hgt_scale = (hgt_max - sea_level);
+	
+	/* Rescale minimum. */
+	sea_level *= 16;
+	
 	/* create "population density" information */
 	create_pop_map(sea_level);
 	
@@ -3197,6 +3205,12 @@ void create_wilderness(void)
 		}
 	}
 	
+	/* Population scale factor */
+	pop_scale = (pop_max - pop_min);
+	
+	/* Rescale minimum. */
+	pop_min *= 16;
+	
 	create_law_map(sea_level);
 	
 	/* work out extremes of "lawfulness" so it can be scaled. */
@@ -3221,21 +3235,38 @@ void create_wilderness(void)
 		}
 	}
 	
-	/* Fill wilderness with grass */
-	/* This will be replaced with a more inteligent routine later */
+	/* Lawfulness scale factor */
+	law_scale = (law_max - law_min);
+	
+	/* Rescale minimum. */
+	law_min *= 16;
+	
+	/* Fill wilderness with terrain */
 	for (i = 0; i < max_wild; i++)
 	{
 		for (j = 0; j < max_wild; j++)
 		{
-			if (wild[j][i].gen.hgt_map < sea_level * 16)			
+			/* If above sea level - use decision tree to get terrain. */
+			if (wild[j][i].gen.hgt_map < sea_level)			
 			{
+				/* Ocean */
 				wild[j][i].done.wild = 65535 - 
-					((long) wild[j][i].gen.hgt_map * 4) / sea_level;
+					((long) wild[j][i].gen.hgt_map * 64) / sea_level;
 			}
 			else
 			{
-				/* Just type one for now. */
-				wild[j][i].done.wild = 1;
+				/* Terrains from decision tree */
+				
+				/* 
+				 * Store parameters before change the information
+				 * in the union.  (Want to scale values to be 0 - 255)
+				 */
+				hgt = (wild[j][i].gen.hgt_map - sea_level) * 16 / hgt_scale;
+				pop = (wild[j][i].gen.pop_map - pop_min) * 16 / pop_scale;
+				law = (wild[j][i].gen.law_map - law_min) * 16 / law_scale;	
+				
+				/* Get wilderness type. */
+				wild[j][i].done.wild = get_gen_type(hgt, pop, law);
 			}
 			
 			/* No town yet */
