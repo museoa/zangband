@@ -506,7 +506,7 @@ N:102:obelisk
 G:;:b
 
 N:103:pillar
-G:#:u
+G:#:D
 
 
 
