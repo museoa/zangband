@@ -716,7 +716,7 @@ void gamble_spin_wheel(void)
 		roll1 = randint1(10);
 		prtf(3, 13, "The wheel spins to a stop and the winner is %d",
 				roll1);
-		prtf(0, 9, "");
+		clear_row(9);
 		prtf((3 * roll1 + 2), 9, "*");
 
 		if (roll1 == choice) win = TRUE;
@@ -2045,7 +2045,7 @@ void do_cmd_bldg(field_type *f_ptr)
 	/* Interact with player */
 	while (!leave_build)
 	{
-		prtf(0, 1, "");
+		clear_row(1);
 
 		/* Clear */
 		clear_from(21);

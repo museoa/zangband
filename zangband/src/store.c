@@ -1042,7 +1042,7 @@ static void display_entry(int pos)
  */
 static void display_inventory(int store_top)
 {
-	int i, k;
+	int k;
 
 	int stocknum = get_list_length(st_ptr->stock);
 
@@ -1057,10 +1057,10 @@ static void display_inventory(int store_top)
 	}
 
 	/* Erase the extra lines and the "more" prompt */
-	for (i = k; i < 13; i++) prtf(0, i + 6, "");
+	clear_region(0, k + 6, 18);
 
 	/* Assume "no current page" */
-	put_fstr( 20, 5, "        ");
+	put_fstr(20, 5, "        ");
 
 	/* Visual reminder of "more items" */
 	if (stocknum > 12)
@@ -1328,7 +1328,7 @@ static int get_stock(int *com_val, cptr pmt, int maxobj)
 	}
 
 	/* Clear the prompt */
-	prtf(0, 0, "");
+	clear_msg();
 
 	/* Cancel */
 	if (command == ESCAPE) return (FALSE);
@@ -2513,7 +2513,7 @@ void do_cmd_store(const field_type *f1_ptr)
 	while (!leave_store)
 	{
 		/* Hack -- Clear line 1 */
-		prtf(0, 1, "");
+		clear_row(1);
 
 		/* Hack -- Check the charisma */
 		tmp_chr = p_ptr->stat_use[A_CHR];

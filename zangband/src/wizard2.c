@@ -610,7 +610,7 @@ static void learn_map(void)
  */
 static void wiz_display_item(const object_type *o_ptr)
 {
-	int i, j = 13;
+	int j = 13;
 	u32b f1, f2, f3;
 	char buf[256];
 
@@ -618,7 +618,7 @@ static void wiz_display_item(const object_type *o_ptr)
 	object_flags(o_ptr, &f1, &f2, &f3);
 
 	/* Clear the screen */
-	for (i = 1; i <= 23; i++) prtf(j - 2, i, "");
+    clear_region(13 - 2, 1, 23);
 
 	/* Describe fully */
 	object_desc_store(buf, o_ptr, TRUE, 3, 256);

@@ -1423,7 +1423,7 @@ bool identify_fully_aux(const object_type *o_ptr)
 	screen_save();
 
 	/* Erase the screen */
-	for (k = 1; k < hgt; k++) prtf(13, k, "");
+    clear_region(13, 1, hgt);
 
 	/* Label the information */
 	prtf(15, 1, "     Item Attributes:");
@@ -3733,7 +3733,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	window_stuff();
 
 	/* Clear the prompt line */
-	prtf(0, 0, "");
+	clear_msg();
 
 	/* Save this object */
 	save_object_choice(o_ptr, command_wrk);

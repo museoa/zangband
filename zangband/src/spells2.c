@@ -585,7 +585,7 @@ void self_knowledge(void)
 	screen_save();
 
 	/* Erase the screen */
-	for (k = 1; k < 24; k++) prtf(13, k, "");
+    clear_region(13, 1, 23);
 
 	/* Label the information */
 	prtf(15, 1, "     Your Attributes:");
@@ -769,7 +769,7 @@ void report_magics(void)
 	screen_save();
 
 	/* Erase the screen */
-	for (k = 1; k < 24; k++) prtf(13, k, "");
+    clear_region(13, 1, 23);
 
 	/* Label the information */
 	prtf(15, 1, "     Your Current Magic:");

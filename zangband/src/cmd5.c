@@ -226,7 +226,7 @@ void do_cmd_browse_aux(const object_type *o_ptr)
 	print_spells(spells, num, 20, 1, (o_ptr->tval - TV_BOOKS_MIN));
 
 	/* Clear the top line */
-	prtf(0, 0, "");
+	clear_msg();
 
 	/* Prompt user */
 	put_fstr(23, 0, "[Press any key to continue]");

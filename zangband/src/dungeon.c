@@ -2778,7 +2778,7 @@ static void process_player(void)
 			msg_flag = FALSE;
 
 			/* Clear the top line */
-			prtf(0, 0, "");
+			clear_msg();
 
 			/* Process the command */
 			process_command();

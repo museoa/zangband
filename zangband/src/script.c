@@ -356,7 +356,7 @@ void do_cmd_script(void)
 			if (!askfor_aux(tmp, 80)) break;
 
 			/* Clear the prompt */
-			prtf(0, 0, "");
+			clear_msg();
 
 			path_build(buf, 1024, ANGBAND_DIR_SCRIPT, tmp);
 
@@ -377,7 +377,7 @@ void do_cmd_script(void)
 			if (!askfor_aux(tmp, 80)) break;
 
 			/* Clear the prompt */
-			prtf(0, 0, "");
+			clear_msg();
 
 			/* Execute the command */
 			script_do_string(tmp);

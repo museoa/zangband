@@ -2345,7 +2345,7 @@ static void borg_display_item(list_item *l_ptr)
 	int i, j = 13;
 
 	/* Clear the screen */
-	for (i = 1; i <= 23; i++) prtf(j - 2, i, "");
+    clear_region(13 - 2, 1, 23);
 
 	/* Describe fully */
 	if (l_ptr->o_name) prtf(j, 2, l_ptr->o_name);
@@ -2555,7 +2555,7 @@ void borg_init_9(void)
 	/*** All done ***/
 
 	/* Clear line */
-	prtf(0, 0, "");
+	clear_msg();
 
 	/* Reset the clock */
 	borg_t = 1000;

@@ -345,7 +345,7 @@ void display_scores_aux(int from, int to, int note, const high_score *score)
 		/* Wait for response */
 		prtf(17, 23, "[Press ESC to quit, any other key to continue.]");
 		j = inkey();
-		prtf(0, 23, "");
+		clear_row(23);
 
 		/* Hack -- notice Escape */
 		if (j == ESCAPE) break;
@@ -716,7 +716,7 @@ void show_highclass(void)
 	msg_print("Hit any key to continue");
 	message_flush();
 
-	for (j = 5; j < 18; j++) prtf(0, j, "");
+	clear_region(0, 5, 17);
 }
 
 
@@ -794,15 +794,14 @@ void race_score(int race_num)
  */
 void race_legends(void)
 {
-	int i, j;
+	int i;
 
 	for (i = 0; i < MAX_RACES; i++)
 	{
 		race_score(i);
 		msg_print("Hit any key to continue");
 		message_flush();
-		for (j = 5; j < 19; j++)
-			prtf(0, j, "");
+        clear_region(0, 5, 18);
 	}
 }
 

@@ -659,7 +659,35 @@ void clear_from(int row)
 	}
 }
 
+/*
+ * Clear top line of screen
+ */
+void clear_msg(void)
+{
+	Term_erase(0, 0, 255);
+}
 
+/*
+ * Clear a line of the screen
+ */
+void clear_row(int row)
+{
+	Term_erase(0, row, 255);
+}
+
+/*
+ * Clear a region of the screen, starting from (x,y1)
+ * going to (255,y2)
+ */
+void clear_region(int x, int y1, int y2)
+{
+	int y;
+	for (y = y1; (y < Term->hgt) && (y <= y2); y++)
+	{
+		/* Erase part of the screen */
+		Term_erase(x, y, 255);
+	}
+}
 
 
 /*
@@ -789,7 +817,7 @@ bool get_string(cptr prompt, char *buf, int len)
 	res = askfor_aux(buf, len);
 
 	/* Clear prompt */
-	prtf(0, 0, "");
+	clear_msg();
 
 	/* Result */
 	return (res);
@@ -829,7 +857,7 @@ bool get_check(cptr prompt)
 	}
 
 	/* Erase the prompt */
-	prtf(0, 0, "");
+	clear_msg();
 
 	/* Normal negation */
 	if ((i != 'Y') && (i != 'y')) return (FALSE);
@@ -858,7 +886,7 @@ bool get_com(cptr prompt, char *command)
 	*command = inkey();
 
 	/* Clear the prompt */
-	prtf(0, 0, "");
+	clear_msg();
 
 	/* Handle "cancel" */
 	if (*command == ESCAPE) return (FALSE);

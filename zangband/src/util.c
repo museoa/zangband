@@ -2766,7 +2766,7 @@ void request_command(int shopping)
 		}
 
 		/* Clear top line */
-		prtf(0, 0, "");
+		clear_msg();
 
 
 		/* Command Count */
@@ -2981,7 +2981,7 @@ void request_command(int shopping)
 
 
 	/* Hack -- erase the message line. */
-	prtf(0, 0, "");
+	clear_msg();
 }
 
 

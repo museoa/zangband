@@ -3709,7 +3709,7 @@ void do_cmd_suicide(void)
 			prtf(0, 0, "Please verify SUICIDE by typing the '@' sign: ");
 			flush();
 			i = inkey();
-			prtf(0, 0, "");
+			clear_msg();
 			if (i != '@') return;
 		}
 	}
@@ -3784,7 +3784,7 @@ void do_cmd_save_game(int is_autosave)
 	message_flush();
 
 	/* Hack -- erase the message line. */
-	prtf(0, 0, "");
+	clear_msg();
 
 	/* Note that the player is not dead */
 	(void)strcpy(p_ptr->died_from, "(alive and well)");
@@ -4355,7 +4355,7 @@ void exit_game_panic(void)
 	msg_flag = FALSE;
 
 	/* Clear the top line */
-	prtf(0, 0, "");
+	clear_msg();
 
 	/* Hack -- turn off some things */
 	disturb(TRUE);

@@ -757,7 +757,7 @@ void carry(int pickup)
 					}
 
 					/* Erase the prompt */
-					prtf(0, 0, "");
+					clear_msg();
 
 					if ((i == 'Y') || (i == 'y'))
 					{
@@ -881,7 +881,7 @@ void carry(int pickup)
 			}
 
 			/* Erase the prompt */
-			prtf(0, 0, "");
+			clear_msg();
 
 			if ((i == 'Y') || (i == 'y'))
 			{

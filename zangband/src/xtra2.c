@@ -3006,7 +3006,7 @@ bool target_set(int mode)
 	temp_n = 0;
 
 	/* Clear the top line */
-	prtf(0, 0, "");
+	clear_msg();
 
 	/* Recenter the map around the player */
 	verify_panel();
