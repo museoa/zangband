@@ -2134,13 +2134,131 @@ static void copy_block(blk_ptr block_ptr)
 	}
 }
 
+/*
+ * This function picks a terrain feature from a list of four
+ * based on a "probability factor".  The further 'prob' is
+ * from 'prob1' etc. the less likely that feature is.
+ * This weights the distribution.
+ *
+ * As a special case, feature 0 is defined to be "nonexistant"
+ * so that choices can be made with less than 4 features.
+ */
+static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
+			byte prob1, byte prob2, byte prob3, byte prob4, byte prob)
+{
+	/* Chance factors */
+	u32b c1, c2, c3, c4, choice;
+
+	/* Zero the chance factors */
+	c1 = c2 = c3 = c4 = 0;
+	
+	/* Calculate chance factors if feature != 0 */
+	if (feat1)
+	{
+		if (prob1 == prob)
+		{
+			c1 = 0x1000000;
+		}
+		else
+		{
+			c1 = 0x1000000 / (((long) prob1 - prob) * ((long) prob1 - prob));
+		}
+	}
+	if (feat2)
+	{
+		if (prob2 == prob)
+		{
+			c2 = 0x1000000;
+		}
+		else
+		{
+			c2 = 0x1000000 / (((long) prob2 - prob) * ((long) prob2 - prob));
+		}
+	}
+	if (feat3)
+	{
+		if (prob3 == prob)
+		{
+			c3 = 0x1000000;
+		}
+		else
+		{
+			c3 = 0x1000000 / (((long) prob3 - prob) * ((long) prob3 - prob));
+		}
+	}
+	
+	if (feat4)
+	{
+		if (prob4 == prob)
+		{
+			c4 = 0x1000000;
+		}
+		else
+		{
+			c4 = 0x1000000 / (((long) prob4 - prob) * ((long) prob4 - prob));
+		}
+	}
+
+	/* get choice */
+	choice = Rand_div(c1 + c2 + c3 + c4);
+	
+	/* Return terrain feature based on weighted chance */
+	if (choice < c1) return(feat1);
+	
+	choice -= c1;
+	if (choice < c2) return(feat2);
+	
+	choice -= c2;
+	if (choice < c3) return(feat3);
+	
+	return(feat4);
+	
+
+}
+
+/*
+ * Make wilderness generation type 1
+ *
+ * Make a plasma fractal.  Convert the heightmap to terrain
+ * via the pick_feat function.
+ * This routine uses all data fields.
+ * Odd fields in the data[] array are the terrain features.
+ * The even fields are the region of the hieght-map where
+ * those features are most common.
+ */
+static void make_wild_01(blk_ptr block_ptr, byte *data)
+{
+	int i, j, element;
+	byte new_feat;
+	/* Generate plasma factal */
+	frac_block();
+
+	/* Make terrain block based on height map */
+	for (j = 0; j < WILD_BLOCK_SIZE; j++)
+	{
+		for (i = 0; i < WILD_BLOCK_SIZE; i++)
+		{
+			/* Get value */
+			element = temp_block[j][i] / WILD_BLOCK_SIZE;
+			
+			/* Work out terrain feature to use */ 
+			new_feat = pick_feat(data[0], data[2], data[4], data[6],
+				data[1], data[3], data[5], data[7], element);
+			
+			block_ptr[j][i].info = CAVE_GLOW|CAVE_MARK;
+			block_ptr[j][i].feat = new_feat;
+		}
+	}
+}
 
 
 /* Make a new block based on the terrain type */
 static void gen_block(int x, int y, blk_ptr block_ptr)
 {
 	u16b w_town;
-
+	u16b w_type;
+	u16b gen_type;
+	
 	/*
 	 * Since only grass has been "turned on", this function
 	 * is rather simple at the moment.
@@ -2157,12 +2275,28 @@ static void gen_block(int x, int y, blk_ptr block_ptr)
 
 	/* Generate a terrain block*/
 
-	/* Test fractal terrain */
-	/* Note that this is very dodgy at the moment.
-	 * There is no wilderness */
-	frac_block();
-	copy_block(block_ptr);
+	/* Get wilderness type */
+	w_type = wild[y][x].done.wild;
+	
+	/* Get generation type */
+	gen_type = wild_gen_data[w_type].gen_routine;
+	
+	
+	/* Based on type - choose wilderness block generation function */
+	switch (gen_type)
+	{
+		case 1:
+			/* Only one type at the moment. */
+			
+			/* Fractal plasma with weighted terrain probabilites */
+			make_wild_01(block_ptr, wild_gen_data[w_type].data);
+		break;
+		
+		default:
+			quit("Illegal wilderness block type.");
+	}
 
+	
 	/* Add roads / river / lava (Not done)*/
 
 

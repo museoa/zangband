@@ -1166,8 +1166,14 @@ static void process_world(void)
 	if (!cave_floor_bold(py, px))
 	{
 		/* Player can walk through trees */
-		if (area(py,px)->feat == FEAT_TREES)
+		if (area(py, px)->feat == FEAT_TREES)
 		{
+			/* Do nothing */
+		}
+		else if ((area(py, px)->feat & 0x70) == 0x70)
+		{
+			/* Player can walk through the "slow floor" terrains. */
+			
 			/* Do nothing */
 		}
 		else if (!p_ptr->invuln && !p_ptr->wraith_form &&

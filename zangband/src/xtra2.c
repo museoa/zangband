@@ -1844,15 +1844,7 @@ static bool target_set_accept(int y, int x)
 		if (c_ptr->feat == FEAT_DIRT) return (TRUE);
 		if (c_ptr->feat == FEAT_GRASS) return (TRUE);
 		if (c_ptr->feat == FEAT_DARK_PIT) return (TRUE);
-		if (c_ptr->feat == FEAT_TREES) return (TRUE);
-		if (c_ptr->feat == FEAT_MOUNTAIN) return (TRUE);
-#if 0
-		/* Notice quest features */
-		if (c_ptr->feat == FEAT_QUEST_ENTER) return (TRUE);
-		if (c_ptr->feat == FEAT_QUEST_EXIT) return (TRUE);
-		if (c_ptr->feat == FEAT_QUEST_DOWN) return (TRUE);
-		if (c_ptr->feat == FEAT_QUEST_UP) return (TRUE);
-#endif
+		if (c_ptr->feat >= FEAT_OCEAN_WATER) return (TRUE);
 	}
 
 	/* Nope */

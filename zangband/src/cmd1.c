@@ -2515,16 +2515,15 @@ void move_player(int dir, int do_pickup)
 		oktomove = TRUE;
 		if (p_ptr->pclass != CLASS_RANGER) energy_use += 10;
 	}
-#if 0
 
-	/* Quest features */
-	else if ((c_ptr->feat >= FEAT_QUEST_ENTER) &&
-	         (c_ptr->feat <= FEAT_QUEST_EXIT))
+	else if ((c_ptr->feat >= FEAT_SAND) && (c_ptr->feat <= FEAT_SOLID_LAVA))
 	{
 		oktomove = TRUE;
 	}
-	
-#endif
+	else if ((c_ptr->feat >= FEAT_BUSH) && (c_ptr->feat <= FEAT_SNOW))
+	{
+		oktomove = TRUE;
+	}
 	/* Closed door */
 	else if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 	         (c_ptr->feat <= FEAT_DOOR_TAIL))
