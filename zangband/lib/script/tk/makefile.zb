@@ -3,11 +3,11 @@
 tcl-files := choice-window.tcl info-window.tcl map.tcl recall.tcl \
 	about.tcl init-other.tcl message-history.tcl store.tcl \
 	angband.tcl config.tcl init-startup.tcl message-window.tcl \
-	store2.tcl autobar.tcl debug-alloc.tcl inventory.tcl \
+	store2.tcl autobar.tcl inventory.tcl \
 	misc-popup.tcl term.tcl bgerror.tcl debug.tcl inventory2.tcl \
 	misc-window.tcl tips.tcl birth.tcl errorInfo.tcl keypress.tcl \
 	misc.tcl tips.txt character-window.tcl errors.txt \
-	knowledge.tcl moduleIndex.tcl tomb.tcl charflags-canvas.tcl \
+	knowledge.tcl moduleIndex.tcl charflags-canvas.tcl \
 	font.tcl pets.tcl value-manager.tcl charinfo-canvas.tcl \
 	main-window.tcl player.tcl widget.tcl
 
