@@ -4420,13 +4420,13 @@ D:A strange creature that disguises itself as discarded objects to lure
 D:unsuspecting adventurers within reach of its venomous claws.
 
 N:353:Chest mimic
-G:~:s
+G:W:s
 I:110:10d14:30:40:0
 W:21:6:0:70
-B:SPIT:POISON:3d4
-B:SPIT:POISON:3d4
-B:HIT:CONFUSE:2d3
-B:HIT:BLIND:2d3
+B:GAZE:CONFUSE:2d3
+B:CLAW:POISON:3d4
+B:CLAW:POISON:3d4
+B:SPIT:BLIND:2d3
 F:CHAR_MULTI | 
 F:FORCE_SLEEP | NEVER_MOVE | 
 F:EMPTY_MIND | COLD_BLOOD |
