@@ -696,7 +696,7 @@ static errr Term_xtra_dos(int n, int v)
 					/* Get a *new* song at random */
 					while (1)
 					{
-						n = Rand_simple(song_number);
+						n = Rand_simple(song_number) + 1;
 						if (n != current_song) break;
 					}
 					current_song = n;
