@@ -1760,10 +1760,9 @@ static void cave_fill(int x, int y)
 {
 	int i, j, d;
 	int ty, tx;
-
+	
 	int flow_tail = 1;
 	int flow_head = 0;
-
 
 	/*** Start Grid ***/
 
@@ -1790,9 +1789,6 @@ static void cave_fill(int x, int y)
 			/* Child location */
 			j = ty + ddy_ddd[d];
 			i = tx + ddx_ddd[d];
-
-			/* Paranoia Don't leave the cave */
-			if (!in_bounds(i, j)) return;
 
 			/* If within bounds */
 			if ((i > fill_data.xmin) && (i < fill_data.xmax)

@@ -1105,7 +1105,7 @@ static void draw_general(int x0, int y0, store_type *st_ptr, int x, int y)
 /*
  * Draw a building / store of a given type at a given position
  */
-static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
+static void draw_building(byte type, byte x, byte y, u16b store, place_type *pl_ptr)
 {
 	/* Really dodgy - just a rectangle, independent of type, for now */
 	int xx, yy;
@@ -1113,7 +1113,7 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 	/* Hack - save the rng seed */
 	u32b rng_save_seed = Rand_value;
 
-	store_type *st_ptr = &place[town_num].store[store];
+	store_type *st_ptr = &pl_ptr->store[store];
 
 	/* Hack, ignore building draw type for now */
 	(void)type;
@@ -1152,16 +1152,13 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 
 
 /* Actually draw the city in the region */
-void draw_city(u16b town_num)
+void draw_city(place_type *pl_ptr)
 {
 	int x, y;
 	int count = 0;
 	byte i, j;
 	byte magic;
 	u16b build;
-
-
-	place_type *pl_ptr = &place[town_num];
 
 	/* Paranoia */
 	if (pl_ptr->region) quit("Town already has region during creation.");
@@ -1187,7 +1184,7 @@ void draw_city(u16b town_num)
 	set_temp_corner_val(WILD_BLOCK_SIZE * 64);
 
 	/* Use population value saved in data. */
-	set_temp_mid((u16b)(WILD_BLOCK_SIZE * place[town_num].data));
+	set_temp_mid((u16b)(WILD_BLOCK_SIZE * pl_ptr->data));
 	frac_block();
 
 	/* Locate the walls */
@@ -1249,7 +1246,7 @@ void draw_city(u16b town_num)
 		i = (byte)randint0(count);
 
 		/* Draw the building */
-		draw_building(0, build_x[i], build_y[i], build, town_num);
+		draw_building(0, build_x[i], build_y[i], build, pl_ptr);
 
 		/*
 		 * Decrement free space in city
@@ -1269,22 +1266,777 @@ void draw_city(u16b town_num)
 
 
 /*
- * Draw a (generic) dungeon entrance on a region
- *
-  * This is really crappy... but will be improved soonish.
+ * Helper function to determine which wilderness blocks
+ * have been used in the region drawn to.
  */
-void draw_dungeon(u16b place_num)
+static void set_place(byte place_num)
+{
+	int i, j, k, l;
+	
+	int xmax = 0, ymax = 0;
+
+	place_type *pl_ptr = &place[place_num];
+	
+	s16b ri_idx = pl_ptr->region;
+	
+	wild_gen2_type *w_ptr;
+	region_info *ri_ptr;
+	cave_type *c_ptr;
+	
+	if (!ri_idx) quit("Place does not have a region!");
+	
+	
+	/* Acquire region info */
+	ri_ptr = &ri_list[ri_idx];
+	
+	/* Look for blocks that are used */
+	for (i = 0; i < ri_ptr->xsize; i += WILD_BLOCK_SIZE)
+	{
+		for (j = 0; j < ri_ptr->ysize; j += WILD_BLOCK_SIZE)
+		{
+			/* Scan for something in this block */
+			for (k = i; (k < i + WILD_BLOCK_SIZE) && (k < ri_ptr->xsize); k++)
+			{
+				for (l = j; (l < j + WILD_BLOCK_SIZE) && (l < ri_ptr->ysize); l++)
+				{
+					c_ptr = access_region(k, l, ri_idx);
+				
+					/* Anything here? */
+					if (c_ptr->feat || c_ptr->o_idx || c_ptr->m_idx || c_ptr->fld_idx)
+					{
+						w_ptr = &wild[pl_ptr->y + j / WILD_BLOCK_SIZE]
+						 			 [pl_ptr->x + i / WILD_BLOCK_SIZE].trans;
+				
+						/* Link the block to the wilderness map */
+						w_ptr->place = (byte)place_num;
+						
+						/* Record max bounds */
+						if (i > xmax) xmax = i;
+						if (j > ymax) ymax = j;
+					
+						/* Break out two levels */
+						goto out;
+					}
+				}
+			}
+						
+			/* Found something */
+			out:;
+		}
+	}
+	
+	/* Shrink region size to minimum required */
+	ri_ptr->xsize = xmax + WILD_BLOCK_SIZE;
+	ri_ptr->ysize = ymax + WILD_BLOCK_SIZE;
+	
+	/* Shrink place size to minimum required */
+	pl_ptr->xsize = (ri_ptr->xsize / WILD_BLOCK_SIZE) + 1;
+	pl_ptr->ysize = (ri_ptr->ysize / WILD_BLOCK_SIZE) + 1;
+}
+
+static u32b dun_habitat;
+static u16b dun_level;
+
+/*
+ * Helper monster selection function
+ */
+static bool monster_habitat_ok(int r_idx)
+{
+	/* In this dungeon? */
+	if (r_info[r_idx].flags[7] & dun_habitat) return (TRUE);
+
+	/* Not here */
+	return (FALSE);
+}
+
+/*
+ * Add monsters to the dungeon entrance
+ */
+static void entrance_monsters(int x_max, int y_max)
+{
+	int x, y;
+	int i;
+	
+	long size = x_max * y_max;
+	
+	int count = size / 10;
+
+	cave_type *c_ptr;
+	
+	/* Bail out if we don't want to make any monsters here */
+	if (!dun_habitat) return;
+	
+	/* Apply the monster restriction */
+	get_mon_num_prep(monster_habitat_ok);
+
+	for (i = 0; i < count; i++)
+	{
+		x = randint0(x_max);
+		y = randint0(y_max);
+		
+		c_ptr = cave_p(x, y);
+		
+		/* Only place monsters on 'nice' grids */
+		if (!cave_nice_grid(c_ptr)) continue;
+		
+		/* Hack  Pick a race, and store it into monster slot of cave_type */
+		c_ptr->m_idx = get_mon_num(dun_level);
+	}
+	
+	/* Remove the monster restriction */
+	get_mon_num_prep(NULL);
+}
+
+
+/*
+ * Open a clearing with ruffled edges in the wilderness.
+ */
+static void open_clearing(int x_max, int y_max)
+{
+	int x, y;
+	
+	int dist, distx, disty;
+	
+	for (x = 0; x < x_max; x++)
+	{
+		for (y = 0; y < y_max; y++)
+		{
+			/* Get distance to boundary */
+			distx = MIN(x, x_max - x);
+			disty = MIN(y, y_max - y);
+			
+			dist = MIN(x, y);
+		
+			/* Rough edges 5 squares deep */
+			if (randint0(6) < dist)
+			{
+				/* Add 'cleared' terrain */
+				
+				if (one_in_(3))
+				{
+					set_feat_bold(x, y, FEAT_PEBBLES);
+				}
+				else
+				{
+					set_feat_bold(x, y, FEAT_DIRT);
+				}
+			}
+		}
+	}
+}
+
+
+/*
+ * Generate helper -- open one side of a rectangle with a door
+ *
+ * This version places a field type, instead of a field itself
+ * so that overlay_place() works.
+ */
+static void gen_dun_door(int x1, int y1, int x2, int y2, bool secret)
+{
+	int y0, x0;
+
+	cave_type *c_ptr;
+
+	/* Center */
+	y0 = (y1 + y2) / 2;
+	x0 = (x1 + x2) / 2;
+
+	/* Open random side */
+	switch (randint0(4))
+	{
+		case 0:
+		{
+			y0 = y1;
+			break;
+		}
+		case 1:
+		{
+			x0 = x1;
+			break;
+		}
+		case 2:
+		{
+			y0 = y2;
+			break;
+		}
+		case 3:
+		{
+			x0 = x2;
+			break;
+		}
+	}
+
+	c_ptr = cave_p(x0, y0);
+	
+	if (secret)
+	{
+		set_feat_grid(c_ptr, FEAT_SECRET);
+	}
+	else
+	{
+		/* Add the door */
+		c_ptr->fld_idx = FT_LOCK_DOOR;
+		set_feat_grid(c_ptr, FEAT_CLOSED);
+	}
+}
+
+
+/*
+ * Draw 'count' buildings in the given region
+ */
+static void make_dun_buildings(int count, int x_max, int y_max)
+{
+	int x, y;
+	int xwid, ywid;
+	
+	int i, j, k;
+	
+	cave_type *c_ptr;
+	
+	for (i = 0; i < count; i++)
+	{
+		/* Get location of building */
+		x = rand_range(2, x_max - 12);
+		y = rand_range(2, y_max - 12);
+		
+		/* Get size */
+		xwid = rand_range(6, 10);
+		ywid = rand_range(6, 10);
+		
+		/* Can we place it here? */
+		for (j = -1; j <= xwid; j++)
+		{
+			for (k = -1; k <= ywid; k++)
+			{
+				c_ptr = cave_p(x + j, y + k);
+				
+				/* Can't place a building here? */
+				if ((c_ptr->feat == FEAT_PERM_OUTER) ||
+					(c_ptr->feat == FEAT_MORE)) goto out;
+			}
+		}
+		
+		/* Make building */
+		
+		/* Add floor */
+		generate_fill(x, y, x + xwid, y + ywid, FEAT_FLOOR_WOOD);
+	
+		/* Add walls */
+		generate_draw(x, y, x + xwid, y + ywid, FEAT_PERM_OUTER);
+
+		/* Add a door */
+		gen_dun_door(x, y, x + xwid, y + ywid, FALSE);
+	
+		out:;
+	}
+}
+
+
+/*
+ * Dungeon drawing routines.
+ *
+ * These draw the entrance on a pre-allocated region.
+ */
+static void draw_dun_dark_water(void)
+{
+	int i;
+
+	int x, y;
+	
+	/* Scatter swamp around */
+	for (i = 0; i < 200; i++)
+	{
+		x = randint0(32);
+		y = randint0(32);
+		
+		set_feat_bold(x, y, FEAT_SHAL_SWAMP);
+	}
+	
+	/* Add some rubble */
+	for (i = 0; i < 10; i++)
+	{
+		x = rand_range(16 - 4, 16 + 4);
+		y = rand_range(16 - 4, 16 + 4);
+		
+		set_feat_bold(x, y, FEAT_RUBBLE);
+	}
+
+	/* Add stairs */
+	set_feat_bold(16, 16, FEAT_MORE);
+	
+	/* Add monsters */
+	entrance_monsters(32, 32);
+}
+
+static void draw_dun_cave(void)
+{
+	int xsize, ysize;
+	
+	int x, y;
+	int i = 0, j = 0;
+	
+	int c1, c2, c3;
+	
+	cave_type *c_ptr;
+	
+	while (TRUE)
+	{
+		xsize = rand_range(2, 4) * 16;
+		ysize = rand_range(2, 4) * 16;
+		
+		/* Floor */
+		c3 = xsize;
+
+		/* Boundary level */
+		c1 = randint0(c3 / 2);
+
+		/* Only two types of terrain */
+		c2 = 0;
+		
+		/* Make a fractal heightmap */
+		generate_hmap(xsize / 2, ysize / 2, xsize, ysize, xsize / 2, 16, c3);
+		
+		/* Did it work? */
+		if (generate_lake(xsize / 2, ysize / 2, xsize, ysize,
+							c1, c2, c3,
+							FEAT_DIRT, FEAT_DIRT, FEAT_DIRT)) break;
+	
+	
+		/* Erase, and repeat until it works */
+		generate_fill(0, 0, xsize, ysize, FEAT_NONE);
+	}
+	
+	/* Remove outer edge */
+	generate_draw(0, 0, xsize, ysize, FEAT_NONE);
+	generate_draw(0, 0, xsize - 1, ysize - 1, FEAT_NONE);
+	
+	/* Make walls only one level thick */
+	for (x = 1; x < xsize - 1; x++)
+	{
+		for (y = 1; y < ysize - 1; y++)
+		{
+			c_ptr = cave_p(x, y);
+
+			if ((c_ptr->feat == FEAT_PERM_OUTER) ||
+				(c_ptr->feat == FEAT_WALL_OUTER) ||
+				(c_ptr->feat == FEAT_WALL_EXTRA))
+			{
+				/* Make sure we are permanent */
+				set_feat_grid(c_ptr, FEAT_PERM_OUTER);
+			
+				for (i = -1; i <= 1; i++)
+				{
+					for (j = -1; j <= 1; j++)
+					{
+						c_ptr = cave_p(x + i, y + j);
+						
+						/* We are next to floor? - Keep */
+						if (c_ptr->feat == FEAT_DIRT) goto out;
+					}
+				}
+				
+				/* Else we are not needed */
+				set_feat_bold(x, y, FEAT_NONE);
+			}
+			
+			out:;
+		}
+	}
+	
+	/* Scan in one of the cardinal directions */
+	switch (randint0(4))
+	{
+		case 0:
+		{
+			i = -1;
+			j = 0;
+		}
+		
+		case 1:
+		{
+			i = 1;
+			j = 0;
+		}
+		
+		case 2:
+		{
+			i = 0;
+			j = -1;
+		}
+		
+		case 3:
+		{
+			i = 0;
+			j = 1;
+		}
+	}
+	
+	x = xsize / 2;
+	y = ysize / 2;
+	
+	/* Scan for first wall */
+	while (cave_p(x, y)->feat != FEAT_PERM_OUTER)
+	{
+		x += i;
+		y += j;
+	}
+
+	/* Paranoia */
+	if (x == 0) x = 1;
+	if (y == 0) y = 1;
+	
+	/* Finally, add entrance to cave */
+	generate_fill(x - 1, y - 1, x + 1, y + 1, FEAT_NONE);
+	
+	/* Add stairs */
+	set_feat_bold(xsize / 2, ysize / 2, FEAT_MORE);
+
+	/* Add monsters */
+	entrance_monsters(xsize, ysize);
+}
+
+static void draw_dun_temple(void)
+{
+	int xsize, ysize;
+	int x0, y0;
+	
+	int x, y;
+		
+	xsize = rand_range(2, 4) * 16;
+	ysize = rand_range(2, 4) * 16;
+
+	x0 = xsize / 2;
+	y0 = ysize / 2;
+
+	/* Open clearing */
+	open_clearing(xsize, ysize);
+	
+	x = xsize / 4;
+	y = ysize / 4;
+	
+	/* Add floor */
+	generate_fill(x0 - x, y0 - y, x0 + x, y0 + y, FEAT_FLOOR_TILE);
+	
+	/* Draw outer walls */
+	generate_draw(x0 - x, y0 - y, x0 + x, y0 + y, FEAT_PERM_OUTER);
+	
+	/* Draw inner walls */
+	generate_draw(x0 - x, y0 - y, x0 - 1, y0 - 1, FEAT_PERM_OUTER);
+	generate_draw(x0 + 1, y0 - y, x0 + x, y0 - 1, FEAT_PERM_OUTER);
+	generate_draw(x0 - x, y0 + 1, x0 - 1, y0 + y, FEAT_PERM_OUTER);
+	generate_draw(x0 + 1, y0 + 1, x0 + x, y0 + y, FEAT_PERM_OUTER);
+	
+	/* Add some doors */
+	gen_dun_door(x0 - x, y0 - y, x0 + x, y0 + y, FALSE);
+	gen_dun_door(x0 - x, y0 - y, x0 - 1, y0 - 1, FALSE);
+	gen_dun_door(x0 - x, y0 - y, x0 - 1, y0 - 1, FALSE);
+	gen_dun_door(x0 + 1, y0 - y, x0 + x, y0 - 1, FALSE);
+	gen_dun_door(x0 + 1, y0 - y, x0 + x, y0 - 1, FALSE);
+	gen_dun_door(x0 - x, y0 + 1, x0 - 1, y0 + y, FALSE);
+	gen_dun_door(x0 - x, y0 + 1, x0 - 1, y0 + y, FALSE);
+	gen_dun_door(x0 + 1, y0 + 1, x0 + x, y0 + y, FALSE);
+	gen_dun_door(x0 + 1, y0 + 1, x0 + x, y0 + y, FALSE);
+	
+	/* Add stairs */
+	switch (randint0(4))
+	{
+		case 0:
+		{
+			set_feat_bold(x0 - x + 1, y0 - y + 1, FEAT_MORE);
+		}
+		
+		case 1:
+		{
+			set_feat_bold(x0 - x + 1, y0 + y - 1, FEAT_MORE);
+		}
+		
+		case 2:
+		{
+			set_feat_bold(x0 + x - 1, y0 - y + 1, FEAT_MORE);
+		}
+		
+		case 3:
+		{
+			set_feat_bold(x0 + x - 1, y0 + y - 1, FEAT_MORE);
+		}
+	}	
+
+	/* Add monsters */
+	entrance_monsters(xsize, ysize);
+
+}
+
+static void draw_dun_tower(void)
+{
+	int xsize, ysize;
+	int x0, y0;
+	
+	int x, y;
+		
+	xsize = rand_range(2, 4) * 16;
+	ysize = rand_range(2, 4) * 16;
+
+	x0 = xsize / 2;
+	y0 = ysize / 2;
+
+	/* Open clearing */
+	open_clearing(xsize, ysize);
+	
+	x = xsize / 4;
+	y = ysize / 4;
+	
+	/* Add floor */
+	generate_fill(x0 - x, y0 - y, x0 + x, y0 + y, FEAT_FLOOR_WOOD);
+	
+	/* Draw nested rectangles */
+	while ((x > 2) && (y > 2))
+	{	
+		/* Add walls */
+		generate_draw(x0 - x, y0 - y, x0 + x, y0 + y, FEAT_PERM_OUTER);
+
+		/* Add a door */
+		gen_dun_door(x0 - x, y0 - y, x0 + x, y0 + y, FALSE);
+		
+		/* Make smaller room inside */
+		x /= 2;
+		y /= 2;
+	}
+	
+	/* Add stairs */
+	set_feat_bold(xsize / 2, ysize / 2, FEAT_MORE);
+
+	/* Add monsters */
+	entrance_monsters(xsize, ysize);
+}
+
+static void draw_dun_ruin(void)
+{
+	int xsize, ysize;
+	int x0, y0;
+	
+	int i, j;
+	
+	int count;
+
+	cave_type *c_ptr;
+	
+	xsize = rand_range(2, 4) * 16;
+	ysize = rand_range(2, 4) * 16;
+
+	x0 = xsize / 2;
+	y0 = ysize / 2;
+	
+	/* Add entrance */
+	generate_draw(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FEAT_PERM_OUTER);
+
+	/* Open the inner vault with a door */
+	gen_dun_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FALSE);
+
+	/* Place stairs */
+	set_feat_bold(x0, y0, FEAT_MORE);
+
+	count = (xsize / 16) * (ysize / 16);
+	
+	/* Draw a random number of buildings */
+	make_dun_buildings(count, xsize, ysize);
+	
+	/* Wreck them! */
+	for (i = 0; i < xsize; i++)
+	{
+		for (j = 0; j < ysize; j++)
+		{
+			c_ptr = cave_p(i, j);
+		
+			switch (c_ptr->feat)
+			{
+				case FEAT_MORE:
+				{
+					/* Keep the stairs */
+					continue;
+				}
+				
+				case FEAT_PERM_OUTER:
+				{
+					/* Convert wall to be diggable to prevent problems */
+					set_feat_grid(c_ptr, FEAT_WALL_OUTER);
+				
+					/* Wreck the walls */
+					if (one_in_(4)) set_feat_grid(c_ptr, FEAT_RUBBLE);
+					if (one_in_(4)) set_feat_grid(c_ptr, FEAT_DIRT);
+					if (one_in_(8)) set_feat_grid(c_ptr, FEAT_NONE);
+				
+					break;
+				}
+			
+				case FEAT_FLOOR_WOOD:
+				{
+					/* Wreck the floors less often */
+					if (one_in_(100)) set_feat_grid(c_ptr, FEAT_RUBBLE);
+					if (one_in_(10)) set_feat_grid(c_ptr, FEAT_DIRT);
+					if (one_in_(25)) set_feat_grid(c_ptr, FEAT_NONE);
+				
+					break;
+				}
+				
+				case FEAT_NONE:
+				{
+					/* Rarely affect the area between buildings */
+					if (one_in_(100)) set_feat_grid(c_ptr, FEAT_RUBBLE);
+					if (one_in_(100)) set_feat_grid(c_ptr, FEAT_DIRT);
+					if (one_in_(100)) set_feat_grid(c_ptr, FEAT_FLOOR_WOOD);
+				}
+			}
+		}	
+	}
+	
+	/* Add monsters */
+	entrance_monsters(xsize, ysize);
+}
+
+static void draw_dun_grave(void)
+{
+	int xsize, ysize;
+	int x0, y0;
+	
+	int x, y;
+	
+	int i, count;
+	int j, k;
+	
+	cave_type *c_ptr;
+	
+	xsize = rand_range(2, 4) * 16;
+	ysize = rand_range(2, 4) * 16;
+
+	/* Open clearing */
+	open_clearing(xsize, ysize);
+
+	x0 = xsize / 2;
+	y0 = ysize / 2;
+	
+	/* Add crypt entrance */
+	generate_draw(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FEAT_PERM_OUTER);
+
+	/* Open the inner vault with a secret door */
+	gen_dun_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, TRUE);
+
+	/* Place stairs */
+	set_feat_bold(x0, y0, FEAT_MORE);
+
+	count = (xsize / 4) * (ysize / 4);
+
+	make_dun_buildings(count, xsize, ysize);
+	
+	/* Draw a random number of graves */
+	for (i = 0; i < count; i++)
+	{
+		x = randint1(xsize - 1);
+		y = randint1(ysize - 1);
+		
+		
+		/* Scan for empty space */
+		for (j = -1; j < 1; j++)
+		{
+			for (k = -1; k < 1; k++)
+			{
+				c_ptr = cave_p(x + j, y + k);
+			
+				/* Not next to or on top of other stuff */
+				if ((c_ptr->feat == FEAT_PERM_OUTER) ||
+					(c_ptr->feat == FEAT_MORE)) goto out;
+			}
+		}
+		
+		if (one_in_(5))
+		{
+			/* Draw obelisk */
+			set_feat_grid(c_ptr, FEAT_OBELISK);
+		}
+		else
+		{
+			/* Draw grave */
+			set_feat_grid(c_ptr, FEAT_BOULDER);
+		}
+		
+		out:;
+	} 
+	
+	/* Add monsters */
+	entrance_monsters(xsize, ysize);
+}
+
+/*
+ * Draw mine entrance.
+ *
+ * XXX XXX Should we have tracks?
+ */
+static void draw_dun_mine(void)
+{
+	int x0 = 8, y0 = 8;
+
+	/* Add entrance */
+	generate_draw(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FEAT_PERM_OUTER);
+
+	/* Add door to the mine */
+	gen_dun_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FALSE);
+
+	/* Place stairs */
+	set_feat_bold(x0, y0, FEAT_MORE);
+	
+	/* Add monsters */
+	entrance_monsters(16, 16);
+}
+
+static void draw_dun_city(void)
+{
+	int xsize, ysize;
+	int x0, y0;
+	
+	int count;
+	
+	xsize = rand_range(2, 4) * 16;
+	ysize = rand_range(2, 4) * 16;
+
+	/* Open clearing */
+	open_clearing(xsize, ysize);
+
+	x0 = xsize / 2;
+	y0 = ysize / 2;
+	
+	/* Add entrance */
+	generate_draw(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FEAT_PERM_OUTER);
+
+	/* Open the inner vault with a door */
+	gen_dun_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FALSE);
+
+	/* Place stairs */
+	set_feat_bold(x0, y0, FEAT_MORE);
+
+	count = (xsize / 16) * (ysize / 16);
+	
+	/* Draw a random number of buildings */
+	make_dun_buildings(count, xsize, ysize);
+	
+	/* Add monsters */
+	entrance_monsters(xsize, ysize);
+}
+
+/*
+ * Draw a the entrance to a dungeon applicable to its 'habitat'.
+ */
+void draw_dungeon(place_type *pl_ptr)
 {
 	int x, y;
 	int i, j;
 
-	place_type *pl_ptr = &place[place_num];
-
 	/* Paranoia */
 	if (pl_ptr->region) quit("Dungeon entrance already has region during creation.");
 
-	/* Get region */
-	create_region(pl_ptr, WILD_BLOCK_SIZE, WILD_BLOCK_SIZE, REGION_NULL);
+	/* Get region */;
+	create_region(pl_ptr, pl_ptr->xsize * WILD_BLOCK_SIZE,
+						pl_ptr->ysize * WILD_BLOCK_SIZE,
+						REGION_NULL);
 
 	/* Hack - do not increment refcount here - let allocate_block do that */
 
@@ -1294,23 +2046,98 @@ void draw_dungeon(u16b place_num)
 	/* Hack -- Induce consistant layout */
 	Rand_value = pl_ptr->seed;
 	
-	/* Get location of stairs */
-	x = randint1(14);
-	y = randint1(14);
+	/* Save for monster placement on entrance */
+	dun_habitat = pl_ptr->dungeon->habitat;
+	dun_level = pl_ptr->dungeon->min_level + 1;
 	
-	/* Put dungeon floor next to stairs so they are easy to find. */
-	for (i = -1; i <= 1; i++)
+	/* Hack - no monsters if have been here before */
+	if (pl_ptr->dungeon->recall_depth) dun_habitat = 0;
+	
+	switch (pl_ptr->dungeon->habitat)
 	{
-		for (j = -1; j <= 1; j++)
+		case RF7_DUN_DARKWATER:
 		{
-			/* Convert square to dungeon floor */
-			set_feat_bold(x + i, y + j, FEAT_FLOOR);
+			draw_dun_dark_water();
+			
+			break;
+		}
+		
+		case RF7_DUN_LAIR:
+		case RF7_DUN_CAVERN:
+		case RF7_DUN_HELL:
+		{
+			draw_dun_cave();
+			
+			break;
+		}
+		
+		case RF7_DUN_TEMPLE:
+		{
+			draw_dun_temple();
+			
+			break;
+		}
+		
+		case RF7_DUN_TOWER:
+		case RF7_DUN_PLANAR:
+		case RF7_DUN_HORROR:
+		{
+			draw_dun_tower();
+			
+			break;
+		}
+		
+		case RF7_DUN_RUIN:
+		{
+			draw_dun_ruin();
+			
+			break;
+		}
+		
+		case RF7_DUN_GRAVE:
+		{
+			draw_dun_grave();
+			
+			break;
+		}
+
+		case RF7_DUN_MINE:
+		{
+			draw_dun_mine();
+			
+			break;
+		}
+		
+		case RF7_DUN_CITY:
+		{
+			draw_dun_city();
+		
+			break;
+		}
+
+		default:
+		{
+			/* A really crappy dungeon entrance */
+		
+			/* Get location of stairs */
+			x = randint1(14);
+			y = randint1(14);
+	
+			/* Put dungeon floor next to stairs so they are easy to find. */
+			for (i = -1; i <= 1; i++)
+			{
+				for (j = -1; j <= 1; j++)
+				{
+					/* Convert square to dungeon floor */
+					set_feat_bold(x + i, y + j, FEAT_FLOOR);
+				}
+			}
+
+			/* Add down stairs */
+			set_feat_bold(x, y, FEAT_MORE);
 		}
 	}
-
-	/* Add down stairs */
-	set_feat_bold(x, y, FEAT_MORE);
-
+	
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;
 }
@@ -1691,8 +2518,10 @@ static bool create_towns(int xx, int yy)
 		}
 	}
 
+	pl_ptr = &place[best_town];
+
 	/* Build starting city / town */
-	draw_city(best_town);
+	draw_city(pl_ptr);
 
 	place_player_start(&p_ptr->wilderness_x, &p_ptr->wilderness_y, best_town);
 
@@ -1729,7 +2558,6 @@ static long score_dungeon(const wild_gen2_type *w_ptr, const dun_gen_type *d_ptr
 }
 
 
-
 /* Add in dungeons into the wilderness */
 static void create_dungeons(void)
 {
@@ -1760,23 +2588,16 @@ static void create_dungeons(void)
 
 		/*
 		 * See if a dungeon will fit.
-		 * (Need a 1x1 block free.)
+		 * (Need a 8x8 block free.)
 		 */
-		if (!blank_spot(x, y, 1, 1, place_count, FALSE)) continue;
-		
-		/* Get location */
-		w_ptr = &wild[y][x].trans;
-
-		/*
-		 * Add city to wilderness
-		 * Note: only 255 towns can be stored currently.
-		 */
-		w_ptr->place = (byte)place_count;
-				
+		if (!blank_spot(x, y, 8, 8, place_count, FALSE)) continue;
+						
 		pl_ptr->x = x;
 		pl_ptr->y = y;
-		pl_ptr->xsize = 1;
-		pl_ptr->ysize = 1;
+
+		/* Hack - the size is constant...  (Is this even needed?) */
+		pl_ptr->xsize = 8;
+		pl_ptr->ysize = 8;
 		
 		/* We are a dugneon */
 		pl_ptr->type = TOWN_DUNGEON;
@@ -1835,6 +2656,26 @@ static void create_dungeons(void)
 		
 		/* Initialise best dungeon */
 		init_dungeon(&place[best], &dungeons[dungeon_list[i]]);
+	}
+	
+	
+	/* Link dungeons to the wilderness */
+	for (i = NUM_TOWNS; i < NUM_TOWNS + NUM_DUNGEON; i++)
+	{
+		/* Get the place */
+		pl_ptr = &place[i];
+	
+		/* Draw it */
+		draw_dungeon(pl_ptr);
+		
+		/* We are now using the region */
+		incref_region(pl_ptr->region);
+		
+		/* Link to wilderness */
+		set_place(i);
+		
+		/* Finish with the region allocated by draw_dungeon() */
+		pl_ptr->region = unref_region(pl_ptr->region);
 	}
 }
 
@@ -2018,7 +2859,7 @@ static void build_store(int xx, int yy, store_type *st_ptr)
  *
  * This simple routine does not check the type of stores town_num wants.
  */
-static void town_gen_hack(u16b town_num)
+static void town_gen_hack(place_type *pl_ptr)
 {
 	int y, x, k, n, xx, yy;
 
@@ -2043,7 +2884,7 @@ static void town_gen_hack(u16b town_num)
 			if (rooms[k] < MAX_STORES)
 			{
 				/* Build that store at the proper location */
-				build_store(x, y, &place[town_num].store[rooms[k]]);
+				build_store(x, y, &pl_ptr->store[rooms[k]]);
 			}
 
 			/* Shift the stores down, remove one store */
@@ -2105,13 +2946,11 @@ static void town_gen_hack(u16b town_num)
  *
  * (Vanilla town only now.)
  */
-void van_town_gen(u16b town_num)
+void van_town_gen(place_type *pl_ptr)
 {
 	int y, x;
 
 	cave_type *c_ptr;
-
-	place_type *pl_ptr = &place[town_num];
 
 	/* Paranoia */
 	if (pl_ptr->region) quit("Town already has region during creation.");
@@ -2137,7 +2976,7 @@ void van_town_gen(u16b town_num)
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant town layout */
-	Rand_value = place[town_num].seed;
+	Rand_value = pl_ptr->seed;
 
 	/* Place some floors */
 	for (y = 1; y < TOWN_HGT - 1; y++)
@@ -2150,7 +2989,7 @@ void van_town_gen(u16b town_num)
 	}
 
 	/* Build stuff */
-	town_gen_hack(town_num);
+	town_gen_hack(pl_ptr);
 
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;
@@ -2207,7 +3046,7 @@ void init_vanilla_town(void)
 	d_ptr->min_level = 1;
 
 	/* Make the town - and get the location of the stairs */
-	van_town_gen(1);
+	van_town_gen(&place[1]);
 
 	place_player_start(&p_ptr->wilderness_x, &p_ptr->wilderness_y, 1);
 
@@ -2217,7 +3056,4 @@ void init_vanilla_town(void)
 	/* Hack - set global region back to wilderness value */
 	set_region(0);
 }
-
-
-
 

@@ -32,7 +32,7 @@
 #define VERSION_NAME "ZAngband"
 
 /* Savefile version */
-#define SAVEFILE_VERSION 47
+#define SAVEFILE_VERSION 48
 
 /* User-visible version */
 #define VER_MAJOR 2

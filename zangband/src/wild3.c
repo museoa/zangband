@@ -28,28 +28,28 @@ static void blend_helper(cave_type *c_ptr, byte *data, int g_type);
 /*
  * Generate the selected place
  */
-static void place_gen(u16b place_num)
+static void place_gen(place_type *pl_ptr)
 {
-	switch (place[place_num].type)
+	switch (pl_ptr->type)
 	{
 		case TOWN_OLD:
 		{
-			van_town_gen(place_num);
+			van_town_gen(pl_ptr);
 			break;
 		}
 		case TOWN_FRACT:
 		{
-			draw_city(place_num);
+			draw_city(pl_ptr);
 			break;
 		}
 		case TOWN_QUEST:
 		{
-			draw_quest(place_num);
+			draw_quest(pl_ptr);
 			break;
 		}
 		case TOWN_DUNGEON:
 		{
-			draw_dungeon(place_num);
+			draw_dungeon(pl_ptr);
 			break;
 		}
 		default:
@@ -85,7 +85,7 @@ static void overlay_place(int x, int y, u16b w_place, blk_ptr block_ptr)
 	if (!pl_ptr->region)
 	{
 		/* Create the place */
-		place_gen(w_place);
+		place_gen(pl_ptr);
 	}
 
 	/* Paranoia */
@@ -1875,15 +1875,17 @@ static void allocate_block(int x, int y)
 		/* We need to make sure the refcounted regions work */
 		else if (place_num)
 		{
+			place_type *pl_ptr = &place[place_num];
+
 			/* Do we need to make the map? */
-			if (!place[place_num].region)
+			if (!pl_ptr->region)
 			{
 				/* Create the place */
-				place_gen(place_num);
+				place_gen(pl_ptr);
 			}
 			
 			/* Increase refcount for region */
-			incref_region(place[place_num].region);
+			incref_region(pl_ptr->region);
 		}
 	}
 }

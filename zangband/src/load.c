@@ -2114,7 +2114,7 @@ static void load_wild_data(void)
 }
 
 /* The version when the format of the wilderness last changed */
-#define VERSION_CHANGE_WILD		43
+#define VERSION_CHANGE_WILD		48
 
 
 /*

@@ -1129,7 +1129,7 @@ void del_region(int rg_idx)
 	/* Free the cave */
 	for (i = 0; i < ri_ptr->ysize; i++)
 	{
-		/* Allocate one row of the cave */
+		/* Deallocate one row of the cave */
 		FREE(rg_list[rg_idx][i]);
 	}
 

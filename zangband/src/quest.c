@@ -2246,12 +2246,10 @@ bool create_quest(int x, int y, int place_num)
 /*
  * Draw the quest onto its region
  */
-void draw_quest(u16b place_num)
+void draw_quest(place_type *pl_ptr)
 {
 	int x, y, n;
 	int i, j;
-
-	place_type *pl_ptr = &place[place_num];
 
 	wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
 
@@ -2278,7 +2276,7 @@ void draw_quest(u16b place_num)
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant quest layout */
-	Rand_value = place[place_num].seed;
+	Rand_value = pl_ptr->seed;
 
 	/* Apply the monster restriction */
 	get_mon_num_prep(camp_types[q_ptr->data.wld.data].hook_func);
