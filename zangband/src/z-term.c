@@ -276,12 +276,8 @@ term *Term = NULL;
 /*
  * Nuke a term_win (see below)
  */
-static errr term_win_nuke(term_win *s, int w, int h)
+static errr term_win_nuke(term_win *s)
 {
-	/* Hack - ignore parameters */
-	(void)w;
-	(void)h;
-
 	/* Free the window access arrays */
 	KILL(s->a);
 	KILL(s->c);
@@ -2200,7 +2196,7 @@ errr Term_resize(int w, int h)
 	KILL(hold_x2);
 
 	/* Nuke */
-	(void)term_win_nuke(hold_old, Term->wid, Term->hgt);
+	(void)term_win_nuke(hold_old);
 
 	/* Kill */
 	KILL(hold_old);
@@ -2210,7 +2206,7 @@ errr Term_resize(int w, int h)
 	if (Term->old->cy >= h) Term->old->cu = 1;
 
 	/* Nuke */
-	(void)term_win_nuke(hold_scr, Term->wid, Term->hgt);
+	(void)term_win_nuke(hold_scr);
 
 	/* Kill */
 	KILL(hold_scr);
@@ -2223,7 +2219,7 @@ errr Term_resize(int w, int h)
 	if (hold_mem)
 	{
 		/* Nuke */
-		(void)term_win_nuke(hold_mem, Term->wid, Term->hgt);
+		(void)term_win_nuke(hold_mem);
 
 		/* Kill */
 		KILL(hold_mem);
@@ -2237,7 +2233,7 @@ errr Term_resize(int w, int h)
 	if (hold_tmp)
 	{
 		/* Nuke */
-		(void)term_win_nuke(hold_tmp, Term->wid, Term->hgt);
+		(void)term_win_nuke(hold_tmp);
 
 		/* Kill */
 		KILL(hold_tmp);
@@ -2322,10 +2318,6 @@ void Term_activate(term *t)
  */
 errr term_nuke(term *t)
 {
-	int w = t->wid;
-	int h = t->hgt;
-
-
 	/* Hack -- Call the special "nuke" hook */
 	if (t->active_flag)
 	{
@@ -2341,13 +2333,13 @@ errr term_nuke(term *t)
 
 
 	/* Nuke "displayed" */
-	(void)term_win_nuke(t->old, w, h);
+	(void)term_win_nuke(t->old);
 
 	/* Kill "displayed" */
 	KILL(t->old);
 
 	/* Nuke "requested" */
-	(void)term_win_nuke(t->scr, w, h);
+	(void)term_win_nuke(t->scr);
 
 	/* Kill "requested" */
 	KILL(t->scr);
@@ -2356,7 +2348,7 @@ errr term_nuke(term *t)
 	if (t->mem)
 	{
 		/* Nuke "memorized" */
-		(void)term_win_nuke(t->mem, w, h);
+		(void)term_win_nuke(t->mem);
 
 		/* Kill "memorized" */
 		KILL(t->mem);
@@ -2366,7 +2358,7 @@ errr term_nuke(term *t)
 	if (t->tmp)
 	{
 		/* Nuke "temporary" */
-		(void)term_win_nuke(t->tmp, w, h);
+		(void)term_win_nuke(t->tmp);
 
 		/* Kill "temporary" */
 		KILL(t->tmp);
