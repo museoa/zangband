@@ -1488,16 +1488,25 @@ static void store_purchase(int *store_top)
 			/* Describe the transaction */
 			msgf("You bought %v for %ld gold.",
 				 OBJECT_FMT(j_ptr, TRUE, 3), (long)price);
+			
+			/* Now, reduce the original stack's pval. */
+			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
+			{
+				o_ptr->pval -= j_ptr->pval;
+
+				/* No used charges in store stock */
+				o_ptr->ac = 0;
+			}
 
             /* Erase the inscription */
             quark_remove(&j_ptr->inscription);
 
 			/* Erase the "feeling" */
 			j_ptr->feeling = FEEL_NONE;
-
+			
 			/* Give it to the player */
 			j_ptr = inven_carry(j_ptr);
-
+			
 			/* Paranoia */
 			if (!j_ptr)
 			{
@@ -1510,15 +1519,6 @@ static void store_purchase(int *store_top)
 
 			/* Describe the final result */
 			msgf("You have %v (%c).", OBJECT_FMT(j_ptr, TRUE, 3), I2A(item_new));
-
-			/* Now, reduce the original stack's pval. */
-			if ((o_ptr->tval == TV_ROD) || (o_ptr->tval == TV_WAND))
-			{
-				o_ptr->pval -= j_ptr->pval;
-
-				/* No used charges in store stock */
-				o_ptr->ac = 0;
-			}
 
 			/* Handle stuff */
 			handle_stuff();
