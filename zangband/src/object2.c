@@ -1963,7 +1963,7 @@ static bool get_ego_prep(byte slot, bool good)
  * The "standard" method of using an allocation table is used to
  * make the selection.
  */
-static s16b get_ego_num(int level)
+static byte get_ego_num(int level)
 {
 	int i;
 
@@ -2011,7 +2011,7 @@ static s16b get_ego_num(int level)
 	}
 
 	/* Result */
-	return (table[i].index);
+	return ((byte)(table[i].index));
 }
 
 
@@ -4125,7 +4125,7 @@ void place_object(int y, int x, bool good, bool great)
  *
  * The location must be a legal, clean, floor grid.
  */
-bool make_gold(object_type *j_ptr, s16b coin_type)
+bool make_gold(object_type *j_ptr, int coin_type)
 {
 	s16b i;
 

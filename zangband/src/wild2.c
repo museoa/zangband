@@ -698,9 +698,11 @@ static void draw_building(byte type, byte x, byte y, u16b store, u16b town_num)
 /* Actually draw the city on cave[][] */
 void draw_city(u16b town_num)
 {
-	int y, x, i, j, k, l;
-	int count = 0, build;
+	int y, x, k, l;
+	int count = 0;
+	byte i, j;
 	byte magic;
+	u16b build;
 
 	bool city_block;
 
@@ -724,7 +726,7 @@ void draw_city(u16b town_num)
 	Rand_value = town[town_num].seed;
 
 	/* Get value of "magic" level of buildings */
-	magic = randint0(256);
+	magic = (byte)randint0(256);
 	
 	/* Generate plasma factal */
 	clear_temp_block();
@@ -883,14 +885,14 @@ void draw_city(u16b town_num)
 	
 	
 	/* Scan blocks in a random order */
-	for(build = 0; build < count; build++)
+	for (build = 0; build < count; build++)
 	{
 		/* Pick a square */		
-		i = randint0(WILD_BLOCK_SIZE);
-		j = randint0(WILD_BLOCK_SIZE);
+		i = (byte)randint0(WILD_BLOCK_SIZE);
+		j = (byte)randint0(WILD_BLOCK_SIZE);
 		
 		/* Find some room for a building */
-		while(temp_block[j][i] <= 1)
+		while (temp_block[j][i] <= 1)
 		{
 			/* Scan across town_block */
 			i++;
@@ -918,6 +920,7 @@ void draw_city(u16b town_num)
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = FALSE;
 }
+
 
 /*
  * Generate the selected town

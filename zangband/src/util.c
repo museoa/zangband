@@ -1959,14 +1959,14 @@ static s16b compact_quarks(void)
 	/* Find the one with the least non-zero time */
 	i = 1;
 	
-	while(!temp_y[i]) i++;
+	while (!temp_y[i]) i++;
 	
 	/* Save the most unused temporary quark */
 	empty = i;
 	
 	
 	/* Reset all the times to something "smaller" */
-	for(;i < quark__num; i++)
+	for (;i < quark__num; i++)
 	{
 		/* Paranoia */
 		if (temp_x[i])

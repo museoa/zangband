@@ -868,9 +868,10 @@ void monster_death(int m_idx)
 		/* Make Object */
 		else
 		{
+			u16b delta_level = (good ? 15 : 0) + (great ? 15 : 0);
+
 			/* Make an object */
-			if (!make_object(q_ptr, (good ? 15 : 0) + (great ? 15 : 0),
-				 r_ptr->obj_drop)) continue;
+			if (!make_object(q_ptr, delta_level, r_ptr->obj_drop)) continue;
 
 			/* XXX XXX XXX */
 			dump_item++;

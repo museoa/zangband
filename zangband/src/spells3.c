@@ -4322,7 +4322,7 @@ bool dimension_door(void)
 /*
  * Map the wilderness
  */
-void map_wilderness(int radius, u16b x, u16b y)
+void map_wilderness(int radius, s32b x, s32b y)
 {
 	int i, j;
 	int dist;

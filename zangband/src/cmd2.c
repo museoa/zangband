@@ -2999,8 +2999,9 @@ void do_cmd_throw_aux(int mult)
 	int px = p_ptr->px;
 
 	int dir, item;
-	int j, y, x, ny, nx, ty, tx;
+	int y, x, ny, nx, ty, tx;
 	int chance, chance2, tdis;
+	int breakage;
 	int mul, div;
 	int cur_dis, visible;
 
@@ -3385,15 +3386,17 @@ void do_cmd_throw_aux(int mult)
 	}
 
 	/* Chance of breakage (during attacks) */
-	j = (hit_body ? breakage_chance(q_ptr) : 0);
+	breakage = (hit_body ? breakage_chance(q_ptr) : 0);
 
 	/* Figurines transform */
 	if (q_ptr->tval == TV_FIGURINE)
 	{
-		j = 100;
+		bool pet = (cursed_p(q_ptr) ? FALSE : TRUE);
 
-		if (!(summon_named_creature(y, x, q_ptr->pval, FALSE, FALSE,
-				!(cursed_p(q_ptr)))))
+		/* Always break */
+		breakage = 100;
+
+		if (!(summon_named_creature(y, x, q_ptr->pval, FALSE, FALSE, pet)))
 			msg_print("The Figurine writhes and then shatters.");
 		else if (cursed_p(q_ptr))
 			msg_print("You have a bad feeling about this.");
@@ -3402,7 +3405,7 @@ void do_cmd_throw_aux(int mult)
 	/* Potions smash open */
 	if (object_is_potion(q_ptr))
 	{
-		if (hit_body || hit_wall || (randint1(100) < j))
+		if (hit_body || hit_wall || (randint1(100) < breakage))
 		{
 			/* Message */
 			msg_format("The %s shatters!", o_name);
@@ -3427,12 +3430,12 @@ void do_cmd_throw_aux(int mult)
 		}
 		else
 		{
-			j = 0;
+			breakage = 0;
 		}
 	}
 
 	/* Drop (or break) near that location */
-	(void)drop_near(q_ptr, j, y, x);
+	(void)drop_near(q_ptr, breakage, y, x);
 
 	p_ptr->redraw |= (PR_EQUIPPY);
 }

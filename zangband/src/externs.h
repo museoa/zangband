@@ -667,7 +667,7 @@ extern void init_match_hook(byte tval, byte sval);
 extern bool kind_is_match(int k_idx);
 extern bool make_object(object_type *o_ptr, u16b delta_level, obj_theme theme);
 extern void place_object(int y, int x, bool good, bool great);
-extern bool make_gold(object_type *j_ptr, s16b coin_type);
+extern bool make_gold(object_type *j_ptr, int coin_type);
 extern void place_gold(int y, int x);
 extern s16b drop_near(object_type *o_ptr, int chance, int y, int x);
 extern void acquirement(int y1, int x1, int num, bool great, bool known);
@@ -848,7 +848,7 @@ extern bool curse_weapon(void);
 extern bool brand_bolts(void);
 extern bool polymorph_monster(int y, int x);
 extern bool dimension_door(void);
-extern void map_wilderness(int radius, u16b x, u16b y);
+extern void map_wilderness(int radius, s32b x, s32b y);
 
 
 /* store.c */
@@ -1071,7 +1071,7 @@ extern errr init_object_alloc(void);
 extern void k_info_reset(void);
 
 /* wild.c */
-extern bool build_is_store(byte type);
+extern bool build_is_store(s16b type);
 extern void light_dark_block(blk_ptr block_ptr, int x, int y);
 extern void change_level(int);
 extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);

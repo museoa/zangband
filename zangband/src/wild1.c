@@ -16,7 +16,7 @@
 #include "wild.h"
 
 /* Is the building a store? */
-bool build_is_store(byte type)
+bool build_is_store(s16b type)
 {
 	switch (type)
 	{
@@ -213,7 +213,7 @@ static bool create_city(int x, int y, int town_num)
 	int magic, temp;
 	int count = 0;	
 	int build_num = 0, build_tot;
-	u16b building;
+	byte building;
 	byte gate_value[MAX_GATES];
 	byte gate_num[MAX_GATES];
 
@@ -227,8 +227,8 @@ static bool create_city(int x, int y, int town_num)
 	u16b build_list[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
 
 	/* Wipe the list of allocated buildings */
-	(void) C_WIPE(build, MAX_CITY_BUILD, u16b);
-	(void) C_WIPE(build_list, (WILD_BLOCK_SIZE * WILD_BLOCK_SIZE), u16b);
+	(void)C_WIPE(build, MAX_CITY_BUILD, u16b);
+	(void)C_WIPE(build_list, (WILD_BLOCK_SIZE * WILD_BLOCK_SIZE), u16b);
 	
 	/* Add town */
 	strcpy(t_ptr->name, "town");
@@ -338,7 +338,6 @@ static bool create_city(int x, int y, int town_num)
 			/* Is a "wall block" */
 			if (town_block[j][i] == 1)
 			{
-				
 				city_block = FALSE;
 								
 				/* Scan around */
@@ -367,9 +366,9 @@ static bool create_city(int x, int y, int town_num)
 	}
 	
 	/* Clear the gates locations */
-	(void) C_WIPE(t_ptr->gates_x, MAX_GATES, byte);
-	(void) C_WIPE(t_ptr->gates_y, MAX_GATES, byte);	
-	(void) C_WIPE(gate_num, MAX_GATES, byte);
+	(void)C_WIPE(t_ptr->gates_x, MAX_GATES, byte);
+	(void)C_WIPE(t_ptr->gates_y, MAX_GATES, byte);	
+	(void)C_WIPE(gate_num, MAX_GATES, byte);
 	
 	
 	/* Initialise min and max values */
@@ -485,24 +484,24 @@ static bool create_city(int x, int y, int town_num)
 	build_tot = count;
 	
 	/* Scan blocks in a random order */
-	while(count)
+	while (count)
 	{
 		/* Pick a square */		
 		i = randint0(WILD_BLOCK_SIZE);
 		j = randint0(WILD_BLOCK_SIZE);
-		
+
 		/* Find some room for a building */
-		while(town_block[j][i] <= 1)
+		while (town_block[j][i] <= 1)
 		{
 			/* Scan across town_block */
 			i++;
-			
+
 			if (i == WILD_BLOCK_SIZE)
 			{
 				/* New line */
 				i = 0;
 				j++;
-				
+
 				if (j == WILD_BLOCK_SIZE)
 				{
 					/* Restart from the begining */
@@ -510,11 +509,11 @@ static bool create_city(int x, int y, int town_num)
 				}
 			}
 		}
-		
+
 		/* Get parameters for the 8x8 section the building is on */
 		pop = town_block[j][i] / WILD_BLOCK_SIZE;
 		law = temp_block[j][i] / WILD_BLOCK_SIZE;
-		
+
 		/* 
 		 * "place" building, and then record in the
 		 * list of allocated buildings.

@@ -1333,7 +1333,7 @@ bool detect_traps(void)
 	/* Save center of detection radius */
 	p_ptr->detectx = px;
 	p_ptr->detecty = py;
-	
+
 	/* Have detected traps on this level */
 	p_ptr->detected = TRUE;
 
@@ -1512,7 +1512,7 @@ bool detect_treasure(void)
 			c_ptr = area(y,x);
 
 			/* Notice embedded gold */
-			
+
 			/* Does "embeded" gold really exist??? */
 			if ((c_ptr->feat == FEAT_MAGMA_H) ||
 			    (c_ptr->feat == FEAT_QUARTZ_H))
@@ -2285,20 +2285,20 @@ bool raise_dead(int y, int x, bool pet)
 		if (!f_ptr->t_idx) continue;
 
 		/* Want a corpse / skeleton */
-		if (!(f_ptr->t_idx == FT_CORPSE)
-			 || (f_ptr->t_idx == FT_SKELETON)) continue;
-		
+		if (!(f_ptr->t_idx == FT_CORPSE) ||
+		     (f_ptr->t_idx == FT_SKELETON)) continue;
+
 		/* Location */
 		fy = f_ptr->fy;
 		fx = f_ptr->fx;
 
 		/* Require line of sight */
 		if (!los(fy, fx, y, x)) continue;
-		
+
 		c_ptr = area(fy, fx);
-	
+
 		/* Raise Corpses / Skeletons */
-		if(field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (void *) &pet))
+		if (field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (void *)&pet))
 		{
 			if (player_has_los_grid(c_ptr)) obvious = TRUE;
 		}
@@ -2406,7 +2406,7 @@ bool genocide(int player_cast)
 
 		/* Skip "wrong" monsters */
 		if (r_ptr->d_char != typ) continue;
-		
+
 		/* Notice changes in view */
 		if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
 		{
@@ -2662,10 +2662,10 @@ bool destroy_area(int y1, int x1, int r, int full)
 
 			/* Fields can block destruction */
 			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) continue;
-			
+
 			/* Destroy the fields on the square */
 			delete_field(y, x);
-			
+
 			/* Destroy "valid" grids */
 			if (cave_valid_grid(c_ptr))
 			{
@@ -2849,7 +2849,7 @@ bool earthquake(int cy, int cx, int r)
 
 			/* Important -- Skip "quake" grids */
 			if (map[16+y-cy][16+x-cx]) continue;
-		
+
 			/* Check for a field that blocks movement */
 			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
 			{
@@ -2933,11 +2933,11 @@ bool earthquake(int cy, int cx, int r)
 			/* Move the player */
 			py = sy;
 			px = sx;
-			
+
 			/* Move the player */
 			p_ptr->py = sy;
 			p_ptr->px = sx;
-			
+
 			if (!p_ptr->depth)
 			{
 				/* Scroll wilderness */
@@ -2945,7 +2945,7 @@ bool earthquake(int cy, int cx, int r)
 				p_ptr->wilderness_y = py;
 				move_wild();
 			}
-		
+
 			/* Process fields under the player. */
 			field_hook(&area(py, px)->fld_idx,
 				 FIELD_ACT_PLAYER_ENTER, NULL);
@@ -3026,25 +3026,25 @@ bool earthquake(int cy, int cx, int r)
 
 							/* Skip non-empty grids */
 							if (!cave_empty_grid(c_ptr)) continue;
-							
+
 							/* Check for a field that blocks movement */
 							if (fields_have_flags(c_ptr->fld_idx,
 									 FIELD_INFO_NO_ENTER)) continue;
-							
-							/* 
+
+							/*
 							 * Test for fields that will not allow this
 							 * specific monster to pass. (i.e. Glyph of warding)
 							 */
-		 
+
 							/* Initialise info to pass to action functions */
 							mon_enter_test.m_ptr = NULL;
 							mon_enter_test.do_move = TRUE;
-		
+
 							/* Call the hook */
 							field_hook(&c_ptr->fld_idx,
-								 FIELD_ACT_MON_ENTER_TEST, 
+								 FIELD_ACT_MON_ENTER_TEST,
 								 (void *)&mon_enter_test);
-			 
+
 							/* Get result */
 							if (!mon_enter_test.do_move) continue;
 
@@ -3706,17 +3706,17 @@ bool teleport_swap(int dir)
 
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx, FIELD_ACT_PLAYER_LEAVE, NULL);
-	
+
 	/* Process fields under the monster. */
 	field_hook(&area(m_ptr->fy, m_ptr->fx)->fld_idx,
 		 FIELD_ACT_MONSTER_LEAVE, m_ptr);
-		 
+
 	/* Move monster */
 	area(py, px)->m_idx = c_ptr->m_idx;
 
 	/* Update the old location */
 	c_ptr->m_idx = 0;
-	
+
 	/* Move the monster */
 	m_ptr->fy = py;
 	m_ptr->fx = px;
@@ -3731,7 +3731,7 @@ bool teleport_swap(int dir)
 
 	tx = m_ptr->fx;
 	ty = m_ptr->fy;
-	
+
 	if (!p_ptr->depth)
 	{
 		/* Scroll wilderness */
@@ -3739,14 +3739,14 @@ bool teleport_swap(int dir)
 		p_ptr->wilderness_y = py;
 		move_wild();
 	}
-	
+
 	/* Process fields under the player. */
 	field_hook(&area(py, px)->fld_idx,
 		FIELD_ACT_PLAYER_ENTER, NULL);
 
 	/* Update the monster (new location) */
 	update_mon(area(ty, tx)->m_idx, TRUE);
-	
+
 	/* Process fields under the monster. */
 	field_hook(&area(m_ptr->fy, m_ptr->fx)->fld_idx,
 		FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
