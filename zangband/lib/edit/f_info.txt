@@ -19,6 +19,7 @@
 
 # N:serial number:terrain name
 # G:symbol:color
+# F: flag | flag | etc
 
 # N' indicates the beginning of an entry. The serial number must
 # increase for each new item.
@@ -30,6 +31,10 @@
 # r - Red          g - Green          b - Blue          u - Brown
 # d - Black        W - Light Gray     v - Violet        y - Yellow
 # R - Light Red    G - Light Green    B - Light Blue    U - Light Brown
+
+# 'F' is for flags. These are fairly self-explanatory. As many F:
+# lines may be used as are needed to specify all the flags and flags
+# are separated by the '|' symbol
 
 
 # Version stamp (required)
@@ -185,91 +190,109 @@ G:^:g
 
 N:32:door
 G:+:U
+F:BLOCK
 
 # Pillar
 N:33:pillar
 G:#:D
+F:BLOCK
 
 
 # 0x30 --> secret door
 
 N:48:granite wall
 G:#:w
+F:BLOCK
 
 # 0x31 --> rubble
 
 N:49:pile of rubble
 G:::w
+F:BLOCK
 
 # 0x32 --> magma vein
 
 N:50:magma vein
 G:#:s
+F:BLOCK
 
 # 0x33 --> quartz vein
 
 N:51:quartz vein
 G:#:W
+F:BLOCK
 
 # 0x34 --> magma vein + treasure
 # This terrain type may not actually be needed...
 N:52:magma vein
 G:#:s
+F:BLOCK
 
 # 0x35 --> quartz vein + treasure
 # This terrain type may not actually be needed...
 N:53:quartz vein
 G:#:W
+F:BLOCK
 
 # 0x36 --> magma vein + known treasure
 
 N:54:magma vein with treasure
 G:*:o
+F:BLOCK
 
 # 0x37 --> quartz vein + known treasure
 
 N:55:quartz vein with treasure
 G:*:o
+F:BLOCK
 
 # 0x38 --> granite wall -- basic
 
 N:56:granite wall
 G:#:w
+F:BLOCK
 
 # 0x39 --> granite wall -- inner
 
 N:57:granite wall
 G:#:w
+F:BLOCK
 
 # 0x3A --> granite wall -- outer
 
 N:58:granite wall
 G:#:w
+F:BLOCK
 
 # 0x3B --> granite wall -- solid
 
 N:59:granite wall
 G:#:w
+F:BLOCK
 
 # 0x3C --> permanent wall -- basic (perm)
 
 N:60:permanent wall
 G:#:w
+F:BLOCK
 
 # 0x3D --> permanent wall -- inner (perm)
 
 N:61:permanent wall
 G:#:w
+F:BLOCK
 
 # 0x3E --> permanent wall -- outer (perm)
 
 N:62:permanent wall
 G:#:w
+F:BLOCK
 
 # 0x3F --> permanent wall -- solid (perm)
 
 N:63:permanent wall
 G:#:w
+F:BLOCK
 
 N:64:explosive rune
 G:*:R
@@ -300,51 +323,6 @@ G:*:w
 
 N:73:corrupted section of the Pattern
 G:*:D
-
-# 0x4A --> shop -- general store (perm)
-
-N:74:General Store
-G:1:U
-
-# 0x4B --> shop -- armoury (perm)
-
-N:75:Armoury
-G:2:s
-
-# 0x4C --> shop -- weapon shop (perm)
-
-N:76:Weapon Smiths
-G:3:w
-
-# 0x4D --> shop -- temple (perm)
-
-N:77:Temple
-G:4:g
-
-# 0x4E --> shop -- alchemist (perm)
-
-N:78:Alchemy Shop
-G:5:b
-
-# 0x4F --> shop -- magic shop (perm)
-
-N:79:Magic Shop
-G:6:r
-
-# 0x50 --> shop -- black market (perm)
-
-N:80:Black Market
-G:7:D
-
-# 0x51 --> shop -- home (perm)
-
-N:81:Home
-G:8:y
-
-# 0x52 --> shop -- bookstore (perm)
-
-N:82:Bookstore
-G:9:o
 
 # 0x53 --> terrain -- deep water
 
@@ -389,39 +367,51 @@ G:%:b
 
 N:96:tree
 G:%:G
+F:HALF_LOS
 
 N:97:rock face
 G:::u
+F:HALF_LOS
 
 N:98:snow covered rock face
 G:::W
+F:HALF_LOS
 
 N:99:boulder
 G:::y
+F:HALF_LOS
 
 N:100:pine tree
 G:%:g
+F:HALF_LOS
 
 N:101:snow covered tree
 G:%:w
+F:HALF_LOS
 
 N:102:obelisk
 G:;:b
+F:HALF_LOS
 
 N:103:pillar
 G:#:w
+F:HALF_LOS
 
 N:112:stone fence
 G:::b
+F:HALF_LOS
 
 N:113:well
 G:~:v
+F:HALF_LOS
 
 N:114:fountain
 G:~:U
+F:HALF_LOS
 
 N:115:jungle
 G:%:D
+F:BLOCK
 
 
 
