@@ -3131,6 +3131,9 @@ void borg_init_9(void)
 	/* The borg doesn't understand this */
 	easy_floor = FALSE;
 
+	/* The borg doesn't understand speaking uniques */
+	speak_unique = FALSE;
+
 	/* Efficiency */
 	avoid_abort = TRUE;
 
