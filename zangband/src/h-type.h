@@ -108,57 +108,50 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
-#if 0
+#ifdef USE_64B
 /* Signed/Unsigned 64bit value */
 typedef long u64b;
 typedef unsigned long s64b;
-#endif /* 0 */
+#endif /* USE_64B */
 
 #else  /* L64 */
 
 typedef signed long s32b;
 typedef unsigned long u32b;
 
-#if 0
-/* Try to get a 64 bit type */
-#if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
+#if USE_64B
 
-#include <stdint.h>
-#define ANG_U64B uint64_t
-#define ANG_S64B int64_t
-#endif /* __STDC__ && __STDC_VERSION__ */
+/* Try to get a 64 bit type */
+# if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
+#  include <stdint.h>
+#  define ANG_U64B uint64_t
+#  define ANG_S64B int64_t
+# endif /* __STDC__ && __STDC_VERSION__ */
 
 /* Define this for Microsoft Dev Studio C++ 6.0 */
-#ifdef MSDEV
-
-#define ANG_U64B unsigned __int64
-#define ANG_S64B __int64
-
-#endif /* MSDEV */
+# ifdef MSDEV
+#  define ANG_U64B unsigned __int64
+#  define ANG_S64B __int64
+# endif /* MSDEV */
 
 /* Define this if you have <sys/types.h> with an old compiler */
-#if defined HAS_SYS_TYPES && !defined ANG_U64B
-
-#include <sys/types.h>
-#define ANG_U64B u_int64_t
-#define ANG_S64B int64_t
-
-#endif /* HAS_SYS_TYPES */
+# if defined HAS_SYS_TYPES && !defined ANG_U64B
+#  include <sys/types.h>
+#  define ANG_U64B u_int64_t
+#  define ANG_S64B int64_t
+# endif /* HAS_SYS_TYPES */
 
 /* Attempt to use "long long" which is semi-standard for older compilers */
-#ifndef ANG_U64B
-
-/* Signed/Unsigned 64bit value */
-#define ANG_U64B unsigned long long
-#define ANG_S64B long long
-
-#endif /* ANG_U64B */
+# ifndef ANG_U64B
+#  define ANG_U64B unsigned long long
+#  define ANG_S64B long long
+# endif /* ANG_U64B */
 
 /* Define the 64bit types */
 typedef ANG_U64B u64b;
 typedef ANG_S64B s64b;
 
-#endif /* 0 */
+#endif /* USE_64B */
 
 #endif /* L64 */
 

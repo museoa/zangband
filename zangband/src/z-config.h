@@ -569,3 +569,8 @@
 #define TERM_CAVE_MAP
 #define TERM_USE_LIST
 #endif /* ALLOW_BORG */
+
+/*
+ * Optional use of 64bit type
+ */
+/* #define USE_64B */

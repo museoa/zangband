@@ -161,7 +161,7 @@ static void prt_binary(u32b flags, int col, int row)
 	}
 }
 
-#if 0
+#if USE_64B
 typedef u64b ufix40_24;	/* Fixed point: 40 bits integer 24 bits fractional */
 
 static ufix40_24 pow4(ufix40_24 n)
@@ -375,8 +375,7 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	prt("+", col, row + 21);
 }
 
-#endif /* 0 */
-
+#endif /* USE_64B */
 
 /*
  * Hack -- Teleport to the target
@@ -997,7 +996,7 @@ static object_type *wiz_reroll_item(object_type *o_ptr)
 }
 
 
-#if 0
+#if USE_64B
 
 /*
  * Redraw the rarity graph with a different number of rolls
@@ -1019,7 +1018,7 @@ static void wiz_statistics(object_type *o_ptr)
 	prt_alloc(o_ptr, 0, 2, test_roll);
 }
 
-#endif /* 0 */
+#endif /* USE_64B */
 
 
 /*
@@ -1137,12 +1136,12 @@ static void do_cmd_wiz_play(void)
 			break;
 		}
 
-#if 0
+#if USE_64B
 		if (ch == 's' || ch == 'S')
 		{
 			wiz_statistics(o_ptr);
 		}
-#endif /* 0 */
+#endif /* USE_64B */
 
 		if (ch == 'r' || ch == 'r')
 		{
