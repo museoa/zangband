@@ -1959,14 +1959,8 @@ static void borg_log_death(void)
 
 	path_make(buf, ANGBAND_DIR_USER, "borg-log.txt");
 
-	/* Hack -- drop permissions */
-	safe_setuid_drop();
-
 	/* Append to the file */
 	borg_log_file = my_fopen(buf, "a");
-
-	/* Hack -- grab permissions */
-	safe_setuid_grab();
 
 	/* Failure */
 	if (!borg_log_file) return;
@@ -2002,14 +1996,8 @@ static void borg_log_death_data(void)
 
 	path_make(buf, ANGBAND_DIR_USER, "zborg.dat");
 
-	/* Hack -- drop permissions */
-	safe_setuid_drop();
-
 	/* Append to the file */
 	borg_log_file = my_fopen(buf, "a");
-
-	/* Hack -- grab permissions */
-	safe_setuid_grab();
 
 	/* Failure */
 	if (!borg_log_file) return;
@@ -3249,17 +3237,13 @@ void do_cmd_borg(void)
 		case 'L':
 		{
 			/* Start a new log file */
-
-			char buf[80];
+			char buf[1024];
 
 			/* Close the log file */
 			if (borg_fff) my_fclose(borg_fff);
 
-			/* Hack -- drop permissions */
-			safe_setuid_drop();
-
 			/* Default  */
-			strcpy(buf, "borg.log");
+			path_make(buf, ANGBAND_DIR_USER, "borg.log");
 
 			/* XXX XXX XXX Get the name and open the log file */
 			if (get_string(buf, 70, "Borg Log File: "))
@@ -3270,9 +3254,6 @@ void do_cmd_borg(void)
 				/* Failure */
 				if (!borg_fff) msgf("Cannot open that file.");
 			}
-
-			/* Hack -- grab permissions */
-			safe_setuid_grab();
 			break;
 		}
 
