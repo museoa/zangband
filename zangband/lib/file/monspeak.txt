@@ -49,11 +49,13 @@ says, 'I routinely carry nifty things...'
 says, 'I need a sauna, eh?'
 
 N:39:Topi Ylinen, the Cute, Furry Bunny
-4
+6
 magically summons Cyberdemons!
 magically summons Greater Hell-Beasts!
 invokes an Ancient Foul Curse!
 activates Nightmare mode!
+says, 'You'd better stop!'
+says, 'The SPCA is going to hear of this!'
 
 N:53:Grip, Farmer Maggot's dog
 N:54:Wolf, Farmer Maggot's dog
