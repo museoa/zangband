@@ -426,6 +426,134 @@ static const byte liquid_types[LQ_MAX][2] =
 };
 
 
+static void add_monsters(int count)
+{
+	int i, j;
+	int delta_level, level, best_level;
+	
+	u16b best_r_idx;
+	
+	int depth, min_depth;
+	
+	u16b r_idx;
+	monster_race *r_ptr;
+	
+	int num;
+
+	bool group;
+
+	int x = 0, y = 0;
+	
+	cave_type *c_ptr;
+
+	/* Put some monsters in the dungeon */
+	for (i = 0; i < count; i++)
+	{
+		/*
+		 * The more boring the dungeon is right now,
+		 * the more out of depth to pick monsters.
+		 */
+		delta_level = (100 - dun_rating) / 10;
+		if (delta_level < 0) delta_level = 0;
+		
+		/* Not too far out of depth for the early levels */
+		if (delta_level > p_ptr->depth * 2) delta_level = 0;
+		
+		(void)alloc_monster(0, TRUE, delta_level);
+	}
+	
+	/* Sometimes have lots of monster of a given type */
+	if (one_in_(10))
+	{
+		level = (p_ptr->depth * 96 + 8) / 20 + 3;
+
+		best_r_idx = 1;
+		best_level = 1;
+	
+		/* Get monster */
+		for (j = 0; j < 100; j++)
+		{
+			depth = level + 6 +
+					randint1(level / 10 + 1) +
+					randint1(level / 10 + 1);
+			min_depth = level + (level / 20) + 1;
+
+			/*
+			 * Random monster out of depth
+			 * (depending on level + number of quests)
+			 */
+			r_idx = get_mon_num(depth);
+
+			r_ptr = &r_info[r_idx];
+
+			/* Save the index if the monster is deeper than current monster */
+			if (!best_r_idx || (r_info[r_idx].level > best_level))
+			{
+				best_r_idx = r_idx;
+				best_level = r_info[r_idx].level;
+			}
+
+			/* Accept monsters that are a few levels out of depth */
+			if (best_level > min_depth) break;
+		}
+
+		r_ptr = &r_info[best_r_idx];
+
+		/* Get the number of monsters */
+		if (r_ptr->flags1 & RF1_UNIQUE)
+		{
+			num = 1;
+		}
+		else if (r_ptr->flags3 & RF3_UNIQUE_7)
+		{
+			num = randint1(r_ptr->max_num);
+		}
+		else
+		{
+			num = 5 + (s16b)randint0(level / 3 + 5) / r_ptr->rarity;
+		}
+		
+		for (i = 0; i < num; i++)
+		{
+			/* Find an empty grid */
+			while (TRUE)
+			{
+				y = rand_range(p_ptr->min_hgt + 1,
+								p_ptr->max_hgt - 2);
+				x = rand_range(p_ptr->min_wid + 1,
+								p_ptr->max_wid - 2);
+
+				/* Access the grid */
+				c_ptr = area(x, y);
+
+				if (!cave_naked_grid(c_ptr)) continue;
+				
+				if (distance(x, y, p_ptr->px, p_ptr->py) < 10)
+					continue;
+				else
+					break;
+			}
+
+			if (r_ptr->flags1 & RF1_FRIENDS)
+				group = FALSE;
+			else
+				group = TRUE;
+
+			/* Try to place the monster */
+			place_monster_aux(x, y, best_r_idx, FALSE, group,
+								  FALSE, FALSE, TRUE);
+		}
+		
+		/*
+		 * Make a great object somewhere in the dungeon to compensate
+		 * (Hack - use location of last monster as target)
+		 */
+		place_object(x, y, TRUE, TRUE, 0);
+	}
+}
+
+
+
 
 /*
  * Generate a new dungeon level
@@ -443,8 +571,6 @@ static bool cave_gen(dun_type *d_ptr)
 	bool destroyed = FALSE;
 	bool empty_level = FALSE;
 	bool cavern = FALSE;
-
-	int delta_level;
 
 	int lq_count;
 
@@ -773,8 +899,6 @@ static bool cave_gen(dun_type *d_ptr)
 	/* Place quest monsters in the dungeon */
 	trigger_quest_create(QC_DUN_MONST, NULL);
 
-	
-
 	/* Pick a base number of monsters */
 	i = MIN_M_ALLOC_LEVEL;
 
@@ -800,22 +924,9 @@ static bool cave_gen(dun_type *d_ptr)
 	k = (p_ptr->depth / 3);
 	if (k > 10) k = 10;
 	if (k < 2) k = 2;
-
-	/* Put some monsters in the dungeon */
-	for (i = i + k; i > 0; i--)
-	{
-		/*
-		 * The more boring the dungeon is right now,
-		 * the more out of depth to pick monsters.
-		 */
-		delta_level = (100 - dun_rating) / 10;
-		if (delta_level < 0) delta_level = 0;
-		
-		/* Not too far out of depth for the early levels */
-		if (delta_level > p_ptr->depth * 2) delta_level = 0;
-		
-		(void)alloc_monster(0, TRUE, delta_level);
-	}
+	
+	/* Add some monsters to the dungeon */
+	add_monsters(i + k);
 
 	/* Place some traps in the dungeon */
 	alloc_object(ALLOC_SET_BOTH, ALLOC_TYP_TRAP, randint1(k));
