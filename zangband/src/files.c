@@ -1314,11 +1314,11 @@ static void display_player_abilities(void)
 
 
 	put_str("Fighting    :", 16, COL_SKILLS1);
-	desc = likert(xthn, 12);
+	desc = likert(xthn, 10);
 	c_put_str(likert_color, desc, 16, COL_SKILLS1 + WID_SKILLS);
 
 	put_str("Bows/Throw  :", 17, COL_SKILLS1);
-	desc = likert(xthb, 12);
+	desc = likert(xthb, 10);
 	c_put_str(likert_color, desc, 17, COL_SKILLS1 + WID_SKILLS);
 
 	put_str("Saving Throw:", 18, COL_SKILLS1);
