@@ -961,7 +961,7 @@ static void rd_store(int town_num, int store_num)
 
 	s16b data;
 
-	byte allocated, type = 0, owner = -1;
+	byte allocated, type = 0, owner = 0;
 	s16b max_cost;
 	byte greed;
 
@@ -3176,7 +3176,7 @@ static errr rd_savefile_new_aux(void)
 
 		for (i = 1; i < place_count; i++)
 		{
-			place[i].numstores = tmp16u;
+			place[i].numstores = (byte) tmp16u;
 
 			/* Allocate the stores */
 			C_MAKE(place[i].store, place[i].numstores, store_type);
@@ -3342,7 +3342,7 @@ static errr rd_savefile_new_aux(void)
 						else
 						{
 							/* Hack - use old one-dungeon depth */
-							dun_ptr->recall_depth = p_ptr->depth;
+							dun_ptr->recall_depth = (byte) p_ptr->depth;
 							
 							/* Make sure the value is in bounds */
 							if (dun_ptr->recall_depth < dun_ptr->min_level)
