@@ -850,7 +850,7 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 	/* Start with adjacent locations, spread further */
 	for (d = 1; d < 10; d++)
 	{
-		//* Get the lists of points with a distance d from (fx, fy) */
+		/* Get the lists of points with a distance d from (fx, fy) */
 		y_offsets = dist_offsets_y[d];
 		x_offsets = dist_offsets_x[d];
 
