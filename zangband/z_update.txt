@@ -154,6 +154,12 @@ Zangband 2.7.2:
   wasn't been updated fully.
 - The shatter armour / weapon effects now update the players
   object feelings.
+- Fix infinite loop when you try to dimension door to your current
+  location.
+- Made the mindcrafter power menu work more like the standard spell
+  menu, and display the available options all the time.
+- Fixed off-by one bug in object allocation code.
+- Fixed major bug when objects in the players pack combine.
 
 Zangband 2.7.1:
 - Split off the graphics-specific code in util.c and moved it into
