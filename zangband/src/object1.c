@@ -2996,7 +2996,6 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 
 	int n1, n2;
 
-	char tmp_val[160];
 	char out_val[160];
 
 	object_type *eo_ptr;
@@ -3013,12 +3012,6 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 
 			/* Begin the prompt */
 			sprintf(out_val, "Inven:");
-
-			/* Build the prompt */
-			sprintf(tmp_val, " %c-%c,", I2A(n1), I2A(n2));
-
-			/* Append */
-			strcat(out_val, tmp_val);
 
 			/* Append */
 			if (equip) strcat(out_val, " / for Equip,");
@@ -3056,12 +3049,6 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 			/* Begin the prompt */
 			sprintf(out_val, "Equip:");
 
-			/* Build the prompt */
-			sprintf(tmp_val, " %c-%c,", I2A(n1), I2A(n2));
-
-			/* Append */
-			strcat(out_val, tmp_val);
-
 			/* Append */
 			if (inven) strcat(out_val, " / for Inven,");
 
@@ -3086,12 +3073,6 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 				/* Begin the prompt */
 				sprintf(out_val, "Floor:");
 
-				/* Build the prompt */
-				sprintf(tmp_val, " %c-%c,", I2A(n1), I2A(n2));
-
-				/* Append */
-				strcat(out_val, tmp_val);
-
 				/* Append */
 				if (inven)
 				{
@@ -3115,11 +3096,8 @@ static void show_item_prompt(bool inven, bool equip, bool floor, cptr pmt)
 	/* Finish the prompt */
 	strcat(out_val, " ESC");
 
-	/* Build the prompt */
-	sprintf(tmp_val, "(%s) %s", out_val, pmt);
-
 	/* Show the prompt */
-	prt(tmp_val, 0, 0);
+	prt(format("(%s) %s", out_val, pmt), 0, 0);
 }
 
 /*
