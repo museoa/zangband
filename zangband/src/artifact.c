@@ -2462,7 +2462,7 @@ bool activate_effect(object_type *o_ptr)
 			cave_type *c_ptr;
 			monster_type *m_ptr;
 
-			msg_format("The %s emmits a blast of air...", o_name);
+			msg_format("The %s emits a blast of air...", o_name);
 
 			for (dir = 0; dir <= 9; dir++)
 			{
@@ -2573,7 +2573,7 @@ bool activate_effect(object_type *o_ptr)
 
 		case ACT_TERROR:
 		{
-			msg_format("The %s emmits a loud blast...", o_name);
+			msg_format("The %s emits a loud blast...", o_name);
 
 			(void)turn_monsters(40 + p_ptr->lev);
 			o_ptr->timeout = 3 * (p_ptr->lev + 10);
