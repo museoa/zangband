@@ -4080,13 +4080,6 @@ void window_stuff(void)
 		if (angband_term[j]) mask |= window_flag[j];
 	}
 
-	/* Apply usable flags */
-	p_ptr->window &= mask;
-
-	/* Nothing to do */
-	if (!p_ptr->window) return;
-
-
 	/* Display inventory */
 	if (p_ptr->window & (PW_INVEN))
 	{
@@ -4100,6 +4093,12 @@ void window_stuff(void)
 		p_ptr->window &= ~(PW_EQUIP);
 		fix_equip();
 	}
+	
+	/* Apply usable flags */
+	p_ptr->window &= mask;
+
+	/* Nothing to do */
+	if (!p_ptr->window) return;
 
 	/* Display spell list */
 	if (p_ptr->window & (PW_SPELL))

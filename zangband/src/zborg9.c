@@ -4196,7 +4196,7 @@ void do_cmd_borg(void)
 			
 			/* Paranoia */
 			if (n < 0) n = 0;
-			if (n > inven_num) break;
+			if (n >= inven_num) break;
 			
 			/* Save the screen */
 			Term_save();
@@ -4223,7 +4223,7 @@ void do_cmd_borg(void)
 			
 			/* Paranoia */
 			if (n < 0) n = 0;
-			if (n > equip_num) break;
+			if (n >= equip_num) break;
 
 			/* Save the screen */
 			Term_save();

@@ -1515,7 +1515,7 @@ bool borg_crush_junk(void)
 				!strstr(l_ptr->o_name, "{average")) continue;
 
 			/* Pretend item isn't there */
-			l_ptr->treat_as = TREAT_AS_SWAP;
+			l_ptr->treat_as = TREAT_AS_GONE;
 
 			/* Fix later */
 			fix = TRUE;
@@ -1699,7 +1699,7 @@ bool borg_crush_hole(void)
 
 
 		/* Pretend item isn't there */
-		l_ptr->treat_as = TREAT_AS_SWAP;
+		l_ptr->treat_as = TREAT_AS_GONE;
 
 		/* Fix later */
 		fix = TRUE;
@@ -2209,13 +2209,12 @@ static bool borg_wear_rings(void)
 
 	bool fix = FALSE;
 
-
 	/* Require no rings */
 	if (equipment[EQUIP_LEFT].number) return (FALSE);
 	if (equipment[EQUIP_RIGHT].number) return (FALSE);
 
-	/* Require two empty slots */
-	if (inven_num >= INVEN_PACK - 2) return (FALSE);
+	/* Require an empty slot */
+	if (inven_num >= INVEN_PACK - 1) return (FALSE);
 
 	/* Scan inventory */
 	for (i = 0; i < inven_num; i++)
@@ -2243,8 +2242,16 @@ static bool borg_wear_rings(void)
 		{
 			/* Pretend to move item into equipment slot */
 			equipment[slot].treat_as = TREAT_AS_SWAP;
-			l_ptr->treat_as = TREAT_AS_SWAP;
-
+			
+			if (l_ptr->number > 1)
+			{
+				l_ptr->treat_as = TREAT_AS_SWAP;
+			}
+			else
+			{
+				l_ptr->treat_as = TREAT_AS_GONE;
+			}
+			
 			/* Fix later */
 			fix = TRUE;
 
@@ -2428,14 +2435,20 @@ bool borg_wear_stuff(void)
 	int slot;
 	int d;
 
-	s32b p, b_p = 0L;
-
+	s32b p, b_p;
+	
 	int i, b_i = -1;
 	int danger;
 
 	list_item *l_ptr;
 
 	bool fix = FALSE;
+	
+	borg_notice();
+	
+	b_p = borg_power();
+	
+	borg_note(format("# Trying to pick best, Old Power (%ld)", b_p));
 
 	/* Require an empty slot */
 	if (inven_num >= INVEN_PACK - 1) return (FALSE);
@@ -2458,7 +2471,7 @@ bool borg_wear_stuff(void)
 			!strstr(l_ptr->o_name, "{excellent") &&
 			!strstr(l_ptr->o_name, "{special")) continue;
 
-		/* apw do not wear not *idd* artifacts */
+		/* apw do not wear not *id* artifacts */
 		if (!(l_ptr->info & OB_MENTAL) && l_ptr->xtra_name &&
 			*l_ptr->xtra_name) continue;
 
@@ -2483,10 +2496,20 @@ bool borg_wear_stuff(void)
 		{
 			/* Swap items */
 			equipment[slot].treat_as = TREAT_AS_SWAP;
-			l_ptr->treat_as = TREAT_AS_SWAP;
-
+			
+			if (l_ptr->number > 1)
+			{
+				l_ptr->treat_as = TREAT_AS_SWAP;
+			}
+			else
+			{
+				l_ptr->treat_as = TREAT_AS_GONE;
+			}
+			
 			/* Fix later */
 			fix = TRUE;
+			
+			borg_note(format("# Trying slot (%d) for %s", slot, l_ptr->o_name));
 
 			/* Examine the inventory */
 			borg_notice();
@@ -2502,13 +2525,10 @@ bool borg_wear_stuff(void)
 			l_ptr->treat_as = TREAT_AS_NORM;
 
 			/* Ignore "bad" swaps */
-			if ((b_i >= 0) && (p < b_p)) continue;
+			if ((b_i >= 0) && (p <= b_p)) continue;
 
 			/* Ignore if more dangerous */
 			if (danger < d) continue;
-
-			/* Hack -- Ignore "equal" swaps */
-			if ((b_i >= 0) && (p == b_p)) continue;
 
 			/* Maintain the "best" */
 			b_i = i;

@@ -838,7 +838,13 @@ bool borg_refuel_torch(void)
 	/* None available */
 	if (!l_ptr) return (FALSE);
 
-	/* must first wield before one can refuel */
+	/* Must first wield before one can refuel */
+	if (!equipment[EQUIP_LITE].k_idx)
+	{
+		return (FALSE);
+	}
+
+	/* Must wield torch */
 	if (k_info[equipment[EQUIP_LITE].k_idx].sval != SV_LITE_TORCH)
 	{
 		return (FALSE);
@@ -880,6 +886,12 @@ bool borg_refuel_lantern(void)
 
 	/* None available */
 	if (!l_ptr) return (FALSE);
+	
+	/* Need to be wielding a light */
+	if (!equipment[EQUIP_LITE].k_idx)
+	{
+		return (FALSE);
+	}
 
 	/* Cant refuel a torch with oil */
 	if (k_info[equipment[EQUIP_LITE].k_idx].sval != SV_LITE_LANTERN)

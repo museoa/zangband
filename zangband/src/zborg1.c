@@ -591,7 +591,6 @@ void borg_info(cptr what)
 {
 	/* Dump a log file message */
 	if (borg_fff) fprintf(borg_fff, "%s\n", what);
-
 }
 
 

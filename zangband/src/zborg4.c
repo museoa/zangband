@@ -144,9 +144,6 @@ void borg_list_info(byte list_type)
 	{
 		case LIST_INVEN:
 		{
-			/* Notice changes */
-			borg_notice();
-
 			/* Inventory changed so goals must change. */
 			goal_shop = -1;
 
@@ -159,9 +156,6 @@ void borg_list_info(byte list_type)
 
 		case LIST_EQUIP:
 		{
-			/* Notice changes */
-			borg_notice();
-			
 			/* Equipment changed so goals must change. */
 			goal_shop = -1;
 
@@ -175,8 +169,6 @@ void borg_list_info(byte list_type)
 
 		case LIST_FLOOR:
 		{
-			/* Notice changes */
-			borg_notice();
 
 			break;
 		}
@@ -463,7 +455,7 @@ static list_item *look_up_equip_slot(int slot)
 			if (l_ptr->k_idx)
 			{
 				/* The item to swap with */
-				if (l_ptr->treat_as == TREAT_AS_SWAP) return (l_ptr);
+				if (l_ptr->treat_as != TREAT_AS_NORM) return (l_ptr);
 			}
 		}
 	}
@@ -1834,8 +1826,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 
 	object_kind *k_ptr;
 
-	if ((l_ptr->treat_as == TREAT_AS_LESS) ||
-		(l_ptr->treat_as == TREAT_AS_SWAP))
+	if (l_ptr->treat_as == TREAT_AS_LESS)
 	{
 		/* Pretend we have less items */
 		number = l_ptr->number - 1;
@@ -2069,10 +2060,6 @@ static void borg_notice_inven(void)
 
 		/* Pretend item isn't there */
 		if (l_ptr->treat_as == TREAT_AS_GONE) continue;
-
-		/* Item is swapped into equipment */
-		if ((l_ptr->treat_as == TREAT_AS_SWAP) &&
-			(l_ptr->number == 1)) continue;
 
 		/* Unaware item? */
 		if (!l_ptr->k_idx) continue;
@@ -4848,7 +4835,7 @@ static s32b borg_power_aux4(void)
 	}
 
 	/* Being too heavy is really bad */
-	value -= borg_skill[BI_WEIGHT] * borg_skill[BI_WEIGHT] * 1000
+	value -= borg_skill[BI_WEIGHT] * borg_skill[BI_WEIGHT] * 100
 		/ (adj_str_wgt[my_stat_ind[A_STR]] * adj_str_wgt[my_stat_ind[A_STR]]);
 
 
@@ -4874,12 +4861,21 @@ s32b borg_power(void)
 {
 	int i = 1;
 	s32b value = 0L;
+	s32b diff;
 
 	/* Process the equipment */
-	value += borg_power_aux3();
+	diff = borg_power_aux3();
+	
+	borg_note(format("# Equip Power (%ld)", diff));
+	
+	value += diff;
 
 	/* Process the inventory */
-	value += borg_power_aux4();
+	diff = borg_power_aux4();
+	
+	borg_note(format("# Inven Power (%ld)", diff));
+	
+	value += diff;
 
 	/* Add a bonus for deep level prep */
 	/* Dump prep codes */
@@ -4889,7 +4885,8 @@ s32b borg_power(void)
 		if ((cptr)NULL != borg_prepared(i)) break;
 	}
 	value += ((i - 1) * 20000L);
-
+	
+	borg_note(format("# Total Power (%ld)", value));
 
 	/* Return the value */
 	return (value);

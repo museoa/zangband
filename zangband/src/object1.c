@@ -142,19 +142,13 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	(*f1) |= (o_ptr->flags1 &
 			  (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR));
 
-
-	/* Identified? */
-	if (object_known_p(o_ptr))
-	{
-		/* 
-		 * *Identify* sets these flags,
-		 * and ego items have some set on creation.
-		 */
-
-		(*f1) |= o_ptr->kn_flags1;
-		(*f2) |= o_ptr->kn_flags2;
-		(*f3) |= o_ptr->kn_flags3;
-	}
+	/* 
+	 * *Identify* sets these flags,
+	 * and ego items have some set on creation.
+	 */
+	(*f1) |= o_ptr->kn_flags1;
+	(*f2) |= o_ptr->kn_flags2;
+	(*f3) |= o_ptr->kn_flags3;
 
 	/* Remove the Moria flags */
 	if (ironman_moria)
