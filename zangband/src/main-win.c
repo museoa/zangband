@@ -3466,53 +3466,9 @@ static void process_menus(WORD wCmd)
 				plog("You may not do that right now.");
 				break;
 			}
-
-			/* Build the filename */
-			path_make(buf, ANGBAND_DIR_APEX, "scores.raw");
-
-			/* Open the binary high score file, for reading */
-			highscore_fd = fd_open(buf, O_RDONLY);
-
-			/* Paranoia -- No score file */
-			if (highscore_fd < 0)
-			{
-				msgf("Score file unavailable.");
-			}
-			else
-			{
-				/* Prevent various functions */
-				initialized = FALSE;
-
-				/* Display the scores */
-				if (game_in_progress && character_generated)
-				{
-					/* Show a selection of the score list */
-					predict_score();
-				}
-				else
-				{
-					/* Save Screen */
-					screen_save();
-
-					/* Show all the scores */
-					(void)display_scores_aux(0, MAX_HISCORES, -1, NULL);
-
-					/* Load screen */
-					screen_load();
-
-					/* Hack - Flush it */
-					Term_fresh();
-				}
-
-				/* Shut the high score file */
-				(void)fd_close(highscore_fd);
-
-				/* Forget the high score fd */
-				highscore_fd = -1;
-
-				/* We are ready again */
-				initialized = TRUE;
-			}
+			
+			/* Show score */
+			ingame_score(&initialized, game_in_progress);
 
 			break;
 		}

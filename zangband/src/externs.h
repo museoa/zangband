@@ -261,7 +261,6 @@ extern bool (*ang_sort_comp) (const vptr u, const vptr v, int a, int b);
 extern void (*ang_sort_swap) (const vptr u, const vptr v, int a, int b);
 extern s32b max_wild;
 extern cptr gf_color[MAX_GF];
-extern int highscore_fd;
 extern int owner_names_max;
 extern int owner_suffix_max;
 
@@ -428,9 +427,6 @@ extern void change_player_name(void);
 extern void do_cmd_suicide(void);
 extern void do_cmd_save_game(int is_autosave);
 extern void do_cmd_save_and_exit(void);
-extern void center_string(char *buf, uint max, cptr fmt, va_list *vp);
-extern void close_game(void);
-extern void exit_game_panic(void);
 extern errr get_rnd_line(cptr file_name, int entry, char *output);
 extern void get_character_name(void);
 
@@ -1026,13 +1022,14 @@ extern void create_named_art(int a_idx, int x, int y);
 extern bool display_scores_aux(int from, int to, int note,
 							   const high_score *score);
 extern void display_scores(int from, int to);
-extern void kingly(void);
 extern void enter_score(void);
-extern void top_twenty(void);
 extern void predict_score(void);
 extern void race_legends(void);
 extern void race_score(int race_num);
 extern void show_highclass(void);
+extern void ingame_score(bool *initialized, bool game_in_progress);
+extern void close_game(void);
+extern void exit_game_panic(void);
 
 /* mind.c */
 extern mindcraft_power mindcraft_powers[MINDCRAFT_MAX];
@@ -1176,6 +1173,7 @@ extern void Term_write_equipment(void);
 extern void Term_write_list(s16b o_idx, byte list_type);
 
 /* ui.c */
+extern void center_string(char *buf, uint max, cptr fmt, va_list *vp);
 extern void binary_fmt(char *buf, uint max, cptr fmt, va_list *vp);
 extern void fmt_clean(char *buf);
 extern int get_player_choice(cptr *choices, int num, int col, int wid,

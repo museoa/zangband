@@ -6,6 +6,49 @@
 
 
 /*
+ * Center a format string in the buffer.
+ *
+ * The first parameter on the stack must be the width
+ *  to center in.
+ *
+ * The second must be the string to center with.
+ * This is treated as a format string - so may contain
+ * other commands etc...
+ */
+void center_string(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	int i, j;
+
+	cptr str;
+	
+	char tmp[1024];
+	
+    int size;
+	
+	/* Unused parameter */
+	(void)fmt;
+	    
+    /* Get the size of the string to center in */
+	size = va_arg(*vp, int);
+	
+	/* Get the string to center with. */
+	str = va_arg(*vp, cptr);
+	
+	/* Expand the string */
+	vstrnfmt(tmp, 1024, str, vp);
+	
+	/* Total length */
+	i = strlen(tmp);
+
+	/* Necessary border */
+	j = (size - i) / 2;
+
+	/* Mega-Hack center the (format) string in the buffer */
+	strnfmt(buf, max, "%*s%s%*s", j, "", tmp, size - i - j, "");
+}
+
+
+/*
  * Function used to print a flag in coloured binary.
  */
 void binary_fmt(char *buf, uint max, cptr fmt, va_list *vp)

@@ -14,6 +14,12 @@
 
 
 /*
+ * The "highscore" file descriptor, if available.
+ */
+int highscore_fd = -1;
+
+
+/*
  * Seek score 'i' in the highscore file
  */
 static int highscore_seek(int i)
@@ -697,7 +703,7 @@ void enter_score(void)
 /*
  * Displays some relevant portion of the high score list.
  */
-void top_twenty(void)
+static void top_twenty(void)
 {
 	int from, to;
 	bool cont;
@@ -954,7 +960,7 @@ void race_legends(void)
 /*
  * Change the player into a King!			-RAK-
  */
-void kingly(void)
+static void kingly(void)
 {
 	/* Hack -- retire in town */
 	p_ptr->depth = 0;
@@ -999,4 +1005,587 @@ void kingly(void)
 
 	/* Wait for response */
 	pause_line(23);
+}
+
+void ingame_score(bool *initialized, bool game_in_progress)
+{
+	char buf[1024];
+	
+	/* Build the filename */
+	path_make(buf, ANGBAND_DIR_APEX, "scores.raw");
+
+	/* Open the binary high score file, for reading */
+	highscore_fd = fd_open(buf, O_RDONLY);
+
+	/* Paranoia -- No score file */
+	if (highscore_fd < 0)
+	{
+		msgf("Score file unavailable.");
+	}
+	else
+	{
+		/* Prevent various functions */
+		*initialized = FALSE;
+
+		/* Display the scores */
+		if (game_in_progress && character_generated)
+		{
+			/* Show a selection of the score list */
+			predict_score();
+		}
+		else
+		{
+			/* Save Screen */
+			screen_save();
+
+			/* Show all the scores */
+			(void)display_scores_aux(0, MAX_HISCORES, -1, NULL);
+
+			/* Load screen */
+			screen_load();
+
+			/* Hack - Flush it */
+			Term_fresh();
+		}
+
+		/* Shut the high score file */
+		(void)fd_close(highscore_fd);
+
+		/* Forget the high score fd */
+		highscore_fd = -1;
+
+		/* We are ready again */
+		*initialized = TRUE;
+	}
+}
+
+
+/*
+ * Display a "tomb-stone"
+ */
+static void print_tomb(void)
+{
+	bool done = FALSE;
+
+	/* Print the text-tombstone */
+	if (!done)
+	{
+		char buf[1024];
+
+		FILE *fp;
+
+		time_t ct = time((time_t) 0);
+
+		/* Clear screen */
+		Term_clear();
+
+		/* Build the filename */
+		path_make(buf, ANGBAND_DIR_FILE, "dead.txt");
+
+		/* Open the News file */
+		fp = my_fopen(buf, "r");
+
+		/* Dump */
+		if (fp)
+		{
+			int i = 0;
+
+			/* Dump the file to the screen */
+			while (0 == my_fgets(fp, buf, 1024))
+			{
+				/* Display and advance */
+				put_fstr(0, i++, buf);
+			}
+
+			/* Close */
+			my_fclose(fp);
+		}
+
+
+		put_fstr(11, 6, "%v", center_string, 31, player_name);
+
+		put_fstr(11, 7, "%v", center_string, 31, "the");
+
+		
+		/* King or Queen */
+		if (p_ptr->state.total_winner || (p_ptr->lev > PY_MAX_LEVEL))
+		{
+			put_fstr(11, 8, "%v", center_string, 31, "Magnificent");
+		}
+
+		/* Normal */
+		else
+		{
+			put_fstr(11, 8, "%v", center_string, 31,
+					 player_title[p_ptr->rp.pclass][(p_ptr->lev - 1) / 5]);
+		}
+
+		put_fstr(11, 10, "%v", center_string, 31, cp_ptr->title);
+
+		put_fstr(11, 11, "%v", center_string, 31, "Level: %d", (int)p_ptr->lev);
+
+		put_fstr(11, 12, "%v", center_string, 31, "Exp: %ld", (long)p_ptr->exp);
+
+		put_fstr(11, 13, "%v", center_string, 31, "AU: %ld", (long)p_ptr->au);
+
+		put_fstr(11, 14, "%v", center_string, 31, "Killed on Level %d", p_ptr->depth);
+
+
+		if (strlen(p_ptr->state.died_from) > 24)
+		{
+			put_fstr(11, 15, "%v", center_string, 31, "by %.24s.", p_ptr->state.died_from);
+		}
+		else
+		{
+			put_fstr(11, 15, "%v", center_string, 31, "by %s.", p_ptr->state.died_from);
+		}
+
+		put_fstr(11, 17, "%v", center_string, 31, "%-.24s", ctime(&ct));
+	}
+}
+
+
+/*
+ * Display some character info
+ */
+static void show_info(void)
+{
+	int i, j, l;
+	object_type *o_ptr;
+	store_type *st_ptr;
+
+	/* Hack -- Know everything in the equipment */
+	for (i = 0; i < EQUIP_MAX; i++)
+	{
+		o_ptr = &p_ptr->equipment[i];
+
+		/* Skip non-objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Aware and Known */
+		object_aware(o_ptr);
+		object_known(o_ptr);
+		object_mental(o_ptr);
+
+		/* Save all the known flags */
+		o_ptr->kn_flags[0] = o_ptr->flags[0];
+		o_ptr->kn_flags[1] = o_ptr->flags[1];
+		o_ptr->kn_flags[2] = o_ptr->flags[2];
+		o_ptr->kn_flags[3] = o_ptr->flags[3];
+	}
+
+	/* Hack -- Know everything in the inventory */
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
+	{
+		/* Aware and Known */
+		object_aware(o_ptr);
+		object_known(o_ptr);
+		object_mental(o_ptr);
+
+		/* Save all the known flags */
+		o_ptr->kn_flags[0] = o_ptr->flags[0];
+		o_ptr->kn_flags[1] = o_ptr->flags[1];
+		o_ptr->kn_flags[2] = o_ptr->flags[2];
+		o_ptr->kn_flags[3] = o_ptr->flags[3];
+	}
+	OBJ_ITT_END;
+
+	for (i = 1; i < z_info->wp_max; i++)
+	{
+		for (j = 0; j < place[i].numstores; j++)
+		{
+			st_ptr = &place[i].store[j];
+
+			if (st_ptr->type == BUILD_STORE_HOME)
+			{
+				/* Hack -- Know everything in the home */
+				OBJ_ITT_START (st_ptr->stock, o_ptr)
+				{
+					/* Aware and Known */
+					object_aware(o_ptr);
+					object_known(o_ptr);
+					object_mental(o_ptr);
+
+					/* Save all the known flags */
+					o_ptr->kn_flags[0] = o_ptr->flags[0];
+					o_ptr->kn_flags[1] = o_ptr->flags[1];
+					o_ptr->kn_flags[2] = o_ptr->flags[2];
+					o_ptr->kn_flags[3] = o_ptr->flags[3];
+				}
+				OBJ_ITT_END;
+			}
+		}
+	}
+
+	/* Hack -- Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Handle stuff */
+	handle_stuff();
+
+	/* Display player */
+	display_player(DISPLAY_PLAYER_STANDARD);
+
+	/* Prompt for inventory */
+	prtf(0, 23, "Hit any key to see more information (ESC to abort): ");
+
+	/* Flush keys */
+	flush();
+
+	/* Allow abort at this point */
+	if (inkey() == ESCAPE) return;
+
+
+	/* Show equipment */
+	Term_clear();
+
+	/* Equipment -- if any */
+	item_tester_full = TRUE;
+	show_equip(FALSE);
+
+	prtf(0, 0, "You are using: -more-");
+
+	/* Flush keys */
+	flush();
+
+	if (inkey() == ESCAPE) return;
+
+
+	/* Show inventory */
+	Term_clear();
+
+	/* Inventory -- if any */
+	item_tester_full = TRUE;
+	show_list(p_ptr->inventory, FALSE);
+
+	prtf(0, 0, "You are carrying: -more-");
+
+	/* Flush keys */
+	flush();
+
+	if (inkey() == ESCAPE) return;
+
+	for (i = 1; i < z_info->wp_max; i++)
+	{
+		for (l = 0; l < place[i].numstores; l++)
+		{
+			st_ptr = &place[i].store[l];
+
+			if (st_ptr->type == BUILD_STORE_HOME)
+			{
+				/* Home -- if anything there */
+				if (st_ptr->stock)
+				{
+					/* Initialise counter */
+					j = 0;
+
+					/* Clear screen */
+					Term_clear();
+
+					/* Display contents of the home */
+					OBJ_ITT_START (st_ptr->stock, o_ptr)
+					{
+						/* Print header, clear line */
+						prtf(4, j + 2, "%c) %s%v", I2A(j),
+							 color_seq[tval_to_attr[o_ptr->tval]],
+							 OBJECT_FMT(o_ptr, TRUE, 3));
+
+						/* Show 12 items at a time */
+						if (j == 12)
+						{
+							/* Caption */
+							prtf(0, 0, "Your home in %s: -more-",
+								 place[i].name);
+
+							/* Flush keys */
+							flush();
+
+							/* Wait for it */
+							if (inkey() == ESCAPE) return;
+
+							/* Restart counter */
+							j = 0;
+
+							/* Clear screen */
+							Term_clear();
+						}
+					}
+					OBJ_ITT_END;
+				}
+			}
+		}
+	}
+}
+
+
+
+static void close_game_handle_death(void)
+{
+	char ch;
+
+	/* Handle retirement */
+	if (p_ptr->state.total_winner)
+	{
+		/* Save winning message to notes file. */
+		if (take_notes)
+		{
+			add_note_type(NOTE_WINNER);
+		}
+
+		kingly();
+	}
+
+	/* Save memories */
+	if (!munchkin_death || get_check("Save death? "))
+	{
+		if (!save_player()) msgf("death save failed!");
+	}
+
+#if 0
+	/* Dump bones file */
+	make_bones();
+#endif
+
+	/* Inform notes file that you are dead */
+	if (take_notes)
+	{
+		char long_day[30];
+		time_t ct = time((time_t *) NULL);
+
+		/* Get the date */
+		(void)strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
+
+		/* Output to the notes file */
+		output_note("\n%s was killed by %s on %s\n", player_name,
+				p_ptr->state.died_from, long_day);
+	}
+
+	/* Enter player in high score list */
+	enter_score();
+
+	/* You are dead */
+	print_tomb();
+
+	/* Describe options */
+	prtf(0, 23, "(D) Dump char record  (C) Show char info  (T) Show top scores  (ESC) Exit");
+
+	/* Flush messages */
+	message_flush();
+
+	/* Flush all input keys */
+	flush();
+
+	/* Player selection */
+	while (TRUE)
+	{
+		/* Save screen */
+		/* Note that Term_save() and Term_load() must match in pairs */
+		Term_save();
+
+		/* Flush all input keys */
+		flush();
+
+		ch = inkey();
+
+		switch (ch)
+		{
+			case ESCAPE:
+			{
+				/* Flush the keys */
+				flush();
+
+				if (get_check("Do you really want to exit? "))
+				{
+					/* Save dead player */
+					if (!save_player())
+					{
+						msgf("Death save failed!");
+						message_flush();
+					}
+
+#if 0
+					/* Dump bones file */
+					make_bones();
+#endif
+
+					/* XXX We now have an unmatched Term_save() */
+					Term_load();
+
+					/* Go home, we're done */
+					return;
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			case 'd':
+			case 'D':
+			{
+				/* Dump char file */
+				char tmp[160] = "";
+
+				/* Prompt */
+				put_fstr(0, 23, "Filename: ");
+
+				/* Ask for filename (or abort) */
+				if (!askfor_aux(tmp, 60)) break;
+
+				/* Ignore Return */
+				if (!tmp[0]) break;
+
+				/* Dump a character file */
+				(void)file_character(tmp, FALSE);
+
+				break;
+			}
+
+			case 'c':
+			case 'C':
+			{
+				/* Remove options line, so we don't dump it */
+				clear_row(23);
+
+				/* Show char info */
+				show_info();
+				break;
+			}
+
+			case 't':
+			case 'T':
+			{
+				/* Show top twenty */
+				top_twenty();
+				break;
+			}
+		}
+
+		/* Restore the screen */
+		Term_load();
+	}
+}
+
+
+/*
+ * Close up the current game (player may or may not be dead)
+ *
+ * This function is called only from "main.c" and "signals.c".
+ */
+void close_game(void)
+{
+	char buf[1024];
+
+	/* Handle stuff */
+	handle_stuff();
+
+	/* Flush the messages */
+	message_flush();
+
+	/* Flush the input */
+	flush();
+
+	/* No suspending now */
+	signals_ignore_tstp();
+
+	/* Hack -- Character is now "icky" */
+	screen_save();
+
+	/* Build the filename */
+	path_make(buf, ANGBAND_DIR_APEX, "scores.raw");
+
+	/* Grab permissions */
+	safe_setuid_grab();
+
+	/* Open the high score file, for reading/writing */
+	highscore_fd = fd_open(buf, O_RDWR);
+
+	/* Drop permissions */
+	safe_setuid_drop();
+
+	if (p_ptr->state.is_dead)
+	{
+		/* Handle death */
+		close_game_handle_death();
+	}
+
+	/* Still alive */
+	else
+	{
+		int wid, hgt;
+	
+		/* Save the game */
+		do_cmd_save_game(FALSE);
+
+		/* If note-taking enabled, write session end to notes file */
+		if (take_notes)
+		{
+			add_note_type(NOTE_SAVE_GAME);
+		}
+		
+		/* Get size */
+		Term_get_size(&wid, &hgt);
+
+		/* Prompt for scores XXX XXX XXX */
+		prtf(0, hgt - 1, "Press Return (or Escape).");
+
+		/* Predict score (or ESCAPE) */
+		if (inkey() != ESCAPE) predict_score();
+	}
+
+
+	/* Shut the high score file */
+	(void)fd_close(highscore_fd);
+
+	/* Forget the high score fd */
+	highscore_fd = -1;
+	
+	/* No longer icky */
+	screen_load();
+
+	/* Allow suspending now */
+	signals_handle_tstp();
+}
+
+
+/*
+ * Handle abrupt death of the visual system
+ *
+ * This routine is called only in very rare situations, and only
+ * by certain visual systems, when they experience fatal errors.
+ *
+ * XXX XXX Hack -- clear the death flag when creating a HANGUP
+ * save file so that player can see tombstone when restart.
+ */
+void exit_game_panic(void)
+{
+	/* If nothing important has happened, just quit */
+	if (!character_generated || character_saved) quit("panic");
+
+	/* Mega-Hack -- see "msgf()" */
+	msg_flag = FALSE;
+
+	/* Clear the top line */
+	clear_msg();
+
+	/* Hack -- turn off some things */
+	disturb(TRUE);
+
+	/* Mega-Hack -- Delay death */
+	if (p_ptr->chp < 0) p_ptr->state.is_dead = FALSE;
+
+	/* Hardcode panic save */
+	p_ptr->state.panic_save = 1;
+
+	/* Forbid suspend */
+	signals_ignore_tstp();
+
+	/* Indicate panic save */
+	(void)strcpy(p_ptr->state.died_from, "(panic save)");
+
+	/* Panic save, or get worried */
+	if (!save_player()) quit("panic save failed!");
+
+	/* Successful panic save */
+	quit("panic save succeeded!");
 }

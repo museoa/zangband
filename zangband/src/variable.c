@@ -759,9 +759,3 @@ int owner_suffix_max;
  */
 int init_flags;
 
-
-/*
- * The "highscore" file descriptor, if available.
- */
-int highscore_fd = -1;
-
