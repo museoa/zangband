@@ -11,10 +11,10 @@ M:Q:100
 M:WS:129
 
 # Maximum number of nodes in the wilderness decision tree
-M:WN:200
+M:WN:250
 
 # Maximum number of wilderness block generation types
-M:WT:30
+M:WT:300
 
 # Maximum number of monsters in r_info.txt
 M:R:885
