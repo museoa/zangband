@@ -955,8 +955,8 @@ static void process_world(void)
 					{
 						/* Lighten wilderness block */
 						light_dark_block(wild_grid.block_ptr[y][x],
-						 (u16b) x + wild_grid.x_min / 16,
-						  (u16b) y + wild_grid.y_min / 16);
+						 (u16b)(x + wild_grid.x_min / 16),
+						  (u16b)(y + wild_grid.y_min / 16));
 					}
 				}
 			}
@@ -974,8 +974,8 @@ static void process_world(void)
 					{
 						/* Darken wilderness block */
 						light_dark_block(wild_grid.block_ptr[y][x],
-						 (u16b) x + wild_grid.x_min / 16,
-						  (u16b) y + wild_grid.y_min / 16);
+						 (u16b)(x + wild_grid.x_min / 16),
+						  (u16b)(y + wild_grid.y_min / 16));
 					}
 				}
 			}
