@@ -75,13 +75,11 @@ Merge discounts when stacking    [stack_force_costs]
     discount. This option may cause you to lose "value", but will give
     you optimal pack usage.
 
-***** <auto_haggle>
-Auto-haggle in stores    [auto_haggle]
-    Disable "haggling" in stores, resulting in a ten percent sales tax
-    on items which you would have otherwise been forced to haggle for.
-    When this option is on, all prices listed in stores will be the
-    actual price that you pay for an item, as opposed to the price
-    that the shop-keeper will suggest.
+***** <toggle_xp>
+Reverse experience display   [toggle_xp]
+    If this option is on, the amount of experience you need to move up
+    to the next level will be displayed on the main screen.  If the
+    option is off, it will show your total experience.
 
 ***** <stack_allow_items>
 Allow weapons and armor to stack    [stack_allow_items]
@@ -397,11 +395,6 @@ Flush input whenever disturbed    [flush_disturb]
     which take time, since it will prevent you from continuing your
     macro while being attacked by a monster.
 
-***** <flush_command>
-Flush input before every command    [flush_command]
-    This option forces the game to flush all pending input before every
-    command. This option is silly, unless you are very paranoid.
-
 ***** <fresh_before>
 Flush output before every command    [fresh_before]
     This option forces the game to flush all output before every
@@ -419,12 +412,6 @@ Flush output after every command    [fresh_after]
     may slow down the game a lot, especially on slower machines, and on
     faster machines you normally do not have a chance to see the
     results anyway.
-
-***** <fresh_message>
-Flush output after every message    [fresh_message]
-    This option forces the game to flush all output after every message
-    displayed by the game.  This will give you maximal information, but
-    may slow down the game somewhat.
 
 ***** <compress_savefile>
 Compress messages in savefiles    [compress_savefile]
@@ -784,5 +771,5 @@ Original   : Ben Harrison
 Updated    : Zangband 2.1.* by Topi Ylinen
 Updated    : Zangband 2.2.0 through 2.2.6c by Robert Ruehlmann
 Updated    : Zangband DevTeam
-Last update: December 28, 2000
+Last update: February 27, 2002
 
