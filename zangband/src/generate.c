@@ -1274,6 +1274,78 @@ int create_region(int x, int y, byte flags)
 	return (0);
 }
 
+typedef struct dun_gen_type dun_gen_type;
+
+struct dun_gen_type
+{
+	obj_theme theme;
+	u32b habitat;
+	int level;
+	int chance;
+};
+
+
+/*
+ * A few dungeon types... just testing.
+ *
+ */
+static const dun_gen_type dungeons[] =
+{
+	{{0, 10, 0, 40}, RF8_DUN_DARKWATER, 0, 1},
+	{{50, 10, 10, 0}, RF8_DUN_LAIR, 0, 1},
+	{{10, 30, 30, 30}, RF8_DUN_TEMPLE, 20, 1},
+	{{20, 0, 80, 0}, RF8_DUN_TOWER, 20, 1},
+	{{10, 20, 20, 0}, RF8_DUN_RUIN, 0, 1},
+	{{50, 20, 20, 0}, RF8_DUN_GRAVE, 0, 1},
+	{{30, 30, 30, 10}, RF8_DUN_CAVERN, 40, 1},
+	{{30, 30, 40, 0}, RF8_DUN_PLANAR, 0, 1},
+	{{20, 40, 40, 0}, RF8_DUN_HELL, 60, 1},
+	{{0, 20, 20, 0}, RF8_DUN_HORROR, 80, 1},
+	{{10, 20, 10, 40}, RF8_DUN_MINE, 0, 1},
+	{{30, 30, 10, 10}, RF8_DUN_CITY, 20, 1},
+	{{0, 0, 0, 0}, 0, 0, 0},
+};
+
+
+/*
+ * Pick a type of dungeon from the above list
+ */
+static int pick_dungeon_type(void)
+{
+	int tmp, total;
+
+	const dun_gen_type *d_ptr;
+
+	/* Calculate the total possibilities */
+	for (d_ptr = dungeons, total = 0; d_ptr->habitat; d_ptr++)
+	{
+		/* Count this possibility */
+		if (d_ptr->level > p_ptr->depth) continue;
+
+		/* Normal selection */
+		total += d_ptr->chance * MAX_DEPTH * 10 /
+				(p_ptr->depth - d_ptr->level + 5);
+	}
+
+	/* Pick a random type */
+	tmp = randint0(total);
+
+	/* Find this type */
+	for (d_ptr = dungeons, total = 0; d_ptr->habitat; d_ptr++)
+	{
+		/* Count this possibility */
+		if (d_ptr->level > p_ptr->depth) continue;
+		
+		total += d_ptr->chance * MAX_DEPTH * 10 /
+			(p_ptr->depth - d_ptr->level + 5);
+
+		/* Found the type */
+		if (tmp < total) break;
+	}
+
+	/* Return the index of the chosen dungeon */
+	return (GET_ARRAY_INDEX(dungeons, d_ptr));
+}
 
 /*
  * Generates a random dungeon level			-RAK-
@@ -1285,8 +1357,10 @@ int create_region(int x, int y, byte flags)
 void generate_cave(void)
 {
 	int num;
+	
+	int type = pick_dungeon_type();
 
-	/* Hack - Reset the object theme */
+	/* Set the object theme */
 	dun_ptr->theme.treasure = 20;
 	dun_ptr->theme.combat = 20;
 	dun_ptr->theme.magic = 20;
@@ -1306,6 +1380,12 @@ void generate_cave(void)
 
 		return;
 	}
+	
+	/* Set the object theme (structure copy) */
+	dun_ptr->theme = dungeons[type].theme;
+	
+	/* Hack - Reset the dungeon habitat to be everything */
+	dun_ptr->habitat = dungeons[type].habitat;
 
 	/* Generate */
 	for (num = 0; TRUE; num++)
