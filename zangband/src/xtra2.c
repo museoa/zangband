@@ -1710,8 +1710,7 @@ static bool target_set_accept(int y, int x)
 		    (c_ptr->feat <= FEAT_BLDG_TAIL)) return (TRUE);
 
 		/* Notice traps */
-		if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-		    (c_ptr->feat <= FEAT_TRAP_TAIL)) return (TRUE);
+		if (is_trap(c_ptr->feat)) return (TRUE);
 
 		/* Notice doors */
 		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&

@@ -1265,8 +1265,7 @@ bool detect_traps(void)
 			}
 
 			/* Detect traps */
-			if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-			    (c_ptr->feat <= FEAT_TRAP_TAIL))
+			if (is_trap(c_ptr->feat))
 			{
 				/* Hack -- Memorize */
 				c_ptr->info |= (CAVE_MARK);

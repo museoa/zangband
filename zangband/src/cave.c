@@ -49,6 +49,43 @@ int distance (int y1, int x1, int y2, int x2)
 
 
 /*
+ * Return TRUE if the given feature is a trap
+ */
+bool is_trap(int feat)
+{
+	switch (feat)
+	{
+		case FEAT_TRAP_TRAPDOOR:
+		case FEAT_TRAP_PIT:
+		case FEAT_TRAP_SPIKED_PIT:
+		case FEAT_TRAP_POISON_PIT:
+		case FEAT_TRAP_TY_CURSE:
+		case FEAT_TRAP_TELEPORT:
+		case FEAT_TRAP_FIRE:
+		case FEAT_TRAP_ACID:
+		case FEAT_TRAP_SLOW:
+		case FEAT_TRAP_LOSE_STR:
+		case FEAT_TRAP_LOSE_DEX:
+		case FEAT_TRAP_LOSE_CON:
+		case FEAT_TRAP_BLIND:
+		case FEAT_TRAP_CONFUSE:
+		case FEAT_TRAP_POISON:
+		case FEAT_TRAP_SLEEP:
+		case FEAT_TRAP_TRAPS:
+		{
+			/* A trap */
+			return (TRUE);
+		}
+		default:
+		{
+			/* Not a trap */
+			return (FALSE);
+		}
+	}
+}
+
+
+/*
  * A simple, fast, integer-based line-of-sight algorithm.  By Joseph Hall,
  * 4116 Brewster Drive, Raleigh NC 27606.  Email to jnh@ecemwl.ncsu.edu.
  *
@@ -549,7 +586,7 @@ static void image_random(byte *ap, char *cp)
  */
 static bool feat_supports_lighting(byte feat)
 {
-	if ((feat >= FEAT_TRAP_HEAD) && (feat <= FEAT_TRAP_TAIL)) return TRUE;
+	if (is_trap(feat)) return TRUE;
 
 	switch (feat)
 	{

@@ -704,7 +704,7 @@ static void hit_trap(void)
 	/* Analyze XXX XXX XXX */
 	switch (c_ptr->feat)
 	{
-		case FEAT_TRAP_HEAD + 0x00:
+		case FEAT_TRAP_TRAPDOOR:
 		{
 			if (p_ptr->ffall)
 			{
@@ -730,7 +730,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x01:
+		case FEAT_TRAP_PIT:
 		{
 			if (p_ptr->ffall)
 			{
@@ -746,7 +746,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x02:
+		case FEAT_TRAP_SPIKED_PIT:
 		{
 			if (p_ptr->ffall)
 			{
@@ -776,7 +776,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x03:
+		case FEAT_TRAP_POISON_PIT:
 		{
 			if (p_ptr->ffall)
 			{
@@ -820,7 +820,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x04:
+		case FEAT_TRAP_TY_CURSE:
 		{
 			msg_print("There is a flash of shimmering light!");
 			c_ptr->info &= ~(CAVE_MARK);
@@ -844,14 +844,14 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x05:
+		case FEAT_TRAP_TELEPORT:
 		{
 			msg_print("You hit a teleport trap!");
 			teleport_player(100);
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x06:
+		case FEAT_TRAP_FIRE:
 		{
 			msg_print("You are enveloped in flames!");
 			dam = damroll(4, 6);
@@ -859,7 +859,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x07:
+		case FEAT_TRAP_ACID:
 		{
 			msg_print("You are splashed with acid!");
 			dam = damroll(4, 6);
@@ -867,7 +867,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x08:
+		case FEAT_TRAP_SLOW:
 		{
 			if (check_hit(125))
 			{
@@ -883,7 +883,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x09:
+		case FEAT_TRAP_LOSE_STR:
 		{
 			if (check_hit(125))
 			{
@@ -899,7 +899,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x0A:
+		case FEAT_TRAP_LOSE_DEX:
 		{
 			if (check_hit(125))
 			{
@@ -915,7 +915,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x0B:
+		case FEAT_TRAP_LOSE_CON:
 		{
 			if (check_hit(125))
 			{
@@ -931,7 +931,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x0C:
+		case FEAT_TRAP_BLIND:
 		{
 			msg_print("A black gas surrounds you!");
 			if (!p_ptr->resist_blind)
@@ -941,7 +941,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x0D:
+		case FEAT_TRAP_CONFUSE:
 		{
 			msg_print("A gas of scintillating colors surrounds you!");
 			if (!p_ptr->resist_conf)
@@ -951,7 +951,7 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x0E:
+		case FEAT_TRAP_POISON:
 		{
 			msg_print("A pungent green gas surrounds you!");
 			if (!p_ptr->resist_pois && !p_ptr->oppose_pois)
@@ -961,12 +961,12 @@ static void hit_trap(void)
 			break;
 		}
 
-		case FEAT_TRAP_HEAD + 0x0F:
+		case FEAT_TRAP_SLEEP:
 		{
 			msg_print("A strange white mist surrounds you!");
 			if (!p_ptr->free_act)
 			{
-         	msg_print("You fall asleep.");
+				msg_print("You fall asleep.");
 
 				if (ironman_nightmare)
 				{
@@ -983,6 +983,19 @@ static void hit_trap(void)
 				}
 				(void)set_paralyzed(p_ptr->paralyzed + rand_int(10) + 5);
 			}
+			break;
+		}
+
+		case FEAT_TRAP_TRAPS:
+		{
+			msg_print("There is a bright flash of light!");
+
+			/* Destroy this trap */
+			cave_set_feat(py, px, FEAT_FLOOR);
+
+			/* Make some new traps */
+			project(0, 1, py, px, 0, GF_MAKE_TRAP, PROJECT_HIDE | PROJECT_JUMP | PROJECT_GRID);
+
 			break;
 		}
 	}
@@ -2147,9 +2160,7 @@ void move_player(int dir, int do_pickup)
 #ifdef ALLOW_EASY_DISARM /* TNB */
 
 	/* Disarm a visible trap */
-	else if ((do_pickup != easy_disarm) &&
-		(c_ptr->feat >= FEAT_TRAP_HEAD) &&
-		(c_ptr->feat <= FEAT_TRAP_TAIL))
+	else if ((do_pickup != easy_disarm) && is_trap(c_ptr->feat))
 	{
 		bool ignore = FALSE;
 		switch (c_ptr->feat)
@@ -2432,8 +2443,7 @@ void move_player(int dir, int do_pickup)
 		}
 
 		/* Set off an visible trap */
-		else if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-			 (c_ptr->feat <= FEAT_TRAP_TAIL))
+		else if (is_trap(c_ptr->feat))
 		{
 			/* Disturb */
 			disturb(0, 0);

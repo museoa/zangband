@@ -867,12 +867,11 @@
 /* Feature 0x0C - 0x0F unused */
 
 /* Traps */
-#define FEAT_TRAP_HEAD          0x10
 #define FEAT_TRAP_TRAPDOOR      0x10
 #define FEAT_TRAP_PIT           0x11
 #define FEAT_TRAP_SPIKED_PIT    0x12
 #define FEAT_TRAP_POISON_PIT    0x13
-#define FEAT_TRAP_SUMMON        0x14
+#define FEAT_TRAP_TY_CURSE      0x14
 #define FEAT_TRAP_TELEPORT      0x15
 #define FEAT_TRAP_FIRE          0x16
 #define FEAT_TRAP_ACID          0x17
@@ -884,7 +883,6 @@
 #define FEAT_TRAP_CONFUSE       0x1D
 #define FEAT_TRAP_POISON        0x1E
 #define FEAT_TRAP_SLEEP         0x1F
-#define FEAT_TRAP_TAIL          0x1F
 
 /* Doors */
 #define FEAT_DOOR_HEAD          0x20
@@ -938,6 +936,8 @@
 #define FEAT_DARK_PIT           0x57
 #define FEAT_DIRT               0x58
 #define FEAT_GRASS              0x59
+
+#define FEAT_TRAP_TRAPS         0x5A
 
 /* Feature 0x5A - 0x5F unused */
 

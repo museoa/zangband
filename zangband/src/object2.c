@@ -4698,6 +4698,30 @@ void acquirement(int y1, int x1, int num, bool great, bool known)
 }
 
 
+#define MAX_TRAPS		17
+
+static int trap_num[MAX_TRAPS] =
+{
+	FEAT_TRAP_TRAPDOOR,
+	FEAT_TRAP_PIT,
+	FEAT_TRAP_SPIKED_PIT,
+	FEAT_TRAP_POISON_PIT,
+	FEAT_TRAP_TY_CURSE,
+	FEAT_TRAP_TELEPORT,
+	FEAT_TRAP_FIRE,
+	FEAT_TRAP_ACID,
+	FEAT_TRAP_SLOW,
+	FEAT_TRAP_LOSE_STR,
+	FEAT_TRAP_LOSE_DEX,
+	FEAT_TRAP_LOSE_CON,
+	FEAT_TRAP_BLIND,
+	FEAT_TRAP_CONFUSE,
+	FEAT_TRAP_POISON,
+	FEAT_TRAP_SLEEP,
+	FEAT_TRAP_TRAPS,
+};
+
+
 /*
  * Hack -- instantiate a trap
  *
@@ -4719,18 +4743,16 @@ void pick_trap(int y, int x)
 	while (1)
 	{
 		/* Hack -- pick a trap */
-		feat = FEAT_TRAP_HEAD + rand_int(16);
+		feat = trap_num[rand_int(MAX_TRAPS)];
+
+		/* Accept non-trapdoors */
+		if (feat != FEAT_TRAP_TRAPDOOR) break;
 
 		/* Hack -- no trap doors on special levels */
-		if ((feat == FEAT_TRAP_HEAD + 0x00) && (p_ptr->inside_arena || quest_number(dun_level)))
-			continue;
+		if (p_ptr->inside_arena || quest_number(dun_level)) continue;
 
 		/* Hack -- no trap doors on the deepest level */
-		if ((feat == FEAT_TRAP_HEAD + 0x00) && (dun_level >= MAX_DEPTH-1))
-			continue;
-
-		/* Done */
-		break;
+		if (dun_level >= MAX_DEPTH-1) continue;
 	}
 
 	/* Activate the trap */

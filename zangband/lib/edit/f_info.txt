@@ -441,6 +441,9 @@ G:.:u
 N:89:patch of grass
 G:.:g
 
+N:90:compact rune
+G:^:D
+
 N:96:tree
 G:#:G
 

@@ -2113,126 +2113,126 @@ static errr rd_dungeon_aux(void)
 				/* Trap -- Pit */
 				case 460:
 				{
-					k = FEAT_TRAP_HEAD + 0x01;
+					k = FEAT_TRAP_PIT;
 					break;
 				}
 
 				/* Trap -- Spiked Pit */
 				case 461:
 				{
-					k = FEAT_TRAP_HEAD + 0x02;
+					k = FEAT_TRAP_SPIKED_PIT;
 					break;
 				}
 
 				/* Trap -- Trap Door */
 				case 462:
 				{
-					k = FEAT_TRAP_HEAD + 0x00;
+					k = FEAT_TRAP_TRAPDOOR;
 					break;
 				}
 
 				/* Trap -- Gas -- Sleep */
 				case 463:
 				{
-					k = FEAT_TRAP_HEAD + 0x0F;
+					k = FEAT_TRAP_SLEEP;
 					break;
 				}
 
 				/* Trap -- Loose rock */
 				case 464:
 				{
-					k = FEAT_TRAP_HEAD + 0x01;
+					k = FEAT_TRAP_PIT;
 					break;
 				}
 
 				/* Trap -- Dart -- lose str */
 				case 465:
 				{
-					k = FEAT_TRAP_HEAD + 0x09;
+					k = FEAT_TRAP_LOSE_STR;
 					break;
 				}
 
 				/* Trap -- Teleport */
 				case 466:
 				{
-					k = FEAT_TRAP_HEAD + 0x05;
+					k = FEAT_TRAP_TELEPORT;
 					break;
 				}
 
 				/* Trap -- Falling rock */
 				case 467:
 				{
-					k = FEAT_TRAP_HEAD + 0x03;
+					k = FEAT_TRAP_POISON_PIT;
 					break;
 				}
 
 				/* Trap -- Dart -- lose dex */
 				case 468:
 				{
-					k = FEAT_TRAP_HEAD + 0x0A;
+					k = FEAT_TRAP_LOSE_DEX;
 					break;
 				}
 
 				/* Trap -- Summoning */
 				case 469:
 				{
-					k = FEAT_TRAP_HEAD + 0x04;
+					k = FEAT_TRAP_TY_CURSE;
 					break;
 				}
 
 				/* Trap -- Fire */
 				case 470:
 				{
-					k = FEAT_TRAP_HEAD + 0x06;
+					k = FEAT_TRAP_FIRE;
 					break;
 				}
 
 				/* Trap -- Acid */
 				case 471:
 				{
-					k = FEAT_TRAP_HEAD + 0x07;
+					k = FEAT_TRAP_ACID;
 					break;
 				}
 
 				/* Trap -- Gas -- poison */
 				case 472:
 				{
-					k = FEAT_TRAP_HEAD + 0x0E;
+					k = FEAT_TRAP_POISON;
 					break;
 				}
 
 				/* Trap -- Gas -- blind */
 				case 473:
 				{
-					k = FEAT_TRAP_HEAD + 0x0C;
+					k = FEAT_TRAP_BLIND;
 					break;
 				}
 
 				/* Trap -- Gas -- confuse */
 				case 474:
 				{
-					k = FEAT_TRAP_HEAD + 0x0D;
+					k = FEAT_TRAP_CONFUSE;
 					break;
 				}
 
 				/* Trap -- Dart -- slow */
 				case 475:
 				{
-					k = FEAT_TRAP_HEAD + 0x08;
+					k = FEAT_TRAP_SLOW;
 					break;
 				}
 
 				/* Trap -- Dart -- lose con */
 				case 476:
 				{
-					k = FEAT_TRAP_HEAD + 0x0B;
+					k = FEAT_TRAP_LOSE_CON;
 					break;
 				}
 
 				/* Trap -- Arrow */
 				case 477:
 				{
-					k = FEAT_TRAP_HEAD + 0x08;
+					k = FEAT_TRAP_SLOW;
 					break;
 				}
 			}

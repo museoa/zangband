@@ -525,9 +525,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			}
 
 			/* Destroy traps */
-			if ((c_ptr->feat == FEAT_INVIS) ||
-			    ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-			     (c_ptr->feat <= FEAT_TRAP_TAIL)))
+			if ((c_ptr->feat == FEAT_INVIS) || is_trap(c_ptr->feat))
 			{
 				/* Check line of sight */
 				if (player_has_los_bold(y, x))
@@ -568,8 +566,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if ((c_ptr->feat == FEAT_OPEN) ||
 			    (c_ptr->feat == FEAT_BROKEN) ||
 			    (c_ptr->feat == FEAT_INVIS) ||
-			   ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-			    (c_ptr->feat <= FEAT_TRAP_TAIL)) ||
+			   (is_trap(c_ptr->feat)) ||
 			   ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 			    (c_ptr->feat <= FEAT_DOOR_TAIL)))
 			{

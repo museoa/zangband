@@ -432,6 +432,7 @@ extern void player_birth(void);
 
 /* cave.c */
 extern int distance(int y1, int x1, int y2, int x2);
+extern bool is_trap(int feat);
 extern bool los(int y1, int x1, int y2, int x2);
 extern bool player_can_see_bold(int y, int x);
 extern bool cave_valid_bold(int y, int x);

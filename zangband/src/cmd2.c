@@ -159,7 +159,7 @@ void do_cmd_go_down(void)
 	/* Player grid */
 	c_ptr = &cave[py][px];
 
-	if (c_ptr->feat == (FEAT_TRAP_HEAD + 0x00)) fall_trap = TRUE;
+	if (c_ptr->feat == (FEAT_TRAP_TRAPDOOR)) fall_trap = TRUE;
 
 	/* Quest down stairs */
 	if (c_ptr->feat == FEAT_QUEST_DOWN)
@@ -606,10 +606,18 @@ static bool do_cmd_open_chest(int y, int x, s16b o_idx)
 #if defined(ALLOW_EASY_OPEN) || defined(ALLOW_EASY_DISARM) /* TNB */
 
 /*
+ * Return TRUE if the given feature is an open door
+ */
+static bool is_open(int feat)
+{
+	return (feat == FEAT_OPEN);
+}
+
+/*
  * Return the number of features around (or under) the character.
  * Usually look for doors and floor traps.
  */
-static int count_dt(int *y, int *x, byte f1, byte f2)
+static int count_dt(int *y, int *x, bool (*test)(int feat))
 {
 	int d, count;
 
@@ -627,8 +635,7 @@ static int count_dt(int *y, int *x, byte f1, byte f2)
 		if (!(cave[yy][xx].info & (CAVE_MARK))) continue;
 
 		/* Not looking for this feature */
-		if (cave[yy][xx].feat < f1) continue;
-		if (cave[yy][xx].feat > f2) continue;
+		if (!((*test)(cave[yy][xx].feat))) continue;
 
 		/* OK */
 		++count;
@@ -834,7 +841,7 @@ void do_cmd_open(void)
 		int num_doors, num_chests;
 
 		/* Count closed doors (locked or jammed) */
-		num_doors = count_dt(&y, &x, FEAT_DOOR_HEAD, FEAT_DOOR_TAIL);
+		num_doors = count_dt(&y, &x, is_trap);
 
 		/* Count chests (locked) */
 		num_chests = count_chests(&y, &x, FALSE);
@@ -992,7 +999,7 @@ void do_cmd_close(void)
 	if (easy_open)
 	{
 		/* Count open doors */
-		if (count_dt(&y, &x, FEAT_OPEN, FEAT_OPEN) == 1)
+		if (count_dt(&y, &x, is_open) == 1)
 		{
 			command_dir = coords_to_dir(y, x);
 		}
@@ -1761,7 +1768,7 @@ void do_cmd_disarm(void)
 		int num_traps, num_chests;
 
 		/* Count visible traps */
-		num_traps = count_dt(&y, &x, FEAT_TRAP_HEAD, FEAT_TRAP_TAIL);
+		num_traps = count_dt(&y, &x, is_trap);
 
 		/* Count chests (trapped) */
 		num_chests = count_chests(&y, &x, TRUE);
@@ -1804,9 +1811,7 @@ void do_cmd_disarm(void)
 		o_idx = chest_check(y, x);
 
 		/* Disarm a trap */
-		if (!((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-		    (c_ptr->feat <= FEAT_TRAP_TAIL)) &&
-		    !o_idx)
+		if (!is_trap(c_ptr->feat) && !o_idx)
 		{
 			/* Message */
 			msg_print("You see nothing there to disarm.");
@@ -2104,8 +2109,7 @@ void do_cmd_alter(void)
 		}
 
 		/* Disarm traps */
-		else if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-		         (c_ptr->feat < FEAT_MINOR_GLYPH))
+		else if (is_trap(c_ptr->feat))
 		{
 			/* Tunnel */
 			more = do_cmd_disarm_aux(y, x, dir);
