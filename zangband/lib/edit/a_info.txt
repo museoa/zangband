@@ -363,16 +363,16 @@ F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_CONF | RES_SOUND
 F:INSTA_ART
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 
-# The Mithril Chain Mail 'Belegennon' -> of Lohengrin
+# The Mithril Chain Mail of Lohengrin -> the Crusader
 
-N:22:of Lohengrin
+N:22:of the Crusader
 I:37:20:4
 W:70:3:150:135000
 P:28:1d4:-1:0:20
-F:STEALTH | WIS | INT | SEE_INVIS |
+F:LUCK_10 | WIS | INT | SEE_INVIS |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS |
 F:HOLD_LIFE | RES_NETHER | RES_DARK | RES_FEAR |
-F:ACTIVATE | INSTA_ART
+F:ACTIVATE | SLAY_EVIL | INSTA_ART
 L:USE:	msgf("A heavenly choir sings...")
 L:USE:	clear_poisoned()
 L:USE:	clear_cut()
@@ -383,6 +383,8 @@ L:USE:	inc_hero(rand_range(25, 50))
 L:USE:	hp_player(777)
 L:USE:	object.timeout = 300
 L:DESC:	return "curing, heroism and heal (777) every 300 turns"
+D:This armor is said to have been forged by an angel and 
+D:imbued with celestial power.
 
 
 # The Mithril Plate Mail of Celeborn -> Julian
@@ -401,15 +403,23 @@ L:DESC:	return "genocide every 500 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 
 
-# The Chain Mail of Arvedui
+# The Chain Mail of Arvedui -> Command
 
-N:24:of Arvedui
+N:24:of Command
 I:37:4:2
 W:35:3:220:32000
 P:14:1d4:-2:0:15
 F:STR | CHR | HIDE_TYPE | INSTA_ART
-F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_SHARDS | RES_NEXUS
+F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD
+L:USE:	msgf("Your armor shines with a brilliant white light.")
+L:USE:	charm_monsters(plev * 2)
+L:USE:	object.timeout = 600
+L:DESC:	return "mass charm every 600 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+D:This finely wrought suit of mail seems worthy of a great king. 
+D:Every detail is perfect, and the whole radiates an aura of 
+D:total confidence and power.
 
 
 # The Augmented Chain Mail of Caspanion
@@ -668,32 +678,38 @@ L:USE:	inc_oppose_pois(rand_range(20, 40))
 L:USE:	object.timeout = 111
 L:DESC:	return "resistance (20-40) every 111 turns"
 
-# The Cloak 'Holcolleth'
+# The Cloak 'Holcolleth' -> 'Thief's Shadow'
 
-N:45:'Holcolleth'
+N:45:'Thief's Shadow'
 I:35:1:2
 W:9:45:10:13000
 P:1:0d0:0:0:4
-F:INT | WIS | STEALTH | HIDE_TYPE | RES_ACID | ACTIVATE | INSTA_ART
+F:DEX | STEALTH | HIDE_TYPE | RES_LITE | ACTIVATE | INSTA_ART
 L:USE:	msgf("Your cloak glows deep blue...")
 L:USE:	sleep_monsters_touch()
 L:USE:	object.timeout = 55
 L:DESC:	return "sleep nearby monsters every 55 turns"
+# Also apply 1/2 the armor bonus to stealth
+L:BONUS:	player.skill.stl = player.skill.stl + object.to_a / 2
+D:This fine cloak of dark cloth allows its wearer to blend 
+D:perfectly with the shadows.
 
 
-# The Cloak of Thingol
+# The Cloak of Thingol -> the Alchemist
 
-N:46:of Thingol
+N:46:of the Alchemist
 I:35:1:3
 W:17:90:10:35000
 P:1:0d0:0:0:18
-F:DEX | CHR | HIDE_TYPE |
+F:DEX | LUCK_10 | HIDE_TYPE |
 F:FREE_ACT | RES_ACID | RES_FIRE | RES_COLD | ACTIVATE | INSTA_ART
 L:USE:	msgf("Your cloak glows bright yellow...")
 L:USE:	recharge(130)
 L:USE:	object.timeout = 70
 L:DESC:	return "recharge item every 70 turns"
 L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+D:This cloak was created by the gnome Samagar the Scorched to 
+D:protect him from his frequent magical mishaps.
 
 
 # The Cloak of Thorongil
@@ -746,13 +762,13 @@ F:STEALTH | FREE_ACT | IM_ACID | SEE_INVIS | INSTA_ART
 # Artifact 51 is unused
 
 
-# The Set of Leather Gloves 'Cambeleg'
+# The Set of Leather Gloves 'Cambeleg' -> of the Ogre
 
-N:52:'Cambeleg'
-I:31:1:2
+N:52:of the Ogre
+I:31:1:3
 W:17:6:5:5000
 P:1:0d0:8:8:15
-F:STR | CON | HIDE_TYPE | FREE_ACT | SHOW_MODS | INSTA_ART
+F:STR | CON | HIDE_TYPE | SHOW_MODS | INSTA_ART
 
 
 # The Set of Leather Gloves 'Cammithrim'
