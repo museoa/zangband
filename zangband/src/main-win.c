@@ -209,8 +209,10 @@
 #define NOCLIPBOARD       /* Clipboard APIs and definitions */
 #define NOICONS           /* IDI_* icon IDs */
 #define NOMDI             /* MDI support */
-#define NOCTLMGR          /* Control management and controls */
 #define NOHELP            /* Help support */
+
+/* Not defined since it breaks Borland C++ 5.5 */
+/* #define NOCTLMGR */    /* Control management and controls */
 
 /*
  * Exclude parts of WINDOWS.H that are not needed (Win32)
