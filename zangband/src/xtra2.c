@@ -232,6 +232,7 @@ void monster_death(int m_idx)
 	object_type forge;
 	object_type *q_ptr;
 
+	cave_type *c_ptr;
 
 	/* Get the location */
 	y = m_ptr->fy;
@@ -457,7 +458,8 @@ void monster_death(int m_idx)
 	if (create_stairs)
 	{
 		/* Stagger around */
-		while (cave_perma_bold(y, x) || area(y,x)->o_idx)
+		c_ptr = area(y, x);
+		while (cave_perma_grid(c_ptr) || c_ptr->o_idx)
 		{
 			/* Pick a location */
 			scatter(&ny, &nx, y, x, 1, 0);
@@ -588,7 +590,7 @@ void monster_death(int m_idx)
 			{
 				scatter(&wy, &wx, y, x, 20, 0);
 			}
-			while (!(in_bounds(wy, wx) && cave_floor_bold(wy, wx)) && --attempts);
+			while (!(in_bounds(wy, wx) && cave_floor_grid(area(wy, wx))) && --attempts);
 
 			if (attempts > 0)
 			{
@@ -1908,7 +1910,7 @@ static void target_set_prepare(int mode)
 			c_ptr = area(y, x);
 
 			/* Require line of sight, unless "look" is "expanded" */
-			if (!expand_look && !player_has_los_bold(y, x)) continue;
+			if (!expand_look && !player_has_los_grid(c_ptr)) continue;
 
 			/* Require "interesting" contents */
 			if (!target_set_accept(y, x)) continue;

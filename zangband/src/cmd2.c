@@ -1090,8 +1090,10 @@ void do_cmd_close(void)
  */
 static bool do_cmd_tunnel_test(int y, int x)
 {
+	cave_type *c_ptr = area(y, x);
+	
 	/* Must have knowledge */
-	if (!(area(y,x)->info & (CAVE_MARK)))
+	if (!(c_ptr->info & (CAVE_MARK)))
 	{
 		/* Message */
 		msg_print("You see nothing there.");
@@ -1101,7 +1103,7 @@ static bool do_cmd_tunnel_test(int y, int x)
 	}
 
 	/* Must be a wall/door/etc */
-	if (cave_floor_bold(y, x))
+	if (cave_floor_grid(c_ptr))
 	{
 		/* Message */
 		msg_print("You see nothing there to tunnel.");
@@ -1130,7 +1132,7 @@ static bool twall(int y, int x, byte feat)
 	cave_type	*c_ptr = area(y,x);
 
 	/* Paranoia -- Require a wall or door or some such */
-	if (cave_floor_bold(y, x)) return (FALSE);
+	if (cave_floor_grid(c_ptr)) return (FALSE);
 
 	/* Forget the wall */
 	c_ptr->info &= ~(CAVE_MARK);
@@ -1395,7 +1397,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	}
 
 	/* Notice new floor grids */
-	if (!cave_floor_bold(y, x))
+	if (!cave_floor_grid(c_ptr))
 	{
 		/* Update some things */
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
@@ -2744,7 +2746,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 	int msec = delay_factor * delay_factor * delay_factor;
 
-
+	cave_type *c_ptr;
+	
 	/* Missile launchers of Velocity and Accuracy sometimes "supercharge" */
 	if ((j_ptr->name2 == EGO_VELOCITY) || (j_ptr->name2 == EGO_ACCURACY))
 	{
@@ -2939,7 +2942,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		if (!in_bounds2(ny, nx)) break;
 		
 		/* Stopped by walls/doors */
-		if (!cave_floor_bold(ny, nx)) break;
+		c_ptr = area(ny, nx);
+		if (!cave_floor_grid(c_ptr)) break;
 
 		/* Advance the distance */
 		cur_dis++;
@@ -2973,10 +2977,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 
 		/* Monster here, Try to hit it */
-		if (area(y, x)->m_idx)
+		if (c_ptr->m_idx)
 		{
-			cave_type *c_ptr = area(y,x);
-
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -2993,7 +2995,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				sleeping_bonus = 5 + p_ptr->lev / 5;
 
 			/* Monsters in rubble can take advantage of cover. -LM- */
-			if (area(y, x)->feat == FEAT_RUBBLE)
+			if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
 			}
@@ -3001,13 +3003,13 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			 * Monsters in trees can take advantage of cover,
 			 * except from rangers.
 			 */
-			else if ((area(y, x)->feat == FEAT_TREES) && 
+			else if ((c_ptr->feat == FEAT_TREES) && 
 					 (p_ptr->pclass == CLASS_RANGER))
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
 			}
 			/* Monsters in water are vulnerable. -LM- */
-			else if (area(y, x)->feat == FEAT_DEEP_WATER)
+			else if (c_ptr->feat == FEAT_DEEP_WATER)
 			{
 				terrain_bonus -= r_ptr->ac / 4;
 			}
@@ -3222,6 +3224,8 @@ void do_cmd_throw_aux(int mult)
 
 	u32b f1, f2, f3;
 	cptr q, s;
+	
+	cave_type *c_ptr;
 
 
 	/* Get an item */
@@ -3353,7 +3357,8 @@ void do_cmd_throw_aux(int mult)
 		}		
 		
 		/* Stopped by walls/doors */
-		if (!cave_floor_bold(ny, nx))
+		c_ptr = area(ny, nx);
+		if (!cave_floor_grid(c_ptr))
 		{
 			hit_wall = TRUE;
 			break;
@@ -3390,10 +3395,8 @@ void do_cmd_throw_aux(int mult)
 
 
 		/* Monster here, Try to hit it */
-		if (area(y,x)->m_idx)
+		if (c_ptr->m_idx)
 		{
-			cave_type *c_ptr = area(y,x);
-
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -3404,7 +3407,7 @@ void do_cmd_throw_aux(int mult)
 			chance2 = chance - distance(py, px, y, x);
 
 			/* Monsters in rubble can take advantage of cover. -LM- */
-			if (area(y, x)->feat == FEAT_RUBBLE)
+			if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
 			}
@@ -3412,13 +3415,13 @@ void do_cmd_throw_aux(int mult)
 			 * Monsters in trees can take advantage of cover,
 			 * except from rangers.
 			 */
-			else if ((area(y, x)->feat == FEAT_TREES) && 
+			else if ((c_ptr->feat == FEAT_TREES) && 
 			         (p_ptr->pclass == CLASS_RANGER))
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
 			}
 			/* Monsters in water are vulnerable. -LM- */
-			else if (area(y, x)->feat == FEAT_DEEP_WATER)
+			else if (c_ptr->feat == FEAT_DEEP_WATER)
 			{
 				terrain_bonus -= r_ptr->ac / 4;
 			}

@@ -106,11 +106,14 @@ static void do_cmd_summon_horde(void)
 {
 	int wy = py, wx = px;
 	int attempts = 1000;
+	cave_type *c_ptr;
+	
 
 	while (--attempts)
 	{
 		scatter(&wy, &wx, py, px, 3, 0);
-		if (cave_naked_bold(wy, wx)) break;
+		c_ptr = area(wy, wx);
+		if (cave_naked_grid(c_ptr)) break;
 	}
 
 	(void)alloc_horde(wy, wx);
@@ -1489,6 +1492,8 @@ static void do_cmd_wiz_summon(int num)
 static void do_cmd_wiz_named(int r_idx, bool slp)
 {
 	int i, x, y;
+	
+	cave_type *c_ptr;
 
 	/* Paranoia */
 	/* if (!r_idx) return; */
@@ -1505,7 +1510,8 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 		scatter(&y, &x, py, px, d, 0);
 
 		/* Require empty grids */
-		if (!cave_empty_bold(y, x)) continue;
+		c_ptr = area(y, x);
+		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* Place it (allow groups) */
 		if (place_monster_aux(y, x, r_idx, slp, TRUE, FALSE, FALSE)) break;

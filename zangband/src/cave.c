@@ -143,6 +143,7 @@ bool los(int y1, int x1, int y2, int x2)
 	/* Slope, or 1/Slope, of LOS */
 	int m;
 
+	cave_type *c_ptr;
 
 	/* Extract the offset */
 	dy = y2 - y1;
@@ -169,7 +170,8 @@ bool los(int y1, int x1, int y2, int x2)
 		{
 			for (ty = y1 + 1; ty < y2; ty++)
 			{
-				if (!cave_floor_bold(ty, x1)) return (FALSE);
+				c_ptr = area(ty, x1);
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
 			}
 		}
 
@@ -178,7 +180,8 @@ bool los(int y1, int x1, int y2, int x2)
 		{
 			for (ty = y1 - 1; ty > y2; ty--)
 			{
-				if (!cave_floor_bold(ty, x1)) return (FALSE);
+				c_ptr = area(ty, x1);
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
 			}
 		}
 
@@ -194,7 +197,8 @@ bool los(int y1, int x1, int y2, int x2)
 		{
 			for (tx = x1 + 1; tx < x2; tx++)
 			{
-				if (!cave_floor_bold(y1, tx)) return (FALSE);
+				c_ptr = area(y1, tx);
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
 			}
 		}
 
@@ -203,7 +207,8 @@ bool los(int y1, int x1, int y2, int x2)
 		{
 			for (tx = x1 - 1; tx > x2; tx--)
 			{
-				if (!cave_floor_bold(y1, tx)) return (FALSE);
+				c_ptr = area(y1, tx);
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
 			}
 		}
 
@@ -222,7 +227,8 @@ bool los(int y1, int x1, int y2, int x2)
 	{
 		if (ay == 2)
 		{
-			if (cave_floor_bold(y1 + sy, x1)) return (TRUE);
+			c_ptr = area(y1 + sy, x1);
+			if (cave_floor_grid(c_ptr)) return (TRUE);
 		}
 	}
 
@@ -231,7 +237,8 @@ bool los(int y1, int x1, int y2, int x2)
 	{
 		if (ax == 2)
 		{
-			if (cave_floor_bold(y1, x1 + sx)) return (TRUE);
+			c_ptr = area(y1, x1 + sx);
+			if (cave_floor_grid(c_ptr)) return (TRUE);
 		}
 	}
 
@@ -267,7 +274,8 @@ bool los(int y1, int x1, int y2, int x2)
 		/* the LOS exactly meets the corner of a tile. */
 		while (x2 - tx)
 		{
-			if (!cave_floor_bold(ty, tx)) return (FALSE);
+			c_ptr = area(ty, tx);
+			if (!cave_floor_grid(c_ptr)) return (FALSE);
 
 			qy += m;
 
@@ -278,7 +286,8 @@ bool los(int y1, int x1, int y2, int x2)
 			else if (qy > f2)
 			{
 				ty += sy;
-				if (!cave_floor_bold(ty, tx)) return (FALSE);
+				c_ptr = area(ty, tx);
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
 				qy -= f1;
 				tx += sx;
 			}
@@ -314,7 +323,8 @@ bool los(int y1, int x1, int y2, int x2)
 		/* the LOS exactly meets the corner of a tile. */
 		while (y2 - ty)
 		{
-			if (!cave_floor_bold(ty, tx)) return (FALSE);
+			c_ptr = area(ty, tx);
+			if (!cave_floor_grid(c_ptr)) return (FALSE);
 
 			qx += m;
 
@@ -325,7 +335,8 @@ bool los(int y1, int x1, int y2, int x2)
 			else if (qx > f2)
 			{
 				tx += sx;
-				if (!cave_floor_bold(ty, tx)) return (FALSE);
+				c_ptr = area(ty, tx);
+				if (!cave_floor_grid(c_ptr)) return (FALSE);
 				qx -= f1;
 				ty += sy;
 			}
@@ -395,13 +406,13 @@ bool player_can_see_bold(int y, int x)
 	if (c_ptr->info & (CAVE_LITE)) return (TRUE);
 
 	/* Require line of sight to the grid */
-	if (!player_has_los_bold(y, x)) return (FALSE);
+	if (!player_has_los_grid(c_ptr)) return (FALSE);
 
 	/* Require "perma-lite" of the grid */
 	if (!(c_ptr->info & (CAVE_GLOW))) return (FALSE);
 
 	/* Floors are simple */
-	if (cave_floor_bold(y, x)) return (TRUE);
+	if (cave_floor_grid(c_ptr)) return (TRUE);
 
 	/* Hack -- move towards player */
 	yy = (y < py) ? (y + 1) : (y > py) ? (y - 1) : y;
@@ -436,10 +447,8 @@ bool no_lite(void)
  *
  * Used by destruction spells, and for placing stairs, etc.
  */
-bool cave_valid_bold(int y, int x)
+bool cave_valid_grid(cave_type *c_ptr)
 {
-	cave_type *c_ptr = area(y,x);
-
 	s16b this_o_idx, next_o_idx = 0;
 
 
@@ -2360,7 +2369,7 @@ void do_cmd_view_map(void)
  * I am thinking in terms of an algorithm that "walks" from the central point
  * out to the maximal "distance", at each point, determining the "view" code
  * (above).  For each grid not on a major axis or diagonal, the "view" code
- * depends on the "cave_floor_bold()" and "view" of exactly two other grids
+ * depends on the "cave_floor_grid()" and "view" of exactly two other grids
  * (the one along the nearest diagonal, and the one next to that one, see
  * "update_view_aux()"...).
  *
@@ -2473,6 +2482,7 @@ void update_lite(void)
 {
 	int i, x, y, min_x, max_x, min_y, max_y;
 
+	cave_type *c_ptr;
 
 	/*** Special case ***/
 
@@ -2500,11 +2510,13 @@ void update_lite(void)
 
 		if (!in_bounds2(y,x)) continue;
 		
+		c_ptr = area(y, x);
+		
 		/* Mark the grid as not "lite" */
-		area(y,x)->info &= ~(CAVE_LITE);
+		c_ptr->info &= ~(CAVE_LITE);
 
 		/* Mark the grid as "seen" */
-		area(y,x)->info |= (CAVE_TEMP);
+		c_ptr->info |= (CAVE_TEMP);
 
 		/* Add it to the "seen" set */
 		temp_y[temp_n] = y;
@@ -2539,17 +2551,20 @@ void update_lite(void)
 
 	/* Radius 2 -- lantern radius */
 	if (p_ptr->cur_lite >= 2)
-	{
+	{		
 		/* South of the player */
-		if ((cave_floor_bold(py+1, px))||(cave_half_bold(py+1, px)))
+		c_ptr = area(py + 1, px);
+		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
 		{
 			cave_lite_hack(py+2, px);
 			cave_lite_hack(py+2, px+1);
 			cave_lite_hack(py+2, px-1);
 		}
 
+
 		/* North of the player */
-		if ((cave_floor_bold(py-1, px))||(cave_half_bold(py-1, px)))
+		c_ptr = area(py - 1, px);
+		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
 		{
 			cave_lite_hack(py-2, px);
 			cave_lite_hack(py-2, px+1);
@@ -2557,7 +2572,8 @@ void update_lite(void)
 		}
 
 		/* East of the player */
-		if ((cave_floor_bold(py, px+1))||(cave_half_bold(py, px+1)))
+		c_ptr = area(py, px + 1);
+		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
 		{
 			cave_lite_hack(py, px+2);
 			cave_lite_hack(py+1, px+2);
@@ -2565,7 +2581,8 @@ void update_lite(void)
 		}
 
 		/* West of the player */
-		if ((cave_floor_bold(py, px-1))||(cave_half_bold(py, px-1)))
+		c_ptr = area(py, px - 1);
+		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
 		{
 			cave_lite_hack(py, px-2);
 			cave_lite_hack(py+1, px-2);
@@ -2585,25 +2602,29 @@ void update_lite(void)
 		if (p > 5) p = 5;
 
 		/* South-East of the player */
-		if ((cave_floor_bold(py+1, px+1))||(cave_half_bold(py+1, px+1)))
+		c_ptr = area(py + 1, px +1);
+		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
 		{
 			cave_lite_hack(py+2, px+2);
 		}
 
 		/* South-West of the player */
-		if ((cave_floor_bold(py+1, px-1))||(cave_half_bold(py+1, px-1)))
+		c_ptr = area(py + 1, px - 1);
+		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
 		{
 			cave_lite_hack(py+2, px-2);
 		}
 
 		/* North-East of the player */
-		if ((cave_floor_bold(py-1, px+1))||(cave_half_bold(py-1, px+1)))
+		c_ptr = area(py - 1, px + 1);
+		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
 		{
 			cave_lite_hack(py-2, px+2);
 		}
 
 		/* North-West of the player */
-		if ((cave_floor_bold(py-1, px-1))||(cave_half_bold(py-1, px-1)))
+		c_ptr = area(py - 1, px - 1);
+		if ((cave_floor_grid(c_ptr)) || (cave_half_grid(c_ptr)))
 		{
 			cave_lite_hack(py-2, px-2);
 		}
@@ -2660,8 +2681,10 @@ void update_lite(void)
 				/* Skip distant grids */
 				if (d > p) continue;
 
+				c_ptr = area(y, x);
+				
 				/* Viewable, nearby, grids get "torch lit" */
-				if (player_has_los_bold(y, x))
+				if (player_has_los_grid(c_ptr))
 				{
 					/* This grid is "torch lit" */
 					cave_lite_hack(y, x);
@@ -2695,11 +2718,13 @@ void update_lite(void)
 		y = temp_y[i];
 		x = temp_x[i];
 
+		c_ptr = area(y, x);
+		
 		/* No longer in the array */
-		area(y,x)->info &= ~(CAVE_TEMP);
+		c_ptr->info &= ~(CAVE_TEMP);
 
 		/* Update stale grids */
-		if (area(y,x)->info & (CAVE_LITE)) continue;
+		if (c_ptr->info & (CAVE_LITE)) continue;
 
 		/* Redraw */
 		lite_spot(y, x);
@@ -2955,7 +2980,7 @@ static int scan_grid(int y, int x)
  * Note also the care taken to prevent "running off the map".  The use of
  * explicit checks on the "validity" of the "diagonal", and the fact that
  * the loops are never allowed to "leave" the map, lets "update_view_aux()"
- * use the optimized "cave_floor_bold()" macro, and to avoid the overhead
+ * use the optimized "cave_floor_grid()" macro, and to avoid the overhead
  * of multiple checks on the validity of grids.
  *
  * Note the "optimizations" involving the "se","sw","ne","nw","es","en",

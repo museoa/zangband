@@ -35,7 +35,7 @@ bool teleport_away(int m_idx, int dis)
 	bool look = TRUE;
 
 	monster_type *m_ptr = &m_list[m_idx];
-
+	cave_type *c_ptr;
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return (FALSE);
@@ -76,20 +76,22 @@ bool teleport_away(int m_idx, int dis)
 			/* Ignore illegal locations */
 			if (!in_bounds(ny, nx)) continue;
 
+			c_ptr = area(ny, nx);
+			
 			/* Require "empty" floor space */
-			if (!cave_empty_bold(ny, nx)) continue;
+			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Hack -- no teleport onto glyph of warding */
-			if (area(ny,nx)->feat == FEAT_GLYPH) continue;
-			if (area(ny,nx)->feat == FEAT_MINOR_GLYPH) continue;
+			if (c_ptr->feat == FEAT_GLYPH) continue;
+			if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
 
 			/* ...nor onto the Pattern */
-			if ((area(ny,nx)->feat >= FEAT_PATTERN_START) &&
-			    (area(ny,nx)->feat <= FEAT_PATTERN_XTRA2)) continue;
+			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
+			    (c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;
 
 			/* No teleporting into vaults and such */
 			if (!(p_ptr->inside_quest || p_ptr->inside_arena))
-				if (area(ny,nx)->info & CAVE_ICKY) continue;
+				if (c_ptr->info & CAVE_ICKY) continue;
 
 			/* This grid looks good */
 			look = FALSE;
@@ -145,6 +147,7 @@ void teleport_to_player(int m_idx)
 	int dis = 2;
 	bool look = TRUE;
 	monster_type *m_ptr = &m_list[m_idx];
+	cave_type *c_ptr;
 
 
 	/* Paranoia */
@@ -185,16 +188,18 @@ void teleport_to_player(int m_idx)
 			/* Ignore illegal locations */
 			if (!in_bounds(ny, nx)) continue;
 
+			c_ptr = area(ny, nx);
+			
 			/* Require "empty" floor space */
-			if (!cave_empty_bold(ny, nx)) continue;
+			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Hack -- no teleport onto glyph of warding */
-			if (area(ny,nx)->feat == FEAT_GLYPH) continue;
-			if (area(ny,nx)->feat == FEAT_MINOR_GLYPH) continue;
+			if (c_ptr->feat == FEAT_GLYPH) continue;
+			if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
 
 			/* ...nor onto the Pattern */
-			if ((area(ny,nx)->feat >= FEAT_PATTERN_START) &&
-			    (area(ny,nx)->feat <= FEAT_PATTERN_XTRA2)) continue;
+			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
+			    (c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;
 
 			/* No teleporting into vaults and such */
 			/* if (cave[ny][nx].info & (CAVE_ICKY)) continue; */
@@ -264,6 +269,7 @@ void teleport_player(int dis)
 	int x = px;
 
 	bool look = TRUE;
+	cave_type *c_ptr;
 
 	if (p_ptr->anti_tele)
 	{
@@ -299,12 +305,14 @@ void teleport_player(int dis)
 			/* Ignore illegal locations */
 			if (!in_bounds(y, x)) continue;
 
+			c_ptr = area(y, x);
+			
 			/* Require "naked" floor space or trees */
-			if (!(cave_naked_bold(y, x) ||
-			    ((area(y,x)->feat & 0x60) == 0x60))) continue;
+			if (!(cave_naked_grid(c_ptr) ||
+			    ((c_ptr->feat & 0x60) == 0x60))) continue;
 
 			/* No teleporting into vaults and such */
-			if (area(y,x)->info & CAVE_ICKY) continue;
+			if (c_ptr->info & CAVE_ICKY) continue;
 
 			/* This grid looks good */
 			look = FALSE;
@@ -409,6 +417,8 @@ void teleport_player(int dis)
 void teleport_player_to(int ny, int nx)
 {
 	int y, x, oy, ox, dis = 0, ctr = 0;
+	
+	cave_type *c_ptr;
 
 	if (p_ptr->anti_tele)
 	{
@@ -428,7 +438,8 @@ void teleport_player_to(int ny, int nx)
 		}
 
 		/* Accept "naked" floor grids */
-		if (cave_naked_bold(y, x)) break;
+		c_ptr = area(y, x);
+		if (cave_naked_grid(c_ptr)) break;
 
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1))
@@ -881,14 +892,15 @@ void call_the_(void)
 {
 	int i;
 
-	if (cave_floor_bold(py - 1, px - 1) &&
-	    cave_floor_bold(py - 1, px    ) &&
-	    cave_floor_bold(py - 1, px + 1) &&
-	    cave_floor_bold(py    , px - 1) &&
-	    cave_floor_bold(py    , px + 1) &&
-	    cave_floor_bold(py + 1, px - 1) &&
-	    cave_floor_bold(py + 1, px    ) &&
-	    cave_floor_bold(py + 1, px + 1))
+	if (in_bounds2(py, px) &&
+	    cave_floor_grid(area(py - 1, px - 1)) &&
+	    cave_floor_grid(area(py - 1, px    )) &&
+	    cave_floor_grid(area(py - 1, px + 1)) &&
+	    cave_floor_grid(area(py    , px - 1)) &&
+	    cave_floor_grid(area(py    , px + 1)) &&
+	    cave_floor_grid(area(py + 1, px - 1)) &&
+	    cave_floor_grid(area(py + 1, px    )) &&
+	    cave_floor_grid(area(py + 1, px + 1)))
 	{
 		for (i = 1; i < 10; i++)
 		{
@@ -968,7 +980,7 @@ void fetch(int dir, int wgt, bool require_los)
 		}
 
 		/* We need to see the item */
-		if (require_los && !player_has_los_bold(ty, tx))
+		if (require_los && !player_has_los_grid(c_ptr))
 		{
 			msg_print("You have no direct line of sight to that location.");
 			return;
@@ -987,7 +999,7 @@ void fetch(int dir, int wgt, bool require_los)
 			c_ptr = area(ty, tx);
 
 			if ((distance(py, px, ty, tx) > MAX_RANGE) ||
-			    !cave_floor_bold(ty, tx)) return;
+			    !cave_floor_grid(c_ptr)) return;
 		}
 		while (!c_ptr->o_idx);
 	}
@@ -1039,8 +1051,10 @@ void alter_reality(void)
  */
 bool warding_glyph(void)
 {
+	cave_type *c_ptr = area(py, px);
+	
 	/* XXX XXX XXX */
-	if (!cave_clean_bold(py, px))
+	if (!cave_clean_grid(c_ptr))
 	{
 		msg_print("The object resists the spell.");
 		return FALSE;
@@ -1058,8 +1072,10 @@ bool warding_glyph(void)
  */
 bool explosive_rune(void)
 {
+	cave_type *c_ptr = area(py, px);
+	
 	/* XXX XXX XXX */
-	if (!cave_clean_bold(py, px))
+	if (!cave_clean_grid(c_ptr))
 	{
 		msg_print("The object resists the spell.");
 		return FALSE;
@@ -1314,8 +1330,10 @@ bool alchemy(void)
  */
 void stair_creation(void)
 {
+	cave_type *c_ptr = area(py, px);
+	
 	/* XXX XXX XXX */
-	if (!cave_valid_bold(py, px))
+	if (!cave_valid_grid(c_ptr))
 	{
 		msg_print("The object resists the spell.");
 		return;
@@ -4084,12 +4102,15 @@ bool dimension_door(void)
 {
 	int	plev = p_ptr->lev;
 	int	x = 0, y = 0;
-
+	cave_type *c_ptr;
+	
 	if (!tgt_pt(&x, &y)) return FALSE;
 
 	p_ptr->energy -= 60 - plev;
 
-	if (!cave_empty_bold(y, x) || (area(y,x)->info & CAVE_ICKY) ||
+	c_ptr = area(y, x);
+
+	if (!cave_empty_grid(c_ptr) || (c_ptr->info & CAVE_ICKY) ||
 		(distance(y, x, py, px) > plev + 2) ||
 		(!rand_int(plev * plev / 2)))
 	{

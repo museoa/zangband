@@ -236,6 +236,7 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 	/* Slope */
 	int m;
 
+	cave_type *c_ptr;	
 
 	/* No path necessary (or allowed) */
 	if ((x1 == x2) && (y1 == y2)) return (0);
@@ -306,13 +307,15 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 			/* Stop if out of bounds */
 			if (!in_bounds(y, x)) break;
 			
+			c_ptr = area(y, x);
+			
 			/* Always stop at non-initial wall grids */
-			if ((n > 0) && !cave_floor_bold(y, x)) break;
+			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if (flg & (PROJECT_STOP))
 			{
-				if ((n > 0) && (area(y,x)->m_idx != 0)) break;
+				if ((n > 0) && (c_ptr->m_idx != 0)) break;
 			}
 
 			/* Slant */
@@ -373,13 +376,15 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 			/* Stop if out of bounds */
 			if (!in_bounds(y, x)) break;
 			
+			c_ptr = area(y, x);
+			
 			/* Always stop at non-initial wall grids */
-			if ((n > 0) && !cave_floor_bold(y, x)) break;
+			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if (flg & (PROJECT_STOP))
 			{
-				if ((n > 0) && (area(y,x)->m_idx != 0)) break;
+				if ((n > 0) && (c_ptr->m_idx != 0)) break;
 			}
 
 			/* Slant */
@@ -434,13 +439,15 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, int flg)
 			/* Stop if out of bounds */
 			if (!in_bounds(y, x)) break;
 			
+			c_ptr = area(y, x);
+			
 			/* Always stop at non-initial wall grids */
-			if ((n > 0) && !cave_floor_bold(y, x)) break;
+			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if (flg & (PROJECT_STOP))
 			{
-				if ((n > 0) && (area(y,x)->m_idx != 0)) break;
+				if ((n > 0) && (c_ptr->m_idx != 0)) break;
 			}
 
 			/* Advance (Y) */
@@ -488,7 +495,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 	cave_type       *c_ptr = area(y,x);
 
 	bool obvious = FALSE;
-	bool known = player_has_los_bold(y, x);
+	bool known = player_has_los_grid(c_ptr);
 
 
 	/* XXX XXX XXX */
@@ -638,7 +645,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_KILL_WALL:
 		{
 			/* Non-walls (etc) */
-			if (cave_floor_bold(y, x)) break;
+			if (cave_floor_grid(c_ptr)) break;
 
 			/* Permanent walls */
 			if (c_ptr->feat >= FEAT_PERM_EXTRA) break;
@@ -773,10 +780,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_MAKE_DOOR:
 		{
 			/* Require a "naked" floor grid */
-			if (!cave_naked_bold(y, x)) break;
-
-			/* Not on the player */
-			if ((y == py) && (x == px)) break;
+			if (!cave_naked_grid(c_ptr)) break;
 
 			/* Create a closed door */
 			cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
@@ -794,9 +798,9 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_MAKE_TRAP:
 		{
 			/* Require a "naked" floor grid */
-			if ((area(y,x)->feat != FEAT_FLOOR) &&
-				 (area(y,x)->o_idx == 0) &&
-				 (area(y,x)->m_idx == 0))
+			if ((c_ptr->feat != FEAT_FLOOR) &&
+				 (c_ptr->o_idx == 0) &&
+				 (c_ptr->m_idx == 0))
 				 break;
 
 			/* Place a trap */
@@ -808,7 +812,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_MAKE_GLYPH:
 		{
 			/* Require a "naked" floor grid */
-			if (!cave_naked_bold(y, x)) break;
+			if (!cave_naked_grid(c_ptr)) break;
 
 			cave_set_feat(y, x, FEAT_GLYPH);
 
@@ -818,10 +822,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 		case GF_STONE_WALL:
 		{
 			/* Require a "naked" floor grid */
-			if (!cave_naked_bold(y, x)) break;
-
-			/* Not on the player */
-			if ((y == py) && (x == px)) break;
+			if (!cave_naked_grid(c_ptr)) break;
 
 			/* Place a trap */
 			cave_set_feat(y, x, FEAT_WALL_EXTRA);
@@ -916,7 +917,7 @@ static bool project_o(int who, int r, int y, int x, int dam, int typ)
 	s16b this_o_idx, next_o_idx = 0;
 
 	bool obvious = FALSE;
-	bool known = player_has_los_bold(y, x);
+	bool known = player_has_los_grid(c_ptr);
 
 	u32b f1, f2, f3;
 
@@ -3340,6 +3341,7 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 	/* Hack -- messages */
 	cptr act = NULL;
 
+	cave_type *c_ptr;
 
 	/* Player is not here */
 	if ((x != px) || (y != py)) return (FALSE);
@@ -3362,9 +3364,11 @@ static bool project_p(int who, int r, int y, int x, int dam, int typ, int a_rad)
 			t_y = m_list[who].fy - 1 + randint(3);
 			t_x = m_list[who].fx - 1 + randint(3);
 			max_attempts--;
+			
+			c_ptr = area(t_y, t_x);
 		}
 		while (max_attempts && in_bounds2(t_y, t_x) &&
-		     !(player_has_los_bold(t_y, t_x)));
+		     !(player_has_los_grid(c_ptr)));
 
 		if (max_attempts < 1)
 		{
@@ -4541,6 +4545,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 
 	bool jump = FALSE;
 
+	cave_type *c_ptr;
+
 	/* Hack -- some weapons always stop at monsters */
 	if (typ == GF_ROCKET) flg |= PROJECT_STOP;
 
@@ -4637,8 +4643,10 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 		int ny = path_g[i].y;
 		int nx = path_g[i].x;
 
+		c_ptr = area(ny, nx);
+		
 		/* Hack -- Balls explode before reaching walls */
-		if (!cave_floor_bold(ny, nx) && (rad > 0)) break;
+		if (!cave_floor_grid(c_ptr) && (rad > 0)) break;
 
 		/* Advance */
 		y = ny;
@@ -4655,8 +4663,9 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 		/* Only do visuals if requested */
 		if (!blind && !(flg & (PROJECT_HIDE)))
 		{
+			
 			/* Only do visuals if the player can "see" the bolt */
-			if (panel_contains(y, x) && player_has_los_bold(y, x))
+			if (panel_contains(y, x) && player_has_los_grid(c_ptr))
 			{
 				u16b p;
 
@@ -4827,15 +4836,17 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 							/* Disintegration balls explosions are stopped by perma-walls */
 							if (!in_disintegration_range(y2, x2, y, x)) continue;
 
-							if (cave_valid_bold(y, x) &&
-								(area(y,x)->feat < FEAT_PATTERN_START ||
-								 area(y,x)->feat > FEAT_PATTERN_XTRA2) &&
-								(area(y,x)->feat < FEAT_DEEP_WATER ||
-								 area(y,x)->feat > FEAT_GRASS))
+							c_ptr = area(y, x);
+							
+							if (cave_valid_grid(c_ptr) &&
+								(c_ptr->feat < FEAT_PATTERN_START ||
+								 c_ptr->feat > FEAT_PATTERN_XTRA2) &&
+								(c_ptr->feat < FEAT_DEEP_WATER ||
+								 c_ptr->feat > FEAT_GRASS))
 							{
-								if ((area(y,x)->feat == FEAT_TREES) ||
-									(area(y,x)->feat == FEAT_PINE_TREE) ||
-									(area(y,x)->feat == FEAT_SNOW_TREE))
+								if ((c_ptr->feat == FEAT_TREES) ||
+									(c_ptr->feat == FEAT_PINE_TREE) ||
+									(c_ptr->feat == FEAT_SNOW_TREE))
 									cave_set_feat(y, x, FEAT_GRASS);
 								else
 									cave_set_feat(y, x, FEAT_FLOOR);
@@ -4881,8 +4892,10 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 				y = gy[i];
 				x = gx[i];
 
+				c_ptr = area(y, x);
+				
 				/* Only do visuals if the player can "see" the blast */
-				if (panel_contains(y, x) && player_has_los_bold(y, x))
+				if (panel_contains(y, x) && player_has_los_grid(c_ptr))
 				{
 					u16b p;
 
@@ -4926,8 +4939,10 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg)
 				y = gy[i];
 				x = gx[i];
 
+				c_ptr = area(y, x);
+				
 				/* Hack -- Erase if needed */
-				if (panel_contains(y, x) && player_has_los_bold(y, x))
+				if (panel_contains(y, x) && player_has_los_grid(c_ptr))
 				{
 					lite_spot(y, x);
 				}

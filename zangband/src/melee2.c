@@ -452,7 +452,7 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 	}
 
 	/* Hack -- Player can see us, run towards him */
-	if (player_has_los_bold(y1, x1)) return (FALSE);
+	if (player_has_los_grid(c_ptr)) return (FALSE);
 
 	/* Check nearby grids, diagonals first */
 	for (i = 7; i >= 0; i--)
@@ -464,18 +464,20 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 		/* Ignore locations off of edge */
 		if (!in_bounds2(y, x)) continue;
 
+		c_ptr = area(y, x);
+		
 		/* Ignore illegal locations */
-		if (!area(y, x)->when) continue;
+		if (!c_ptr->when) continue;
 
 		/* Ignore ancient locations */
-		if (area(y, x)->when < when) continue;
+		if (c_ptr->when < when) continue;
 
 		/* Ignore distant locations */
-		if (area(y, x)->cost > cost) continue;
+		if (c_ptr->cost > cost) continue;
 
 		/* Save the cost and time */
-		when = area(y, x)->when;
-		cost = area(y, x)->cost;
+		when = c_ptr->when;
+		cost = c_ptr->cost;
 
 		/* Hack -- Save the "twiddled" location */
 		(*yp) = py + 16 * ddy_ddd[i];
@@ -604,6 +606,8 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 	int y, x, d, dis;
 	int gy = 0, gx = 0, gdis = 0;
 
+	cave_type *c_ptr;
+
 	/* Start with adjacent locations, spread further */
 	for (d = 1; d < 10; d++)
 	{
@@ -615,8 +619,10 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 				/* Skip illegal locations */
 				if (!in_bounds(y, x)) continue;
 
+				c_ptr = area(y, x);
+				
 				/* Skip locations in a wall */
-				if (!cave_floor_bold(y, x)) continue;
+				if (!cave_floor_grid(c_ptr)) continue;
 
 				/* Check distance */
 				if (distance(y, x, fy, fx) != d) continue;
@@ -625,10 +631,10 @@ static bool find_safety(int m_idx, int *yp, int *xp)
 				if (flow_by_sound)
 				{
 					/* Ignore grids very far from the player */
-					if (area(y,x)->when < area(py,px)->when) continue;
+					if (c_ptr->when < area(py,px)->when) continue;
 
 					/* Ignore too-distant grids */
-					if (area(y,x)->cost > area(fy,fx)->cost + 2 * d) continue;
+					if (c_ptr->cost > area(fy,fx)->cost + 2 * d) continue;
 				}
 
 				/* Check for absence of shot */
@@ -682,6 +688,8 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 
 	int y, x, d, dis;
 	int gy = 0, gx = 0, gdis = 999, min;
+	
+	cave_type *c_ptr;
 
 	/* Closest distance to get */
 	min = distance(py, px, fy, fx) * 3 / 4 + 2;
@@ -697,8 +705,10 @@ static bool find_hiding(int m_idx, int *yp, int *xp)
 				/* Skip illegal locations */
 				if (!in_bounds(y, x)) continue;
 
+				c_ptr = area(y, x);
+				
 				/* Skip locations in a wall */
-				if (!cave_floor_bold(y, x)) continue;
+				if (!cave_floor_grid(c_ptr)) continue;
 
 				/* Check distance */
 				if (distance(y, x, fy, fx) != d) continue;
@@ -753,7 +763,7 @@ static bool get_moves(int m_idx, int *mm)
 	int          x2 = px;
 	bool         done = FALSE;
 	bool         will_run = mon_will_run(m_idx);
-
+	cave_type	*c_ptr;
 
 #ifdef MONSTER_FLOW
 	/* Flow towards the player */
@@ -826,7 +836,8 @@ static bool get_moves(int m_idx, int *mm)
 				}
 
 				/* Ignore filled grids */
-				if (!cave_empty_bold(y2, x2)) continue;
+				c_ptr = area(y2, x2);
+				if (!cave_empty_grid(c_ptr)) continue;
 
 				/* Try to fill this hole */
 				break;
@@ -2059,11 +2070,14 @@ static void process_monster(int m_idx)
 		msg_print("You hear heavy steps.");
 	}
 
+	/* Access that cave grid */
+	c_ptr = area(oy,ox);
+	
 	/* Some monsters can speak */
 	if (speak_unique &&
 	    (r_ptr->flags2 & RF2_CAN_SPEAK) &&
 		(randint(SPEAK_CHANCE) == 1) &&
-		player_has_los_bold(oy, ox))
+		player_has_los_grid(c_ptr))
 	{
 		char m_name[80];
 		char monmessage[1024];
@@ -2259,14 +2273,13 @@ static void process_monster(int m_idx)
 		if (!in_bounds2(ny, nx)) continue;
 
 		/* Access that cave grid */
-		c_ptr = area(ny,nx);
+		c_ptr = area(ny, nx);
 
 		/* Access that cave grid's contents */
 		y_ptr = &m_list[c_ptr->m_idx];
 
-
 		/* Floor is open? */
-		if (cave_floor_bold(ny, nx))
+		if (cave_floor_grid(c_ptr))
 		{
 			/* Go ahead and move */
 			do_move = TRUE;
@@ -2340,7 +2353,7 @@ static void process_monster(int m_idx)
 			cave_set_feat(ny, nx, FEAT_FLOOR);
 
 			/* Note changes to viewable region */
-			if (player_has_los_bold(ny, nx)) do_view = TRUE;
+			if (player_has_los_grid(c_ptr)) do_view = TRUE;
 		}
 
 		/* Handle doors and secret doors */
@@ -2437,7 +2450,7 @@ static void process_monster(int m_idx)
 				}
 
 				/* Handle viewable doors */
-				if (player_has_los_bold(ny, nx)) do_view = TRUE;
+				if (player_has_los_grid(c_ptr)) do_view = TRUE;
 			}
 		}
 
@@ -2531,8 +2544,8 @@ static void process_monster(int m_idx)
 			do_turn = TRUE;
 		}
 
-		if ((area(ny,nx)->feat >= FEAT_PATTERN_START) &&
-			(area(ny,nx)->feat <= FEAT_PATTERN_XTRA2) &&
+		if ((c_ptr->feat >= FEAT_PATTERN_START) &&
+			(c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
 			!do_turn && !(r_ptr->flags7 & RF7_CAN_FLY))
 		{
 			do_move = FALSE;
@@ -2551,7 +2564,7 @@ static void process_monster(int m_idx)
 			/* Attack 'enemies' */
 			if (((r_ptr->flags2 & (RF2_KILL_BODY)) &&
 				  (r_ptr->mexp * r_ptr->level > z_ptr->mexp * z_ptr->level) &&
-				  (cave_floor_bold(ny, nx))) ||
+				  (cave_floor_grid(c_ptr))) ||
 				 are_enemies(m_ptr, m2_ptr) || m_ptr->confused)
 			{
 				do_move = FALSE;
@@ -2569,8 +2582,8 @@ static void process_monster(int m_idx)
 
 			/* Push past weaker monsters (unless leaving a wall) */
 			else if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
-				(r_ptr->mexp > z_ptr->mexp) && cave_floor_bold(ny, nx) &&
-				(cave_floor_bold(m_ptr->fy, m_ptr->fx)))
+				(r_ptr->mexp > z_ptr->mexp) && cave_floor_grid(c_ptr) &&
+				(cave_floor_grid(area(m_ptr->fy, m_ptr->fx))))
 			{
 				/* Allow movement */
 				do_move = TRUE;
@@ -2721,7 +2734,7 @@ static void process_monster(int m_idx)
 							did_take_item = TRUE;
 
 							/* Describe observable situations */
-							if (m_ptr->ml && player_has_los_bold(ny, nx))
+							if (m_ptr->ml && player_has_los_grid(c_ptr))
 							{
 								/* Dump a message */
 								msg_format("%^s tries to pick up %s, but fails.",
@@ -2737,7 +2750,7 @@ static void process_monster(int m_idx)
 						did_take_item = TRUE;
 
 						/* Describe observable situations */
-						if (player_has_los_bold(ny, nx))
+						if (player_has_los_grid(c_ptr))
 						{
 							/* Dump a message */
 							msg_format("%^s picks up %s.", m_name, o_name);
@@ -2780,7 +2793,7 @@ static void process_monster(int m_idx)
 						did_kill_item = TRUE;
 
 						/* Describe observable situations */
-						if (player_has_los_bold(ny, nx))
+						if (player_has_los_grid(c_ptr))
 						{
 							/* Dump a message */
 							msg_format("%^s destroys %s.", m_name, o_name);
@@ -2932,6 +2945,8 @@ void process_monsters(void)
 	int old_total_friends = total_friends;
 	s32b old_friend_align = friend_align;
 
+	cave_type *c_ptr;
+	
 	/* Clear some variables */
 	total_friends = 0;
 	total_friend_levels = 0;
@@ -3042,6 +3057,7 @@ void process_monsters(void)
 		fx = m_ptr->fx;
 		fy = m_ptr->fy;
 
+		c_ptr = area(fy, fx);
 
 		/* Assume no move */
 		test = FALSE;
@@ -3061,7 +3077,7 @@ void process_monsters(void)
 
 		/* Handle "sight" and "aggravation" */
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&
-			(player_has_los_bold(fy, fx) || p_ptr->aggravate))
+			(player_has_los_grid(c_ptr) || p_ptr->aggravate))
 		{
 			/* We can "see" or "feel" the player */
 			test = TRUE;
@@ -3071,9 +3087,9 @@ void process_monsters(void)
 		/* Hack -- Monsters can "smell" the player from far away */
 		/* Note that most monsters have "aaf" of "20" or so */
 		else if (flow_by_sound &&
-			(area(py,px)->when == area(fy,fx)->when) &&
-			(area(fy,fx)->cost < MONSTER_FLOW_DEPTH) &&
-			(area(fy,fx)->cost < r_ptr->aaf))
+			(area(py,px)->when == c_ptr->when) &&
+			(c_ptr->cost < MONSTER_FLOW_DEPTH) &&
+			(c_ptr->cost < r_ptr->aaf))
 		{
 			/* We can "smell" the player */
 			test = TRUE;

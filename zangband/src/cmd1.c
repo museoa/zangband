@@ -1547,7 +1547,7 @@ void py_attack(int y, int x)
 	}
 
 	/* Monsters in rubble can take advantage of cover. -LM- */
-	if (area(y,x)->feat == FEAT_RUBBLE)
+	if (c_ptr->feat == FEAT_RUBBLE)
 	{
 		terrain_bonus = r_ptr->ac / 7 + 5;
 	}
@@ -1555,13 +1555,13 @@ void py_attack(int y, int x)
 	 * Monsters in trees can take advantage of cover,
 	 * except from rangers.
 	 */
-	else if ((area(y, x)->feat == FEAT_TREES) && 
+	else if ((c_ptr->feat == FEAT_TREES) && 
 	         (p_ptr->pclass == CLASS_RANGER))
 	{
 		terrain_bonus = r_ptr->ac / 7 + 5;
 	}
 	/* Monsters in water are vulnerable. -LM- */
-	else if (area(y, x)->feat == FEAT_DEEP_WATER)
+	else if (c_ptr->feat == FEAT_DEEP_WATER)
 	{
 		terrain_bonus -= r_ptr->ac / 5;
 	}
@@ -1632,7 +1632,7 @@ void py_attack(int y, int x)
 		}
 
 		/* Damage, check for fear and death. */
-		if (mon_take_hit(area(y, x)->m_idx, bash_dam, &fear, NULL))
+		if (mon_take_hit(c_ptr->m_idx, bash_dam, &fear, NULL))
 		{
 			/* Fight's over. */
 			return;
@@ -2094,7 +2094,7 @@ void py_attack(int y, int x)
 				}
 			}
 
-			else if ((chaos_effect == 5) && cave_floor_bold(y, x) &&
+			else if ((chaos_effect == 5) && cave_floor_grid(c_ptr) &&
 			         (randint(90) > r_ptr->level))
 			{
 				if (!(r_ptr->flags1 & RF1_UNIQUE) &&
@@ -2487,14 +2487,14 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Hack -- attack monsters */
-	if (c_ptr->m_idx && (m_ptr->ml || cave_floor_bold(y, x) || p_can_pass_walls))
+	if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr) || p_can_pass_walls))
 	{
 		/* Attack -- only if we can see it OR it is not in a wall */
 		if (!is_hostile(m_ptr) &&
 		    !(p_ptr->confused || p_ptr->image || !m_ptr->ml || p_ptr->stun ||
 		    ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero)) &&
 		    (pattern_seq(py, px, y, x)) &&
-		    ((cave_floor_bold(y, x)) || p_can_pass_walls))
+		    ((cave_floor_grid(c_ptr)) || p_can_pass_walls))
 		{
 			m_ptr->csleep = 0;
 
@@ -2512,7 +2512,7 @@ void move_player(int dir, int do_pickup)
 			{
 				py_attack(y, x);
 			}
-			else if (cave_floor_bold(py, px) ||
+			else if (cave_floor_grid(area(py, px)) ||
 			    (r_info[m_ptr->r_idx].flags2 & RF2_PASS_WALL))
 			{
 				msg_format("You push past %s.", m_name);
@@ -2678,7 +2678,7 @@ void move_player(int dir, int do_pickup)
 #endif /* ALLOW_EASY_DISARM -- TNB */
 
 	/* Player can not walk through "walls" unless in wraith form...*/
-	else if (!cave_floor_bold(y, x) && !p_can_pass_walls)
+	else if (!cave_floor_grid(c_ptr) && !p_can_pass_walls)
 	{
 		oktomove = FALSE;
 
@@ -2972,6 +2972,8 @@ static int see_wall(int dir, int y, int x)
  */
 static int see_nothing(int dir, int y, int x)
 {
+	cave_type *c_ptr = area(y, x);
+	
 	/* Get the new location */
 	y += ddy[dir];
 	x += ddx[dir];
@@ -2980,10 +2982,10 @@ static int see_nothing(int dir, int y, int x)
 	if (!in_bounds2(y, x)) return (TRUE);
 
 	/* Memorized grids are always known */
-	if (area(y,x)->info & (CAVE_MARK)) return (FALSE);
+	if (c_ptr->info & (CAVE_MARK)) return (FALSE);
 
 	/* Non-floor grids are unknown */
-	if (!cave_floor_bold(y, x)) return (TRUE);
+	if (!cave_floor_grid(c_ptr)) return (TRUE);
 
 	/* Viewable door/wall grids are known */
 	if (player_can_see_bold(y, x)) return (FALSE);
@@ -3453,8 +3455,8 @@ static bool run_test(void)
 		}
 
 		/* Analyze unknown grids and floors */
-		if (inv || cave_floor_bold(row, col) ||
-		    (area(row,col)->feat == FEAT_TREES))
+		if (inv || cave_floor_grid(c_ptr) ||
+		    (c_ptr->feat == FEAT_TREES))
 		{
 			/* Looking for open area */
 			if (find_openarea)

@@ -4290,8 +4290,11 @@ void place_object(int y, int x, bool good, bool great)
 	/* Paranoia -- check bounds */
 	if (!in_bounds(y, x)) return;
 
+	/* Acquire grid */
+	c_ptr = area(y,x);
+		
 	/* Require clean floor space */
-	if (!cave_gen_bold(y, x)) return;
+	if (!cave_gen_grid(c_ptr)) return;
 
 
 	/* Get local object */
@@ -4321,9 +4324,6 @@ void place_object(int y, int x, bool good, bool great)
 		/* Location */
 		o_ptr->iy = y;
 		o_ptr->ix = x;
-
-		/* Acquire grid */
-		c_ptr = area(y,x);
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;
@@ -4411,9 +4411,11 @@ void place_gold(int y, int x)
 	/* Paranoia -- check bounds */
 	if (!in_bounds(y, x)) return;
 
+	/* Acquire grid */
+	c_ptr = area(y,x);
+	
 	/* Require clean floor space */
-	if (!cave_clean_bold(y, x)) return;
-
+	if (!cave_clean_grid(c_ptr)) return;
 
 	/* Get local object */
 	q_ptr = &forge;
@@ -4442,9 +4444,6 @@ void place_gold(int y, int x)
 		/* Save location */
 		o_ptr->iy = y;
 		o_ptr->ix = x;
-
-		/* Acquire grid */
-		c_ptr = area(y,x);
 
 		/* Build a stack */
 		o_ptr->next_o_idx = c_ptr->o_idx;
@@ -4690,7 +4689,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		bx = tx;
 
 		/* Require floor space */
-		if (!cave_clean_bold(by, bx)) continue;
+		if (!cave_clean_grid(c_ptr)) continue;
 
 		/* Okay */
 		flag = TRUE;
@@ -4950,11 +4949,15 @@ void pick_trap(int y, int x)
  */
 void place_trap(int y, int x)
 {
+	cave_type *c_ptr;
+	
 	/* Paranoia -- verify location */
 	if (!in_bounds(y, x)) return;
 
+	c_ptr = area(y, x);
+	
 	/* Require empty, clean, floor grid */
-	if (!cave_naked_bold(y, x)) return;
+	if (!cave_naked_grid(c_ptr)) return;
 
 	/* Place an invisible trap */
 	cave_set_feat(y, x, FEAT_INVIS);

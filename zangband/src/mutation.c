@@ -1905,8 +1905,9 @@ void mutation_power_aux(u32b power)
 				if (!get_rep_dir(&dir)) break;
 				y = py + ddy[dir];
 				x = px + ddx[dir];
+				
 				c_ptr = area(y,x);
-				if (cave_floor_bold(y, x))
+				if (cave_floor_grid(c_ptr))
 				{
 					msg_print("You bite into thin air!");
 					break;

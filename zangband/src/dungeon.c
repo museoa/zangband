@@ -872,6 +872,7 @@ static void process_world(void)
 	u32b f1 = 0 , f2 = 0 , f3 = 0;
 	int temp;
 	object_kind *k_ptr;
+	cave_type *c_ptr = area(py, px);
 
 	/* Announce the level feeling */
 	if ((turn - old_turn == 1000) && (dun_level)) do_cmd_feeling();
@@ -1034,7 +1035,7 @@ static void process_world(void)
 		if (!dun_level && !p_ptr->resist_lite && !p_ptr->invuln &&
 		    (!((turn / ((10L * TOWN_DAWN) / 2)) % 2)))
 		{
-			if (area(py,px)->info & CAVE_GLOW)
+			if (c_ptr->info & CAVE_GLOW)
 			{
 				/* Take damage */
 				msg_print("The sun's rays scorch your undead flesh!");
@@ -1067,7 +1068,7 @@ static void process_world(void)
 		}
 	}
 
-	if ((area(py,px)->feat == FEAT_SHAL_LAVA) &&
+	if ((c_ptr->feat == FEAT_SHAL_LAVA) &&
 		!p_ptr->invuln && !p_ptr->immune_fire && !p_ptr->ffall)
 	{
 		int damage = p_ptr->lev;
@@ -1084,7 +1085,7 @@ static void process_world(void)
 		}
 	}
 
-	else if ((area(py,px)->feat == FEAT_DEEP_LAVA) &&
+	else if ((c_ptr->feat == FEAT_DEEP_LAVA) &&
 		!p_ptr->invuln && !p_ptr->immune_fire)
 	{
 		int damage = p_ptr->lev * 2;
@@ -1117,7 +1118,7 @@ static void process_world(void)
 		}
 	}
 	
-	if ((area(py,px)->feat == FEAT_SHAL_ACID) &&
+	if ((c_ptr->feat == FEAT_SHAL_ACID) &&
 		!p_ptr->invuln && !p_ptr->immune_acid && !p_ptr->ffall)
 	{
 		int damage = p_ptr->lev;
@@ -1134,7 +1135,7 @@ static void process_world(void)
 		}
 	}
 
-	else if ((area(py,px)->feat == FEAT_DEEP_ACID) &&
+	else if ((c_ptr->feat == FEAT_DEEP_ACID) &&
 		!p_ptr->invuln && !p_ptr->immune_acid)
 	{
 		int damage = p_ptr->lev * 2;
@@ -1167,7 +1168,7 @@ static void process_world(void)
 		}
 	}
 
-	if ((area(py,px)->feat == FEAT_SHAL_SWAMP) &&
+	if ((c_ptr->feat == FEAT_SHAL_SWAMP) &&
 		!p_ptr->invuln && !p_ptr->resist_pois && !p_ptr->ffall)
 	{
 		int damage = p_ptr->lev;
@@ -1183,7 +1184,7 @@ static void process_world(void)
 		}
 	}
 
-	else if ((area(py,px)->feat == FEAT_DEEP_SWAMP) &&
+	else if ((c_ptr->feat == FEAT_DEEP_SWAMP) &&
 		!p_ptr->invuln)
 	{
 		int damage = p_ptr->lev * 2;
@@ -1216,7 +1217,7 @@ static void process_world(void)
 		}
 	}
 
-	else if ((area(py,px)->feat == FEAT_DEEP_WATER) && !p_ptr->ffall)
+	else if ((c_ptr->feat == FEAT_DEEP_WATER) && !p_ptr->ffall)
 	{
 		if (p_ptr->total_weight > ((adj_str_wgt[p_ptr->stat_ind[A_STR]] * 100) / 2))
 		{
@@ -1234,14 +1235,14 @@ static void process_world(void)
 	 * reduced below 0 hp by being inside a stone wall; others
 	 * WILL BE!
 	 */
-	if (!cave_floor_bold(py, px))
+	if (!cave_floor_grid(c_ptr))
 	{
 		/* Player can walk through semi-transparent terrain */
-		if ((area(py, px)->feat & 0x60) == 0x60)
+		if ((c_ptr->feat & 0x60) == 0x60)
 		{
 			/* Do nothing */
 		}
-		else if ((area(py, px)->feat & 0x80) == 0x80)
+		else if ((c_ptr->feat & 0x80) == 0x80)
 		{
 			/* Player can walk through the "slow floor" terrains. */
 			
@@ -1511,8 +1512,8 @@ static void process_world(void)
 	/* Regenerate Hit Points if needed */
 	if ((p_ptr->chp < p_ptr->mhp) && !cave_no_regen)
 	{
-		if ((area(py,px)->feat < FEAT_PATTERN_END) &&
-		    (area(py,px)->feat >= FEAT_PATTERN_START))
+		if ((c_ptr->feat < FEAT_PATTERN_END) &&
+		    (c_ptr->feat >= FEAT_PATTERN_START))
 		{
 			regenhp(regen_amount / 5); /* Hmmm. this should never happen? */
 		}
@@ -1886,7 +1887,7 @@ static void process_world(void)
 			msg_print(NULL);
 
 			/* Absorb light from the current possition */
-			if (area(py,px)->info & CAVE_GLOW)
+			if (c_ptr->info & CAVE_GLOW)
 			{
 				hp_player(10);
 			}
@@ -3631,6 +3632,8 @@ static void process_player(void)
 static void dungeon(void)
 {
 	int quest_num;
+	
+	cave_type *c_ptr;
 
 	/* Set the base level */
 	base_level = dun_level;
@@ -3708,7 +3711,8 @@ static void dungeon(void)
 	if (create_up_stair || create_down_stair)
 	{
 		/* Place a stairway */
-		if (cave_valid_bold(py, px))
+		c_ptr = area(py, px);
+		if (cave_valid_grid(c_ptr))
 		{
 			/* XXX XXX XXX */
 			delete_object(py, px);

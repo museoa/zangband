@@ -348,6 +348,8 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 static bool summon_possible(int y1, int x1)
 {
 	int y, x;
+	
+	cave_type *c_ptr;
 
 	/* Start at the player's location, and check 2 grids in each dir */
 	for (y = y1 - 2; y <= y1 + 2; y++)
@@ -360,16 +362,19 @@ static bool summon_possible(int y1, int x1)
 			/* Only check a circular area */
 			if (distance(y1, x1, y, x) > 2) continue;
 
+			/* Access Grid */
+			c_ptr = area(y, x);
+			
 			/* Hack: no summon on glyph of warding */
-			if (area(y,x)->feat == FEAT_GLYPH) continue;
-			if (area(y,x)->feat == FEAT_MINOR_GLYPH) continue;
+			if (c_ptr->feat == FEAT_GLYPH) continue;
+			if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
 
 			/* ...nor on the Pattern */
-			if ((area(y,x)->feat >= FEAT_PATTERN_START) &&
-			    (area(y,x)->feat <= FEAT_PATTERN_XTRA2)) continue;
+			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
+			    (c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;
 
 			/* Require empty floor grid in line of sight */
-			if (cave_empty_bold(y, x) && los(y1, x1, y, x)) return (TRUE);
+			if (cave_empty_grid(c_ptr) && los(y1, x1, y, x)) return (TRUE);
 		}
 	}
 

@@ -2078,6 +2078,7 @@ bool project_hack(int typ, int dam)
 	int     flg = PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
 	bool    obvious = FALSE;
 
+	cave_type *c_ptr;
 
 	/* Mark all (nearby) monsters */
 	for (i = 1; i < m_max; i++)
@@ -2091,8 +2092,10 @@ bool project_hack(int typ, int dam)
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
+		c_ptr = area(y, x);
+		
 		/* Require line of sight */
-		if (!player_has_los_bold(y, x)) continue;
+		if (!player_has_los_grid(c_ptr)) continue;
 
 		/* Mark the monster */
 		m_ptr->mflag |= (MFLAG_TEMP);
@@ -2232,7 +2235,7 @@ void aggravate_monsters(int who)
 	int     i;
 	bool    sleep = FALSE;
 	bool    speed = FALSE;
-
+	cave_type *c_ptr;
 
 	/* Aggravate everyone nearby */
 	for (i = 1; i < m_max; i++)
@@ -2258,8 +2261,10 @@ void aggravate_monsters(int who)
 			}
 		}
 
+		c_ptr = area(m_ptr->fy, m_ptr->fx);
+		
 		/* Speed up monsters in line of sight */
-		if (player_has_los_bold(m_ptr->fy, m_ptr->fx))
+		if (player_has_los_grid(c_ptr))
 		{
 			/* Speed up (instantly) to racial base + 10 */
 			if (m_ptr->mspeed < r_ptr->speed + 10)
@@ -2432,7 +2437,7 @@ bool probing(void)
 {
 	int     i;
 	bool    probe = FALSE;
-
+	cave_type *c_ptr;
 
 	/* Probe all (nearby) monsters */
 	for (i = 1; i < m_max; i++)
@@ -2441,9 +2446,11 @@ bool probing(void)
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
+		
+		c_ptr = area(m_ptr->fy, m_ptr->fx);
 
 		/* Require line of sight */
-		if (!player_has_los_bold(m_ptr->fy, m_ptr->fx)) continue;
+		if (!player_has_los_grid(c_ptr)) continue;
 
 		/* Probe visible monsters */
 		if (m_ptr->ml)
@@ -2518,7 +2525,7 @@ bool destroy_area(int y1, int x1, int r, int full)
 			if (k > r) continue;
 
 			/* Access the grid */
-			c_ptr = area(y,x);
+			c_ptr = area(y, x);
 
 			/* Lose room and vault */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
@@ -2554,7 +2561,7 @@ bool destroy_area(int y1, int x1, int r, int full)
 			}
 
 			/* Destroy "valid" grids */
-			if (cave_valid_bold(y, x))
+			if (cave_valid_grid(c_ptr))
 			{
 				/* Delete objects */
 				delete_object(y, x);
@@ -2723,8 +2730,11 @@ bool earthquake(int cy, int cx, int r)
 			y = py + ddy_ddd[i];
 			x = px + ddx_ddd[i];
 
+			/* Access the grid */
+			c_ptr = area(y, x);
+			
 			/* Skip non-empty grids */
-			if (!cave_empty_bold(y, x)) continue;
+			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Important -- Skip "quake" grids */
 			if (map[16+y-cy][16+x-cx]) continue;
@@ -2878,16 +2888,19 @@ bool earthquake(int cy, int cx, int r)
 							y = yy + ddy_ddd[i];
 							x = xx + ddx_ddd[i];
 
+							/* Access the grid */
+							c_ptr = area(y, x);
+							
 							/* Skip non-empty grids */
-							if (!cave_empty_bold(y, x)) continue;
+							if (!cave_empty_grid(c_ptr)) continue;
 
 							/* Hack -- no safety on glyph of warding */
-							if (area(y,x)->feat == FEAT_GLYPH) continue;
-							if (area(y,x)->feat == FEAT_MINOR_GLYPH) continue;
+							if (c_ptr->feat == FEAT_GLYPH) continue;
+							if (c_ptr->feat == FEAT_MINOR_GLYPH) continue;
 
 							/* ... nor on the Pattern */
-							if ((area(y,x)->feat <= FEAT_PATTERN_XTRA2) &&
-							    (area(y,x)->feat >= FEAT_PATTERN_START))
+							if ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
+							    (c_ptr->feat >= FEAT_PATTERN_START))
 								continue;
 
 							/* Important -- Skip "quake" grids */
@@ -2981,9 +2994,9 @@ bool earthquake(int cy, int cx, int r)
 			if ((yy == py) && (xx == px)) continue;
 
 			/* Destroy location (if valid) */
-			if (cave_valid_bold(yy, xx))
+			if (cave_valid_grid(c_ptr))
 			{
-				bool floor = cave_floor_bold(yy, xx);
+				bool floor = cave_floor_grid(c_ptr);
 
 				/* Delete objects */
 				delete_object(yy, xx);
@@ -3211,14 +3224,18 @@ static int next_to_open(int cy, int cx)
 
 	int len = 0;
 	int blen = 0;
+	
+	cave_type *c_ptr;
 
 	for (i = 0; i < 16; i++)
 	{
 		y = cy + ddy_cdd[i % 8];
 		x = cx + ddx_cdd[i % 8];
 
+		c_ptr = area(y, x);
+
 		/* Found a wall, break the length */
-		if (!cave_floor_bold(y, x))
+		if (!cave_floor_grid(c_ptr))
 		{
 			/* Track best length */
 			if (len > blen)
@@ -3245,13 +3262,17 @@ static int next_to_walls_adj(int cy, int cx)
 	int y, x;
 
 	int c = 0;
+	
+	cave_type *c_ptr;
 
 	for (i = 0; i < 8; i++)
 	{
 		y = cy + ddy_ddd[i];
 		x = cx + ddx_ddd[i];
 
-		if (!cave_floor_bold(y, x)) c++;
+		c_ptr = area(y, x);
+		
+		if (!cave_floor_grid(c_ptr)) c++;
 	}
 
 	return c;
@@ -3274,13 +3295,8 @@ static void cave_temp_room_aux(int y, int x)
 	/* Avoid infinite recursion */
 	if (c_ptr->info & (CAVE_TEMP)) return;
 
-#if 0
-	/* Do not "leave" the current room */
-	if (!(c_ptr->info & (CAVE_ROOM))) return;
-#endif
-
 	/* If a wall, exit */
-	if (!cave_floor_bold(y, x)) return;
+	if (!cave_floor_grid(c_ptr)) return;
 
 	/* Do not exceed the maximum spell range */
 	if (distance(py, px, y, x) > MAX_RANGE) return;
@@ -3289,7 +3305,7 @@ static void cave_temp_room_aux(int y, int x)
 	/* Verify this grid */
 	/*
 	* The reason why it is ==6 instead of >5 is that 8 is impossible
-	* due to the check for cave_bold above.
+	* due to the check for cave_floor_grid above.
 	* 7 lights dead-end corridors (you need to do this for the
 	* checkboard interesting rooms, so that the boundary is lit
 	* properly.
@@ -3317,6 +3333,8 @@ static void cave_temp_room_aux(int y, int x)
 void lite_room(int y1, int x1)
 {
 	int i, x, y;
+	
+	cave_type *c_ptr;
 
 	/* Add the initial grid */
 	cave_temp_room_aux(y1, x1);
@@ -3326,8 +3344,10 @@ void lite_room(int y1, int x1)
 	{
 		x = temp_x[i], y = temp_y[i];
 
+		c_ptr = area(y, x);
+
 		/* Walls get lit, but stop light */
-		if (!cave_floor_bold(y, x)) continue;
+		if (!cave_floor_grid(c_ptr)) continue;
 
 		/* Spread adjacent */
 		cave_temp_room_aux(y + 1, x);
@@ -3353,6 +3373,8 @@ void lite_room(int y1, int x1)
 void unlite_room(int y1, int x1)
 {
 	int i, x, y;
+	
+	cave_type *c_ptr;
 
 	/* Add the initial grid */
 	cave_temp_room_aux(y1, x1);
@@ -3362,8 +3384,10 @@ void unlite_room(int y1, int x1)
 	{
 		x = temp_x[i], y = temp_y[i];
 
+		c_ptr = area(y, x);
+
 		/* Walls get dark, but stop darkness */
-		if (!cave_floor_bold(y, x)) continue;
+		if (!cave_floor_grid(c_ptr)) continue;
 
 		/* Spread adjacent */
 		cave_temp_room_aux(y + 1, x);

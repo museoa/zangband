@@ -154,17 +154,17 @@ static void alloc_stairs(int feat, int num, int walls)
 				y = rand_int(cur_hgt);
 				x = rand_int(cur_wid);
 
+				/* Access the grid */
+				c_ptr = &cave[y][x];
+				
 				/* Require "naked" floor grid */
-				if (!cave_naked_bold(y, x)) continue;
+				if (!cave_naked_grid(c_ptr)) continue;
 
 				/* Require floor */
-				if (cave[y][x].feat != FEAT_FLOOR) continue;
+				if (c_ptr->feat != FEAT_FLOOR) continue;
 
 				/* Require a certain number of adjacent walls */
 				if (next_to_walls(y, x) < walls) continue;
-
-				/* Access the grid */
-				c_ptr = &cave[y][x];
 
 				/* Clear previous contents, add stairs */
 				c_ptr->feat = feat;
@@ -187,6 +187,7 @@ static void alloc_object(int set, int typ, int num)
 {
 	int y, x, k;
 	int dummy = 0;
+	cave_type *c_ptr;
 
 	/* Place some objects */
 	for (k = 0; k < num; k++)
@@ -201,10 +202,11 @@ static void alloc_object(int set, int typ, int num)
 			/* Location */
 			y = rand_int(cur_hgt);
 			x = rand_int(cur_wid);
+			
+			c_ptr = &cave[y][x];
 
 			/* Require "naked" floor grid */
-			if (!cave_naked_bold(y, x) &&
-			    !((y == py) && (x == px))) continue;
+			if (!cave_naked_grid(c_ptr)) continue;
 
 			/* Check for "room" */
 			room = (cave[y][x].info & CAVE_ROOM) ? TRUE : FALSE;
@@ -288,11 +290,11 @@ static int next_to_corr(int y1, int x1)
 		y = y1 + ddy_ddd[i];
 		x = x1 + ddx_ddd[i];
 
-		/* Skip non floors */
-		if (!cave_floor_bold(y, x)) continue;
-
 		/* Access the grid */
 		c_ptr = &cave[y][x];
+		
+		/* Skip non floors */
+		if (!cave_floor_grid(c_ptr)) continue;
 
 		/* Skip non "empty floor" grids */
 		if (c_ptr->feat != FEAT_FLOOR) continue;
@@ -826,7 +828,11 @@ static bool cave_gen(void)
 						{
 							y = rand_int(cur_hgt);
 							x = rand_int(cur_wid);
-							if (!cave_naked_bold(y, x)) continue;
+							
+							/* Access the grid */
+							c_ptr = &cave[y][x];
+							
+							if (!cave_naked_grid(c_ptr)) continue;
 							if (distance(y, x, py, px) < 10) continue;
 							else break;
 						}

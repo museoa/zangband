@@ -3176,112 +3176,6 @@
  * Add in the fact that some new terrain (water & lava) do NOT block sight
  * -KMW-
  */
-#define cave_floor_bold(Y,X) \
-	(!(area(Y,X)->feat & 0x20))
-
-
-/*
- * Used to see if square is transparent.
- * Some things block LOS half the time.
- */
-#define cave_half_bold(Y,X) \
-	(((area(Y,X)->feat & 0x60) == 0x60) && (quick_rand()))
-
-/*
- * Determine if a "legal" grid is a "clean" floor grid
- *
- * Line 1 -- forbid non-floors
- * Line 2 -- forbid deep water -KMW-
- * Line 3 -- forbid deep lava -KMW-
- * Line 4 -- forbid normal objects
- * Allow passable floors + snow
- */
-#define cave_clean_bold(Y,X) \
-	(((area(Y,X)->feat == FEAT_FLOOR) || \
-	  (area(Y,X)->feat == FEAT_SHAL_WATER) || \
-	  (area(Y,X)->feat == FEAT_SHAL_LAVA) || \
-	  (area(Y,X)->feat == FEAT_SHAL_ACID) || \
-	  (area(Y,X)->feat == FEAT_GRASS) || \
-	  (area(Y,X)->feat == FEAT_SNOW) || \
-	  ((area(Y,X)->feat & 0xF8) == 0x08) || \
-	  ((area(Y,X)->feat & 0x80) == 0x80) || \
-	  (area(Y,X)->feat == FEAT_DIRT)) && \
-	  (area(Y,X)->o_idx == 0))
-
-/*
- * Determine if a "legal" grid is a "gen" floor grid
- *
- * Line 1 -- forbid non-floors
- * Line 2 -- forbid water -KMW-
- * Line 3 -- forbid lava -KMW-
- * Line 4 -- forbid normal objects
- *  This function describes grids that can hold any object.
- *  Note: The *_SHAL_* possibilities are removed.
- */
-#define cave_gen_bold(Y,X) \
-	(((area(Y,X)->feat == FEAT_FLOOR) || \
-	  (area(Y,X)->feat == FEAT_GRASS) || \
-	  (area(Y,X)->feat == FEAT_SNOW) || \
-	  ((area(Y,X)->feat & 0xF8) == 0x08) || \
-	  ((area(Y,X)->feat & 0x80) == 0x80) || \
-	  (area(Y,X)->feat == FEAT_DIRT)) && \
-	  (area(Y,X)->o_idx == 0))
-
-
-/*
- * Determine if a "legal" grid is an "empty" floor grid
- *
- * Line 1 -- forbid doors, rubble, seams, walls
- * Line 2 -- forbid normal monsters
- * Line 3 -- forbid the player
- */
-#define cave_empty_bold(Y,X) \
-    (cave_floor_bold(Y,X) && \
-     !(area(Y,X)->m_idx) && \
-     !(((Y) == py) && ((X) == px)))
-
-
-/*
- * Determine if a "legal" grid is an "naked" floor grid
- *
- * Line 1 -- forbid non-floors, non-shallow water & lava -KMW-
- * Line 4 -- forbid normal objects
- * Line 5 -- forbid player/monsters
- */
-#define cave_naked_bold(Y,X) \
-	(((area(Y,X)->feat == FEAT_FLOOR) || \
-	  (area(Y,X)->feat == FEAT_SHAL_WATER) || \
-	  (area(Y,X)->feat == FEAT_SHAL_LAVA) || \
-	  (area(Y,X)->feat == FEAT_SHAL_ACID) || \
-	  (area(Y,X)->feat == FEAT_SNOW) || \
-	  ((area(Y,X)->feat & 0xF8) == 0x08) || \
-	  (area(Y,X)->feat == FEAT_GRASS) || \
-	  (area(Y,X)->feat == FEAT_DIRT)) && \
-	  (area(Y,X)->o_idx == 0) && \
-	  (area(Y,X)->m_idx == 0))
-
-
-
-/*
- * Determine if a "legal" grid is "permanent"
- *
- * Line 1   -- perma-walls
- * Line 2-3 -- stairs
- * Line 4-5 -- building doors -KMW-
- * Line 6-7 -- shop doors
- */
-#define cave_perma_bold(Y,X) \
-	((area(Y,X)->feat >= FEAT_PERM_EXTRA) || \
-	((area(Y,X)->feat == FEAT_LESS) || \
-	 (area(Y,X)->feat == FEAT_MORE)) || \
-	((area(Y,X)->feat & 0x70) == 0x70) || \
-	((area(Y,X)->feat >= FEAT_SHOP_HEAD) && \
-	 (area(Y,X)->feat <= FEAT_SHOP_TAIL)))
-
-
-/*
- * Grid based version of "cave_floor_bold()"
- */
 #define cave_floor_grid(C) \
     (!((C)->feat & 0x20))
 
@@ -3293,11 +3187,45 @@
 
 
 /*
+ * Grid will block LOS.
+ */
+
+#define cave_los_grid(C) \
+   ((cave_floor_grid(C)) || (cave_half_grid(C)))
+
+/*
  * Grid based version of "cave_clean_bold()"
  */
 #define cave_clean_grid(C) \
-    (((C)->feat == FEAT_FLOOR) && \
-     (!(C)->o_idx))
+    ((((C)->feat == FEAT_FLOOR) || \
+	  ((C)->feat == FEAT_SHAL_WATER) || \
+	  ((C)->feat == FEAT_SHAL_LAVA) || \
+	  ((C)->feat == FEAT_SHAL_ACID) || \
+	  ((C)->feat == FEAT_GRASS) || \
+	  ((C)->feat == FEAT_SNOW) || \
+	  (((C)->feat & 0xF8) == 0x08) || \
+	  (((C)->feat & 0x80) == 0x80) || \
+	  ((C)->feat == FEAT_DIRT)) && \
+	  ((C)->o_idx == 0))
+
+/*
+ * Determine if a "legal" grid is a "gen" floor grid
+ *
+ * Line 1 -- forbid non-floors
+ * Line 2 -- forbid water -KMW-
+ * Line 3 -- forbid lava -KMW-
+ * Line 4 -- forbid normal objects
+ *  This function describes grids that can hold any object.
+ *  Note: The *_SHAL_* possibilities are removed.
+ */
+#define cave_gen_grid(C) \
+	((((C)->feat == FEAT_FLOOR) || \
+	  ((C)->feat == FEAT_GRASS) || \
+	  ((C)->feat == FEAT_SNOW) || \
+	  (((C)->feat & 0xF8) == 0x08) || \
+	  (((C)->feat & 0x80) == 0x80) || \
+	  ((C)->feat == FEAT_DIRT)) && \
+	  ((C)->o_idx == 0))
 
 /*
  * Grid based version of "cave_empty_bold()"
@@ -3305,32 +3233,37 @@
 #define cave_empty_grid(C) \
     (cave_floor_grid(C) && \
      !((C)->m_idx) && \
-     !((C) == &cave[py][px]))
+     !((C) == area(py, px)))
 
 /*
- * Grid based version of "cave_empty_bold()"
+ * Grid based version of "cave_naked_bold()"
  */
 #define cave_naked_grid(C) \
-    (((C)->feat == FEAT_FLOOR) && \
-     !((C)->o_idx) && \
-     !((C)->m_idx) && \
-     !((C) == &cave[py][px]))
+    ((((C)->feat == FEAT_FLOOR) || \
+	  ((C)->feat == FEAT_SHAL_WATER) || \
+	  ((C)->feat == FEAT_SHAL_LAVA) || \
+	  ((C)->feat == FEAT_SHAL_ACID) || \
+	  ((C)->feat == FEAT_SNOW) || \
+	  (((C)->feat & 0xF8) == 0x08) || \
+	  ((C)->feat == FEAT_GRASS) || \
+	  ((C)->feat == FEAT_DIRT)) && \
+	  ((C)->o_idx == 0) && \
+	  ((C)->m_idx == 0) && \
+	  !((C) == area(py, px)))
 
 
 /*
  * Grid based version of "cave_perma_bold()"
  */
 #define cave_perma_grid(C) \
-	((((C)->feat >= FEAT_PERM_EXTRA) && \
-	  ((C)->feat <= FEAT_PERM_SOLID)) || \
-	  ((C)->feat == FEAT_LESS) || \
-	  ((C)->feat == FEAT_MORE) || \
-	  ((C)->feat == FEAT_MOUNTAIN) || \
+	(((C)->feat >= FEAT_PERM_EXTRA) || \
+	(((C)->feat == FEAT_LESS) || \
+	 ((C)->feat == FEAT_MORE)) || \
+	(((C)->feat & 0x70) == 0x70) || \
 	 (((C)->feat >= FEAT_PATTERN_START) && \
 	  ((C)->feat <= FEAT_PATTERN_XTRA2)) || \
-	 (((C)->feat >= FEAT_SHOP_HEAD) && \
-	  ((C)->feat <= FEAT_SHOP_TAIL)))
-
+	(((C)->feat >= FEAT_SHOP_HEAD) && \
+	 ((C)->feat <= FEAT_SHOP_TAIL)))
 
 
 /*
@@ -3338,8 +3271,8 @@
  *
  * Note the use of comparison to zero to force a "boolean" result
  */
-#define player_has_los_bold(Y,X) \
-    ((area(Y,X)->info & (CAVE_VIEW)) != 0)
+#define player_has_los_grid(C) \
+    (((C)->info & (CAVE_VIEW)) != 0)
 
 
 /*

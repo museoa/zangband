@@ -1107,7 +1107,7 @@ static bool cast_nature_spell(int spell)
 				m_ptr = &m_list[c_ptr->m_idx];
 
 				/* Hack -- attack monsters */
-				if (c_ptr->m_idx && (m_ptr->ml || cave_floor_bold(y, x)))
+				if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr)))
 					py_attack(y, x);
 			}
 		}
@@ -1159,6 +1159,7 @@ static bool cast_chaos_spell(int spell)
 {
 	int	dir, i, beam;
 	int	plev = p_ptr->lev;
+	cave_type *c_ptr;
 
 	if (p_ptr->pclass == CLASS_MAGE) beam = plev;
 	else if (p_ptr->pclass == CLASS_HIGH_MAGE) beam = plev + 10;
@@ -1379,8 +1380,9 @@ static bool cast_chaos_spell(int spell)
 
 					/* Approximate distance */
 					d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+					c_ptr = area(y, x);
 				}
-				while (in_bounds(y, x) && ((d > 5) || !player_has_los_bold(y, x)));
+				while (in_bounds(y, x) && ((d > 5) || !player_has_los_grid(c_ptr)));
 
 				if (count > 1000) break;
 
