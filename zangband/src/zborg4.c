@@ -434,20 +434,38 @@ static list_item *look_up_equip_slot(int slot)
 		/* Optimise common case of empty slot */
 		if (l_ptr->treat_as != TREAT_AS_SWAP) return (NULL);
 	}
-
-	/* Otherwise, scan the inventory */
-	for (i = 0; i < inven_num; i++)
+	
+	/* Look at current shop */
+	if (use_shop)
 	{
-		l_ptr = &inventory[i];
-
-		/* Does it exist and are we aware? */
-		if (l_ptr->k_idx)
+		for (i = 0; i < cur_num; i++)
 		{
-			/* The item to swap with */
-			if (l_ptr->treat_as == TREAT_AS_SWAP) return (l_ptr);
+			l_ptr = &cur_list[i];
+
+			/* Does it exist and are we aware? */
+			if (l_ptr->k_idx)
+			{
+				/* The item to swap with */
+				if (l_ptr->treat_as == TREAT_AS_SWAP) return (l_ptr);
+			}
 		}
 	}
+	else	
+	{
+		/* Otherwise, scan the inventory */
+		for (i = 0; i < inven_num; i++)
+		{
+			l_ptr = &inventory[i];
 
+			/* Does it exist and are we aware? */
+			if (l_ptr->k_idx)
+			{
+				/* The item to swap with */
+				if (l_ptr->treat_as == TREAT_AS_SWAP) return (l_ptr);
+			}
+		}
+	}
+	
 	/* No match! */
 	return (NULL);
 }
@@ -2076,6 +2094,37 @@ static void borg_notice_inven(void)
 
 				/* Done (Only one extra item) */
 				return;
+			}
+		}
+	}
+	
+	/* Scan current shop? */
+	if (use_shop)
+	{
+		for (i = 0; i < cur_num; i++)
+		{
+			l_ptr = &cur_list[i];
+
+			/* A known item? */
+			if (l_ptr->k_idx)
+			{
+				/* Hack - only 'LESS' items are treated as going into inven */
+				if (l_ptr->treat_as == TREAT_AS_LESS)
+				{
+					int num = l_ptr->number;
+				
+					/* Hack - assume we get one item */
+					l_ptr->number = 1;
+				
+					/* Examine the item */
+					borg_notice_inven_item(l_ptr);
+
+					/* Restore number */
+					l_ptr->number = num;
+
+					/* Done (Only one extra item) */
+					return;
+				}
 			}
 		}
 	}

@@ -32,6 +32,9 @@ extern void borg_list_info(byte list_type);
 /* The current home */
 extern int home_shop;
 
+/* Use current shop in power calculation */
+extern int use_shop;
+
 /* Borg functions */
 extern void borg_notice(void);
 extern void borg_notice_home(void);

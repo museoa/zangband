@@ -501,9 +501,8 @@ static bool borg_good_sell(list_item *l_ptr)
 /*
  * Step 2 -- sell "useless" items to a shop (for cash)
  */
-static bool borg_think_shop_sell_aux(void)
+static bool borg_think_shop_sell_aux(int shop)
 {
-	int k, b_k = -1;
 	int i, b_i = -1;
 	s32b p, b_p = 0L;
 	s32b c = 0L;
@@ -514,73 +513,63 @@ static bool borg_think_shop_sell_aux(void)
 	/* Evaluate */
 	b_p = borg_power();
 	
-	/* Check each shop */
-	for (k = 0; k < (track_shop_num); k++)
+	/* Sell stuff */
+	for (i = 0; i < inven_num; i++)
 	{
-		
-#if 0
-		/* skip the home */
-		if (k == BORG_HOME) continue;
-#endif
-		/* Sell stuff */
-		for (i = 0; i < inven_num; i++)
+		list_item *l_ptr = &inventory[i];
+
+		/* Skip "bad" sales */
+		if (!borg_good_sell(l_ptr)) continue;
+
+		/* Give the item to the shop */
+		if (l_ptr->number == 1)
 		{
-			list_item *l_ptr = &inventory[i];
-
-			/* Skip "bad" sales */
-			if (!borg_good_sell(l_ptr)) continue;
-
-			/* Give the item to the shop */
-			if (l_ptr->number == 1)
-			{
-				l_ptr->treat_as = TREAT_AS_GONE;
-			}
-			else
-			{
-				l_ptr->treat_as = TREAT_AS_LESS;
-			}
-
-			/* Fix later */
-			fix = TRUE;
-
-			/* Examine the inventory */
-			borg_notice();
-
-			/* Evaluate the inventory with this item gone */
-			p = borg_power();
-
-			/* Restore the item */
-			l_ptr->treat_as = TREAT_AS_NORM;
-
-			/* Ignore "bad" sales */
-			if (p < b_p) continue;
-
-			/* Extract the "price" */
-			c = ((l_ptr->cost < 30000L) ? l_ptr->cost : 30000L);
-
-			/*
-			 * Sell cheap items first.
-			 * This is done because we may have to buy the item back
-			 * in some very strange circumstances.
-			 */
-			if ((p == b_p) && (c >= b_c)) continue;
-
-			/* Maintain the "best" */
-			b_k = k;
-			b_i = i;
-			b_p = p;
-			b_c = c;
+			l_ptr->treat_as = TREAT_AS_GONE;
 		}
+		else
+		{
+			l_ptr->treat_as = TREAT_AS_LESS;
+		}
+
+		/* Fix later */
+		fix = TRUE;
+
+		/* Examine the inventory */
+		borg_notice();
+
+		/* Evaluate the inventory with this item gone */
+		p = borg_power();
+
+		/* Restore the item */
+		l_ptr->treat_as = TREAT_AS_NORM;
+
+		/* Ignore "bad" sales */
+		if (p < b_p) continue;
+
+		/* Extract the "price" */
+		c = ((l_ptr->cost < 30000L) ? l_ptr->cost : 30000L);
+
+		/*
+		 * Sell cheap items first.
+		 * This is done because we may have to buy the item back
+		 * in some very strange circumstances.
+		 */
+		if ((p == b_p) && (c >= b_c)) continue;
+
+		/* Maintain the "best" */
+		b_i = i;
+		b_p = p;
+		b_c = c;
 	}
 
 	/* Examine the inventory */
 	if (fix) borg_notice();
 
 	/* Sell something (if useless) */
-	if ((b_k >= 0) && (b_i >= 0))
+	if (b_i >= 0)
 	{
 		/* Visit that shop */
-		goal_shop = b_k;
+		goal_shop = shop;
 
 		/* Sell that item */
 		goal_item = b_i;
@@ -597,12 +586,10 @@ static bool borg_think_shop_sell_aux(void)
 /*
  * Step 3 -- buy "useful" things from a shop (to be used)
  */
-static bool borg_think_shop_buy_aux(void)
+static bool borg_think_shop_buy_aux(int shop)
 {
 	int slot;
-	int qty = 1;
 
-	int k, b_k = -1;
 	int n, b_n = -1;
 	s32b p, b_p = 0L;
 	s32b c, b_c = 0L;
@@ -614,147 +601,112 @@ static bool borg_think_shop_buy_aux(void)
 
 	/* Extract the "power" */
 	b_p = borg_power();
+	
+	/* Attempt to use shop items */
+	use_shop = TRUE;
 
-	/* Check the shops */
-	for (k = 0; k < (track_shop_num); k++)
+	/* Scan the wares */
+	for (n = 0; n < cur_num; n++)
 	{
-#if 0
-		/* Skip home */
-		if (k == BORG_HOME) continue;
-#endif
+		list_item *l_ptr = &cur_list[n];
+		
+		/* second check on empty */
+		if (!l_ptr->k_idx) continue;
 
-		/* Scan the wares */
-		for (n = 0; n < STORE_INVEN_MAX; n++)
+		/* Hack -- Require "sufficient" cash */
+		if (borg_gold < l_ptr->cost * 12 / 10) continue;
+
+		/* Obtain "slot" */
+		slot = borg_wield_slot(l_ptr);
+
+		/*
+		 * Hack, we keep diggers as a back-up, not to
+		 * replace our current weapon
+		 */
+		if (l_ptr->tval == TV_DIGGING) slot = -1;
+
+		/*
+		 * If our current equip is cursed, then I can't
+		 * buy a new replacement.
+		 * XXX  Perhaps he should not buy anything but save
+		 * money for the Remove Curse Scroll.
+		 */
+		if (slot >= 0)
 		{
-			borg_item *item = &borg_shops[k].ware[n];
-
-			/* Skip empty items */
-			if (!item->iqty) continue;
-
-			/* second check on empty */
-			if (!item->kind) continue;
-
-			/* Hack -- Require "sufficient" cash */
-			if (borg_gold < item->cost * 12 / 10) continue;
-
-			/* Skip it if I just sold this item. XXX XXX */
-
-			/* Save shop item */
-			COPY(&safe_shops[k].ware[n], &borg_shops[k].ware[n], borg_item);
-
-			/* Save hole */
-			COPY(&safe_items[hole], &borg_items[hole], borg_item);
-
-			/* Save the number to trade */
-			qty = 1;
-
-			/* Remove one item from shop (sometimes) */
-			borg_shops[k].ware[n].iqty -= qty;
-
-			/* Obtain "slot" */
-			slot = borg_wield_slot(l_ptr);
-
-/* what if the item is a ring?  we have 2 ring slots --- copy it from the Home code */
-
-			/* Hack, we keep diggers as a back-up, not to
-			 * replace our current weapon
-			 */
-			if (item->tval == TV_DIGGING) slot = -1;
-
-			/* if our current equip is cursed, then I can't
-			 * buy a new replacement.
-			 * XXX  Perhaps he should not buy anything but save
-			 * money for the Remove Curse Scroll.
-			 */
-			if (slot >= INVEN_WIELD)
-			{
-				if (borg_items[slot].cursed) continue;
-				if (borg_items[slot].flags3 & TR3_HEAVY_CURSE) continue;
-				if (borg_items[slot].flags3 & TR3_PERMA_CURSE) continue;
-			}
-
-
-			/* Consider new equipment */
-			if (slot >= 0)
-			{
-				/* Save old item */
-				COPY(&safe_items[slot], &borg_items[slot], borg_item);
-
-				/* Move equipment into inventory */
-				COPY(&borg_items[hole], &safe_items[slot], borg_item);
-
-				/* Move new item into equipment */
-				COPY(&borg_items[slot], &safe_shops[k].ware[n], borg_item);
-
-				/* Only a single item */
-				borg_items[slot].iqty = qty;
-
-				/* Fix later */
-				fix = TRUE;
-
-				/* Examine the inventory */
-				borg_notice();
-
-				/* Evaluate the inventory */
-				p = borg_power();
-
-				/* Restore old item */
-				COPY(&borg_items[slot], &safe_items[slot], borg_item);
-			}
-
-			/* Consider new inventory */
-			else
-			{
-				/* Move new item into inventory */
-				COPY(&borg_items[hole], &safe_shops[k].ware[n], borg_item);
-
-				/* Only a single item */
-				borg_items[hole].iqty = qty;
-
-				/* Fix later */
-				fix = TRUE;
-
-				/* Examine the inventory */
-				borg_notice();
-
-				/* Evaluate the equipment */
-				p = borg_power();
-			}
-
-			/* Restore hole */
-			COPY(&borg_items[hole], &safe_items[hole], borg_item);
-
-			/* Restore shop item */
-			COPY(&borg_shops[k].ware[n], &safe_shops[k].ware[n], borg_item);
-
-			/* Obtain the "cost" of the item */
-			c = item->cost * qty;
-
-			/* Penalize the cost of expensive items */
-			if (c > borg_gold / 10) p -= c;
-
-			/* Ignore "bad" purchases */
-			if (p < b_p) continue;
-
-			/* Ignore "expensive" purchases */
-			if ((p == b_p) && (c >= b_c)) continue;
-
-			/* Save the item and cost */
-			b_k = k;
-			b_n = n;
-			b_p = p;
-			b_c = c;
+			if (equipment[slot].kn_flags3 & TR3_CURSED) continue;
+			if (equipment[slot].kn_flags3 & TR3_HEAVY_CURSE) continue;
+			if (equipment[slot].kn_flags3 & TR3_PERMA_CURSE) continue;
 		}
+
+		/* Consider new equipment */
+		if (slot >= 0)
+		{
+			/* Swap items */
+			equipment[slot].treat_as = TREAT_AS_SWAP;
+			l_ptr->treat_as = TREAT_AS_SWAP;
+
+			/* Fix later */
+			fix = TRUE;
+
+			/* Examine the inventory */
+			borg_notice();
+
+			/* Evaluate the inventory */
+			p = borg_power();
+
+			/* Fix items */
+			equipment[slot].treat_as = TREAT_AS_NORM;
+			l_ptr->treat_as = TREAT_AS_NORM;
+		}
+
+		/* Consider new inventory */
+		else
+		{
+			/* Hack - use 'INVEN_LESS' to say we want it in the inventory */
+			l_ptr->treat_as = TREAT_AS_LESS;
+		
+			/* Fix later */
+			fix = TRUE;
+
+			/* Examine the inventory */
+			borg_notice();
+
+			/* Evaluate the equipment */
+			p = borg_power();
+			
+			/* Fix item */
+			l_ptr->treat_as = TREAT_AS_NORM;
+		}
+
+		/* Obtain the "cost" of the item */
+		c = l_ptr->cost;
+
+		/* Penalize the cost of expensive items */
+		if (c > borg_gold / 10) p -= c;
+
+		/* Ignore "bad" purchases */
+		if (p < b_p) continue;
+
+		/* Ignore "expensive" purchases */
+		if ((p == b_p) && (c >= b_c)) continue;
+
+		/* Save the item and cost */
+		b_n = n;
+		b_p = p;
+		b_c = c;
 	}
+	
+	/* Use normal items */
+	use_shop = FALSE;
 
 	/* Examine the inventory */
 	if (fix) borg_notice();
 
 	/* Buy something */
-	if ((b_k >= 0) && (b_n >= 0))
+	if (b_n >= 0)
 	{
 		/* Visit that shop */
-		goal_shop = b_k;
+		goal_shop = shop;
 
 		/* Buy that item */
 		goal_ware = b_n;
