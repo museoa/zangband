@@ -600,83 +600,66 @@ void field_copy(field_type *f_ptr, field_type *j_ptr)
  */
 s16b field_add(field_type *f_ptr, cave_type *c_ptr)
 {
-	s16b *fld_idx2 = &c_ptr->fld_idx;
-	s16b fld_idx = 0;
 	s16b new_idx;
-	field_type *j_ptr = &fld_list[*fld_idx2];
-
-	bool merge = FALSE;
-
-	s32b counter;
-
-	/* Add to a list of fields */
-	while ((*fld_idx2) && (j_ptr->priority > f_ptr->priority))
+	
+	field_type *j_ptr;
+	field_type *q_ptr = NULL;
+	
+	FLD_ITT_START (c_ptr->fld_idx, j_ptr)
 	{
 		/* Look for fields that can be merged */
 		if ((f_ptr->info & FIELD_INFO_MERGE) && (f_ptr->t_idx == j_ptr->t_idx))
 		{
-			/* Set merging flag */
-			merge = TRUE;
-			break;
+			s32b counter;
+		
+			/* Merge the two together */
+			counter = j_ptr->counter + f_ptr->counter;
+
+			/* Bounds checking */
+			if (counter > MAX_SHORT) counter = MAX_SHORT;
+
+			/* Store in new counter */
+			j_ptr->counter = (s16b)counter;
+
+			/* Return index */
+			return (*field_find(j_ptr));
 		}
-
-		/* Save old field number */
-		fld_idx = *fld_idx2;
-
-		/* Get next field in the list */
-		fld_idx2 = &(j_ptr->next_f_idx);
-
-		/* Update the pointer */
-		j_ptr = &fld_list[*fld_idx2];
+		
+		/* Sort in priority order */
+		if (j_ptr->priority < f_ptr->priority) break;
+	
+		/* Save previous object */
+		q_ptr = j_ptr;
 	}
-
-	if (merge)
-	{
-		/* Merge the two together */
-		counter = j_ptr->counter + f_ptr->counter;
-
-		/* Bounds checking */
-		if (counter > MAX_SHORT) counter = MAX_SHORT;
-
-		/* Store in new counter */
-		j_ptr->counter = (s16b)counter;
-
-		return (*fld_idx2);
-	}
+	FLD_ITT_END;
 
 	/* Add the field to the list */
+
+	/*
+	 * fld_idx points to node before this one.
+	 * *fld_idx2 points to the node after this one.
+	 */
+
+	/* Get new node in list */
+	new_idx = f_pop();
+
+	if (!new_idx) return (0);
+
+	/* Move field to location */
+	field_copy(&fld_list[new_idx], f_ptr);
+
+	/* If a previous node exists */
+	if (q_ptr)
+	{
+		q_ptr->next_f_idx = new_idx;
+	}
 	else
 	{
-		/*
-		 * fld_idx points to node before this one.
-		 * *fld_idx2 points to the node after this one.
-		 */
-
-		/* The next node */
-		f_ptr->next_f_idx = *fld_idx2;
-
-		/* Get new node in list */
-		new_idx = f_pop();
-
-		if (!new_idx) return (0);
-
-		/* Move field to location */
-		field_copy(&fld_list[new_idx], f_ptr);
-
-		/* Make node before this one, point to this one. */
-		if (fld_idx)
-		{
-			/* If a previous node exists */
-			fld_list[fld_idx].next_f_idx = new_idx;
-		}
-		else
-		{
-			/* No old node - just link directly */
-			*fld_idx2 = new_idx;
-		}
-
-		return (new_idx);
+		/* No old node - just link directly */
+		c_ptr->fld_idx = new_idx;
 	}
+
+	return (new_idx);
 }
 
 #ifdef UNUSED_FUNC
@@ -1213,8 +1196,6 @@ void test_field_data_integrity(void)
 	cave_type *c_ptr;
 	field_type *f_ptr;
 
-	s16b fld_idx;
-
 	/* Test cave data structure */
 	for (i = p_ptr->min_wid; i < p_ptr->max_wid; i++)
 	{
@@ -1223,21 +1204,17 @@ void test_field_data_integrity(void)
 			/* Point to location */
 			c_ptr = area(i, j);
 
-			fld_idx = c_ptr->fld_idx;
-
 			/* Want a field */
-			while (fld_idx)
+			FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 			{
-				f_ptr = &fld_list[fld_idx];
-
 				/* Dead field? */
 				if (!f_ptr->t_idx)
 				{
 					msgf("Dead Field");
-					msgf("Field %d", fld_idx);
+					msgf("Field %d", _this_f_idx);
 				}
 
-				if (fld_idx > fld_max)
+				if (_this_f_idx > fld_max)
 				{
 					msgf("Field index inconsistancy.");
 				}
@@ -1248,9 +1225,8 @@ void test_field_data_integrity(void)
 					msgf("Field x, cave x,%d,%d", f_ptr->fx, i);
 					msgf("Field y, cave y,%d,%d", f_ptr->fy, j);
 				}
-
-				fld_idx = f_ptr->next_f_idx;
 			}
+			FLD_ITT_END;
 		}
 	}
 }
