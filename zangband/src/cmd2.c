@@ -2943,7 +2943,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	if (p_ptr->xtra_might) tmul++;
 
 	/* Base range */
-	tdis = 5 * tmul;
+	tdis = 5 + 5 * tmul;
 
 	/* Take a (partial) turn */
 	energy_use = (energy_use / thits);
