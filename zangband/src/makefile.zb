@@ -28,7 +28,7 @@ ANGOBJS := $(addprefix src/,\
 	bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
 	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
 	main-lsl.o main-vcs.o main-gtk.o main-win.o main.o \
-	maid-grf.o main-dos.o main-ibm.o main-acn.o main-emx.o \
+	maid-grf.o main-dos.o main-ibm.o main-emx.o \
 	main-ami.o main-tnb.o)
 
 ##
@@ -131,7 +131,7 @@ $(LUAWOBJS): $(INCS)
 ##
 
 GRAF_PORTS = $(addprefix src/,\
-		main-ami.o maid-grf.o maid-x11.o main-acn.o \
+		main-ami.o maid-grf.o maid-x11.o \
 		main-gtk.o main-tnb.o main-win.o main-x11.o \
 		main-xaw.o main-xpj.o)
 
