@@ -35,7 +35,7 @@ int distance(int y1, int x1, int y2, int x2)
 	while (1)
 	{
 		/* Approximate error */
-		err = (target - d * d) / (2 * d);
+		err = (target / d - d) / 2;
 
 		/* No error - we are done */
 		if (!err) break;
