@@ -3364,6 +3364,8 @@ static bool run_test(void)
 		row = py + ddy[new_dir];
 		col = px + ddx[new_dir];
 		
+		if(!in_bounds2(row, col)) continue;
+		
 		/* Access grid */
 		c_ptr = area(row, col);
 
@@ -3625,6 +3627,8 @@ static bool run_test(void)
 
 			row = py + ddy[new_dir];
 			col = px + ddx[new_dir];
+			
+			if(!in_bounds2(row, col)) continue;
 
 			/* Unknown grid or non-wall XXX XXX XXX cave_floor_grid(c_ptr)) */
 			if (!see_wall(new_dir, py, px))
@@ -3655,6 +3659,8 @@ static bool run_test(void)
 
 			row = py + ddy[new_dir];
 			col = px + ddx[new_dir];
+			
+			if(!in_bounds2(row, col)) continue;
 
 			/* Access grid */
 			c_ptr = area(row, col);
