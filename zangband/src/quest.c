@@ -678,6 +678,10 @@ static void create_stairs(int x, int y)
 static void quest_reward(int num, int x, int y)
 {
 	object_type *o_ptr;
+	
+	dun_type *dundata = place[p_ptr->place_num].dungeon;
+	
+	obj_theme *o_theme = &dundata->theme;
 
 	/* Ignore num for now */
 	(void)num;
@@ -688,12 +692,12 @@ static void quest_reward(int num, int x, int y)
 		if (randint0(number_of_quests()) < 20)
 		{
 			/* Make a great object */
-			o_ptr = make_object(base_level(), 30, &dundata->theme);
+			o_ptr = make_object(base_level(), 30, o_theme);
 		}
 		else
 		{
 			/* Make a good object */
-			o_ptr = make_object(base_level(), 15, &dundata->theme);
+			o_ptr = make_object(base_level(), 15, o_theme);
 		}
 
 		if (!o_ptr) continue;
@@ -1492,7 +1496,7 @@ bool quest_blank(int x, int y, int xsize, int ysize, int place_num, byte flags)
 	/* Look to see if another town / quest is too close */
 	for (i = 1; i < place_num; i++)
 	{
-		if (distance(place[i].x, place[i].y, x, y) < QUEST_MIN_DIST)
+		if (distance(place[i].x, place[i].y, x, y) < MIN_DIST_QUEST)
 		{
 			/* Too close? */
 			return (FALSE);

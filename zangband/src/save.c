@@ -1031,6 +1031,9 @@ static void wr_extra(void)
 	/* Write death */
 	wr_byte(p_ptr->state.is_dead);
 
+	/* Write "feeling" */
+	wr_byte(p_ptr->state.feeling);
+
 	/* Turn of last "feeling" */
 	wr_s32b(old_turn);
 
@@ -1665,7 +1668,6 @@ static bool wr_savefile_new(void)
 					
 			/* Rating + feeling */
 			wr_s16b(dun_ptr->rating);
-			wr_byte(dun_ptr->feeling);
 		}
 		else
 		{

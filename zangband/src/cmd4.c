@@ -3050,7 +3050,7 @@ static cptr do_cmd_feeling_text[11] =
 void do_cmd_feeling(void)
 {
 	/* Verify the feeling */
-	if (dundata->feeling > 10) dundata->feeling = 10;
+	if (p_ptr->state.feeling > 10) p_ptr->state.feeling = 10;
 
 	if (p_ptr->place_num && !p_ptr->depth)
 	{
@@ -3085,7 +3085,7 @@ void do_cmd_feeling(void)
 	/* Display the feeling */
 	if (turn - old_turn >= 1000)
 	{
-		msgf(do_cmd_feeling_text[dundata->feeling]);
+		msgf(do_cmd_feeling_text[p_ptr->state.feeling]);
 	}
 	else
 	{

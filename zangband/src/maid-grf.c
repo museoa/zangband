@@ -985,6 +985,8 @@ void display_map(int *cx, int *cy)
 	char **mtc;
 
 	int hgt, wid, yrat, xrat, xfactor, yfactor;
+	
+	place_type *pl_ptr;
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
@@ -1130,28 +1132,51 @@ void display_map(int *cx, int *cy)
 				/* If there is a place... */
 				if (twn)
 				{
-					/* Hack make a char /attr */
-					if (place[twn].quest_num)
+					pl_ptr = &place[twn];
+				
+					switch (place[twn].type)
 					{
-						place_type *pl_ptr = &place[twn];
+						case TOWN_QUEST:
+						{
+							/* Hack make a char / attr from depth */
+							wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
 
-						wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
+							int depth = (w_ptr->done.mon_gen + 9) / 10;
 
-						int depth = (w_ptr->done.mon_gen + 9) / 10;
+							if (depth > 9) depth = 9;
 
-						if (depth > 9) depth = 9;
+							/* Quests are red */
+							ma[j + 1][i + 1] = TERM_RED;
+							mc[j + 1][i + 1] = '0' + depth;
+							feat = FEAT_NONE;
+							
+							break;
+						}
+						
+						case TOWN_DUNGEON:
+						{
+							/* Hack make a char / attr from depth */
+							int depth = (pl_ptr->dungeon->min_level + 9) / 10;
+							
+							if (depth > 9) depth = 9;
 
-						/* Quests are red */
-						ma[j + 1][i + 1] = TERM_RED;
-						mc[j + 1][i + 1] = '0' + depth;
-						feat = FEAT_NONE;
-					}
-					else
-					{
-						/* Towns are white */
-						ma[j + 1][i + 1] = TERM_WHITE;
-						mc[j + 1][i + 1] = place[twn].name[0];
-						feat = FEAT_NONE;
+							/* Dungeons are blue */
+							ma[j + 1][i + 1] = TERM_L_BLUE;
+							mc[j + 1][i + 1] = '0' + depth;
+							feat = FEAT_NONE;
+							
+							break;
+						}
+						
+						default:
+						{
+							/* Towns are white */
+							ma[j + 1][i + 1] = TERM_WHITE;
+							mc[j + 1][i + 1] = pl_ptr->name[0];
+							feat = FEAT_NONE;
+						
+							break;
+						}
 					}
 				}
 

@@ -2247,7 +2247,7 @@ static void init_ego_item(object_type *o_ptr, byte ego)
 	}
 
 	/* Hack -- apply rating bonus */
-	dundata->rating += e_ptr->rating;
+	inc_rating(e_ptr->rating);
 
 	/* Cheat -- describe the item */
 	if (cheat_peek) object_mention(o_ptr);
@@ -2372,7 +2372,7 @@ static object_type *make_artifact(void)
 		o_ptr->xtra_name = quark_add(a_name + a_ptr->name);
 
 		/* Hack - increase the level rating */
-		dundata->rating += 30;
+		inc_rating(30);
 
 		if (!a_ptr->cost)
 		{
@@ -2389,7 +2389,7 @@ static object_type *make_artifact(void)
 		if (cheat_peek) object_mention(o_ptr);
 
 		/* Set the good item flag */
-		dundata->good_item_flag = TRUE;
+		set_special();
 
 		/* Success */
 		return (o_ptr);
@@ -2902,7 +2902,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 		case TV_DRAG_ARMOR:
 		{
 			/* Rating boost */
-			dundata->rating += 30;
+			inc_rating(30);
 
 			/* Mention the item */
 			if (cheat_peek) object_mention(o_ptr);
@@ -2980,7 +2980,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (o_ptr->sval == SV_DRAGON_SHIELD)
 			{
 				/* Rating boost */
-				dundata->rating += 5;
+				inc_rating(5);
 
 				/* Mention the item */
 				if (cheat_peek) object_mention(o_ptr);
@@ -3172,7 +3172,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 			if (o_ptr->sval == SV_DRAGON_HELM)
 			{
 				/* Rating boost */
-				dundata->rating += 5;
+				inc_rating(5);
 
 				/* Mention the item */
 				if (cheat_peek) object_mention(o_ptr);
@@ -3384,7 +3384,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					}
 
 					/* Rating boost */
-					dundata->rating += 25;
+					inc_rating(25);
 
 					/* Mention the item */
 					if (cheat_peek) object_mention(o_ptr);
@@ -3402,7 +3402,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 
 					/* Bonus to armor class */
 					o_ptr->to_a = rand_range(10, 15) + m_bonus(10, level);
-					dundata->rating += 5;
+					inc_rating(5);
 					
 					break;
 				}
@@ -3708,7 +3708,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 					if (one_in_(3)) o_ptr->flags3 |= TR3_SLOW_DIGEST;
 
 					/* Boost the rating */
-					dundata->rating += 25;
+					inc_rating(25);
 
 					/* Mention the item */
 					if (cheat_peek) object_mention(o_ptr);
@@ -4176,7 +4176,7 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 	}
 
 	/* Change level feeling for random artifacts */
-	if (o_ptr->flags3 & TR3_INSTA_ART) dundata->rating += 30;
+	if (o_ptr->flags3 & TR3_INSTA_ART) inc_rating(30);
 
 	/* Examine real objects */
 	if (o_ptr->k_idx)
@@ -4444,7 +4444,7 @@ object_type *make_object(int level, int delta_level, obj_theme *theme)
 	if (!cursed_p(o_ptr) && o_ptr->cost && (obj_level > p_ptr->depth))
 	{
 		/* Rating increase */
-		dundata->rating += (obj_level - p_ptr->depth);
+		inc_rating(obj_level - p_ptr->depth);
 
 		/* Cheat -- peek at items */
 		if (cheat_peek) object_mention(o_ptr);
@@ -4603,6 +4603,10 @@ void place_object(int x, int y, bool good, bool great, int delta_level)
 
 	object_type *o_ptr;
 
+	place_type *pl_ptr = &place[p_ptr->place_num];
+	
+	obj_theme *o_theme = &pl_ptr->dungeon->theme;
+
 	/* Paranoia -- check bounds */
 	if (!in_bounds2(x, y)) return;
 
@@ -4618,7 +4622,7 @@ void place_object(int x, int y, bool good, bool great, int delta_level)
 	
 	/* Make an object (if possible) */
 	o_ptr = make_object(base_level() + delta_level,
-						(good ? 15 : 0) + (great ? 15 : 0), &dundata->theme);
+						(good ? 15 : 0) + (great ? 15 : 0), o_theme);
 
 	/* Put it on the ground */
 	(void)put_object(o_ptr, x, y);

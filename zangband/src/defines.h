@@ -45,7 +45,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 42
+#define SAVEFILE_VERSION 43
 
 /* Added for ZAngband */
 /* Why do we need a fake version number? */
@@ -116,6 +116,12 @@
 
 /* Hack XXX  Start of the sea types = 2^16 - 65*/
 #define WILD_SEA	65471
+
+/* Town types */
+#define TOWN_OLD		1
+#define TOWN_FRACT		2
+#define TOWN_QUEST		3
+#define TOWN_DUNGEON    4
 
 /*
  * Quest type
@@ -1190,6 +1196,31 @@
 #define WILD_INFO_SEEN		0x20
 #define WILD_INFO_ACID		0x40
 #define WILD_INFO_QUEST		0x80
+
+
+/* Types of "liquid" for dungeon */
+#define LQ_NONE		0x00
+#define LQ_WATER	0x01
+#define LQ_LAVA		0x02
+#define LQ_ACID		0x04
+#define LQ_SWAMP	0x08
+
+#define LQ_MAX		4
+
+/* Room types */
+#define RT_TAG_CROWDED	0x0001 /* Affects "crowded" counter */
+#define RT_NATURAL		0x0002
+#define RT_ANIMAL		0x0004
+#define RT_COMPLEX		0x0008
+#define RT_DENSE		0x0010
+#define RT_RUIN			0x0020
+#define RT_SIMPLE		0x0040
+#define RT_BUILDING		0x0080
+#define RT_CRYPT		0x0100
+#define RT_RVAULT		0x0200
+#define RT_STRANGE		0x0400
+#define RT_FANCY		0x0800
+
 
 /*** Field Thaumatergical types - (see "fields.c" and t_info.txt) ***/
 #define FT_NONE					0x0000
@@ -3897,11 +3928,6 @@
  */
 #define term_screen     (angband_term[0])
 
-/*
- * The current dungeon data
- */
-#define dundata			(place[p_ptr->place_num].dungeon)
-
 
 /*
  * Determine if a given inventory item is "aware"
@@ -4524,3 +4550,4 @@ extern int PlayerUID;
 #define TABLE_ROW		10
 
 #define INVALID_CHOICE 255
+

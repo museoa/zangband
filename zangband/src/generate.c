@@ -118,6 +118,44 @@ int dun_tun_jct;
  */
 dun_data *dun;
 
+static int dun_rating;
+static int is_special;
+
+/* Control the rating */
+void inc_rating(int delta_rating)
+{
+	dun_rating += delta_rating;
+}
+
+/* Set the special feeling */
+void set_special(void)
+{
+	is_special = TRUE;
+}
+
+static byte extract_feeling(void)
+{
+	/* Hack -- no feeling in the town */
+	if (!p_ptr->depth) return 0;
+
+	/* Hack -- Have a special feeling sometimes */
+	if (is_special && !preserve_mode) return 1;
+
+	if (dun_rating > 100) return 2;
+	if (dun_rating > 80) return 3;
+	if (dun_rating > 60) return 4;
+	if (dun_rating > 40) return 5;
+	if (dun_rating > 30) return 6;
+	if (dun_rating > 20) return 7;
+	if (dun_rating > 10) return 8;
+	if (dun_rating > 0) return 9;
+
+	if ((turn - old_turn) > 50000L)
+		chg_virtue(V_PATIENCE, 1);
+
+	return 10;
+}
+
 /*
  * Places some staircases near walls
  */
@@ -384,8 +422,7 @@ static const byte liquid_types[LQ_MAX][2] =
 	{FEAT_SHAL_WATER, FEAT_DEEP_WATER},
 	{FEAT_SHAL_LAVA, FEAT_DEEP_LAVA},
 	{FEAT_SHAL_ACID, FEAT_DEEP_ACID},
-	{FEAT_SHAL_SWAMP, FEAT_DEEP_SWAMP},
-	{FEAT_DRY_MUD, FEAT_WET_MUD}
+	{FEAT_SHAL_SWAMP, FEAT_DEEP_SWAMP}
 };
 
 
@@ -395,7 +432,7 @@ static const byte liquid_types[LQ_MAX][2] =
  *
  * Note that "dun_body" adds about 4000 bytes of memory to the stack.
  */
-static bool cave_gen(const dun_gen_type *d_type_ptr)
+static bool cave_gen(dun_type *d_ptr)
 {
 	int i, j, k, y, x, y1, x1;
 
@@ -429,14 +466,20 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 	
 	/*** Store in the terrain types ***/
 	
+	/* Get floor type */
+	dun->feat_floor = d_ptr->floor;
+	
+	/* Get room types */
+	dun->room_types = d_ptr->rooms;
+	
 	/* Paranoia */
-	if (d_type_ptr->liquid == LQ_NONE)
+	if (d_ptr->liquid == LQ_NONE)
 	{
 		quit("Undefined liquid type in dungeon.");
 	}
 	
 	/* Count applicable liquid types */
-	lq_count = count_bits(d_type_ptr->liquid);
+	lq_count = count_bits(d_ptr->liquid);
 	
 	/* Pick one */
 	lq_count = randint0(lq_count);
@@ -445,7 +488,7 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 	for (i = 0; i < LQ_MAX; i++)
 	{
 		/* Is this flag set? */
-		if (d_type_ptr->liquid & (1 << i))
+		if (d_ptr->liquid & (1 << i))
 		{
 			if (!lq_count)
 			{
@@ -460,12 +503,6 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 		}
 	}
 	
-	/* Get floor type */
-	dun->feat_floor = d_type_ptr->floor;
-	
-	/* Get room types */
-	dun->room_types = d_type_ptr->rooms;
-
 	/* Empty arena levels */
 	if (ironman_empty_levels || (empty_levels && one_in_(EMPTY_LEVEL)))
 	{
@@ -771,7 +808,7 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 		 * The more boring the dungeon is right now,
 		 * the more out of depth to pick monsters.
 		 */
-		delta_level = (dundata->rating - 100) / 10;
+		delta_level = (dun_rating - 100) / 10;
 		if (delta_level < 0) delta_level = 0;
 		
 		(void)alloc_monster(0, TRUE, delta_level);
@@ -878,7 +915,7 @@ void map_panel_size(void)
 }
 
 /* Make a real level */
-static bool level_gen(cptr *why, const dun_gen_type *d_type_ptr)
+static bool level_gen(cptr *why, dun_type *d_ptr)
 {
 	int level_height, level_width;
 
@@ -918,44 +955,20 @@ static bool level_gen(cptr *why, const dun_gen_type *d_type_ptr)
 	}
 
 	/* Get the new region */
-	dundata->region = (s16b)create_region(p_ptr->max_wid, p_ptr->max_hgt,
+	d_ptr->region = (s16b)create_region(p_ptr->max_wid, p_ptr->max_hgt,
 										  REGION_CAVE);
 
 	/* Grab the reference to it */
 	incref_region(cur_region);
 
 	/* Make a dungeon */
-	if (!cave_gen(d_type_ptr))
+	if (!cave_gen(d_ptr))
 	{
 		*why = "could not place player";
 		return FALSE;
 	}
 
 	return TRUE;
-}
-
-
-static byte extract_feeling(void)
-{
-	/* Hack -- no feeling in the town */
-	if (!p_ptr->depth) return 0;
-
-	/* Hack -- Have a special feeling sometimes */
-	if (dundata->good_item_flag && !preserve_mode) return 1;
-
-	if (dundata->rating > 100) return 2;
-	if (dundata->rating > 80) return 3;
-	if (dundata->rating > 60) return 4;
-	if (dundata->rating > 40) return 5;
-	if (dundata->rating > 30) return 6;
-	if (dundata->rating > 20) return 7;
-	if (dundata->rating > 10) return 8;
-	if (dundata->rating > 0) return 9;
-
-	if ((turn - old_turn) > 50000L)
-		chg_virtue(V_PATIENCE, 1);
-
-	return 10;
 }
 
 
@@ -1199,121 +1212,6 @@ int create_region(int x, int y, byte flags)
 
 
 /*
- * A few dungeon types... just testing.
- *
- */
-static const dun_gen_type dungeons[] =
-{
-	{{0, 10, 0, 40}, RF8_DUN_DARKWATER, 0, 1,
-		RT_SIMPLE | RT_NATURAL | RT_ANIMAL | RT_STRANGE,
-		FEAT_DRY_MUD,
-		LQ_WATER | LQ_MUD | LQ_SWAMP},
-
-	{{50, 10, 10, 0}, RF8_DUN_LAIR, 0, 1,
-		RT_NATURAL | RT_COMPLEX | RT_RUIN,
-		FEAT_DIRT,
-		LQ_WATER | LQ_ACID | LQ_SWAMP | LQ_MUD},
-
-	{{10, 30, 30, 30}, RF8_DUN_TEMPLE, 20, 1,
-		RT_SIMPLE | RT_COMPLEX | RT_DENSE | RT_FANCY | RT_BUILDING | RT_CRYPT,
-		FEAT_FLOOR_TILE,
-		LQ_WATER | LQ_LAVA},
-
-	{{20, 0, 80, 0}, RF8_DUN_TOWER, 20, 1,
-		RT_SIMPLE | RT_COMPLEX | RT_BUILDING | RT_RVAULT,
-		FEAT_FLOOR_WOOD,
-		LQ_ACID | LQ_LAVA},
-
-	{{10, 20, 20, 0}, RF8_DUN_RUIN, 0, 1,
-		RT_RUIN,
-		FEAT_PEBBLES,
-		LQ_WATER | LQ_LAVA | LQ_SWAMP},
-
-	{{50, 20, 20, 0}, RF8_DUN_GRAVE, 10, 1,
-		RT_COMPLEX | RT_FANCY | RT_CRYPT,
-		FEAT_FLOOR_TILE,
-		LQ_WATER | LQ_SWAMP},
-
-	{{30, 30, 30, 10}, RF8_DUN_CAVERN, 40, 1,
-		RT_SIMPLE | RT_ANIMAL | RT_DENSE | RT_RUIN | RT_RVAULT,
-		FEAT_DIRT,
-		LQ_WATER | LQ_ACID | LQ_LAVA | LQ_MUD},
-
-	{{30, 30, 40, 0}, RF8_DUN_PLANAR, 40, 1,
-		RT_COMPLEX | RT_DENSE | RT_FANCY | RT_RVAULT,
-		FEAT_SAND,
-		LQ_ACID | LQ_LAVA},
-
-	{{20, 40, 40, 0}, RF8_DUN_HELL, 60, 1,
-		RT_SIMPLE | RT_NATURAL | RT_ANIMAL | RT_DENSE | RT_RUIN |
-		RT_FANCY | RT_RVAULT | RT_STRANGE,
-		FEAT_SOLID_LAVA,
-		LQ_LAVA | LQ_MUD},
-
-	{{0, 20, 20, 0}, RF8_DUN_HORROR, 80, 1,
-		RT_SIMPLE | RT_NATURAL | RT_ANIMAL | RT_DENSE | RT_RUIN | RT_STRANGE,
-		FEAT_SALT,
-		LQ_ACID},
-
-	{{10, 20, 10, 40}, RF8_DUN_MINE, 0, 1,
-		RT_SIMPLE | RT_NATURAL | RT_ANIMAL | RT_RUIN | RT_STRANGE,
-		FEAT_DIRT,
-		LQ_WATER | LQ_MUD | LQ_LAVA},
-
-	{{30, 30, 10, 10}, RF8_DUN_CITY, 20, 1,
-		RT_SIMPLE | RT_COMPLEX | RT_DENSE | RT_FANCY | RT_BUILDING |
-		RT_CRYPT | RT_RVAULT | RT_STRANGE,
-		FEAT_FLOOR_TILE,
-		LQ_WATER},
-
-	{{0, 0, 0, 0}, 0, 0, 0,
-		0,
-		FEAT_NONE,
-		LQ_NONE},
-};
-
-
-/*
- * Pick a type of dungeon from the above list
- */
-static int pick_dungeon_type(void)
-{
-	int tmp, total;
-
-	const dun_gen_type *d_ptr;
-
-	/* Calculate the total possibilities */
-	for (d_ptr = dungeons, total = 0; d_ptr->habitat; d_ptr++)
-	{
-		/* Count this possibility */
-		if (d_ptr->level > p_ptr->depth) continue;
-
-		/* Normal selection */
-		total += d_ptr->chance * MAX_DEPTH * 10 /
-				(p_ptr->depth - d_ptr->level + 5);
-	}
-
-	/* Pick a random type */
-	tmp = randint0(total);
-
-	/* Find this type */
-	for (d_ptr = dungeons, total = 0; d_ptr->habitat; d_ptr++)
-	{
-		/* Count this possibility */
-		if (d_ptr->level > p_ptr->depth) continue;
-		
-		total += d_ptr->chance * MAX_DEPTH * 10 /
-			(p_ptr->depth - d_ptr->level + 5);
-
-		/* Found the type */
-		if (tmp < total) break;
-	}
-
-	/* Return the index of the chosen dungeon */
-	return (GET_ARRAY_INDEX(dungeons, d_ptr));
-}
-
-/*
  * Generates a random dungeon level			-RAK-
  *
  * Hack -- regenerate any "overflow" levels
@@ -1323,21 +1221,21 @@ static int pick_dungeon_type(void)
 void generate_cave(void)
 {
 	int num;
-	
-	int type = pick_dungeon_type();
 
-	/* Set the object theme */
-	dundata->theme.treasure = 20;
-	dundata->theme.combat = 20;
-	dundata->theme.magic = 20;
-	dundata->theme.tools = 20;
+	dun_type *dundata = place[p_ptr->place_num].dungeon;
 	
-	/* Hack - Reset the dungeon habitat to be everything */
-	dundata->habitat = RF8_DUNGEON;
-
 	/* Build the wilderness */
 	if (!p_ptr->depth)
 	{
+		/* XXX XXX Reset the object theme to wilderness values */
+		dundata->theme.treasure = 20;
+		dundata->theme.combat = 20;
+		dundata->theme.magic = 20;
+		dundata->theme.tools = 20;
+	
+		/* Hack - Reset the dungeon habitat to be everything */
+		dundata->habitat = RF8_DUNGEON;
+	
 		/* The "dungeon" is ready */
 		character_dungeon = TRUE;
 
@@ -1347,11 +1245,26 @@ void generate_cave(void)
 		return;
 	}
 	
-	/* Set the object theme (structure copy) */
-	dundata->theme = dungeons[type].theme;
+	/* Get random dungeon */
+	if (vanilla_town)
+	{
+		const dun_gen_type *d_ptr = pick_dungeon_type();
+		
+		/* Get floor type */
+		dundata->floor = d_ptr->floor;
 	
-	/* Hack - Reset the dungeon habitat to be everything */
-	dundata->habitat = dungeons[type].habitat;
+		/* Liquid type */
+		dundata->liquid = d_ptr->liquid;
+	
+		/* Get room types */
+		dundata->rooms = d_ptr->rooms;
+	
+		/* Set the object theme (structure copy) */
+		dundata->theme = d_ptr->theme;
+	
+		/* Hack - Reset the dungeon habitat to be everything */
+		dundata->habitat = d_ptr->habitat;
+	}	
 
 	/* Generate */
 	for (num = 0; TRUE; num++)
@@ -1364,12 +1277,17 @@ void generate_cave(void)
 		dundata->good_item_flag = FALSE;
 
 		/* Nothing good here yet */
-		dundata->rating = 0;
+		dun_rating = 0;
+		is_special = FALSE;
 
-		okay = level_gen(&why, &dungeons[type]);
+		okay = level_gen(&why, dundata);
+		
+		/* Save rating for later */
+		dundata->rating = dun_rating;
+		dundata->good_item_flag = is_special;
 
 		/* Extract the feeling */
-		dundata->feeling = extract_feeling();
+		p_ptr->state.feeling = extract_feeling();
 
 		/* Prevent object over-flow */
 		if (o_max >= z_info->o_max)

@@ -449,6 +449,8 @@ extern void get_character_name(void);
 /* generate.c */
 extern void place_closed_door(int x, int y);
 extern void map_panel_size(void);
+extern void inc_rating(int delta_rating);
+extern void set_special(void);
 extern void del_region(int rg_idx);
 extern int unref_region(int rg_idx);
 extern void incref_region(int rg_idx);
@@ -1049,6 +1051,7 @@ extern void k_info_reset(void);
 
 /* wild1.c and wild2.c */
 extern void select_town_name(char *name, int pop);
+extern const dun_gen_type *pick_dungeon_type(void);
 extern void light_dark_square(int y, int x, bool daytime);
 extern u16b init_choice_tree(wild_bound_box_type *bound, u16b type);
 extern u16b add_node_tree_root(wild_bound_box_type *bound, u16b type);

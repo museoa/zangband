@@ -1,3 +1,17 @@
+/* File: wild1.h */
+
+/* Purpose: Dungeon generation header file */
+
+/*
+ * Copyright (c) 1989, 1999 James E. Wilson, Robert A. Koeneke,
+ * Robert Ruehlmann
+ *
+ * This software may be copied and distributed for educational, research, and
+ * not for profit purposes provided that this copyright and statement are
+ * included in all such copies.
+ */
+
+
 
 #define SAFE_MAX_ATTEMPTS 5000
 
@@ -160,48 +174,5 @@ struct dun_data
 
 extern dun_data *dun;
 
-/* Types of "liquid" for dungeon */
-#define LQ_NONE		0x00
-#define LQ_WATER	0x01
-#define LQ_LAVA		0x02
-#define LQ_ACID		0x04
-#define LQ_SWAMP	0x08
-#define LQ_MUD		0x10
 
-
-#define LQ_MAX		5
-
-/* Room types */
-#define RT_TAG_CROWDED		0x0001 /* Affects "crowded" counter */
-#define RT_NATURAL		0x0002
-#define RT_ANIMAL		0x0004
-#define RT_COMPLEX		0x0008
-#define RT_DENSE		0x0010
-#define RT_RUIN			0x0020
-#define RT_SIMPLE		0x0040
-#define RT_BUILDING		0x0080
-#define RT_CRYPT		0x0100
-#define RT_RVAULT		0x0200
-#define RT_STRANGE		0x0400
-#define RT_FANCY                0x0800
-
-/* Type holding dungeon type information */
-typedef struct dun_gen_type dun_gen_type;
-
-struct dun_gen_type
-{
-	obj_theme theme;
-	u32b habitat;
-	int level;
-	int chance;
-	
-	/* Rooms */
-	u16b rooms;
-	
-	/* Floor terrain type */
-	byte floor;
-	
-	/* Liquid type for lakes/ rivers etc. */
-	byte liquid;
-};
 

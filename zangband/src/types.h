@@ -1340,6 +1340,8 @@ struct player_state
 
 	bool create_up_stair;	/* Create up stair on next level */
 	bool create_down_stair;	/* Create down stair on next level */
+	
+	byte feeling;	/* Most recent feeling */
 };
 
 /*
@@ -1720,8 +1722,50 @@ struct dun_type
 
 	s16b region;	/* Hack - Region for current level */
 
-	byte feeling;	/* Most recent feeling */
 	bool good_item_flag;	/* True if "Artifact" on this level */
+	
+	/* Room types available */
+	u16b rooms;
+	
+	/* Floor terrain type */
+	byte floor;
+	
+	/* Liquid type for lakes/ rivers etc. */
+	byte liquid;
+};
+
+
+/* Type holding dungeon type information */
+typedef struct dun_gen_type dun_gen_type;
+
+struct dun_gen_type
+{
+	/* Theme information */
+	obj_theme theme;
+	u32b habitat;
+	
+	/* Level bounds for fixed dungeons */
+	int min_level;
+	int max_level;
+
+	/* How deep is the dungeon on average, except that 0 = full depth */
+	int dif_level;
+	
+	/* Probability (inverse rarity) */
+	int chance;
+	
+	/* Wilderness location */
+	int pop;
+	int height;
+	
+	/* Room types available */
+	u16b rooms;
+	
+	/* Floor terrain type */
+	byte floor;
+	
+	/* Liquid type for lakes/ rivers etc. */
+	byte liquid;
 };
 
 

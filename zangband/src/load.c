@@ -1378,11 +1378,8 @@ static void rd_extra(void)
 	rd_byte(&tmp8u);
 	p_ptr->state.is_dead = tmp8u;
 
-	if (sf_version < 42)
-	{
-		/* Read (and ignore) old "feeling" */
-		rd_byte(&tmp8u);
-	}
+	/* Read "feeling" */
+	rd_byte(&p_ptr->state.feeling);
 	
 	/* Turn of last "feeling" */
 	rd_s32b(&old_turn);
@@ -2052,7 +2049,7 @@ static void load_wild_data(void)
 }
 
 /* The version when the format of the wilderness last changed */
-#define VERSION_CHANGE_WILD		38
+#define VERSION_CHANGE_WILD		43
 
 
 /*
@@ -2071,6 +2068,8 @@ static errr rd_dungeon(void)
 	u16b dun_level_backup, px_back, py_back;
 
 	bool ignore_stuff = FALSE;
+	
+	dun_type *dundata = place[p_ptr->place_num].dungeon; 
 
 	s16b cur_wid, cur_hgt;
 
@@ -2349,11 +2348,18 @@ static errr rd_dungeon(void)
 		/* Real item? */
 		if (o_ptr->k_idx)
 		{
+			/* Hack - ignore items */
+			if (ignore_stuff && (o_ptr->ix || o_ptr->iy))
+			{
+				object_wipe(o_ptr);
+				continue;
+			}
+		
 			/* Count objects */
 			o_cnt++;
 
 			/* Dungeon items */
-			if (!ignore_stuff && (o_ptr->ix || o_ptr->iy))
+			if (o_ptr->ix || o_ptr->iy)
 			{
 				if (!in_bounds2(o_ptr->ix, o_ptr->iy))
 				{
@@ -2421,7 +2427,6 @@ static errr rd_dungeon(void)
 
 		monster_race *r_ptr;
 
-
 		/* Get a new record */
 		m_idx = m_pop();
 
@@ -2454,13 +2459,26 @@ static errr rd_dungeon(void)
 
 			/* Mark the location */
 			c_ptr->m_idx = m_idx;
+			
+			/* Access race */
+			r_ptr = &r_info[m_ptr->r_idx];
+	
+			/* Count XXX XXX XXX */
+			r_ptr->cur_num++;
+			
+			
 		}
-
-		/* Access race */
-		r_ptr = &r_info[m_ptr->r_idx];
-
-		/* Count XXX XXX XXX */
-		r_ptr->cur_num++;
+		else
+		{
+			/* Delete objects */
+			delete_object_list(&m_ptr->hold_o_idx);
+		
+			/* Hack - just delete the monster */
+			(void)WIPE(m_ptr, monster_type);
+			
+			/* Count monsters */
+			m_cnt--;
+		}
 	}
 
 	if (sf_version > 11)
@@ -3205,9 +3223,8 @@ static errr rd_savefile_new_aux(void)
 					rd_byte(&dun_ptr->min_level);
 					rd_byte(&dun_ptr->max_level);
 					
-					/* Rating + feeling */
+					/* Rating */
 					rd_s16b(&dun_ptr->rating);
-					rd_byte(&dun_ptr->feeling);
 				}
 			}
 			

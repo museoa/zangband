@@ -650,6 +650,8 @@ static int filter_mon_loc(int x, int y)
 	wild_done_type *w_ptr;
 	monster_race *r_ptr;
 	
+	place_type *pl_ptr = &place[p_ptr->place_num];
+
 	int level;
 
 	int i;
@@ -700,7 +702,7 @@ static int filter_mon_loc(int x, int y)
 				r_ptr = &r_info[entry->index];
 				
 				/* Not a monster for this dungeon? */
-				if (!(r_ptr->flags8 & dundata->habitat))
+				if (!(r_ptr->flags8 & (pl_ptr->dungeon->habitat)))
 				{
 					entry->prob2 = 0;
 				}
@@ -1742,7 +1744,6 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	/* Get result */
 	if (!(flags & (MEG_DO_MOVE))) return (FALSE);
 
-
 	/* Powerful monster */
 	if (r_ptr->level > p_ptr->depth)
 	{
@@ -1752,8 +1753,9 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 			/* Message for cheaters */
 			if (cheat_hear) msgf("Deep Unique (%s).", name);
 
+
 			/* Boost rating by twice delta-depth */
-			dundata->rating += (r_ptr->level - p_ptr->depth) * 2;
+			inc_rating((r_ptr->level - p_ptr->depth) * 2);
 		}
 
 		/* Normal monsters */
@@ -1761,9 +1763,12 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 		{
 			/* Message for cheaters */
 			if (cheat_hear) msgf("Deep Monster (%s).", name);
-
-			/* Boost rating by delta-depth */
-			dundata->rating += (r_ptr->level - p_ptr->depth);
+	
+			if (!(r_ptr->flags1 & (RF1_FRIENDS)))
+			{
+				/* Boost rating by delta-depth */
+				inc_rating(r_ptr->level - p_ptr->depth);
+			}
 		}
 	}
 
@@ -1931,7 +1936,7 @@ static bool place_monster_group(int x, int y, int r_idx, bool slp,
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	int old, n, i;
+	int n, i;
 	int total = 0, extra = 0;
 
 	int hack_n = 0;
@@ -1970,9 +1975,6 @@ static bool place_monster_group(int x, int y, int r_idx, bool slp,
 	/* Maximum size */
 	if (total > GROUP_MAX) total = GROUP_MAX;
 
-
-	/* Save the rating */
-	old = dundata->rating;
 
 	/* Start on the monster */
 	hack_n = 1;
@@ -2013,10 +2015,6 @@ static bool place_monster_group(int x, int y, int r_idx, bool slp,
 			}
 		}
 	}
-
-	/* Hack -- restore the rating */
-	dundata->rating = old;
-
 
 	/* Success */
 	return (TRUE);

@@ -32,8 +32,7 @@ static s16b *field_find(s16b fld_idx)
 	f_ptr = &fld_list[fld_idx];
 
 	/* Paranoia */
-	if (f_ptr->region !=
-		dundata->region) quit("Trying to find unregioned field");
+	if (f_ptr->region != cur_region) quit("Trying to find unregioned field");
 
 	location = &(area(f_ptr->fx, f_ptr->fy)->fld_idx);
 

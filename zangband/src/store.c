@@ -1131,8 +1131,6 @@ static void store_maint(void)
 {
 	int i = 0, j;
 
-	int old_rating = dundata->rating;
-
 	/* Ignore home + locker */
 	if (st_ptr->type == BUILD_STORE_HOME) return;
 
@@ -1205,10 +1203,6 @@ static void store_maint(void)
 		/* Try to allocate some items */
 		store_create();
 	}
-
-
-	/* Hack -- Restore the rating */
-	dundata->rating = old_rating;
 }
 
 

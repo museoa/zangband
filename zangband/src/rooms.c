@@ -1592,13 +1592,13 @@ static void build_type5(int bx0, int by0)
 	}
 
 	/* Increase the level rating */
-	dundata->rating += 10;
+	inc_rating(10);
 
 	/* Sometimes nests cause a special feeling */
 	if ((p_ptr->depth <= 40) &&
 		(randint1(p_ptr->depth * p_ptr->depth + 50) < 300))
 	{
-		dundata->good_item_flag = TRUE;
+		set_special();
 	}
 }
 
@@ -1877,13 +1877,13 @@ static void build_type6(int bx0, int by0)
 	}
 
 	/* Increase the level rating */
-	dundata->rating += 10;
+	inc_rating(10);
 
 	/* Sometimes pits cause a special feeling */
 	if ((p_ptr->depth <= 40) &&
 		(randint1(p_ptr->depth * p_ptr->depth + 50) < 300))
 	{
-		dundata->good_item_flag = TRUE;
+		set_special();
 	}
 }
 
@@ -2234,22 +2234,17 @@ static void build_type7(int bx0, int by0)
 		return;
 	}
 
-
-#ifdef FORCE_V_IDX
-	v_ptr = &v_info[2];
-#endif
-
 	/* Message */
 	if (cheat_room) msgf("%s", v_name + v_ptr->name);
 
 	/* Boost the rating */
-	dundata->rating += v_ptr->rat;
+	inc_rating(v_ptr->rat);
 
 	/* (Sometimes) Cause a special feeling */
 	if ((p_ptr->depth <= 50) ||
 		(randint1((p_ptr->depth - 40) * (p_ptr->depth - 40) + 50) < 400))
 	{
-		dundata->good_item_flag = TRUE;
+		set_special();
 	}
 
 	/* Hack -- Build the vault */
@@ -2331,22 +2326,17 @@ static void build_type8(int bx0, int by0)
 		return;
 	}
 
-
-#ifdef FORCE_V_IDX
-	v_ptr = &v_info[rand_range(76, 79)];
-#endif
-
 	/* Message */
 	if (cheat_room) msgf("%s", v_name + v_ptr->name);
 
 	/* Boost the rating */
-	dundata->rating += v_ptr->rat;
+	inc_rating(v_ptr->rat);
 
 	/* (Sometimes) Cause a special feeling */
 	if ((p_ptr->depth <= 50) ||
 		(randint1((p_ptr->depth - 40) * (p_ptr->depth - 40) + 50) < 400))
 	{
-		dundata->good_item_flag = TRUE;
+		set_special();
 	}
 
 	/* Hack -- Build the vault */
@@ -3718,13 +3708,13 @@ static void build_type10(int bx0, int by0)
 	 * Boost the rating- higher than lesser vaults
 	 * and lower than greater vaults
 	 */
-	dundata->rating += 10;
+	inc_rating(10);
 
 	/* (Sometimes) Cause a special feeling */
 	if ((p_ptr->depth <= 50) ||
 		(randint1((p_ptr->depth - 40) * (p_ptr->depth - 40) + 1) < 400))
 	{
-		dundata->good_item_flag = TRUE;
+		set_special();
 	}
 
 	/* Select type of vault */
