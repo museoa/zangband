@@ -1228,42 +1228,55 @@ void do_cmd_query_symbol(void)
 	if (sym == KTRL('A'))
 	{
 		all = TRUE;
-		strcpy(buf, "Full monster list.");
+		prtf(0, 0, "Full monster list.");
 	}
 	else if (sym == KTRL('U'))
 	{
 		all = uniq = TRUE;
-		strcpy(buf, "Unique monster list.");
+		prtf(0, 0, "Unique monster list.");
 	}
 	else if (sym == KTRL('N'))
 	{
 		all = norm = TRUE;
-		strcpy(buf, "Non-unique monster list.");
+		prtf(0, 0, "Non-unique monster list.");
 	}
 	else if (sym == KTRL('M'))
 	{
 		all = TRUE;
-		if (!get_string(temp1, 70, "Name:")) temp1[0] = 0;
+		if (!get_string(temp1, 70, "Name:"))
+		{
+			clear_msg();
+		}
 		else
-			sprintf(buf, "Monsters with a name \"%s\"", temp1);
+		{
+			prtf(0, 0, "Monsters with a name \"%s\"", temp1);
+		}
 	}
 	else if (sym == KTRL('K'))
 	{
 		all = killed = TRUE;
-		strcpy(buf, "Killed monster list.");
+		prtf(0, 0, "Killed monster list.");
 	}
 
 	else if (ident_info[i])
 	{
-		sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
+		if (ident_info[i][0] == '$')
+		{
+			/*
+			 * Hack - we need two dollar signs since it
+			 * is an escape code.
+			 */
+			prtf(0, 0, "$$ - %s.", ident_info[i] + 2);
+		}
+		else
+		{
+			prtf(0, 0, "%c - %s.", sym, ident_info[i] + 2);
+		}
 	}
 	else
 	{
-		sprintf(buf, "%c - %s.", sym, "Unknown Symbol");
+		prtf(0, 0, "%c - %s.", sym, "Unknown Symbol");
 	}
-
-	/* Display the result */
-	prtf(0, 0, buf);
 
 	/* Allocate the "who" array */
 	C_MAKE(who, z_info->r_max, u16b);

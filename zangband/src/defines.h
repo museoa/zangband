@@ -4102,29 +4102,29 @@ extern int PlayerUID;
 /*
  * Colour format specifiers in strings
  *
- * Start with /001, and then have a character that depends on the
+ * Start with $, and then have a character that depends on the
  * colour.  We could also use this techinque for other formatting
  * specifiers...
  *
  * Note we must use 'nice' characters for the specifier because
  * the formatting routines eat some of the control characters.
  */
-#define CLR_DARK		"\001A"  
-#define CLR_WHITE		"\001B"
-#define CLR_SLATE		"\001C"
-#define CLR_ORANGE		"\001D"
-#define CLR_RED			"\001E"
-#define CLR_GREEN		"\001F"
-#define CLR_BLUE		"\001G"
-#define CLR_UMBER		"\001H"
-#define CLR_L_DARK		"\001I"
-#define CLR_L_WHITE		"\001J"
-#define CLR_VIOLET		"\001K"
-#define CLR_YELLOW		"\001L"
-#define CLR_L_RED		"\001M"
-#define CLR_L_GREEN		"\001N"
-#define CLR_L_BLUE		"\001O"
-#define CLR_L_UMBER		"\001P"
+#define CLR_DARK		"$A"  
+#define CLR_WHITE		"$B"
+#define CLR_SLATE		"$C"
+#define CLR_ORANGE		"$D"
+#define CLR_RED			"$E"
+#define CLR_GREEN		"$F"
+#define CLR_BLUE		"$G"
+#define CLR_UMBER		"$H"
+#define CLR_L_DARK		"$I"
+#define CLR_L_WHITE		"$J"
+#define CLR_VIOLET		"$K"
+#define CLR_YELLOW		"$L"
+#define CLR_L_RED		"$M"
+#define CLR_L_GREEN		"$N"
+#define CLR_L_BLUE		"$O"
+#define CLR_L_UMBER		"$P"
 
 
 #define MSG_GENERIC          0

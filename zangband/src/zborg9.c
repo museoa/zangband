@@ -3160,7 +3160,7 @@ void do_cmd_borg(void)
 		            "Command '@' Borg LOS.\n"
 		            "Command 'q' Auto stop on level.\n"
 		            "Command 'd' Dump spell info.\n"
-		            "Command '$' Reload Borg.txt.\n"
+		            "Command '$$' Reload Borg.txt.\n"
 		            "Command '^' Flow Pathway.");
         
         /* Second column */

@@ -633,7 +633,7 @@ static void put_cstr(int col, int row, cptr str, bool clear)
 	while (*c)
 	{
 		/* Does this character match the escape code? */
-		if (*c == 1)
+		if (*c == '$')
 		{
 			/* Scan the next character */
 			c++;
@@ -654,6 +654,12 @@ static void put_cstr(int col, int row, cptr str, bool clear)
 				
 				continue;
 			}
+			
+			/*
+			 * Hack XXX XXX - otherwise, ignore the dollar sign
+			 *
+			 * This makes "$$" turn into just "$".
+			 */
 		}
 		
 		if (*c == '\n')
@@ -787,7 +793,7 @@ void roff(cptr str, ...)
 		}
 		
 		/* Does this character match the escape code? */
-		if (*s == 1)
+		if (*s == '$')
 		{
 			/* Scan the next character */
 			s++;
@@ -809,6 +815,11 @@ void roff(cptr str, ...)
 				/* Hack -- fake monochrome */
 				if (!use_color || ironman_moria) a = TERM_WHITE;
 			}
+			/*
+			 * Hack XXX XXX - otherwise, ignore the dollar sign
+			 *
+			 * This makes "$$" turn into just "$".
+			 */
 		}
 
 		/* Clean up the char */
