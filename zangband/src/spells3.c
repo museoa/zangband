@@ -727,30 +727,21 @@ void teleport_player_level(void)
 
 bool check_down_wild(void)
 {
+	/* Can always recall from dungeon */
+	if (p_ptr->depth) return (TRUE);
+
 	/* Hack - no recalling in the middle of the wilderness */
-	if ((!p_ptr->depth) && (!p_ptr->place_num))
+	if (!p_ptr->place_num)
 	{
 		msgf("Nothing happens.");
 		return (FALSE);
 	}
 
 	/* Cannot recall in towns with no dungeon */
-	if ((!vanilla_town) && (!p_ptr->depth))
+	if (!vanilla_town)
 	{
-		bool found = FALSE;
-		int i;
-
-		/* Look for stairs */
-		for (i = 0; i < place[p_ptr->place_num].numstores; i++)
-		{
-			if (place[p_ptr->place_num].store[i].type == BUILD_STAIRS)
-			{
-				found = TRUE;
-				break;
-			}
-		}
-
-		if (!found)
+		/* Look for dungeon */
+		if (!place[p_ptr->place_num].dungeon)
 		{
 			msgf("Nothing happens.");
 			return (FALSE);
