@@ -3460,16 +3460,25 @@ static errr rd_savefile_new_aux(void)
 #endif
 
 	/* Read the pet command settings */
-	if (!z_older_than(2, 2, 3))
+	if (!z_older_than(2, 3, 3))
 	{
-		rd_byte(&p_ptr->pet_follow_distance);
+		rd_s16b(&p_ptr->pet_follow_distance);
+		rd_byte(&p_ptr->pet_open_doors);
+		rd_byte(&p_ptr->pet_pickup_items);
+	}
+	else if (!z_older_than(2, 2, 3))
+	{
+		rd_byte(&tmp8u);
+
+		p_ptr->pet_follow_distance = tmp8u;
+
 		rd_byte(&p_ptr->pet_open_doors);
 		rd_byte(&p_ptr->pet_pickup_items);
 	}
 	else
 	{
 		/* Default pet command settings */
-		p_ptr->pet_follow_distance = 6;
+		p_ptr->pet_follow_distance = PET_FOLLOW_DIST;
 		p_ptr->pet_open_doors = FALSE;
 		p_ptr->pet_pickup_items = FALSE;
 	}

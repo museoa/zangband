@@ -1351,10 +1351,8 @@ static bool wr_savefile_new(void)
 	v_stamp = 0L;
 	x_stamp = 0L;
 
-#if SAVEFILE_VERSION
 	/* Write the savefile version */
 	wr_u32b(SAVEFILE_VERSION);
-#endif /* SAVEFILE_VERSION */
 
 	/* Operating system */
 	wr_u32b(sf_xtra);
@@ -1528,7 +1526,7 @@ static bool wr_savefile_new(void)
 	}
 
 	/* Write the pet command settings */
-	wr_byte(p_ptr->pet_follow_distance);
+	wr_s16b(p_ptr->pet_follow_distance);
 	wr_byte(p_ptr->pet_open_doors);
 	wr_byte(p_ptr->pet_pickup_items);
 
