@@ -2637,7 +2637,7 @@ static int see_wall(int dir, int y, int x)
 	c_ptr = area(y, x);
 
 	/* Non-wall grids are not known walls */
-	if (c_ptr->feat < FEAT_SECRET) return (FALSE);
+	if (c_ptr->feat < FEAT_PILLAR) return (FALSE);
 
 	if ((c_ptr->feat >= FEAT_DEEP_WATER) &&
 	    (c_ptr->feat <= FEAT_GRASS)) return (FALSE);
