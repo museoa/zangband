@@ -2232,51 +2232,46 @@ bool dispel_demons(int dam)
 bool raise_dead(int y, int x, bool pet)
 {
 	s16b i;
-	int ix, iy;
+	int fx, fy;
 
 	bool    obvious = FALSE;
-	monster_type *m_ptr;
 
-	/* Check all (nearby) objects */
-	for (i = 1; i < o_max; i++)
+	cave_type *c_ptr;
+	
+	bool nightmare_mode = ironman_nightmare;
+	
+	/* Mega hack XXX XXX */
+	ironman_nightmare = TRUE;
+
+	/* Check all (nearby) fields */
+	for (i = 1; i < fld_max; i++)
 	{
-		object_type *o_ptr = &o_list[i];
+		field_type *f_ptr = &fld_list[i];
 
 		/* Paranoia -- Skip missing objects */
-		if (!o_ptr->k_idx) continue;
+		if (!f_ptr->t_idx) continue;
 
+		/* Want a corpse / skeleton */
+		if (!(f_ptr->t_idx == FT_CORPSE)
+			 || (f_ptr->t_idx == FT_SKELETON)) continue;
+		
 		/* Location */
-		iy = o_ptr->iy;
-		ix = o_ptr->ix;
+		fy = f_ptr->fy;
+		fx = f_ptr->fx;
 
 		/* Require line of sight */
-		if (!los(iy, ix, y, x)) continue;
+		if (!los(fy, fx, y, x)) continue;
+		
+		c_ptr = area(fy, fx);
 
-		if (player_has_los_grid(area(iy, ix))) obvious = TRUE;
-
-		/* Make a monster nearby if possible */
-		if (summon_named_creature(o_ptr->iy, o_ptr->ix,
-			o_ptr->pval, FALSE, FALSE, pet))
-		{
-			/* Get pointer monster if successful */
-			m_ptr = &m_list[hack_m_idx_ii];
-
-			if (player_can_see_bold(m_ptr->fy, m_ptr->fx))
-			{
-				msg_format("The %s rises.");
-			}
-
-			/* Set the cloned flag, so no treasure is dropped */
-			m_ptr->smart |= SM_CLONED;
-		}
-
-		/* The corpse/skeleton is destroyed */
-		floor_item_increase(i, -1);
-		floor_item_optimize(i);
-
-		/* Hack, decrease counter properly */
-		i--;
+		if (player_has_los_grid(c_ptr)) obvious = TRUE;
+		
+		/* Hack XXX XXX */
+		field_action_corpse_decay(&c_ptr->fld_idx, NULL);
 	}
+	
+	/* Mega hack XXX XXX */
+	ironman_nightmare = nightmare_mode;
 
 	/* Result */
 	return (obvious);
