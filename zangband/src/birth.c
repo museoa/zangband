@@ -2209,7 +2209,7 @@ static bool player_birth_aux_1(void)
 	}
 
 	/* And finally, get the number of random quests */
-	get_player_quests();
+	get_player_quests(-1);
 
 	/* Clear */
 	clear_from(15);

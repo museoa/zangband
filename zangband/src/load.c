@@ -2956,7 +2956,7 @@ static errr rd_savefile_new_aux(void)
 	 */
 	if (sf_version < 30)
 	{
-		(void)get_player_quests();
+		get_player_quests(-1);
 	}
 
 	if (arg_fiddle) note("Loaded Quests");

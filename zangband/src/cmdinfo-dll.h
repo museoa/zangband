@@ -26,9 +26,9 @@ struct SubCommandInfo {
 
 struct CommandInfo {
 	int depth;
-	char *name;
+	cptr name;
 	int minArgs, maxArgs;
-	char *errorMsg;
+	cptr errorMsg;
 	Tcl_ObjCmdProc *proc;
 	ClientData clientData;
 	SubCommandInfo subCmd;
@@ -36,9 +36,9 @@ struct CommandInfo {
 
 struct CommandInit {
 	int depth;
-	char *name;
+	cptr name;
 	int minArgs, maxArgs;
-	char *errorMsg;
+	cptr errorMsg;
 	Tcl_ObjCmdProc *proc;
 	ClientData clientData;
 };

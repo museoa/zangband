@@ -3283,9 +3283,9 @@ static int Tcl_Initialized = 0;
  *--------------------------------------------------------------
  */
 
-void angtk_eval(char *command, ...)
+void angtk_eval(cptr command, ...)
 {
-	char *s = command;
+	cptr = command;
 	va_list vp;
 	int objc = 0;
 	Tcl_Obj *objv[40];
@@ -3308,7 +3308,7 @@ void angtk_eval(char *command, ...)
 		Tcl_IncrRefCount(objv[objc - 1]);
 
 		/* Get the next string argument */
-		s = va_arg(vp, char *);
+		s = va_arg(vp, cptr);
 	}
 
 	/* Finish processing variable argument list */
@@ -3590,9 +3590,9 @@ void angtk_angband_initialized(void)
 /*
  * Tcl_Eval() a file, assuming the given filename is not UTF-8.
  */
-int angtk_eval_file(char *extFileName)
+int angtk_eval_file(cptr extFileName)
 {
-	char *utfFileName;
+	cptr utfFileName;
 	Tcl_DString dString;
 	int result;
 

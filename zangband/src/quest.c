@@ -243,8 +243,11 @@ errr init_quests(void)
 
 /*
  * Quests
+ *
+ * q_num is the number of random quests to use.
+ * If it is -1, then we ask how many to use.
  */
-void get_player_quests(void)
+void get_player_quests(int q_num)
 {
 	char inp[80];
 
@@ -265,50 +268,57 @@ void get_player_quests(void)
 	{
 		quest_wipe(i);
 	}
-
-	/* Extra info */
-	Term_putstr(5, 15, -1, TERM_WHITE,
+	
+	if (q_num == -1)
+	{
+		/* Extra info */
+		Term_putstr(5, 15, -1, TERM_WHITE,
 				"You can enter the number of quests you'd like to perform in addition");
-	Term_putstr(5, 16, -1, TERM_WHITE,
+		Term_putstr(5, 16, -1, TERM_WHITE,
 				"to the two obligatory ones ( Oberon and the Serpent of Chaos )");
-	Term_putstr(5, 17, -1, TERM_WHITE,
+		Term_putstr(5, 17, -1, TERM_WHITE,
 				"In case you do not want any additional quests, just enter 0");
 
-	Term_putstr(5, 18, -1, TERM_WHITE,
+		Term_putstr(5, 18, -1, TERM_WHITE,
 				"If you want a random number of random quests, just enter *");
 
-	/* Ask the number of additional quests */
-	while (TRUE)
-	{
-		put_str("Number of additional quests? (<50) ", 2, 20);
-
-		/* Get a the number of additional quest */
+		/* Ask the number of additional quests */
 		while (TRUE)
 		{
-			/* Move the cursor */
-			put_str("", 37, 20);
+			put_str("Number of additional quests? (<50) ", 2, 20);
 
-			/* Default */
-			strcpy(inp, "20");
-
-			/* Get a response (or escape) */
-			if (!askfor_aux(inp, 3)) inp[0] = '\0';
-
-			/* Check for random number of quests */
-			if (inp[0] == '*')
+			/* Get a the number of additional quest */
+			while (TRUE)
 			{
-				/* 0 to 49 random quests */
-				v = randint0(50);
-			}
-			else
-			{
-				v = atoi(inp);
-			}
+				/* Move the cursor */
+				put_str("", 37, 20);
 
-			/* Break on valid input */
-			if ((v < 50) && (v >= 0)) break;
+				/* Default */
+				strcpy(inp, "20");
+
+				/* Get a response (or escape) */
+				if (!askfor_aux(inp, 3)) inp[0] = '\0';
+
+				/* Check for random number of quests */
+				if (inp[0] == '*')
+				{
+					/* 0 to 49 random quests */
+					v = randint0(50);
+				}
+				else
+				{
+					v = atoi(inp);
+				}
+
+				/* Break on valid input */
+				if ((v < 50) && (v >= 0)) break;
+			}
+			break;
 		}
-		break;
+	}
+	else
+	{
+		v = q_num;
 	}
 #if 0
 

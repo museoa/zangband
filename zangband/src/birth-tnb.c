@@ -36,12 +36,6 @@ static const char *keyword_birth[] = {
 
 #define STAT_LIMIT 56
 
-/*
- * This is a debugging macro to make sure my switch statements match
- * the list of strings passed to Tcl_GetIndexFromObj().
- */
-#define ASSERT_OPTION(table,index,string) \
-	if (strcmp(table[index], string)) return TCL_ERROR;
 
 /*
  * A structure to hold "rolled" information
@@ -79,7 +73,7 @@ struct birth_info
 	bool valid;
 	int stats[A_MAX];
 	int max_quest;
-	char *realm_name[MAX_REALM + 1 + 1];
+	cptr realm_name[MAX_REALM + 1 + 1];
 };
 
 static struct birth_info *birth_ptr = NULL;
@@ -683,12 +677,12 @@ static void save_prev_data(void)
 	/* Save the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(birth_ptr->prev.history[i], history[i]);
+		strcpy(birth_ptr->prev.history[i], p_ptr->history[i]);
 	}
 
 	/* Save player_hp */
 	for (i = 0; i < PY_MAX_LEVEL; i++)
-		birth_ptr->prev.player_hp[i] = player_hp[i];
+		birth_ptr->prev.player_hp[i] = p_ptr->player_hp[i];
 
 	birth_ptr->prev.chaos_patron = p_ptr->chaos_patron;
 }
@@ -722,12 +716,12 @@ static void load_prev_data(void)
 	/* Save the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(temp.history[i], history[i]);
+		strcpy(temp.history[i], p_ptr->history[i]);
 	}
 
 	/* Save player_hp */
 	for (i = 0; i < PY_MAX_LEVEL; i++)
-		temp.player_hp[i] = player_hp[i];
+		temp.player_hp[i] = p_ptr->player_hp[i];
 
 	temp.chaos_patron = p_ptr->chaos_patron;
 
@@ -750,12 +744,12 @@ static void load_prev_data(void)
 	/* Load the history */
 	for (i = 0; i < 4; i++)
 	{
-		strcpy(history[i], birth_ptr->prev.history[i]);
+		strcpy(p_ptr->history[i], birth_ptr->prev.history[i]);
 	}
 
 	/* Load player_hp */
 	for (i = 0; i < PY_MAX_LEVEL; i++)
-		player_hp[i] = birth_ptr->prev.player_hp[i];
+		p_ptr->player_hp[i] = birth_ptr->prev.player_hp[i];
 
 	p_ptr->chaos_patron = birth_ptr->prev.chaos_patron;
 
@@ -787,56 +781,6 @@ static void load_prev_data(void)
 	birth_ptr->prev.chaos_patron = temp.chaos_patron;
 }
 
-/*
- * Adjust a stat by an amount
- *
- * This just uses "modify_stat_value()" unless "maximize" mode is false,
- * and a positive bonus is being applied, in which case, a special hack
- * is used, with the "auto_roll" flag affecting the result.
- *
- * The "auto_roll" flag selects "maximal" changes for use with the
- * auto-roller initialization code.  Otherwise, if "maximize" mode
- * is being used, the changes are fixed.  Otherwise, semi-random
- * changes will occur, with larger changes at lower values.
- */
-static int adjust_stat(int value, int amount, int auto_roll)
-{
-	/* Negative amounts or maximize mode */
-	if ((amount < 0) || maximize_mode)
-	{
-		return (modify_stat_value(value, amount));
-	}
-
-	/* Special hack */
-	else
-	{
-		int i;
-
-		/* Apply reward */
-		for (i = 0; i < amount; i++)
-		{
-			if (value < 18)
-			{
-				value++;
-			}
-			else if (value < 18 + 70)
-			{
-				value += ((auto_roll ? 15 : randint(15)) + 5);
-			}
-			else if (value < 18 + 90)
-			{
-				value += ((auto_roll ? 6 : randint(6)) + 2);
-			}
-			else if (value < 18 + 100)
-			{
-				value++;
-			}
-		}
-	}
-
-	/* Return the result */
-	return (value);
-}
 
 /*
  * Roll for a characters stats
@@ -857,23 +801,8 @@ static void get_stats(void)
 		/* Process stats */
 		for (i = 0; i < A_MAX; i++)
 		{
-			/* Variable stat maxes */
-			if (maximize_mode)
-			{
-				/* Reset stats */
-				p_ptr->stat_cur[i] = p_ptr->stat_max[i] = birth_ptr->stats[i];
-			}
-
-			/* Fixed stat maxes */
-			else
-			{
-				/* Obtain a "bonus" for "race" and "class" */
-				int bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
-
-				/* Apply the racial/class bonuses */
-				p_ptr->stat_cur[i] = p_ptr->stat_max[i] =
-					modify_stat_value(birth_ptr->stats[i], bonus);
-			}
+			/* Reset stats */
+			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = birth_ptr->stats[i];
 		}
 
 		/* Done */
@@ -909,27 +838,12 @@ static void get_stats(void)
 		/* Obtain a "bonus" for "race" and "class" */
 		bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
-		/* Variable stat maxes */
-		if (maximize_mode)
-		{
-			/* Start fully healed */
-			p_ptr->stat_cur[i] = p_ptr->stat_max[i];
+		/* Start fully healed */
+		p_ptr->stat_cur[i] = p_ptr->stat_max[i];
 
-			/* Efficiency -- Apply the racial/class bonuses */
-			birth_ptr->stat_use[i] = modify_stat_value(p_ptr->stat_max[i],
-				bonus);
-		}
-
-		/* Fixed stat maxes */
-		else
-		{
-			/* Apply the bonus to the stat (somewhat randomly) */
-			birth_ptr->stat_use[i] = adjust_stat(p_ptr->stat_max[i], bonus,
-				FALSE);
-
-			/* Save the resulting stat maximum */
-			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = birth_ptr->stat_use[i];
-		}
+		/* Efficiency -- Apply the racial/class bonuses */
+		birth_ptr->stat_use[i] = modify_stat_value(p_ptr->stat_max[i],
+			bonus);
 	}
 }
 
@@ -945,23 +859,10 @@ static void get_extra(void)
 #endif
 
 	/* Level one */
-	p_ptr->max_plv = p_ptr->lev = 1;
+	p_ptr->max_lev = p_ptr->lev = 1;
 
 	/* Experience factor */
 	p_ptr->expfact = rp_ptr->r_exp + cp_ptr->c_exp;
-
-	/* Initialize arena and rewards information -KMW- */
-	p_ptr->arena_number = 0;
-	p_ptr->inside_arena = 0;
-	p_ptr->inside_quest = 0;
-	p_ptr->leftbldg = FALSE;
-	p_ptr->exit_bldg = TRUE; /* only used for arena now -KMW- */
-
-	/* Reset rewards */
-	for (i = 0; i < MAX_BACT; i++)
-	{
-		p_ptr->rewards[i] = 0;
-	}
 
 	/* Hitdice */
 	p_ptr->hitdie = rp_ptr->r_mhp + cp_ptr->c_mhp;
@@ -978,7 +879,7 @@ static void get_extra(void)
 	max_value += PY_MAX_LEVEL;
 
 	/* Pre-calculate level 1 hitdice */
-	player_hp[0] = p_ptr->hitdie;
+	p_ptr->player_hp[0] = p_ptr->hitdie;
 
 	/* Roll out the hitpoints */
 	while (TRUE)
@@ -988,20 +889,20 @@ static void get_extra(void)
 		{
 			/* Add in racial hit dice */
 			j = randint(rp_ptr->r_mhp);
-			player_hp[i] = player_hp[i - 1] + j;
+			p_ptr->player_hp[i] = p_ptr->player_hp[i - 1] + j;
 
 			/* If class hit dice is non zero - add it on */
 			if (cp_ptr->c_mhp)
 			{
-				player_hp[i] += randint(cp_ptr->c_mhp);
+				p_ptr->player_hp[i] += randint(cp_ptr->c_mhp);
 			}
 		}
 
 		/* XXX Could also require acceptable "mid-level" hitpoints */
 
 		/* Require "valid" hitpoints at highest level */
-		if (player_hp[PY_MAX_LEVEL-1] < min_value) continue;
-		if (player_hp[PY_MAX_LEVEL-1] > max_value) continue;
+		if (p_ptr->player_hp[PY_MAX_LEVEL-1] < min_value) continue;
+		if (p_ptr->player_hp[PY_MAX_LEVEL-1] > max_value) continue;
 
 		/* Acceptable */
 		break;
@@ -1157,7 +1058,7 @@ static void get_history(void)
 
 
 	/* Clear the previous history strings */
-	for (i = 0; i < 4; i++) history[i][0] = '\0';
+	for (i = 0; i < 4; i++) p_ptr->history[i][0] = '\0';
 
 	/* Clear the history text */
 	buf[0] = '\0';
@@ -1375,7 +1276,7 @@ static void get_history(void)
 		if (n < 60)
 		{
 			/* Save one line of history */
-			strcpy(history[i++], s);
+			strcpy(p_ptr->history[i++], s);
 
 			/* All done */
 			break;
@@ -1392,7 +1293,7 @@ static void get_history(void)
 			s[--n] = '\0';
 
 		/* Save one line of history */
-		strcpy(history[i++], s);
+		strcpy(p_ptr->history[i++], s);
 
 		/* Start next line */
 		for (s = t; *s == ' '; s++) /* loop */ ;
@@ -1412,20 +1313,20 @@ static void get_ahw(void)
 	/* Calculate the height/weight for males */
 	if (p_ptr->psex == SEX_MALE)
 	{
-		p_ptr->ht = randnor(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
+		p_ptr->ht = Rand_normal(rp_ptr->m_b_ht, rp_ptr->m_m_ht);
 		h_percent = (int) (p_ptr->ht) * 100 / (int) (rp_ptr->m_b_ht);
 		p_ptr->wt =
-			randnor((int) (rp_ptr->m_b_wt) * h_percent / 100,
+			Rand_normal((int) (rp_ptr->m_b_wt) * h_percent / 100,
 			(int) (rp_ptr->m_m_wt) * h_percent / 300);
 	}
 	/* Calculate the height/weight for females */
 	else if (p_ptr->psex == SEX_FEMALE)
 	{
-		p_ptr->ht = randnor(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
+		p_ptr->ht = Rand_normal(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
 
 		h_percent = (int) (p_ptr->ht) * 100 / (int) (rp_ptr->f_b_ht);
 		p_ptr->wt =
-			randnor((int) (rp_ptr->f_b_wt) * h_percent / 100,
+			Rand_normal((int) (rp_ptr->f_b_wt) * h_percent / 100,
 			(int) (rp_ptr->f_m_wt) * h_percent / 300);
 	}
 }
@@ -1490,37 +1391,8 @@ static void player_wipe(void)
 	/* Wipe the player */
 	(void) WIPE(p_ptr, player_type);
 
-	/* Wipe the history */
-	for (i = 0; i < 4; i++)
-	{
-		strcpy(history[i], "");
-	}
-
-	/* Wipe the quests */
-	for (i = 0; i < max_quests; i++)
-	{
-		quest[i].status = QUEST_STATUS_UNTAKEN;
-
-		quest[i].cur_num = 0;
-		quest[i].max_num = 0;
-		quest[i].type = 0;
-		quest[i].level = 0;
-		quest[i].r_idx = 0;
-	}
-
-	/* No items */
-	inven_cnt = 0;
-	equip_cnt = 0;
-
-	/* Clear the inventory */
-	for (i = 0; i < INVEN_TOTAL; i++)
-	{
-		object_wipe(&inventory[i]);
-	}
-
-
 	/* Start with no artifacts made yet */
-	for (i = 0; i < max_a_idx; i++)
+	for (i = 0; i < z_info->a_max; i++)
 	{
 		artifact_type *a_ptr = &a_info[i];
 		a_ptr->cur_num = 0;
@@ -1530,7 +1402,7 @@ static void player_wipe(void)
 	k_info_reset();
 
 	/* Reset the "monsters" */
-	for (i = 1; i < max_r_idx; i++)
+	for (i = 1; i < z_info->r_max; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 
@@ -1551,13 +1423,9 @@ static void player_wipe(void)
 
 	/* Hack -- Well fed player */
 	p_ptr->food = PY_FOOD_FULL - 1;
-
-	/* Wipe the spells */
-	spell_learned1 = spell_learned2 = 0L;
-	spell_worked1 = spell_worked2 = 0L;
-	spell_forgotten1 = spell_forgotten2 = 0L;
-	for (i = 0; i < 64; i++)
-		spell_order[i] = 99;
+	
+	/* None of the spells have been learned yet */
+	for (i = 0; i < PY_MAX_SPELLS; i++) p_ptr->spell_order[i] = 99;
 
 	/* Clean the mutation count */
 	mutant_regenerate_mod = 100;
@@ -1569,20 +1437,9 @@ static void player_wipe(void)
 	cheat_xtra = FALSE;
 	cheat_know = FALSE;
 	cheat_live = FALSE;
-
-	/* Assume no winning game */
-	total_winner = FALSE;
-
-	/* Assume no panic save */
-	panic_save = 0;
-
-	/* Assume no cheating */
-	noscore = 0;
-
+	
 	/* Default pet command settings */
 	p_ptr->pet_follow_distance = PET_FOLLOW_DIST;
-	p_ptr->pet_open_doors = FALSE;
-	p_ptr->pet_pickup_items = FALSE;
 }
 
 /*
@@ -1678,12 +1535,7 @@ static void player_outfit(void)
 {
 	int i, tv, sv;
 
-	object_type forge;
 	object_type *q_ptr;
-
-
-	/* Get local object */
-	q_ptr = &forge;
 
 	/* Give the player some food */
 	switch (p_ptr->prace)
@@ -1695,13 +1547,13 @@ static void player_outfit(void)
 		case RACE_SPECTRE:
 			{
 				/* Scrolls of satisfy hunger */
-				object_prep(q_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
+				q_ptr = object_prep(lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
 				q_ptr->number = (byte) rand_range(2, 5);
 				object_aware(q_ptr);
 				object_known(q_ptr);
 
 				/* These objects are "storebought" */
-				q_ptr->ident |= IDENT_STOREB;
+				q_ptr->info |= OB_STOREB;
 
 				(void) inven_carry(q_ptr);
 
@@ -1710,7 +1562,7 @@ static void player_outfit(void)
 		default:
 			{
 				/* Food rations */
-				object_prep(q_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
+				q_ptr = object_prep(lookup_kind(TV_FOOD, SV_FOOD_RATION));
 				q_ptr->number = (byte) rand_range(3, 7);
 				object_aware(q_ptr);
 				object_known(q_ptr);
@@ -1718,13 +1570,10 @@ static void player_outfit(void)
 			}
 	}
 
-	/* Get local object */
-	q_ptr = &forge;
-
 	if (p_ptr->prace == RACE_VAMPIRE)
 	{
 		/* Hack -- Give the player scrolls of DARKNESS! */
-		object_prep(q_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_DARKNESS));
+		q_ptr = object_prep(lookup_kind(TV_SCROLL, SV_SCROLL_DARKNESS));
 
 		q_ptr->number = (byte) rand_range(2, 5);
 
@@ -1732,14 +1581,14 @@ static void player_outfit(void)
 		object_known(q_ptr);
 
 		/* These objects are "storebought" */
-		q_ptr->ident |= IDENT_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		(void) inven_carry(q_ptr);
 	}
 	else
 	{
 		/* Hack -- Give the player some torches */
-		object_prep(q_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
+		q_ptr = object_prep(lookup_kind(TV_LITE, SV_LITE_TORCH));
 		q_ptr->number = (byte) rand_range(3, 7);
 		q_ptr->pval = rand_range(3, 7) * 500;
 		object_aware(q_ptr);
@@ -1747,27 +1596,24 @@ static void player_outfit(void)
 		(void) inven_carry(q_ptr);
 	}
 
-	/* Get local object */
-	q_ptr = &forge;
-
 	if (p_ptr->pclass == CLASS_RANGER)
 	{
 		/* Hack -- Give the player some arrows */
-		object_prep(q_ptr, lookup_kind(TV_ARROW, SV_AMMO_NORMAL));
+		q_ptr = object_prep(lookup_kind(TV_ARROW, SV_AMMO_NORMAL));
 		q_ptr->number = (byte) rand_range(15, 20);
 
 		/* These objects are "storebought" */
-		q_ptr->ident |= IDENT_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
 		(void) inven_carry(q_ptr);
 
 		/* Hack -- Give the player some arrows */
-		object_prep(q_ptr, lookup_kind(TV_BOW, SV_SHORT_BOW));
+		q_ptr = object_prep(lookup_kind(TV_BOW, SV_SHORT_BOW));
 
 		/* These objects are "storebought" */
-		q_ptr->ident |= IDENT_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
@@ -1776,12 +1622,12 @@ static void player_outfit(void)
 	else if (p_ptr->pclass == CLASS_HIGH_MAGE)
 	{
 		/* Hack -- Give the player some arrows */
-		object_prep(q_ptr, lookup_kind(TV_WAND, SV_WAND_MAGIC_MISSILE));
+		q_ptr = object_prep(lookup_kind(TV_WAND, SV_WAND_MAGIC_MISSILE));
 		q_ptr->number = 1;
 		q_ptr->pval = (byte) rand_range(25, 30);
 
 		/* These objects are "storebought" */
-		q_ptr->ident |= IDENT_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
@@ -1806,21 +1652,11 @@ static void player_outfit(void)
 			/* Barbarians do not need a ring of resist fear */
 			sv = SV_RING_SUSTAIN_STR;
 
-		/* Get local object */
-		q_ptr = &forge;
-
 		/* Hack -- Give the player an object */
-		object_prep(q_ptr, lookup_kind(tv, sv));
-
-		/* Assassins begin the game with a poisoned dagger */
-		if (tv == TV_SWORD && p_ptr->pclass == CLASS_ROGUE &&
-			p_ptr->realm1 == REALM_DEATH) /* Only assassins get a poisoned weapon */
-		{
-			q_ptr->name2 = EGO_BRAND_POIS;
-		}
+		q_ptr = object_prep(lookup_kind(tv, sv));
 
 		/* These objects are "storebought" */
-		q_ptr->ident |= IDENT_STOREB;
+		q_ptr->info |= OB_STOREB;
 
 		object_aware(q_ptr);
 		object_known(q_ptr);
@@ -1836,8 +1672,6 @@ static void player_outfit(void)
  */
 void player_birth(void)
 {
-	int i, j;
-
 	validate_bg();
 
 	/* Set up the character creation display */
@@ -1853,108 +1687,14 @@ void player_birth(void)
 	}
 	
 	/* Note player birth in the message recall */
-	message_add(" ");
-	message_add("  ");
-	message_add("====================");
-	message_add("  ");
-	message_add(" ");
+	message_add(" ", MSG_GENERIC);
+	message_add("  ", MSG_GENERIC);
+	message_add("====================", MSG_GENERIC);
+	message_add("  ", MSG_GENERIC);
+	message_add(" ", MSG_GENERIC);
 
 	/* Hack -- outfit the player */
 	player_outfit();
-
-	/* Init the shops */
-	for (i = 1; i < max_towns; i++)
-	{
-		for (j = 0; j < MAX_STORES; j++)
-		{
-			/* Initialize */
-			store_init(i, j);
-		}
-	}
-}
-
-static void init_quests(int num_random)
-{
-	int i, j;
-	
-	/* Init the random quests */
-	init_flags = INIT_ASSIGN;
-	p_ptr->inside_quest = MIN_RANDOM_QUEST;
-	process_dungeon_file("q_info.txt", 0, 0, 0, 0);
-	p_ptr->inside_quest = 0;
-
-	/* Prepare allocation table */
-	get_mon_num_prep(monster_quest, NULL);
-
-	/* Generate quests */
-	for (i = MIN_RANDOM_QUEST + num_random - 1; i >= MIN_RANDOM_QUEST; i--)
-	{
-		quest_type *q_ptr = &quest[i];
-		monster_race *r_ptr;
-		monster_race *quest_r_ptr;
-		int r_idx;
-
-		q_ptr->status = QUEST_STATUS_TAKEN;
-
-		for (j = 0; j < MAX_TRIES; j++)
-		{
-			/*
-			 * Random monster 5 - 10 levels out of depth
-			 * (depending on level)
-			 */
-			r_idx =
-				get_mon_num(q_ptr->level + 4 + randint(q_ptr->level / 10));			r_ptr = &r_info[r_idx];
-
-			/* Save the index if the monster is deeper than out current monster */
-			if (!q_ptr->r_idx || (r_info[r_idx].level >
-					r_info[q_ptr->r_idx].level))
-			{
-				q_ptr->r_idx = r_idx;
-			}
-
-			/*
-			 * Accept monsters that are 2 - 6 levels
-			 * out of depth depending on the quest level
-			 */
-			if (r_ptr->level > (q_ptr->level + (q_ptr->level / 20) + 1))
-				break;
-		}
-
-		quest_r_ptr = &r_info[q_ptr->r_idx];
-
-		/* Get the number of monsters */
-		if (quest_r_ptr->flags1 & RF1_UNIQUE)
-		{
-			/* Mark uniques */
-			quest_r_ptr->flags1 |= RF1_QUESTOR;
-
-			q_ptr->max_num = 1;
-		}
-		else if (quest_r_ptr->flags3 & RF3_UNIQUE_7)
-		{
-			/* Mark uniques */
-			quest_r_ptr->flags1 |= RF1_QUESTOR;
-
-			q_ptr->max_num = randint(quest_r_ptr->max_num);
-		}
-		else
-		{
-			q_ptr->max_num =
-				5 + (s16b) rand_int(q_ptr->level / 3 +
-				5) / quest_r_ptr->rarity;
-		}
-	}
-
-	/* Init the two main quests (Oberon + Serpent) */
-	init_flags = INIT_ASSIGN;
-	p_ptr->inside_quest = QUEST_OBERON;
-	process_dungeon_file("q_info.txt", 0, 0, 0, 0);
-	quest[QUEST_OBERON].status = QUEST_STATUS_TAKEN;
-
-	p_ptr->inside_quest = QUEST_SERPENT;
-	process_dungeon_file("q_info.txt", 0, 0, 0, 0);
-	quest[QUEST_SERPENT].status = QUEST_STATUS_TAKEN;
-	p_ptr->inside_quest = 0;
 }
 
 
@@ -2012,7 +1752,7 @@ static int birth_stage(int stage)
  * (birth) stat current $stat
  * (birth) stat max $stat
  */
-int
+static int
 objcmd_birth_stat(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -2020,10 +1760,13 @@ objcmd_birth_stat(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
-	static char *cmdOptions[] = {"bonus", "current", "max", NULL};
+	static cptr cmdOptions[] = {"bonus", "current", "max", NULL};
 	enum {IDX_BONUS, IDX_CURRENT, IDX_MAX} option;
 
 	int stat;
+
+	/* Hack - ignore parameters */
+	(void) objc;
 
 	/* Check the stage */
 	if (birth_stage(BIRTH_GENERATE) != TCL_OK)
@@ -2031,14 +1774,14 @@ objcmd_birth_stat(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 		return TCL_ERROR;
 	}
 
-    if (Tcl_GetIndexFromObj(interp, objV[1], cmdOptions, "option", 0, 
+    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) cmdOptions, (char *) "option", 0, 
 		(int *) &option) != TCL_OK)
 	{
 		return TCL_ERROR;
     }
 
     if (Tcl_GetIndexFromObj(interp, objV[2], (char **) keyword_stat,
-    	"stat", 0, &stat) != TCL_OK)
+    	(char *) "stat", 0, &stat) != TCL_OK)
     {
     	return TCL_ERROR;
     }
@@ -2088,13 +1831,16 @@ objcmd_birth_stat(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 /*
  * (birth) class $class
  */
-int
+static int
 objcmd_birth_class(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	int class;
+	
+	/* Ignore parameters */
+	(void) objc;
 
 	/* Check the stage */
 	if (birth_stage(BIRTH_CLASS) != TCL_OK)
@@ -2103,7 +1849,7 @@ objcmd_birth_class(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj 
 	}
 
     if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_class,
-    	"class", 0, &class) != TCL_OK)
+    	(char *) "class", 0, &class) != TCL_OK)
     {
     	return TCL_ERROR;
     }
@@ -2121,9 +1867,14 @@ objcmd_birth_class(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj 
 /*
  * (birth) done
  */
-int
+static int
 objcmd_birth_done(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
+	/* Ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) clientData;
+
 	/* Check the stage */
 	if (birth_stage(BIRTH_GENERATE) != TCL_OK)
 	{
@@ -2134,14 +1885,14 @@ objcmd_birth_done(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 	{
 		/* Set the error */
 		Tcl_SetResult(interp,
-			"character has not been generated yet", TCL_STATIC);
+			(char *) "character has not been generated yet", TCL_STATIC);
 
 		/* Failure */
 		return TCL_ERROR;
 	}
 
 	/* Initialize the quests */
-	init_quests(birth_ptr->max_quest);
+	get_player_quests(birth_ptr->max_quest);
 
 	/* Verify name? */
 
@@ -2154,9 +1905,15 @@ objcmd_birth_done(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 /*
  * (birth) done_options
  */
-int
+static int
 objcmd_birth_done_options(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) interp;
+	(void) clientData;
+
 	/* Check the stage */
 	if (birth_stage(BIRTH_GENERATE) != TCL_OK)
 	{
@@ -2169,13 +1926,16 @@ objcmd_birth_done_options(ClientData clientData, Tcl_Interp *interp, int objc, T
 /*
  * (birth) gender $gender
  */
-int
+static int
 objcmd_birth_gender(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	int gender;
+	
+	/* Hack - ignore parameters */
+	(void) objc;
 
 	/* Check the stage */
 	if (birth_stage(BIRTH_GENDER) != TCL_OK)
@@ -2184,7 +1944,7 @@ objcmd_birth_gender(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 	}
 
 	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_gender,
-		"gender", 0, &gender) != TCL_OK)
+		(char *) "gender", 0, &gender) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -2201,9 +1961,15 @@ objcmd_birth_gender(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 /*
  * (birth) get_player
  */
-int
+static int
 objcmd_birth_get_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) interp;
+	(void) clientData;
+
 	/* Check the stage */
 	if (birth_stage(BIRTH_GENERATE) != TCL_OK)
 	{
@@ -2254,9 +2020,15 @@ objcmd_birth_get_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 /*
  * (birth) get_stats
  */
-int
+static int
 objcmd_birth_get_stats(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) interp;
+	(void) clientData;
+
 	/* Check the stage */
 	if (birth_stage(BIRTH_GENERATE) != TCL_OK)
 	{
@@ -2272,7 +2044,7 @@ objcmd_birth_get_stats(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_
 /*
  * (birth) info $option
  */
-int
+static int
 objcmd_birth_info(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -2280,14 +2052,17 @@ objcmd_birth_info(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
-	static char *infoName[] = {"has_prev", "stat_limit",
+	static cptr infoName[] = {"has_prev", "stat_limit",
 		"realm_name", "max_quest", NULL};
 	int option;
+	
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Initialize if needed */
 	birth_init();
 
-	if (Tcl_GetIndexFromObj(interp, objV[1], infoName, "option", 0,
+	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) infoName, (char *) "option", 0,
 		&option) != TCL_OK)
 	{
 		return TCL_ERROR;
@@ -2318,8 +2093,7 @@ objcmd_birth_info(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 		}
 			
 		case 3: /* max_quest */
-			Tcl_SetIntObj(resultPtr, MAX_RANDOM_QUEST -
-				MIN_RANDOM_QUEST + 1);
+			Tcl_SetIntObj(resultPtr, 50);
 			break;
 	}
 
@@ -2329,13 +2103,16 @@ objcmd_birth_info(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 /*
  * (birth) name $name
  */
-int
+static int
 objcmd_birth_name(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	char *p, *s;
+	
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Initialize if needed */
 	birth_init();
@@ -2378,7 +2155,7 @@ objcmd_birth_name(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 /*
  * (birth) option $option ?$value?
  */
-int
+static int
 objcmd_birth_option(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -2388,13 +2165,13 @@ objcmd_birth_option(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
-	static char *optionName[] = { "max_quest", NULL};
+	static cptr optionName[] = { "max_quest", NULL};
 	int option;
 
 	/* Initialize if needed */
 	birth_init();
 
-    if (Tcl_GetIndexFromObj(interp, objV[1], optionName, "option",
+    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) optionName, (char *) "option",
     	0, &option) != TCL_OK)
     {
     	return TCL_ERROR;
@@ -2405,7 +2182,10 @@ objcmd_birth_option(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 		case 0: /* max_quest */
 		{
 			int i;
-			ASSERT_OPTION(optionName, option, "max_quest");
+			
+			/* Make sure the option matches */
+			if (strcmp(optionName[option], "max_quest")) return TCL_ERROR;
+			
 			if (objC == 2)
 			{
 				Tcl_SetBooleanObj(resultPtr, birth_ptr->max_quest);
@@ -2413,12 +2193,11 @@ objcmd_birth_option(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 			}
 		    if (Tcl_GetIntFromObj(interp, objv[3], &i) != TCL_OK)
 		    	return TCL_ERROR;
-			if ((i < 0) || (i > MAX_RANDOM_QUEST - MIN_RANDOM_QUEST + 1))
+			if ((i < 0) || (i > 50))
 			{
 				/* Set the error */
 				Tcl_SetStringObj(resultPtr,
-					format("max_quest must be between 0 and %d",
-					MAX_RANDOM_QUEST - MIN_RANDOM_QUEST + 1), -1);
+					format("max_quest must be between 0 and %d", 50), -1);
 
 				/* Failure */
 				return TCL_ERROR;
@@ -2439,9 +2218,14 @@ objcmd_birth_option(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 /*
  * (birth) load_prev
  */
-int
+static int
 objcmd_birth_load_prev(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) clientData;
+	
 	/* Check the stage */
 	if (birth_stage(BIRTH_GENERATE) != TCL_OK)
 	{
@@ -2452,7 +2236,7 @@ objcmd_birth_load_prev(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_
 	if (!birth_ptr->has_prev)
 	{
 		/* Set the error */
-		Tcl_SetResult(interp, "no previous roll exists", TCL_STATIC);
+		Tcl_SetResult(interp, (char *) "no previous roll exists", TCL_STATIC);
 
 		/* Failure */
 		return TCL_ERROR;
@@ -2479,7 +2263,7 @@ objcmd_birth_load_prev(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_
 /*
  * (birth points) cost $stat
  */
-int
+static int
 objcmd_birth_points_cost(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -2488,6 +2272,9 @@ objcmd_birth_points_cost(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	Tcl_Obj *resultPtr = Tcl_GetObjResult(interp);
 
 	int stat;
+	
+	/* Hack - ignore parameters */
+	(void) objc;
 
 	/* Check the stage */
 	if (birth_stage(BIRTH_GENERATE) != TCL_OK)
@@ -2497,13 +2284,13 @@ objcmd_birth_points_cost(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 
 	if (!point_based)
 	{
-		Tcl_SetResult(interp, "not using point-based generation", TCL_STATIC);
+		Tcl_SetResult(interp, (char *) "not using point-based generation", TCL_STATIC);
 		return TCL_ERROR;
 	}
 
 	/* Get the stat */
 	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_stat,
-		"stat", 0, &stat) != TCL_OK)
+		(char *) "stat", 0, &stat) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -2517,7 +2304,7 @@ objcmd_birth_points_cost(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 /*
  * (birth points) stat $stat ?$value?
  */
-int
+static int
 objcmd_birth_points_stat(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
@@ -2536,13 +2323,13 @@ objcmd_birth_points_stat(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 
 	if (!point_based)
 	{
-		Tcl_SetResult(interp, "not using point-based generation", TCL_STATIC);
+		Tcl_SetResult(interp, (char *) "not using point-based generation", TCL_STATIC);
 		return TCL_ERROR;
 	}
 
 	/* Get the stat */
 	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_stat,
-		"stat", 0, &stat) != TCL_OK)
+		(char *) "stat", 0, &stat) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -2579,38 +2366,20 @@ objcmd_birth_points_stat(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		/* Restrict cost */
 		if (cost > 48)
 		{
-			Tcl_SetResult(interp, "stat cost is too high", TCL_STATIC);
+			Tcl_SetResult(interp, (char *) "stat cost is too high", TCL_STATIC);
 			return TCL_ERROR;
 		}
 
 		/* Save the new value */
 		birth_ptr->stats[stat] = value;
 
-		/* Variable stat maxes */
-		if (maximize_mode)
-		{
-			/* Reset stats */
-			p_ptr->stat_cur[stat] = p_ptr->stat_max[stat] =
-				birth_ptr->stats[stat];
+		/* Reset stats */
+		p_ptr->stat_cur[stat] = p_ptr->stat_max[stat] =
+			birth_ptr->stats[stat];
 
-/* "birth stat current" wants it */
-birth_ptr->stat_use[stat] = modify_stat_value(birth_ptr->stats[stat],
-	rp_ptr->r_adj[stat] + cp_ptr->c_adj[stat]);
-		}
-
-		/* Fixed stat maxes */
-		else
-		{
-			/* Obtain a "bonus" for "race" and "class" */
-			int bonus = rp_ptr->r_adj[stat] + cp_ptr->c_adj[stat];
-
-			/* Apply the racial/class bonuses */
-			p_ptr->stat_cur[stat] = p_ptr->stat_max[stat] =
-				modify_stat_value(birth_ptr->stats[stat], bonus);
-
-/* "birth stat current" wants it */
-birth_ptr->stat_use[stat] = p_ptr->stat_cur[stat];
-		}
+		/* "birth stat current" wants it */
+		birth_ptr->stat_use[stat] = modify_stat_value(birth_ptr->stats[stat],
+			rp_ptr->r_adj[stat] + cp_ptr->c_adj[stat]);
 
 		return TCL_OK;
 	}
@@ -2624,13 +2393,16 @@ birth_ptr->stat_use[stat] = p_ptr->stat_cur[stat];
 /*
  * (birth) race $race
  */
-int
+static int
 objcmd_birth_race(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	int race;
+	
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Check the stage */
 	if (birth_stage(BIRTH_RACE) != TCL_OK)
@@ -2639,7 +2411,7 @@ objcmd_birth_race(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 	}
 
 	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_race,
-		"race", 0, &race) != TCL_OK)
+		(char *) "race", 0, &race) != TCL_OK)
 	{
 		return TCL_ERROR;
 	}
@@ -2662,9 +2434,15 @@ objcmd_birth_race(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 /*
  * (birth) reset
  */
-int
+static int
 objcmd_birth_reset(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) clientData;
+	(void) interp;
+
 	/* Initialize if needed */
 	birth_init();
 
@@ -2684,9 +2462,14 @@ objcmd_birth_reset(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj 
 /*
  * (birth) save_prev
  */
-int
+static int
 objcmd_birth_save_prev(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
+	/* Hack - ignore parameters */
+	(void) objc;
+	(void) objv;
+	(void) clientData;
+
 	/* Check the stage */
 	if (birth_stage(BIRTH_GENERATE) != TCL_OK)
 	{
@@ -2698,7 +2481,7 @@ objcmd_birth_save_prev(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_
 	{
 		/* Set the error */
 		Tcl_SetResult(interp,
-			"character has not been generated yet", TCL_STATIC);
+			(char *) "character has not been generated yet", TCL_STATIC);
 
 		/* Failure */
 		return TCL_ERROR;
@@ -2717,14 +2500,16 @@ objcmd_birth_save_prev(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_
 /*
  * (birth) realm1 $realm
  */
-int
+static int
 objcmd_birth_realm1(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
-/*	int objC = objc - infoCmd->depth; */
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	int j, n, realm, realms[MAX_REALM + 1];
+	
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Check the stage */
 	if (birth_stage(BIRTH_REALM_1) != TCL_OK)
@@ -2740,8 +2525,8 @@ objcmd_birth_realm1(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 	 * this single so-called choice.
 	 */
 
-	if (Tcl_GetIndexFromObj(interp, objV[1], birth_ptr->realm_name,
-		"realm", 0, &realm) != TCL_OK)
+	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) birth_ptr->realm_name,
+		(char *) "realm", 0, &realm) != TCL_OK)
     {
     	return TCL_ERROR;
     }
@@ -2772,14 +2557,17 @@ objcmd_birth_realm1(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 /*
  * (birth) realm2 $realm
  */
-int
+static int
 objcmd_birth_realm2(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	CommandInfo *infoCmd = (CommandInfo *) clientData;
-/*	int objC = objc - infoCmd->depth; */
+
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	int j, n, realm, realms[MAX_REALM + 1];
+
+	/* Hack - ignore parameter */
+	(void) objc;
 
 	/* Check the stage */
 	if (birth_stage(BIRTH_REALM_2) != TCL_OK)
@@ -2787,8 +2575,8 @@ objcmd_birth_realm2(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 		return TCL_ERROR;
 	}
 
-	if (Tcl_GetIndexFromObj(interp, objV[1], birth_ptr->realm_name,
-		"realm", 0, &realm) != TCL_OK)
+	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) birth_ptr->realm_name,
+		(char *) "realm", 0, &realm) != TCL_OK)
     {
     	return TCL_ERROR;
     }
