@@ -70,6 +70,10 @@ clean:
    -@if exist *.exe del *.exe >nul
    -@if exist *.res del *.res >nul
    -@if exist *.tds del *.tds >nul
+   -@if exist *.ilc del *.ilc >nul
+   -@if exist *.ild del *.ild >nul
+   -@if exist *.ilf del *.ilf >nul
+   -@if exist *.ils del *.ils >nul
 
 install: $(EXE_FILE)
 	copy $(EXE_FILE) ..
