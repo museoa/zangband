@@ -745,6 +745,9 @@ void notice_lite_change(object_type *o_ptr)
 	{
 		disturb(FALSE);
 		msg_print("Your light has gone out!");
+		
+		/* Calculate torch radius */
+		p_ptr->update |= (PU_TORCH);
 	}
 
 	/* The light is getting dim */
@@ -1659,30 +1662,46 @@ static void process_world(void)
 		/* Recharge activatable objects */
 		if (o_ptr->timeout > 0)
 		{
-			/* Hack lights with the LITE flag are everburning */
-			if (!((o_ptr->flags3 & TR3_LITE) && (o_ptr->tval == TV_LITE)))
-			{
-				/* Recharge */
-				o_ptr->timeout--;
-			}
-
 			/* Lights are special */
 			if (o_ptr->tval == TV_LITE)
 			{
-				/* Notice interesting fuel steps */
-				notice_lite_change(o_ptr);
-
-				/* Calculate torch radius */
-				p_ptr->update |= (PU_TORCH);
+				/* Artifact lights decrease timeout */
+				if (o_ptr->flags3 & TR3_INSTA_ART)
+				{
+					/* Recharge */
+					o_ptr->timeout--;
+					
+					if (!o_ptr->timeout)
+					{
+						recharged_notice(o_ptr);
+	
+						/* Window stuff */
+						p_ptr->window |= (PW_EQUIP);
+					}
+				}
+				else if (!(o_ptr->flags3 & TR3_LITE))
+				{
+					/* Normal lights that are not everburning */
+					o_ptr->timeout--;
+					
+					/* Notice interesting fuel steps */
+					notice_lite_change(o_ptr);
+				}
 			}
 
 			/* Notice changes */
-			else if (!o_ptr->timeout)
+			else 
 			{
-				recharged_notice(o_ptr);
+				/* Recharge */
+				o_ptr->timeout--;
+				
+				if (!o_ptr->timeout)
+				{
+					recharged_notice(o_ptr);
 
-				/* Window stuff */
-				p_ptr->window |= (PW_EQUIP);
+					/* Window stuff */
+					p_ptr->window |= (PW_EQUIP);
+				}
 			}
 		}
 	}
