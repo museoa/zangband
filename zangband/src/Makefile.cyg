@@ -10,10 +10,10 @@
 
 
 #
-# File locations - change these as appropriate
+# Cygwin install directory - change as appropriate
 #
-CYGDIR	=	c:/Programme/cygnus/cygwin-b20/h-i586-cygwin32
-TGTDIR = C:/ZAngband/
+CYGDIR	=	c:/cygnus/cygwin-b20/h-i586-cygwin32
+
 
 #
 # Standard defines
@@ -180,7 +180,7 @@ install:	zangband movebin cleanobjs
 #		del zangband.exe
 
 movebin:
-		mv -f zangband.exe $(TGTDIR)/zangband.exe
+		mv -f zangband.exe ../zangband.exe
 
 cleanobjs:
 		rm -f $(EXOBJS)
