@@ -3720,17 +3720,17 @@ void update_stuff(void)
 
 	/* Character is in "icky" mode, no screen updates */
 	if (character_icky) return;
-
-	if (p_ptr->update & (PU_MON_LITE))
-	{
-		p_ptr->update &= ~(PU_MON_LITE);
-		update_mon_lite();
-	}
 	
 	if (p_ptr->update & (PU_VIEW))
 	{
 		p_ptr->update &= ~(PU_VIEW);		
 		update_view();
+	}
+	
+	if (p_ptr->update & (PU_MON_LITE))
+	{
+		p_ptr->update &= ~(PU_MON_LITE);
+		update_mon_lite();
 	}
 
 	if (p_ptr->update & (PU_FLOW))
