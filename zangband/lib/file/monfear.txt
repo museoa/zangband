@@ -338,7 +338,11 @@ howls with pain and fear.
 #N:799:Caine, the Conspirator
 #N:807:Gerard, Strongman of Amber
 #N:813:Eric the Usurper
-#N:820:Corwin, Lord of Avalon
+
+N:820:Corwin, Lord of Avalon
+1
+says, 'Let's play fair, like the Olympic Games!"
+
 #N:824:Benedict, the Ideal Warrior
 
 N:825:The Witch-King of Angmar
