@@ -3671,8 +3671,6 @@ void clear_mon_lite(void)
 }
 
 
-
-
 /*
  * Hack -- provide some "speed" for the "flow" code
  * This entry is the "current index" for the "when" field
