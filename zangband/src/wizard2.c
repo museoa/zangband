@@ -535,12 +535,14 @@ static tval_desc tvals[] =
 	{ TV_CHAOS_BOOK,        "Chaos Spellbook"      },
 	{ TV_DEATH_BOOK,        "Death Spellbook"      },
 	{ TV_TRUMP_BOOK,        "Trump Spellbook"      },
-	{ TV_ARCANE_BOOK,       "Arcane Spellbook",    },
+	{ TV_ARCANE_BOOK,       "Arcane Spellbook"     },
 	{ TV_SPIKE,             "Spikes"               },
 	{ TV_DIGGING,           "Digger"               },
 	{ TV_CHEST,             "Chest"                },
 	{ TV_FOOD,              "Food"                 },
 	{ TV_FLASK,             "Flask"                },
+	{ TV_JUNK,              "Junk"                 },
+	{ TV_SKELETON,          "Skeleton"             },
 	{ 0,                    NULL                   }
 };
 
@@ -638,9 +640,6 @@ static int wiz_create_itemtype(void)
 		/* Analyze matching items */
 		if (k_ptr->tval == tval)
 		{
-			/* Hack -- Skip instant artifacts */
-			if (k_ptr->flags3 & (TR3_INSTA_ART)) continue;
-
 			/* Prepare it */
 			row = 2 + (num % 20);
 			col = 30 * (num / 20);
@@ -746,8 +745,15 @@ static void wiz_reroll_item(object_type *o_ptr)
 		wiz_display_item(q_ptr);
 
 		/* Ask wizard what to do. */
-		if (!get_com("[a]ccept, [n]ormal, [g]ood, [e]xcellent? ", &ch))
+		if (!get_com("[a]ccept, [n]ormal, [g]ood, [e]xcellent, [s]pecial? ", &ch))
 		{
+			/* Preserve wizard-generated artifacts */
+			if (artifact_p(q_ptr))
+			{
+				a_info[q_ptr->name1].cur_num = 0;
+				q_ptr->name1 = 0;
+			}
+			
 			changed = FALSE;
 			break;
 		}
@@ -759,25 +765,42 @@ static void wiz_reroll_item(object_type *o_ptr)
 			break;
 		}
 
+		/* Preserve wizard-generated artifacts */
+		if (artifact_p(q_ptr))
+		{
+			a_info[q_ptr->name1].cur_num = 0;
+			q_ptr->name1 = 0;
+		}
+
 		/* Apply normal magic, but first clear object */
-		else if (ch == 'n' || ch == 'N')
+		if (ch == 'n' || ch == 'N')
 		{
 			object_prep(q_ptr, o_ptr->k_idx);
 			apply_magic(q_ptr, dun_level, FALSE, FALSE, FALSE);
 		}
 
 		/* Apply good magic, but first clear object */
-		else if (ch == 'g' || ch == 'g')
+		else if (ch == 'g' || ch == 'G')
 		{
 			object_prep(q_ptr, o_ptr->k_idx);
 			apply_magic(q_ptr, dun_level, FALSE, TRUE, FALSE);
 		}
 
 		/* Apply great magic, but first clear object */
-		else if (ch == 'e' || ch == 'e')
+		else if (ch == 'e' || ch == 'E')
 		{
 			object_prep(q_ptr, o_ptr->k_idx);
 			apply_magic(q_ptr, dun_level, FALSE, TRUE, TRUE);
+		}
+
+		/* Apply special magic, but first clear object */
+		else if (ch == 's' || ch == 'S')
+		{
+			object_prep(q_ptr, o_ptr->k_idx);
+			apply_magic(q_ptr, dun_level, TRUE, TRUE, TRUE);
+
+			/* Failed to create normal artifact; make a random one */
+			if (!artifact_p(q_ptr)) create_artifact(q_ptr, FALSE);
 		}
 	}
 
@@ -1170,8 +1193,32 @@ static void wiz_create_item(void)
 	/* Create the item */
 	object_prep(q_ptr, k_idx);
 
-	/* Apply magic (no messages, no artifacts) */
-	apply_magic(q_ptr, dun_level, FALSE, FALSE, FALSE);
+	if (k_info[k_idx].flags3 & TR3_INSTA_ART)
+	{
+		int i;
+
+		/* Artifactify */
+		for (i = 1; i < max_a_idx; i++)
+		{
+			/* Ignore incorrect tval */
+			if (a_info[i].tval != q_ptr->tval) continue;
+
+			/* Ignore incorrect sval */
+			if (a_info[i].sval != q_ptr->sval) continue;
+
+			/* Choose this artifact */
+			q_ptr->name1 = i;
+			break;
+		}
+
+		/* Apply magic */
+		apply_magic(q_ptr, -1, TRUE, TRUE, TRUE);
+	}
+	else
+	{
+		/* Apply magic */
+		apply_magic(q_ptr, dun_level, FALSE, FALSE, FALSE);
+	}
 
 #ifdef USE_SCRIPT
 	q_ptr->python = object_create_callback(q_ptr);
