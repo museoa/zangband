@@ -455,6 +455,33 @@ static void draw_general(int x0, int y0, store_type *st_ptr, int x, int y)
 
 			/* Clear previous contents, add down stairs */
 			cave[y0][x0].feat = FEAT_MORE;
+			
+			break;
+		}
+		
+		case BUILD_NONE:
+		{
+			int x1, y1, x2, y2;
+			
+			/* Determine the store boundaries */
+			y1 = y0 - randint1(3);
+			y2 = y0 + randint1(2);
+			x1 = x0 - randint1(3);
+			x2 = x0 + randint1(3);
+
+			/* Build an invulnerable rectangular building */
+			generate_fill(y1, x1, y2, x2, FEAT_PERM_EXTRA);
+			
+			/* No doors */
+		
+			break;
+		}
+		
+		case BUILD_BLANK:
+		{
+			/* Do Nothing */
+			
+			break;
 		}
 	}
 }

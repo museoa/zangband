@@ -45,6 +45,8 @@ bool build_is_general(byte type)
 	switch (type)
 	{
 		case BUILD_STAIRS:
+		case BUILD_NONE:
+		case BUILD_BLANK:
 		{
 			/* It is a general town feature */
 			return(TRUE);
