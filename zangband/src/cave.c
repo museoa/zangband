@@ -558,13 +558,15 @@ static void image_random(byte *ap, char *cp)
 }
 
 /* Are we using 16x16 tiles ? (Faster than streq("new") etc.)*/
-static bool new_graphics_on;
+static bool lighting_effects_on;
 
 /*
  * The 16x16 tile of the terrain supports lighting
  */
 static bool feat_supports_lighting(byte feat)
 {
+	if (!lighting_effects_on) return FALSE;
+	
 	if ((feat == FEAT_OPEN) ||
 	(feat == FEAT_BROKEN) ||
 	((feat >= FEAT_DOOR_HEAD) && (feat <= FEAT_DOOR_TAIL)) ||
@@ -783,7 +785,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	feat = f_info[feat].mimic;
 			
 	/* Hack - Non LOS blocking terrains */
-	if (cave_floor_grid(c_ptr))
+	if (cave_floor_grid(c_ptr) && lighting_effects_on)
 	{
 		/* Memorized (or visible) floor */
 		if   ((c_ptr->info & CAVE_MARK) ||
@@ -857,7 +859,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 				else if (!(c_ptr->info & CAVE_VIEW))
 				{
 					/* Special flag */
-					if (view_bright_lite && new_graphics_on)
+					if (view_bright_lite)
 					{
 						if (use_transparency && feat_supports_lighting(c_ptr->feat))
 						{
@@ -892,7 +894,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	else
 	{
 		/* Memorized grids */
-		if ((c_ptr->info & CAVE_MARK) && (view_granite_lite))
+		if ((c_ptr->info & CAVE_MARK) && (view_granite_lite && lighting_effects_on))
 		{
 			/* Access feature */
 			f_ptr = &f_info[feat];
@@ -938,7 +940,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 			}
 
 			/* Handle "view_bright_lite" */
-			else if (view_bright_lite && new_graphics_on && (!use_transparency || feat_supports_lighting(c_ptr->feat)))
+			else if (view_bright_lite && (!use_transparency || feat_supports_lighting(c_ptr->feat)))
 			{
 				/* Not viewable */
 				if (!(c_ptr->info & CAVE_VIEW))
@@ -1659,9 +1661,6 @@ void display_dungeon(void)
 	char tc;
 #endif /* USE_TRANSPARENCY */
 
-	/* Mega hack - set state of existance of Adom Bolts 16x16 graphics. */
-	new_graphics_on = (streq(ANGBAND_GRAF, "new"));
-
 	for (x = px - Term->wid / 2 + 1; x <= px + Term->wid / 2; x++)
 	{
 		for (y = py - Term->hgt / 2 + 1; y <= py + Term->hgt / 2; y++)
@@ -1781,6 +1780,15 @@ void prt_map(void)
 	/* Hide the cursor */
 	(void)Term_set_cursor(0);
 
+#ifdef USE_GRAPHICS	
+	/* hack - Adom Bolts 16x16 graphics has lighting effects. */
+	lighting_effects_on = streq(ANGBAND_GRAF, "new");
+#else
+	/* hack - ascii has lighting effects */
+	lighting_effects_on = TRUE;
+#endif /* GRAPHICS */
+
+	
 
 	/* Dump the map */
 	for (y = panel_row_min; y <= panel_row_max; y++)
