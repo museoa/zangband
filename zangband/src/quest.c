@@ -320,7 +320,7 @@ void get_player_quests(void)
 	/* Generate quests */
 	for (i = 0; i < v; i++)
 	{
-		level = (i * 97 + 48) / v;
+		level = (i * 96 + 48) / v  + 1;
 		
 		best_r_idx = 1;
 		best_level = 1;
