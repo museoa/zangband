@@ -4101,7 +4101,7 @@ extern int PlayerUID;
 #define FIELD_INFO_NO_MAGIC	0x0200  /* Grid blocks magic */
 #define FIELD_INFO_NO_OBJCT	0x0400  /* Grid cannot hold objects */
 #define FIELD_INFO_PERM		0x0800	/* Grid is not affected by disintegrate */
-#define FIELD_INFO_DUMMY11	0x1000
+#define FIELD_INFO_IGNORE	0x1000	/* Grid is below the object layer */
 #define FIELD_INFO_DUMMY12	0x2000
 #define FIELD_INFO_DUMMY13	0x4000
 #define FIELD_INFO_DUMMY14  0x8000

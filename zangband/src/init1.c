@@ -619,7 +619,7 @@ static cptr t_info_flags[] =
 	"NO_MAGIC",
 	"NO_OBJECT",
 	"PERM",
-	"XXX11",
+	"IGNORE",
 	"XXX12",
 	"XXX13",
 	"XXX14"

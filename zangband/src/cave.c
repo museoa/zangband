@@ -1255,6 +1255,17 @@ void map_info(int y, int x, byte *ap, char *cp)
 			}
 			else
 			{
+				/* Hack - no monochrome effects.  Add them later? */
+				
+				/* Do we need to look at objects? */
+				if (fld_ptr->info & (FIELD_INFO_IGNORE))
+				{
+					c = fld_ptr->f_char;
+					a = fld_ptr->f_attr;
+					break;
+				}
+				
+				
 				/* Above objects */
 
 				/* Normal char */
@@ -1262,8 +1273,6 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 				/* Normal attr */
 				(*ap) = fld_ptr->f_attr;
-
-				/* Hack - no monochrome effects.  Add them later? */
 
 				/* Done */
 				return;
