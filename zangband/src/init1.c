@@ -1517,7 +1517,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i < error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
+			if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
 
 			/* Verify information */
 			if (i >= a_head->info_num) return (PARSE_ERROR_OBSOLETE_FILE);
@@ -1812,7 +1812,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i < error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
+			if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
 
 			/* Verify information */
 			if (i >= e_head->info_num) return (PARSE_ERROR_OBSOLETE_FILE);
@@ -2176,7 +2176,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i < error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
+			if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
 
 			/* Verify information */
 			if (i >= r_head->info_num) return (PARSE_ERROR_OBSOLETE_FILE);
@@ -2535,7 +2535,7 @@ errr init_w_info_txt(FILE *fp, char *buf)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i < error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
+			if (i <= error_idx) return (PARSE_ERROR_NON_SEQUENTIAL_RECORDS);
 
 			/* Check to see if there is room in array */
 			if (i > max_w_block - 1) return (PARSE_ERROR_OUT_OF_MEMORY);
