@@ -39,14 +39,6 @@ N:19:Martti Ihrasaari
 yells, 'I'm a head of state!  You can't *do* this!'
 yells, 'Help! Psycho on the loose!'
 
-N:39:Topi Ylinen, the Cute, Furry Bunny
-5
-shouts, 'Stop, or I'll TY_CURSE you!'
-shouts, 'Hey look!  It's a Cyberdemon!'
-hops about frantically. 
-protests, 'I'm not evil!' 
-pleads, 'What would Zangband be like without me?'
-
 N:53:Grip, Farmer Maggot's dog
 N:54:Wolf, Farmer Maggot's dog
 N:55:Fang, Farmer Maggot's dog
@@ -377,6 +369,14 @@ shouts, 'Kill me if you want, the Boss will getcha!'
 N:862:The Serpent of Chaos
 1
 screams, 'This CAN'T be happening!'
+
+N:871:Topi Ylinen, the Cute, Furry Bunny
+5
+shouts, 'Stop, or I'll TY_CURSE you!'
+shouts, 'Hey look!  It's a Cyberdemon!'
+hops about frantically. 
+protests, 'I'm not evil!' 
+pleads, 'What would Zangband be like without me?'
 
 N:*:Default lines
 61

@@ -27,14 +27,14 @@
 #
 # Entries by Eric Bock, Matt Graham, Andrew Hill, Chris Kern, and Topi Ylinen
 
-N:39:Topi Ylinen, the Cute, Furry Bunny
-1
-'You're going to be *really* sorry!'
-
 N:53:Grip, Farmer Maggot's dog
 N:54:Wolf, Farmer Maggot's dog
 N:55:Fang, Farmer Maggot's dog
 0
+
+N:871:Topi Ylinen, the Cute, Furry Bunny
+1
+'You're going to be *really* sorry!'
 
 N:*:Default
 332
