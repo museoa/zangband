@@ -9,7 +9,7 @@ ZAngband 2.5.2:
 -Corpses now are dropped by monsters when they die.  These
  decay over time, and cannot be picked up.  Some monsters have spells
  that raise all corpses in LOS.
--Removed the bash command.  Use disarm to open stuck doors.
+-Removed the bash command.  Use the open command to open stuck doors.
 -Completely rewritten traps code.  The types of traps are now level
  dependent.  There are new types, and some old types are nastier.
 -Added a version of the big screen patch.
