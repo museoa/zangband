@@ -1934,12 +1934,6 @@ static void borg_parse(cptr msg)
 
 static void init_borg_txt_file(void)
 {
-	/*
-	 * Array of borg variables is stored as
-	 * 0 to k_max = items in inventory
-	 */
-	C_MAKE(borg_has, z_info->k_max, int);
-
 	/* Make sure we know who and what we are */
 	borg_class = p_ptr->rp.pclass;
 

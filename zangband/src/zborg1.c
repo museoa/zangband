@@ -53,9 +53,6 @@
 /* Dynamic borg stuff */
 bool borg_scums_uniques;
 
-int *borg_has;
-
-
 borg_player *bp_ptr;
 
 /*

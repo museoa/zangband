@@ -256,7 +256,7 @@ static void borg_think_shop_sell(int item, list_item *l_ptr)
 	borg_keypress(I2A(item));
 
 	/* Mega-Hack -- Accept the price */
-	borg_keypress('y');
+	borg_keypress('n');
 	borg_keypress('\r');
 	borg_keypress('\r');
 	borg_keypress('\r');
@@ -309,7 +309,7 @@ static void borg_think_shop_buy(int item)
 	borg_keypress(I2A(item % (STORE_INVEN_MAX / 2)));
 
 	/* Mega-Hack -- Accept the price */
-	borg_keypress('y');
+	borg_keypress('n');
 	borg_keypress('\r');
 	borg_keypress('\r');
 	borg_keypress('\r');

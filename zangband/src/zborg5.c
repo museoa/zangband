@@ -2944,8 +2944,6 @@ static s32b borg_power_aux3(void)
 	int cur_wgt = 0;
 	int max_wgt = 0;
 
-	int realm, book, k;
-
 	s32b value = 0L;
 
 	list_item *l_ptr;
@@ -3538,59 +3536,6 @@ static s32b borg_power_aux3(void)
 		}
 	}
 
-	/*** Hack -- books ***/
-
-	/* Reward books */
-	for (realm = 0; realm < MAX_REALM; realm++)
-	{
-		/* My realm only */
-		if (!borg_has_realm(realm)) continue;
-
-		for (book = 0; book < 4; book++)
-		{
-			/* No copies */
-			if (!amt_book[realm][book]) continue;
-
-			/* The "hard" books */
-			if (book >= 2)
-			{
-				/* Reward the book */
-				k = 0;
-				for (; k < 1 && k < amt_book[realm][book];
-					 k++) value += 300000L;
-			}
-
-			/* The "easy" books */
-			else
-			{
-				int what, when = 99;
-
-				/* Scan the spells */
-				for (what = 0; what < 9; what++)
-				{
-					borg_magic *as = &borg_magics[realm][book][what];
-
-					/* Track minimum level */
-					if (as->level < when) when = as->level;
-				}
-
-				/* Hack -- Ignore "difficult" normal books */
-				if ((when > 5) && (when >= bp_ptr->max_lev + 2)) continue;
-
-				/* Reward the book */
-				k = 0;
-				for (; k < 1 && k < amt_book[realm][book];
-					 k++) value += 500000L;
-				if (bp_ptr->max_depth > 5)
-					for (; k < 2 && k < amt_book[realm][book];
-						 k++) value += 10000L;
-				if (bp_ptr->max_depth > 50)
-					for (; k < 3 && k < amt_book[realm][book];
-						 k++) value += 2500L;
-			}
-		}
-	}
-
 	/* Reward for wielded artifacts with multiple high resists */
 	for (i = 0; i < equip_num; i++)
 	{
@@ -3861,16 +3806,16 @@ static s32b borg_power_aux4(void)
 	if (bp_ptr->max_depth >= 98)
 	{
 		/* Genocide scrolls */
-		value += 10000 * MIN(borg_has[207], 10);
-		value += 2000 * MIN_FLOOR(borg_has[207], 10, 25);
+		value += 10000 * MIN(bp_ptr->able.genocide, 10);
+		value += 2000 * MIN_FLOOR(bp_ptr->able.genocide, 10, 25);
 	
 		/* Mass Genocide scrolls */
-		value += 10000 * MIN(borg_has[200], 10);
-		value += 2000 * MIN_FLOOR(borg_has[200], 10, 25);
+		value += 10000 * MIN(bp_ptr->able.mass_genocide, 10);
+		value += 2000 * MIN_FLOOR(bp_ptr->able.mass_genocide, 10, 25);
 
 		/* Invulnerability Potions */
-		value += 10000 * MIN(borg_has[238], 15);
-		value += 2000 * MIN_FLOOR(borg_has[238], 15, 99);
+		value += 10000 * MIN(bp_ptr->able.invulnerability, 15);
+		value += 2000 * MIN_FLOOR(bp_ptr->able.invulnerability, 15, 99);
 	}
 
 	/* Reward speed potions/staves */
@@ -3975,50 +3920,33 @@ static s32b borg_power_aux4(void)
 			/* No copies */
 			if (!amt_book[realm][book]) continue;
 
-			/* The "hard" books */
-			if (book >= 2)
+			/* Can the borg use this book? */
+			if (borg_uses_book(realm, book))
 			{
-				/* Reward the book */
-				value += 300000 * MIN(amt_book[realm][book], 1);
-			}
-
-			/* The "easy" books */
-			else
-			{
-				int what, when = 99;
-
-				/* Scan the spells */
-				for (what = 0; what < 9; what++)
-				{
-					borg_magic *as = &borg_magics[realm][book][what];
-
-					/* Track minimum level */
-					if (as->level < when) when = as->level;
-				}
-
-				/* Hack -- Ignore "difficult" normal books */
-				if ((when > 5) && (when >= bp_ptr->max_lev + 2)) continue;
-
-				/* Reward the book */
+				/* Reward the first book */
 				value += 500000 * MIN(amt_book[realm][book], 1);
 
-				/* Higher level */
-				if (bp_ptr->lev > 10)
+				/* Is it a town book? */
+				if (book < 2 || realm == REALM_ARCANE)
 				{
-					/* Reward two books */
-					value += 10000 * MIN_FLOOR(amt_book[realm][book], 1, 2);
-				
-					/* Still higher level */
-					if (bp_ptr->lev > 40)
-					{
-						/* Reward three books */
-						value += 2500 * MIN_FLOOR(amt_book[realm][book], 2, 3);
-					}
+					/* Reward the second book */
+					if (bp_ptr->lev > 15)
+						value += 10000 * MIN_FLOOR(amt_book[realm][book], 1, 2);
+
+					/* Reward the third book */
+					if (bp_ptr->lev > 35)
+						value += 5000 * MIN_FLOOR(amt_book[realm][book], 2, 3);
 				}
+			}
+			/* This is a book the borg can not use yet */
+			else
+			{
+				/* Give it value to get it home */
+				value += 3000 * MIN(amt_book[realm][book], 1);
 			}
 		}
 	}
-
+ 
 	/* Hack -- Apply "encumbrance" from weight */
 	value -= bp_ptr->encumber * 500L;
 
@@ -4396,10 +4324,10 @@ static cptr borg_prepared_aux2(int depth)
 		if ((bp_ptr->msp > 100) && (bp_ptr->able.mana < 15)) return ("15ResMana");
 
 		/* must have lots of heal */
-		if (borg_has[242] < 15 &&
+		if (bp_ptr->able.heal < 15 &&
 			(borg_class == CLASS_MAGE ||
 			 borg_class == CLASS_PRIEST)) return ("15Heal");
-		else if (borg_has[242] < 25) return ("25Heal");
+		else if (bp_ptr->able.heal < 25) return ("25Heal");
 
 		/* must have lots of ez-heal */
 		if (bp_ptr->able.easy_heal < 15) return ("15EZHeal");

@@ -1611,15 +1611,46 @@ static void borg_dimension_door(void)
 	borg_keypress(' ');
 }
 
+/* Returns the mana cost of a spell, assuming that the borg can cast it */
+byte borg_spell_mana(int realm, int book, int spell)
+{
+	byte power;
+
+	/* basic cost of the spell */
+	power = borg_magics[realm][book][spell].power;
+
+	/* If this is a chaos spell and the borg has a chaos patron */
+	if (realm == REALM_CHAOS && FLAG(p_ptr, TR_PATRON))
+	{
+		/* Reduce the spell cost */
+		power = (2 * power + 2) / 3;
+	}
+
+	/* Tell the world */
+	return (power);
+}
+
+/* Combines the legality check with the cost */
+bool borg_mana_legal_fail(int realm, int book, int spell, int fail, byte *cost)
+{
+	/* Is this spell castable with the fail_check? */
+	if (!borg_spell_legal_fail(realm, book, spell, fail)) return (FALSE);
+
+	/* Find out the cost */
+	*cost = borg_spell_mana(realm, book, spell);
+
+	/* Success */
+	return (TRUE);
+}
+	
 
 /* This function returns the amount of reserve mana */
 int borg_reserve_mana(void)
 {
-	/* Don't bother with reserve mana if you are a lousy spell caster */
-	if (borg_class != CLASS_PRIEST &&
-		borg_class != CLASS_MAGE &&
-		borg_class != CLASS_HIGH_MAGE &&
-		borg_class != CLASS_MINDCRAFTER) return (0);
+	byte cost;
+
+	/* Don't bother with reserve mana if you can't have spells */
+	if (borg_class == CLASS_WARRIOR) return (0);
 
 	/* Low level spell casters should not worry about this */
 	if (bp_ptr->lev < 20) return (0);
@@ -1627,67 +1658,70 @@ int borg_reserve_mana(void)
 	/* Special case for Mindcrafters */
 	if (borg_class == CLASS_MINDCRAFTER)
 	{
+		/* This borg has dimension door */
+		if (bp_ptr->lev >= 40) return (3 * borg_minds[MIND_MINOR_DISP].power);
+
 		/* Telekinetic Wave */
-		if (bp_ptr->msp > 100) return (20);
+		if (bp_ptr->msp > 100) return (borg_minds[MIND_TELE_WAVE].power);
 
 		/* Two teleports */
-		if (bp_ptr->msp > 50) return (12);
+		if (bp_ptr->msp > 50) return (2 * borg_minds[MIND_MAJOR_DISP].power);
 
 		/* One teleport */
-		if (bp_ptr->msp > 12) return (6);
+		if (bp_ptr->msp > 12) return (borg_minds[MIND_MAJOR_DISP].power);
 
 		/* One phase door */
-		if (bp_ptr->msp > 4) return (2);
+		if (bp_ptr->msp > 4) return (borg_minds[MIND_MINOR_DISP].power);
+
+		/* Puny! */
+		return (0);
 	}
 
 	/*
-	 * Lump the rest of the classes together, to avoid a big amount of work.
-	 * Sometimes reserve_mana is off by some SP because of that.
-	 * amt_book is only non-zero if the borg belongs to that realm so there is
-	 * no need for realm checking here.
-	 * I created these values realm by realm.  Trump has low values, Arcane high
-	 * Unfortunately this has to be orderded by spell type and then descending
-	 * by reserve_mana because otherwise the reserve_mana could be smaller than
-	 * it should be.  So it looks like a big mess realmwise.
+	 * I created these values spell by spell.  If there are multiple realms
+	 * carrying a spell then Trump goes first and Arcane goes last as Trump
+	 * has low values and Arcane high
 	 * Teleport away is not listed because it is covered by the reserve for
 	 * teleport spells.
 	 */
 
+
 	/* Multiple Dimension Doors */
-	if (bp_ptr->msp > 50 && amt_book[REALM_TRUMP][0]) return (18);
-	if (bp_ptr->msp > 100 && amt_book[REALM_SORCERY][2]) return (30);
+	if (borg_mana_legal_fail(REALM_TRUMP, 0, 5, 5, &cost)) return (3 * cost);
+	if (borg_mana_legal_fail(REALM_SORCERY, 2, 3, 5, &cost)) return (3 * cost);
 
 	/* Dimension Door */
-	if (bp_ptr->msp > 18 && amt_book[REALM_TRUMP][0]) return (9);
-	if (bp_ptr->msp > 30 && amt_book[REALM_SORCERY][2]) return (15);
+	if (borg_mana_legal_fail(REALM_TRUMP, 0, 5, 15, &cost)) return (cost);
+	if (borg_mana_legal_fail(REALM_SORCERY, 2, 3, 15, &cost)) return (cost);
 
 	/* Teleport Level */
-	if (bp_ptr->msp > 100 && amt_book[REALM_CHAOS][2]) return (25);
-	if (bp_ptr->msp > 150 && amt_book[REALM_TRUMP][1]) return (35);
-	if (bp_ptr->msp > 100 && amt_book[REALM_ARCANE][3]) return (35);
+	if (borg_mana_legal_fail(REALM_TRUMP, 1, 5, 15, &cost)) return (cost);
+	if (borg_mana_legal_fail(REALM_ARCANE, 3, 1, 15, &cost)) return (cost);
 	
 	/* Mass teleport away */
-	if (bp_ptr->msp > 200 && amt_book[REALM_DEATH][3]) return (40);
-	if (bp_ptr->msp > 200 && amt_book[REALM_LIFE][2]) return (55);
-	if (bp_ptr->msp > 200 && amt_book[REALM_TRUMP][1]) return (40);
+	if (borg_mana_legal_fail(REALM_DEATH, 3, 4, 15, &cost)) return (cost);
+	if (borg_mana_legal_fail(REALM_LIFE, 2, 5, 15, &cost)) return (cost);
+	if (borg_mana_legal_fail(REALM_TRUMP, 1, 7, 15, &cost)) return (cost);
 
 	/* Multiple Teleports */
-	if (bp_ptr->msp > 35 && amt_book[REALM_SORCERY][0]) return (12);
-	if (bp_ptr->msp > 80 && amt_book[REALM_CHAOS][0]) return (18);
+	if (borg_mana_legal_fail(REALM_TRUMP, 0, 4, 5, &cost)) return (2 * cost);
+	if (borg_mana_legal_fail(REALM_SORCERY, 0, 5, 5, &cost)) return (2 * cost);
+	if (borg_mana_legal_fail(REALM_CHAOS, 1, 7, 5, &cost)) return (2 * cost);
+	if (borg_mana_legal_fail(REALM_ARCANE, 2, 3, 5, &cost)) return (2 * cost);
 
 	/* Teleport */
-	if (bp_ptr->msp > 12 && amt_book[REALM_SORCERY][0]) return (6);
-	if (bp_ptr->msp > 15 && amt_book[REALM_TRUMP][0]) return (7);
-	if (bp_ptr->msp > 20 && amt_book[REALM_CHAOS][0]) return (9);
-	if (bp_ptr->msp > 35 && amt_book[REALM_ARCANE][2]) return (15);
+	if (borg_mana_legal_fail(REALM_TRUMP, 0, 4, 15, &cost)) return (cost);
+	if (borg_mana_legal_fail(REALM_SORCERY, 0, 5, 15, &cost)) return (cost);
+	if (borg_mana_legal_fail(REALM_CHAOS, 1, 7, 15, &cost)) return (cost);
+	if (borg_mana_legal_fail(REALM_ARCANE, 2, 3, 15, &cost)) return (cost);
 
 	/* Stair Building */
-	if (bp_ptr->msp > 50 && amt_book[REALM_NATURE][3]) return (12);
+	if (borg_mana_legal_fail(REALM_NATURE, 2, 1, 15, &cost)) return (cost);
 
-	/* Do we have a book with Phase Door? */
-	if (bp_ptr->msp > 8 && amt_book[REALM_TRUMP][0]) return (2);
-	if (bp_ptr->msp > 7 && amt_book[REALM_SORCERY][0]) return (2);
-	if (bp_ptr->msp > 7 && amt_book[REALM_ARCANE][0]) return (2);
+	/* Phase Door? */
+	if (borg_mana_legal_fail(REALM_TRUMP, 0, 0, 15, &cost)) return (cost);
+	if (borg_mana_legal_fail(REALM_SORCERY, 0, 1, 15, &cost)) return (cost);
+	if (borg_mana_legal_fail(REALM_ARCANE, 0, 4, 15, &cost)) return (cost);
 
 	/* No spell available */
 	return (0);
@@ -1695,16 +1729,20 @@ int borg_reserve_mana(void)
 
 
 /*
- * This function determines if a given spell is allowed to be cast with
- * regards to reserve_mana
+ * This function determines if a given spell is allowed to be cast
+ * with regards to reserve_mana
  */
 static bool borg_reserve_allow(int realm, int book, int what)
 {
 	borg_magic *as = &borg_magics[realm][book][what];
 
 	/* Are you dipping into reserve mana? */
-	if (bp_ptr->csp - as->power >= borg_reserve_mana()) return (TRUE);
-		
+	if (bp_ptr->csp - borg_spell_mana(realm, book, what) >= borg_reserve_mana())
+	{
+		/* Plenty of mana so it is OK */
+		return (TRUE);
+	}
+
 	switch (realm)
 	{
 		case REALM_LIFE:
@@ -1834,7 +1872,7 @@ bool borg_spell_legal(int realm, int book, int what)
 	if (as->status < BORG_MAGIC_TEST) return (FALSE);
 
 	/* The spell must be affordable (when rested) */
-	if (as->power > bp_ptr->msp) return (FALSE);
+	if (borg_spell_mana(realm, book, what) > bp_ptr->msp) return (FALSE);
 
 	/* Not if locked down */
 	if (FLAG(bp_ptr, TR_NO_MAGIC)) return (FALSE);
@@ -1860,10 +1898,11 @@ bool borg_spell_okay(int realm, int book, int what)
 	if (!borg_spell_legal(realm, book, what)) return (FALSE);
 
 	/* Hack -- blind/confused */
-	if (bp_ptr->status.blind || bp_ptr->status.confused) return (FALSE);
+	if (bp_ptr->status.blind ||
+		bp_ptr->status.confused) return (FALSE);
 
 	/* The spell must be affordable (now) */
-	if (as->power > bp_ptr->csp) return (FALSE);
+	if (borg_spell_mana(realm, book, what) > bp_ptr->csp) return (FALSE);
 
 	/* Check if this spell uses reserve mana */
 	if (!borg_reserve_allow(realm, book, what)) return (FALSE);
@@ -1875,7 +1914,7 @@ bool borg_spell_okay(int realm, int book, int what)
 /*
  * fail rate on a spell
  */
-static int borg_spell_fail_rate(int realm, int book, int what)
+int borg_spell_fail_rate(int realm, int book, int what)
 {
 	int chance, minfail, stat, power;
 
@@ -1916,7 +1955,7 @@ static int borg_spell_fail_rate(int realm, int book, int what)
 	chance -= 3 * (adj_mag_stat[stat] - 1);
 
 	/* Collect the spell cost */
-	power = as->power;
+	power = borg_spell_mana(realm, book, what);
 
 	/* Failure rate goes up if there is not enough mana */
 	if (power > bp_ptr->csp) chance += 5 * (power - bp_ptr->csp);
@@ -2052,6 +2091,43 @@ bool borg_spell(int realm, int book, int what)
 	return (TRUE);
 }
 
+/* Determines if a book contains spells that can be reliably cast */
+bool borg_uses_book(int realm, int book)
+{
+	int spell, fail, b_fail = 100;
+	int real_mana;
+
+	/* Remember how much mana there was */
+	real_mana = bp_ptr->csp;
+
+	/* Use the max_mana to get the optimal fail_rate */
+	bp_ptr->csp = bp_ptr->msp;
+
+	/* Loop through the spells */
+	for (spell = 0; spell < 8; spell++)
+	{
+		/* get the fail_rate for this spell */
+		fail = borg_spell_fail_rate(realm, book, spell);
+
+		/* Collect the minimum fail_rate */
+		b_fail = MIN(b_fail, fail);
+	}
+
+	/* Restore the real amount of mana */
+	bp_ptr->csp = real_mana;
+
+	/* Does this book have easy spells? */
+	if (b_fail <= 40)
+	{
+		/* it is a usable book */
+		return (TRUE);
+	}
+
+	/* Only hard spells */
+	return (FALSE);
+}
+
+
 /*** Mindcrafter spells are much like realm spells ***/
 
 /* Determine if the borg can cast a given spell with regard to reserve_mana */
@@ -2123,7 +2199,7 @@ bool borg_mindcr_okay(int spell, int level)
 /*
  * fail rate on a mindcrafter spell
  */
-static int borg_mindcr_fail_rate(int spell, int level)
+int borg_mindcr_fail_rate(int spell, int level)
 {
 	int chance, minfail;
 	borg_mind *as = &borg_minds[spell];
@@ -2137,7 +2213,7 @@ static int borg_mindcr_fail_rate(int spell, int level)
 	/* Reduce failure rate by "effective" level adjustment */
 	chance -= 3 * (bp_ptr->lev - as->level);
 
-	/* Reduce failure rate by INT/WIS adjustment */
+	/* Reduce failure rate by WIS adjustment */
 	chance -= 3 * (adj_mag_stat[my_stat_ind[A_WIS]] - 1);
 
 	/* If there is not enough mana the fail rate plummets */

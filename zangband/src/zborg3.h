@@ -175,15 +175,19 @@ extern bool borg_activate_rand_art(int effect);
 extern bool borg_check_artifact(list_item *l_ptr, bool real_use);
 
 extern int borg_reserve_mana(void);
+extern byte borg_spell_mana(int realm, int book, int spell);
 extern bool borg_spell_legal(int realm, int book, int what);
 extern bool borg_spell_okay(int realm, int book, int what);
+extern int  borg_spell_fail_rate(int realm, int book, int what);
 extern bool borg_spell(int realm, int book, int what);
 extern bool borg_spell_fail(int realm, int book, int what, int allow_fail);
 extern bool borg_spell_okay_fail(int realm, int book, int what, int allow_fail);
 extern bool borg_spell_legal_fail(int realm, int book, int what,
 								  int allow_fail);
+extern bool borg_uses_book(int realm, int book);
 extern bool borg_mindcr_legal(int spell, int level);
 extern bool borg_mindcr_okay(int spell, int level);
+extern int  borg_mindcr_fail_rate(int spell, int level);
 extern bool borg_mindcr(int spell, int level);
 extern bool borg_mindcr_fail(int spell, int level, int allow_fail);
 extern bool borg_mindcr_okay_fail(int spell, int level, int allow_fail);

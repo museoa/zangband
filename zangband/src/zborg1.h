@@ -208,9 +208,6 @@ extern int successful_target;
 
 extern bool borg_scums_uniques;
 
-/* Borg has is intrinsically broken */
-extern int *borg_has;
-
 /*
  * Borg-abilities
  */
@@ -258,6 +255,9 @@ struct borg_ability
 	s16b poison;
 	s16b mana;
 	s16b logrus;
+	s16b genocide;
+	s16b mass_genocide;
+	s16b invulnerability;
 
 	s16b bolt;
 	s16b ball;

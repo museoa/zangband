@@ -1426,7 +1426,7 @@ static bool borg_dim_door(int emergency, int p1)
 
 
 /* Just in case the key changes again */
-static void borg_press_faint_accept(void)
+void borg_press_faint_accept(void)
 {
 	borg_keypress(' ');
 	borg_keypress('y');
@@ -4329,9 +4329,9 @@ static int borg_launch_damage_one(int i, int dam, int typ)
 
 			/* only use mana storm against uniques... this */
 			/* should cut down on some mana use. */
-			if (!borg_fighting_unique || borg_has[266] < 3)
+			if (!borg_fighting_unique || bp_ptr->able.mana < 3)
 				dam /= 2;
-			if (borg_fighting_unique && borg_has[266] > 7)
+			if (borg_fighting_unique && bp_ptr->able.mana > 7)
 				dam *= 2;
 			break;
 		}
@@ -7069,7 +7069,7 @@ static int borg_attack_mindcrafter_reserve(bool faint, int *b_spell)
 		if (faint && bp_ptr->lev >= 20) return (0);
 
 		/* Only big guys have reserve_mana */
-		if (!faint && bp_ptr->lev < 20) return (0);
+		if (!faint && !borg_reserve_mana()) return (0);
 
 		/* There can only be one monster closeby */
 		if (borg_bolt_n != 1) return (0);
@@ -7094,10 +7094,9 @@ static int borg_attack_mindcrafter_reserve(bool faint, int *b_spell)
 			/* If there is enough mana then keep trying */
 			if (!faint && bp_ptr->csp < as->power) continue;
 
-			/* If there is almost enough mana then keep trying */
+			/* Does the lack of mana bust the failrate? */
 			if (faint &&
-				(bp_ptr->csp + 5 <= as->power) &&
-				bp_ptr->csp >= as->power) continue;
+				borg_mindcr_fail_rate(spell, bp_ptr->lev) > fail_rate) continue;
 
 			/* Pretend there is enough mana */
 			bp_ptr->csp = bp_ptr->msp;
@@ -8486,7 +8485,7 @@ static int borg_attack_spell(int *b_slot, int *b_spell)
 				n = borg_spell_damage_monster(realm, book, spell);
 
 				/* Penalize mana usage */
-				n = n - as->power;
+				n = n - borg_spell_mana(realm, book, spell);
 
 				/* Compare with previous */
 				if (n <= b_n) continue;
@@ -8538,7 +8537,7 @@ static int borg_attack_spell_reserve(bool faint, int *b_slot, int *b_spell)
 	int b_x = 0, b_y = 0;
 
 	int fail_rate = (borg_fighting_unique ? 40 : 25);
-	int monster;
+	int power, monster;
 
 	/* Fake our Mana */
 	int sv_mana = bp_ptr->csp;
@@ -8558,13 +8557,7 @@ static int borg_attack_spell_reserve(bool faint, int *b_slot, int *b_spell)
 		if (faint && bp_ptr->lev >= 20) return (0);
 
 		/* Only big guys have reserve_mana */
-		if (!faint && bp_ptr->lev < 20) return (0);
-
-		/* This proc is useless for spellcasters with borg_reserve_mana = 0 */
-		if (!faint &&
-			borg_class != CLASS_PRIEST &&
-			borg_class != CLASS_MAGE &&
-			borg_class != CLASS_HIGH_MAGE) return (0);
+		if (!faint && !borg_reserve_mana()) return (0);
 
 		/* No firing while blind, confused, or hallucinating */
 		if (bp_ptr->status.blind ||
@@ -8606,15 +8599,19 @@ static int borg_attack_spell_reserve(bool faint, int *b_slot, int *b_spell)
 				if (as->level > bp_ptr->lev) continue;
 
 				/* Require inability (right now) */
-				if (borg_spell_okay_fail(realm, book, spell, fail_rate)) continue;
+				if (borg_spell_okay_fail(realm, book, spell, fail_rate))
+					continue;
+
+				/* Collect the mana for this spell */
+				power = borg_spell_mana(realm, book, spell);
 
 				/* If there is enough mana then keep trying */
-				if (!faint && bp_ptr->csp < as->power) continue;
+				if (!faint && bp_ptr->csp < power) continue;
 
-				/* If there is almost enough mana then keep trying */
+				/* Does the lack of mana bust the failrate? */
 				if (faint &&
-					(bp_ptr->csp + 5 <= as->power) &&
-					bp_ptr->csp >= as->power) continue;
+					borg_spell_fail_rate(realm, book, spell) > fail_rate)
+					continue;
 
 				/* Pretend there is enough mana  */
 				bp_ptr->csp = bp_ptr->msp;
@@ -11627,6 +11624,7 @@ enum
 	BP_PROT_FROM_EVIL,
 	BP_BLESS,
 	BP_TELEPATHY,
+	BP_SEE_INVIS,
 
 	BP_RESIST_ALL,
 	BP_RESIST_F,
@@ -11637,8 +11635,7 @@ enum
 
 	BP_GOI,
 	BP_SHIELD,
-	BP_HERO,
-	BP_BERSERK,
+	BP_HERO_BERSERK,
 	BP_BERSERK_POTION,
 
 	BP_GLYPH,
@@ -11653,41 +11650,44 @@ static int borg_perma_aux_bless(void)
 {
 	int fail_allowed = 5, cost;
 
-	borg_magic *as;
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
 
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
+		/* already blessed */
+		if (borg_bless) return (0);
 
-	/* already blessed */
-	if (borg_bless)
-		return (0);
+		/* Is the life prayer spell available? */
+		if (borg_spell_okay_fail(REALM_LIFE, 3, 1, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_LIFE, 3, 1);
+		}
+		/* Is the life bless spell available? */
+		else if (borg_spell_okay_fail(REALM_LIFE, 0, 2, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_LIFE, 0, 2);
+		}
+		else
+		{
+			/* No bless available */
+			return (0);
+		}
 
-	/* Cant when Blind */
-	if (bp_ptr->status.blind || bp_ptr->status.confused) return (0);
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
 
-	/* XXX Dark */
-
-	if (!borg_spell_okay_fail(REALM_LIFE, 3, 1, fail_allowed))
-		return (0);
-
-	/* Obtain the cost of the spell */
-	as = &borg_magics[REALM_LIFE][3][1];
-	cost = as->power;
-	/* If its cheap, go ahead */
-	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
-
-	/* Simulation */
-	/* bless is a low priority */
-	if (borg_simulate) return (1);
+		/* Simulation */
+		/* bless is a low priority */
+		return (1);
+	}
 
 	/* do it! */
-	if (borg_spell(REALM_LIFE, 3, 0))
-		return 1;
-
-
-	return (0);
+	return (borg_spell(REALM_LIFE, 3, 1) ||
+			borg_spell(REALM_LIFE, 0, 2));
 }
 
 /* all resists */
@@ -11695,42 +11695,34 @@ static int borg_perma_aux_resist(void)
 {
 	int cost = 0;
 	int fail_allowed = 5;
-	borg_magic *as;
 
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
 
-	if (my_oppose_fire + my_oppose_acid + my_oppose_pois +
-		my_oppose_elec + my_oppose_cold >= 3)
-		return (0);
+		if (my_oppose_fire + my_oppose_acid + my_oppose_pois +
+			my_oppose_elec + my_oppose_cold >= 3)
+			return (0);
 
-	/* Not needed if GOI is on */
-	if (borg_goi) return (0);
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
 
-	if (!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed))
-		return (0);
+		if (!borg_spell_okay_fail(REALM_NATURE, 2, 3, fail_allowed)) return (0);
 
-	/* Obtain the cost of the spell */
-	as = &borg_magics[REALM_NATURE][2][3];
-	cost = as->power;
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_NATURE, 2, 3);
 
-	/* If its cheap, go ahead */
-	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
 
-	/* Simulation */
-	if (borg_simulate) return (2);
+		/* Simulation */
+		return (2);
+	}
 
 	/* do it! */
-	if (borg_spell_fail(REALM_NATURE, 2, 3, fail_allowed))
-
-		/* Value */
-		return (2);
-
-
-	/* default to can't do it. */
-	return (0);
+	return (borg_spell(REALM_NATURE, 2, 3));
 }
 
 
@@ -11739,42 +11731,36 @@ static int borg_perma_aux_resist_f(void)
 {
 	int cost = 0;
 	int fail_allowed = 5;
-	borg_magic *as;
 
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
-
-	if (my_oppose_fire || !unique_on_level)
-		return (0);
-
-	if (FLAG(bp_ptr, TR_IM_FIRE)) return (0);
-
-	if (!borg_spell_okay_fail(REALM_ARCANE, 1, 6, fail_allowed))
-		return (0);
-
-	/* Not needed if GOI is on */
-	if (borg_goi) return (0);
-
-	/* Obtain the cost of the spell */
-	as = &borg_magics[REALM_ARCANE][1][6];
-	cost = as->power;
-
-	/* If its cheap, go ahead */
-	if (cost >= bp_ptr->csp / 20) return (0);
-
-	/* Simulation */
-	if (borg_simulate) return (1);
-
-	/* do it! */
-	if (borg_spell_fail(REALM_ARCANE, 1, 6, fail_allowed))
+	if (borg_simulate)
 	{
-		/* Value */
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		if (my_oppose_fire || !unique_on_level) return (0);
+
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
+
+		/* No need if the borg is immune to fire */
+		if (FLAG(bp_ptr, TR_IM_FIRE)) return (0);
+
+		/* Is the spell available? */
+		if (!borg_spell_okay_fail(REALM_ARCANE, 1, 6, fail_allowed)) return (0);
+
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_ARCANE, 1, 6);
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / 20) return (0);
+
+		/* Simulation */
 		return (1);
 	}
 
-	/* default to can't do it. */
-	return (0);
+	/* do it! */
+	return (borg_spell(REALM_ARCANE, 1, 6));
 }
 
 /* resists--- Only bother if a Unique is on the level.*/
@@ -11782,44 +11768,35 @@ static int borg_perma_aux_resist_c(void)
 {
 	int cost = 0;
 	int fail_allowed = 5;
-	borg_magic *as;
 
-
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
-
-	if (my_oppose_cold || !unique_on_level)
-		return (0);
-
-	if (FLAG(bp_ptr, TR_IM_COLD)) return (0);
-
-	/* Not needed if GOI is on */
-	if (borg_goi) return (0);
-
-	if (!borg_spell_okay_fail(REALM_ARCANE, 1, 7, fail_allowed))
-		return (0);
-
-	/* Obtain the cost of the spell */
-	as = &borg_magics[REALM_ARCANE][1][7];
-	cost = as->power;
-
-	/* If its cheap, go ahead */
-	if (cost >= bp_ptr->csp / 20) return (0);
-
-	/* Simulation */
-	if (borg_simulate) return (1);
-
-	/* do it! */
-	if (borg_spell_fail(REALM_ARCANE, 1, 7, fail_allowed))
+	if (borg_simulate)
 	{
-		/* Value */
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		if (my_oppose_cold || !unique_on_level) return (0);
+
+		/* No need if the borg is immune to Cold */
+		if (FLAG(bp_ptr, TR_IM_COLD)) return (0);
+
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
+
+		if (!borg_spell_okay_fail(REALM_ARCANE, 1, 7, fail_allowed)) return (0);
+
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_ARCANE, 1, 7);
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / 20) return (0);
+
+		/* Simulation */
 		return (1);
 	}
 
-
-	/* default to can't do it. */
-	return (0);
+	/* do it! */
+	return (borg_spell(REALM_ARCANE, 1, 7));
 }
 
 /* resists--- Only bother if a Unique is on the level.*/
@@ -11827,42 +11804,35 @@ static int borg_perma_aux_resist_a(void)
 {
 	int cost = 0;
 	int fail_allowed = 5;
-	borg_magic *as;
 
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
-
-	if (my_oppose_acid || !unique_on_level)
-		return (0);
-
-	/* Not needed if GOI is on */
-	if (borg_goi) return (0);
-
-	if (!borg_spell_okay_fail(REALM_ARCANE, 2, 1, fail_allowed))
-		return (0);
-
-	/* Obtain the cost of the spell */
-	as = &borg_magics[REALM_ARCANE][2][1];
-	cost = as->power;
-
-	/* If its cheap, go ahead */
-	if (cost >= bp_ptr->csp / 20) return (0);
-
-	/* Simulation */
-	if (borg_simulate) return (1);
-
-	/* do it! */
-	if (borg_spell_fail(REALM_ARCANE, 2, 1, fail_allowed))
+	if (borg_simulate)
 	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
 
-		/* Value */
+		if (my_oppose_acid || !unique_on_level) return (0);
+
+		/* No need if the borg is immune to Acid */
+		if (FLAG(bp_ptr, TR_IM_ACID)) return (0);
+
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
+
+		if (!borg_spell_okay_fail(REALM_ARCANE, 2, 1, fail_allowed)) return (0);
+
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_ARCANE, 2, 1);
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / 20) return (0);
+
+		/* Simulation */
 		return (1);
 	}
 
-
-	/* default to can't do it. */
-	return (0);
+	/* do it! */
+	return (borg_spell(REALM_ARCANE, 2, 1));
 }
 
 /* resists--- Only bother if a Unique is on the level.*/
@@ -11870,41 +11840,35 @@ static int borg_perma_aux_resist_p(void)
 {
 	int cost = 0;
 	int fail_allowed = 5;
-	borg_magic *as;
 
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
 
+		if (my_oppose_pois || !unique_on_level) return (0);
 
-	if (my_oppose_pois || !unique_on_level)
-		return (0);
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
 
-	/* Not needed if GOI is on */
-	if (borg_goi) return (0);
+		/* No need if the borg is immune to Poison */
+		if (FLAG(bp_ptr, TR_IM_POIS)) return (0);
 
-	if (!borg_spell_okay_fail(REALM_DEATH, 0, 5, fail_allowed))
-		return (0);
+		if (!borg_spell_okay_fail(REALM_DEATH, 0, 5, fail_allowed)) return (0);
 
-	/* Obtain the cost of the spell */
-	as = &borg_magics[REALM_DEATH][0][5];
-	cost = as->power;
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_DEATH, 0, 5);
 
-	/* If its cheap, go ahead */
-	if (cost >= bp_ptr->csp / 20) return (0);
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / 20) return (0);
 
-	/* Simulation */
-	if (borg_simulate) return (1);
+		/* Simulation */
+		return (1);
+	}
 
 	/* do it! */
-	if (borg_spell_fail(REALM_DEATH, 0, 5, fail_allowed))
-
-		/* Value */
-		return (1);
-
-
-	/* default to can't do it. */
-	return (0);
+	return (borg_spell(REALM_DEATH, 0, 5));
 }
 
 /* resist fire and cold for priests */
@@ -11912,55 +11876,45 @@ static int borg_perma_aux_resist_fce(void)
 {
 	int cost = 0;
 	int fail_allowed = 5;
-	borg_magic *as;
 
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
 
-	/* cast if one drops and unique is near */
-	if (borg_fighting_unique &&
-		(my_oppose_fire || FLAG(bp_ptr, TR_IM_FIRE)) &&
-		(my_oppose_elec || FLAG(bp_ptr, TR_IM_ELEC)) &&
-		(my_oppose_cold || FLAG(bp_ptr, TR_IM_COLD))) return (0);
+		/* cast if one drops and unique is near */
+		if (borg_fighting_unique &&
+			(my_oppose_fire || FLAG(bp_ptr, TR_IM_FIRE)) &&
+			(my_oppose_elec || FLAG(bp_ptr, TR_IM_ELEC)) &&
+			(my_oppose_cold || FLAG(bp_ptr, TR_IM_COLD))) return (0);
 
+		/* cast if both drop and no unique is near */
+		if (!borg_fighting_unique && (my_oppose_fire || my_oppose_cold)) return (0);
 
-	/* cast if both drop and no unique is near */
-	if (!borg_fighting_unique && (my_oppose_fire || my_oppose_cold)) return (0);
+		/* no need if immune */
+		if (FLAG(bp_ptr, TR_IM_FIRE) &&
+			FLAG(bp_ptr, TR_IM_COLD) &&
+			FLAG(bp_ptr, TR_IM_ELEC)) return (0);
 
-	/* no need if immune */
-	if (FLAG(bp_ptr, TR_IM_FIRE) &&
-		FLAG(bp_ptr, TR_IM_COLD) &&
-		FLAG(bp_ptr, TR_IM_ELEC)) return (0);
+		/* Not needed if GOI is on */
+		if (borg_goi) return (0);
 
-	/* Not needed if GOI is on */
-	if (borg_goi) return (0);
+		if (!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed)) return (0);
 
-	if (!borg_spell_okay_fail(REALM_NATURE, 0, 6, fail_allowed))
-		return (0);
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_NATURE, 0, 6);
 
-	/* Obtain the cost of the spell */
-	as = &borg_magics[REALM_NATURE][0][6];
-	cost = as->power;
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
 
-	/* If its cheap, go ahead */
-	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
-
-	/* Simulation */
-	if (borg_simulate) return (2);
+		/* Simulation */
+		return (2);
+	}
 
 	/* do it! */
-	if (borg_spell_fail(REALM_NATURE, 0, 6, fail_allowed))
-
-		/* Value */
-		return (2);
-
-
-	/* default to can't do it. */
-	return (0);
+	return (borg_spell(REALM_NATURE, 0, 6));
 }
-
 
 
 /*
@@ -11970,48 +11924,51 @@ static int borg_perma_aux_speed(void)
 {
 	int fail_allowed = 7;
 	int cost;
-	borg_magic *as;
 
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
-
-
-	/* already fast */
-	if (borg_speed)
-		return (0);
-
-	/* only cast defence spells if fail rate is not too high */
-	if (!borg_spell_okay_fail(REALM_SORCERY, 1, 5, fail_allowed) &&
-		!borg_spell_okay_fail(REALM_DEATH, 2, 3, fail_allowed))
-		return (0);
-
-	/* Obtain the cost of the spell */
-	if (borg_spell_okay_fail(REALM_SORCERY, 1, 5, fail_allowed))
+	if (borg_simulate)
 	{
-		as = &borg_magics[REALM_SORCERY][1][5];
-		cost = as->power;
-	}
-	else
-	{
-		as = &borg_magics[REALM_DEATH][2][3];
-		cost = as->power;
-	}
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
 
-	/* If its cheap, go ahead */
-	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
+		/* already fast */
+		if (borg_speed) return (0);
 
-	/* Simulation */
-	if (borg_simulate) return (5);
+		/* Is the sorcery speed spell available? */
+		if (borg_spell_okay_fail(REALM_SORCERY, 1, 5, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_SORCERY, 1, 5);
+		}
+		/* Is the death speed spell available? */
+		else if (borg_spell_okay_fail(REALM_DEATH, 2, 3, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_DEATH, 2, 3);
+		}
+		/* Is the mindcrafter speed spell available? */
+		else if (borg_mindcr_okay_fail(MIND_ADRENALINE, 23, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_ADRENALINE].power;
+		}
+		else
+		{
+			/* speed spell not available */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (5);
+	}
 
 	/* do it! */
-	if (borg_spell_fail(REALM_SORCERY, 1, 5, fail_allowed) ||
-		borg_spell_fail(REALM_DEATH, 2, 3, fail_allowed))
-		return (5);
-
-	/* default to can't do it. */
-	return (0);
+	return (borg_spell(REALM_SORCERY, 1, 5) ||
+		borg_mindcr(MIND_ADRENALINE, 23) ||
+		borg_spell(REALM_DEATH, 2, 3));
 }
 
 
@@ -12019,49 +11976,47 @@ static int borg_perma_aux_goi(void)
 {
 	int fail_allowed = 5;
 	int cost;
-	borg_magic *as = &borg_magics[0][0][0];
 
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
-
-	/* if already protected */
-	if (borg_shield || borg_goi)
-		return (0);
-
-	/* only on 100 and when Morgy is near */
-	if (bp_ptr->depth != 100 || borg_fighting_unique <= 9)
-		return (0);
-
-	if (!borg_spell_okay_fail(REALM_LIFE, 3, 7, fail_allowed) &&
-		!borg_spell_okay_fail(REALM_SORCERY, 3, 7, fail_allowed))
-		return (0);
-
-	/* Obtain the cost of the spell */
-	if (borg_spell_okay_fail(REALM_LIFE, 3, 7, fail_allowed))
+	if (borg_simulate)
 	{
-		as = &borg_magics[REALM_LIFE][3][7];
-	}
-	else if (borg_spell_okay_fail(REALM_SORCERY, 3, 7, fail_allowed))
-	{
-		as = &borg_magics[REALM_LIFE][3][7];
-	}
-	cost = as->power;
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
 
-	/* If its cheap, go ahead */
-	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
+		/* if already protected */
+		if (borg_shield || borg_goi) return (0);
 
-	/* Simulation */
-	if (borg_simulate) return (3);
+		/* only when a unique is near */
+		if (!unique_on_level) return (0);
+
+		/* Is the Life GoI spell available? */
+		if (borg_spell_okay_fail(REALM_LIFE, 3, 7, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_LIFE, 3, 7);
+		}
+		/* Is the Death GoI spell available? */
+		else if (borg_spell_okay_fail(REALM_SORCERY, 3, 7, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_SORCERY, 3, 7);
+		}
+		else
+		{
+			/* No GoI available */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (3);
+	}
 
 	/* do it! */
-	if (borg_spell_fail(REALM_SORCERY, 3, 7, fail_allowed) ||
-		borg_spell_fail(REALM_LIFE, 3, 7, fail_allowed))
-		return (2);
-
-	/* default to can't do it. */
-	return (0);
+	return (borg_spell_fail(REALM_SORCERY, 3, 7, fail_allowed) ||
+		borg_spell_fail(REALM_LIFE, 3, 7, fail_allowed));
 }
 
 /*
@@ -12071,123 +12026,175 @@ static int borg_perma_aux_telepathy(void)
 {
 	int fail_allowed = 5, cost;
 
-	borg_magic *as = &borg_magics[0][0][0];
-
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
-
-	/* already blessed */
-	if (borg_esp || (FLAG(bp_ptr, TR_TELEPATHY)))
-		return (0);
-
-	/* must be able to */
-	if (!borg_spell_okay_fail(REALM_ARCANE, 3, 7, fail_allowed) &&
-		!borg_spell_okay_fail(REALM_SORCERY, 3, 3, fail_allowed))
-		return (0);
-
-	/* Obtain the cost of the spell */
-	if (borg_spell_legal_fail(REALM_ARCANE, 3, 7, fail_allowed))
+	if (borg_simulate)
 	{
-		as = &borg_magics[REALM_ARCANE][3][7];
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* already telepathic */
+		if (borg_esp || (FLAG(bp_ptr, TR_TELEPATHY))) return (0);
+
+		/* Is the Arcane telepathy spell available? */
+		if (borg_spell_okay_fail(REALM_ARCANE, 3, 7, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_ARCANE, 3, 7);
+		}
+		/* Is the Sorcery telepathy spell available? */
+		else if (borg_spell_okay_fail(REALM_SORCERY, 3, 3, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_SORCERY, 3, 3);
+		}
+		else if (borg_mindcr_okay_fail(MIND_PRECOGNIT, 24, fail_allowed) &&
+				bp_ptr->lev < 40)
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_PRECOGNIT].power;
+		}
+		else
+		{
+			/* Telepathy, what is that? */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (1);
 	}
-	else if (borg_spell_legal_fail(REALM_SORCERY, 3, 3, fail_allowed))
-	{
-		as = &borg_magics[REALM_SORCERY][3][3];
-	}
-
-	cost = as->power;
-
-	/* If its cheap, go ahead */
-	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
-
-	/* Simulation */
-	if (borg_simulate) return (1);
 
 	/* do it! */
-	if (borg_spell(REALM_ARCANE, 3, 7) || borg_spell(REALM_SORCERY, 3, 3))
-		return 1;
-
-
-	return (0);
+	return (borg_spell(REALM_ARCANE, 3, 7) ||
+		borg_spell(REALM_SORCERY, 3, 3) ||
+		borg_mindcr(MIND_PRECOGNIT, 24));
 }
 
+/*
+ * Telepathy
+ */
+static int borg_perma_aux_see_invis(void)
+{
+	int fail_allowed = 5, cost;
+
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
+
+		/* already seeing invisible */
+		if (borg_inviso || FLAG(bp_ptr, TR_SEE_INVIS)) return (0);
+
+		/* Is the Arcane see invisible spell available? */
+		if (borg_spell_okay_fail(REALM_ARCANE, 2, 7, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_ARCANE, 2, 7);
+		}
+		/* Is the Life see invisible spell available? */
+		else if (borg_spell_okay_fail(REALM_LIFE, 1, 3, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_LIFE, 1, 3);
+		}
+		else
+		{
+			/* See invisible, what is that? */
+			return (0);
+		}
+
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
+
+		/* Simulation */
+		return (1);
+	}
+
+	/* do it! */
+	return (borg_spell(REALM_ARCANE, 2, 7) ||
+		borg_spell(REALM_SORCERY, 1, 3));
+}
+
+/* Shield for high AC */
 static int borg_perma_aux_shield(void)
 {
 	int fail_allowed = 5;
 	int cost;
-	borg_magic *as;
 
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
+	if (borg_simulate)
+	{
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
 
-	/* if already protected */
-	if (borg_shield || borg_goi)
-		return (0);
+		/* if already protected */
+		if (borg_shield || borg_goi) return (0);
 
-	if (!borg_spell_okay_fail(REALM_NATURE, 2, 2, fail_allowed))
-		return (0);
+		/* Is the nature shield spell available? */
+		if (borg_spell_okay_fail(REALM_NATURE, 2, 2, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_spell_mana(REALM_NATURE, 2, 2);
+		}
+		/* Is the mindcrafter shield spell available? */
+		else if (borg_mindcr_okay_fail(MIND_CHAR_ARMOUR, 13, fail_allowed))
+		{
+			/* Obtain the cost of the spell */
+			cost = borg_minds[MIND_CHAR_ARMOUR].power;
+		}
+		else
+		{
+			/* No shield available */
+			return (0);
+		}
 
-	/* Obtain the cost of the spell */
-	as = &borg_magics[REALM_NATURE][2][2];
-	cost = as->power;
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
 
-	/* If its cheap, go ahead */
-	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
-
-	/* Simulation */
-	if (borg_simulate) return (2);
+		/* Simulation */
+		return (2);
+	}
 
 	/* do it! */
-	if (borg_spell_fail(REALM_NATURE, 2, 2, fail_allowed))
-		return (2);
-
-	/* default to can't do it. */
-	return (0);
+	return (borg_spell(REALM_NATURE, 2, 2) ||
+		borg_mindcr(MIND_CHAR_ARMOUR, 13));
 }
+
 static int borg_perma_aux_prot_evil(void)
 {
 	int cost = 0;
 	int fail_allowed = 5;
-	borg_magic *as = &borg_magics[0][0][0];
 
-	/* if already protected */
-	if (borg_prot_from_evil)
-		return (0);
+	if (borg_simulate)
+	{
+		/* if already protected */
+		if (borg_prot_from_evil) return (0);
 
-	/* increase the threshold */
-	if (unique_on_level) fail_allowed = 10;
-	if (borg_fighting_unique) fail_allowed = 15;
+		/* increase the threshold */
+		if (unique_on_level) fail_allowed = 10;
+		if (borg_fighting_unique) fail_allowed = 15;
 
+		if (!borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed)) return (0);
 
-	if (!borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed)) return (0);
+		/* Obtain the cost of the spell */
+		cost = borg_spell_mana(REALM_LIFE, 1, 5);
 
-	/* Obtain the cost of the spell */
-	as = &borg_magics[REALM_LIFE][1][5];
-	cost = as->power;
+		/* If its cheap, go ahead */
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
 
-	/* If its cheap, go ahead */
-	if (cost >=
-		((unique_on_level) ? bp_ptr->csp / 7 : bp_ptr->csp / 10)) return (0);
-
-	/* Simulation */
-	if (borg_simulate) return (3);
+		/* Simulation */
+		return (3);
+	}
 
 	/* do it! */
-	if (borg_spell_fail(REALM_LIFE, 1, 5, fail_allowed))
-
-		/* Value */
-		return (3);
-
-	/* default to can't do it. */
-	return (0);
+	return (borg_spell_fail(REALM_LIFE, 1, 5, fail_allowed));
 }
 
 /*
- * Hero to prepare for battle
+ * Hero/Berserk to prepare for battle
  */
 static int borg_perma_aux_hero(void)
 {
@@ -12202,14 +12209,13 @@ static int borg_perma_aux_hero(void)
 		if (borg_fighting_unique) fail_allowed = 15;
 
 		/* already blessed */
-		if (borg_hero || borg_berserk)
-			return (0);
+		if (borg_hero || borg_berserk) return (0);
 
 		/* Can the borg cast the death berserk spell? */
 		if (borg_spell_okay_fail(REALM_DEATH, 2, 0, fail_allowed))
 		{
 			/* Obtain the cost of the spell */
-			cost = borg_magics[REALM_DEATH][2][0].power;
+			cost = borg_spell_mana(REALM_DEATH, 2, 0);
 		}
 		/* Can the borg cast the mindcrafter adrenaline spell? */
 		else if (borg_mindcr_okay_fail(MIND_ADRENALINE, 23, fail_allowed))
@@ -12221,7 +12227,7 @@ static int borg_perma_aux_hero(void)
 		else if (borg_spell_okay_fail(REALM_LIFE, 3, 0, fail_allowed))
 		{
 			/* Obtain the cost of the spell */
-			cost = borg_magics[REALM_LIFE][3][0].power;
+			cost = borg_spell_mana(REALM_LIFE, 3, 0);
 
 			/* Reassign the importance */
 			priority = 1;
@@ -12233,8 +12239,7 @@ static int borg_perma_aux_hero(void)
 		}
 
 		/* If its cheap, go ahead */
-		if ((unique_on_level && cost >= bp_ptr->csp / 7) ||
-			(!unique_on_level && cost >= bp_ptr->csp / 10)) return (0);
+		if (cost >= bp_ptr->csp / (unique_on_level ? 7 : 10)) return (0);
 
 		/* hero/berserk has a low priority */
 		return (priority);
@@ -12246,46 +12251,37 @@ static int borg_perma_aux_hero(void)
 		borg_spell(REALM_LIFE, 3, 0));
 }
 
-/*
- * Berserk to prepare for battle
- */
-static int borg_perma_aux_berserk(void)
-{
-	if (!borg_simulate) borg_oops("Inconceivable!");
-	
-	return (0);
-}
 
 /*
  * Berserk to prepare for battle
  */
 static int borg_perma_aux_berserk_potion(void)
 {
+	if (borg_simulate)
+	{
+		/* Save the potions */
+		if (!borg_fighting_unique) return (0);
 
-	/* Saver the potions */
-	if (!borg_fighting_unique) return (0);
+		/* already blessed */
+		if (borg_hero || borg_berserk)return (0);
 
-	/* already blessed */
-	if (borg_hero || borg_berserk)
-		return (0);
+		/* do I have any? */
+		if (!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH) ||
+			borg_mutation_check(MUT1_BERSERK, TRUE))
+		{
+			/* No dice */
+			return (0);
+		}
 
-	/* do I have any? */
-	if (!borg_slot(TV_POTION, SV_POTION_BERSERK_STRENGTH) ||
-		borg_mutation_check(MUT1_BERSERK, TRUE))
-		return (0);
-
-	/* Simulation */
-	/* Berserk is a low priority */
-	if (borg_simulate) return (2);
+		/* Simulation */
+		return (2);
+	}
 
 	/* do it! */
-	if (borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
-		borg_mutation(MUT1_BERSERK))
-		return (2);
-
-
-	return (0);
+	return (borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
+		borg_mutation(MUT1_BERSERK));
 }
+
 
 /* Glyph of Warding in a a-s corridor */
 static int borg_perma_aux_glyph(void)
@@ -12399,6 +12395,10 @@ static int borg_perma_aux(int what)
 		{
 			return (borg_perma_aux_telepathy());
 		}
+		case BP_SEE_INVIS:
+		{
+			return (borg_perma_aux_see_invis());
+		}
 
 		case BP_PROT_FROM_EVIL:
 		{
@@ -12432,13 +12432,9 @@ static int borg_perma_aux(int what)
 		{
 			return (borg_perma_aux_bless());
 		}
-		case BP_HERO:
+		case BP_HERO_BERSERK:
 		{
 			return (borg_perma_aux_hero());
-		}
-		case BP_BERSERK:
-		{
-			return (borg_perma_aux_berserk());
 		}
 		case BP_BERSERK_POTION:
 		{
@@ -12477,9 +12473,7 @@ bool borg_perma_spell()
 	/* Not in town */
 	if (!bp_ptr->depth) return (FALSE);
 
-	/* No perma-spells until clevel 30 to avoid nasty loops with resting for
-	 * mana regain
-	 */
+	/* No perma-spells until clevel 30 or the borg has to rest too much */
 	if (bp_ptr->lev < 30) return (FALSE);
 
 	/* Analyze the possible setup moves */

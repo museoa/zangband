@@ -2855,7 +2855,7 @@ bool borg_play_magic(bool bored)
 				 * Spells with higher casting cost than max mana
 				 * should be learned last.
 				 */
-				if (as->power > bp_ptr->msp) rate = 1;
+				if (borg_spell_mana(realm, book, spell) > bp_ptr->msp) rate = 1;
 
 
 				/* Skip "worse" spells/prayers */
@@ -2934,7 +2934,7 @@ bool borg_play_magic(bool bored)
 				if (as->method == BORG_MAGIC_OBJ) continue;
 
 				/* Make sure I have enough mana */
-				if (bp_ptr->csp < as->power) continue;
+				if (bp_ptr->csp < borg_spell_mana(realm, book, spell)) continue;
 
 				/* Note */
 				borg_note("# Testing untried spell/prayer");

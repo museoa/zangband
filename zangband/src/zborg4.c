@@ -1507,6 +1507,11 @@ static void borg_notice_potions(list_item *l_ptr, int number)
 			bp_ptr->able.death += number;
 			break;
 		}
+		case SV_POTION_INVULNERABILITY:
+		{
+			bp_ptr->able.invulnerability += number;
+			break;
+		}
 	}
 }
 
@@ -1632,6 +1637,16 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 		case SV_SCROLL_LIGHT:
 		{
 			bp_ptr->able.lite += number;
+			break;
+		}
+		case SV_SCROLL_GENOCIDE:
+		{
+			bp_ptr->able.genocide += number;
+			break;
+		}
+		case SV_SCROLL_MASS_GENOCIDE:
+		{
+			bp_ptr->able.mass_genocide += number;
 			break;
 		}
 	}
@@ -1960,9 +1975,6 @@ static void borg_notice_inven_item(list_item *l_ptr)
 		}
 	}
 	
-	/* count up the items on the borg */
-	borg_has[l_ptr->k_idx] += number;
-
 	/* Keep track of weight */
 	bp_ptr->weight += l_ptr->weight * number;
 
@@ -2868,9 +2880,6 @@ void borg_update_frame(void)
  */
 void borg_notice(void)
 {
-	/* Clear out 'has' array */
-	(void) C_WIPE(borg_has, z_info->k_max, int);
-	
 	/* Clear out the player information */
 	(void) WIPE(bp_ptr, borg_player);
 
@@ -4631,18 +4640,31 @@ static s32b borg_power_home_aux2(void)
 		/* Only my realms */
 		if (!borg_has_realm(realm)) continue;
 
-		/* Scan Books */
-		for (book = 0; book < 2; book++)
+		/* Scan town books */
+		for (book = 0; book < 4; book++)
 		{
-			if (bp_ptr->lev > 35)
+			int min_book = 0;
+
+			/* Does the borg have this book yet? */
+			if (!num_book[realm][book]) continue;
+
+			/* Does the borg use this book yet? */
+			if (!borg_uses_book(realm, book))
 			{
-				/* Collect up to 20 copies of each normal book */
-				value += 5000 * MIN(num_book[realm][book], 20);
+				/* Reward keeping the first unused book in the house */
+				value += 50000 * MIN(num_book[realm][book], 1);
+
+				/* Remember that you've valued 1 book */
+				min_book = 1;
 			}
-			else
+
+			/* Is this a town book? */
+			if (book < 2 || realm == REALM_ARCANE)
 			{
-				/* Collect up to 5 copies of each normal book */
-				value += 5000 * MIN(num_book[realm][book], 5);
+				/* Assign value to the extra books */
+				value += 4000 * MIN_FLOOR(num_book[realm][book],
+										  min_book,
+										  (bp_ptr->lev + 1) / 2);
 			}
 		}
 	}
