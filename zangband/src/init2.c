@@ -16,12 +16,14 @@
 #include "init.h"
 
 #ifdef CHECK_MODIFICATION_TIME
+#ifndef RISCOS
 #ifdef MACINTOSH
 #include <stat.h>
 #else
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif /* MACINTOSH */
+#endif /* !RISCOS */
 #endif /* CHECK_MODIFICATION_TIME */
 
 
@@ -246,9 +248,10 @@ cptr err_str[PARSE_ERROR_MAX] =
 #endif /* ALLOW_TEMPLATES */
 
 
+#ifndef RISCOS
 #ifdef CHECK_MODIFICATION_TIME
 
-static errr check_modification_date(int fd, cptr template_file)
+extern errr check_modification_date(int fd, cptr template_file)
 {
 	char buf[1024];
 
@@ -281,8 +284,7 @@ static errr check_modification_date(int fd, cptr template_file)
 }
 
 #endif /* CHECK_MODIFICATION_TIME */
-
-
+#endif /* !RISCOS */
 
 /*
  * File headers

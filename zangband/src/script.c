@@ -118,6 +118,25 @@ static int xxx_fire_beam(lua_State *L)
 	return 1;
 }
 
+#ifdef RISCOS
+extern char *riscosify_name(const char *);
+
+static int xxx_dofile(lua_State *L)
+{			
+	cptr filename = lua_tostring(L, 1);
+	
+	/* Pop off the filename */
+	lua_pop(L, 1);
+
+	if (filename)
+	{
+	 	return lua_dofile(L, riscosify_name(filename));
+	}
+
+	return 0;
+}
+#endif /* RISCOS */
+
 
 static const struct luaL_reg anglib[] =
 {
@@ -127,6 +146,9 @@ static const struct luaL_reg anglib[] =
 	{"fire_beam", xxx_fire_beam},
 	{"build_script_path", xxx_build_script_path},
 	{"get_rumor", xxx_get_rumor},
+#ifdef RISCOS
+	{"dofile", xxx_dofile},
+#endif /* RISCOS */
 };
 
 
@@ -743,8 +765,14 @@ bool script_do_string(cptr script)
 bool script_do_file(cptr filename)
 {
 	if (!L) return FALSE;
-
+#ifdef RISCOS
+	{
+		char *realname = riscosify_name(filename);
+		if (!lua_dofile(L, realname)) return TRUE;
+	}
+#else /* RISCOS */
 	if (!lua_dofile(L, filename)) return TRUE;
+#endif /* RISCOS */
 
 	return FALSE;
 }

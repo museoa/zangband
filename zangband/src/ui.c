@@ -223,12 +223,10 @@ int get_player_choice(cptr *choices, int num, int col, int wid,
 			}
 			else
 			{
+				/* Invalid input */
 				bell("Illegal birth choice!");
 			}
 		}
-
-		/* Invalid input */
-		bell("Illegal birth choice!");
 	}
 
 	return (INVALID_CHOICE);
