@@ -1610,7 +1610,7 @@ bool borg_crush_junk(void)
 		borg_keypress(I2A(i));
 
 		/* Default is one item */
-		borg_keypress('\r');
+		if (l_ptr->number > 1) borg_keypress('\r');
 
 		/* Verify destruction */
 		borg_keypress('y');
