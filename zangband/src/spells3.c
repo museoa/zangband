@@ -159,6 +159,9 @@ bool teleport_away(int m_idx, int dis)
 
 	/* Redraw the new grid */
 	lite_spot(ny, nx);
+	
+	/* Update stuff */
+	p_ptr->update |= (PU_MON_LITE);
 
 	return (TRUE);
 }
@@ -295,6 +298,9 @@ void teleport_to_player(int m_idx)
 
 	/* Redraw the new grid */
 	lite_spot(ny, nx);
+	
+	/* Update stuff */
+	p_ptr->update |= (PU_MON_LITE);
 }
 
 
