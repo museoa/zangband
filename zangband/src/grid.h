@@ -30,6 +30,11 @@
 #define LAKE_SAND		10
 #define LAKE_ROCK		11
 
+/*
+ * Access the cave data structure
+ */
+#define cave_p(X,Y)		(&cave[Y][X]) 
+
 
 /* Externs */
 extern bool new_player_spot(void);

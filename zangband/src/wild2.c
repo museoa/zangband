@@ -76,7 +76,7 @@ static void build_store(int xx, int yy, store_type *st_ptr)
 		for (x = x1; x <= x2; x++)
 		{
 			/* Create the building */
-			cave[y][x].feat = FEAT_PERM_EXTRA;
+			cave_p(x, y)->feat = FEAT_PERM_EXTRA;
 		}
 	}
 
@@ -130,8 +130,8 @@ static void build_store(int xx, int yy, store_type *st_ptr)
 	}
 
 	/* Clear previous contents, add a store door */
-	cave[y][x].feat = FEAT_FLOOR;
-	cave[y][x].fld_idx = wild_build[st_ptr->type].field;
+	cave_p(x, y)->feat = FEAT_FLOOR;
+	cave_p(x, y)->fld_idx = wild_build[st_ptr->type].field;
 
 	/* Save location of store door */
 	st_ptr->x = x;
@@ -183,10 +183,10 @@ static void town_gen_hack(u16b town_num)
 		yy = rand_range(3, TOWN_HGT - 4);
 		xx = rand_range(3, TOWN_WID - 4);
 
-		feat = cave[yy][xx].feat;
+		feat = cave_p(xx, yy)->feat;
 
 		/* If square is a shop then try again */
-		if ((feat == FEAT_PERM_EXTRA) || (cave[yy][xx].fld_idx != 0))
+		if ((feat == FEAT_PERM_EXTRA) || (cave_p(xx, yy)->fld_idx != 0))
 			continue;
 
 		/* Blank square */
@@ -199,17 +199,17 @@ static void town_gen_hack(u16b town_num)
 		for (x = -1; x <= 1; x++)
 		{
 			/* Get feat at location */
-			feat = cave[yy + y][xx + x].feat;
+			feat = cave_p(xx + x, yy + y)->feat;
 
 			if (feat == FEAT_PERM_EXTRA) continue;
 
 			/* Convert square to dungeon floor */
-			cave[yy + y][xx + x].feat = FEAT_FLOOR;
+			cave_p(xx + x, yy + y)->feat = FEAT_FLOOR;
 		}
 	}
 
 	/* Clear previous contents, add down stairs */
-	cave[yy][xx].feat = FEAT_MORE;
+	cave_p(xx, yy)->feat = FEAT_MORE;
 
 	wild_stairs_x = xx;
 	wild_stairs_y = yy;
@@ -241,8 +241,8 @@ void van_town_gen(u16b town_num)
 		for (x = 0; x < MAX_WID; x++)
 		{
 			/* Create empty area */
-			cave[y][x].feat = FEAT_PERM_EXTRA;
-			cave[y][x].fld_idx = 0;
+			cave_p(x, y)->feat = FEAT_PERM_EXTRA;
+			cave_p(x, y)->fld_idx = 0;
 		}
 	}
 
@@ -258,7 +258,7 @@ void van_town_gen(u16b town_num)
 		for (x = 1; x < TOWN_WID - 1; x++)
 		{
 			/* Create see-through terrain */
-			cave[y][x].feat = FEAT_FLOOR;
+			cave_p(x, y)->feat = FEAT_FLOOR;
 		}
 	}
 
@@ -311,12 +311,12 @@ static void draw_general(int x0, int y0, store_type *st_ptr, int x, int y)
 				for (j = -1; j <= 1; j++)
 				{
 					/* Convert square to dungeon floor */
-					cave[y0 + j][x0 + i].feat = FEAT_FLOOR;
+					cave_p(x0 + i, y0 + j)->feat = FEAT_FLOOR;
 				}
 			}
 
 			/* Clear previous contents, add down stairs */
-			cave[y0][x0].feat = FEAT_MORE;
+			cave_p(x0, y0)->feat = FEAT_MORE;
 
 			break;
 		}
@@ -403,9 +403,9 @@ static void draw_store(int x0, int y0, store_type *st_ptr, int x, int y)
 	}
 
 	/* Clear previous contents, add a store door */
-	cave[i][j].feat = FEAT_FLOOR;
+	cave_p(j, i)->feat = FEAT_FLOOR;
 
-	cave[i][j].fld_idx = wild_build[st_ptr->type].field;
+	cave_p(j, i)->fld_idx = wild_build[st_ptr->type].field;
 
 	/* Save location of store door */
 	st_ptr->x = x * 8 + j % 8;
@@ -478,8 +478,8 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 				case 0:
 				{
 					/* Hack - shift gate if next to walls */
-					if (cave[y + 2][x + 3].feat == FEAT_PERM_SOLID) yy -= 3;
-					if (cave[y + 5][x + 3].feat == FEAT_PERM_SOLID) yy += 3;
+					if (cave_p(x + 3, y + 2)->feat == FEAT_PERM_SOLID) yy -= 3;
+					if (cave_p(x + 3, y + 5)->feat == FEAT_PERM_SOLID) yy += 3;
 
 					y = yy;
 
@@ -487,10 +487,10 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Right gate */
-					cave[y + 3][x + 4].fld_idx = FT_LOCK_DOOR;
-					cave[y + 3][x + 4].feat = FEAT_CLOSED;
-					cave[y + 4][x + 4].fld_idx = FT_LOCK_DOOR;
-					cave[y + 4][x + 4].feat = FEAT_CLOSED;
+					cave_p(x + 4, y + 3)->fld_idx = FT_LOCK_DOOR;
+					cave_p(x + 4, y + 3)->feat = FEAT_CLOSED;
+					cave_p(x + 4, y + 4)->fld_idx = FT_LOCK_DOOR;
+					cave_p(x + 4, y + 4)->feat = FEAT_CLOSED;
 
 					return;
 				}
@@ -498,8 +498,8 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 				case 1:
 				{
 					/* Hack - shift gate if next to walls */
-					if (cave[y + 2][x + 3].feat == FEAT_PERM_SOLID) yy -= 3;
-					if (cave[y + 5][x + 3].feat == FEAT_PERM_SOLID) yy += 3;
+					if (cave_p(x + 3, y + 2)->feat == FEAT_PERM_SOLID) yy -= 3;
+					if (cave_p(x + 3, y + 5)->feat == FEAT_PERM_SOLID) yy += 3;
 
 					y = yy;
 
@@ -507,10 +507,10 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Left gate */
-					cave[y + 3][x + 3].fld_idx = FT_LOCK_DOOR;
-					cave[y + 3][x + 3].feat = FEAT_CLOSED;
-					cave[y + 4][x + 3].fld_idx = FT_LOCK_DOOR;
-					cave[y + 4][x + 3].feat = FEAT_CLOSED;
+					cave_p(x + 3, y + 3)->fld_idx = FT_LOCK_DOOR;
+					cave_p(x + 3, y + 3)->feat = FEAT_CLOSED;
+					cave_p(x + 3, y + 4)->fld_idx = FT_LOCK_DOOR;
+					cave_p(x + 3, y + 4)->feat = FEAT_CLOSED;
 
 					return;
 				}
@@ -518,8 +518,8 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 				case 2:
 				{
 					/* Hack - shift gate if next to walls */
-					if (cave[y + 3][x + 2].feat == FEAT_PERM_SOLID) xx -= 3;
-					if (cave[y + 3][x + 5].feat == FEAT_PERM_SOLID) xx += 3;
+					if (cave_p(x + 2, y + 3)->feat == FEAT_PERM_SOLID) xx -= 3;
+					if (cave_p(x + 5, y + 3)->feat == FEAT_PERM_SOLID) xx += 3;
 
 					x = xx;
 
@@ -527,10 +527,10 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Bottom gate */
-					cave[y + 4][x + 3].fld_idx = FT_LOCK_DOOR;
-					cave[y + 4][x + 3].feat = FEAT_CLOSED;
-					cave[y + 4][x + 4].fld_idx = FT_LOCK_DOOR;
-					cave[y + 4][x + 4].feat = FEAT_CLOSED;
+					cave_p(x + 3, y + 4)->fld_idx = FT_LOCK_DOOR;
+					cave_p(x + 3, y + 4)->feat = FEAT_CLOSED;
+					cave_p(x + 4, y + 4)->fld_idx = FT_LOCK_DOOR;
+					cave_p(x + 4, y + 4)->feat = FEAT_CLOSED;
 
 					return;
 				}
@@ -538,8 +538,8 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 				case 3:
 				{
 					/* Hack - shift gate if next to walls */
-					if (cave[y + 3][x + 2].feat == FEAT_PERM_SOLID) xx -= 3;
-					if (cave[y + 3][x + 5].feat == FEAT_PERM_SOLID) xx += 3;
+					if (cave_p(x + 2, y + 3)->feat == FEAT_PERM_SOLID) xx -= 3;
+					if (cave_p(x + 5, y + 3)->feat == FEAT_PERM_SOLID) xx += 3;
 
 					x = xx;
 
@@ -547,10 +547,10 @@ static void draw_gates(int x, int y, byte i, byte j, town_type *t_ptr)
 					generate_fill(x + 3, y + 3, x + 4, y + 4, FEAT_FLOOR);
 
 					/* Top gate */
-					cave[y + 3][x + 3].fld_idx = FT_LOCK_DOOR;
-					cave[y + 3][x + 3].feat = FEAT_CLOSED;
-					cave[y + 3][x + 4].fld_idx = FT_LOCK_DOOR;
-					cave[y + 3][x + 4].feat = FEAT_CLOSED;
+					cave_p(x + 3, y + 3)->fld_idx = FT_LOCK_DOOR;
+					cave_p(x + 3, y + 3)->feat = FEAT_CLOSED;
+					cave_p(x + 4, y + 3)->fld_idx = FT_LOCK_DOOR;
+					cave_p(x + 4, y + 3)->feat = FEAT_CLOSED;
 
 					return;
 				}
@@ -578,8 +578,8 @@ void draw_city(u16b town_num)
 		for (i = 0; i < MAX_WID; i++)
 		{
 			/* Create empty area */
-			cave[j][i].feat = FEAT_NONE;
-			cave[j][i].fld_idx = 0;
+			cave_p(i, j)->feat = FEAT_NONE;
+			cave_p(i, j)->fld_idx = 0;
 		}
 	}
 
@@ -827,7 +827,7 @@ static void overlay_town(int x, int y, u16b w_town, blk_ptr block_ptr)
 	{
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
-			c_ptr = &cave[yy + j][xx + i];
+			c_ptr = cave_p(xx + i, yy + j);
 
 			/* Only copy if there is something there. */
 			if (c_ptr->feat == FEAT_NONE) continue;
@@ -2465,7 +2465,7 @@ static void day_night(void)
  */
 static cave_type *access_cave(int x, int y)
 {
-	return &cave[y][x];
+	return cave_p(x, y);
 }
 
 

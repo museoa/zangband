@@ -708,7 +708,7 @@ void trigger_quest_create(byte c_type, void *data)
 								x = rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2);
 
 								/* Access the grid */
-								c_ptr = &cave[y][x];
+								c_ptr = area(x, y);
 
 								if (!cave_naked_grid(c_ptr)) continue;
 								if (distance(x, y, p_ptr->px, p_ptr->py) < 10) continue;
@@ -914,7 +914,7 @@ static void castle_quest(void)
 	clear_bldg(7, 18);
 
 	/* Current quest of the building */
-	q_index = cave[py][px].special;
+	q_index = get_qindex();
 
 	/* Is there a quest available at the building? */
 	if (!q_index)

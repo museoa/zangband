@@ -154,7 +154,7 @@ static bool alloc_stairs(int feat, int num, int walls)
 				x = rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2);
 
 				/* Access the grid */
-				c_ptr = &cave[y][x];
+				c_ptr = cave_p(x, y);
 
 				/* Require "naked" floor grid */
 				if (!cave_naked_grid(c_ptr)) continue;
@@ -215,7 +215,7 @@ static void alloc_object(int set, int typ, int num)
 			y = rand_range(p_ptr->min_hgt + 1, p_ptr->max_hgt - 2);
 			x = rand_range(p_ptr->min_wid + 1, p_ptr->max_wid - 2);
 
-			c_ptr = &cave[y][x];
+			c_ptr = cave_p(x, y);
 
 			/* Require "naked" floor grid */
 			if (!cave_naked_grid(c_ptr)) continue;
@@ -308,7 +308,7 @@ static int next_to_corr(int x1, int y1)
 		x = x1 + ddx_ddd[i];
 
 		/* Access the grid */
-		c_ptr = &cave[y][x];
+		c_ptr = cave_p(x, y);
 
 		/* Skip non floors */
 		if (!cave_floor_grid(c_ptr)) continue;
@@ -340,15 +340,15 @@ static bool possible_doorway(int x, int y)
 	if (next_to_corr(x, y) >= 2)
 	{
 		/* Check Vertical */
-		if ((cave[y-1][x].feat >= FEAT_MAGMA) &&
-		    (cave[y+1][x].feat >= FEAT_MAGMA))
+		if ((cave_p(x, y - 1)->feat >= FEAT_MAGMA) &&
+		    (cave_p(x, y + 1)->feat >= FEAT_MAGMA))
 		{
 			return (TRUE);
 		}
 
 		/* Check Horizontal */
-		if ((cave[y][x-1].feat >= FEAT_MAGMA) &&
-		    (cave[y][x+1].feat >= FEAT_MAGMA))
+		if ((cave_p(x - 1, y)->feat >= FEAT_MAGMA) &&
+		    (cave_p(x + 1, y)->feat >= FEAT_MAGMA))
 		{
 			return (TRUE);
 		}
@@ -364,20 +364,24 @@ static bool possible_doorway(int x, int y)
  */
 static void try_door(int x, int y)
 {
+	cave_type *c_ptr;
+	
 	/* Paranoia */
 	if (!in_bounds(x, y)) return;
+	
+	c_ptr = cave_p(x, y);
 
 	/* Ignore walls */
-	if (cave[y][x].feat >= FEAT_MAGMA) return;
+	if (c_ptr->feat >= FEAT_MAGMA) return;
 
 	/* Ignore room grids */
-	if (cave[y][x].info & (CAVE_ROOM)) return;
+	if (c_ptr->info & (CAVE_ROOM)) return;
 
 	/* Occasional door (if allowed) */
 	if ((randint0(100) < dun_tun_jct) && possible_doorway(x, y))
 	{
 		/* Place a door */
-		place_random_door(y, x);
+		place_random_door(x, y);
 	}
 }
 
@@ -442,10 +446,10 @@ static bool cave_gen(void)
 		for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 		{
 			if (empty_level)
-				cave[y][x].feat = FEAT_FLOOR;
+				cave_p(x, y)->feat = FEAT_FLOOR;
 			else
 			  /* Create granite wall */
-				cave[y][x].feat = FEAT_WALL_EXTRA;
+				cave_p(x, y)->feat = FEAT_WALL_EXTRA;
 		}
 	}
 
@@ -674,28 +678,28 @@ static bool cave_gen(void)
 	for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave[p_ptr->min_hgt][x].feat = FEAT_PERM_SOLID;
+		cave_p(x, p_ptr->min_hgt)->feat = FEAT_PERM_SOLID;
 	}
 
 	/* Special boundary walls -- Bottom */
 	for (x = p_ptr->min_wid; x < p_ptr->max_wid; x++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave[p_ptr->max_hgt - 1][x].feat = FEAT_PERM_SOLID;
+		cave_p(x, p_ptr->max_hgt - 1)->feat = FEAT_PERM_SOLID;
 	}
 
 	/* Special boundary walls -- Left */
 	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave[y][p_ptr->min_wid].feat = FEAT_PERM_SOLID;
+		cave_p(p_ptr->min_wid, y)->feat = FEAT_PERM_SOLID;
 	}
 
 	/* Special boundary walls -- Right */
 	for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 	{
 		/* Clear previous contents, add "solid" perma-wall */
-		cave[y][p_ptr->max_wid - 1].feat = FEAT_PERM_SOLID;
+		cave_p(p_ptr->max_wid - 1, y)->feat = FEAT_PERM_SOLID;
 	}
 
 
@@ -757,7 +761,7 @@ static bool cave_gen(void)
 			x = dun->tunn[j].x;
 
 			/* Access the grid */
-			c_ptr = &cave[y][x];
+			c_ptr = cave_p(x, y);
 			
 			/* Deleting a locked or jammed door is problematical */
 			delete_field_location(c_ptr);
@@ -778,7 +782,7 @@ static bool cave_gen(void)
 			x = dun->wall[j].x;
 
 			/* Access the grid */
-			c_ptr = &cave[y][x];
+			c_ptr = cave_p(x, y);
 			
 			/* Deleting a locked or jammed door is problematical */
 			delete_field_location(c_ptr);
@@ -790,7 +794,7 @@ static bool cave_gen(void)
 			if (randint0(100) < dun_tun_pen)
 			{
 				/* Place a random door */
-				place_random_door(y, x);
+				place_random_door(x, y);
 			}
 		}
 
@@ -893,7 +897,7 @@ static bool cave_gen(void)
 		{
 			for (x = p_ptr->min_hgt; x < p_ptr->max_wid; x++)
 			{
-				cave[y][x].info |= (CAVE_GLOW);
+				cave_p(x, y)->info |= (CAVE_GLOW);
 			}
 		}
 	}
@@ -1197,7 +1201,7 @@ void generate_cave(void)
 		for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
 		{
 			/* Clear the flag */
-			cave[y][x].info &= ~(CAVE_ROOM);
+			cave_p(x, y)->info &= ~(CAVE_ROOM);
 		}
 	}
 #endif /* 0 */

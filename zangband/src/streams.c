@@ -97,7 +97,7 @@ static void recursive_river(int x1, int y1, int x2, int y2, int feat1, int feat2
 					{
 						if (!in_bounds(tx, ty)) continue;
 
-						c_ptr = &cave[ty][tx];
+						c_ptr = cave_p(tx, ty);
 
 						if (c_ptr->feat == feat1) continue;
 						if (c_ptr->feat == feat2) continue;
@@ -242,7 +242,7 @@ void build_streamer(int feat, int chance)
 			}
 
 			/* Access the grid */
-			c_ptr = &cave[ty][tx];
+			c_ptr = cave_p(tx, ty);
 
 			/* Only convert "granite" walls */
 			if (c_ptr->feat < FEAT_WALL_EXTRA) continue;
@@ -297,7 +297,7 @@ void place_trees(int x, int y)
 	{
 		for (j = y - 3; j < y + 4; j++)
 		{
-			c_ptr = &cave[j][i];
+			c_ptr = cave_p(i, j);
 
 			/* Want square to be in the circle and accessable. */
 			if (in_bounds(i, j) && (distance(i, j, x, y) < 4) && !cave_perma_grid(c_ptr))
@@ -312,15 +312,15 @@ void place_trees(int x, int y)
 				if ((distance(i, j, x, y) > 1) || one_in_(4))
 				{
 					if (randint1(100) < 75)
-						cave[j][i].feat = FEAT_TREES;
+						cave_p(i, j)->feat = FEAT_TREES;
 				}
 				else
 				{
-					cave[j][i].feat = FEAT_RUBBLE;
+					cave_p(i, j)->feat = FEAT_RUBBLE;
 				}
 
 				/* Light area since is open above */
-				cave[j][i].info |= (CAVE_GLOW | CAVE_ROOM);
+				cave_p(i, j)->info |= (CAVE_GLOW | CAVE_ROOM);
 			}
 		}
 	}
@@ -329,7 +329,7 @@ void place_trees(int x, int y)
 	if (!ironman_downward && one_in_(3))
 	{
 		/* up stair */
-		cave[y][x].feat = FEAT_LESS;
+		cave_p(x, y)->feat = FEAT_LESS;
 	}
 
 	/* Hack - Save the location as a "room" */
@@ -376,7 +376,7 @@ void destroy_level(void)
 				if (k >= 16) continue;
 
 				/* Access the grid */
-				c_ptr = &cave[y][x];
+				c_ptr = cave_p(x, y);
 
 				/* Destroy valid grids */
 				if (cave_valid_grid(c_ptr))

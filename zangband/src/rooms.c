@@ -57,7 +57,7 @@ static void build_small_room(int x0, int y0)
 	generate_door(x0 - 1, y0 - 1, x0 + 1, y0 + 1, TRUE);
 
 	/* Add inner open space */
-	cave[y0][x0].feat = FEAT_FLOOR;
+	cave_p(x0, y0)->feat = FEAT_FLOOR;
 }
 
 
@@ -261,8 +261,6 @@ static void build_type1(int bx0, int by0)
 
 	bool light;
 
-	cave_type *c_ptr;
-
 	/* Pick a room size */
 	y1 = randint1(4);
 	x1 = randint1(11);
@@ -302,8 +300,7 @@ static void build_type1(int bx0, int by0)
 		{
 			for (x = x1; x <= x2; x += 2)
 			{
-				c_ptr = &cave[y][x];
-				c_ptr->feat = FEAT_PILLAR;
+				cave_p(x, y)->feat = FEAT_PILLAR;
 			}
 		}
 	}
@@ -313,34 +310,20 @@ static void build_type1(int bx0, int by0)
 	{
 		if ((y1 + 4 < y2) && (x1 + 4 < x2))
 		{
-			c_ptr = &cave[y1 + 1][x1 + 1];
-			c_ptr->feat = FEAT_PILLAR;
-
-			c_ptr = &cave[y1 + 1][x2 - 1];
-			c_ptr->feat = FEAT_PILLAR;
-
-			c_ptr = &cave[y2 - 1][x1 + 1];
-			c_ptr->feat = FEAT_PILLAR;
-
-			c_ptr = &cave[y2 - 1][x2 - 1];
-			c_ptr->feat = FEAT_PILLAR;
+			cave_p(x1 + 1, y1 + 1)->feat = FEAT_PILLAR;
+			cave_p(x2 - 1, y1 + 1)->feat = FEAT_PILLAR;
+			cave_p(x1 + 1, y2 - 1)->feat = FEAT_PILLAR;
+			cave_p(x2 - 1, y2 - 1)->feat = FEAT_PILLAR;
 		}
 	}
 	
 	/* Hack -- Occasional room with rounded corners */
 	else if (one_in_(40))
 	{
-		c_ptr = &cave[y1][x1];
-		c_ptr->feat = FEAT_WALL_INNER;
-
-		c_ptr = &cave[y1][x2];
-		c_ptr->feat = FEAT_WALL_INNER;
-
-		c_ptr = &cave[y2][x1];
-		c_ptr->feat = FEAT_WALL_INNER;
-
-		c_ptr = &cave[y2][x2];
-		c_ptr->feat = FEAT_WALL_INNER;
+		cave_p(x1, y1)->feat = FEAT_WALL_INNER;
+		cave_p(x2, y1)->feat = FEAT_WALL_INNER;
+		cave_p(x1, y2)->feat = FEAT_WALL_INNER;
+		cave_p(x2, y2)->feat = FEAT_WALL_INNER;
 	}
 	
 	/* Hack -- Occasional ragged-edge room */
@@ -348,17 +331,13 @@ static void build_type1(int bx0, int by0)
 	{
 		for (y = y1 + 2; y <= y2 - 2; y += 2)
 		{
-			c_ptr = &cave[y][x1];
-			c_ptr->feat = FEAT_PILLAR;
-			c_ptr = &cave[y][x2];
-			c_ptr->feat = FEAT_PILLAR;
+			cave_p(x1, y)->feat = FEAT_PILLAR;
+			cave_p(x2, y)->feat = FEAT_PILLAR;
 		}
 		for (x = x1 + 2; x <= x2 - 2; x += 2)
 		{
-			c_ptr = &cave[y1][x];
-			c_ptr->feat = FEAT_PILLAR;
-			c_ptr = &cave[y2][x];
-			c_ptr->feat = FEAT_PILLAR;
+			cave_p(x, y1)->feat = FEAT_PILLAR;
+			cave_p(x, y2)->feat = FEAT_PILLAR;
 		}
 	}
 	
@@ -370,24 +349,24 @@ static void build_type1(int bx0, int by0)
 			/* Horizontal wall */
 			for (x = x1; x <= x2; x++)
 			{
-				cave[yval][x].feat = FEAT_WALL_INNER;
+				cave_p(x, yval)->feat = FEAT_WALL_INNER;
 			}
 
 			/* Prevent edge of wall from being tunneled */
-			cave[yval][x1 - 1].feat = FEAT_WALL_SOLID;
-			cave[yval][x2 + 1].feat = FEAT_WALL_SOLID;
+			cave_p(x1 - 1, yval)->feat = FEAT_WALL_SOLID;
+			cave_p(x2 + 1, yval)->feat = FEAT_WALL_SOLID;
 		}
 		else
 		{
 			/* Vertical wall */
 			for (y = y1; y <= y2; y++)
 			{
-				cave[y][xval].feat = FEAT_WALL_INNER;
+				cave_p(xval, y)->feat = FEAT_WALL_INNER;
 			}
 
 			/* Prevent edge of wall from being tunneled */
-			cave[y1 - 1][xval].feat = FEAT_WALL_SOLID;
-			cave[y2 + 1][xval].feat = FEAT_WALL_SOLID;
+			cave_p(xval, y1 - 1)->feat = FEAT_WALL_SOLID;
+			cave_p(xval, y2 + 1)->feat = FEAT_WALL_SOLID;
 		}
 
 		place_random_door(xval, yval);
@@ -473,8 +452,6 @@ static void build_type3(int bx0, int by0)
 	int			y1b, x1b, y2b, x2b;
 	int			yval, xval;
 	bool		light;
-	cave_type   *c_ptr;
-
 
 	/* Try to allocate space for room. */
 	if (!room_alloc(25, 11, FALSE, by0, bx0, &xval, &yval)) return;
@@ -573,20 +550,18 @@ static void build_type3(int bx0, int by0)
 				for (y = y1b; y <= y2b; y++)
 				{
 					if (y == yval) continue;
-					c_ptr = &cave[y][x1a - 1];
-					c_ptr->feat = FEAT_WALL_INNER;
-					c_ptr = &cave[y][x2a + 1];
-					c_ptr->feat = FEAT_WALL_INNER;
+					
+					cave_p(x1a - 1, y)->feat = FEAT_WALL_INNER;
+					cave_p(x2a + 1, y)->feat = FEAT_WALL_INNER;
 				}
 
 				/* Pinch the north/south sides */
 				for (x = x1a; x <= x2a; x++)
 				{
 					if (x == xval) continue;
-					c_ptr = &cave[y1b - 1][x];
-					c_ptr->feat = FEAT_WALL_INNER;
-					c_ptr = &cave[y2b + 1][x];
-					c_ptr->feat = FEAT_WALL_INNER;
+					
+					cave_p(x, y1b - 1)->feat = FEAT_WALL_INNER;
+					cave_p(x, y2b + 1)->feat = FEAT_WALL_INNER;
 				}
 
 				/* Sometimes shut using secret doors */
@@ -608,8 +583,7 @@ static void build_type3(int bx0, int by0)
 			/* Occasionally put a pillar in the center */
 			else if (one_in_(3))
 			{
-				c_ptr = &cave[yval][xval];
-				c_ptr->feat = FEAT_PILLAR;
+				cave_p(xval, yval)->feat = FEAT_PILLAR;
 			}
 
 			break;
@@ -633,8 +607,6 @@ static void build_type4(int bx0, int by0)
 	int         y, x, y1, x1;
 	int         y2, x2, tmp, yval, xval;
 	bool        light;
-	cave_type   *c_ptr;
-
 
 	/* Try to allocate space for room. */
 	if (!room_alloc(25, 11, FALSE, by0, bx0, &xval, &yval)) return;
@@ -774,8 +746,7 @@ static void build_type4(int bx0, int by0)
 				{
 					if (0x1 & (x + y))
 					{
-						c_ptr = &cave[y][x];
-						c_ptr->feat = FEAT_WALL_INNER;
+						cave_p(x, y)->feat = FEAT_WALL_INNER;
 					}
 				}
 			}
@@ -1786,7 +1757,7 @@ static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
 			if (*t == ' ') continue;
 
 			/* Access the grid */
-			c_ptr = &cave[y][x];
+			c_ptr = cave_p(x, y);
 
 			/* Lay down a floor */
 			c_ptr->feat = FEAT_FLOOR;
@@ -2239,7 +2210,7 @@ static void build_type9(int bx0, int by0)
 static void add_door(int x, int y)
 {
 	/* Need to have a wall in the center square */
-	if (cave[y][x].feat != FEAT_WALL_OUTER) return;
+	if (cave_p(x, y)->feat != FEAT_WALL_OUTER) return;
 
 	/* look at:
 	 *  x#x
@@ -2250,17 +2221,17 @@ static void add_door(int x, int y)
 	 *  .=floor, #=wall
 	 */
 
-	if ((cave[y - 1][x].feat == FEAT_FLOOR) &&
-		(cave[y + 1][x].feat == FEAT_FLOOR) &&
-	    (cave[y][x - 1].feat == FEAT_WALL_OUTER) &&
-		(cave[y][x + 1].feat == FEAT_WALL_OUTER))
+	if ((cave_p(x, y - 1)->feat == FEAT_FLOOR) &&
+		(cave_p(x, y + 1)->feat == FEAT_FLOOR) &&
+	    (cave_p(x - 1, y)->feat == FEAT_WALL_OUTER) &&
+		(cave_p(x + 1, y)->feat == FEAT_WALL_OUTER))
 	{
 		/* secret door */
 		place_secret_door(y, x);
 
 		/* set boundarys so don't get wide doors */
-		cave[y][x - 1].feat = FEAT_WALL_SOLID;
-		cave[y][x + 1].feat = FEAT_WALL_SOLID;
+		cave_p(x - 1, y)->feat = FEAT_WALL_SOLID;
+		cave_p(x + 1, y)->feat = FEAT_WALL_SOLID;
 	}
 
 
@@ -2272,17 +2243,17 @@ static void add_door(int x, int y)
 	 *  where x = don't care
 	 *  .=floor, #=wall
 	 */
-	if ((cave[y - 1][x].feat == FEAT_WALL_OUTER) &&
-	    (cave[y + 1][x].feat == FEAT_WALL_OUTER) &&
-	    (cave[y][x - 1].feat == FEAT_FLOOR) &&
-	    (cave[y][x + 1].feat == FEAT_FLOOR))
+	if ((cave_p(x, y - 1)->feat == FEAT_WALL_OUTER) &&
+	    (cave_p(x, y + 1)->feat == FEAT_WALL_OUTER) &&
+	    (cave_p(x - 1, y)->feat == FEAT_FLOOR) &&
+	    (cave_p(x + 1, y)->feat == FEAT_FLOOR))
 	{
 		/* secret door */
 		place_secret_door(y, x);
 
 		/* set boundarys so don't get wide doors */
-		cave[y - 1][x].feat = FEAT_WALL_SOLID;
-		cave[y + 1][x].feat = FEAT_WALL_SOLID;
+		cave_p(x, y - 1)->feat = FEAT_WALL_SOLID;
+		cave_p(x, y + 1)->feat = FEAT_WALL_SOLID;
 	}
 }
 
@@ -2295,6 +2266,8 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 	int x, y, cx, cy, size;
 	s32b value;
 
+	cave_type *c_ptr;
+	
 	/* center of room:*/
 	cx = (x1 + x2) / 2;
 	cy = (y1 + y2) / 2;
@@ -2316,10 +2289,12 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 			/* hack- empty square part of the time */
 			if ((randint1(100) - difficulty * 3) > 50) value = 20;
 
+			c_ptr = cave_p(x, y);
+			
 			/* if floor, shallow water and lava */
-			if ((cave[y][x].feat == FEAT_FLOOR) ||
-			    (cave[y][x].feat == FEAT_SHAL_WATER) ||
-			    (cave[y][x].feat == FEAT_SHAL_LAVA))
+			if ((c_ptr->feat == FEAT_FLOOR) ||
+			    (c_ptr->feat == FEAT_SHAL_WATER) ||
+			    (c_ptr->feat == FEAT_SHAL_LAVA))
 			{
 				/* The smaller 'value' is, the better the stuff */
 				if (value < 0)
@@ -2509,7 +2484,7 @@ static void build_bubble_vault(int x0, int y0, int xsize, int ysize)
 				}
 			}
 			
-			c_ptr = &cave[y0 - yhsize + y][x0 - xhsize + x];
+			c_ptr = cave_p(x0 - xhsize + x, y0 - yhsize + y);
 			
 			if (((min2 - min1) <= 2) && (!(min1 < 3)))
 			{
@@ -2585,7 +2560,7 @@ static void build_room(int x1, int y1, int x2, int y2)
 	{
 		for (y = 1; y < ysize; y++)
 		{
-			c_ptr = &cave[y1 + y][x1 + x];
+			c_ptr = cave_p(x1 + x, y1 + y);
 			
 			if (c_ptr->feat == FEAT_WALL_EXTRA)
 			{
@@ -2688,7 +2663,7 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
 	{
 		for (x = x0 - xhsize; x < x0 - xhsize + xsize; x++)
 		{
-			c_ptr = &cave[y][x];
+			c_ptr = cave_p(x, y);
 			
 			/* Is it a floor? */
 			if (c_ptr->feat == FEAT_FLOOR)
@@ -2925,7 +2900,7 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 	{
 		for (y = y1; y <= y2; y++)
 		{
-			c_ptr = &cave[y][x];
+			c_ptr = cave_p(x, y);
 			
 			total = x - x1 + y - y1;
 			
@@ -2942,15 +2917,15 @@ static void build_mini_c_vault(int x0, int y0, int xsize, int ysize)
 	{
 		/* left and right */
 		y = randint1(dy) + dy / 2;
-		cave[y1 + y][x1 - 1].feat = FEAT_WALL_OUTER;
-		cave[y1 + y][x2 + 1].feat = FEAT_WALL_OUTER;
+		cave_p(x1 - 1, y1 + y)->feat = FEAT_WALL_OUTER;
+		cave_p(x2 + 1, y1 + y)->feat = FEAT_WALL_OUTER;
 	}
 	else
 	{
 		/* top and bottom */
 		x = randint1(dx) + dx / 2;
-		cave[y1 - 1][x1 + x].feat = FEAT_WALL_OUTER;
-		cave[y2 + 1][x1 + x].feat = FEAT_WALL_OUTER;
+		cave_p(x1 + x, y1 - 1)->feat = FEAT_WALL_OUTER;
+		cave_p(x1 + x, y2 + 1)->feat = FEAT_WALL_OUTER;
 	}
 
 	/* Fill with monsters and treasure, highest difficulty */
@@ -3020,15 +2995,15 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 			{
 				/* left and right */
 				y = randint1(ysize) + y1;
-				cave[y][x1].feat = FEAT_FLOOR;
-				cave[y][x2].feat = FEAT_FLOOR;
+				cave_p(x1, y)->feat = FEAT_FLOOR;
+				cave_p(x2, y)->feat = FEAT_FLOOR;
 			}
 			else
 			{
 				/* top and bottom */
 				x = randint1(xsize) + x1;
-				cave[y1][x].feat = FEAT_FLOOR;
-				cave[y2][x].feat = FEAT_FLOOR;
+				cave_p(x, y1)->feat = FEAT_FLOOR;
+				cave_p(x, y2)->feat = FEAT_FLOOR;
 			}
 
 			/* Select size of keep */
@@ -3079,12 +3054,12 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 			if (one_in_(2))
 			{
 				/* left */
-				cave[y][x1 + 1].feat = FEAT_FLOOR;
+				cave_p(x1 + 1, y)->feat = FEAT_FLOOR;
 			}
 			else
 			{
 				/* right */
-				cave[y][x2 - 1].feat = FEAT_FLOOR;
+				cave_p(x2 - 1, y)->feat = FEAT_FLOOR;
 			}
 
 			/* Build the room */
@@ -3180,7 +3155,7 @@ static void add_outer_wall(int x, int y, int light,
 
 	if (!in_bounds(x, y)) return;
 
-	c_ptr = &cave[y][x];
+	c_ptr = cave_p(x, y);
 
 	/* hack- check to see if square has been visited before
 	* if so, then exit (use room flag to do this) */
@@ -3255,6 +3230,8 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 {
 	int rad, x, y;
 
+	cave_type *c_ptr;
+	
 	/* Make a random metric */
 	int h1, h2, h3, h4;
 	h1 = randint1(32) - 16;
@@ -3282,21 +3259,23 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 	{
 		for (y = y0 - rad + 1; y <= y0 + rad - 1; y++)
 		{
+			c_ptr = cave_p(x, y);
+			
 			/* clear room flag */
-			cave[y][x].info &= ~(CAVE_ROOM);
+			c_ptr->info &= ~(CAVE_ROOM);
 
 			/* Vault - so is "icky" */
-			cave[y][x].info |= CAVE_ICKY;
+			c_ptr->info |= CAVE_ICKY;
 
 			if (dist2(y0, x0, y, x, h1, h2, h3, h4) <= rad - 1)
 			{
 				/* inside- so is floor */
-				cave[y][x].feat = FEAT_FLOOR;
+				c_ptr->feat = FEAT_FLOOR;
 			}
 			else
 			{
 				/* make granite outside so arena works */
-				cave[y][x].feat = FEAT_WALL_EXTRA;
+				c_ptr->feat = FEAT_WALL_EXTRA;
 			}
 		}
 	}
@@ -3313,7 +3292,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 			if (dist2(y0, x0, y, x, h1, h2, h3, h4) == rad / 2)
 			{
 				/* Make an internal wall */
-				cave[y][x].feat = FEAT_WALL_INNER;
+				cave_p(x, y)->feat = FEAT_WALL_INNER;
 			}
 		}
 	}
@@ -3325,7 +3304,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
 	generate_draw(x0 - 1, y0 - 1, x0 + 1, y0 + 1, FEAT_WALL_INNER);
 		
 	/* Make inner room */
-	cave[y0][x0].feat = FEAT_FLOOR;
+	cave_p(x0, y0)->feat = FEAT_FLOOR;
 
 
 	/* Add doors to vault */
@@ -3494,7 +3473,7 @@ static void build_micro_room_vault(int x0, int y0, int xsize, int ysize)
 		{
 			if (one_in_(2))
 			{
-				cave[j][i].feat = FEAT_WALL_INNER;
+				cave_p(i, j)->feat = FEAT_WALL_INNER;
 			}
 		}
 	}
@@ -3585,12 +3564,12 @@ static void build_type11(int bx0, int by0)
 			if (distance(x0, y0, x, y) <= rad - 1)
 			{
 				/* inside- so is floor */
-				cave[y][x].feat = FEAT_FLOOR;
+				cave_p(x, y)->feat = FEAT_FLOOR;
 			}
 			else if (distance(x0, y0, x, y) <= rad + 1)
 			{
 				/* make granite outside so arena works */
-				cave[y][x].feat = FEAT_WALL_EXTRA;
+				cave_p(x, y)->feat = FEAT_WALL_EXTRA;
 			}
 		}
 	}
@@ -3613,6 +3592,8 @@ static void build_type12(int bx0, int by0)
 	int light = FALSE;
 	bool emptyflag = TRUE;
 
+	cave_type *c_ptr;
+	
 	/* Make a random metric */
 	int h1, h2, h3, h4;
 	h1 = randint1(32) - 16;
@@ -3636,22 +3617,24 @@ static void build_type12(int bx0, int by0)
 	{
 		for (y = y0 - rad + 1; y <= y0 + rad - 1; y++)
 		{
+			c_ptr = cave_p(x, y);
+			
 			/* clear room flag */
-			cave[y][x].info &= ~(CAVE_ROOM);
+			c_ptr->info &= ~(CAVE_ROOM);
 
 			if (dist2(y0, x0, y, x, h1, h2, h3, h4) <= rad - 1)
 			{
 				/* inside - so is floor */
-				cave[y][x].feat = FEAT_FLOOR;
+				c_ptr->feat = FEAT_FLOOR;
 			}
 			else if (distance(x0, y0, x, y) < 3)
 			{
-				cave[y][x].feat = FEAT_FLOOR;
+				c_ptr->feat = FEAT_FLOOR;
 			}
 			else
 			{
 				/* make granite outside so arena works */
-				cave[y][x].feat = FEAT_WALL_EXTRA;
+				c_ptr->feat = FEAT_WALL_EXTRA;
 			}
 		}
 	}
@@ -3665,7 +3648,7 @@ static void build_type12(int bx0, int by0)
 	{
 		for (y = y0 - 2; y <= y0 + 2; y++)
 		{
-			if (cave[y][x].feat != FEAT_FLOOR)
+			if (cave_p(x, y)->feat != FEAT_FLOOR)
 			{
 				/* Wall in the way */
 				emptyflag = FALSE;
@@ -3834,10 +3817,10 @@ static void build_type14(int bx0, int by0)
 			/* Horizontal walls */
 			for (x = x1 + 1; x < x2; x++)
 			{
-				cave[yval - 3][x].feat = FEAT_WALL_INNER;
-				cave[yval - 1][x].feat = FEAT_WALL_INNER;
-				cave[yval + 1][x].feat = FEAT_WALL_INNER;
-				cave[yval + 3][x].feat = FEAT_WALL_INNER;
+				cave_p(x, yval - 3)->feat = FEAT_WALL_INNER;
+				cave_p(x, yval - 1)->feat = FEAT_WALL_INNER;
+				cave_p(x, yval + 1)->feat = FEAT_WALL_INNER;
+				cave_p(x, yval + 3)->feat = FEAT_WALL_INNER;
 			}
 			break;
 		}
@@ -3852,13 +3835,13 @@ static void build_type14(int bx0, int by0)
 			/* Top wall */
 			for (y = y1; y <= yval; y++)
 			{
-				cave[y][xval + sgn].feat = FEAT_WALL_INNER;
+				cave_p(xval + sgn, y)->feat = FEAT_WALL_INNER;
 			} 
 			
 			/* Bottom Wall */
 			for (y = y2; y >= yval; y--)
 			{
-				cave[y][xval - sgn].feat = FEAT_WALL_INNER;
+				cave_p(xval - sgn, y)->feat = FEAT_WALL_INNER;
 			}
 
 			break;
@@ -3869,7 +3852,7 @@ static void build_type14(int bx0, int by0)
 			/* Horizontal internal wall */
 			for (x = xval - 4; x <= xval + 4; x++)
 			{
-				cave[yval][x].feat = FEAT_WALL_INNER;
+				cave_p(x, yval)->feat = FEAT_WALL_INNER;
 			}
 			
 			break;
@@ -3930,12 +3913,12 @@ static void build_type15(int bx0, int by0)
 			if (type)
 			{
 				/* Sloping down and right */
-				cave[y + y1][x + y].feat = FEAT_FLOOR;
+				cave_p(x + y, y + y1)->feat = FEAT_FLOOR;
 			}
 			else
 			{
 				/* Sloping up and right */
-				cave[y + y1][x + h - y].feat = FEAT_FLOOR;
+				cave_p(x + h - y, y + y1)->feat = FEAT_FLOOR;
 			}
 		}
 	}

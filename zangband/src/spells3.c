@@ -265,7 +265,7 @@ void teleport_to_player(int m_idx)
 			    (c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;
 
 			/* No teleporting into vaults and such */
-			/* if (cave[ny][nx].info & (CAVE_ICKY)) continue; */
+			/* if (c_ptr->info & (CAVE_ICKY)) continue; */
 
 			/* This grid looks good */
 			look = FALSE;
