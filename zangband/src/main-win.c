@@ -613,13 +613,13 @@ static const byte special_key_list[] =
 	VK_UP,			/* 0x26 (KP<8>) */
 	VK_RIGHT,		/* 0x27 (KP<6>) */
 	VK_DOWN,		/* 0x28 (KP<2>) */
-	VK_SELECT,		/* 0x29 (?????) */
-	VK_PRINT,		/* 0x2A (?????) */
-	VK_EXECUTE,		/* 0x2B (?????) */
-	VK_SNAPSHOT,	/* 0x2C (?????) */
+	VK_SELECT,		/* 0x29 (?) */
+	VK_PRINT,		/* 0x2A (?) */
+	VK_EXECUTE,		/* 0x2B (?) */
+	VK_SNAPSHOT,	/* 0x2C (?) */
 	VK_INSERT,		/* 0x2D (KP<0>) */
 	VK_DELETE,		/* 0x2E (KP<.>) */
-	VK_HELP,		/* 0x2F (?????) */
+	VK_HELP,		/* 0x2F (?) */
 
 #if 0
 	VK_NUMPAD0,		/* 0x60 (KP<0>) */
@@ -634,7 +634,7 @@ static const byte special_key_list[] =
 	VK_NUMPAD9,		/* 0x69 (KP<9>) */
 	VK_MULTIPLY,	/* 0x6A (KP<*>) */
 	VK_ADD,			/* 0x6B (KP<+>) */
-	VK_SEPARATOR,	/* 0x6C (?????) */
+	VK_SEPARATOR,	/* 0x6C (?) */
 	VK_SUBTRACT,	/* 0x6D (KP<->) */
 	VK_DECIMAL,		/* 0x6E (KP<.>) */
 	VK_DIVIDE,		/* 0x6F (KP</>) */
