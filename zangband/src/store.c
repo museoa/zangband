@@ -3650,6 +3650,9 @@ void do_cmd_store(void)
 
 		/* Save the visit */
 		town[p_ptr->town_num].store[which].last_visit = turn;
+		
+		/* Store the type */
+		town[p_ptr->town_num].store[which].type = which;
 	}
 
 	/* Forget the lite */
@@ -4065,6 +4068,9 @@ void move_to_black_market(object_type *o_ptr)
 	if (allocate_store(st_ptr))
 	{
 		store_maint(p_ptr->town_num, STORE_BLACK);
+		
+		/* Store the type */
+		town[p_ptr->town_num].store[STORE_BLACK].type = STORE_BLACK;
 	}
 	
 	o_ptr->ident |= IDENT_STOREB;
