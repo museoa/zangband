@@ -1467,6 +1467,55 @@ static bool borg_consume(list_item *l_ptr)
 	return (FALSE);
 }
 
+/*
+ * Destroy 'number' items
+ */
+static void borg_destroy_item(list_item *l_ptr, int slot, int number)
+{
+	/* Message */
+	borg_note(format("# Destroying %s.", l_ptr->o_name));
+	
+	borg_keypress('0');
+	borg_keypress(format("%d", number));
+
+	/* Destroy that item */
+	if (!(l_ptr->kn_flags3 & TR3_INSTA_ART))
+		borg_keypress('k');
+	else
+	{
+		int a;
+
+		/* worthless artifacts are dropped. */
+		borg_keypress('d');
+
+		/*
+		 * Mark the spot that the object was dropped so that
+		 * it will not be picked up again.
+		 */
+		for (a = 0; a < 50; a++)
+		{
+			if (bad_obj_x[a] != -1) continue;
+			if (bad_obj_y[a] != -1) continue;
+
+			bad_obj_x[a] = c_x;
+			bad_obj_y[a] = c_y;
+			borg_note(format
+					  ("# Crappy artifact at %d,%d", bad_obj_x[a],
+					   bad_obj_y[a]));
+			break;
+		}
+	}
+	
+	borg_keypress(I2A(slot));
+
+	/* Default is one item */
+	/* if ((l_ptr->number > 1) && (number > 1)) borg_keypress('\r'); */
+
+	/* Verify destruction */
+	borg_keypress('y');
+}
+
+
 
 /*
  * Destroy "junk" items
@@ -1578,42 +1627,9 @@ bool borg_crush_junk(void)
 
 		/* Message */
 		borg_note(format("# Junking junk (valued at %d)", value));
-
-		/* Message */
-		borg_note(format("# Destroying %s.", l_ptr->o_name));
-
-		/* Destroy that item */
-		if (!(l_ptr->kn_flags3 & TR3_INSTA_ART))
-			borg_keypress('k');
-		else
-		{
-			int a;
-
-			/* worthless artifacts are dropped. */
-			borg_keypress('d');
-
-			/* mark the spot that the object was dropped so that  */
-			/* it will not be picked up again. */
-			for (a = 0; a < 50; a++)
-			{
-				if (bad_obj_x[a] != -1) continue;
-				if (bad_obj_y[a] != -1) continue;
-
-				bad_obj_x[a] = c_x;
-				bad_obj_y[a] = c_y;
-				borg_note(format
-						  ("# Crappy artifact at %d,%d", bad_obj_x[a],
-						   bad_obj_y[a]));
-				break;
-			}
-		}
-		borg_keypress(I2A(i));
-
-		/* Default is one item */
-		if (l_ptr->number > 1) borg_keypress('\r');
-
-		/* Verify destruction */
-		borg_keypress('y');
+		
+		/* Destroy the item */
+		borg_destroy_item(l_ptr, i, 1);
 
 		/* Success */
 		return (TRUE);
@@ -1702,8 +1718,8 @@ bool borg_crush_hole(void)
 			borg_class == CLASS_WARRIOR && l_ptr->number <= 5) continue;
 
 
-		/* Pretend item isn't there */
-		l_ptr->treat_as = TREAT_AS_GONE;
+		/* Pretend one item isn't there */
+		l_ptr->treat_as = TREAT_AS_LESS;
 
 		/* Fix later */
 		fix = TRUE;
@@ -1735,19 +1751,9 @@ bool borg_crush_hole(void)
 
 		/* Try to consume the junk */
 		if (borg_consume(l_ptr)) return (TRUE);
-
-		/* Message */
-		borg_note(format("# Destroying %s.", l_ptr->o_name));
-
-		/* Destroy all items */
-		borg_keypresses("099");
-
-		/* Destroy that item */
-		borg_keypress('k');
-		borg_keypress(I2A(b_i));
-
-		/* Verify destruction */
-		borg_keypress('y');
+		
+		/* Destroy the item */
+		borg_destroy_item(l_ptr, b_i, 1);
 
 		/* Success */
 		return (TRUE);
@@ -1839,20 +1845,11 @@ bool borg_crush_slow(void)
 
 		/* Attempt to consume it */
 		if (borg_consume(l_ptr)) return (TRUE);
-
-		/* Message */
-		borg_note(format("# Destroying %s.", l_ptr->o_name));
-
-		/* Destroy one item */
-		borg_keypress('0');
-		borg_keypress('1');
-
-		/* Destroy that item */
-		borg_keypress('k');
-		borg_keypress(I2A(b_i));
-
-		/* Verify destruction */
-		borg_keypress('y');
+		
+		/* Destroy the item */
+		borg_destroy_item(l_ptr, b_i, 1);
+		
+		return (TRUE);
 	}
 
 	/* Hack -- no need */

@@ -1718,7 +1718,8 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 		/* Note */
 		borg_note("# Possible Invisible monster nearby.");
 
-		/* if I can, cast detect inviso--time stamp it
+		/*
+		 * If I can, cast detect inviso--time stamp it
 		 * We stamp it now if we can, or later if we just did the spell
 		 * That way we dont loop casting the spell.    APW
 		 */
@@ -1739,7 +1740,7 @@ static int borg_locate_kill(cptr who, int x, int y, int r)
 
 	/* Note */
 	borg_note(format("# There is a monster '%s' within %d grids of %d,%d",
-					 (r_name + r_ptr->name), r, y, x));
+					 (r_name + r_ptr->name), r, x, y));
 
 	/* Hack -- count racial appearances */
 	if (borg_race_count[r_idx] < MAX_SHORT) borg_race_count[r_idx]++;
