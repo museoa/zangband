@@ -2188,11 +2188,8 @@ void move_dun_level(int direction)
 		}
 	}
 	
-	/* Hack - save the recall depth the first time we go down */
-	if (!d_ptr->recall_depth)
-	{
-		d_ptr->recall_depth = d_ptr->min_level;
-	}
+	/* Make sure the deepest level is set correctly */
+	d_ptr->recall_depth = MAX(d_ptr->recall_depth, p_ptr->depth);
 }
 
 
