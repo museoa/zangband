@@ -1068,10 +1068,10 @@ static void store_delete(void)
 	num = st_ptr->stock[what].number;
 
 	/* Hack -- sometimes, only destroy half the items */
-	if (randint0(100) < 50) num = (num + 1) / 2;
+	if (one_in_(2)) num = (num + 1) / 2;
 
 	/* Hack -- sometimes, only destroy a single item */
-	if (randint0(100) < 50) num = 1;
+	if (one_in_(2)) num = 1;
 
 	/* 
 	 * Hack -- decrement the maximum timeouts and
@@ -1719,7 +1719,7 @@ static bool increase_insults(void)
 		st_ptr->bad_buy = 0;
 
 		/* Open tomorrow */
-		st_ptr->store_open = turn + 25000 + randint1(25000);
+		st_ptr->store_open = turn + rand_range(25000, 50000);
 
 		/* Closed */
 		return (TRUE);

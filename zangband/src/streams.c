@@ -307,7 +307,7 @@ void place_trees(int x, int y)
 				 * Clear previous contents, add feature
 				 * The border mainly gets trees, while the center gets rubble
 				 */
-				if ((distance(j, i, y, x) > 1) || (randint1(100) < 25))
+				if ((distance(j, i, y, x) > 1) || one_in_(4))
 				{
 					if (randint1(100) < 75)
 						cave[j][i].feat = FEAT_TREES;
@@ -454,7 +454,7 @@ void build_cavern(void)
 	while (!done)
 	{
 		/* testing values for these parameters: feel free to adjust */
-		grd = randint1(4) + 4;
+		grd = rand_range(4, 8);
 
 		/* want average of about 16 */
 		roug = randint1(8) * randint1(4);
@@ -500,7 +500,7 @@ void build_lake(int type)
 	while (!done)
 	{
 		/* testing values for these parameters: feel free to adjust */
-		grd = randint1(3) + 4;
+		grd = rand_range(3, 7);
 
 		/* want average of about 16 */
 		roug = randint1(8) * randint1(4);

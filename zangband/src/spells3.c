@@ -653,7 +653,7 @@ void teleport_player_level(void)
 		/* Leaving */
 		p_ptr->leaving = TRUE;
 	}
-	else if (randint0(100) < 50)
+	else if (one_in_(2))
 	{
 		msg_print("You rise up through the ceiling.");
 
@@ -760,7 +760,7 @@ void recall_player(int turns)
 
 void word_of_recall(void)
 {
-	recall_player(randint0(21) + 15);
+	recall_player(rand_range(15, 35));
 }
 
 
@@ -1033,7 +1033,7 @@ void brand_weapon(int brand_type)
 
 		msg_format("Your %s %s", o_name, act);
 
-		enchant(o_ptr, randint0(3) + 4, ENCH_TOHIT | ENCH_TODAM);
+		enchant(o_ptr, rand_range(4, 6), ENCH_TOHIT | ENCH_TODAM);
 	}
 	else
 	{
@@ -1100,7 +1100,7 @@ void call_the_(void)
 		else
 			msg_print("The dungeon trembles.");
 
-		take_hit(100 + randint1(150), "a suicidal Call the Void");
+		take_hit(rand_range(100, 250), "a suicidal Call the Void");
 	}
 }
 
@@ -1567,7 +1567,7 @@ void stair_creation(void)
 		/* Quest level */
 		cave_set_feat(py, px, FEAT_LESS);
 	}
-	else if (randint0(100) < 50)
+	else if (one_in_(2))
 	{
 		cave_set_feat(py, px, FEAT_MORE);
 	}
@@ -1654,7 +1654,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 			else if (o_ptr->to_h > 15) chance = 1000;
 			else chance = enchant_table[o_ptr->to_h];
 
-			if (force || ((randint1(1000) > chance) && (!a || (randint0(100) < 50))))
+			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
 			{
 				o_ptr->to_h++;
 				res = TRUE;
@@ -1672,7 +1672,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 			else if (o_ptr->to_d > 15) chance = 1000;
 			else chance = enchant_table[o_ptr->to_d];
 
-			if (force || ((randint1(1000) > chance) && (!a || (randint0(100) < 50))))
+			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
 			{
 				o_ptr->to_d++;
 				res = TRUE;
@@ -1690,7 +1690,7 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 			else if (o_ptr->to_a > 15) chance = 1000;
 			else chance = enchant_table[o_ptr->to_a];
 
-			if (force || ((randint1(1000) > chance) && (!a || (randint0(100) < 50))))
+			if (force || ((randint1(1000) > chance) && (!a || one_in_(2))))
 			{
 				o_ptr->to_a++;
 				res = TRUE;
@@ -1892,7 +1892,7 @@ static void bad_luck(object_type *o_ptr)
 	if (wield_slot(o_ptr) == -1) return;
 
 	/* Objects become worse sometimes */
-	if (!randint0(13))
+	if (one_in_(13))
 	{
 		int number = o_ptr->number;
 
@@ -1916,12 +1916,12 @@ static void bad_luck(object_type *o_ptr)
 	}
 
 	/* Objects are blasted sometimes */
-	if (!randint0(666) && (!is_art || !randint0(3)))
+	if (one_in_(666) && (!is_art || one_in_(3)))
 	{
 		/* Blast it */
-		if (o_ptr->to_a) o_ptr->to_a = 0 - randint1(5) - randint1(5);
-		if (o_ptr->to_h) o_ptr->to_h = 0 - randint1(5) - randint1(5);
-		if (o_ptr->to_d) o_ptr->to_d = 0 - randint1(5) - randint1(5);
+		if (o_ptr->to_a) o_ptr->to_a = 0 - rand_range(5, 10);
+		if (o_ptr->to_h) o_ptr->to_h = 0 - rand_range(5, 10);
+		if (o_ptr->to_d) o_ptr->to_d = 0 - rand_range(5, 10);
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;
 		o_ptr->ds = 1;
@@ -3975,7 +3975,7 @@ bool curse_armor(void)
 	object_desc(o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if ((o_ptr->flags3 & TR3_INSTA_ART) && (randint0(100) < 50))
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && one_in_(2))
 	{
 		/* Cool */
 		msg_format("A %s tries to %s, but your %s resists the effects!",
@@ -3991,7 +3991,7 @@ bool curse_armor(void)
 		chg_virtue(V_ENCHANT, -5);
 
 		/* Blast the armor */
-		o_ptr->to_a = 0 - randint1(5) - randint1(5);
+		o_ptr->to_a = 0 - rand_range(5, 10);
 		o_ptr->to_h = 0;
 		o_ptr->to_d = 0;
 		o_ptr->ac = 0;
@@ -4044,7 +4044,7 @@ bool curse_weapon(void)
 	object_desc(o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw */
-	if ((o_ptr->flags3 & TR3_INSTA_ART) && (randint0(100) < 50))
+	if ((o_ptr->flags3 & TR3_INSTA_ART) && one_in_(2))
 	{
 		/* Cool */
 		msg_format("A %s tries to %s, but your %s resists the effects!",
@@ -4060,8 +4060,8 @@ bool curse_weapon(void)
 		chg_virtue(V_ENCHANT, -5);
 
 		/* Shatter the weapon */
-		o_ptr->to_h = 0 - randint1(5) - randint1(5);
-		o_ptr->to_d = 0 - randint1(5) - randint1(5);
+		o_ptr->to_h = 0 - rand_range(5, 10);
+		o_ptr->to_d = 0 - rand_range(5, 10);
 		o_ptr->to_a = 0;
 		o_ptr->ac = 0;
 		o_ptr->dd = 1;
@@ -4124,7 +4124,7 @@ bool brand_bolts(void)
 		add_ego_flags(o_ptr, EGO_FLAME);
 
 		/* Enchant */
-		enchant(o_ptr, randint0(3) + 4, ENCH_TOHIT | ENCH_TODAM);
+		enchant(o_ptr, rand_range(2, 6), ENCH_TOHIT | ENCH_TODAM);
 
 		/* Notice */
 		return (TRUE);
@@ -4260,8 +4260,7 @@ bool dimension_door(void)
 	c_ptr = area(y, x);
 
 	if (!cave_empty_grid(c_ptr) || (c_ptr->info & CAVE_ICKY) ||
-		(distance(y, x, py, px) > plev + 2) ||
-		(!randint0(plev * plev / 2)))
+		(distance(y, x, py, px) > plev + 2) || (one_in_(plev * plev / 2)))
 	{
 		msg_print("You fail to exit the astral plane correctly!");
 		p_ptr->energy -= 100;

@@ -2335,7 +2335,7 @@ bool destroy_area(int y1, int x1, int r)
 		if (!p_ptr->resist_blind && !p_ptr->resist_lite)
 		{
 			/* Become blind */
-			(void)set_blind(p_ptr->blind + 10 + randint1(10));
+			(void)set_blind(p_ptr->blind + rand_range(10, 20));
 		}
 	}
 
@@ -3500,14 +3500,14 @@ bool drain_gain_life(int dir, int dam)
 bool wall_to_mud(int dir)
 {
 	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-	return (project_hook(GF_KILL_WALL, dir, 20 + randint1(30), flg));
+	return (project_hook(GF_KILL_WALL, dir, rand_range(20, 50), flg));
 }
 
 
 bool wizard_lock(int dir)
 {
 	u16b flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
-	return (project_hook(GF_JAM_DOOR, dir, 20 + randint1(30), flg));
+	return (project_hook(GF_JAM_DOOR, dir, rand_range(20, 50), flg));
 }
 
 
@@ -3746,7 +3746,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				if (!(*count))
 				{
 					msg_print("The ground trembles...");
-					earthquake(py, px, 5 + randint0(10));
+					earthquake(py, px, rand_range(5, 15));
 					if (!one_in_(6)) break;
 				}
 			}
@@ -3820,7 +3820,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					}
 					stop_ty = TRUE;
 				}
-				if (randint1(6) != 1) break;
+				if (!one_in_(6)) break;
 			}
 			case 21: case 22: case 23:
 			{
@@ -3972,7 +3972,7 @@ void wall_breaker(void)
 			if ((y != py) || (x != px)) break;
 		}
 
-		project(0, 0, y, x, 20 + randint1(30), GF_KILL_WALL,
+		project(0, 0, y, x, rand_range(20, 50), GF_KILL_WALL,
 				  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 	}
 	else if (randint1(100) > 30)
@@ -3992,7 +3992,7 @@ void wall_breaker(void)
 				if ((y != py) || (x != px)) break;
 			}
 
-			project(0, 0, y, x, 20 + randint1(30), GF_KILL_WALL,
+			project(0, 0, y, x, rand_range(20, 50), GF_KILL_WALL,
 					  (PROJECT_BEAM | PROJECT_THRU | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL));
 		}
 	}

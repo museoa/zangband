@@ -626,7 +626,7 @@ bool monster_death(int m_idx)
 	 */
 	else if (strstr((r_name + r_ptr->name), "the Dawn"))
 	{
-		if (randint1(20) != 13)
+		if (!one_in_(20))
 		{
 			int wy = y, wx = x;
 			int attempts = 100;
@@ -763,27 +763,27 @@ bool monster_death(int m_idx)
 			}
 			else if (strstr((r_name + r_ptr->name), "Brand, "))
 			{
-				if (randint1(3) != 1)
-				{
-					a_idx = ART_BRAND;
-					chance = 25;
-				}
-				else
+				if (one_in_(3))
 				{
 					a_idx = ART_ANGUIREL;
 					chance = 33;
 				}
+				else
+				{
+					a_idx = ART_BRAND;
+					chance = 25;
+				}
 			}
 			else if (strstr((r_name + r_ptr->name), "Corwin,"))
 			{
-				if (randint1(3) != 1)
+				if (one_in_(3))
 				{
-					a_idx = ART_GRAYSWANDIR;
+					a_idx = ART_CORWIN;
 					chance = 33;
 				}
 				else
 				{
-					a_idx = ART_CORWIN;
+					a_idx = ART_GRAYSWANDIR;
 					chance = 33;
 				}
 			}
@@ -860,7 +860,7 @@ bool monster_death(int m_idx)
 		object_wipe(q_ptr);
 
 		/* Make Gold */
-		if (do_gold && (!do_item || (randint0(100) < 50)))
+		if (do_gold && (!do_item || one_in_(2)))
 		{
 			/* Make some gold */
 			if (!make_gold(q_ptr, force_coin)) continue;
@@ -1272,7 +1272,7 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 		/* Don't kill Amberites */
 		if ((r_ptr->flags3 & RF3_AMBERITE) && one_in_(2))
 		{
-			int curses = 1 + randint1(3);
+			int curses = rand_range(1, 4);
 			bool stop_ty = FALSE;
 			int count = 0;
 
@@ -3416,7 +3416,7 @@ void gain_level_reward(int chosen_reward)
 	if (one_in_(nasty_chance))
 		type = randint1(20); /* Allow the 'nasty' effects */
 	else
-		type = randint1(15) + 5; /* Or disallow them */
+		type = rand_range(5, 20); /* Or disallow them */
 
 	if (type < 1) type = 1;
 	if (type > 20) type = 20;
@@ -3573,7 +3573,7 @@ void gain_level_reward(int chosen_reward)
 			q_ptr->to_h = 3 + randint1(p_ptr->depth) % 10;
 			q_ptr->to_d = 3 + randint1(p_ptr->depth) % 10;
 			
-			(void) random_resistance(q_ptr, randint1(34) + 4, 0);
+			(void) random_resistance(q_ptr, rand_range(4, 38), 0);
 			
 			add_ego_flags(q_ptr, EGO_CHAOTIC);
 
@@ -3588,13 +3588,13 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Thy deed hath earned thee a worthy reward.'");
-			acquirement(py, px, randint1(2) + 1, FALSE, FALSE);
+			acquirement(py, px, rand_range(2, 3), FALSE, FALSE);
 			break;
 		case REW_GREA_OBS:
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'Behold, mortal, how generously I reward thy loyalty.'");
-			acquirement(py, px, randint1(2) + 1, TRUE, FALSE);
+			acquirement(py, px, rand_range(2, 3), TRUE, FALSE);
 			break;
 		case REW_TY_CURSE:
 		{
@@ -3608,7 +3608,7 @@ void gain_level_reward(int chosen_reward)
 			msg_format("The voice of %s booms out:",
 				chaos_patrons[p_ptr->chaos_patron]);
 			msg_print("'My pets, destroy the arrogant mortal!'");
-			for (i = 0; i < randint1(5) + 1; i++)
+			for (i = 0; i < rand_range(2, 6); i++)
 			{
 				(void)summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
 			}
@@ -3650,7 +3650,7 @@ void gain_level_reward(int chosen_reward)
 			msg_print("You feel less powerful!");
 			for (i = 0; i < A_MAX; i++)
 			{
-				(void)dec_stat(i, 10 + randint1(15), TRUE);
+				(void)dec_stat(i, rand_range(10, 25), TRUE);
 			}
 			break;
 		case REW_POLY_WND:
@@ -3724,7 +3724,7 @@ void gain_level_reward(int chosen_reward)
 				default:
 					for (i = 0; i < A_MAX; i++)
 					{
-						(void)dec_stat(i, 10 + randint1(15), TRUE);
+						(void)dec_stat(i, rand_range(10, 25), TRUE);
 					}
 			}
 			break;
@@ -3738,7 +3738,7 @@ void gain_level_reward(int chosen_reward)
 
 			for (i = 0; i < A_MAX; i++)
 			{
-				(void)dec_stat(i, 10 + randint1(15), FALSE);
+				(void)dec_stat(i, rand_range(10, 25), FALSE);
 			}
 
 			activate_hi_summon();

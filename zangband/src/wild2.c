@@ -1717,13 +1717,13 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 				}
 				else
 				{
-					if (randint0(3))
+					if (one_in_(3))
 					{
-						c_ptr->feat = FEAT_DIRT;
+						c_ptr->feat = FEAT_PEBBLES;
 					}
 					else
 					{
-						c_ptr->feat = FEAT_PEBBLES;
+						c_ptr->feat = FEAT_DIRT;
 					}
 				}
 			}
@@ -1748,25 +1748,25 @@ static void wild_add_gradient(blk_ptr block_ptr, byte feat1, byte feat2)
 			if (temp_block[j][i] >= WILD_BLOCK_SIZE * 213)
 			{
 				/* 25% of the time use the other tile : it looks better this way */
-				if (randint1(100) < 75)
+				if (one_in_(4))
 				{
-					block_ptr[j][i].feat = feat2;
+					block_ptr[j][i].feat = feat1;
 				}
 				else
 				{
-					block_ptr[j][i].feat = feat1;
+					block_ptr[j][i].feat = feat2;
 				}
 			}
 			else if (temp_block[j][i] >= WILD_BLOCK_SIZE * 128)
 			{
 				/* 25% of the time use the other tile : it looks better this way */
-				if (randint1(100) < 75)
+				if (one_in_(4))
 				{
-					block_ptr[j][i].feat = feat1;
+					block_ptr[j][i].feat = feat2;
 				}
 				else
 				{
-					block_ptr[j][i].feat = feat2;
+					block_ptr[j][i].feat = feat1;
 				}
 			}
 		}
@@ -1918,14 +1918,14 @@ static void make_wild_03(blk_ptr block_ptr, byte *data)
 			/* Outside circle? */
 			if (element < WILD_BLOCK_SIZE * 128) continue;
 
-			if ((element < WILD_BLOCK_SIZE * 171) && (randint0(2) == 1))
+			if ((element < WILD_BLOCK_SIZE * 171) && one_in_(2))
 			{
 				/* Outermost terrain */
 				block_ptr[j][i].feat = data[1];
 				continue;
 			}
 
-			if ((element < WILD_BLOCK_SIZE * 213) && (randint0(2) == 1))
+			if ((element < WILD_BLOCK_SIZE * 213) && one_in_(2))
 			{
 				/* Middle terrain */
 				block_ptr[j][i].feat = data[2];
@@ -2170,7 +2170,7 @@ static void add_monsters_block(int x, int y)
 			/* See if monster should go on square */
 			if (!randint0(prob))
 			{
-				if (randint0(2))
+				if (one_in_(2))
 				{
 					/* Monsters are awake */
 					(void)place_monster(yy + j, xx + i, FALSE, TRUE);
