@@ -432,6 +432,60 @@ list_item *look_up_equip_slot(int slot)
 }
 
 
+/* Does this item have some bad curse that the borg can't handle */
+bool borg_test_bad_curse(list_item *l_ptr)
+{
+	int i;
+
+	/* Just checking */
+	if (!l_ptr) return (FALSE);
+
+	/* No borg can handle not teleporting */
+	if (KN_FLAG(l_ptr, TR_NO_TELE)) return (TRUE);
+
+	/* Only high level borgs can handle topi */
+	if (KN_FLAG(l_ptr, TR_TY_CURSE) && bp_ptr->lev < 50) return (TRUE);
+
+	/* This curse is meaningless for warriors */
+	if (KN_FLAG(l_ptr, TR_NO_MAGIC) && borg_class != CLASS_WARRIOR) return (TRUE);
+
+	/* This curse is no problem if all stats are sustained */
+	if (KN_FLAG(l_ptr, TR_DRAIN_STATS))
+	{
+		list_item temp;
+
+		/* Clear */
+		temp.kn_flags[1] = 0;
+
+		/* Check the equipment */
+		for (i = 0; i < equip_num; i++)
+		{
+			l_ptr = look_up_equip_slot(i);
+
+			/* No empty slots */
+			if (!l_ptr) continue;
+
+			/* Copy the flags */
+			temp.kn_flags[1] |= l_ptr->kn_flags[1];
+		}
+
+		/* If there are enough sustains this curse can be ignored */
+		if (KN_FLAG(&temp, TR_SUST_STR) &&
+			KN_FLAG(&temp, TR_SUST_INT) &&
+			KN_FLAG(&temp, TR_SUST_WIS) &&
+			KN_FLAG(&temp, TR_SUST_DEX) &&
+			KN_FLAG(&temp, TR_SUST_CON)) return (FALSE);
+
+		/* not enough sustains */
+		return (TRUE);
+	}
+
+	/* No curse */
+	return (FALSE);
+}
+					
+
+
 /* Determine if this item should be id'd or something. */
 static void borg_notice_improve_item(list_item *l_ptr, bool equip)
 {
@@ -2018,14 +2072,8 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 				/* No empty slots */
 				if (!l_ptr) continue;
 
-				/* If there is a nasty curse */
-				if (KN_FLAG(l_ptr, TR_NO_TELE) ||
-					(KN_FLAG(l_ptr, TR_NO_MAGIC) && borg_class != CLASS_WARRIOR) ||
-					KN_FLAG(l_ptr, TR_TY_CURSE))
-				{
-					/* Count the mundanity scroll */
-					bp_ptr->able.mundane += number;
-				}
+				/* If there is a nasty curse count the mundanity scroll */
+				if (borg_test_bad_curse(l_ptr)) bp_ptr->able.mundane += number;
 
 			break;
 			}
@@ -4119,14 +4167,8 @@ static void borg_notice_home_item(list_item *l_ptr, int i)
 		num_artifact += l_ptr->number;
 	}
 
-	/* If this item has some really bad flag */
-	if (KN_FLAG(l_ptr, TR_TY_CURSE) ||
-		KN_FLAG(l_ptr, TR_NO_TELE) ||
-		(KN_FLAG(l_ptr, TR_NO_MAGIC) && borg_class != CLASS_WARRIOR))
-	{
-		/* Count this flag */
-		num_bad_curse += l_ptr->number;
-	}
+	/* If this item has some really bad flag count it */
+	if (borg_test_bad_curse(l_ptr)) num_bad_curse += l_ptr->number;
 
 	/* Analyze the item */
 	switch (l_ptr->tval)
@@ -4891,8 +4933,8 @@ static s32b borg_power_home_aux1(void)
 	else if (num_sustain_all > 2)
 		value += 1500L + (num_sustain_all - 2) * 1L;
 
-	/* Count the artifacts stored at home */
-	value += num_artifact * 100000;
+	/* Count the un*id*'d artifacts stored at home */
+	value += MIN(num_artifact, 7) * 100000;
 
 	/*
 	 * Do a minus for too many duplicates.

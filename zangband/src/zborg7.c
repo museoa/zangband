@@ -1132,14 +1132,8 @@ static bool borg_mundane(void)
 		/* Not for empty slots */
 		if (!l_ptr) continue;
 
-		/* If there is a nasty curse */
-		if (KN_FLAG(l_ptr, TR_NO_TELE) ||
-			(KN_FLAG(l_ptr, TR_NO_MAGIC) && borg_class != CLASS_WARRIOR) ||
-			KN_FLAG(l_ptr, TR_TY_CURSE))
-		{
-			/* Remember the target for the mundanity scroll */
-			slot = i;
-		}
+		/* If there is a nasty curse remember the slot */
+		if (borg_test_bad_curse(l_ptr))	slot = i;
 	}
 
 	/* I guess not */
