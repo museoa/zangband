@@ -1780,7 +1780,7 @@ bool activate_effect(object_type *o_ptr)
 						if (!in_bounds2(x, y)) continue;
 
 						c_ptr = area(x, y);
-						if (!cave_floor_grid(c_ptr)) continue;
+						if (cave_wall_grid(c_ptr)) continue;
 
 						if ((y != py) || (x != px)) break;
 					}

@@ -485,7 +485,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			if ((c_ptr->o_idx != 0) || (c_ptr->m_idx != 0)) break;
 
 			/* Require a floor grid */
-			if (!cave_floor_grid(c_ptr)) break;
+			if (cave_wall_grid(c_ptr)) break;
 
 			/* Add the glyph here as a field */
 			(void)place_field(x, y, FT_GLYPH_WARDING);
@@ -4269,7 +4269,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 		c_ptr = area(nx, ny);
 
 		/* Hack -- Balls explode before reaching walls */
-		if (!cave_floor_grid(c_ptr) && (rad > 0)) break;
+		if (cave_wall_grid(c_ptr) && (rad > 0)) break;
 
 		/* Require fields do not block magic */
 		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC)) break;

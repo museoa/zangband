@@ -2523,7 +2523,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 		/* Stopped by walls/doors */
 		c_ptr = area(nx, ny);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (cave_wall_grid(c_ptr)) break;
 
 		/* Advance the distance */
 		cur_dis++;
@@ -2961,7 +2961,7 @@ void do_cmd_throw_aux(int mult)
 
 		/* Stopped by walls/doors */
 		c_ptr = area(nx, ny);
-		if (!cave_floor_grid(c_ptr))
+		if (cave_wall_grid(c_ptr))
 		{
 			hit_wall = TRUE;
 			break;

@@ -3042,7 +3042,7 @@ static int next_to_open(int cx, int cy)
 		c_ptr = area(x, y);
 
 		/* Found a wall, break the length */
-		if (!cave_floor_grid(c_ptr))
+		if (cave_wall_grid(c_ptr))
 		{
 			/* Track best length */
 			if (len > blen)
@@ -3081,7 +3081,7 @@ static int next_to_walls_adj(int cx, int cy)
 
 		c_ptr = area(x, y);
 
-		if (!cave_floor_grid(c_ptr)) c++;
+		if (cave_wall_grid(c_ptr)) c++;
 	}
 
 	return c;
@@ -3105,7 +3105,7 @@ static void cave_temp_room_aux(int x, int y)
 	if (c_ptr->info & (CAVE_TEMP)) return;
 
 	/* If a wall, exit */
-	if (!cave_floor_grid(c_ptr)) return;
+	if (cave_wall_grid(c_ptr)) return;
 
 	/* Do not exceed the maximum spell range */
 	if (distance(p_ptr->px, p_ptr->py, x, y) > MAX_RANGE) return;
@@ -3156,7 +3156,7 @@ void lite_room(int x1, int y1)
 		c_ptr = area(x, y);
 
 		/* Walls get lit, but stop light */
-		if (!cave_floor_grid(c_ptr)) continue;
+		if (cave_wall_grid(c_ptr)) continue;
 
 		/* Spread adjacent */
 		cave_temp_room_aux(x + 1, y);
@@ -3196,7 +3196,7 @@ void unlite_room(int x1, int y1)
 		c_ptr = area(x, y);
 
 		/* Walls get dark, but stop darkness */
-		if (!cave_floor_grid(c_ptr)) continue;
+		if (cave_wall_grid(c_ptr)) continue;
 
 		/* Spread adjacent */
 		cave_temp_room_aux(x + 1, y);
@@ -4243,7 +4243,7 @@ bool starlite(void)
 
 			c_ptr = area(x, y);
 
-			if (!cave_floor_grid(c_ptr)) continue;
+			if (cave_wall_grid(c_ptr)) continue;
 
 			if ((y != p_ptr->py) || (x != p_ptr->px)) break;
 		}

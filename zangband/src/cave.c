@@ -1617,7 +1617,8 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
 	 * We then need to have a grid that is allowed to be lit.
 	 */
 	if (view_bright_lite && !p_ptr->blind
-		&& (floor_grid(feat) || (view_granite_lite && !view_torch_grids)))
+		&& (!(f_ptr->flags & FF_BLOCK)
+			 || (view_granite_lite && !view_torch_grids)))
 	{
 		/* It's not in view or no lighting effects? */
 		if (((!(player & (GRID_VIEW))) && view_special_lite)
@@ -4707,9 +4708,11 @@ void update_flow(void)
 			if (c_ptr->when == flow_n) continue;
 
 			/* Ignore all "walls" except doors + terrain */
-			if (!floor_grid(feat) && (feat != FEAT_CLOSED) &&
-				((feat & 0x60) != 0x60)) continue;
-
+			if ((f_info[feat].flags & FF_BLOCK) && (feat != FEAT_CLOSED))
+			{
+				continue;
+			}
+			
 			/*
 			 * Hack - do not overwrite loud sounds with quiet ones,
 			 * unless some time has passed
@@ -4964,7 +4967,7 @@ void cave_set_feat(int x, int y, int feat)
 	if (cave_floor_grid(c_ptr))
 	{
 		/* Is new eat a wall grid? */
-		if (!floor_grid(feat))
+		if (f_info[feat].flags & FF_BLOCK)
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
@@ -4973,7 +4976,7 @@ void cave_set_feat(int x, int y, int feat)
 	else
 	{
 		/* Is new feat a floor grid? */
-		if (floor_grid(feat))
+		if (!(f_info[feat].flags & FF_BLOCK))
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);

@@ -1232,21 +1232,10 @@ static void process_world(void)
 	 * reduced below 0 hp by being inside a stone wall; others
 	 * WILL BE!
 	 */
-	if (!cave_floor_grid(c_ptr))
+	if (cave_wall_grid(c_ptr))
 	{
-		/* Player can walk through semi-transparent terrain */
-		if ((c_ptr->feat & 0x60) == 0x60)
-		{
-			/* Do nothing */
-		}
-		else if ((c_ptr->feat & 0x80) == 0x80)
-		{
-			/* Player can walk through the "slow floor" terrains. */
-
-			/* Do nothing */
-		}
-		else if (!p_ptr->invuln && !p_ptr->wraith_form &&
-				 ((p_ptr->chp > (p_ptr->lev / 5)) || !p_ptr->pass_wall))
+		if (!p_ptr->invuln && !p_ptr->wraith_form &&
+			((p_ptr->chp > (p_ptr->lev / 5)) || !p_ptr->pass_wall))
 		{
 			cptr dam_desc;
 

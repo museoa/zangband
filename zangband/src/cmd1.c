@@ -2493,7 +2493,7 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Player can not walk through "walls" unless in wraith form... */
-	else if (!cave_floor_grid(c_ptr) && !p_can_pass_walls)
+	else if (cave_wall_grid(c_ptr) && !p_can_pass_walls)
 	{
 		oktomove = FALSE;
 
@@ -2664,7 +2664,7 @@ static int see_wall(int dir, int x, int y)
 {
 	pcave_type *pc_ptr;
 
-	byte feat;
+	feature_type *f_ptr;
 
 	/* Get the new location */
 	y += ddy[dir];
@@ -2674,24 +2674,11 @@ static int see_wall(int dir, int x, int y)
 	if (!in_boundsp(x, y)) return (TRUE);
 
 	pc_ptr = parea(x, y);
+	
+	f_ptr = &f_info[pc_ptr->feat];
 
-	feat = pc_ptr->feat;
-
-	/* Non-wall grids are not known walls */
-	if (feat < FEAT_PILLAR) return (FALSE);
-
-	if ((feat >= FEAT_DEEP_WATER) && (feat <= FEAT_GRASS)) return (FALSE);
-
-	/* Semi - transparent terrains */
-	if ((feat & 0x60) == 0x60) return (FALSE);
-
-	if ((feat == FEAT_GRASS) ||
-		(feat == FEAT_DIRT) || (feat == FEAT_TREE_WATER)) return (FALSE);
-
-	if ((feat >= FEAT_BUSH) && (feat <= FEAT_SNOW)) return (FALSE);
-
-	/* Default */
-	return (TRUE);
+	/* Return block-los status */
+	return (f_ptr->flags & FF_BLOCK);
 }
 
 
@@ -2717,7 +2704,7 @@ static int see_nothing(int dir, int x, int y)
 	if (pc_ptr->feat) return (FALSE);
 
 	/* Non-floor grids are unknown */
-	if (!cave_floor_grid(c_ptr)) return (TRUE);
+	if (cave_wall_grid(c_ptr)) return (TRUE);
 
 	/* Viewable door/wall grids are known */
 	if (player_can_see_grid(pc_ptr)) return (FALSE);
@@ -3201,7 +3188,7 @@ static bool run_test(void)
 		}
 
 		/* Analyze unknown grids and floors */
-		if (inv || cave_floor_grid(c_ptr) || ((c_ptr->feat & 0x60) == 0x60))
+		if (inv || cave_floor_grid(c_ptr))
 		{
 			/* Looking for open area */
 			if (p_ptr->run_open_area)

@@ -1223,7 +1223,7 @@ void fetch(int dir, int wgt, bool require_los)
 			c_ptr = area(tx, ty);
 
 			if ((distance(px, py, tx, ty) > MAX_RANGE) ||
-				!cave_floor_grid(c_ptr)) return;
+				cave_wall_grid(c_ptr)) return;
 
 			/* found a spot */
 			if (!c_ptr->o_idx) break;
@@ -1305,7 +1305,7 @@ bool warding_glyph(void)
 	}
 
 	/* Not in a wall */
-	if (!cave_floor_grid(c_ptr))
+	if (cave_wall_grid(c_ptr))
 	{
 		msg_print("You need open space to draw the rune.");
 		return FALSE;
@@ -1339,7 +1339,7 @@ bool explosive_rune(void)
 	}
 
 	/* Not in a wall */
-	if (!cave_floor_grid(c_ptr))
+	if (cave_wall_grid(c_ptr))
 	{
 		msg_print("You need open space to draw the rune.");
 		return FALSE;
@@ -1685,7 +1685,7 @@ static int enchant_table_dam[ENCHANT_MAX_DAM + 1] =
 /*
  * Used by the "enchant" function (chance of failure)
  */
-static int enchant_table[ENCHANT_MAX] =
+static int enchant_table[ENCHANT_MAX + 1] =
 {
 	0, 10,  50, 100, 200,
 	300, 400, 500, 650, 800,

@@ -282,7 +282,7 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 	/*** Check passability of various features. ***/
 
 	/* Feature is not a wall */
-	if (floor_grid(feat))
+	if (!(f_info[feat].flags & FF_BLOCK))
 	{
 		/* Ocean */
 		if (feat == FEAT_OCEAN_WATER)
@@ -344,12 +344,6 @@ static int cave_passable_mon(monster_type *m_ptr, cave_type *c_ptr)
 		}
 
 		/* Anything else that's not a wall we assume to be passable. */
-		return (move_chance);
-	}
-
-	/* Semi-transparent terrains are no obstacle */
-	if ((feat & 0x60) == 0x60)
-	{
 		return (move_chance);
 	}
 
@@ -842,7 +836,7 @@ static void find_safety(monster_type *m_ptr, int *xp, int *yp)
 			c_ptr = area(x, y);
 
 			/* Skip locations in a wall */
-			if (!cave_floor_grid(c_ptr)) continue;
+			if (cave_wall_grid(c_ptr)) continue;
 
 			/* Ignore grids very far from the player */
 			if (c_ptr->when < area(px, py)->when) continue;
@@ -1371,7 +1365,7 @@ static bool get_moves(int m_idx, int *mm)
 				c_ptr = area(xx, yy);
 
 				/* Check grid */
-				if (((cave_floor_grid(c_ptr)) || ((c_ptr->feat & 0x60) == 0x60))
+				if (cave_floor_grid(c_ptr)
 					&& monster_can_cross_terrain(c_ptr->feat, r_ptr))
 				{
 					/* One more room grid */
@@ -2239,12 +2233,6 @@ static void take_move(int m_idx, int *mm)
 			do_move = FALSE;
 		}
 
-		/* Hack -- semi-transparent terrains are no obstacle */
-		else if ((c_ptr->feat & 0x60) == 0x60)
-		{
-			do_move = TRUE;
-		}
-
 		/* Hack -- closed or secret doors are no obstacle */
 		else if ((c_ptr->feat == FEAT_CLOSED) || (c_ptr->feat == FEAT_SECRET))
 		{
@@ -2279,7 +2267,7 @@ static void take_move(int m_idx, int *mm)
 			cave_set_feat(nx, ny, FEAT_FLOOR);
 		}
 
-		else if (!cave_floor_grid(c_ptr))
+		else if (cave_wall_grid(c_ptr))
 		{
 			/* This monster cannot walk through walls */
 			do_move = FALSE;

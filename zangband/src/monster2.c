@@ -1492,10 +1492,11 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	if (cave_perma_grid(c_ptr)) return (FALSE);
 
 	/* Walls also stops generation if we aren't ghostly */
-	if (!
-		(cave_floor_grid(c_ptr) || ((c_ptr->feat & 0x60) == 0x60)
-		 || (r_ptr->flags2 & RF2_PASS_WALL))) return (FALSE);
-
+	if (cave_wall_grid(c_ptr) && !(r_ptr->flags2 & RF2_PASS_WALL))
+	{
+		return (FALSE);
+	}
+	
 	/* Nor on the Pattern */
 	if ((c_ptr->feat >= FEAT_PATTERN_START)
 		&& (c_ptr->feat <= FEAT_PATTERN_XTRA2))
