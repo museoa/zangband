@@ -4065,6 +4065,8 @@ void play_game(bool new_game)
 		Rand_state_init(seed);
 	}
 
+	/* Reset the visual mappings */
+	reset_visuals();
 	
 	/* Roll new character */
 	if (new_game)
@@ -4106,9 +4108,6 @@ void play_game(bool new_game)
 		/* Hack -- seed for town layout (not used any more) */
 		seed_town = 0;
 	}
-
-	/* Reset the visual mappings */
-	reset_visuals();
 	
 	/* Init the fields */
 	init_fields();
