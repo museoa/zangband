@@ -477,367 +477,7 @@ static int widget_create(Tcl_Interp *interp, Widget **ptr)
 	return TCL_OK;
 }
 
-/*
- * One-time initialization.
- */
-int init_widget(Tcl_Interp *interp)
-{
-	if (Widget_Init(interp, widget_create) != TCL_OK)
-		return TCL_ERROR;
-	return TCL_OK;
-}
-
-void angtk_widget_lock(bool lock)
-{
-	DoubleLink *link;
-	Widget *widgetPtr;
-
-	if (lock)
-	{
-		for (link = WidgetList.head; link; link = link->next)
-		{
-			widgetPtr = DoubleLink_Data(link, Widget);
-			widgetPtr->flags |= WIDGET_NO_UPDATE;
-		}
-	}
-	else
-	{
-		for (link = WidgetList.head; link; link = link->next)
-		{
-			widgetPtr = DoubleLink_Data(link, Widget);
-			if (!widgetPtr->noUpdate)
-			{
-				widgetPtr->flags &= ~WIDGET_NO_UPDATE;
-			}
-		}
-	}
-}
-
-/*
- * Now for spell and missile effects in a Widget. The basic idea is to
- * prepare for drawing, perform the drawing (offscreen), display
- * the changed grids onscreen, then repair the affected grids offscreen.
- *
- * Specifically, we call angtk_effect_prep(), then another routine to
- * draw any number of spell/missile grids offscreen, and finally
- * angtk_effect_fresh() to display the changes onscreen. This allows us
- * to draw each radius of a spell explosion in turn.
- *
- * Because a Widget may display an arbitrary area of the cave, and because
- * a particular Widget may not be mapped (ie, visible onscreen), we keep
- * track of which Widgets were really drawn into and require redisplaying.
- */
-
-/*
- * Return EFFECT_SPELL_XXX constant for given GF_XXX constant. For each
- * EFFECT_SPELL_XXX we have a bolt icon assignment and a ball icon assignment.
- * The bolt assignment is assumed to be the first of four icons.
- */
-static byte effect_index(int type)
-{
-	/* Analyze */
-	switch (type)
-	{
-		case GF_MISSILE:	return (EFFECT_SPELL_MISSILE);
-		case GF_ACID:		return (EFFECT_SPELL_ACID);
-		case GF_ELEC:		return (EFFECT_SPELL_ELEC);
-		case GF_FIRE:		return (EFFECT_SPELL_FIRE);
-		case GF_COLD:		return (EFFECT_SPELL_COLD);
-		case GF_POIS:		return (EFFECT_SPELL_POIS);
-		case GF_HOLY_FIRE:	return (EFFECT_SPELL_HOLY_FIRE);
-		case GF_HELL_FIRE:	return (EFFECT_SPELL_HELL_FIRE);
-		case GF_MANA:		return (EFFECT_SPELL_MANA);
-		case GF_ARROW:		return (EFFECT_SPELL_ARROW);
-		case GF_WATER:		return (EFFECT_SPELL_WATER);
-		case GF_NETHER:		return (EFFECT_SPELL_NETHER);
-		case GF_CHAOS:		return (EFFECT_SPELL_CHAOS);
-		case GF_DISENCHANT:	return (EFFECT_SPELL_DISENCHANT);
-		case GF_NEXUS:		return (EFFECT_SPELL_NEXUS);
-		case GF_CONFUSION:	return (EFFECT_SPELL_CONFUSION);
-		case GF_SOUND:		return (EFFECT_SPELL_SOUND);
-		case GF_SHARDS:		return (EFFECT_SPELL_SHARD);
-		case GF_FORCE:		return (EFFECT_SPELL_FORCE);
-		case GF_INERTIA:	return (EFFECT_SPELL_INERTIA);
-		case GF_GRAVITY:	return (EFFECT_SPELL_GRAVITY);
-		case GF_TIME:		return (EFFECT_SPELL_TIME);
-		case GF_LITE_WEAK:	return (EFFECT_SPELL_LITE_WEAK);
-		case GF_LITE:		return (EFFECT_SPELL_LITE);
-		case GF_DARK_WEAK:	return (EFFECT_SPELL_DARK_WEAK);
-		case GF_DARK:		return (EFFECT_SPELL_DARK);
-		case GF_PLASMA:		return (EFFECT_SPELL_PLASMA);
-		case GF_METEOR:		return (EFFECT_SPELL_METEOR);
-		case GF_ICE:		return (EFFECT_SPELL_ICE);
-		case GF_ROCKET:		return (EFFECT_SPELL_ROCKET);
-		case GF_DEATH_RAY:	return (EFFECT_SPELL_DEATH_RAY);
-		case GF_NUKE:		return (EFFECT_SPELL_NUKE);
-		case GF_DISINTEGRATE:	return (EFFECT_SPELL_DISINTEGRATE);
-		case GF_PSI:
-		case GF_PSI_DRAIN:
-		case GF_TELEKINESIS:
-		case GF_DOMINATION:		return (EFFECT_SPELL_PSI);
-	}
-
-	/* Standard "color" */
-	return (EFFECT_SPELL_FORCE);
-}
-
-static bool angtk_effect_aux(int y, int x, IconSpec *iconSpecPtr)
-{
-	Widget *widgetPtr;
-	ExWidget *exPtr;
-	DoubleLink *link;
-	int row, col;
-	bool drawn = FALSE;
-
-	/* Check each Widget */
-	for (link = WidgetListMap.head; link; link = link->next)
-	{
-		widgetPtr = DoubleLink_Data(link, Widget);
-		exPtr = (ExWidget *) widgetPtr;
-
-		/* Drawing is disabled */
-		if (widgetPtr->flags & WIDGET_NO_UPDATE) continue;
-
-		/* Don't draw out of bounds */
-		if (!Widget_CaveToView(widgetPtr, y, x, &row, &col))
-			continue;
-			
-		/* Set effect icon */
-		exPtr->effect[col + row * widgetPtr->cc] = *iconSpecPtr;
-
-		/* Mark the grid as invalid */
-		Widget_Invalidate(widgetPtr, row, col);
-
-		/* Redraw later */
-		widgetPtr->flags |= WIDGET_DRAW_INVALID;
-		Widget_EventuallyRedraw(widgetPtr);
-
-		/* Something was drawn */
-		drawn = TRUE;
-	}
-
-	return drawn;
-}
-
-void angtk_effect_clear(int y, int x)
-{
-	Widget *widgetPtr;
-	ExWidget *exPtr;
-	DoubleLink *link;
-	int row, col;
-
-	/* Check each Widget */
-	for (link = WidgetListMap.head; link; link = link->next)
-	{
-		widgetPtr = DoubleLink_Data(link, Widget);
-		exPtr = (ExWidget *) widgetPtr;
-
-		/* Drawing is disabled */
-		if (widgetPtr->flags & WIDGET_NO_UPDATE) continue;
-
-		/* Don't draw out of bounds */
-		if (!Widget_CaveToView(widgetPtr, y, x, &row, &col))
-			continue;
-
-		/* No effect was drawn here */
-		if (exPtr->effect[col + row * widgetPtr->cc].type == ICON_TYPE_NONE)
-			continue;
-
-		/* Clear effect icon */
-		exPtr->effect[col + row * widgetPtr->cc].type = ICON_TYPE_NONE;
-
-		/* Mark the grid as invalid */
-		Widget_Invalidate(widgetPtr, row, col);
-
-		widgetPtr->flags |= WIDGET_DRAW_INVALID;
-		Widget_EventuallyRedraw(widgetPtr);
-	}
-}
-
-/*
- * Draws the icon assigned to a particular spell type (GF_XXX constant).
- */
-bool angtk_effect_spell(int y, int x, int typ, int bolt)
-{
-	int effect = effect_index(typ);
-	IconSpec iconSpec;
-
-	if (bolt)
-	{
-		iconSpec = g_effect[EFFECT_SPELL_BOLT].icon[effect];
-
-		iconSpec.index += bolt - 1;
-	}
-	else
-	{
-		iconSpec = g_effect[EFFECT_SPELL_BALL].icon[effect];
-	}
-
-	return angtk_effect_aux(y, x, &iconSpec);
-}
-
-/*
- * Draws the icon assigned to a fired ammunition
- */
-bool angtk_effect_ammo(int y, int x, object_type *o_ptr, int dir)
-{
-	IconSpec iconSpec;
-
-	/* Eliminate '5' */
-	if (dir >= 5) dir -= 1;
-
-	switch (k_info[o_ptr->k_idx].tval)
-	{
-		case TV_ARROW:
-			iconSpec = g_effect[EFFECT_AMMO].icon[EFFECT_AMMO_ARROW];
-			iconSpec.index += dir - 1;
-			break;
-
-		case TV_BOLT:
-			iconSpec = g_effect[EFFECT_AMMO].icon[EFFECT_AMMO_BOLT];
-			iconSpec.index += dir - 1;
-			break;
-
-		/* Sling ammo */
-		default:
-			return angtk_effect_object(y, x, o_ptr);
-	}
-
-	/* Nothing is assigned */
-	if (iconSpec.type == ICON_TYPE_DEFAULT)
-	{
-		return angtk_effect_object(y, x, o_ptr);
-	}
-
-	return angtk_effect_aux(y, x, &iconSpec);
-}
-
-/*
- * Draws the icon assigned to thrown object
- */
-bool angtk_effect_object(int y, int x, object_type *o_ptr)
-{
-	t_assign assign = g_assign[ASSIGN_OBJECT].assign[o_ptr->k_idx];
-	IconSpec iconSpec;
-
-	FinalIcon(&iconSpec, &assign, 0, o_ptr);
-	return angtk_effect_aux(y, x, &iconSpec);
-}
-
-/*
- * This is a dummy lite_spot() routine that may get called before
- * the icons have been initialized.
- */
-static void angtk_lite_spot_dummy(int y, int x)
-{
-	/* Ignore parameters and do nothing */
-	(void) x;
-	(void) y;
-}
-
-void (*angtk_lite_spot)(int y, int x) = angtk_lite_spot_dummy;
-
-/*
- * This is called whenever the game thinks a grid needs to be redrawn,
- * via lite_spot(). If the grid actually changed then a redraw is
- * scheduled.
- */
-void angtk_lite_spot_real(int y, int x)
-{
-	DoubleLink *link;
-	int row, col;
-
-	/* Get knowledge about location */
-	get_grid_info(y, x, &g_grid[y][x]);
-
-	/* Check each Widget */
-	for (link = WidgetListMap.head; link; link = link->next)
-	{
-		Widget *widgetPtr = DoubleLink_Data(link, Widget);
-
-		/* Drawing is disabled */
-		if (widgetPtr->flags & WIDGET_NO_UPDATE)
-			continue;
-
-		/* A full redraw is already pending */
-		if (widgetPtr->flags & WIDGET_WIPE)
-			continue;
-
-		/* Cave location isn't visible */
-		if (!Widget_CaveToView(widgetPtr, y, x, &row, &col))
-			continue;
-
-		/* */
-		Widget_Invalidate(widgetPtr, row, col);
-
-		/* Redraw invalid grids later */
-		widgetPtr->flags |= WIDGET_DRAW_INVALID;
-		Widget_EventuallyRedraw(widgetPtr);
-	}
-}
-
-/*
- * Table specifying legal configuration options for a Widget.
- */
-static Tk_OptionSpec optionSpecs[20] = {
-    {TK_OPTION_INT, (char *) "-height", (char *) "height", (char *) "Height",
-    (char *) "100", -1, Tk_Offset(Widget, height), 0, 0, 0},
-    {TK_OPTION_INT, (char *) "-width", (char *) "width", (char *) "Width",
-    (char *) "100", -1, Tk_Offset(Widget, width), 0, 0, 0},
-    {TK_OPTION_INT, (char *) "-gheight", (char *) "gheight", (char *) "Height",
-    (char *) "32", -1, Tk_Offset(Widget, gheight), 0, 0, 0},
-    {TK_OPTION_INT, (char *) "-gwidth", (char *) "gwidth", (char *) "Width",
-    (char *) "32", -1, Tk_Offset(Widget, gwidth), 0, 0, 0},
-    {TK_OPTION_CURSOR, (char *) "-cursor", (char *) "cursor", (char *) "Cursor",
-    (char *) "", -1, Tk_Offset(Widget, cursor), TK_OPTION_NULL_OK, 0, 0},
-    {TK_OPTION_BOOLEAN, (char *) "-setgrid", (char *) "setGrid", (char *) "SetGrid",
-	(char *) "no", -1, Tk_Offset(Widget, setGrid), 0, 0, 0},
-    {TK_OPTION_BOOLEAN, (char *) "-noupdate", (char *) "noUpdate", (char *) "NoUpdate",
-	(char *) "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
-   {TK_OPTION_END, NULL, NULL, NULL,
-     NULL, 0, -1, 0, 0, 0}
-};
-
-static Tk_OptionTable optionTable = None;
-
-/* forward declarations */
-
-int Widget_ObjCmd _ANSI_ARGS_((ClientData clientData,
-  Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
-int Widget_Configure _ANSI_ARGS_((Tcl_Interp *interp,
-  Widget *widgetPtr, int objc, Tcl_Obj *CONST objv[]));
-void Widget_WorldChanged(ClientData instanceData);
-void Widget_CmdDeletedProc _ANSI_ARGS_((ClientData clientData));
-void Widget_EventProc _ANSI_ARGS_((ClientData clientData,
-  XEvent *eventPtr));
-int Widget_WidgetObjCmd _ANSI_ARGS_((ClientData clientData,
-  Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
-void Widget_Calc(Widget *widgetPtr);
-
-static void Widget_CreateBitmap(Widget *widgetPtr);
-static void Widget_DeleteBitmap(Widget *widgetPtr);
-
-/* Table of procedures for the "Widget" class */
-Tk_ClassProcs widgetProcs = {
-	sizeof(Tk_ClassProcs),
-	Widget_WorldChanged,			/* geometryProc. */
-	NULL,							/* createProc. */
-    NULL							/* modalProc. */ 
-};
-
-/* List of existing widgets let us iterate over them */
-DoubleLinker WidgetList;
-
-/* List of mapped widgets */
-DoubleLinker WidgetListMap;
-
 static Widget_CreateProc *g_create_proc;
-
-static void WindowToBitmap(Widget *widgetPtr, int *y, int *x)
-{
-	*y += widgetPtr->by;
-	*x += widgetPtr->bx;
-}
 
 #define BAD_COLOR(c) (((c) < 0) || ((c) > 255))
 
@@ -859,6 +499,314 @@ static int WidgetColor_Init(Tcl_Interp *interp)
 	g_widget_color_count = 0;
 	return TCL_OK;
 }
+
+
+/*
+ * Create a bitmap as big as the given Widget. We get the address of
+ * the bits so we can write directly into the bitmap. The bitmap is
+ * 8-bit depth with a 256-color palette.
+ */
+static void Widget_CreateBitmap(Widget *widgetPtr)
+{
+	/* Calculate the bitmap dimensions in pixels */
+	widgetPtr->bitmap.width = widgetPtr->bw;
+	widgetPtr->bitmap.height = widgetPtr->bh;
+
+	widgetPtr->bitmap.depth = ((widgetPtr->gwidth == g_icon_size) ? g_icon_depth : 8);
+	widgetPtr->bitmap.depth = g_icon_depth;
+
+	/* Create the bitmap */
+	Bitmap_New(widgetPtr->interp, &widgetPtr->bitmap);
+}
+
+/* Free the bitmap for this Widget */
+static void Widget_DeleteBitmap(Widget *widgetPtr)
+{
+	Bitmap_Delete(&widgetPtr->bitmap);
+}
+
+
+static void Widget_Calc(Widget *widgetPtr)
+{
+	int i;
+	int rc, cc;
+	int dLeft, cLeft, dRight, cRight;
+	int dTop, rTop, dBottom, rBottom;
+
+	dLeft = (widgetPtr->width - widgetPtr->gwidth) / 2;
+	cLeft = dLeft / widgetPtr->gwidth;
+	if (dLeft % widgetPtr->gwidth)
+		++cLeft;
+
+	dRight = widgetPtr->width - dLeft - widgetPtr->gwidth;
+	cRight = dRight / widgetPtr->gwidth;
+	if (dRight % widgetPtr->gwidth)
+		++cRight;
+
+	dTop = (widgetPtr->height - widgetPtr->gheight) / 2;
+	rTop = dTop / widgetPtr->gheight;
+	if (dTop % widgetPtr->gheight)
+		++rTop;
+
+	dBottom = widgetPtr->height - dTop - widgetPtr->gheight;
+	rBottom = dBottom / widgetPtr->gheight;
+	if (dBottom % widgetPtr->gheight)
+		++rBottom;
+
+	cc = cLeft + 1 + cRight;
+	rc = rTop + 1 + rBottom;
+
+	widgetPtr->tc = rc * cc;
+	widgetPtr->rc = rc;
+	widgetPtr->cc = cc;
+
+	widgetPtr->bw = cc * widgetPtr->gwidth;
+	widgetPtr->bh = rc * widgetPtr->gheight;
+
+	widgetPtr->bx = cLeft * widgetPtr->gwidth - dLeft;
+	widgetPtr->by = rTop * widgetPtr->gheight - dTop;
+
+	if (widgetPtr->info)
+		Tcl_Free((char *) widgetPtr->info);
+	if (widgetPtr->invalid)
+		Tcl_Free((char *) widgetPtr->invalid);
+
+	widgetPtr->info = (short *) Tcl_Alloc(sizeof(short) *
+		widgetPtr->rc * widgetPtr->cc);
+	widgetPtr->invalid = (int *) Tcl_Alloc(sizeof(int) *
+		widgetPtr->rc * widgetPtr->cc);
+	widgetPtr->invalidCnt = 0;
+
+	for (i = 0; i < widgetPtr->rc * widgetPtr->cc; i++)
+	{
+		widgetPtr->info[i] = 0;
+	}
+}
+
+
+/*
+ * This procedure is called when the world has changed in some
+ * way and the widget needs to recompute all its graphics contexts
+ * and determine its new geometry.
+ */
+static void Widget_WorldChanged(ClientData instanceData)
+{
+    Widget *widgetPtr = (Widget *) instanceData;
+	Tk_Window tkwin = widgetPtr->tkwin;
+    XGCValues gcValues;
+	WidgetItem *itemPtr;
+
+	/* Allocate GC */
+    if (widgetPtr->copyGC == None)
+    {
+		gcValues.function = GXcopy;
+		gcValues.graphics_exposures = False;
+		widgetPtr->copyGC = Tk_GetGC(tkwin, GCFunction | GCGraphicsExposures,
+			&gcValues);
+    }
+
+	/* Size changed */
+	if ((widgetPtr->width != widgetPtr->oldWidth) ||
+		(widgetPtr->height != widgetPtr->oldHeight) ||
+		(widgetPtr->gwidth != widgetPtr->oldGWidth) ||
+		(widgetPtr->gheight != widgetPtr->oldGHeight))
+	{
+		Widget_Calc(widgetPtr);
+	}
+
+	/* The bitmap is not the right size */
+	if ((widgetPtr->bitmap.pixelPtr != NULL) &&
+		((widgetPtr->bw != widgetPtr->bitmap.width) ||
+		(widgetPtr->bh != widgetPtr->bitmap.height)))
+	{
+		/* Delete the bitmap */
+		Widget_DeleteBitmap(widgetPtr);
+
+		/* Forget the bitmap */
+		widgetPtr->bitmap.pixelPtr = NULL;
+	}
+
+	/* No bitmap yet */
+	if (widgetPtr->bitmap.pixelPtr == NULL)
+	{
+		DoubleLink *link;
+
+		/* Allocate bitmap */
+		Widget_CreateBitmap(widgetPtr);
+
+		/* Check each Widget item */
+		for (link = widgetPtr->linkerItem.head; link; link = link->next)
+		{
+			itemPtr = DoubleLink_Data(link, WidgetItem);
+			
+			/*
+			 * Some Widget items are not allowed to be out of bounds. In such
+			 * cases, we call a item-type-specific callback to allow the
+			 * item to move itself to a safe position.
+			 */
+			if (itemPtr->typePtr->changedProc)
+			{
+				(void) (*itemPtr->typePtr->changedProc)(widgetPtr->interp,
+					widgetPtr, itemPtr);
+			}
+		}
+	}
+
+	if (widgetPtr->noUpdate)
+	{
+		widgetPtr->flags |= WIDGET_NO_UPDATE;
+	}
+	else
+	{
+		widgetPtr->flags &= ~WIDGET_NO_UPDATE;
+	}
+
+	/* The widget is of non-zero size */
+    if ((widgetPtr->width > 0) && (widgetPtr->height > 0))
+	{
+		/* Request geometry */
+		Tk_GeometryRequest(tkwin, widgetPtr->width, widgetPtr->height);
+	}
+
+	/* We want to control gridded geometry of its toplevel */
+	if (widgetPtr->setGrid)
+	{
+		/* Turn on gridded geometry management for the toplevel */
+		Tk_SetGrid(tkwin, widgetPtr->cc, widgetPtr->rc,
+			widgetPtr->gwidth, widgetPtr->gheight);
+	}
+
+	/* We do not want to control gridded geometry of its toplevel */
+	else
+	{
+		/* Cancel gridded geometry management for the toplevel */
+		Tk_UnsetGrid(widgetPtr->tkwin);
+	}
+
+	/* Client command */
+	if (widgetPtr->changedProc)
+		(*widgetPtr->changedProc)(widgetPtr);
+
+	/* Remember the current info */
+	widgetPtr->oldTileCnt = widgetPtr->tc;
+	widgetPtr->oldWidth = widgetPtr->width;
+	widgetPtr->oldHeight = widgetPtr->height;
+	widgetPtr->oldGWidth = widgetPtr->gwidth;
+	widgetPtr->oldGHeight = widgetPtr->gheight;
+
+	/* Redraw the window (later) */
+	Widget_EventuallyRedraw(widgetPtr);
+}
+
+/*
+ * This procedure is invoked when a Widget command is deleted. If
+ * the Widget isn't already in the process of being destroyed,
+ * this command destroys it.
+ */
+static void Widget_CmdDeletedProc(ClientData clientData)
+{
+    Widget *widgetPtr = (Widget *) clientData;
+
+    /*
+     * This procedure could be invoked either because the window was
+     * destroyed and the command was then deleted or because the command
+     * was deleted, and then this procedure destroys the widget.  The
+     * WIDGET_DELETED flag distinguishes these cases.
+     */
+
+	if (!(widgetPtr->flags & WIDGET_DELETED))
+	{
+		Tk_DestroyWindow(widgetPtr->tkwin);
+	}
+}
+
+static void WindowToBitmap(Widget *widgetPtr, int *y, int *x)
+{
+	*y += widgetPtr->by;
+	*x += widgetPtr->bx;
+}
+
+static Tk_OptionTable optionTable = None;
+
+/*
+ * Fiddle with configuration options for a Widget
+ */
+static int Widget_Configure(Tcl_Interp *interp, Widget *widgetPtr, int objc, Tcl_Obj *CONST objv[])
+{
+	Tk_SavedOptions savedOptions;
+	Tcl_Obj *errorResult = NULL;
+	int error;
+
+    /*
+     * The following loop is potentially executed twice.  During the
+     * first pass configuration options get set to their new values.
+     * If there is an error in this pass, we execute a second pass
+     * to restore all the options to their previous values.
+     */
+
+    for (error = 0; error <= 1; error++)
+    {
+    	if (!error)
+    	{
+		    /*
+		     * First pass: set options to new values.
+		     */
+			if (Tk_SetOptions(interp, (char *) widgetPtr, optionTable, objc, objv,
+				widgetPtr->tkwin, &savedOptions, NULL) != TCL_OK)
+			{
+				continue;
+			}
+		}
+		else
+		{
+		    /*
+		     * Second pass: restore options to old values.
+		     */
+		    errorResult = Tcl_GetObjResult(interp);
+		    Tcl_IncrRefCount(errorResult);
+		    Tk_RestoreSavedOptions(&savedOptions);
+		}
+
+		/* Require gwidth == gheight. Why not have just one option? */
+		if (widgetPtr->gwidth != widgetPtr->gheight)
+		{
+			/* Set the error */
+			Tcl_AppendResult(interp, "expected gwidth equal to gheight", NULL);
+	
+			/* Failure */
+			continue;
+		}
+
+		/* Client command */
+		if (widgetPtr->configureProc)
+		{
+			if ((*widgetPtr->configureProc)(interp, widgetPtr) != TCL_OK)
+				continue;
+		}
+
+		break;
+	}
+	if (!error)
+	{
+		Tk_FreeSavedOptions(&savedOptions);
+	}
+
+	/* Recompute geometry, etc */
+    Widget_WorldChanged((ClientData) widgetPtr);
+
+	if (error)
+	{
+		Tcl_SetObjResult(interp, errorResult);
+		Tcl_DecrRefCount(errorResult);
+
+		/* Failure */
+		return TCL_ERROR;
+	}
+
+	/* Success */
+	return TCL_OK;
+}
+
 
 /*
  * Search for an existing Widget item color of the given properties.
@@ -887,252 +835,11 @@ static t_widget_color *WidgetColor_Find(int color, int opacity)
 	return NULL;
 }
 
-/*
- * Search for an already allocated but unused Widget item color.
- */
-static t_widget_color *WidgetColor_FindFree(void)
-{
-	int i;
-
-	/* Check each color */
-	for (i = 0; i < g_widget_color_count; i++)
-	{
-		/* This is free */
-		if (g_widget_color[i]->ref_cnt == 0)
-		{
-			/* Return the address */
-			return g_widget_color[i];
-		}
-	}
-
-	/* None are free */
-	return NULL;
-}
-
-/*
- * Allocates a new Widget item color of the given properties. If such
- * a color already exists, its references count is incremented and
- * the color is returned. Otherwise a new struct is allocated.
- */
-t_widget_color *WidgetColor_Alloc(int color, int opacity)
-{
-	t_widget_color *color_ptr;
-
-	/* Look for an existing color */
-	if ((color_ptr = WidgetColor_Find(color, opacity)))
-	{
-		/* Increase the reference count */
-		color_ptr->ref_cnt++;
-
-		/* Return the address */
-		return color_ptr;
-	}
-
-	/* Look for a free struct */
-	if (!(color_ptr = WidgetColor_FindFree()))
-	{
-		/* Allocate a struct */
-		color_ptr = (t_widget_color *) Tcl_Alloc(sizeof(t_widget_color));
-
-		/* Append pointer to the global array */
-		g_widget_color = Array_Insert(g_widget_color,
-			&g_widget_color_count, sizeof(t_widget_color *),
-			g_widget_color_count);
-
-		/* Remember the new struct */
-		g_widget_color[g_widget_color_count - 1] = color_ptr;
-	}
-
-	/* Set the fields */
-	color_ptr->ref_cnt = 1;
-	color_ptr->color = color;
-	color_ptr->opacity = opacity;
-
-	/* Calculate the tint table */
-	Colormap_TintTable(g_palette2colormap[color], opacity, color_ptr->tint);
-
-	/* Return the address */
-	return color_ptr;
-}
-
-/*
- * Decrement the reference count for a Widget item color. We never
- * actually free the memory for a struct with zero references, since
- * we allow them to be reused.
- */
-void WidgetColor_Deref(t_widget_color *color_ptr)
-{
-	/* Allow NULL color_ptr */
-	if (!color_ptr) return;
-
-	/* Decrement the reference count */
-	if (--color_ptr->ref_cnt <= 0)
-	{
-		/* Mark the color as unused */
-		color_ptr->ref_cnt = 0;
-		color_ptr->color = 0;
-		color_ptr->opacity = 0;
-	}
-}
-
-/*
- *--------------------------------------------------------------
- *
- * Widget_ObjCmd --
- *
- *	Called by Tcl to implement the "widget" command. This is
- *	the procedure passed to Tcl_CreateCommand() inside
- *	Widget_Init().
- *
- *--------------------------------------------------------------
- */
-
-int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
-{
-	Widget *widgetPtr;
-	Tk_Window tkwin;
-
-	optionTable = (Tk_OptionTable) clientData;
-	if (optionTable == NULL)
-	{
-		Tcl_CmdInfo info;
-		char *name;
-
-		/*
-		* We haven't created the option table for this widget class
-		* yet.  Do it now and save the table as the clientData for
-		* the command, so we'll have access to it in future
-		* invocations of the command.
-		*/
-
-		optionTable = Tk_CreateOptionTable(interp, optionSpecs);
-		name = Tcl_GetString(objv[0]);
-		Tcl_GetCommandInfo(interp, name, &info);
-		info.objClientData = (ClientData) optionTable;
-		Tcl_SetCommandInfo(interp, name, &info);
-	}
-
-	/* Required number of arguments */
-    if (objc < 2)
-    {
-		/* Set the error */
-		Tcl_WrongNumArgs(interp, 1, objv, "pathName ?options?");
-
-		/* Failure */
-		return(TCL_ERROR);
-    }
-
-	/* Create a new Tk window with the given name */
-    tkwin = Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
-	    Tcl_GetString(objv[1]), NULL);
-
-	/* The window could not be created */
-	if (tkwin == NULL)
-	{
-		return TCL_ERROR;
-	}
-
-	/*
-	 * Set the window class. By convention all class names start with
-	 * a capital letter, and there exists a Tcl command with the same
-	 * name as each class.
-	 */
-    Tk_SetClass(tkwin, "Widget");
-
-    /* Allocate a new Widget struct */
-    if ((*g_create_proc)(interp, &widgetPtr) != TCL_OK)
-    {
-    	return TCL_ERROR;
-    }
-
-	/* Set the class callbacks for the new Widget */
-    Tk_SetClassProcs(tkwin, &widgetProcs, (ClientData) widgetPtr);
-
-	/* Set some fields */
-	widgetPtr->tkwin = tkwin;
-	widgetPtr->display = Tk_Display(tkwin);
-	widgetPtr->interp = interp;
-
-	/*
-	 * Note here we are creating a new Tcl command that has the same
-	 * name as the full pathname of the new Tk window (this Widget).
-	 */
-	widgetPtr->widgetCmd = Tcl_CreateObjCommand(interp,
-		Tk_PathName(tkwin), Widget_WidgetObjCmd, (ClientData) widgetPtr,
-		Widget_CmdDeletedProc);
-
-	/* Set more fields */
-	widgetPtr->copyGC = None;
-	widgetPtr->bitmap.pixelPtr = NULL;
-	widgetPtr->bitmap.pixmap = None;
-    widgetPtr->width = 0;
-    widgetPtr->height = 0;
-    widgetPtr->gwidth = 0;
-    widgetPtr->gheight = 0;
-    widgetPtr->oldWidth = widgetPtr->oldHeight = 0;
-    widgetPtr->oldGWidth = widgetPtr->oldGHeight = 0;
-    widgetPtr->cursor = None;
-	widgetPtr->setGrid = FALSE;
-    widgetPtr->flags = 0;
-	widgetPtr->y = widgetPtr->x = 0;
-	widgetPtr->y_min = widgetPtr->y_max = 0;
-	widgetPtr->x_min = widgetPtr->x_max = 0;
-	DoubleLink_Init(&WidgetList, &widgetPtr->link, widgetPtr);
-	DoubleLink_Init(&WidgetListMap, &widgetPtr->linkMap, widgetPtr);
-	DoubleLink_Init(&widgetPtr->linkerItem, NULL, NULL);
-	widgetPtr->linkerItem.what = "item";
-	DoubleLink_Init(&widgetPtr->linkerItemVis, NULL, NULL);
-	widgetPtr->linkerItemVis.what ="itemVis";
-	widgetPtr->noUpdate = FALSE;
-	widgetPtr->dx = widgetPtr->dy = 0;
-	widgetPtr->dw = widgetPtr->dh = 0;
-	widgetPtr->info = NULL;
-	widgetPtr->invalid = NULL;
-
-	/*
-	 * Arrange for our routine to be called when any of the specified
-	 * events occur to our new Widget.
-	 */
-    Tk_CreateEventHandler(widgetPtr->tkwin,
-		ExposureMask | StructureNotifyMask | FocusChangeMask,
-		Widget_EventProc, (ClientData) widgetPtr);
-
-	/* Set the default options for the new widget */
-	if (Tk_InitOptions(interp, (char *) widgetPtr, optionTable, tkwin)
-		!= TCL_OK)
-	{
-		/* Destroy the Tk window */
-		Tk_DestroyWindow(widgetPtr->tkwin);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-	
-	/* Parse the rest of the arguments for option/value pairs */
-	if (Widget_Configure(interp, widgetPtr, objc - 2, objv + 2) != TCL_OK)
-	{
-		/* Destroy the Tk window */
-		Tk_DestroyWindow(widgetPtr->tkwin);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Add another widget to the list */
-	DoubleLink_Link(&widgetPtr->link);
-	
-	/* Return the window pathname */
-    Tcl_SetStringObj(Tcl_GetObjResult(interp), Tk_PathName(widgetPtr->tkwin),
-    	-1);
-
-	/* Success */
-    return TCL_OK;
-}
 
 /*
  * This is the window-specific command created for each new Widget.
  */
-int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+static int Widget_WidgetObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
 	static cptr commandNames[] = {"caveyx", "center", "cget", "configure",
 		"coloralloc", "colorderef", "itemcget", "itemconfigure",
@@ -1577,6 +1284,28 @@ error:
 
 
 /*
+ * Delete a Widget item. This is currently only called when a Widget
+ * is deleted (ie, you can't delete an individual item. It would be
+ * best to replace the linked list of items with another direct-lookup
+ * method, and implement unique item ids like a Canvas.
+ */
+static void WidgetItem_Delete(Widget *widgetPtr, WidgetItem *itemPtr)
+{
+	/* Call the item delete callback */
+	(*itemPtr->typePtr->deleteProc)(widgetPtr, itemPtr);
+
+	Tk_FreeConfigOptions((char *) itemPtr, itemPtr->typePtr->optionTable,
+		widgetPtr->tkwin);
+
+	/* Remove the item from the linked list of items */
+	DoubleLink_Unlink(&itemPtr->link);
+
+	/* Free the item memory */
+	Tcl_Free((char *) itemPtr);
+}
+
+
+/*
  * This procedure is invoked by Tcl_EventuallyFree() or Tcl_Release()
  * to clean up the internal structure of a Widget at a safe time
  * (when no-one is using it anymore).
@@ -1647,204 +1376,12 @@ static void Widget_Destroy(Widget *widgetPtr)
     Tcl_EventuallyFree((ClientData) widgetPtr, Tcl_Free);
 }
 
-/*
- * Fiddle with configuration options for a Widget
- */
-int Widget_Configure(Tcl_Interp *interp, Widget *widgetPtr, int objc, Tcl_Obj *CONST objv[])
-{
-	Tk_SavedOptions savedOptions;
-	Tcl_Obj *errorResult = NULL;
-	int error;
-
-    /*
-     * The following loop is potentially executed twice.  During the
-     * first pass configuration options get set to their new values.
-     * If there is an error in this pass, we execute a second pass
-     * to restore all the options to their previous values.
-     */
-
-    for (error = 0; error <= 1; error++)
-    {
-    	if (!error)
-    	{
-		    /*
-		     * First pass: set options to new values.
-		     */
-			if (Tk_SetOptions(interp, (char *) widgetPtr, optionTable, objc, objv,
-				widgetPtr->tkwin, &savedOptions, NULL) != TCL_OK)
-			{
-				continue;
-			}
-		}
-		else
-		{
-		    /*
-		     * Second pass: restore options to old values.
-		     */
-		    errorResult = Tcl_GetObjResult(interp);
-		    Tcl_IncrRefCount(errorResult);
-		    Tk_RestoreSavedOptions(&savedOptions);
-		}
-
-		/* Require gwidth == gheight. Why not have just one option? */
-		if (widgetPtr->gwidth != widgetPtr->gheight)
-		{
-			/* Set the error */
-			Tcl_AppendResult(interp, "expected gwidth equal to gheight", NULL);
-	
-			/* Failure */
-			continue;
-		}
-
-		/* Client command */
-		if (widgetPtr->configureProc)
-		{
-			if ((*widgetPtr->configureProc)(interp, widgetPtr) != TCL_OK)
-				continue;
-		}
-
-		break;
-	}
-	if (!error)
-	{
-		Tk_FreeSavedOptions(&savedOptions);
-	}
-
-	/* Recompute geometry, etc */
-    Widget_WorldChanged((ClientData) widgetPtr);
-
-	if (error)
-	{
-		Tcl_SetObjResult(interp, errorResult);
-		Tcl_DecrRefCount(errorResult);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	/* Success */
-	return TCL_OK;
-}
-
-/*
- * This procedure is called when the world has changed in some
- * way and the widget needs to recompute all its graphics contexts
- * and determine its new geometry.
- */
-void Widget_WorldChanged(ClientData instanceData)
-{
-    Widget *widgetPtr = (Widget *) instanceData;
-	Tk_Window tkwin = widgetPtr->tkwin;
-    XGCValues gcValues;
-	WidgetItem *itemPtr;
-
-	/* Allocate GC */
-    if (widgetPtr->copyGC == None)
-    {
-		gcValues.function = GXcopy;
-		gcValues.graphics_exposures = False;
-		widgetPtr->copyGC = Tk_GetGC(tkwin, GCFunction | GCGraphicsExposures,
-			&gcValues);
-    }
-
-	/* Size changed */
-	if ((widgetPtr->width != widgetPtr->oldWidth) ||
-		(widgetPtr->height != widgetPtr->oldHeight) ||
-		(widgetPtr->gwidth != widgetPtr->oldGWidth) ||
-		(widgetPtr->gheight != widgetPtr->oldGHeight))
-	{
-		Widget_Calc(widgetPtr);
-	}
-
-	/* The bitmap is not the right size */
-	if ((widgetPtr->bitmap.pixelPtr != NULL) &&
-		((widgetPtr->bw != widgetPtr->bitmap.width) ||
-		(widgetPtr->bh != widgetPtr->bitmap.height)))
-	{
-		/* Delete the bitmap */
-		Widget_DeleteBitmap(widgetPtr);
-
-		/* Forget the bitmap */
-		widgetPtr->bitmap.pixelPtr = NULL;
-	}
-
-	/* No bitmap yet */
-	if (widgetPtr->bitmap.pixelPtr == NULL)
-	{
-		DoubleLink *link;
-
-		/* Allocate bitmap */
-		Widget_CreateBitmap(widgetPtr);
-
-		/* Check each Widget item */
-		for (link = widgetPtr->linkerItem.head; link; link = link->next)
-		{
-			itemPtr = DoubleLink_Data(link, WidgetItem);
-			
-			/*
-			 * Some Widget items are not allowed to be out of bounds. In such
-			 * cases, we call a item-type-specific callback to allow the
-			 * item to move itself to a safe position.
-			 */
-			if (itemPtr->typePtr->changedProc)
-			{
-				(void) (*itemPtr->typePtr->changedProc)(widgetPtr->interp,
-					widgetPtr, itemPtr);
-			}
-		}
-	}
-
-	if (widgetPtr->noUpdate)
-	{
-		widgetPtr->flags |= WIDGET_NO_UPDATE;
-	}
-	else
-	{
-		widgetPtr->flags &= ~WIDGET_NO_UPDATE;
-	}
-
-	/* The widget is of non-zero size */
-    if ((widgetPtr->width > 0) && (widgetPtr->height > 0))
-	{
-		/* Request geometry */
-		Tk_GeometryRequest(tkwin, widgetPtr->width, widgetPtr->height);
-	}
-
-	/* We want to control gridded geometry of its toplevel */
-	if (widgetPtr->setGrid)
-	{
-		/* Turn on gridded geometry management for the toplevel */
-		Tk_SetGrid(tkwin, widgetPtr->cc, widgetPtr->rc,
-			widgetPtr->gwidth, widgetPtr->gheight);
-	}
-
-	/* We do not want to control gridded geometry of its toplevel */
-	else
-	{
-		/* Cancel gridded geometry management for the toplevel */
-		Tk_UnsetGrid(widgetPtr->tkwin);
-	}
-
-	/* Client command */
-	if (widgetPtr->changedProc)
-		(*widgetPtr->changedProc)(widgetPtr);
-
-	/* Remember the current info */
-	widgetPtr->oldTileCnt = widgetPtr->tc;
-	widgetPtr->oldWidth = widgetPtr->width;
-	widgetPtr->oldHeight = widgetPtr->height;
-	widgetPtr->oldGWidth = widgetPtr->gwidth;
-	widgetPtr->oldGHeight = widgetPtr->gheight;
-
-	/* Redraw the window (later) */
-	Widget_EventuallyRedraw(widgetPtr);
-}
 
 /*
  * This procedure is invoked by the Tk dispatcher for various
  * events on a Widget.
  */
-void Widget_EventProc(ClientData clientData, XEvent *eventPtr)
+static void Widget_EventProc(ClientData clientData, XEvent *eventPtr)
 {
     Widget *widgetPtr = (Widget *) clientData;
 
@@ -1891,27 +1428,604 @@ redraw:
 	Widget_EventuallyRedraw(widgetPtr);
 }
 
+
+/* Table of procedures for the "Widget" class */
+Tk_ClassProcs widgetProcs = {
+	sizeof(Tk_ClassProcs),
+	Widget_WorldChanged,			/* geometryProc. */
+	NULL,							/* createProc. */
+    NULL							/* modalProc. */ 
+};
+
+/* List of existing widgets let us iterate over them */
+DoubleLinker WidgetList;
+
+/* List of mapped widgets */
+DoubleLinker WidgetListMap;
+
+
 /*
- * This procedure is invoked when a Widget command is deleted. If
- * the Widget isn't already in the process of being destroyed,
- * this command destroys it.
+ * Table specifying legal configuration options for a Widget.
  */
-void Widget_CmdDeletedProc(ClientData clientData)
+static Tk_OptionSpec optionSpecs[20] = {
+    {TK_OPTION_INT, (char *) "-height", (char *) "height", (char *) "Height",
+    (char *) "100", -1, Tk_Offset(Widget, height), 0, 0, 0},
+    {TK_OPTION_INT, (char *) "-width", (char *) "width", (char *) "Width",
+    (char *) "100", -1, Tk_Offset(Widget, width), 0, 0, 0},
+    {TK_OPTION_INT, (char *) "-gheight", (char *) "gheight", (char *) "Height",
+    (char *) "32", -1, Tk_Offset(Widget, gheight), 0, 0, 0},
+    {TK_OPTION_INT, (char *) "-gwidth", (char *) "gwidth", (char *) "Width",
+    (char *) "32", -1, Tk_Offset(Widget, gwidth), 0, 0, 0},
+    {TK_OPTION_CURSOR, (char *) "-cursor", (char *) "cursor", (char *) "Cursor",
+    (char *) "", -1, Tk_Offset(Widget, cursor), TK_OPTION_NULL_OK, 0, 0},
+    {TK_OPTION_BOOLEAN, (char *) "-setgrid", (char *) "setGrid", (char *) "SetGrid",
+	(char *) "no", -1, Tk_Offset(Widget, setGrid), 0, 0, 0},
+    {TK_OPTION_BOOLEAN, (char *) "-noupdate", (char *) "noUpdate", (char *) "NoUpdate",
+	(char *) "no", -1, Tk_Offset(Widget, noUpdate), 0, 0, 0},
+   {TK_OPTION_END, NULL, NULL, NULL,
+     NULL, 0, -1, 0, 0, 0}
+};
+
+
+/*
+ *--------------------------------------------------------------
+ *
+ * Widget_ObjCmd --
+ *
+ *	Called by Tcl to implement the "widget" command. This is
+ *	the procedure passed to Tcl_CreateCommand() inside
+ *	Widget_Init().
+ *
+ *--------------------------------------------------------------
+ */
+static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-    Widget *widgetPtr = (Widget *) clientData;
+	Widget *widgetPtr;
+	Tk_Window tkwin;
 
-    /*
-     * This procedure could be invoked either because the window was
-     * destroyed and the command was then deleted or because the command
-     * was deleted, and then this procedure destroys the widget.  The
-     * WIDGET_DELETED flag distinguishes these cases.
-     */
-
-	if (!(widgetPtr->flags & WIDGET_DELETED))
+	optionTable = (Tk_OptionTable) clientData;
+	if (optionTable == NULL)
 	{
+		Tcl_CmdInfo info;
+		char *name;
+
+		/*
+		* We haven't created the option table for this widget class
+		* yet.  Do it now and save the table as the clientData for
+		* the command, so we'll have access to it in future
+		* invocations of the command.
+		*/
+
+		optionTable = Tk_CreateOptionTable(interp, optionSpecs);
+		name = Tcl_GetString(objv[0]);
+		Tcl_GetCommandInfo(interp, name, &info);
+		info.objClientData = (ClientData) optionTable;
+		Tcl_SetCommandInfo(interp, name, &info);
+	}
+
+	/* Required number of arguments */
+    if (objc < 2)
+    {
+		/* Set the error */
+		Tcl_WrongNumArgs(interp, 1, objv, "pathName ?options?");
+
+		/* Failure */
+		return(TCL_ERROR);
+    }
+
+	/* Create a new Tk window with the given name */
+    tkwin = Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
+	    Tcl_GetString(objv[1]), NULL);
+
+	/* The window could not be created */
+	if (tkwin == NULL)
+	{
+		return TCL_ERROR;
+	}
+
+	/*
+	 * Set the window class. By convention all class names start with
+	 * a capital letter, and there exists a Tcl command with the same
+	 * name as each class.
+	 */
+    Tk_SetClass(tkwin, "Widget");
+
+    /* Allocate a new Widget struct */
+    if ((*g_create_proc)(interp, &widgetPtr) != TCL_OK)
+    {
+    	return TCL_ERROR;
+    }
+
+	/* Set the class callbacks for the new Widget */
+    Tk_SetClassProcs(tkwin, &widgetProcs, (ClientData) widgetPtr);
+
+	/* Set some fields */
+	widgetPtr->tkwin = tkwin;
+	widgetPtr->display = Tk_Display(tkwin);
+	widgetPtr->interp = interp;
+
+	/*
+	 * Note here we are creating a new Tcl command that has the same
+	 * name as the full pathname of the new Tk window (this Widget).
+	 */
+	widgetPtr->widgetCmd = Tcl_CreateObjCommand(interp,
+		Tk_PathName(tkwin), Widget_WidgetObjCmd, (ClientData) widgetPtr,
+		Widget_CmdDeletedProc);
+
+	/* Set more fields */
+	widgetPtr->copyGC = None;
+	widgetPtr->bitmap.pixelPtr = NULL;
+	widgetPtr->bitmap.pixmap = None;
+    widgetPtr->width = 0;
+    widgetPtr->height = 0;
+    widgetPtr->gwidth = 0;
+    widgetPtr->gheight = 0;
+    widgetPtr->oldWidth = widgetPtr->oldHeight = 0;
+    widgetPtr->oldGWidth = widgetPtr->oldGHeight = 0;
+    widgetPtr->cursor = None;
+	widgetPtr->setGrid = FALSE;
+    widgetPtr->flags = 0;
+	widgetPtr->y = widgetPtr->x = 0;
+	widgetPtr->y_min = widgetPtr->y_max = 0;
+	widgetPtr->x_min = widgetPtr->x_max = 0;
+	DoubleLink_Init(&WidgetList, &widgetPtr->link, widgetPtr);
+	DoubleLink_Init(&WidgetListMap, &widgetPtr->linkMap, widgetPtr);
+	DoubleLink_Init(&widgetPtr->linkerItem, NULL, NULL);
+	widgetPtr->linkerItem.what = "item";
+	DoubleLink_Init(&widgetPtr->linkerItemVis, NULL, NULL);
+	widgetPtr->linkerItemVis.what ="itemVis";
+	widgetPtr->noUpdate = FALSE;
+	widgetPtr->dx = widgetPtr->dy = 0;
+	widgetPtr->dw = widgetPtr->dh = 0;
+	widgetPtr->info = NULL;
+	widgetPtr->invalid = NULL;
+
+	/*
+	 * Arrange for our routine to be called when any of the specified
+	 * events occur to our new Widget.
+	 */
+    Tk_CreateEventHandler(widgetPtr->tkwin,
+		ExposureMask | StructureNotifyMask | FocusChangeMask,
+		Widget_EventProc, (ClientData) widgetPtr);
+
+	/* Set the default options for the new widget */
+	if (Tk_InitOptions(interp, (char *) widgetPtr, optionTable, tkwin)
+		!= TCL_OK)
+	{
+		/* Destroy the Tk window */
 		Tk_DestroyWindow(widgetPtr->tkwin);
+
+		/* Failure */
+		return TCL_ERROR;
+	}
+	
+	/* Parse the rest of the arguments for option/value pairs */
+	if (Widget_Configure(interp, widgetPtr, objc - 2, objv + 2) != TCL_OK)
+	{
+		/* Destroy the Tk window */
+		Tk_DestroyWindow(widgetPtr->tkwin);
+
+		/* Failure */
+		return TCL_ERROR;
+	}
+
+	/* Add another widget to the list */
+	DoubleLink_Link(&widgetPtr->link);
+	
+	/* Return the window pathname */
+    Tcl_SetStringObj(Tcl_GetObjResult(interp), Tk_PathName(widgetPtr->tkwin),
+    	-1);
+
+	/* Success */
+    return TCL_OK;
+}
+
+
+/*
+ * Initialize the Widget package
+ */
+int init_widget(Tcl_Interp *interp)
+{
+	/*  */
+	g_create_proc = widget_create;
+
+	/* Linked lists of Widgets */
+	DoubleLink_Init(&WidgetList, NULL, NULL);
+	WidgetList.what = "widget";
+	DoubleLink_Init(&WidgetListMap, NULL, NULL);
+	WidgetListMap.what = "widgetMap";
+
+	/* Initialize Widget item colors */
+	if (WidgetColor_Init(interp) != TCL_OK)
+	{
+		return TCL_ERROR;
+	}
+
+	/* Create the "widget" interpreter command */
+	Tcl_CreateObjCommand(interp, "widget", Widget_ObjCmd, NULL, NULL);
+
+	/* Success */
+    return TCL_OK;
+}
+
+void angtk_widget_lock(bool lock)
+{
+	DoubleLink *link;
+	Widget *widgetPtr;
+
+	if (lock)
+	{
+		for (link = WidgetList.head; link; link = link->next)
+		{
+			widgetPtr = DoubleLink_Data(link, Widget);
+			widgetPtr->flags |= WIDGET_NO_UPDATE;
+		}
+	}
+	else
+	{
+		for (link = WidgetList.head; link; link = link->next)
+		{
+			widgetPtr = DoubleLink_Data(link, Widget);
+			if (!widgetPtr->noUpdate)
+			{
+				widgetPtr->flags &= ~WIDGET_NO_UPDATE;
+			}
+		}
 	}
 }
+
+/*
+ * Now for spell and missile effects in a Widget. The basic idea is to
+ * prepare for drawing, perform the drawing (offscreen), display
+ * the changed grids onscreen, then repair the affected grids offscreen.
+ *
+ * Specifically, we call angtk_effect_prep(), then another routine to
+ * draw any number of spell/missile grids offscreen, and finally
+ * angtk_effect_fresh() to display the changes onscreen. This allows us
+ * to draw each radius of a spell explosion in turn.
+ *
+ * Because a Widget may display an arbitrary area of the cave, and because
+ * a particular Widget may not be mapped (ie, visible onscreen), we keep
+ * track of which Widgets were really drawn into and require redisplaying.
+ */
+
+/*
+ * Return EFFECT_SPELL_XXX constant for given GF_XXX constant. For each
+ * EFFECT_SPELL_XXX we have a bolt icon assignment and a ball icon assignment.
+ * The bolt assignment is assumed to be the first of four icons.
+ */
+static byte effect_index(int type)
+{
+	/* Analyze */
+	switch (type)
+	{
+		case GF_MISSILE:	return (EFFECT_SPELL_MISSILE);
+		case GF_ACID:		return (EFFECT_SPELL_ACID);
+		case GF_ELEC:		return (EFFECT_SPELL_ELEC);
+		case GF_FIRE:		return (EFFECT_SPELL_FIRE);
+		case GF_COLD:		return (EFFECT_SPELL_COLD);
+		case GF_POIS:		return (EFFECT_SPELL_POIS);
+		case GF_HOLY_FIRE:	return (EFFECT_SPELL_HOLY_FIRE);
+		case GF_HELL_FIRE:	return (EFFECT_SPELL_HELL_FIRE);
+		case GF_MANA:		return (EFFECT_SPELL_MANA);
+		case GF_ARROW:		return (EFFECT_SPELL_ARROW);
+		case GF_WATER:		return (EFFECT_SPELL_WATER);
+		case GF_NETHER:		return (EFFECT_SPELL_NETHER);
+		case GF_CHAOS:		return (EFFECT_SPELL_CHAOS);
+		case GF_DISENCHANT:	return (EFFECT_SPELL_DISENCHANT);
+		case GF_NEXUS:		return (EFFECT_SPELL_NEXUS);
+		case GF_CONFUSION:	return (EFFECT_SPELL_CONFUSION);
+		case GF_SOUND:		return (EFFECT_SPELL_SOUND);
+		case GF_SHARDS:		return (EFFECT_SPELL_SHARD);
+		case GF_FORCE:		return (EFFECT_SPELL_FORCE);
+		case GF_INERTIA:	return (EFFECT_SPELL_INERTIA);
+		case GF_GRAVITY:	return (EFFECT_SPELL_GRAVITY);
+		case GF_TIME:		return (EFFECT_SPELL_TIME);
+		case GF_LITE_WEAK:	return (EFFECT_SPELL_LITE_WEAK);
+		case GF_LITE:		return (EFFECT_SPELL_LITE);
+		case GF_DARK_WEAK:	return (EFFECT_SPELL_DARK_WEAK);
+		case GF_DARK:		return (EFFECT_SPELL_DARK);
+		case GF_PLASMA:		return (EFFECT_SPELL_PLASMA);
+		case GF_METEOR:		return (EFFECT_SPELL_METEOR);
+		case GF_ICE:		return (EFFECT_SPELL_ICE);
+		case GF_ROCKET:		return (EFFECT_SPELL_ROCKET);
+		case GF_DEATH_RAY:	return (EFFECT_SPELL_DEATH_RAY);
+		case GF_NUKE:		return (EFFECT_SPELL_NUKE);
+		case GF_DISINTEGRATE:	return (EFFECT_SPELL_DISINTEGRATE);
+		case GF_PSI:
+		case GF_PSI_DRAIN:
+		case GF_TELEKINESIS:
+		case GF_DOMINATION:		return (EFFECT_SPELL_PSI);
+	}
+
+	/* Standard "color" */
+	return (EFFECT_SPELL_FORCE);
+}
+
+static bool angtk_effect_aux(int y, int x, IconSpec *iconSpecPtr)
+{
+	Widget *widgetPtr;
+	ExWidget *exPtr;
+	DoubleLink *link;
+	int row, col;
+	bool drawn = FALSE;
+
+	/* Check each Widget */
+	for (link = WidgetListMap.head; link; link = link->next)
+	{
+		widgetPtr = DoubleLink_Data(link, Widget);
+		exPtr = (ExWidget *) widgetPtr;
+
+		/* Drawing is disabled */
+		if (widgetPtr->flags & WIDGET_NO_UPDATE) continue;
+
+		/* Don't draw out of bounds */
+		if (!Widget_CaveToView(widgetPtr, y, x, &row, &col))
+			continue;
+			
+		/* Set effect icon */
+		exPtr->effect[col + row * widgetPtr->cc] = *iconSpecPtr;
+
+		/* Mark the grid as invalid */
+		Widget_Invalidate(widgetPtr, row, col);
+
+		/* Redraw later */
+		widgetPtr->flags |= WIDGET_DRAW_INVALID;
+		Widget_EventuallyRedraw(widgetPtr);
+
+		/* Something was drawn */
+		drawn = TRUE;
+	}
+
+	return drawn;
+}
+
+void angtk_effect_clear(int y, int x)
+{
+	Widget *widgetPtr;
+	ExWidget *exPtr;
+	DoubleLink *link;
+	int row, col;
+
+	/* Check each Widget */
+	for (link = WidgetListMap.head; link; link = link->next)
+	{
+		widgetPtr = DoubleLink_Data(link, Widget);
+		exPtr = (ExWidget *) widgetPtr;
+
+		/* Drawing is disabled */
+		if (widgetPtr->flags & WIDGET_NO_UPDATE) continue;
+
+		/* Don't draw out of bounds */
+		if (!Widget_CaveToView(widgetPtr, y, x, &row, &col))
+			continue;
+
+		/* No effect was drawn here */
+		if (exPtr->effect[col + row * widgetPtr->cc].type == ICON_TYPE_NONE)
+			continue;
+
+		/* Clear effect icon */
+		exPtr->effect[col + row * widgetPtr->cc].type = ICON_TYPE_NONE;
+
+		/* Mark the grid as invalid */
+		Widget_Invalidate(widgetPtr, row, col);
+
+		widgetPtr->flags |= WIDGET_DRAW_INVALID;
+		Widget_EventuallyRedraw(widgetPtr);
+	}
+}
+
+/*
+ * Draws the icon assigned to a particular spell type (GF_XXX constant).
+ */
+bool angtk_effect_spell(int y, int x, int typ, int bolt)
+{
+	int effect = effect_index(typ);
+	IconSpec iconSpec;
+
+	if (bolt)
+	{
+		iconSpec = g_effect[EFFECT_SPELL_BOLT].icon[effect];
+
+		iconSpec.index += bolt - 1;
+	}
+	else
+	{
+		iconSpec = g_effect[EFFECT_SPELL_BALL].icon[effect];
+	}
+
+	return angtk_effect_aux(y, x, &iconSpec);
+}
+
+/*
+ * Draws the icon assigned to a fired ammunition
+ */
+bool angtk_effect_ammo(int y, int x, object_type *o_ptr, int dir)
+{
+	IconSpec iconSpec;
+
+	/* Eliminate '5' */
+	if (dir >= 5) dir -= 1;
+
+	switch (k_info[o_ptr->k_idx].tval)
+	{
+		case TV_ARROW:
+			iconSpec = g_effect[EFFECT_AMMO].icon[EFFECT_AMMO_ARROW];
+			iconSpec.index += dir - 1;
+			break;
+
+		case TV_BOLT:
+			iconSpec = g_effect[EFFECT_AMMO].icon[EFFECT_AMMO_BOLT];
+			iconSpec.index += dir - 1;
+			break;
+
+		/* Sling ammo */
+		default:
+			return angtk_effect_object(y, x, o_ptr);
+	}
+
+	/* Nothing is assigned */
+	if (iconSpec.type == ICON_TYPE_DEFAULT)
+	{
+		return angtk_effect_object(y, x, o_ptr);
+	}
+
+	return angtk_effect_aux(y, x, &iconSpec);
+}
+
+/*
+ * Draws the icon assigned to thrown object
+ */
+bool angtk_effect_object(int y, int x, object_type *o_ptr)
+{
+	t_assign assign = g_assign[ASSIGN_OBJECT].assign[o_ptr->k_idx];
+	IconSpec iconSpec;
+
+	FinalIcon(&iconSpec, &assign, 0, o_ptr);
+	return angtk_effect_aux(y, x, &iconSpec);
+}
+
+/*
+ * This is a dummy lite_spot() routine that may get called before
+ * the icons have been initialized.
+ */
+static void angtk_lite_spot_dummy(int y, int x)
+{
+	/* Ignore parameters and do nothing */
+	(void) x;
+	(void) y;
+}
+
+void (*angtk_lite_spot)(int y, int x) = angtk_lite_spot_dummy;
+
+/*
+ * This is called whenever the game thinks a grid needs to be redrawn,
+ * via lite_spot(). If the grid actually changed then a redraw is
+ * scheduled.
+ */
+void angtk_lite_spot_real(int y, int x)
+{
+	DoubleLink *link;
+	int row, col;
+
+	/* Get knowledge about location */
+	get_grid_info(y, x, &g_grid[y][x]);
+
+	/* Check each Widget */
+	for (link = WidgetListMap.head; link; link = link->next)
+	{
+		Widget *widgetPtr = DoubleLink_Data(link, Widget);
+
+		/* Drawing is disabled */
+		if (widgetPtr->flags & WIDGET_NO_UPDATE)
+			continue;
+
+		/* A full redraw is already pending */
+		if (widgetPtr->flags & WIDGET_WIPE)
+			continue;
+
+		/* Cave location isn't visible */
+		if (!Widget_CaveToView(widgetPtr, y, x, &row, &col))
+			continue;
+
+		/* */
+		Widget_Invalidate(widgetPtr, row, col);
+
+		/* Redraw invalid grids later */
+		widgetPtr->flags |= WIDGET_DRAW_INVALID;
+		Widget_EventuallyRedraw(widgetPtr);
+	}
+}
+
+
+/*
+ * Search for an already allocated but unused Widget item color.
+ */
+static t_widget_color *WidgetColor_FindFree(void)
+{
+	int i;
+
+	/* Check each color */
+	for (i = 0; i < g_widget_color_count; i++)
+	{
+		/* This is free */
+		if (g_widget_color[i]->ref_cnt == 0)
+		{
+			/* Return the address */
+			return g_widget_color[i];
+		}
+	}
+
+	/* None are free */
+	return NULL;
+}
+
+/*
+ * Allocates a new Widget item color of the given properties. If such
+ * a color already exists, its references count is incremented and
+ * the color is returned. Otherwise a new struct is allocated.
+ */
+t_widget_color *WidgetColor_Alloc(int color, int opacity)
+{
+	t_widget_color *color_ptr;
+
+	/* Look for an existing color */
+	if ((color_ptr = WidgetColor_Find(color, opacity)))
+	{
+		/* Increase the reference count */
+		color_ptr->ref_cnt++;
+
+		/* Return the address */
+		return color_ptr;
+	}
+
+	/* Look for a free struct */
+	if (!(color_ptr = WidgetColor_FindFree()))
+	{
+		/* Allocate a struct */
+		color_ptr = (t_widget_color *) Tcl_Alloc(sizeof(t_widget_color));
+
+		/* Append pointer to the global array */
+		g_widget_color = Array_Insert(g_widget_color,
+			&g_widget_color_count, sizeof(t_widget_color *),
+			g_widget_color_count);
+
+		/* Remember the new struct */
+		g_widget_color[g_widget_color_count - 1] = color_ptr;
+	}
+
+	/* Set the fields */
+	color_ptr->ref_cnt = 1;
+	color_ptr->color = color;
+	color_ptr->opacity = opacity;
+
+	/* Calculate the tint table */
+	Colormap_TintTable(g_palette2colormap[color], opacity, color_ptr->tint);
+
+	/* Return the address */
+	return color_ptr;
+}
+
+/*
+ * Decrement the reference count for a Widget item color. We never
+ * actually free the memory for a struct with zero references, since
+ * we allow them to be reused.
+ */
+void WidgetColor_Deref(t_widget_color *color_ptr)
+{
+	/* Allow NULL color_ptr */
+	if (!color_ptr) return;
+
+	/* Decrement the reference count */
+	if (--color_ptr->ref_cnt <= 0)
+	{
+		/* Mark the color as unused */
+		color_ptr->ref_cnt = 0;
+		color_ptr->color = 0;
+		color_ptr->opacity = 0;
+	}
+}
+
 
 /*
  * Actually draw stuff into the Widget's display. This routine is
@@ -1987,87 +2101,6 @@ void Widget_Display(ClientData clientData)
 	widgetPtr->dy = widgetPtr->by;
 	widgetPtr->dw = widgetPtr->width;
 	widgetPtr->dh = widgetPtr->height;
-}
-
-void Widget_Calc(Widget *widgetPtr)
-{
-	int i;
-	int rc, cc;
-	int dLeft, cLeft, dRight, cRight;
-	int dTop, rTop, dBottom, rBottom;
-
-	dLeft = (widgetPtr->width - widgetPtr->gwidth) / 2;
-	cLeft = dLeft / widgetPtr->gwidth;
-	if (dLeft % widgetPtr->gwidth)
-		++cLeft;
-
-	dRight = widgetPtr->width - dLeft - widgetPtr->gwidth;
-	cRight = dRight / widgetPtr->gwidth;
-	if (dRight % widgetPtr->gwidth)
-		++cRight;
-
-	dTop = (widgetPtr->height - widgetPtr->gheight) / 2;
-	rTop = dTop / widgetPtr->gheight;
-	if (dTop % widgetPtr->gheight)
-		++rTop;
-
-	dBottom = widgetPtr->height - dTop - widgetPtr->gheight;
-	rBottom = dBottom / widgetPtr->gheight;
-	if (dBottom % widgetPtr->gheight)
-		++rBottom;
-
-	cc = cLeft + 1 + cRight;
-	rc = rTop + 1 + rBottom;
-
-	widgetPtr->tc = rc * cc;
-	widgetPtr->rc = rc;
-	widgetPtr->cc = cc;
-
-	widgetPtr->bw = cc * widgetPtr->gwidth;
-	widgetPtr->bh = rc * widgetPtr->gheight;
-
-	widgetPtr->bx = cLeft * widgetPtr->gwidth - dLeft;
-	widgetPtr->by = rTop * widgetPtr->gheight - dTop;
-
-	if (widgetPtr->info)
-		Tcl_Free((char *) widgetPtr->info);
-	if (widgetPtr->invalid)
-		Tcl_Free((char *) widgetPtr->invalid);
-
-	widgetPtr->info = (short *) Tcl_Alloc(sizeof(short) *
-		widgetPtr->rc * widgetPtr->cc);
-	widgetPtr->invalid = (int *) Tcl_Alloc(sizeof(int) *
-		widgetPtr->rc * widgetPtr->cc);
-	widgetPtr->invalidCnt = 0;
-
-	for (i = 0; i < widgetPtr->rc * widgetPtr->cc; i++)
-	{
-		widgetPtr->info[i] = 0;
-	}
-}
-
-/*
- * Create a bitmap as big as the given Widget. We get the address of
- * the bits so we can write directly into the bitmap. The bitmap is
- * 8-bit depth with a 256-color palette.
- */
-static void Widget_CreateBitmap(Widget *widgetPtr)
-{
-	/* Calculate the bitmap dimensions in pixels */
-	widgetPtr->bitmap.width = widgetPtr->bw;
-	widgetPtr->bitmap.height = widgetPtr->bh;
-
-	widgetPtr->bitmap.depth = ((widgetPtr->gwidth == g_icon_size) ? g_icon_depth : 8);
-	widgetPtr->bitmap.depth = g_icon_depth;
-
-	/* Create the bitmap */
-	Bitmap_New(widgetPtr->interp, &widgetPtr->bitmap);
-}
-
-/* Free the bitmap for this Widget */
-static void Widget_DeleteBitmap(Widget *widgetPtr)
-{
-	Bitmap_Delete(&widgetPtr->bitmap);
 }
 
 
@@ -2316,66 +2349,5 @@ int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
 	return result;
 }
 
-/*
- * Delete a Widget item. This is currently only called when a Widget
- * is deleted (ie, you can't delete an individual item. It would be
- * best to replace the linked list of items with another direct-lookup
- * method, and implement unique item ids like a Canvas.
- */
-void WidgetItem_Delete(Widget *widgetPtr, WidgetItem *itemPtr)
-{
-	/* Call the item delete callback */
-	(*itemPtr->typePtr->deleteProc)(widgetPtr, itemPtr);
 
-	Tk_FreeConfigOptions((char *) itemPtr, itemPtr->typePtr->optionTable,
-		widgetPtr->tkwin);
 
-	/* Remove the item from the linked list of items */
-	DoubleLink_Unlink(&itemPtr->link);
-
-	/* Free the item memory */
-	Tcl_Free((char *) itemPtr);
-}
-
-int Widget_AddOptions(Tcl_Interp *interp, Tk_OptionSpec *option)
-{
-	int i, j;
-
-	/* Hack - ignore unused parameter */
-	(void) interp;
-
-	for (i = 0; optionSpecs[i].type != TK_OPTION_END; i++) ;
-	
-	for (j = 0; option[j].type != TK_OPTION_END; j++)
-		optionSpecs[i++] = option[j];
-	optionSpecs[i++] = option[j];
-
-	return TCL_OK;
-}
-
-/*
- * Initialize the Widget package
- */
-int Widget_Init(Tcl_Interp *interp, Widget_CreateProc *proc)
-{
-	/*  */
-	g_create_proc = proc;
-
-	/* Linked lists of Widgets */
-	DoubleLink_Init(&WidgetList, NULL, NULL);
-	WidgetList.what = "widget";
-	DoubleLink_Init(&WidgetListMap, NULL, NULL);
-	WidgetListMap.what = "widgetMap";
-
-	/* Initialize Widget item colors */
-	if (WidgetColor_Init(interp) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/* Create the "widget" interpreter command */
-	Tcl_CreateObjCommand(interp, "widget", Widget_ObjCmd, NULL, NULL);
-
-	/* Success */
-    return TCL_OK;
-}

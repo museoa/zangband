@@ -136,14 +136,10 @@ typedef struct WidgetItemType
 	struct WidgetItemType *nextPtr;
 } WidgetItemType;
 
-extern int WidgetItem_Create(Tcl_Interp *interp, Widget *widgetPtr,
-	int objc, Tcl_Obj *CONST objv[]);
 extern int WidgetItem_Cget(Tcl_Interp *interp, Widget *widgetPtr,
 	int objc, Tcl_Obj *CONST objv[]);
 extern int WidgetItem_Configure(Tcl_Interp *interp, Widget *widgetPtr,
 	int objc, Tcl_Obj *CONST objv[]);
-extern void	WidgetItem_Delete(Widget *widgetPtr,
-	WidgetItem *itemPtr);
 
 /*
  * Widget items use tint tables for transparency. Since each tint table
@@ -163,8 +159,6 @@ extern void WidgetColor_Deref(t_widget_color *color_ptr);
 
 extern DoubleLinker WidgetList;
 extern DoubleLinker WidgetListMap;
-extern int Widget_Init(Tcl_Interp *interp, Widget_CreateProc *proc);
-extern int Widget_AddOptions(Tcl_Interp *interp, Tk_OptionSpec *option);
 extern void Widget_Center(Widget *widgetPtr, int cy, int cx);
 extern void Widget_Display(ClientData clientData);
 extern void Widget_Invalidate(Widget *widgetPtr, int row, int col);
