@@ -2144,7 +2144,7 @@ void test_decision_tree(void)
 	msg_format("Type returned: %d .", type);
 }
 
-
+#if 0
 /*
  * "Testing" function, used to find where the "invisible monster" bug
  * is being caused.
@@ -2193,6 +2193,7 @@ void test_mon_wild_integrity(void)
 		}
 	}
 }
+#endif /* 0 */
 
 /*
  * Test to see that there are no null nodes in the decision tree.

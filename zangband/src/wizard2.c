@@ -2021,9 +2021,9 @@ void do_cmd_debug(void)
 		(void)ident_spell();
 		break;
 
-		/* Monster Integrity */
+		/* Fields Integrity */
 		case 'I':
-		(void)test_mon_wild_integrity();
+		(void)test_field_data_integrity();
 		break;
 
 		/* Go up or down in the dungeon */

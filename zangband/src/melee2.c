@@ -2890,7 +2890,7 @@ static void process_monster(int m_idx)
 	}
 
 	/* Notice changes in view */
-	if (do_move && (m_ptr->cdis <= MAX_SIGHT + 3))
+	if (do_move && (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2)))
 	{
 		/* Update some things */
 		p_ptr->update |= (PU_MON_LITE);

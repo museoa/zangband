@@ -678,7 +678,8 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 					 * This is a mega-hack... will be fixed later.
 					 */
 					
-					field_hook_single(&fld_idx, FIELD_ACT_MAGIC_TARGET, NULL);
+					field_hook_single(field_find(fld_idx),
+						 FIELD_ACT_MAGIC_TARGET, NULL);
 				}
 			}
 			

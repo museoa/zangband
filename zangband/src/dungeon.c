@@ -4289,8 +4289,6 @@ void play_game(bool new_game)
 	if (init_v_info()) quit("Cannot initialize vaults");
 
 	
-
-
 	/* React to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
 	

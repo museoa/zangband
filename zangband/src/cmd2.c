@@ -807,8 +807,9 @@ bool do_cmd_open_aux(int y, int x)
 		if (p_ptr->blind || no_lite()) i = i / 10;
 		if (p_ptr->confused || p_ptr->image) i = i / 10;
 
-		/* Success */
-		if (!field_hook_single(&fld_idx, FIELD_ACT_INTERACT, (void *) &i))
+		/* Success? */
+		if (!field_hook_single(field_find(fld_idx), FIELD_ACT_INTERACT,
+			 (void *) &i))
 		{
 			/* Open the door */
 			cave_set_feat(y, x, FEAT_OPEN);
@@ -1169,7 +1170,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 
 	if (fld_idx && (action == 0))
 	{
-		if (!field_hook_single(&fld_idx, FIELD_ACT_INTERACT,
+		if (!field_hook_single(field_find(fld_idx), FIELD_ACT_INTERACT,
 			 (void *) &dig))
 		{
 			/* Notice new floor grids */
@@ -1395,24 +1396,6 @@ static bool do_cmd_tunnel_aux(int y, int x)
 
 			/* Occasional Search XXX XXX */
 			if (rand_int(100) < 25) search();
-		}
-	}
-
-	/* Doors */
-	else
-	{
-		/* Tunnel */
-		if ((p_ptr->skill_dig > 30 + rand_int(1200)) && twall(y, x, FEAT_FLOOR))
-		{
-			msg_print("You have finished the tunnel.");
-		}
-
-		/* Keep trying */
-		else
-		{
-			/* We may continue tunelling */
-			msg_print("You tunnel into the door.");
-			more = TRUE;
 		}
 	}
 
@@ -1658,7 +1641,8 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 	/* Success */
-	if (!field_hook_single(&fld_idx, FIELD_ACT_INTERACT, (void *) &i))
+	if (!field_hook_single(field_find(fld_idx), FIELD_ACT_INTERACT,
+	 (void *) &i))
 	{
 		/* Message */
 		msg_format("You have disarmed the %s.", t_ptr->name);

@@ -2989,7 +2989,7 @@ void update_view(void)
 		y = view_y[i];
 		x = view_x[i];
 
-		if (!in_bounds2(y,x)) continue;
+		if (!in_bounds2(y, x)) continue;
 
 		c_ptr = area(y, x);
 		info = c_ptr->info;
@@ -3646,6 +3646,9 @@ void update_mon_lite(void)
 		lite_y[lite_n] = fy;
 		lite_n++;
 	}
+	
+	/* Finished with temp_n */
+	temp_n = 0;
 }
 
 
