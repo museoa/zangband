@@ -52,7 +52,7 @@ void output_note(cptr final_note, ...)
 	va_start(vp, final_note);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, final_note, vp);
+	(void)vstrnfmt(buf, 1024, final_note, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -89,7 +89,7 @@ void add_note(char code, cptr note, ...)
 	va_start(vp, note);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, note, vp);
+	(void)vstrnfmt(buf, 1024, note, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);

@@ -96,6 +96,11 @@
  *   Do not use the "+" or "0" flags.
  *   Note that a "NULL" value of "s" is converted to the empty string.
  *
+ * Format ("%S", cptr fmt, extra information...)
+ *   Append the string created by using
+ *   strnfmt(fmt, extra information).
+ *   This allows recursive formatting.
+ *
  * Format("%V", vptr v)
  *   Note -- possibly significant mode flag
  * Format("%v", vptr v)
@@ -208,7 +213,7 @@ static vstrnfmt_aux_func vstrnfmt_aux = vstrnfmt_aux_dflt;
  * too short, not written a null, and forced the programmer to deal with
  * this special case, but I felt that it is better to at least give a
  * "usable" result when the buffer was too long instead of either giving
- * a memory overwrite like "sprintf()" or a non-terminted string like
+ * a memory overwrite like "sprintf()" or a non-terminated string like
  * "strncpy()".  Note that "strncpy()" also "null-pads" the result.
  *
  * Note that in most cases "just long enough" is probably "too short".
@@ -225,7 +230,7 @@ static vstrnfmt_aux_func vstrnfmt_aux = vstrnfmt_aux_dflt;
  * the given buffer to a length of zero, and return a "length" of zero.
  * The contents of "buf", except for "buf[0]", may then be undefined.
  */
-uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
+uint vstrnfmt(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	cptr s;
 
@@ -303,7 +308,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		if (*s == 'r')
 		{
 			/* Extract the next argument, and save it (globally) */
-			vstrnfmt_aux = va_arg(vp, vstrnfmt_aux_func);
+			vstrnfmt_aux = va_arg(*vp, vstrnfmt_aux_func);
 
 			/* Skip the "r" */
 			s++;
@@ -391,7 +396,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					int arg;
 
 					/* Get the next argument */
-					arg = va_arg(vp, int);
+					arg = va_arg(*vp, int);
 
 					/* Hack -- append the "length" */
 					sprintf(aux + q, "%d", arg);
@@ -438,7 +443,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				int arg;
 
 				/* Get the next argument */
-				arg = va_arg(vp, int);
+				arg = va_arg(*vp, int);
 
 				/* Format the argument */
 				sprintf(tmp, aux, arg);
@@ -455,7 +460,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					long arg;
 
 					/* Get the next argument */
-					arg = va_arg(vp, long);
+					arg = va_arg(*vp, long);
 
 					/* Format the argument */
 					sprintf(tmp, aux, arg);
@@ -465,7 +470,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					int arg;
 
 					/* Get the next argument */
-					arg = va_arg(vp, int);
+					arg = va_arg(*vp, int);
 
 					/* Format the argument */
 					sprintf(tmp, aux, arg);
@@ -480,7 +485,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				/* Stat values */
 				int arg;
 				
-				arg = va_arg(vp, int);
+				arg = va_arg(*vp, int);
 				
 				if (arg >= 400)
         			sprintf(tmp, "  40+ ");
@@ -489,6 +494,17 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			
 				/* Done */
 				break;
+			}
+			
+			case 'S':
+			{
+				/* Use a format string */
+				cptr arg;
+				
+				arg = va_arg(*vp, cptr);
+
+				/* Format the string */
+				(void)vstrnfmt(tmp, 1000, arg, vp);
 			}
 
 			case 'u':  case 'o':  case 'x':  case 'X':
@@ -499,7 +515,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					unsigned long arg;
 
 					/* Get the next argument */
-					arg = va_arg(vp, unsigned long);
+					arg = va_arg(*vp, unsigned long);
 
 					/* Format the argument */
 					sprintf(tmp, aux, arg);
@@ -509,7 +525,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					unsigned int arg;
 
 					/* Get the next argument */
-					arg = va_arg(vp, unsigned int);
+					arg = va_arg(*vp, unsigned int);
 
 					/* Format the argument */
 					sprintf(tmp, aux, arg);
@@ -524,7 +540,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				vptr arg;
 
 				/* Get the next argument */
-				arg = va_arg(vp, vptr);
+				arg = va_arg(*vp, vptr);
 
 				/* Format the argument */
 				sprintf(tmp, aux, arg);
@@ -540,7 +556,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				char arg2[1024];
 
 				/* Get the next argument */
-				arg = va_arg(vp, cptr);
+				arg = va_arg(*vp, cptr);
 
 				/* Hack -- convert NULL to EMPTY */
 				if (!arg) arg = "";
@@ -562,7 +578,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			case 'v':
 			{
 				/* Format the "user data" */
-				(void)vstrnfmt_aux(tmp, 1000, aux, &vp);
+				(void)vstrnfmt_aux(tmp, 1000, aux, vp);
 
 				/* Done */
 				break;
@@ -643,7 +659,7 @@ char *vformat(cptr fmt, va_list vp)
 		uint len;
 
 		/* Build the string */
-		len = vstrnfmt(format_buf, format_len, fmt, vp);
+		len = vstrnfmt(format_buf, format_len, fmt, &vp);
 
 		/* Success */
 		if (len < format_len - 1) break;
@@ -677,7 +693,7 @@ uint strnfmt(char *buf, uint max, cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Do a virtual fprintf to stderr */
-	len = vstrnfmt(buf, max, fmt, vp);
+	len = vstrnfmt(buf, max, fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);

@@ -1037,7 +1037,7 @@ errr process_pref_file(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(name, 1024, fmt, vp);
+	(void)vstrnfmt(name, 1024, fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);

@@ -2574,7 +2574,7 @@ void msg_format(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, vp);
+	(void)vstrnfmt(buf, 1024, fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -2616,7 +2616,7 @@ void message_format(u16b message_type, s16b extra, cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, vp);
+	(void)vstrnfmt(buf, 1024, fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);

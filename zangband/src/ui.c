@@ -957,7 +957,7 @@ void put_fstr(int col, int row, cptr str, ...)
 	va_start(vp, str);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, str, vp);
+	(void)vstrnfmt(buf, 1024, str, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -981,7 +981,7 @@ void prtf(int col, int row, cptr str, ...)
 	va_start(vp, str);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, str, vp);
+	(void)vstrnfmt(buf, 1024, str, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -1024,7 +1024,7 @@ void roff(cptr str, ...)
 	va_start(vp, str);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, str, vp);
+	(void)vstrnfmt(buf, 1024, str, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -1331,7 +1331,7 @@ bool get_string(char *buf, int len, cptr str, ...)
 	va_start(vp, str);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(prompt, 1024, str, vp);
+	(void)vstrnfmt(prompt, 1024, str, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -1372,7 +1372,7 @@ bool get_check(cptr prompt, ...)
 	va_start(vp, prompt);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, prompt, vp);
+	(void)vstrnfmt(buf, 1024, prompt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);

@@ -28,7 +28,7 @@
 /**** Available Functions ****/
 
 /* Format arguments into given bounded-length buffer */
-extern uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp);
+extern uint vstrnfmt(char *buf, uint max, cptr fmt, va_list *vp);
 
 /* Simple interface to "vstrnfmt()" */
 extern uint strnfmt(char *buf, uint max, cptr fmt, ...);

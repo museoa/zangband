@@ -717,7 +717,7 @@ void borg_note_fmt(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, vp);
+	(void)vstrnfmt(buf, 1024, fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -760,7 +760,7 @@ void borg_oops_fmt(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, vp);
+	(void)vstrnfmt(buf, 1024, fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);

@@ -684,7 +684,7 @@ static void spoiler_underline(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, vp);
+	(void)vstrnfmt(buf, 1024, fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
@@ -1524,7 +1524,7 @@ static void spoil_out(cptr fmt, ...)
 	va_start(vp, fmt);
 
 	/* Format the args, save the length */
-	(void)vstrnfmt(buf, 1024, fmt, vp);
+	(void)vstrnfmt(buf, 1024, fmt, &vp);
 
 	/* End the Varargs Stuff */
 	va_end(vp);
