@@ -1022,6 +1022,11 @@ void self_knowledge(void)
 		{
 			info[i++] = "Your weapon is a great bane of dragons.";
 		}
+		
+		if (f2 & (TR2_THROW))
+		{
+			info[i++] = "Your weapon can be thrown well.";
+		}
 	}
 
 
