@@ -696,7 +696,7 @@ static void init_vanilla_town(void)
 	p_ptr->wilderness_y = town[1].y * 16 + yy;
 
 	/* One town */
-	town_count = 1;
+	town_count = 2;
 }
 
 /*
