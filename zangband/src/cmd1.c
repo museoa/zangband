@@ -3053,7 +3053,9 @@ static bool run_test(void)
 			/* Visible object */
 			if (o_ptr->marked) return (TRUE);
 		}
-
+		
+		/* Visible traps abort running */
+		if (is_visible_trap (c_ptr)) return TRUE;
 
 		/* Assume unknown */
 		inv = TRUE;
