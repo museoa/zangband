@@ -66,6 +66,12 @@
 #define one_in_(X) \
 	(rand_int(X) == 0)
 
+/*
+ * Evaluate to TRUE "S" percent of the time
+ */
+#define saving_throw(S) \
+	(rand_int(100) < (S))
+
 
 /**** Available Variables ****/
 
