@@ -3382,15 +3382,8 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 
 	/* Analyze choices */
 
-	/* Hack -- Start on equipment if requested */
-	if ((p_ptr->command_wrk == (USE_EQUIP)) && allow_equip)
-	{
-		/* This line is redundant */
-		p_ptr->command_wrk = (USE_EQUIP);
-	}
-
 	/* Use inventory if allowed */
-	else if (allow_inven)
+	if (allow_inven)
 	{
 		p_ptr->command_wrk = (USE_INVEN);
 	}
