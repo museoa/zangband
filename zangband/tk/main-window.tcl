@@ -610,7 +610,6 @@ proc NSMainWindow::InitMenus {oop} {
 	lappend entries [list -type command -label [mc Keymap] -identifier E_PREF_KEYMAP]
 	lappend entries [list -type command -label [mc Macros] -identifier E_PREF_MACROS]
 	lappend entries [list -type command -label [mc Options] -identifier E_PREF_OPTIONS]
-	lappend entries [list -type command -label [mc Sprite] -identifier E_PREF_SPRITE]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_PREFERENCES $entries
 
 	set entries {}
@@ -711,8 +710,7 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 	lappend identList E_WINDOW_SAVEPOS E_WINDOW_DEFPOS \
 		E_WINDOW_LOADPOS E_WINDOW_AUTOSAVE E_WINDOW_MAXIMIZE E_ABOUT E_TIPS
 	lappend identList M_PREFERENCES E_PREF_COLOR \
-		E_PREF_FONT E_PREF_KEYMAP E_PREF_SPRITE \
-		E_PREF_ALTERNATE
+		E_PREF_FONT E_PREF_KEYMAP E_PREF_ALTERNATE
 
 	lappend identList E_CHOICEWINDOW E_WINDOW_MESSAGE E_WINDOW_MESSAGES \
 		E_WINDOW_MAP E_WINDOW_MISC E_WINDOW_RECALL
@@ -855,10 +853,6 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 		}
 		E_PREF_MACROS {DoUnderlyingCommand @}
 		E_PREF_OPTIONS {DoUnderlyingCommand =}
-		E_PREF_SPRITE {
-			NSModule::LoadIfNeeded NSSprite
-			NSWindowManager::Display sprite
-		}
 
 		E_OTHER_INFO {DoUnderlyingCommand C}
 		E_OTHER_FEELING {DoUnderlyingCommand ^F}

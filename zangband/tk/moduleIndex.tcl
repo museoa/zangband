@@ -36,7 +36,6 @@ IndexOne NSPhoto photo.tcl
 IndexOne NSPlayerFlags player-flags.tcl
 IndexOne NSRecord record.tcl
 IndexOne NSRecall recall.tcl
-IndexOne NSSprite sprite.tcl
 IndexOne NSStore store.tcl
 IndexOne NSStore2 store2.tcl
 IndexOne NSStatus status.tcl

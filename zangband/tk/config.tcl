@@ -114,7 +114,6 @@ proc NSConfig::Load {} {
 
 	# These next files are automatically generated at shutdown
 	# Source [Global config,alternate] Config::Alternate
-	# Source [Global config,sprite] Config::Sprite
 	# Source [Global config,assign] Config::Assign
 	
 	# Map symbols
@@ -168,7 +167,6 @@ proc NSConfig::SetPrefix {prefix} {
 
 	Global config,prefix $prefix
 	Global config,alternate $prefix-alternate
-	Global config,sprite $prefix-sprite
 	Global config,assign $prefix-assign
 	Global config,town $prefix-town
 	Global config,postop $prefix-postop
@@ -190,7 +188,6 @@ proc NSConfig::ShareConfigFile {which file} {
 
 	switch -- $which {
 		alternate -
-		sprite -
 		assign -
 		town {
 			Global config,$which $file
@@ -724,59 +721,3 @@ proc Config::Assign::Feat {light background} {
 
 	return
 }
-
-
-# Config::Sprite --
-#
-#	A namespace with commands called when the tk/config/sprite file
-#	is sourced.
-#
-
-namespace eval Config::Sprite {
-
-	variable Priv
-
-# namespace eval Config::Sprite
-}
-
-proc Config::Sprite::Source {path} {
-
-	source $path
-
-	return
-}
-
-proc Config::Sprite::Type {type} {
-
-	variable Priv
-
-	lappend Priv(type) $type
-
-	return
-}
-
-proc Config::Sprite::New {delay reverse} {
-
-	variable Priv
-
-	set Priv(id) [sprite create]
-	sprite configure $Priv(id) -delay $delay -reverse $reverse
-
-	return
-}
-
-proc Config::Sprite::Ins {typeIndex iconIndex} {
-
-	variable Priv
-
-	set iconType [lindex $Priv(type) $typeIndex]
-	if {[catch {icon validate -type $iconType -index $iconIndex}]} {
-		set iconType default
-		set iconIndex 0
-	}
-	sprite insert $Priv(id) 1000 -type $iconType -index $iconIndex
-
-	return
-}
-
-
