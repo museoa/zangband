@@ -1035,7 +1035,7 @@ static void rd_field(field_type *f_ptr)
 	s32b tmp32s;
 	int i;
 	
-	u16b t_idx;
+	s16b t_idx;
 
 	/* Type */
 	rd_s16b(&t_idx);
@@ -2933,7 +2933,7 @@ static errr rd_dungeon(void)
 	cave_type *c_ptr;
 	u16b dun_level_backup, px_back, py_back;
 
-	u16b cur_wid, cur_hgt;
+	s16b cur_wid, cur_hgt;
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);

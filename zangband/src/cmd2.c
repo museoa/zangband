@@ -768,7 +768,6 @@ bool do_cmd_open_aux(int y, int x)
 	int i;
 
 	cave_type *c_ptr;
-	field_type *f_ptr;
 	
 	s16b fld_idx;
 
@@ -791,9 +790,6 @@ bool do_cmd_open_aux(int y, int x)
 	/* If the door is locked / jammed */
 	if (fld_idx)
 	{
-		/* Point to field */
-		f_ptr = &fld_list[fld_idx];
-	
 		/* Get the "disarm" factor */
 		i = p_ptr->skill_dis;
 
