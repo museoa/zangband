@@ -2261,9 +2261,6 @@ void prt_map(void)
 
 	int wid, hgt;
 
-	/* Temp variables to speed up deletion loops */
-	s16b l1, l2, l3;
-
 	byte *pa;
 	char *pc;
 
@@ -2296,26 +2293,8 @@ void prt_map(void)
 	ymax = p_ptr->panel_y2 - 1;
 		
 		
-	/* Top section of screen */
-    clear_region(COL_MAP, 1, ymin - p_ptr->panel_y1 + ROW_MAP);
-
-	/* Bottom section of screen */
-    clear_region(COL_MAP, ymax - p_ptr->panel_y1 + ROW_MAP, hgt);
-
-	/* Sides of screen */
-	/* Left side */
-	l1 = xmin - p_ptr->panel_x1;
-
-	/* Right side */
-	l2 = xmax - p_ptr->panel_x1 + COL_MAP;
-	l3 = Term->wid - l2;
-
-	for (y = ymin; y <= ymax; y++)
-	{
-		/* Erase the sections */
-		Term_erase(COL_MAP, y - p_ptr->panel_y1 + ROW_MAP, l1);
-		Term_erase(l2, y - p_ptr->panel_y1 + ROW_MAP, l3);
-	}
+	/* Clear screen */
+    clear_region(COL_MAP, ROW_MAP, ROW_MAP + hgt);
 
 	/* Pointers to current position in the string */
 	pa = mp_a;

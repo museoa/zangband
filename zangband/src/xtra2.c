@@ -1230,7 +1230,8 @@ static bool panel_bounds(int x, int y, int wid, int hgt)
 	ymax = y + hgt;
 	
 	/* Handle "changes" */
-	if ((y != p_ptr->panel_y1) || (x != p_ptr->panel_x1))
+	if ((x != p_ptr->panel_x1) || (y != p_ptr->panel_y1) ||
+		(xmax != p_ptr->panel_x2) || (ymax != p_ptr->panel_y2))
 	{
 		/* Save the new panel info */
 		p_ptr->panel_x1 = x;
