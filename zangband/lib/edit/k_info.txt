@@ -2151,9 +2151,13 @@ L:USE:	if not player_res(TR2_RES_CHAOS) and one_in_(2) and
 L:USE:		inc_image(rand_range(150, 300)) then ident = TRUE end
 L:USE:	if not player_res(TR2_RES_CHAOS) and one_in_(13) then
 L:USE:		ident = TRUE
-L:USE:		if one_in_(3) then lose_all_info() else wiz_dark() end
-L:USE:		teleport_player(100)
-L:USE:		wiz_dark()
+L:USE:		if player.depth > 0 then
+L:USE:			if one_in_(3) then lose_all_info() else wiz_dark() end
+L:USE:			teleport_player(100)
+L:USE:			wiz_dark()
+L:USE:		else
+L:USE:			teleport_player(250)
+L:USE:		end
 L:USE:		msgf("You wake up somewhere with a sore head...")
 L:USE:		msgf("You can't remember a thing, or how you got here!")
 L:USE:	end
