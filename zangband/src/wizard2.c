@@ -415,7 +415,7 @@ static void do_cmd_wiz_change_aux(void)
 		tmp_int = atoi(tmp_val);
 
 		/* Verify */
-		if (tmp_int > 18 + 100) tmp_int = 18 + 100;
+		if (tmp_int > stat_cap(i)) tmp_int = stat_cap(i);
 		else if (tmp_int < 3) tmp_int = 3;
 
 		/* Save it */

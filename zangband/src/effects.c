@@ -1935,6 +1935,22 @@ bool set_food(int v)
 }
 
 /*
+ * Find the maximum a stat can be raised to
+ */
+int stat_cap(int stat)
+{
+    int bonus = rp_ptr->r_adj[stat] + cp_ptr->c_adj[stat];
+
+    if (bonus > 12)
+        return 18+220;
+    else if (bonus > -9)
+        return 18+100 + 10 * bonus;
+    else
+        return 18+10;
+}
+
+
+/*
  * Increases a stat by one randomized level             -RAK-
  *
  * Note that this function (used by stat potions) now restores
@@ -1942,13 +1958,15 @@ bool set_food(int v)
  */
 bool inc_stat(int stat)
 {
-	int value, gain;
+    int value, gain;
+
+    int cap = stat_cap(stat);
 
 	/* Then augment the current/max stat */
 	value = p_ptr->stat_cur[stat];
 
-	/* Cannot go above 18/100 */
-	if (value < 18 + 100)
+	/* Cannot go above limit */
+	if (value < cap)
 	{
 		/* Gain one (sometimes two) points */
 		if (value < 18)
@@ -1957,11 +1975,11 @@ bool inc_stat(int stat)
 			value += gain;
 		}
 
-		/* Gain 1/6 to 1/3 of distance to 18/100 */
-		else if (value < 18 + 98)
+		/* Gain 1/6 to 1/3 of distance to limit */
+		else if (value < cap - 2)
 		{
 			/* Approximate gain value */
-			gain = (((18 + 100) - value) / 2 + 3) / 2;
+			gain = ((cap - value) / 2 + 3) / 2;
 
 			/* Paranoia */
 			if (gain < 1) gain = 1;
@@ -1970,7 +1988,7 @@ bool inc_stat(int stat)
 			value += randint1(gain) + gain / 2;
 
 			/* Maximal value */
-			if (value > 18 + 99) value = 18 + 99;
+			if (value > cap - 1) value = cap - 1;
 		}
 
 		/* Gain one point at a time */

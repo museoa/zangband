@@ -973,6 +973,7 @@ extern bool set_oppose_pois(int v);
 extern bool set_stun(int v);
 extern bool set_cut(int v);
 extern bool set_food(int v);
+extern int stat_cap(int stat);
 extern bool inc_stat(int stat);
 extern bool dec_stat(int stat, int amount, int permanent);
 extern bool res_stat(int stat);

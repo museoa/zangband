@@ -138,7 +138,7 @@ static void prt_stat(int stat)
 	}
 
 	/* Indicate natural maximum */
-	if (p_ptr->stat_max[stat] == 18 + 100)
+	if (p_ptr->stat_max[stat] == stat_cap(stat))
 	{
 		put_str("!", 3, ROW_STAT + stat);
 	}

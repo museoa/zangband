@@ -746,9 +746,11 @@ static void load_prev_data(void)
 }
 
 
-static int adjust_stat(int value, int amount)
+static int adjust_stat(int stat, int value, int amount)
 {
     int i;
+
+    int cap = stat_cap(stat);
 
     /* Negative amounts */
     if (amount < 0)
@@ -789,8 +791,7 @@ static int adjust_stat(int value, int amount)
     }
 
     /* Cap value */
-    if (value > 18+100)
-        value = 18+100;
+    if (value > cap) value = cap;
 
     /* Return the result */
     return (value);
@@ -838,7 +839,7 @@ static void get_stats(void)
         bonus = rp_ptr->r_adj[i] + cp_ptr->c_adj[i];
 
         /* Apply the bonus to the stat (somewhat randomly) */
-        stat_use[i] = adjust_stat(j, bonus);
+        stat_use[i] = adjust_stat(i, j, bonus);
 
 		/* Start fully healed */
 		p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
