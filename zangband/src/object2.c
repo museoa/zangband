@@ -5170,8 +5170,11 @@ void reorder_pack(void)
 
 bool can_player_destroy_object(object_type *o_ptr)
 {
-	/* Artifacts cannot be destroyed */
-	if (FLAG(o_ptr, TR_INSTA_ART))
+	/*
+	 * Artifacts cannot be destroyed
+	 * However only notice if we have not *id'ed* it.
+	 */
+	if (FLAG(o_ptr, TR_INSTA_ART) && !(o_ptr->info & OB_MENTAL))
 	{
 		byte feel = FEEL_SPECIAL;
 
