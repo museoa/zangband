@@ -4267,11 +4267,8 @@ static void build_type16(int bx0, int by0)
 	/* Determine number of sections to use */
 	num = rand_range(1, 2);
 
-	/* Make num rooms */
 	for (i = 0; i < num; i++)
 	{
-		/* Determine "default" extents of filled region */
-	
 		switch (randint1(4))
 		{
 			case 1:
@@ -4328,7 +4325,145 @@ static void build_type16(int bx0, int by0)
 }
 
 
-#define ROOM_TYPES	16
+/*
+ * Test a point to see if it lies within a triangular
+ * shaped region defined by three other points.
+ *
+ * det is the determinate of two vectors.
+ *
+ * (It is the sign of the "handedness" of the triangle * 1/2
+ * of its area.)
+ */
+static bool test_tri(int px, int py, int x1, int y1, int x2, int y2, int x3, int y3, int det)
+{
+	if (det > 0)
+	{
+		if ((x2 - x1) * (py - y1) - (px - x1) * (y2 - y1) < 0) return (FALSE);
+		if ((x3 - x2) * (py - y2) - (px - x2) * (y3 - y2) < 0) return (FALSE);
+		if ((x1 - x3) * (py - y3) - (px - x3) * (y1 - y3) < 0) return (FALSE);
+	}
+	else
+	{
+		if ((x2 - x1) * (py - y1) - (px - x1) * (y2 - y1) > 0) return (FALSE);
+		if ((x3 - x2) * (py - y2) - (px - x2) * (y3 - y2) > 0) return (FALSE);
+		if ((x1 - x3) * (py - y3) - (px - x3) * (y1 - y3) > 0) return (FALSE);
+	}
+
+	/* Inside the region. */
+	return (TRUE);
+}
+ 
+/*
+ * Make sure two squares are connected by floors.
+ */
+static void connect(int x1, int y1, int x2, int y2)
+{
+	int x, y;
+	int l, length = distance(x1, y1, x2, y2);
+	
+	/* Paranoia */
+	if (!length) return;
+
+	/* Be dumb, and use a straight line */
+	for (l = 0; l <= length; l++)
+	{
+		x = x1 + l * (x2 - x1) / length;
+		y = y1 + l * (y2 - y1) / length;
+	
+		set_feat_bold(x, y, FEAT_FLOOR);
+	}
+}
+
+
+/*
+ * Type 17 -- Room made of Triangles
+ */
+static void build_type17(int bx0, int by0)
+{
+	int xval, yval;
+	int y1, x1, y2, x2;
+	bool light;
+
+	int det;
+
+	int x, y;
+	int vx1, vy1, vx2, vy2, vx3, vy3;
+
+	int num, i;
+	
+	int xsize, ysize;
+	
+	/* Pick a room size */
+	y1 = randint1(14);
+	x1 = randint1(14);
+	y2 = randint1(14);
+	x2 = randint1(14);
+
+	xsize = x1 + x2 + 1;
+	ysize = y1 + y2 + 1;
+
+	/* Try to allocate space for room.  If fails, exit */
+	if (!room_alloc(xsize + 2, ysize + 2, FALSE, bx0, by0, &xval, &yval))
+		return;
+
+	/* Choose lite or dark */
+	light = (p_ptr->depth <= randint1(25));
+
+	/* Get corner values */
+	y1 = yval - ysize / 2;
+	x1 = xval - xsize / 2;
+	y2 = yval + (ysize - 1) / 2;
+	x2 = xval + (xsize - 1) / 2;
+	
+	/* Determine number of shapes to use */
+	num = rand_range(2, 4);
+
+	/* Fill with random triangles */
+
+	/* Make num rooms */
+	for (i = 0; i < num; i++)
+	{
+		do
+		{
+			/* Get vertices */
+			vx1 = rand_range(x1, x2);
+			vx2 = rand_range(x1, x2);
+			vx3 = rand_range(x1, x2);
+		
+			vy1 = rand_range(y1, y2);
+			vy2 = rand_range(y1, y2);
+			vy3 = rand_range(y1, y2);
+		
+			det = (vx2 - vx1) * (vy3 - vy1) - (vx3 - vx1) * (vy2 - vy1);
+		
+			/* Make sure the triangle is large enough. */
+		} while (abs(det) < 10);
+		
+		for (x = x1; x <= x2; x++)
+		{
+			for (y = y1; y <= y2; y++)
+			{
+				if (test_tri(x, y, vx1, vy1, vx2, vy2, vx3, vy3, det))
+				{
+					set_feat_bold(x, y, FEAT_FLOOR);
+				}
+			}
+		}
+		
+		/* Hack - connect to room center */
+		connect(xval, yval, (vx1 + vx2 + vx3) / 3, (vy1 + vy2 + vy3) / 3);
+		
+		/* Hack - connect vertexes to avoid problems with rounding */
+		connect(vx1, vy1, vx2, vy2);
+		connect(vx1, vy1, vx3, vy3);
+		connect(vx3, vy3, vx2, vy2);
+	}
+	
+	/* Find visible outer walls and set to be FEAT_OUTER */
+	add_outer_wall(xval, yval, light, x1 - 1, y1 - 1, x2 + 1, y2 + 1);
+}
+
+#define ROOM_TYPES	17
 
 typedef void (*room_build_type)(int, int);
 
@@ -4349,7 +4484,8 @@ room_build_type room_list[ROOM_TYPES] =
 	build_type13,
 	build_type14,
 	build_type15,
-	build_type16
+	build_type16,
+	build_type17
 };
 
 
