@@ -11,6 +11,7 @@
  */
 
 #include "angband.h"
+#include "script.h"
 
 /*
  * Temp object used to return an object not allocated via o_pop().
@@ -2335,11 +2336,11 @@ static object_type *make_artifact(void)
 		/* Do not make another one */
 		a_ptr->cur_num = 1;
 
-		/* Hack: Some artifacts get random extra powers */
-		random_artifact_resistance(o_ptr);
-
 		/* Save the inscription */
 		o_ptr->xtra_name = quark_add(a_name + a_ptr->name);
+
+		/* Apply special scripts */
+		apply_object_trigger(TRIGGER_MAKE, o_ptr, "");
 
 		/* Hack - increase the level rating */
 		inc_rating(30);
@@ -2411,6 +2412,9 @@ static object_type *make_special_randart(void)
 
 		/* Create using the object kind's depth */
 		create_artifact(o_ptr, k_info[k_idx].level, FALSE);
+
+		/* Run special scripts */
+		apply_object_trigger(TRIGGER_MAKE, o_ptr, "");
 
 		return (o_ptr);
 	}
@@ -3861,6 +3865,14 @@ void add_ego_power(int power, object_type *o_ptr)
 			power = EGO_XTRA_HI_RESIST;
 	}
 
+	if (power == EGO_XTRA_POWER)
+	{
+		if (one_in_(2))
+			power = EGO_XTRA_ABILITY;
+		else
+			power = EGO_XTRA_HI_RESIST;
+	}
+
 	switch (power)
 	{
 		case EGO_XTRA_ABILITY:
@@ -4162,6 +4174,9 @@ void apply_magic(object_type *o_ptr, int lev, int lev_dif, byte flags)
 			break;
 		}
 	}
+
+	/* Run any special scripts */
+	apply_object_trigger(TRIGGER_MAKE, o_ptr, "");
 
 	/* Change level feeling for random artifacts */
 	if (o_ptr->flags3 & TR3_INSTA_ART) inc_rating(30);

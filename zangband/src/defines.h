@@ -106,7 +106,7 @@
 #define MAX_TRIGGER     5
 
 #define TRIGGER_USE     0
-#define TRIGGER_XXX1    1
+#define TRIGGER_MAKE    1
 #define TRIGGER_BONUS   2
 #define TRIGGER_SMASH   3
 #define TRIGGER_DESC	4
@@ -2833,7 +2833,7 @@
 #define FEEL_MAX               13
 
 /*
- * Hack -- special "xtra" object powers for ego items and some artifacts
+ * Special "xtra" object powers for ego items and some artifacts
  */
 
 /* Sustain one stat */
@@ -2846,6 +2846,9 @@
 
 /* Special ability */
 #define EGO_XTRA_ABILITY        5
+
+/* Special ability OR high resist */
+#define EGO_XTRA_POWER          6
 
 
 /*** Object flag values ***/

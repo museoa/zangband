@@ -3,6 +3,7 @@
 /* Purpose: Spoiler generation -BEN- */
 
 #include "angband.h"
+#include "script.h"
 
 
 #ifdef ALLOW_SPOILERS
@@ -1182,11 +1183,11 @@ static object_type *make_fake_artifact(int a_idx)
 	/* Do not make another one */
 	a_ptr->cur_num = 1;
 
-	/* Hack: Some artifacts get random extra powers */
-	random_artifact_resistance(o_ptr);
-
 	/* Save the inscription */
 	o_ptr->xtra_name = quark_add(a_name + a_ptr->name);
+
+	/* Apply special scripts */
+	apply_object_trigger(TRIGGER_MAKE, o_ptr, "");
 
 	/* Success */
 	return (o_ptr);

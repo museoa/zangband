@@ -11,6 +11,7 @@
  */
 
 #include "angband.h"
+#include "script.h"
 
 /* Chance of using syllables to form the name instead of the "template" files */
 #define TABLE_NAME      45
@@ -2354,101 +2355,6 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 }
 
 
-void random_artifact_resistance(object_type *o_ptr)
-{
-	bool give_resistance = FALSE, give_power = FALSE;
-
-	/* Terror Mask is for warriors... */
-	if (o_ptr->activate == ART_TERROR)
-	{
-		if (p_ptr->rp.pclass == CLASS_WARRIOR)
-		{
-			give_power = TRUE;
-			give_resistance = TRUE;
-		}
-		else
-		{
-			o_ptr->flags3 |=
-				(TR3_CURSED | TR3_HEAVY_CURSE | TR3_AGGRAVATE | TR3_TY_CURSE);
-			return;
-		}
-	}
-
-	switch (o_ptr->activate)
-	{
-		case ART_CELEBORN:
-		case ART_ARVEDUI:
-		case ART_CASPANION:
-		case ART_HITHLOMIR:
-		case ART_ROHIRRIM:
-		case ART_CELEGORM:
-		case ART_ANARION:
-		case ART_THRANDUIL:
-		case ART_LUTHIEN:
-		case ART_THROR:
-		case ART_THORIN:
-		case ART_NIMTHANC:
-		case ART_DETHANC:
-		case ART_NARTHANC:
-		case ART_STING:
-		case ART_TURMIL:
-		case ART_THALKETTOTH:
-		{
-			/* Give a resistance */
-			give_resistance = TRUE;
-		}
-			break;
-		case ART_MAEDHROS:
-		case ART_GLAMDRING:
-		case ART_ORCRIST:
-		case ART_ANDURIL:
-		case ART_ZARCUTHRA:
-		case ART_GURTHANG:
-		case ART_HARADEKKET:
-		case ART_BRAND:
-		case ART_DAWN:
-		{
-			/* Give a resistance OR a power */
-			if (one_in_(2)) give_resistance = TRUE;
-			else
-				give_power = TRUE;
-		}
-			break;
-		case ART_NENYA:
-		case ART_VILYA:
-		case ART_BERUTHIEL:
-		case ART_FINGOLFIN:
-		case ART_THINGOL:
-		case ART_ULMO:
-		case ART_OLORIN:
-		{
-			/* Give a power */
-			give_power = TRUE;
-		}
-			break;
-		case ART_POWER:
-		case ART_GONDOR:
-		case ART_AULE:
-		{
-			/* Give both */
-			give_power = TRUE;
-			give_resistance = TRUE;
-		}
-			break;
-	}
-
-	if (give_power)
-	{
-		add_ego_power(EGO_XTRA_ABILITY, o_ptr);
-	}
-
-	if (give_resistance)
-	{
-		add_ego_power(EGO_XTRA_HI_RESIST, o_ptr);
-	}
-}
-
-
 /*
  * Create the artifact of the specified number
  */
@@ -2503,7 +2409,8 @@ void create_named_art(int a_idx, int x, int y)
 	/* Save the inscription */
 	q_ptr->xtra_name = quark_add(a_name + a_ptr->name);
 
-	random_artifact_resistance(q_ptr);
+	/* Apply special scripts */
+	apply_object_trigger(TRIGGER_MAKE, q_ptr, "");
 
 	if (!a_ptr->cost)
 	{

@@ -11,10 +11,29 @@ typedef int sint;
 /* Triggers */
 #define MAX_TRIGGER             5
 #define TRIGGER_USE             0
-#define TRIGGER_XXX1            1
+#define TRIGGER_MAKE            1
 #define TRIGGER_BONUS           2
 #define TRIGGER_SMASH           3
 #define TRIGGER_DESC		4
+
+/*
+ * Special "xtra" object powers for ego items and some artifacts
+ */
+
+/* Sustain one stat */
+#define EGO_XTRA_SUSTAIN        1
+
+/* Resistances */
+#define EGO_XTRA_LO_RESIST      2
+#define EGO_XTRA_HI_RESIST      3
+#define EGO_XTRA_ANY_RESIST     4
+
+/* Special ability */
+#define EGO_XTRA_ABILITY        5
+
+/* Special ability OR high resist */
+#define EGO_XTRA_POWER          6
+
 
 /* Activation effects for random artifacts */
 #define ACT_SUNLIGHT            1
@@ -1067,7 +1086,6 @@ extern void display_koff(int k_idx);
 
 /* artifact.c */
 extern bool create_artifact(object_type *o_ptr, int level, bool a_scroll);
-extern void random_artifact_resistance(object_type *o_ptr);
 extern void create_named_art(int a_idx, int x, int y);
 
 /* obj_kind.c */
