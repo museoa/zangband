@@ -13447,7 +13447,7 @@ S:SCARE | BR_POIS | BR_DARK
 D:Fed with horrid meats and grown to enormous size, this slavering creature 
 D:seeks livelier prey.
 
-N:879:Spectral Dragon
+N:879:Spectral Wyrm
 G:D:w
 I:130:60d70:40:100:255
 W:72:4:0:35000
@@ -13468,7 +13468,7 @@ D:The tortured soul of a once powerful wyrm.
 
 N:880:Creeping Dust
 G:.:v
-I:80:2d6:30:30:100
+I:120:2d6:30:30:100
 W:75:6:0:800
 B:HIT:CONFUSE:3d4
 F:CHAR_MULTI | ATTR_MULTI | ATTR_ANY |
