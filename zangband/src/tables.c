@@ -6072,7 +6072,7 @@ cptr window_flag_desc[32] =
 	"Display object recall",
 	"Display dungeon view",
 	"Display snap-shot",
-	"DIsplay visible monsters",
+	"Display visible monsters",
 	"Display script messages",
 	"Display borg messages",
 	"Display borg status",
