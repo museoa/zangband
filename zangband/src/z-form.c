@@ -1,4 +1,3 @@
-/* CVS: Last edit by $Author$ on $Date$ */
 /* File: z-form.c */
 
 /* Purpose: Low level text formatting -BEN- */
@@ -570,7 +569,6 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				arg2[1023] = '\0';
 
 				/* Format the argument */
-				sprintf(tmp, aux, arg);
 				sprintf(tmp, aux, arg2);
 
 				/* Done */
