@@ -1463,50 +1463,6 @@ bool borg_projectable(int y1, int x1, int y2, int x2)
 
 /*
  * Check the projection from (x1,y1) to (x2,y2).
- * Assume that there is no monster in the way.
- * Hack -- we refuse to assume that unknown grids are floors
- * Adapted from "projectable()" in "spells1.c".
- * This is used by borg_offset()
- */
-bool borg_offset_projectable(int y1, int x1, int y2, int x2)
-{
-	int dist, y, x;
-
-	map_block *mb_ptr;
-
-	/* Start at the initial location */
-	y = y1;
-	x = x1;
-
-	/* Simulate the spell/missile path */
-	for (dist = 0; dist <= MAX_RANGE; dist++)
-	{
-		/* Bounds checking */
-		if (!map_in_bounds(x, y)) break;
-
-		/* Get the grid */
-		mb_ptr = map_loc(x, y);
-
-		/* Assume all unknown grids are walls. */
-		if ((dist) && !mb_ptr->feat) break;
-
-		/* Never pass through walls/doors */
-		if (dist && borg_cave_wall_grid(mb_ptr)) break;
-
-		/* Check for arrival at "final target" */
-		if ((x == x2) && (y == y2)) return (TRUE);
-
-		/* Calculate the new location */
-		borgmove2(&y, &x, y1, x1, y2, x2);
-	}
-
-	/* Assume obstruction */
-	return (FALSE);
-}
-
-
-/*
- * Check the projection from (x1,y1) to (x2,y2).
  * Assume that monsters in the way will stop the projection
  * Hack -- we refuse to assume that unknown grids are floors
  * Adapted from "projectable()" in "spells1.c".
