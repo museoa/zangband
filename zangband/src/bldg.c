@@ -279,13 +279,11 @@ void quest_discovery(int q_idx)
 
 	strcpy(name, (r_name + r_ptr->name));
 
-	msg_print(find_quest[rand_range(0, 5)]);
-	msg_print(NULL);
-
 	if (r_ptr->flags1 & RF1_UNIQUE)
 	{
 		/* Unique */
-		msg_format("Beware, this level is protected by %s!", name);
+		msg_format("%s: Beware, this level is protected by %s!",
+			 find_quest[rand_range(0, 5)], name);
 	}
 	else
 	{
@@ -293,7 +291,8 @@ void quest_discovery(int q_idx)
 		if (q_num > 1)
 			plural_aux(name);
 
-		msg_format("Be warned, this level is guarded by %d %s!", q_num, name);
+		msg_format("%s: Be warned, this level is guarded by %d %s!",
+			 find_quest[rand_range(0, 5)], q_num, name);
 	}
 }
 
