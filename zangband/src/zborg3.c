@@ -1255,12 +1255,12 @@ void borg_item_analyze(borg_item *item, object_type *real_item, cptr desc)
 	}
 
 	/* Item has been ID'd (store, scroll, spell) */
-	if ((real_item->ident & IDENT_KNOWN) ||
-		(real_item->ident & IDENT_STOREB) ||
+	if ((real_item->ident & OB_KNOWN) ||
+		(real_item->ident & OB_STOREB) ||
 		object_known_full(real_item)) item->able = TRUE;
 
 	/* Item has been *ID*'d (store, scroll, spell) */
-	if ((real_item->ident & IDENT_STOREB) ||
+	if ((real_item->ident & OB_STOREB) ||
 		object_known_full(real_item)) item->fully_identified = TRUE;
 
 	/* Kind index -- Only if partially ID */
@@ -1294,7 +1294,7 @@ void borg_item_analyze(borg_item *item, object_type *real_item, cptr desc)
 		if (item->able) item->pval = real_item->pval;
 
 		/* if seen {empty} assume pval 0 */
-		if (real_item->ident & IDENT_EMPTY) item->pval = 0;
+		if (real_item->ident & OB_EMPTY) item->pval = 0;
 	}
 
 	/* Weight of item */
@@ -1412,7 +1412,7 @@ void borg_item_analyze(borg_item *item, object_type *real_item, cptr desc)
 
 #if 0
 	/* name3 items really screw up the borg */
-	if (real_item->name3 && (real_item->ident & (IDENT_KNOWN)))
+	if (real_item->name3 && (real_item->ident & (OB_KNOWN)))
 	{
 		artifact_type *a_ptr;
 
@@ -3329,7 +3329,7 @@ void borg_cheat_equip(void)
 
 		/* get the fully id stuff */
 		if (object_known_full(&inventory[i]) ||
-			(inventory[i].ident & IDENT_STOREB))
+			(inventory[i].ident & OB_STOREB))
 		{
 			borg_items[i].fully_identified = TRUE;
 			borg_items[i].needs_I_exam = TRUE;
@@ -3376,7 +3376,7 @@ void borg_cheat_inven(void)
 
 		/* get the fully id stuff */
 		if (object_known_full(&inventory[i]) ||
-			(inventory[i].ident & IDENT_STOREB))
+			(inventory[i].ident & OB_STOREB))
 		{
 			borg_items[i].fully_identified = TRUE;
 			borg_items[i].needs_I_exam = TRUE;

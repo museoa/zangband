@@ -925,7 +925,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			if (aware) append_name = TRUE;
 
 			if (((plain_descriptions) && (aware))
-				|| o_ptr->ident & IDENT_STOREB)
+				|| (o_ptr->ident & OB_STOREB))
 				basenm = "& Amulet~";
 			else
 				basenm = aware ? "& # Amulet~" : "& # Amulet~";
@@ -945,7 +945,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			if (aware) append_name = TRUE;
 
 			if (((plain_descriptions) && (aware))
-				|| o_ptr->ident & IDENT_STOREB)
+				|| (o_ptr->ident & OB_STOREB))
 				basenm = "& Ring~";
 			else
 				basenm = aware ? "& # Ring~" : "& # Ring~";
@@ -962,7 +962,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			modstr = staff_adj[indexx];
 			if (aware) append_name = TRUE;
 			if (((plain_descriptions) && (aware))
-				|| o_ptr->ident & IDENT_STOREB)
+				|| (o_ptr->ident & OB_STOREB))
 				basenm = "& Staff~";
 			else
 				basenm = aware ? "& # Staff~" : "& # Staff~";
@@ -975,7 +975,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			modstr = wand_adj[indexx];
 			if (aware) append_name = TRUE;
 			if (((plain_descriptions) && (aware))
-				|| o_ptr->ident & IDENT_STOREB)
+				|| (o_ptr->ident & OB_STOREB))
 				basenm = "& Wand~";
 			else
 				basenm = aware ? "& # Wand~" : "& # Wand~";
@@ -988,7 +988,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			modstr = rod_adj[indexx];
 			if (aware) append_name = TRUE;
 			if (((plain_descriptions) && (aware))
-				|| o_ptr->ident & IDENT_STOREB)
+				|| (o_ptr->ident & OB_STOREB))
 				basenm = "& Rod~";
 			else
 				basenm = aware ? "& # Rod~" : "& # Rod~";
@@ -1001,7 +1001,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			modstr = scroll_adj[indexx];
 			if (aware) append_name = TRUE;
 			if (((plain_descriptions) && (aware))
-				|| o_ptr->ident & IDENT_STOREB)
+				|| (o_ptr->ident & OB_STOREB))
 				basenm = "& Scroll~";
 			else
 				basenm =
@@ -1015,7 +1015,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			modstr = potion_adj[indexx];
 			if (aware) append_name = TRUE;
 			if (((plain_descriptions) && (aware))
-				|| o_ptr->ident & IDENT_STOREB)
+				|| (o_ptr->ident & OB_STOREB))
 				basenm = "& Potion~";
 			else
 				basenm = aware ? "& # Potion~" : "& # Potion~";
@@ -1031,7 +1031,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 			modstr = food_adj[indexx];
 			if (aware) append_name = TRUE;
 			if (((plain_descriptions) && (aware))
-				|| o_ptr->ident & IDENT_STOREB)
+				|| (o_ptr->ident & OB_STOREB))
 				basenm = "& Mushroom~";
 			else
 				basenm = aware ? "& # Mushroom~" : "& # Mushroom~";
@@ -1769,13 +1769,13 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	}
 
 	/* Note "cursed" if the item is known to be cursed */
-	else if (cursed_p(o_ptr) && (known || (o_ptr->ident & (IDENT_SENSE))))
+	else if (cursed_p(o_ptr) && (known || (o_ptr->ident & (OB_SENSE))))
 	{
 		strcpy(tmp_val2, "cursed");
 	}
 
 	/* Mega-Hack -- note empty wands/staffs */
-	else if (!known && (o_ptr->ident & (IDENT_EMPTY)))
+	else if (!known && (o_ptr->ident & (OB_EMPTY)))
 	{
 		strcpy(tmp_val2, "empty");
 	}
@@ -1852,7 +1852,7 @@ void object_desc_store(char *buf, const object_type *o_ptr, int pref,
 	k_info[i_ptr->k_idx].flavor = FALSE;
 
 	/* Set the "known" flag */
-	i_ptr->ident |= (IDENT_KNOWN);
+	i_ptr->ident |= (OB_KNOWN);
 
 	/* Force "aware" for description */
 	k_info[i_ptr->k_idx].aware = TRUE;

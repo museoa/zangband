@@ -764,10 +764,8 @@ struct object_type
 	s16b timeout;	/* Timeout Counter */
 
 	byte dd, ds;	/* Damage dice/sides */
-
-	byte ident;	/* Special flags */
-
-	byte marked;	/* Object is marked */
+	
+	s16b next_o_idx;	/* Next object in stack (if any) */
 
 	u16b inscription;	/* Inscription index */
 	u16b xtra_name;	/* Extra Name (Artifacts and ego items) */
@@ -780,8 +778,6 @@ struct object_type
 	u32b kn_flags2;	/* Known Flags, set 2 */
 	u32b kn_flags3;	/* Known Flags, set 3 */
 
-	s16b next_o_idx;	/* Next object in stack (if any) */
-
 	s16b held_m_idx;	/* Monster holding us (if any) */
 
 	s32b cost;	/* Object "base cost" */
@@ -791,6 +787,11 @@ struct object_type
 	byte feeling;	/* Game generated inscription number (eg, pseudo-id) */
 
 	byte activate;	/* Activation type */
+	
+	byte ident;		/* Special flags */
+
+	byte marked;	/* Object is marked */
+
 };
 
 

@@ -179,7 +179,7 @@ void do_cmd_wield(void)
 	}
 
 	if (cursed_p(o_ptr) && confirm_wear &&
-		(object_known_p(o_ptr) || (o_ptr->ident & IDENT_SENSE)))
+		(object_known_p(o_ptr) || (o_ptr->ident & OB_SENSE)))
 	{
 		char dummy[512];
 
@@ -279,7 +279,7 @@ void do_cmd_wield(void)
 		chg_virtue(V_HARMONY, -1);
 
 		/* Note the curse */
-		o_ptr->ident |= (IDENT_SENSE);
+		o_ptr->ident |= (OB_SENSE);
 	}
 
 	/* Recalculate bonuses */

@@ -142,7 +142,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
 	object_prep(q_ptr, k);
 
 	/* It is known */
-	q_ptr->ident |= (IDENT_KNOWN);
+	q_ptr->ident |= (OB_KNOWN);
 
 	/* Cancel bonuses */
 	q_ptr->pval = 0;

@@ -832,11 +832,11 @@ static void rd_store(int town_num, int store_num)
 	{
 		strip_bytes(4);
 	}
-	
+
 	rd_s16b(&data);
 	rd_byte(&owner);
 	rd_byte(&num);
-	
+
 	if (sf_version < 34)
 	{
 		strip_bytes(4);
@@ -859,7 +859,7 @@ static void rd_store(int town_num, int store_num)
 	/* Restore the saved parameters */
 	st_ptr->data = data;
 	st_ptr->owner = owner;
-	
+
 	/* Read last visit */
 	rd_s32b(&st_ptr->last_visit);
 
@@ -2751,7 +2751,7 @@ static errr rd_savefile_new_aux(void)
 	}
 	if (arg_fiddle) note("Loaded Object Memory");
 
-		
+
 
 	/* Number of towns */
 	rd_u16b(&max_towns_load);
@@ -2763,7 +2763,7 @@ static errr rd_savefile_new_aux(void)
 		if (max_towns_load > z_info->wp_max)
 			max_towns_load = z_info->wp_max;
 	}
-		
+
 	/* Incompatible save files */
 	if (max_towns_load > z_info->wp_max)
 	{

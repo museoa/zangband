@@ -310,7 +310,7 @@ static void sense_inventory(void)
 		if (!okay) continue;
 
 		/* We know about it already, do not tell us again */
-		if (o_ptr->ident & (IDENT_SENSE)) continue;
+		if (o_ptr->ident & (OB_SENSE)) continue;
 
 		/* It is fully known, no information needed */
 		if (object_known_p(o_ptr)) continue;
@@ -399,7 +399,7 @@ static void sense_inventory(void)
 		}
 
 		/* We have "felt" it */
-		o_ptr->ident |= (IDENT_SENSE);
+		o_ptr->ident |= (OB_SENSE);
 
 		/* Set the "inscription" */
 		o_ptr->feeling = feel;
@@ -824,7 +824,7 @@ bool psychometry(void)
 			   game_inscriptions[feel]);
 
 	/* We have "felt" it */
-	o_ptr->ident |= (IDENT_SENSE);
+	o_ptr->ident |= (OB_SENSE);
 
 	/* "Inscribe" it */
 	o_ptr->feeling = feel;

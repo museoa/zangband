@@ -130,8 +130,8 @@ static long equip_value(void)
 	{
 		o_ptr = &inventory[i];
 
-		if (o_ptr->ident & IDENT_STOREB) continue;
-		if (!(o_ptr->ident & IDENT_KNOWN)) continue;
+		if (o_ptr->ident & OB_STOREB) continue;
+		if (!(o_ptr->ident & OB_KNOWN)) continue;
 
 		total += object_value(o_ptr);
 	}

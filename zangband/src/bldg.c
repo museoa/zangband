@@ -1501,7 +1501,7 @@ void building_recharge(s32b cost)
 		o_ptr->ac = 0;
 
 		/* We no longer think the item is empty */
-		o_ptr->ident &= ~(IDENT_EMPTY);
+		o_ptr->ident &= ~(OB_EMPTY);
 	}
 
 	/* Give feedback */

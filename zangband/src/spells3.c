@@ -1407,7 +1407,7 @@ static int remove_curse_aux(int all)
 		if (f3 & TR3_PERMA_CURSE) continue;
 
 		/* Hack -- Assume felt */
-		o_ptr->ident |= (IDENT_SENSE);
+		o_ptr->ident |= (OB_SENSE);
 
 		if (o_ptr->flags3 & TR3_CURSED)
 			o_ptr->flags3 &= ~(TR3_CURSED);
@@ -1641,7 +1641,7 @@ static void break_curse(object_type *o_ptr)
 	{
 		msg_print("The curse is broken!");
 
-		o_ptr->ident |= (IDENT_SENSE);
+		o_ptr->ident |= (OB_SENSE);
 
 		if (o_ptr->flags3 & TR3_CURSED)
 			o_ptr->flags3 &= ~(TR3_CURSED);
@@ -2498,10 +2498,10 @@ bool recharge(int power)
 			}
 
 			/* Hack -- we no longer "know" the item */
-			o_ptr->ident &= ~(IDENT_KNOWN);
+			o_ptr->ident &= ~(OB_KNOWN);
 
 			/* Hack -- we no longer think the item is empty */
-			o_ptr->ident &= ~(IDENT_EMPTY);
+			o_ptr->ident &= ~(OB_EMPTY);
 		}
 	}
 
@@ -2742,7 +2742,7 @@ bool bless_weapon(void)
 		o_ptr->flags3 &= ~(TR3_CURSED);
 
 		/* Hack -- Assume felt */
-		o_ptr->ident |= (IDENT_SENSE);
+		o_ptr->ident |= (OB_SENSE);
 
 		/* Take note */
 		o_ptr->feeling = FEEL_UNCURSED;

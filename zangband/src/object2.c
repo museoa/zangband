@@ -775,13 +775,13 @@ void object_known(object_type *o_ptr)
 	o_ptr->feeling = FEEL_NONE;
 
 	/* Clear the "Felt" info */
-	o_ptr->ident &= ~(IDENT_SENSE);
+	o_ptr->ident &= ~(OB_SENSE);
 
 	/* Clear the "Empty" info */
-	o_ptr->ident &= ~(IDENT_EMPTY);
+	o_ptr->ident &= ~(OB_EMPTY);
 
 	/* Now we know about the item */
-	o_ptr->ident |= (IDENT_KNOWN);
+	o_ptr->ident |= (OB_KNOWN);
 }
 
 
@@ -1340,10 +1340,10 @@ s32b object_value(const object_type *o_ptr)
 	else
 	{
 		/* Hack -- Felt broken items */
-		if ((o_ptr->ident & (IDENT_SENSE)) && !o_ptr->cost) return (0L);
+		if ((o_ptr->ident & (OB_SENSE)) && !o_ptr->cost) return (0L);
 
 		/* Hack -- Felt cursed items */
-		if ((o_ptr->ident & (IDENT_SENSE)) && cursed_p(o_ptr)) return (0L);
+		if ((o_ptr->ident & (OB_SENSE)) && cursed_p(o_ptr)) return (0L);
 
 		/* Base value (see above) */
 		value = object_value_base(o_ptr);
@@ -1506,9 +1506,9 @@ bool object_similar(const object_type *o_ptr, const object_type *j_ptr)
 			/* Staffs */
 
 			/* Require either knowledge or known empty for both staffs. */
-			if ((!(o_ptr->ident & (IDENT_EMPTY)) &&
+			if ((!(o_ptr->ident & (OB_EMPTY)) &&
 				 !object_known_p(o_ptr)) ||
-				(!(j_ptr->ident & (IDENT_EMPTY)) &&
+				(!(j_ptr->ident & (OB_EMPTY)) &&
 				 !object_known_p(j_ptr))) return (FALSE);
 
 			/* Require identical charges, since staffs are bulky. */
@@ -1668,11 +1668,11 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 	if (object_known_p(j_ptr)) object_known(o_ptr);
 
 	/* Hack -- clear "storebought" if only one has it */
-	if (((o_ptr->ident & IDENT_STOREB) || (j_ptr->ident & IDENT_STOREB)) &&
-		(!((o_ptr->ident & IDENT_STOREB) && (j_ptr->ident & IDENT_STOREB))))
+	if (((o_ptr->ident & OB_STOREB) || (j_ptr->ident & OB_STOREB)) &&
+		(!((o_ptr->ident & OB_STOREB) && (j_ptr->ident & OB_STOREB))))
 	{
-		if (j_ptr->ident & IDENT_STOREB) j_ptr->ident &= ~IDENT_STOREB;
-		if (o_ptr->ident & IDENT_STOREB) o_ptr->ident &= ~IDENT_STOREB;
+		if (j_ptr->ident & OB_STOREB) j_ptr->ident &= ~OB_STOREB;
+		if (o_ptr->ident & OB_STOREB) o_ptr->ident &= ~OB_STOREB;
 	}
 
 	/* Hack -- blend "mental" status */
@@ -1707,7 +1707,7 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 		o_ptr->ac += j_ptr->ac;
 
 		/* Hack XXX XXX - remove {empty} inscription. */
-		if (o_ptr->pval) o_ptr->ident &= ~(IDENT_EMPTY);
+		if (o_ptr->pval) o_ptr->ident &= ~(OB_EMPTY);
 	}
 }
 
@@ -5676,7 +5676,7 @@ bool can_player_destroy_object(object_type *o_ptr)
 		o_ptr->feeling = feel;
 
 		/* We have "felt" it (again) */
-		o_ptr->ident |= (IDENT_SENSE);
+		o_ptr->ident |= (OB_SENSE);
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);

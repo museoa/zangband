@@ -1554,9 +1554,9 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 		char dummy_name[80];
 		strcpy(dummy_name, "");
 		(void)identify_fully_aux(o_ptr);
-		o_ptr->ident |= IDENT_STOREB;	/* This will be used later on... */
-		if (!
-			(get_string
+		o_ptr->ident |= OB_STOREB;
+		
+		if (!(get_string
 			 ("What do you want to call the artifact? ", dummy_name, 80)))
 		{
 			get_random_name(new_name, o_ptr->tval, power_level);
