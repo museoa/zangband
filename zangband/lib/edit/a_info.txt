@@ -592,8 +592,8 @@ L:MAKE:	if player.rp.pclass == CLASS_WARRIOR then
 L:MAKE:		add_ego_power(EGO_XTRA_ABILITY, object)
 L:MAKE:		add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:MAKE:	else
-L:MAKE:		object.flags3 = object.flags3 | (TR3_CURSED | TR3_HEAVY_CURSE | 
-L:MAKE:			TR3_AGGRAVATE | TR3_TY_CURSE)
+L:MAKE:		object.flags3 = bOr(object.flags3, TR3_CURSED, TR3_HEAVY_CURSE, 
+L:MAKE:			TR3_AGGRAVATE, TR3_TY_CURSE)
 L:MAKE:	end
 
 
