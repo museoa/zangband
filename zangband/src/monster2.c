@@ -1815,7 +1815,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp, bool friendl
 			if (!cave_empty_grid(c_ptr)) continue;
 
 			/* Prepare allocation table */
-			get_mon_num_prep(place_monster_okay, get_monster_hook2(ny, nx));
+			get_mon_num_prep(place_monster_okay, get_monster_hook2(nx, ny));
 
 			/* Pick a random race */
 			z = get_mon_num(r_ptr->level);
@@ -1851,7 +1851,7 @@ bool place_monster(int y, int x, bool slp, bool grp)
 	int r_idx;
 
 	/* Prepare allocation table */
-	get_mon_num_prep(get_monster_hook(), get_monster_hook2(y, x));
+	get_mon_num_prep(get_monster_hook(), get_monster_hook2(x, y));
 
 	/* Pick a monster */
 	r_idx = get_mon_num(monster_level);
@@ -1881,7 +1881,7 @@ bool alloc_horde(int y, int x)
 	int cx = x;
 
 	/* Prepare allocation table */
-	get_mon_num_prep(get_monster_hook(), get_monster_hook2(y, x));
+	get_mon_num_prep(get_monster_hook(), get_monster_hook2(x, y));
 
 	while (--attempts)
 	{
@@ -2385,7 +2385,7 @@ bool summon_specific(int who, int y1, int x1, int lev, int type,
 	summon_specific_hostile = (!friendly && !pet);
 
 	/* Prepare allocation table */
-	get_mon_num_prep(summon_specific_okay, get_monster_hook2(y, x));
+	get_mon_num_prep(summon_specific_okay, get_monster_hook2(x, y));
 
 	/* Pick a monster, using the level calculation */
 	r_idx = get_mon_num((p_ptr->depth + lev) / 2 + 5);

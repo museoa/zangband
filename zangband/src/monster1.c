@@ -1807,7 +1807,7 @@ monster_hook_type get_monster_hook(void)
 }
 
 
-monster_hook_type get_monster_hook2(int y, int x)
+monster_hook_type get_monster_hook2(int x, int y)
 {
 	wild_done_type *w_ptr;
 

@@ -545,7 +545,7 @@ extern bool monster_lava_wild(int r_idx);
 extern bool monster_acid_wild(int r_idx);
 extern bool monster_swamp_wild(int r_idx);
 extern monster_hook_type get_monster_hook(void);
-extern monster_hook_type get_monster_hook2(int y, int x);
+extern monster_hook_type get_monster_hook2(int x, int y);
 extern void set_friendly(monster_type *m_ptr);
 extern void set_pet(monster_type *m_ptr);
 extern void set_hostile(monster_type *m_ptr);
