@@ -3690,7 +3690,14 @@ bool teleport_swap(int dir)
 	verify_panel();
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
+	p_ptr->update |= (PU_VIEW | PU_FLOW);
+
+	/* Notice changes in view */
+	if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
+	{
+		/* Update some things */
+		p_ptr->update |= (PU_MON_LITE);
+	}
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_DISTANCE);

@@ -35,6 +35,7 @@ bool teleport_away(int m_idx, int dis)
 	bool look = TRUE;
 
 	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	cave_type *c_ptr = NULL;
 	
 	field_mon_test	mon_enter_test;
@@ -160,8 +161,12 @@ bool teleport_away(int m_idx, int dis)
 	/* Redraw the new grid */
 	lite_spot(ny, nx);
 	
-	/* Update stuff */
-	p_ptr->update |= (PU_MON_LITE);
+	/* Notice changes in view */
+	if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
+	{
+		/* Update some things */
+		p_ptr->update |= (PU_MON_LITE);
+	}
 
 	return (TRUE);
 }
@@ -178,6 +183,7 @@ void teleport_to_player(int m_idx)
 	int dis = 2;
 	bool look = TRUE;
 	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	cave_type *c_ptr = NULL;
 	field_mon_test	mon_enter_test;
 
@@ -299,8 +305,12 @@ void teleport_to_player(int m_idx)
 	/* Redraw the new grid */
 	lite_spot(ny, nx);
 	
-	/* Update stuff */
-	p_ptr->update |= (PU_MON_LITE);
+	/* Notice changes in view */
+	if (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2))
+	{
+		/* Update some things */
+		p_ptr->update |= (PU_MON_LITE);
+	}
 }
 
 

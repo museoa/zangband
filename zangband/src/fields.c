@@ -2943,14 +2943,10 @@ void field_action_door_bash(s16b *field_ptr, void *input)
 	
 	int *jam = (int *) input;
 	
-	/* Extract door "power" */
-	int power = *jam / 2 + adj_str_blow[p_ptr->stat_ind[A_STR]] / 5
-		 - f_ptr->counter * 2;
-	
-	/* Always have a small chance of success */
-	if (power < 1) power = 1;
+	/* Extract unjamming "power" */
+	int power = *jam / 10 + adj_str_wgt[p_ptr->stat_ind[A_STR]] / 2;
 		
-	if (rand_int(100) < power)
+	if (rand_int(power) > f_ptr->counter)
 	{
 		/* Success */
 			
@@ -3046,7 +3042,7 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 			(!is_pet(m_ptr) || p_ptr->pet_open_doors))
 	{
 		/* Attempt to Bash */
-		if (rand_int(m_ptr->hp / 10) > f_ptr->counter)
+		if (rand_int(m_ptr->hp / 50) > f_ptr->counter)
 		{
 			/* Message */
 			msg_print("You hear a door burst open!");
