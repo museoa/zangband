@@ -30,6 +30,11 @@ GAMEGROUP = games
 
 CFLAGS += -DDEFAULT_PATH=\"$(DESTDIR)lib/\"
 
+#
+# Edit me to turn on and off things like tcl/tk detection
+#
+CONFIGURE = ./configure
+
 
 cygwin = @cygwin@
 TK_PORT = @TK_PORT@
@@ -72,7 +77,7 @@ zangband: $(objs-y)
 ## Hack - make sure the build system is consistant.
 ##
 makefile: configure makefile.in
-	./configure
+	$(CONFIGURE)
 
 configure: configure.in
 	aclocal

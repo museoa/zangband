@@ -101,6 +101,12 @@ src/zangband.a: $(OBJS)
 endif
 
 ##
+## Autoconf header
+##
+src/autoconf.h:
+	$(CONFIGURE)
+
+##
 ## Low-level Headers
 ##
 
@@ -185,10 +191,14 @@ $(LUAWSRCS): %.c: %.pkg src/lua/tolua
 	src/lua/tolua -n $(subst l-,,$(notdir $*)) -o $@ $<
 
 clean-files += src/*.bak src/*.o src/l-*.c
+distclean-files += autoconf.h
 
 srcdirlist += src
-srcfiles += src/*.c src/*.h src/angband.rc src/angband.ico \
-		 src/angband.xpm src/zangband.icns src/makefile* src/l-*.pkg
+notsrcfiles += compress.c autoconf.h
+
+srcfiles += $(filter_out $(notsrcfiles), \
+		 src/*.c src/*.h src/angband.rc src/angband.ico \
+		 src/angband.xpm src/zangband.icns src/makefile* src/l-*.pkg)
 
 # scan other source directories
 dirs := lua tk
