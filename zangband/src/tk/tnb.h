@@ -223,7 +223,7 @@ extern int SetArrayValueLong(cptr varName, cptr field, long value);
 extern int SetArrayValueString(cptr varName, cptr field, cptr value);
 
 /* tcltk.c */
-extern Tcl_Interp *TclTk_Init(int argc, cptr *argv);
+extern Tcl_Interp *TclTk_Init(cptr *argv);
 
 /* util-tnb.c */
 extern cptr keyword_term_color[];

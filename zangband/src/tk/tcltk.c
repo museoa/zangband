@@ -50,12 +50,11 @@ static void CloseStdHandle(DWORD nStdHandle)
 	CloseHandle(handle);
 }
 
-Tcl_Interp *TclTk_Init(int argc, char **argv)
+Tcl_Interp *TclTk_Init(char **argv)
 {
-	char *p, *args, *fileName;
-	char buffer[MAX_PATH], buf[20], *t;
+	char *p;
+	char buffer[MAX_PATH], *t;
 	size_t length;
-	Tcl_DString argString;
 	Tcl_Interp *interp;
 
 	/*** From tk80/win/winMain.c ***/
@@ -66,7 +65,6 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 	SetMessageQueue(64);
 
 	GetModuleFileName(NULL, buffer, sizeof(buffer));
-	argv[0] = buffer;
 	for (p = buffer; *p != '\0'; p++)
 	{
 		if (*p == '\\')
@@ -77,7 +75,7 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 
 	/*** From tk80/generic/TkMain.c ***/
 
-	Tcl_FindExecutable(argv[0]);
+	Tcl_FindExecutable(buffer);
 
 	/* According to Hobbs, this should come after Tcl_FindExecutable() */
 	interp = Tcl_CreateInterp();
@@ -88,46 +86,7 @@ Tcl_Interp *TclTk_Init(int argc, char **argv)
 	CloseStdHandle(STD_OUTPUT_HANDLE);
 	CloseStdHandle(STD_ERROR_HANDLE);
 	
-	fileName = NULL;
-	if (argc > 1)
-	{
-		length = strlen(argv[1]);
-		if ((length >= 2) && (strncmp(argv[1], "-file", length) == 0))
-		{
-			argc--;
-			argv++;
-		}
-	}
-	if ((argc > 1) && (argv[1][0] != '-'))
-	{
-		fileName = argv[1];
-		argc--;
-		argv++;
-	}
-
-	args = Tcl_Merge(argc-1, argv+1);
-	Tcl_ExternalToUtfDString(NULL, args, -1, &argString);
-	Tcl_SetVar(interp, "argv", Tcl_DStringValue(&argString),
-		TCL_GLOBAL_ONLY);
-	Tcl_DStringFree(&argString);
-	ckfree(args);
-	sprintf(buf, "%d", argc-1);
-
-	if (fileName == NULL)
-	{
-		Tcl_ExternalToUtfDString(NULL, argv[0], -1, &argString);
-	}
-	else
-	{
-		fileName = Tcl_ExternalToUtfDString(NULL, fileName, -1, &argString);
-	}
-	Tcl_SetVar(interp, "argc", buf, TCL_GLOBAL_ONLY);
-	Tcl_SetVar(interp, "argv0", Tcl_DStringValue(&argString),
-		TCL_GLOBAL_ONLY);
-    Tcl_DStringFree(&argString);
-
-	Tcl_SetVar(interp, "tcl_interactive",
-		(fileName == NULL) ? "1" : "0", TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "tcl_interactive", "1", TCL_GLOBAL_ONLY);
 
 	/*** from tk80/win/winMain.c (Tcl_AppInit) ***/
 	
@@ -352,11 +311,8 @@ static void StdinProc(ClientData clientData, int mask)
 }
 
 
-Tcl_Interp *TclTk_Init(int argc, cptr *argv)
+Tcl_Interp *TclTk_Init(cptr *argv)
 {
-	char *args;
-	char buf[20];
-	Tcl_DString argString;
 	Tcl_Interp *interp;
     Tcl_Channel inChannel, outChannel;
     ThreadSpecificData *tsdPtr;
@@ -370,18 +326,6 @@ Tcl_Interp *TclTk_Init(int argc, cptr *argv)
 
 	Tcl_FindExecutable(argv[0]);
 	tsdPtr->interp = interp;
-
-	args = Tcl_Merge(argc-1, argv+1);
-	Tcl_ExternalToUtfDString(NULL, args, -1, &argString);
-	Tcl_SetVar(interp, "argv", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
-	Tcl_DStringFree(&argString);
-	Tcl_Free(args);
-	sprintf(buf, "%d", argc-1);
-
-	Tcl_ExternalToUtfDString(NULL, argv[0], -1, &argString);
-	Tcl_SetVar(interp, "argc", buf, TCL_GLOBAL_ONLY);
-	Tcl_SetVar(interp, "argv0", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
-	Tcl_DStringFree(&argString);
 
 	tsdPtr->tty = isatty(0);
 	Tcl_SetVar(interp, "tcl_interactive",

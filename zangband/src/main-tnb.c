@@ -446,6 +446,9 @@ static void hook_quit(cptr str)
  */
 int init_tnb(int argc, cptr *argv)
 {
+	/* Hack -ignore parameter */
+	(void) argc;
+	
 	ANGBAND_DIR_TK = DEFAULT_TK_PATH;
 
 	/* Validate the "tk" directory */
@@ -465,7 +468,7 @@ int init_tnb(int argc, cptr *argv)
 	ANGBAND_SYS = "tk-x11";
 
 	/* Initialize Tcl and Tk. */
-	g_interp = TclTk_Init(argc, argv);
+	g_interp = TclTk_Init(argv);
 	
 	/* Paranoia */
 	if (!g_interp) return(1);
