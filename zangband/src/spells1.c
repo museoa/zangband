@@ -4362,8 +4362,6 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 			int brad = 0;
 			int bdis = 0;
 			int cdis;
-			int sl = 0;
-			int sq = 0;
 
 			/* Not done yet */
 			bool done = FALSE;
@@ -4372,6 +4370,9 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 
 			by = y1;
 			bx = x1;
+			
+			/* Initialise the multi-move */
+			mmove_init(x1, y1, x2, y2);
 
 			while (bdis <= dist + rad)
 			{
@@ -4417,7 +4418,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 				}
 
 				/* Ripple outwards */
-				mmove2(&bx, &by, x1, y1, x2, y2, &sl, &sq);
+				mmove(&bx, &by, x1, y1);
 
 				/* Find the next ripple */
 				bdis++;

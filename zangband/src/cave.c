@@ -273,19 +273,20 @@ bool los(int x1, int y1, int x2, int y2)
 }
 
 
+/* Slope and square used by mmove2 */
+static int mmove_slope;
+static int mmove_sq;
+
+/* Direction to move in */
+static int mmove_dx;
+static int mmove_dy;
+
+
 /*
- * Calculate incremental motion
- *
- * The current position is updated.
- *
- * (x,y) encodes the current location.
- * slope and sq encodes the current square along the flight path.
- * Set sq to be zero to initialise the routine.
- *
- * This routine is very similar to los() except that we can use it
- * to return partial results.
+ * Calculate the slope and square information used by
+ * a following mmove2
  */
-void mmove2(int *x, int *y, int x1, int y1, int x2, int y2, int *slope, int *sq)
+void mmove_init(int x1, int y1, int x2, int y2)
 {
 	int temp;
 
@@ -294,15 +295,17 @@ void mmove2(int *x, int *y, int x1, int y1, int x2, int y2, int *slope, int *sq)
 	int dx, dy, ax, ay, sx, sy, dist;
 
 	cave_type *c_ptr;
+	
+	/* Clear slope and square */
+	mmove_slope = 0;
+	mmove_sq = 0;
+	
+	/* Clear direction */
+	mmove_dx = 0;
+	mmove_dy = 0;
 
 	/* Paranoia - degenerate case */
-	if ((x1 == x2) && (y1 == y2))
-	{
-		*x = x1;
-		*y = y2;
-
-		return;
-	}
+	if ((x1 == x2) && (y1 == y2)) return;
 
 	/* Extract the offset */
 	dy = y2 - y1;
@@ -320,6 +323,10 @@ void mmove2(int *x, int *y, int x1, int y1, int x2, int y2, int *slope, int *sq)
 		dx = (dx * MAX_SIGHT) / dist;
 		dy = (dy * MAX_SIGHT) / dist;
 	}
+	
+	/* Save direction */
+	mmove_dx = dx;
+	mmove_dy = dy;
 
 	/* Extract the absolute offset */
 	ay = ABS(dy);
@@ -329,124 +336,142 @@ void mmove2(int *x, int *y, int x1, int y1, int x2, int y2, int *slope, int *sq)
 	sx = (dx < 0) ? -1 : 1;
 	sy = (dy < 0) ? -1 : 1;
 
+	/*
+	 * Start at the first square in the list.
+	 * This is a square adjacent to (x1,y1)
+	 */
 
-	/* Do we need to initialise? */
-	if (!(*sq))
+	/* Hack - we need to stick to one octant */
+	if (ay < ax)
 	{
-		/*
-		 * Start at the first square in the list.
-		 * This is a square adjacent to (x1,y1)
-		 */
+		/* Look up the slope to use */
+		mmove_slope = p_slope_min[ax][ay];
 
-		/* sq is already zero at this point. */
-
-		/* Hack - we need to stick to one octant */
-		if (ay < ax)
+		while (mmove_slope <= p_slope_max[ax][ay])
 		{
-			/* Look up the slope to use */
-			*slope = p_slope_min[ax][ay];
+			xx = x1 + sx * project_data[mmove_slope][mmove_sq].x;
+			yy = y1 + sy * project_data[mmove_slope][mmove_sq].y;
 
-			while (*slope <= p_slope_max[ax][ay])
+			/* Done? */
+			if ((xx == x1 + dx) && (yy == y1 + dy)) break;
+
+			c_ptr = area(xx, yy);
+
+			/* Is the square not occupied by a monster, and passable? */
+			if (!cave_los_grid(c_ptr) || c_ptr->m_idx)
 			{
-				xx = x1 + sx * project_data[*slope][*sq].x;
-				yy = y1 + sy * project_data[*slope][*sq].y;
-
-				/* Done? */
-				if ((xx == x1 + dx) && (yy == y1 + dy)) break;
-
-				c_ptr = area(xx, yy);
-
-				/* Is the square not occupied by a monster, and passable? */
-				if (!cave_los_grid(c_ptr) || c_ptr->m_idx)
-				{
-					/* Advance to the best position we have not looked at yet */
-					temp = project_data[*slope][*sq].slope;
-					*sq = project_data[*slope][*sq].square;
-					*slope = temp;
-				}
-				else
-				{
-					/* Advance along ray */
-					(*sq)++;
-				}
+				/* Advance to the best position we have not looked at yet */
+				temp = project_data[mmove_slope][mmove_sq].slope;
+				mmove_sq = project_data[mmove_slope][mmove_sq].square;
+				mmove_slope = temp;
 			}
-
-			/* No match? */
-			if (*slope > p_slope_max[ax][ay])
+			else
 			{
-				*slope = (p_slope_min[ax][ay] + p_slope_max[ax][ay]) / 2;
-			}
-		}
-		else
-		{
-			/* Look up the slope to use */
-			*slope = p_slope_min[ay][ax];
-
-			while (*slope <= p_slope_max[ay][ax])
-			{
-				/* Note that the data offsets have x,y swapped */
-				xx = x1 + sx * project_data[*slope][*sq].y;
-				yy = y1 + sy * project_data[*slope][*sq].x;
-
-				/* Done? */
-				if ((xx == x1 + dx) && (yy == y1 + dy)) break;
-
-				c_ptr = area(xx, yy);
-
-				/* Is the square not occupied by a monster, and passable? */
-				if (!cave_los_grid(c_ptr) || c_ptr->m_idx)
-				{
-					/* Advance to the best position we have not looked at yet */
-					temp = project_data[*slope][*sq].slope;
-					*sq = project_data[*slope][*sq].square;
-					*slope = temp;
-				}
-				else
-				{
-					/* Advance along ray */
-					(*sq)++;
-				}
-			}
-
-			/* No match? */
-			if (*slope > p_slope_max[ay][ax])
-			{
-				*slope = (p_slope_min[ay][ax] + p_slope_max[ay][ax]) / 2;
+				/* Advance along ray */
+				(mmove_sq)++;
 			}
 		}
 
-		/*
-		 * Reset to start.
-		 *
-		 * Square zero is the the first square along the path.
-		 * It is not the starting square
-		 */
-		*sq = 0;
+		/* No match? */
+		if (mmove_slope > p_slope_max[ax][ay])
+		{
+			mmove_slope = (p_slope_min[ax][ay] + p_slope_max[ax][ay]) / 2;
+		}
 	}
 	else
 	{
-		/* Paranoia - square number is too large */
-		if (*sq >= slope_count[*slope])
+		/* Look up the slope to use */
+		mmove_slope = p_slope_min[ay][ax];
+
+		while (mmove_slope <= p_slope_max[ay][ax])
 		{
-			*sq = slope_count[*slope] - 1;
+			/* Note that the data offsets have x,y swapped */
+			xx = x1 + sx * project_data[mmove_slope][mmove_sq].y;
+			yy = y1 + sy * project_data[mmove_slope][mmove_sq].x;
+
+			/* Done? */
+			if ((xx == x1 + dx) && (yy == y1 + dy)) break;
+
+			c_ptr = area(xx, yy);
+
+			/* Is the square not occupied by a monster, and passable? */
+			if (!cave_los_grid(c_ptr) || c_ptr->m_idx)
+			{
+				/* Advance to the best position we have not looked at yet */
+				temp = project_data[mmove_slope][mmove_sq].slope;
+				mmove_sq = project_data[mmove_slope][mmove_sq].square;
+				mmove_slope = temp;
+			}
+			else
+			{
+				/* Advance along ray */
+				(mmove_sq)++;
+			}
 		}
+
+		/* No match? */
+		if (mmove_slope > p_slope_max[ay][ax])
+		{
+			mmove_slope = (p_slope_min[ay][ax] + p_slope_max[ay][ax]) / 2;
+		}
+	}
+	
+	
+	/*
+	 * Reset to start.
+	 *
+	 * Square zero is the the first square along the path.
+	 * It is not the starting square
+	 */
+	mmove_sq = 0;
+}
+
+
+/*
+ * Calculate incremental motion
+ *
+ * The current position is updated.
+ *
+ * (x,y) encodes the current location.
+ * slope and sq encodes the current square along the flight path.
+ * Set sq to be zero to initialise the routine.
+ *
+ * This routine is very similar to los() except that we can use it
+ * to return partial results.
+ */
+void mmove(int *x, int *y, int x1, int y1)
+{
+	int ax, ay, sx, sy;
+
+	/* Extract the absolute offset */
+	ay = ABS(mmove_dy);
+	ax = ABS(mmove_dx);
+
+	/* Extract some signs */
+	sx = (mmove_dx < 0) ? -1 : 1;
+	sy = (mmove_dy < 0) ? -1 : 1;
+
+	/* Paranoia - square number is too large */
+	if (mmove_sq >= slope_count[mmove_slope])
+	{
+		mmove_sq = slope_count[mmove_slope] - 1;
 	}
 
 	if (ay < ax)
 	{
 		/* Work out square to return */
-		*x = x1 + sx * project_data[*slope][*sq].x;
-		*y = y1 + sy * project_data[*slope][*sq].y;
+		*x = x1 + sx * project_data[mmove_slope][mmove_sq].x;
+		*y = y1 + sy * project_data[mmove_slope][mmove_sq].y;
 	}
 	else
 	{
 		/* Work out square to return */
-		*x = x1 + sx * project_data[*slope][*sq].y;
-		*y = y1 + sy * project_data[*slope][*sq].x;
+		*x = x1 + sx * project_data[mmove_slope][mmove_sq].y;
+		*y = y1 + sy * project_data[mmove_slope][mmove_sq].x;
 	}
 
 	/* Next square, next time. */
-	(*sq)++;
+	mmove_sq++;
 }
 
 /*

@@ -301,8 +301,8 @@ extern int distance(int x1, int y1, int x2, int y2);
 extern bool is_trap(cave_type *c_ptr);
 extern bool is_visible_trap(cave_type *c_ptr);
 extern bool los(int x1, int y1, int x2, int y2);
-extern void mmove2(int *x, int *y, int x1, int y1, int x2, int y2, int *slope,
-				   int *sq);
+extern void mmove_init(int x1, int y1, int x2, int y2);
+extern void mmove(int *x, int *y, int x1, int y1);
 extern bool projectable(int x1, int y1, int x2, int y2);
 extern sint project_path(coord *gp, int x1, int y1, int x2, int y2, u16b flg);
 extern bool in_ball_range(int x1, int y1, int x2, int y2);
