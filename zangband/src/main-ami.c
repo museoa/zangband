@@ -54,6 +54,8 @@
 
 #ifdef USE_AMI
 
+#include "maid-grf.h"
+
 #ifndef __CEXTRACT__
 
 #include "vers.h"
@@ -1037,7 +1039,7 @@ errr init_ami( void )
 			 WA_DragBar, !backdrop && !ts->notitle,
 			 WA_DepthGadget, !backdrop && !ts->notitle,
 			 WA_NewLookMenus, TRUE,
-			 backdrop ? TAG_IGNORE : WA_ScreenTitle, VERIANT,
+			 backdrop ? TAG_IGNORE : WA_ScreenTitle, VARIANT,
 			 ( backdrop || ts->notitle ) ? TAG_IGNORE : WA_Title, ts->name,
 			 WA_Activate, TRUE,
 			 WA_RMBTrap, !use_menus,
