@@ -2,7 +2,7 @@
 
 function test_use_object_hook(test_tval, test_svals)
 	for test_sval, _ in test_svals do
-		local test_object = {tval = test_tval, sval = test_sval, pval = 1}
+		local test_object = {tval = test_tval, sval = test_sval, pval = 1, k_idx = 1, ident = 0}
 		use_object_hook(test_object)
 	end
 end
@@ -148,7 +148,7 @@ test_use_object_hook(TV_SCROLL, {
 		SV_SCROLL_CHAOS,
 		SV_SCROLL_RUMOR,
 		SV_SCROLL_ARTIFACT})
-end
+
 -- Test the staves
 test_use_object_hook(TV_STAFF, {
 		SV_STAFF_DARKNESS,
@@ -181,4 +181,38 @@ test_use_object_hook(TV_STAFF, {
 		SV_STAFF_GENOCIDE,
 		SV_STAFF_EARTHQUAKES,
 		SV_STAFF_DESTRUCTION})
+end
+
+-- Test the wands
+test_use_object_hook(TV_WAND, {
+		SV_WAND_HEAL_MONSTER,
+		SV_WAND_HASTE_MONSTER,
+		SV_WAND_CLONE_MONSTER,
+		SV_WAND_TELEPORT_AWAY,
+		SV_WAND_DISARMING,
+		SV_WAND_TRAP_DOOR_DEST,
+		SV_WAND_STONE_TO_MUD,
+		SV_WAND_LITE,
+		SV_WAND_SLEEP_MONSTER,
+		SV_WAND_SLOW_MONSTER,
+		SV_WAND_CONFUSE_MONSTER,
+		SV_WAND_FEAR_MONSTER,
+		SV_WAND_DRAIN_LIFE,
+		SV_WAND_POLYMORPH,
+		SV_WAND_STINKING_CLOUD,
+		SV_WAND_MAGIC_MISSILE,
+		SV_WAND_ACID_BOLT,
+		SV_WAND_CHARM_MONSTER,
+		SV_WAND_FIRE_BOLT,
+		SV_WAND_COLD_BOLT,
+		SV_WAND_ACID_BALL,
+		SV_WAND_ELEC_BALL,
+		SV_WAND_FIRE_BALL,
+		SV_WAND_COLD_BALL,
+		SV_WAND_WONDER,
+		SV_WAND_ANNIHILATION,
+		SV_WAND_DRAGON_FIRE,
+		SV_WAND_DRAGON_COLD,
+		SV_WAND_DRAGON_BREATH,
+		SV_WAND_ROCKETS})
 

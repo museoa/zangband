@@ -153,15 +153,59 @@ DYADIC(intShiftr,   >>)
 MONADIC(intBitNot,  ~ )
 
 
+static int math_min(lua_State *L)
+{
+	int i;
+
+	/* number of arguments */
+	int n = lua_gettop(L);
+
+	long dmin = luaL_check_number(L, 1);
+
+	for (i = 2; i <= n; i++)
+	{
+		long d = luaL_check_number(L, i);
+		if (d < dmin) dmin = d;
+	}
+
+	lua_pushnumber(L, dmin);
+
+	return 1;
+}
+
+
+static int math_max(lua_State *L)
+{
+	int i;
+
+	/* number of arguments */
+	int n = lua_gettop(L);
+	
+	long dmax = luaL_check_number(L, 1);
+
+	for (i = 2; i <= n; i++)
+	{
+		long d = luaL_check_number(L, i);
+		if (d > dmax) dmax = d;
+	}
+
+	lua_pushnumber(L, dmax);
+
+	return 1;
+}
+
+
 static const struct luaL_reg intMathLib[] =
 {
-    {"mod",    intMod    },
-    {"bAnd",   intAnd    },
-    {"bOr",    intOr     },
-    {"bXor",   intXor    },
-    {"bNot",   intBitNot },
-    {"shiftl", intShiftl },
-    {"shiftr", intShiftr },
+    {"mod",    intMod   },
+    {"bAnd",   intAnd   },
+    {"bOr",    intOr    },
+    {"bXor",   intXor   },
+    {"bNot",   intBitNot},
+    {"shiftl", intShiftl},
+    {"shiftr", intShiftr},
+	{"min",    math_min },
+	{"max",    math_max },
 };
 
 
@@ -171,18 +215,28 @@ static const struct luaL_reg intMathLib[] =
 bool use_object(object_type *o_ptr, bool *ident)
 {
 	bool used_up;
+	int status;
 
 	lua_getglobal(L, "use_object_hook");
 	tolua_pushusertype(L, (void*)o_ptr, tolua_tag(L, "object_type"));
 
 	/* Call the function with 1 argument and 2 results */
-	lua_call(L, 1, 2);
+	status = lua_call(L, 1, 2);
 
-	*ident = tolua_getbool(L, 1, FALSE);
-	used_up = tolua_getbool(L, 2, FALSE);
+	if (status == 0)
+	{
+		*ident = tolua_getbool(L, 1, FALSE);
+		used_up = tolua_getbool(L, 2, FALSE);
 
-	/* Remove the results */
-	lua_pop(L, 2);
+		/* Remove the results */
+		lua_pop(L, 2);
+	}
+	else
+	{
+		/* Error */
+		*ident = FALSE;
+		used_up = FALSE;
+	}
 
 	return (used_up);
 }

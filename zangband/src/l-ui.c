@@ -1,12 +1,12 @@
 /*
 ** Lua binding: ui
-** Generated automatically by tolua 4.0a - angband on Thu Nov  1 17:38:39 2001.
+** Generated automatically by tolua 4.0a - angband on Fri Nov  9 18:34:13 2001.
 */
 
 #include "lua/tolua.h"
 
 /* Exported function */
-int tolua_ui_open (lua_State* tolua_S);
+int  tolua_ui_open (lua_State* tolua_S);
 void tolua_ui_close (lua_State* tolua_S);
 
 #include "angband.h"
@@ -14,6 +14,8 @@ void tolua_ui_close (lua_State* tolua_S);
 /* function to register type */
 static void toluaI_reg_types (lua_State* tolua_S)
 {
+ /* Hack - ignore paramters if none */
+ (void) tolua_S;
 }
 
 /* error messages */
@@ -24,14 +26,14 @@ static void toluaI_reg_types (lua_State* tolua_S)
 static int toluaI_ui_notice_stuff00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  notice_stuff();
- }
+  {
+   notice_stuff();
+  }
  }
  return 0;
 tolua_lerror:
@@ -43,14 +45,14 @@ tolua_lerror:
 static int toluaI_ui_update_stuff00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  update_stuff();
- }
+  {
+   update_stuff();
+  }
  }
  return 0;
 tolua_lerror:
@@ -62,14 +64,14 @@ tolua_lerror:
 static int toluaI_ui_redraw_stuff00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  redraw_stuff();
- }
+  {
+   redraw_stuff();
+  }
  }
  return 0;
 tolua_lerror:
@@ -81,14 +83,14 @@ tolua_lerror:
 static int toluaI_ui_window_stuff00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  window_stuff();
- }
+  {
+   window_stuff();
+  }
  }
  return 0;
 tolua_lerror:
@@ -100,14 +102,14 @@ tolua_lerror:
 static int toluaI_ui_handle_stuff00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  handle_stuff();
- }
+  {
+   handle_stuff();
+  }
  }
  return 0;
 tolua_lerror:
@@ -119,15 +121,15 @@ tolua_lerror:
 static int toluaI_ui_inkey00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  char toluaI_ret = (char)  inkey();
- tolua_pushnumber(tolua_S,(long)toluaI_ret);
- }
+  {
+   char toluaI_ret = (char)  inkey();
+   tolua_pushnumber(tolua_S,(long)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -139,16 +141,16 @@ tolua_lerror:
 static int toluaI_ui_bell00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   cptr reason = ((cptr)  tolua_getstring(tolua_S,1,0));
- {
-  bell(reason);
- }
+  {
+   bell(reason);
+  }
  }
  return 0;
 tolua_lerror:
@@ -160,16 +162,16 @@ tolua_lerror:
 static int toluaI_ui_sound00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int val = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  sound(val);
- }
+  {
+   sound(val);
+  }
  }
  return 0;
 tolua_lerror:
@@ -181,16 +183,16 @@ tolua_lerror:
 static int toluaI_ui_msg_print00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   cptr msg = ((cptr)  tolua_getstring(tolua_S,1,0));
- {
-  msg_print(msg);
- }
+  {
+   msg_print(msg);
+  }
  }
  return 0;
 tolua_lerror:
@@ -202,20 +204,20 @@ tolua_lerror:
 static int toluaI_ui_message00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,3,LUA_TSTRING,0) ||
- !tolua_isnoobj(tolua_S,4)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,3,LUA_TSTRING,0) ||
+     !tolua_isnoobj(tolua_S,4)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   u16b message_type = ((u16b)  tolua_getnumber(tolua_S,1,0));
   s16b extra = ((s16b)  tolua_getnumber(tolua_S,2,0));
   cptr message_text = ((cptr)  tolua_getstring(tolua_S,3,0));
- {
-  message(message_type,extra,message_text);
- }
+  {
+   message(message_type,extra,message_text);
+  }
  }
  return 0;
 tolua_lerror:
@@ -227,14 +229,14 @@ tolua_lerror:
 static int toluaI_ui_message_flush00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  message_flush();
- }
+  {
+   message_flush();
+  }
  }
  return 0;
 tolua_lerror:
@@ -246,14 +248,14 @@ tolua_lerror:
 static int toluaI_ui_screen_save00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  screen_save();
- }
+  {
+   screen_save();
+  }
  }
  return 0;
 tolua_lerror:
@@ -265,14 +267,14 @@ tolua_lerror:
 static int toluaI_ui_screen_load00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  screen_load();
- }
+  {
+   screen_load();
+  }
  }
  return 0;
 tolua_lerror:
@@ -284,22 +286,22 @@ tolua_lerror:
 static int toluaI_ui_c_put_str00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,2,LUA_TSTRING,0) ||
- !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,4,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,5)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,2,LUA_TSTRING,0) ||
+     !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,4,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,5)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   byte attr = ((byte)  tolua_getnumber(tolua_S,1,0));
   cptr str = ((cptr)  tolua_getstring(tolua_S,2,0));
   int row = ((int)  tolua_getnumber(tolua_S,3,0));
   int col = ((int)  tolua_getnumber(tolua_S,4,0));
- {
-  c_put_str(attr,str,row,col);
- }
+  {
+   c_put_str(attr,str,row,col);
+  }
  }
  return 0;
 tolua_lerror:
@@ -311,20 +313,20 @@ tolua_lerror:
 static int toluaI_ui_put_str00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
- !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,4)
+     !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
+     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,4)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   cptr str = ((cptr)  tolua_getstring(tolua_S,1,0));
   int row = ((int)  tolua_getnumber(tolua_S,2,0));
   int col = ((int)  tolua_getnumber(tolua_S,3,0));
- {
-  put_str(str,row,col);
- }
+  {
+   put_str(str,row,col);
+  }
  }
  return 0;
 tolua_lerror:
@@ -336,22 +338,22 @@ tolua_lerror:
 static int toluaI_ui_c_prt00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,2,LUA_TSTRING,0) ||
- !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,4,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,5)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,2,LUA_TSTRING,0) ||
+     !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,4,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,5)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   byte attr = ((byte)  tolua_getnumber(tolua_S,1,0));
   cptr str = ((cptr)  tolua_getstring(tolua_S,2,0));
   int row = ((int)  tolua_getnumber(tolua_S,3,0));
   int col = ((int)  tolua_getnumber(tolua_S,4,0));
- {
-  c_prt(attr,str,row,col);
- }
+  {
+   c_prt(attr,str,row,col);
+  }
  }
  return 0;
 tolua_lerror:
@@ -363,20 +365,20 @@ tolua_lerror:
 static int toluaI_ui_prt00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
- !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,4)
+     !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
+     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,4)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   cptr str = ((cptr)  tolua_getstring(tolua_S,1,0));
   int row = ((int)  tolua_getnumber(tolua_S,2,0));
   int col = ((int)  tolua_getnumber(tolua_S,3,0));
- {
-  prt(str,row,col);
- }
+  {
+   prt(str,row,col);
+  }
  }
  return 0;
 tolua_lerror:
@@ -388,18 +390,18 @@ tolua_lerror:
 static int toluaI_ui_c_roff00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,2,LUA_TSTRING,0) ||
- !tolua_isnoobj(tolua_S,3)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,2,LUA_TSTRING,0) ||
+     !tolua_isnoobj(tolua_S,3)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   byte a = ((byte)  tolua_getnumber(tolua_S,1,0));
   cptr str = ((cptr)  tolua_getstring(tolua_S,2,0));
- {
-  c_roff(a,str);
- }
+  {
+   c_roff(a,str);
+  }
  }
  return 0;
 tolua_lerror:
@@ -411,16 +413,16 @@ tolua_lerror:
 static int toluaI_ui_roff00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   cptr str = ((cptr)  tolua_getstring(tolua_S,1,0));
- {
-  roff(str);
- }
+  {
+   roff(str);
+  }
  }
  return 0;
 tolua_lerror:
@@ -432,16 +434,16 @@ tolua_lerror:
 static int toluaI_ui_clear_from00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int row = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  clear_from(row);
- }
+  {
+   clear_from(row);
+  }
  }
  return 0;
 tolua_lerror:
@@ -453,16 +455,16 @@ tolua_lerror:
 static int toluaI_ui_pause_line00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int row = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  pause_line(row);
- }
+  {
+   pause_line(row);
+  }
  }
  return 0;
 tolua_lerror:
@@ -474,16 +476,16 @@ tolua_lerror:
 static int toluaI_ui_request_command00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"bool"),0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"bool"),0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   bool shopping = ((bool)  tolua_getbool(tolua_S,1,0));
- {
-  request_command(shopping);
- }
+  {
+   request_command(shopping);
+  }
  }
  return 0;
 tolua_lerror:
@@ -543,6 +545,71 @@ int tolua_ui_open (lua_State* tolua_S)
  tolua_constant(tolua_S,NULL,"MSG_STAIRS",MSG_STAIRS);
  tolua_constant(tolua_S,NULL,"MSG_HITPOINT_WARN",MSG_HITPOINT_WARN);
  tolua_constant(tolua_S,NULL,"MSG_MAX",MSG_MAX);
+ tolua_constant(tolua_S,NULL,"SOUND_HIT",SOUND_HIT);
+ tolua_constant(tolua_S,NULL,"SOUND_MISS",SOUND_MISS);
+ tolua_constant(tolua_S,NULL,"SOUND_FLEE",SOUND_FLEE);
+ tolua_constant(tolua_S,NULL,"SOUND_DROP",SOUND_DROP);
+ tolua_constant(tolua_S,NULL,"SOUND_KILL",SOUND_KILL);
+ tolua_constant(tolua_S,NULL,"SOUND_LEVEL",SOUND_LEVEL);
+ tolua_constant(tolua_S,NULL,"SOUND_DEATH",SOUND_DEATH);
+ tolua_constant(tolua_S,NULL,"SOUND_STUDY",SOUND_STUDY);
+ tolua_constant(tolua_S,NULL,"SOUND_TELEPORT",SOUND_TELEPORT);
+ tolua_constant(tolua_S,NULL,"SOUND_SHOOT",SOUND_SHOOT);
+ tolua_constant(tolua_S,NULL,"SOUND_QUAFF",SOUND_QUAFF);
+ tolua_constant(tolua_S,NULL,"SOUND_ZAP",SOUND_ZAP);
+ tolua_constant(tolua_S,NULL,"SOUND_WALK",SOUND_WALK);
+ tolua_constant(tolua_S,NULL,"SOUND_TPOTHER",SOUND_TPOTHER);
+ tolua_constant(tolua_S,NULL,"SOUND_HITWALL",SOUND_HITWALL);
+ tolua_constant(tolua_S,NULL,"SOUND_EAT",SOUND_EAT);
+ tolua_constant(tolua_S,NULL,"SOUND_STORE1",SOUND_STORE1);
+ tolua_constant(tolua_S,NULL,"SOUND_STORE2",SOUND_STORE2);
+ tolua_constant(tolua_S,NULL,"SOUND_STORE3",SOUND_STORE3);
+ tolua_constant(tolua_S,NULL,"SOUND_STORE4",SOUND_STORE4);
+ tolua_constant(tolua_S,NULL,"SOUND_DIG",SOUND_DIG);
+ tolua_constant(tolua_S,NULL,"SOUND_OPENDOOR",SOUND_OPENDOOR);
+ tolua_constant(tolua_S,NULL,"SOUND_SHUTDOOR",SOUND_SHUTDOOR);
+ tolua_constant(tolua_S,NULL,"SOUND_TPLEVEL",SOUND_TPLEVEL);
+ tolua_constant(tolua_S,NULL,"SOUND_SCROLL",SOUND_SCROLL);
+ tolua_constant(tolua_S,NULL,"SOUND_BUY",SOUND_BUY);
+ tolua_constant(tolua_S,NULL,"SOUND_SELL",SOUND_SELL);
+ tolua_constant(tolua_S,NULL,"SOUND_WARN",SOUND_WARN);
+ tolua_constant(tolua_S,NULL,"SOUND_ROCKET",SOUND_ROCKET);
+ tolua_constant(tolua_S,NULL,"SOUND_N_KILL",SOUND_N_KILL);
+ tolua_constant(tolua_S,NULL,"SOUND_U_KILL",SOUND_U_KILL);
+ tolua_constant(tolua_S,NULL,"SOUND_QUEST",SOUND_QUEST);
+ tolua_constant(tolua_S,NULL,"SOUND_HEAL",SOUND_HEAL);
+ tolua_constant(tolua_S,NULL,"SOUND_X_HEAL",SOUND_X_HEAL);
+ tolua_constant(tolua_S,NULL,"SOUND_BITE",SOUND_BITE);
+ tolua_constant(tolua_S,NULL,"SOUND_CLAW",SOUND_CLAW);
+ tolua_constant(tolua_S,NULL,"SOUND_M_SPELL",SOUND_M_SPELL);
+ tolua_constant(tolua_S,NULL,"SOUND_SUMMON",SOUND_SUMMON);
+ tolua_constant(tolua_S,NULL,"SOUND_BREATH",SOUND_BREATH);
+ tolua_constant(tolua_S,NULL,"SOUND_BALL",SOUND_BALL);
+ tolua_constant(tolua_S,NULL,"SOUND_M_HEAL",SOUND_M_HEAL);
+ tolua_constant(tolua_S,NULL,"SOUND_ATK_SPELL",SOUND_ATK_SPELL);
+ tolua_constant(tolua_S,NULL,"SOUND_EVIL",SOUND_EVIL);
+ tolua_constant(tolua_S,NULL,"SOUND_TOUCH",SOUND_TOUCH);
+ tolua_constant(tolua_S,NULL,"SOUND_STING",SOUND_STING);
+ tolua_constant(tolua_S,NULL,"SOUND_CRUSH",SOUND_CRUSH);
+ tolua_constant(tolua_S,NULL,"SOUND_SLIME",SOUND_SLIME);
+ tolua_constant(tolua_S,NULL,"SOUND_WAIL",SOUND_WAIL);
+ tolua_constant(tolua_S,NULL,"SOUND_WINNER",SOUND_WINNER);
+ tolua_constant(tolua_S,NULL,"SOUND_FIRE",SOUND_FIRE);
+ tolua_constant(tolua_S,NULL,"SOUND_ACID",SOUND_ACID);
+ tolua_constant(tolua_S,NULL,"SOUND_ELEC",SOUND_ELEC);
+ tolua_constant(tolua_S,NULL,"SOUND_COLD",SOUND_COLD);
+ tolua_constant(tolua_S,NULL,"SOUND_ILLEGAL",SOUND_ILLEGAL);
+ tolua_constant(tolua_S,NULL,"SOUND_FAIL",SOUND_FAIL);
+ tolua_constant(tolua_S,NULL,"SOUND_WAKEUP",SOUND_WAKEUP);
+ tolua_constant(tolua_S,NULL,"SOUND_INVULN",SOUND_INVULN);
+ tolua_constant(tolua_S,NULL,"SOUND_FALL",SOUND_FALL);
+ tolua_constant(tolua_S,NULL,"SOUND_PAIN",SOUND_PAIN);
+ tolua_constant(tolua_S,NULL,"SOUND_DESTITEM",SOUND_DESTITEM);
+ tolua_constant(tolua_S,NULL,"SOUND_MOAN",SOUND_MOAN);
+ tolua_constant(tolua_S,NULL,"SOUND_SHOW",SOUND_SHOW);
+ tolua_constant(tolua_S,NULL,"SOUND_UNUSED",SOUND_UNUSED);
+ tolua_constant(tolua_S,NULL,"SOUND_EXPLODE",SOUND_EXPLODE);
+ tolua_constant(tolua_S,NULL,"SOUND_MAX",SOUND_MAX);
  tolua_constant(tolua_S,NULL,"PN_COMBINE",PN_COMBINE);
  tolua_constant(tolua_S,NULL,"PN_REORDER",PN_REORDER);
  tolua_constant(tolua_S,NULL,"PU_BONUS",PU_BONUS);
@@ -671,6 +738,71 @@ void tolua_ui_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MSG_STAIRS");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MSG_HITPOINT_WARN");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"MSG_MAX");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_HIT");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_MISS");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_FLEE");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_DROP");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_KILL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_LEVEL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_DEATH");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_STUDY");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_TELEPORT");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_SHOOT");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_QUAFF");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_ZAP");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_WALK");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_TPOTHER");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_HITWALL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_EAT");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_STORE1");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_STORE2");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_STORE3");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_STORE4");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_DIG");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_OPENDOOR");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_SHUTDOOR");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_TPLEVEL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_SCROLL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_BUY");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_SELL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_WARN");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_ROCKET");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_N_KILL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_U_KILL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_QUEST");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_HEAL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_X_HEAL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_BITE");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_CLAW");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_M_SPELL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_SUMMON");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_BREATH");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_BALL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_M_HEAL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_ATK_SPELL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_EVIL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_TOUCH");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_STING");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_CRUSH");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_SLIME");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_WAIL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_WINNER");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_FIRE");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_ACID");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_ELEC");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_COLD");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_ILLEGAL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_FAIL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_WAKEUP");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_INVULN");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_FALL");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_PAIN");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_DESTITEM");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_MOAN");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_SHOW");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_UNUSED");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_EXPLODE");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"SOUND_MAX");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"PN_COMBINE");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"PN_REORDER");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"PU_BONUS");

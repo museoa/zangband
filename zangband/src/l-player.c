@@ -1,12 +1,12 @@
 /*
 ** Lua binding: player
-** Generated automatically by tolua 4.0a - angband on Sat Nov  3 00:58:49 2001.
+** Generated automatically by tolua 4.0a - angband on Fri Nov  9 18:34:01 2001.
 */
 
 #include "lua/tolua.h"
 
 /* Exported function */
-int tolua_player_open (lua_State* tolua_S);
+int  tolua_player_open (lua_State* tolua_S);
 void tolua_player_close (lua_State* tolua_S);
 
 #include "angband.h"
@@ -14,6 +14,8 @@ void tolua_player_close (lua_State* tolua_S);
 /* function to register type */
 static void toluaI_reg_types (lua_State* tolua_S)
 {
+ /* Hack - ignore paramters if none */
+ (void) tolua_S;
  tolua_usertype(tolua_S,"player_sex");
  tolua_usertype(tolua_S,"player_class");
  tolua_usertype(tolua_S,"player_race");
@@ -29,8 +31,8 @@ static void toluaI_reg_types (lua_State* tolua_S)
 static int toluaI_get_player_player_race_title(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushstring(tolua_S,(const char*)self->title);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushstring(tolua_S,(const char*)self->title);
  return 1;
 }
 
@@ -38,9 +40,9 @@ static int toluaI_get_player_player_race_title(lua_State* tolua_S)
 static int toluaI_set_player_player_race_title(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TSTRING,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TSTRING,0))
+   TOLUA_ERR_ASSIGN;
   self->title = ((cptr)  tolua_getstring(tolua_S,2,0));
  return 0;
 }
@@ -54,10 +56,10 @@ static int toluaI_get_player_player_race_r_adj(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_race*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->r_adj[toluaI_index]);
  return 1;
 }
@@ -71,10 +73,10 @@ static int toluaI_set_player_player_race_r_adj(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_race*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->r_adj[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -83,8 +85,8 @@ static int toluaI_set_player_player_race_r_adj(lua_State* tolua_S)
 static int toluaI_get_player_player_race_r_dis(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->r_dis);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->r_dis);
  return 1;
 }
 
@@ -92,9 +94,9 @@ static int toluaI_get_player_player_race_r_dis(lua_State* tolua_S)
 static int toluaI_set_player_player_race_r_dis(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->r_dis = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -103,8 +105,8 @@ static int toluaI_set_player_player_race_r_dis(lua_State* tolua_S)
 static int toluaI_get_player_player_race_r_dev(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->r_dev);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->r_dev);
  return 1;
 }
 
@@ -112,9 +114,9 @@ static int toluaI_get_player_player_race_r_dev(lua_State* tolua_S)
 static int toluaI_set_player_player_race_r_dev(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->r_dev = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -123,8 +125,8 @@ static int toluaI_set_player_player_race_r_dev(lua_State* tolua_S)
 static int toluaI_get_player_player_race_r_sav(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->r_sav);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->r_sav);
  return 1;
 }
 
@@ -132,9 +134,9 @@ static int toluaI_get_player_player_race_r_sav(lua_State* tolua_S)
 static int toluaI_set_player_player_race_r_sav(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->r_sav = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -143,8 +145,8 @@ static int toluaI_set_player_player_race_r_sav(lua_State* tolua_S)
 static int toluaI_get_player_player_race_r_stl(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->r_stl);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->r_stl);
  return 1;
 }
 
@@ -152,9 +154,9 @@ static int toluaI_get_player_player_race_r_stl(lua_State* tolua_S)
 static int toluaI_set_player_player_race_r_stl(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->r_stl = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -163,8 +165,8 @@ static int toluaI_set_player_player_race_r_stl(lua_State* tolua_S)
 static int toluaI_get_player_player_race_r_srh(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->r_srh);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->r_srh);
  return 1;
 }
 
@@ -172,9 +174,9 @@ static int toluaI_get_player_player_race_r_srh(lua_State* tolua_S)
 static int toluaI_set_player_player_race_r_srh(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->r_srh = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -183,8 +185,8 @@ static int toluaI_set_player_player_race_r_srh(lua_State* tolua_S)
 static int toluaI_get_player_player_race_r_fos(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->r_fos);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->r_fos);
  return 1;
 }
 
@@ -192,9 +194,9 @@ static int toluaI_get_player_player_race_r_fos(lua_State* tolua_S)
 static int toluaI_set_player_player_race_r_fos(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->r_fos = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -203,8 +205,8 @@ static int toluaI_set_player_player_race_r_fos(lua_State* tolua_S)
 static int toluaI_get_player_player_race_r_thn(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->r_thn);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->r_thn);
  return 1;
 }
 
@@ -212,9 +214,9 @@ static int toluaI_get_player_player_race_r_thn(lua_State* tolua_S)
 static int toluaI_set_player_player_race_r_thn(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->r_thn = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -223,8 +225,8 @@ static int toluaI_set_player_player_race_r_thn(lua_State* tolua_S)
 static int toluaI_get_player_player_race_r_thb(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->r_thb);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->r_thb);
  return 1;
 }
 
@@ -232,9 +234,9 @@ static int toluaI_get_player_player_race_r_thb(lua_State* tolua_S)
 static int toluaI_set_player_player_race_r_thb(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->r_thb = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -243,8 +245,8 @@ static int toluaI_set_player_player_race_r_thb(lua_State* tolua_S)
 static int toluaI_get_player_player_race_r_mhp(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->r_mhp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->r_mhp);
  return 1;
 }
 
@@ -252,9 +254,9 @@ static int toluaI_get_player_player_race_r_mhp(lua_State* tolua_S)
 static int toluaI_set_player_player_race_r_mhp(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->r_mhp = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -263,8 +265,8 @@ static int toluaI_set_player_player_race_r_mhp(lua_State* tolua_S)
 static int toluaI_get_player_player_race_r_exp(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->r_exp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->r_exp);
  return 1;
 }
 
@@ -272,9 +274,9 @@ static int toluaI_get_player_player_race_r_exp(lua_State* tolua_S)
 static int toluaI_set_player_player_race_r_exp(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->r_exp = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -283,8 +285,8 @@ static int toluaI_set_player_player_race_r_exp(lua_State* tolua_S)
 static int toluaI_get_player_player_race_b_age(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->b_age);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->b_age);
  return 1;
 }
 
@@ -292,9 +294,9 @@ static int toluaI_get_player_player_race_b_age(lua_State* tolua_S)
 static int toluaI_set_player_player_race_b_age(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->b_age = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -303,8 +305,8 @@ static int toluaI_set_player_player_race_b_age(lua_State* tolua_S)
 static int toluaI_get_player_player_race_m_age(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->m_age);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->m_age);
  return 1;
 }
 
@@ -312,9 +314,9 @@ static int toluaI_get_player_player_race_m_age(lua_State* tolua_S)
 static int toluaI_set_player_player_race_m_age(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->m_age = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -323,8 +325,8 @@ static int toluaI_set_player_player_race_m_age(lua_State* tolua_S)
 static int toluaI_get_player_player_race_m_b_ht(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->m_b_ht);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->m_b_ht);
  return 1;
 }
 
@@ -332,9 +334,9 @@ static int toluaI_get_player_player_race_m_b_ht(lua_State* tolua_S)
 static int toluaI_set_player_player_race_m_b_ht(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->m_b_ht = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -343,8 +345,8 @@ static int toluaI_set_player_player_race_m_b_ht(lua_State* tolua_S)
 static int toluaI_get_player_player_race_m_m_ht(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->m_m_ht);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->m_m_ht);
  return 1;
 }
 
@@ -352,9 +354,9 @@ static int toluaI_get_player_player_race_m_m_ht(lua_State* tolua_S)
 static int toluaI_set_player_player_race_m_m_ht(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->m_m_ht = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -363,8 +365,8 @@ static int toluaI_set_player_player_race_m_m_ht(lua_State* tolua_S)
 static int toluaI_get_player_player_race_m_b_wt(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->m_b_wt);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->m_b_wt);
  return 1;
 }
 
@@ -372,9 +374,9 @@ static int toluaI_get_player_player_race_m_b_wt(lua_State* tolua_S)
 static int toluaI_set_player_player_race_m_b_wt(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->m_b_wt = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -383,8 +385,8 @@ static int toluaI_set_player_player_race_m_b_wt(lua_State* tolua_S)
 static int toluaI_get_player_player_race_m_m_wt(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->m_m_wt);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->m_m_wt);
  return 1;
 }
 
@@ -392,9 +394,9 @@ static int toluaI_get_player_player_race_m_m_wt(lua_State* tolua_S)
 static int toluaI_set_player_player_race_m_m_wt(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->m_m_wt = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -403,8 +405,8 @@ static int toluaI_set_player_player_race_m_m_wt(lua_State* tolua_S)
 static int toluaI_get_player_player_race_f_b_ht(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->f_b_ht);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->f_b_ht);
  return 1;
 }
 
@@ -412,9 +414,9 @@ static int toluaI_get_player_player_race_f_b_ht(lua_State* tolua_S)
 static int toluaI_set_player_player_race_f_b_ht(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->f_b_ht = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -423,8 +425,8 @@ static int toluaI_set_player_player_race_f_b_ht(lua_State* tolua_S)
 static int toluaI_get_player_player_race_f_m_ht(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->f_m_ht);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->f_m_ht);
  return 1;
 }
 
@@ -432,9 +434,9 @@ static int toluaI_get_player_player_race_f_m_ht(lua_State* tolua_S)
 static int toluaI_set_player_player_race_f_m_ht(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->f_m_ht = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -443,8 +445,8 @@ static int toluaI_set_player_player_race_f_m_ht(lua_State* tolua_S)
 static int toluaI_get_player_player_race_f_b_wt(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->f_b_wt);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->f_b_wt);
  return 1;
 }
 
@@ -452,9 +454,9 @@ static int toluaI_get_player_player_race_f_b_wt(lua_State* tolua_S)
 static int toluaI_set_player_player_race_f_b_wt(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->f_b_wt = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -463,8 +465,8 @@ static int toluaI_set_player_player_race_f_b_wt(lua_State* tolua_S)
 static int toluaI_get_player_player_race_f_m_wt(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->f_m_wt);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->f_m_wt);
  return 1;
 }
 
@@ -472,9 +474,9 @@ static int toluaI_get_player_player_race_f_m_wt(lua_State* tolua_S)
 static int toluaI_set_player_player_race_f_m_wt(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->f_m_wt = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -483,8 +485,8 @@ static int toluaI_set_player_player_race_f_m_wt(lua_State* tolua_S)
 static int toluaI_get_player_player_race_infra(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->infra);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->infra);
  return 1;
 }
 
@@ -492,9 +494,9 @@ static int toluaI_get_player_player_race_infra(lua_State* tolua_S)
 static int toluaI_set_player_player_race_infra(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->infra = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -503,8 +505,8 @@ static int toluaI_set_player_player_race_infra(lua_State* tolua_S)
 static int toluaI_get_player_player_race_choice(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->choice);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->choice);
  return 1;
 }
 
@@ -512,9 +514,9 @@ static int toluaI_get_player_player_race_choice(lua_State* tolua_S)
 static int toluaI_set_player_player_race_choice(lua_State* tolua_S)
 {
   player_race* self = (player_race*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->choice = ((u16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -523,8 +525,8 @@ static int toluaI_set_player_player_race_choice(lua_State* tolua_S)
 static int toluaI_get_player_player_class_title(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushstring(tolua_S,(const char*)self->title);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushstring(tolua_S,(const char*)self->title);
  return 1;
 }
 
@@ -532,9 +534,9 @@ static int toluaI_get_player_player_class_title(lua_State* tolua_S)
 static int toluaI_set_player_player_class_title(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TSTRING,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TSTRING,0))
+   TOLUA_ERR_ASSIGN;
   self->title = ((cptr)  tolua_getstring(tolua_S,2,0));
  return 0;
 }
@@ -548,10 +550,10 @@ static int toluaI_get_player_player_class_c_adj(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_class*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->c_adj[toluaI_index]);
  return 1;
 }
@@ -565,10 +567,10 @@ static int toluaI_set_player_player_class_c_adj(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_class*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->c_adj[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -577,8 +579,8 @@ static int toluaI_set_player_player_class_c_adj(lua_State* tolua_S)
 static int toluaI_get_player_player_class_c_dis(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->c_dis);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->c_dis);
  return 1;
 }
 
@@ -586,9 +588,9 @@ static int toluaI_get_player_player_class_c_dis(lua_State* tolua_S)
 static int toluaI_set_player_player_class_c_dis(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->c_dis = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -597,8 +599,8 @@ static int toluaI_set_player_player_class_c_dis(lua_State* tolua_S)
 static int toluaI_get_player_player_class_c_dev(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->c_dev);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->c_dev);
  return 1;
 }
 
@@ -606,9 +608,9 @@ static int toluaI_get_player_player_class_c_dev(lua_State* tolua_S)
 static int toluaI_set_player_player_class_c_dev(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->c_dev = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -617,8 +619,8 @@ static int toluaI_set_player_player_class_c_dev(lua_State* tolua_S)
 static int toluaI_get_player_player_class_c_sav(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->c_sav);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->c_sav);
  return 1;
 }
 
@@ -626,9 +628,9 @@ static int toluaI_get_player_player_class_c_sav(lua_State* tolua_S)
 static int toluaI_set_player_player_class_c_sav(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->c_sav = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -637,8 +639,8 @@ static int toluaI_set_player_player_class_c_sav(lua_State* tolua_S)
 static int toluaI_get_player_player_class_c_stl(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->c_stl);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->c_stl);
  return 1;
 }
 
@@ -646,9 +648,9 @@ static int toluaI_get_player_player_class_c_stl(lua_State* tolua_S)
 static int toluaI_set_player_player_class_c_stl(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->c_stl = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -657,8 +659,8 @@ static int toluaI_set_player_player_class_c_stl(lua_State* tolua_S)
 static int toluaI_get_player_player_class_c_srh(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->c_srh);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->c_srh);
  return 1;
 }
 
@@ -666,9 +668,9 @@ static int toluaI_get_player_player_class_c_srh(lua_State* tolua_S)
 static int toluaI_set_player_player_class_c_srh(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->c_srh = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -677,8 +679,8 @@ static int toluaI_set_player_player_class_c_srh(lua_State* tolua_S)
 static int toluaI_get_player_player_class_c_fos(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->c_fos);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->c_fos);
  return 1;
 }
 
@@ -686,9 +688,9 @@ static int toluaI_get_player_player_class_c_fos(lua_State* tolua_S)
 static int toluaI_set_player_player_class_c_fos(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->c_fos = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -697,8 +699,8 @@ static int toluaI_set_player_player_class_c_fos(lua_State* tolua_S)
 static int toluaI_get_player_player_class_c_thn(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->c_thn);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->c_thn);
  return 1;
 }
 
@@ -706,9 +708,9 @@ static int toluaI_get_player_player_class_c_thn(lua_State* tolua_S)
 static int toluaI_set_player_player_class_c_thn(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->c_thn = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -717,8 +719,8 @@ static int toluaI_set_player_player_class_c_thn(lua_State* tolua_S)
 static int toluaI_get_player_player_class_c_thb(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->c_thb);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->c_thb);
  return 1;
 }
 
@@ -726,9 +728,9 @@ static int toluaI_get_player_player_class_c_thb(lua_State* tolua_S)
 static int toluaI_set_player_player_class_c_thb(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->c_thb = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -737,8 +739,8 @@ static int toluaI_set_player_player_class_c_thb(lua_State* tolua_S)
 static int toluaI_get_player_player_class_x_dis(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->x_dis);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->x_dis);
  return 1;
 }
 
@@ -746,9 +748,9 @@ static int toluaI_get_player_player_class_x_dis(lua_State* tolua_S)
 static int toluaI_set_player_player_class_x_dis(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->x_dis = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -757,8 +759,8 @@ static int toluaI_set_player_player_class_x_dis(lua_State* tolua_S)
 static int toluaI_get_player_player_class_x_dev(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->x_dev);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->x_dev);
  return 1;
 }
 
@@ -766,9 +768,9 @@ static int toluaI_get_player_player_class_x_dev(lua_State* tolua_S)
 static int toluaI_set_player_player_class_x_dev(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->x_dev = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -777,8 +779,8 @@ static int toluaI_set_player_player_class_x_dev(lua_State* tolua_S)
 static int toluaI_get_player_player_class_x_sav(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->x_sav);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->x_sav);
  return 1;
 }
 
@@ -786,9 +788,9 @@ static int toluaI_get_player_player_class_x_sav(lua_State* tolua_S)
 static int toluaI_set_player_player_class_x_sav(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->x_sav = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -797,8 +799,8 @@ static int toluaI_set_player_player_class_x_sav(lua_State* tolua_S)
 static int toluaI_get_player_player_class_x_stl(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->x_stl);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->x_stl);
  return 1;
 }
 
@@ -806,9 +808,9 @@ static int toluaI_get_player_player_class_x_stl(lua_State* tolua_S)
 static int toluaI_set_player_player_class_x_stl(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->x_stl = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -817,8 +819,8 @@ static int toluaI_set_player_player_class_x_stl(lua_State* tolua_S)
 static int toluaI_get_player_player_class_x_srh(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->x_srh);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->x_srh);
  return 1;
 }
 
@@ -826,9 +828,9 @@ static int toluaI_get_player_player_class_x_srh(lua_State* tolua_S)
 static int toluaI_set_player_player_class_x_srh(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->x_srh = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -837,8 +839,8 @@ static int toluaI_set_player_player_class_x_srh(lua_State* tolua_S)
 static int toluaI_get_player_player_class_x_fos(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->x_fos);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->x_fos);
  return 1;
 }
 
@@ -846,9 +848,9 @@ static int toluaI_get_player_player_class_x_fos(lua_State* tolua_S)
 static int toluaI_set_player_player_class_x_fos(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->x_fos = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -857,8 +859,8 @@ static int toluaI_set_player_player_class_x_fos(lua_State* tolua_S)
 static int toluaI_get_player_player_class_x_thn(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->x_thn);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->x_thn);
  return 1;
 }
 
@@ -866,9 +868,9 @@ static int toluaI_get_player_player_class_x_thn(lua_State* tolua_S)
 static int toluaI_set_player_player_class_x_thn(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->x_thn = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -877,8 +879,8 @@ static int toluaI_set_player_player_class_x_thn(lua_State* tolua_S)
 static int toluaI_get_player_player_class_x_thb(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->x_thb);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->x_thb);
  return 1;
 }
 
@@ -886,9 +888,9 @@ static int toluaI_get_player_player_class_x_thb(lua_State* tolua_S)
 static int toluaI_set_player_player_class_x_thb(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->x_thb = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -897,8 +899,8 @@ static int toluaI_set_player_player_class_x_thb(lua_State* tolua_S)
 static int toluaI_get_player_player_class_c_mhp(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->c_mhp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->c_mhp);
  return 1;
 }
 
@@ -906,9 +908,9 @@ static int toluaI_get_player_player_class_c_mhp(lua_State* tolua_S)
 static int toluaI_set_player_player_class_c_mhp(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->c_mhp = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -917,8 +919,8 @@ static int toluaI_set_player_player_class_c_mhp(lua_State* tolua_S)
 static int toluaI_get_player_player_class_c_exp(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->c_exp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->c_exp);
  return 1;
 }
 
@@ -926,9 +928,9 @@ static int toluaI_get_player_player_class_c_exp(lua_State* tolua_S)
 static int toluaI_set_player_player_class_c_exp(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->c_exp = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -937,8 +939,8 @@ static int toluaI_set_player_player_class_c_exp(lua_State* tolua_S)
 static int toluaI_get_player_player_class_pet_upkeep_div(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->pet_upkeep_div);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->pet_upkeep_div);
  return 1;
 }
 
@@ -946,9 +948,9 @@ static int toluaI_get_player_player_class_pet_upkeep_div(lua_State* tolua_S)
 static int toluaI_set_player_player_class_pet_upkeep_div(lua_State* tolua_S)
 {
   player_class* self = (player_class*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->pet_upkeep_div = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -957,8 +959,8 @@ static int toluaI_set_player_player_class_pet_upkeep_div(lua_State* tolua_S)
 static int toluaI_get_player_player_type_px(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->px);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->px);
  return 1;
 }
 
@@ -966,9 +968,9 @@ static int toluaI_get_player_player_type_px(lua_State* tolua_S)
 static int toluaI_set_player_player_type_px(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->px = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -977,8 +979,8 @@ static int toluaI_set_player_player_type_px(lua_State* tolua_S)
 static int toluaI_get_player_player_type_py(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->py);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->py);
  return 1;
 }
 
@@ -986,9 +988,9 @@ static int toluaI_get_player_player_type_py(lua_State* tolua_S)
 static int toluaI_set_player_player_type_py(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->py = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -997,8 +999,8 @@ static int toluaI_set_player_player_type_py(lua_State* tolua_S)
 static int toluaI_get_player_player_type_psex(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->psex);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->psex);
  return 1;
 }
 
@@ -1006,9 +1008,9 @@ static int toluaI_get_player_player_type_psex(lua_State* tolua_S)
 static int toluaI_set_player_player_type_psex(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->psex = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1017,8 +1019,8 @@ static int toluaI_set_player_player_type_psex(lua_State* tolua_S)
 static int toluaI_get_player_player_type_prace(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->prace);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->prace);
  return 1;
 }
 
@@ -1026,9 +1028,9 @@ static int toluaI_get_player_player_type_prace(lua_State* tolua_S)
 static int toluaI_set_player_player_type_prace(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->prace = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1037,8 +1039,8 @@ static int toluaI_set_player_player_type_prace(lua_State* tolua_S)
 static int toluaI_get_player_player_type_pclass(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->pclass);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->pclass);
  return 1;
 }
 
@@ -1046,9 +1048,9 @@ static int toluaI_get_player_player_type_pclass(lua_State* tolua_S)
 static int toluaI_set_player_player_type_pclass(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->pclass = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1057,8 +1059,8 @@ static int toluaI_set_player_player_type_pclass(lua_State* tolua_S)
 static int toluaI_get_player_player_type_realm1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->realm1);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->realm1);
  return 1;
 }
 
@@ -1066,9 +1068,9 @@ static int toluaI_get_player_player_type_realm1(lua_State* tolua_S)
 static int toluaI_set_player_player_type_realm1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->realm1 = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1077,8 +1079,8 @@ static int toluaI_set_player_player_type_realm1(lua_State* tolua_S)
 static int toluaI_get_player_player_type_realm2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->realm2);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->realm2);
  return 1;
 }
 
@@ -1086,9 +1088,9 @@ static int toluaI_get_player_player_type_realm2(lua_State* tolua_S)
 static int toluaI_set_player_player_type_realm2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->realm2 = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1097,8 +1099,8 @@ static int toluaI_set_player_player_type_realm2(lua_State* tolua_S)
 static int toluaI_get_player_player_type_hitdie(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->hitdie);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->hitdie);
  return 1;
 }
 
@@ -1106,9 +1108,9 @@ static int toluaI_get_player_player_type_hitdie(lua_State* tolua_S)
 static int toluaI_set_player_player_type_hitdie(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->hitdie = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1117,8 +1119,8 @@ static int toluaI_set_player_player_type_hitdie(lua_State* tolua_S)
 static int toluaI_get_player_player_type_age(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->age);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->age);
  return 1;
 }
 
@@ -1126,9 +1128,9 @@ static int toluaI_get_player_player_type_age(lua_State* tolua_S)
 static int toluaI_set_player_player_type_age(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->age = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1137,8 +1139,8 @@ static int toluaI_set_player_player_type_age(lua_State* tolua_S)
 static int toluaI_get_player_player_type_ht(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->ht);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->ht);
  return 1;
 }
 
@@ -1146,9 +1148,9 @@ static int toluaI_get_player_player_type_ht(lua_State* tolua_S)
 static int toluaI_set_player_player_type_ht(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->ht = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1157,8 +1159,8 @@ static int toluaI_set_player_player_type_ht(lua_State* tolua_S)
 static int toluaI_get_player_player_type_wt(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->wt);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->wt);
  return 1;
 }
 
@@ -1166,9 +1168,9 @@ static int toluaI_get_player_player_type_wt(lua_State* tolua_S)
 static int toluaI_set_player_player_type_wt(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->wt = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1177,8 +1179,8 @@ static int toluaI_set_player_player_type_wt(lua_State* tolua_S)
 static int toluaI_get_player_player_type_sc(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->sc);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->sc);
  return 1;
 }
 
@@ -1186,9 +1188,9 @@ static int toluaI_get_player_player_type_sc(lua_State* tolua_S)
 static int toluaI_set_player_player_type_sc(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->sc = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1197,8 +1199,8 @@ static int toluaI_set_player_player_type_sc(lua_State* tolua_S)
 static int toluaI_get_player_player_type_max_depth(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->max_depth);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->max_depth);
  return 1;
 }
 
@@ -1206,9 +1208,9 @@ static int toluaI_get_player_player_type_max_depth(lua_State* tolua_S)
 static int toluaI_set_player_player_type_max_depth(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->max_depth = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1217,8 +1219,8 @@ static int toluaI_set_player_player_type_max_depth(lua_State* tolua_S)
 static int toluaI_get_player_player_type_depth(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->depth);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->depth);
  return 1;
 }
 
@@ -1226,9 +1228,9 @@ static int toluaI_get_player_player_type_depth(lua_State* tolua_S)
 static int toluaI_set_player_player_type_depth(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->depth = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1237,8 +1239,8 @@ static int toluaI_set_player_player_type_depth(lua_State* tolua_S)
 static int toluaI_get_player_player_type_max_lev(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->max_lev);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->max_lev);
  return 1;
 }
 
@@ -1246,9 +1248,9 @@ static int toluaI_get_player_player_type_max_lev(lua_State* tolua_S)
 static int toluaI_set_player_player_type_max_lev(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->max_lev = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1257,8 +1259,8 @@ static int toluaI_set_player_player_type_max_lev(lua_State* tolua_S)
 static int toluaI_get_player_player_type_lev(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->lev);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->lev);
  return 1;
 }
 
@@ -1266,9 +1268,9 @@ static int toluaI_get_player_player_type_lev(lua_State* tolua_S)
 static int toluaI_set_player_player_type_lev(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->lev = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1277,8 +1279,8 @@ static int toluaI_set_player_player_type_lev(lua_State* tolua_S)
 static int toluaI_get_player_player_type_exp_frac(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->exp_frac);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->exp_frac);
  return 1;
 }
 
@@ -1286,9 +1288,9 @@ static int toluaI_get_player_player_type_exp_frac(lua_State* tolua_S)
 static int toluaI_set_player_player_type_exp_frac(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->exp_frac = ((u16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1297,8 +1299,8 @@ static int toluaI_set_player_player_type_exp_frac(lua_State* tolua_S)
 static int toluaI_get_player_player_type_max_exp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->max_exp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->max_exp);
  return 1;
 }
 
@@ -1306,9 +1308,9 @@ static int toluaI_get_player_player_type_max_exp(lua_State* tolua_S)
 static int toluaI_set_player_player_type_max_exp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->max_exp = ((s32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1317,8 +1319,8 @@ static int toluaI_set_player_player_type_max_exp(lua_State* tolua_S)
 static int toluaI_get_player_player_type_exp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->exp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->exp);
  return 1;
 }
 
@@ -1326,9 +1328,9 @@ static int toluaI_get_player_player_type_exp(lua_State* tolua_S)
 static int toluaI_set_player_player_type_exp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->exp = ((s32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1337,8 +1339,8 @@ static int toluaI_set_player_player_type_exp(lua_State* tolua_S)
 static int toluaI_get_player_player_type_au(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->au);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->au);
  return 1;
 }
 
@@ -1346,9 +1348,9 @@ static int toluaI_get_player_player_type_au(lua_State* tolua_S)
 static int toluaI_set_player_player_type_au(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->au = ((s32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1357,8 +1359,8 @@ static int toluaI_set_player_player_type_au(lua_State* tolua_S)
 static int toluaI_get_player_player_type_town_num(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->town_num);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->town_num);
  return 1;
 }
 
@@ -1366,9 +1368,9 @@ static int toluaI_get_player_player_type_town_num(lua_State* tolua_S)
 static int toluaI_set_player_player_type_town_num(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->town_num = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1377,8 +1379,8 @@ static int toluaI_set_player_player_type_town_num(lua_State* tolua_S)
 static int toluaI_get_player_player_type_inside_quest(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->inside_quest);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->inside_quest);
  return 1;
 }
 
@@ -1386,9 +1388,9 @@ static int toluaI_get_player_player_type_inside_quest(lua_State* tolua_S)
 static int toluaI_set_player_player_type_inside_quest(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->inside_quest = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1397,8 +1399,8 @@ static int toluaI_set_player_player_type_inside_quest(lua_State* tolua_S)
 static int toluaI_get_player_player_type_wilderness_x(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->wilderness_x);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->wilderness_x);
  return 1;
 }
 
@@ -1406,9 +1408,9 @@ static int toluaI_get_player_player_type_wilderness_x(lua_State* tolua_S)
 static int toluaI_set_player_player_type_wilderness_x(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->wilderness_x = ((s32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1417,8 +1419,8 @@ static int toluaI_set_player_player_type_wilderness_x(lua_State* tolua_S)
 static int toluaI_get_player_player_type_wilderness_y(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->wilderness_y);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->wilderness_y);
  return 1;
 }
 
@@ -1426,9 +1428,9 @@ static int toluaI_get_player_player_type_wilderness_y(lua_State* tolua_S)
 static int toluaI_set_player_player_type_wilderness_y(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->wilderness_y = ((s32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1437,8 +1439,8 @@ static int toluaI_set_player_player_type_wilderness_y(lua_State* tolua_S)
 static int toluaI_get_player_player_type_mhp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->mhp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->mhp);
  return 1;
 }
 
@@ -1446,9 +1448,9 @@ static int toluaI_get_player_player_type_mhp(lua_State* tolua_S)
 static int toluaI_set_player_player_type_mhp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->mhp = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1457,8 +1459,8 @@ static int toluaI_set_player_player_type_mhp(lua_State* tolua_S)
 static int toluaI_get_player_player_type_chp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->chp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->chp);
  return 1;
 }
 
@@ -1466,9 +1468,9 @@ static int toluaI_get_player_player_type_chp(lua_State* tolua_S)
 static int toluaI_set_player_player_type_chp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->chp = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1477,8 +1479,8 @@ static int toluaI_set_player_player_type_chp(lua_State* tolua_S)
 static int toluaI_get_player_player_type_chp_frac(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->chp_frac);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->chp_frac);
  return 1;
 }
 
@@ -1486,9 +1488,9 @@ static int toluaI_get_player_player_type_chp_frac(lua_State* tolua_S)
 static int toluaI_set_player_player_type_chp_frac(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->chp_frac = ((u16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1497,8 +1499,8 @@ static int toluaI_set_player_player_type_chp_frac(lua_State* tolua_S)
 static int toluaI_get_player_player_type_msp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->msp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->msp);
  return 1;
 }
 
@@ -1506,9 +1508,9 @@ static int toluaI_get_player_player_type_msp(lua_State* tolua_S)
 static int toluaI_set_player_player_type_msp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->msp = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1517,8 +1519,8 @@ static int toluaI_set_player_player_type_msp(lua_State* tolua_S)
 static int toluaI_get_player_player_type_csp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->csp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->csp);
  return 1;
 }
 
@@ -1526,9 +1528,9 @@ static int toluaI_get_player_player_type_csp(lua_State* tolua_S)
 static int toluaI_set_player_player_type_csp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->csp = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1537,8 +1539,8 @@ static int toluaI_set_player_player_type_csp(lua_State* tolua_S)
 static int toluaI_get_player_player_type_csp_frac(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->csp_frac);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->csp_frac);
  return 1;
 }
 
@@ -1546,9 +1548,9 @@ static int toluaI_get_player_player_type_csp_frac(lua_State* tolua_S)
 static int toluaI_set_player_player_type_csp_frac(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->csp_frac = ((u16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1562,10 +1564,10 @@ static int toluaI_get_player_player_type_stat_max(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->stat_max[toluaI_index]);
  return 1;
 }
@@ -1579,10 +1581,10 @@ static int toluaI_set_player_player_type_stat_max(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->stat_max[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -1596,10 +1598,10 @@ static int toluaI_get_player_player_type_stat_cur(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->stat_cur[toluaI_index]);
  return 1;
 }
@@ -1613,10 +1615,10 @@ static int toluaI_set_player_player_type_stat_cur(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->stat_cur[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -1625,8 +1627,8 @@ static int toluaI_set_player_player_type_stat_cur(lua_State* tolua_S)
 static int toluaI_get_player_player_type_fast(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->fast);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->fast);
  return 1;
 }
 
@@ -1634,9 +1636,9 @@ static int toluaI_get_player_player_type_fast(lua_State* tolua_S)
 static int toluaI_set_player_player_type_fast(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->fast = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1645,8 +1647,8 @@ static int toluaI_set_player_player_type_fast(lua_State* tolua_S)
 static int toluaI_get_player_player_type_slow(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->slow);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->slow);
  return 1;
 }
 
@@ -1654,9 +1656,9 @@ static int toluaI_get_player_player_type_slow(lua_State* tolua_S)
 static int toluaI_set_player_player_type_slow(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->slow = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1665,8 +1667,8 @@ static int toluaI_set_player_player_type_slow(lua_State* tolua_S)
 static int toluaI_get_player_player_type_blind(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->blind);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->blind);
  return 1;
 }
 
@@ -1674,9 +1676,9 @@ static int toluaI_get_player_player_type_blind(lua_State* tolua_S)
 static int toluaI_set_player_player_type_blind(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->blind = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1685,8 +1687,8 @@ static int toluaI_set_player_player_type_blind(lua_State* tolua_S)
 static int toluaI_get_player_player_type_paralyzed(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->paralyzed);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->paralyzed);
  return 1;
 }
 
@@ -1694,9 +1696,9 @@ static int toluaI_get_player_player_type_paralyzed(lua_State* tolua_S)
 static int toluaI_set_player_player_type_paralyzed(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->paralyzed = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1705,8 +1707,8 @@ static int toluaI_set_player_player_type_paralyzed(lua_State* tolua_S)
 static int toluaI_get_player_player_type_confused(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->confused);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->confused);
  return 1;
 }
 
@@ -1714,9 +1716,9 @@ static int toluaI_get_player_player_type_confused(lua_State* tolua_S)
 static int toluaI_set_player_player_type_confused(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->confused = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1725,8 +1727,8 @@ static int toluaI_set_player_player_type_confused(lua_State* tolua_S)
 static int toluaI_get_player_player_type_afraid(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->afraid);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->afraid);
  return 1;
 }
 
@@ -1734,9 +1736,9 @@ static int toluaI_get_player_player_type_afraid(lua_State* tolua_S)
 static int toluaI_set_player_player_type_afraid(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->afraid = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1745,8 +1747,8 @@ static int toluaI_set_player_player_type_afraid(lua_State* tolua_S)
 static int toluaI_get_player_player_type_image(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->image);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->image);
  return 1;
 }
 
@@ -1754,9 +1756,9 @@ static int toluaI_get_player_player_type_image(lua_State* tolua_S)
 static int toluaI_set_player_player_type_image(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->image = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1765,8 +1767,8 @@ static int toluaI_set_player_player_type_image(lua_State* tolua_S)
 static int toluaI_get_player_player_type_poisoned(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->poisoned);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->poisoned);
  return 1;
 }
 
@@ -1774,9 +1776,9 @@ static int toluaI_get_player_player_type_poisoned(lua_State* tolua_S)
 static int toluaI_set_player_player_type_poisoned(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->poisoned = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1785,8 +1787,8 @@ static int toluaI_set_player_player_type_poisoned(lua_State* tolua_S)
 static int toluaI_get_player_player_type_cut(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->cut);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->cut);
  return 1;
 }
 
@@ -1794,9 +1796,9 @@ static int toluaI_get_player_player_type_cut(lua_State* tolua_S)
 static int toluaI_set_player_player_type_cut(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->cut = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1805,8 +1807,8 @@ static int toluaI_set_player_player_type_cut(lua_State* tolua_S)
 static int toluaI_get_player_player_type_stun(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->stun);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->stun);
  return 1;
 }
 
@@ -1814,9 +1816,9 @@ static int toluaI_get_player_player_type_stun(lua_State* tolua_S)
 static int toluaI_set_player_player_type_stun(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->stun = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1825,8 +1827,8 @@ static int toluaI_set_player_player_type_stun(lua_State* tolua_S)
 static int toluaI_get_player_player_type_protevil(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->protevil);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->protevil);
  return 1;
 }
 
@@ -1834,9 +1836,9 @@ static int toluaI_get_player_player_type_protevil(lua_State* tolua_S)
 static int toluaI_set_player_player_type_protevil(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->protevil = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1845,8 +1847,8 @@ static int toluaI_set_player_player_type_protevil(lua_State* tolua_S)
 static int toluaI_get_player_player_type_invuln(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->invuln);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->invuln);
  return 1;
 }
 
@@ -1854,9 +1856,9 @@ static int toluaI_get_player_player_type_invuln(lua_State* tolua_S)
 static int toluaI_set_player_player_type_invuln(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->invuln = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1865,8 +1867,8 @@ static int toluaI_set_player_player_type_invuln(lua_State* tolua_S)
 static int toluaI_get_player_player_type_hero(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->hero);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->hero);
  return 1;
 }
 
@@ -1874,9 +1876,9 @@ static int toluaI_get_player_player_type_hero(lua_State* tolua_S)
 static int toluaI_set_player_player_type_hero(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->hero = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1885,8 +1887,8 @@ static int toluaI_set_player_player_type_hero(lua_State* tolua_S)
 static int toluaI_get_player_player_type_shero(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->shero);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->shero);
  return 1;
 }
 
@@ -1894,9 +1896,9 @@ static int toluaI_get_player_player_type_shero(lua_State* tolua_S)
 static int toluaI_set_player_player_type_shero(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->shero = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1905,8 +1907,8 @@ static int toluaI_set_player_player_type_shero(lua_State* tolua_S)
 static int toluaI_get_player_player_type_shield(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->shield);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->shield);
  return 1;
 }
 
@@ -1914,9 +1916,9 @@ static int toluaI_get_player_player_type_shield(lua_State* tolua_S)
 static int toluaI_set_player_player_type_shield(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->shield = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1925,8 +1927,8 @@ static int toluaI_set_player_player_type_shield(lua_State* tolua_S)
 static int toluaI_get_player_player_type_blessed(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->blessed);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->blessed);
  return 1;
 }
 
@@ -1934,9 +1936,9 @@ static int toluaI_get_player_player_type_blessed(lua_State* tolua_S)
 static int toluaI_set_player_player_type_blessed(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->blessed = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1945,8 +1947,8 @@ static int toluaI_set_player_player_type_blessed(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_invis(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_invis);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_invis);
  return 1;
 }
 
@@ -1954,9 +1956,9 @@ static int toluaI_get_player_player_type_tim_invis(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_invis(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_invis = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1965,8 +1967,8 @@ static int toluaI_set_player_player_type_tim_invis(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_infra(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_infra);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_infra);
  return 1;
 }
 
@@ -1974,9 +1976,9 @@ static int toluaI_get_player_player_type_tim_infra(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_infra(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_infra = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -1985,8 +1987,8 @@ static int toluaI_set_player_player_type_tim_infra(lua_State* tolua_S)
 static int toluaI_get_player_player_type_oppose_acid(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->oppose_acid);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->oppose_acid);
  return 1;
 }
 
@@ -1994,9 +1996,9 @@ static int toluaI_get_player_player_type_oppose_acid(lua_State* tolua_S)
 static int toluaI_set_player_player_type_oppose_acid(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->oppose_acid = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2005,8 +2007,8 @@ static int toluaI_set_player_player_type_oppose_acid(lua_State* tolua_S)
 static int toluaI_get_player_player_type_oppose_elec(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->oppose_elec);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->oppose_elec);
  return 1;
 }
 
@@ -2014,9 +2016,9 @@ static int toluaI_get_player_player_type_oppose_elec(lua_State* tolua_S)
 static int toluaI_set_player_player_type_oppose_elec(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->oppose_elec = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2025,8 +2027,8 @@ static int toluaI_set_player_player_type_oppose_elec(lua_State* tolua_S)
 static int toluaI_get_player_player_type_oppose_fire(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->oppose_fire);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->oppose_fire);
  return 1;
 }
 
@@ -2034,9 +2036,9 @@ static int toluaI_get_player_player_type_oppose_fire(lua_State* tolua_S)
 static int toluaI_set_player_player_type_oppose_fire(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->oppose_fire = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2045,8 +2047,8 @@ static int toluaI_set_player_player_type_oppose_fire(lua_State* tolua_S)
 static int toluaI_get_player_player_type_oppose_cold(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->oppose_cold);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->oppose_cold);
  return 1;
 }
 
@@ -2054,9 +2056,9 @@ static int toluaI_get_player_player_type_oppose_cold(lua_State* tolua_S)
 static int toluaI_set_player_player_type_oppose_cold(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->oppose_cold = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2065,8 +2067,8 @@ static int toluaI_set_player_player_type_oppose_cold(lua_State* tolua_S)
 static int toluaI_get_player_player_type_oppose_pois(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->oppose_pois);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->oppose_pois);
  return 1;
 }
 
@@ -2074,9 +2076,9 @@ static int toluaI_get_player_player_type_oppose_pois(lua_State* tolua_S)
 static int toluaI_set_player_player_type_oppose_pois(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->oppose_pois = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2085,8 +2087,8 @@ static int toluaI_set_player_player_type_oppose_pois(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_esp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_esp);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_esp);
  return 1;
 }
 
@@ -2094,9 +2096,9 @@ static int toluaI_get_player_player_type_tim_esp(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_esp(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_esp = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2105,8 +2107,8 @@ static int toluaI_set_player_player_type_tim_esp(lua_State* tolua_S)
 static int toluaI_get_player_player_type_wraith_form(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->wraith_form);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->wraith_form);
  return 1;
 }
 
@@ -2114,9 +2116,9 @@ static int toluaI_get_player_player_type_wraith_form(lua_State* tolua_S)
 static int toluaI_set_player_player_type_wraith_form(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->wraith_form = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2125,8 +2127,8 @@ static int toluaI_set_player_player_type_wraith_form(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_magic(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->resist_magic);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->resist_magic);
  return 1;
 }
 
@@ -2134,9 +2136,9 @@ static int toluaI_get_player_player_type_resist_magic(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_magic(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->resist_magic = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2145,8 +2147,8 @@ static int toluaI_set_player_player_type_resist_magic(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_xtra1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_xtra1);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_xtra1);
  return 1;
 }
 
@@ -2154,9 +2156,9 @@ static int toluaI_get_player_player_type_tim_xtra1(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_xtra1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_xtra1 = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2165,8 +2167,8 @@ static int toluaI_set_player_player_type_tim_xtra1(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_xtra2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_xtra2);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_xtra2);
  return 1;
 }
 
@@ -2174,9 +2176,9 @@ static int toluaI_get_player_player_type_tim_xtra2(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_xtra2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_xtra2 = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2185,8 +2187,8 @@ static int toluaI_set_player_player_type_tim_xtra2(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_xtra3(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_xtra3);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_xtra3);
  return 1;
 }
 
@@ -2194,9 +2196,9 @@ static int toluaI_get_player_player_type_tim_xtra3(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_xtra3(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_xtra3 = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2205,8 +2207,8 @@ static int toluaI_set_player_player_type_tim_xtra3(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_xtra4(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_xtra4);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_xtra4);
  return 1;
 }
 
@@ -2214,9 +2216,9 @@ static int toluaI_get_player_player_type_tim_xtra4(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_xtra4(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_xtra4 = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2225,8 +2227,8 @@ static int toluaI_set_player_player_type_tim_xtra4(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_xtra5(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_xtra5);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_xtra5);
  return 1;
 }
 
@@ -2234,9 +2236,9 @@ static int toluaI_get_player_player_type_tim_xtra5(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_xtra5(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_xtra5 = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2245,8 +2247,8 @@ static int toluaI_set_player_player_type_tim_xtra5(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_xtra6(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_xtra6);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_xtra6);
  return 1;
 }
 
@@ -2254,9 +2256,9 @@ static int toluaI_get_player_player_type_tim_xtra6(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_xtra6(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_xtra6 = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2265,8 +2267,8 @@ static int toluaI_set_player_player_type_tim_xtra6(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_xtra7(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_xtra7);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_xtra7);
  return 1;
 }
 
@@ -2274,9 +2276,9 @@ static int toluaI_get_player_player_type_tim_xtra7(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_xtra7(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_xtra7 = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2285,8 +2287,8 @@ static int toluaI_set_player_player_type_tim_xtra7(lua_State* tolua_S)
 static int toluaI_get_player_player_type_tim_xtra8(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->tim_xtra8);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->tim_xtra8);
  return 1;
 }
 
@@ -2294,9 +2296,9 @@ static int toluaI_get_player_player_type_tim_xtra8(lua_State* tolua_S)
 static int toluaI_set_player_player_type_tim_xtra8(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->tim_xtra8 = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2305,8 +2307,8 @@ static int toluaI_set_player_player_type_tim_xtra8(lua_State* tolua_S)
 static int toluaI_get_player_player_type_muta1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->muta1);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->muta1);
  return 1;
 }
 
@@ -2314,9 +2316,9 @@ static int toluaI_get_player_player_type_muta1(lua_State* tolua_S)
 static int toluaI_set_player_player_type_muta1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->muta1 = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2325,8 +2327,8 @@ static int toluaI_set_player_player_type_muta1(lua_State* tolua_S)
 static int toluaI_get_player_player_type_muta2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->muta2);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->muta2);
  return 1;
 }
 
@@ -2334,9 +2336,9 @@ static int toluaI_get_player_player_type_muta2(lua_State* tolua_S)
 static int toluaI_set_player_player_type_muta2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->muta2 = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2345,8 +2347,8 @@ static int toluaI_set_player_player_type_muta2(lua_State* tolua_S)
 static int toluaI_get_player_player_type_muta3(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->muta3);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->muta3);
  return 1;
 }
 
@@ -2354,9 +2356,9 @@ static int toluaI_get_player_player_type_muta3(lua_State* tolua_S)
 static int toluaI_set_player_player_type_muta3(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->muta3 = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2370,10 +2372,10 @@ static int toluaI_get_player_player_type_virtues(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=MAX_PLAYER_VIRTUES)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->virtues[toluaI_index]);
  return 1;
 }
@@ -2387,10 +2389,10 @@ static int toluaI_set_player_player_type_virtues(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=MAX_PLAYER_VIRTUES)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->virtues[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -2404,10 +2406,10 @@ static int toluaI_get_player_player_type_vir_types(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=MAX_PLAYER_VIRTUES)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->vir_types[toluaI_index]);
  return 1;
 }
@@ -2421,10 +2423,10 @@ static int toluaI_set_player_player_type_vir_types(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=MAX_PLAYER_VIRTUES)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->vir_types[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -2433,8 +2435,8 @@ static int toluaI_set_player_player_type_vir_types(lua_State* tolua_S)
 static int toluaI_get_player_player_type_chaos_patron(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->chaos_patron);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->chaos_patron);
  return 1;
 }
 
@@ -2442,9 +2444,9 @@ static int toluaI_get_player_player_type_chaos_patron(lua_State* tolua_S)
 static int toluaI_set_player_player_type_chaos_patron(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->chaos_patron = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2453,8 +2455,8 @@ static int toluaI_set_player_player_type_chaos_patron(lua_State* tolua_S)
 static int toluaI_get_player_player_type_word_recall(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->word_recall);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->word_recall);
  return 1;
 }
 
@@ -2462,9 +2464,9 @@ static int toluaI_get_player_player_type_word_recall(lua_State* tolua_S)
 static int toluaI_set_player_player_type_word_recall(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->word_recall = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2473,8 +2475,8 @@ static int toluaI_set_player_player_type_word_recall(lua_State* tolua_S)
 static int toluaI_get_player_player_type_energy(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->energy);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->energy);
  return 1;
 }
 
@@ -2482,9 +2484,9 @@ static int toluaI_get_player_player_type_energy(lua_State* tolua_S)
 static int toluaI_set_player_player_type_energy(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->energy = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2493,8 +2495,8 @@ static int toluaI_set_player_player_type_energy(lua_State* tolua_S)
 static int toluaI_get_player_player_type_food(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->food);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->food);
  return 1;
 }
 
@@ -2502,9 +2504,9 @@ static int toluaI_get_player_player_type_food(lua_State* tolua_S)
 static int toluaI_set_player_player_type_food(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->food = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2513,8 +2515,8 @@ static int toluaI_set_player_player_type_food(lua_State* tolua_S)
 static int toluaI_get_player_player_type_spell_learned1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->spell_learned1);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->spell_learned1);
  return 1;
 }
 
@@ -2522,9 +2524,9 @@ static int toluaI_get_player_player_type_spell_learned1(lua_State* tolua_S)
 static int toluaI_set_player_player_type_spell_learned1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->spell_learned1 = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2533,8 +2535,8 @@ static int toluaI_set_player_player_type_spell_learned1(lua_State* tolua_S)
 static int toluaI_get_player_player_type_spell_learned2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->spell_learned2);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->spell_learned2);
  return 1;
 }
 
@@ -2542,9 +2544,9 @@ static int toluaI_get_player_player_type_spell_learned2(lua_State* tolua_S)
 static int toluaI_set_player_player_type_spell_learned2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->spell_learned2 = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2553,8 +2555,8 @@ static int toluaI_set_player_player_type_spell_learned2(lua_State* tolua_S)
 static int toluaI_get_player_player_type_spell_worked1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->spell_worked1);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->spell_worked1);
  return 1;
 }
 
@@ -2562,9 +2564,9 @@ static int toluaI_get_player_player_type_spell_worked1(lua_State* tolua_S)
 static int toluaI_set_player_player_type_spell_worked1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->spell_worked1 = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2573,8 +2575,8 @@ static int toluaI_set_player_player_type_spell_worked1(lua_State* tolua_S)
 static int toluaI_get_player_player_type_spell_worked2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->spell_worked2);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->spell_worked2);
  return 1;
 }
 
@@ -2582,9 +2584,9 @@ static int toluaI_get_player_player_type_spell_worked2(lua_State* tolua_S)
 static int toluaI_set_player_player_type_spell_worked2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->spell_worked2 = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2593,8 +2595,8 @@ static int toluaI_set_player_player_type_spell_worked2(lua_State* tolua_S)
 static int toluaI_get_player_player_type_spell_forgotten1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->spell_forgotten1);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->spell_forgotten1);
  return 1;
 }
 
@@ -2602,9 +2604,9 @@ static int toluaI_get_player_player_type_spell_forgotten1(lua_State* tolua_S)
 static int toluaI_set_player_player_type_spell_forgotten1(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->spell_forgotten1 = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2613,8 +2615,8 @@ static int toluaI_set_player_player_type_spell_forgotten1(lua_State* tolua_S)
 static int toluaI_get_player_player_type_spell_forgotten2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->spell_forgotten2);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->spell_forgotten2);
  return 1;
 }
 
@@ -2622,9 +2624,9 @@ static int toluaI_get_player_player_type_spell_forgotten2(lua_State* tolua_S)
 static int toluaI_set_player_player_type_spell_forgotten2(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->spell_forgotten2 = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2638,10 +2640,10 @@ static int toluaI_get_player_player_type_spell_order(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=PY_MAX_SPELLS)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->spell_order[toluaI_index]);
  return 1;
 }
@@ -2655,10 +2657,10 @@ static int toluaI_set_player_player_type_spell_order(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=PY_MAX_SPELLS)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->spell_order[toluaI_index] = ((byte)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -2672,10 +2674,10 @@ static int toluaI_get_player_player_type_player_hp(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=PY_MAX_LEVEL)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->player_hp[toluaI_index]);
  return 1;
 }
@@ -2689,10 +2691,10 @@ static int toluaI_set_player_player_type_player_hp(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=PY_MAX_LEVEL)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->player_hp[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -2706,10 +2708,10 @@ static int toluaI_get_player_player_type_died_from(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=80)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->died_from[toluaI_index]);
  return 1;
 }
@@ -2723,10 +2725,10 @@ static int toluaI_set_player_player_type_died_from(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=80)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->died_from[toluaI_index] = ((char)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -2735,8 +2737,8 @@ static int toluaI_set_player_player_type_died_from(lua_State* tolua_S)
 static int toluaI_get_player_player_type_confusing(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->confusing);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->confusing);
  return 1;
 }
 
@@ -2744,9 +2746,9 @@ static int toluaI_get_player_player_type_confusing(lua_State* tolua_S)
 static int toluaI_set_player_player_type_confusing(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->confusing = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2755,8 +2757,8 @@ static int toluaI_set_player_player_type_confusing(lua_State* tolua_S)
 static int toluaI_get_player_player_type_searching(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->searching);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->searching);
  return 1;
 }
 
@@ -2764,9 +2766,9 @@ static int toluaI_get_player_player_type_searching(lua_State* tolua_S)
 static int toluaI_set_player_player_type_searching(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->searching = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2775,8 +2777,8 @@ static int toluaI_set_player_player_type_searching(lua_State* tolua_S)
 static int toluaI_get_player_player_type_total_winner(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->total_winner);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->total_winner);
  return 1;
 }
 
@@ -2784,9 +2786,9 @@ static int toluaI_get_player_player_type_total_winner(lua_State* tolua_S)
 static int toluaI_set_player_player_type_total_winner(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->total_winner = ((u16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2795,8 +2797,8 @@ static int toluaI_set_player_player_type_total_winner(lua_State* tolua_S)
 static int toluaI_get_player_player_type_panic_save(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->panic_save);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->panic_save);
  return 1;
 }
 
@@ -2804,9 +2806,9 @@ static int toluaI_get_player_player_type_panic_save(lua_State* tolua_S)
 static int toluaI_set_player_player_type_panic_save(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->panic_save = ((u16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2815,8 +2817,8 @@ static int toluaI_set_player_player_type_panic_save(lua_State* tolua_S)
 static int toluaI_get_player_player_type_noscore(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->noscore);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->noscore);
  return 1;
 }
 
@@ -2824,9 +2826,9 @@ static int toluaI_get_player_player_type_noscore(lua_State* tolua_S)
 static int toluaI_set_player_player_type_noscore(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->noscore = ((u16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2835,8 +2837,8 @@ static int toluaI_set_player_player_type_noscore(lua_State* tolua_S)
 static int toluaI_get_player_player_type_is_dead(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->is_dead);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->is_dead);
  return 1;
 }
 
@@ -2844,9 +2846,9 @@ static int toluaI_get_player_player_type_is_dead(lua_State* tolua_S)
 static int toluaI_set_player_player_type_is_dead(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->is_dead = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -2855,8 +2857,8 @@ static int toluaI_set_player_player_type_is_dead(lua_State* tolua_S)
 static int toluaI_get_player_player_type_wizard(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->wizard);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->wizard);
  return 1;
 }
 
@@ -2864,9 +2866,9 @@ static int toluaI_get_player_player_type_wizard(lua_State* tolua_S)
 static int toluaI_set_player_player_type_wizard(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->wizard = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -2875,8 +2877,8 @@ static int toluaI_set_player_player_type_wizard(lua_State* tolua_S)
 static int toluaI_get_player_player_type_expfact(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->expfact);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->expfact);
  return 1;
 }
 
@@ -2884,9 +2886,9 @@ static int toluaI_get_player_player_type_expfact(lua_State* tolua_S)
 static int toluaI_set_player_player_type_expfact(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->expfact = ((u16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2895,8 +2897,8 @@ static int toluaI_set_player_player_type_expfact(lua_State* tolua_S)
 static int toluaI_get_player_player_type_playing(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->playing);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->playing);
  return 1;
 }
 
@@ -2904,9 +2906,9 @@ static int toluaI_get_player_player_type_playing(lua_State* tolua_S)
 static int toluaI_set_player_player_type_playing(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->playing = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -2915,8 +2917,8 @@ static int toluaI_set_player_player_type_playing(lua_State* tolua_S)
 static int toluaI_get_player_player_type_leaving(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->leaving);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->leaving);
  return 1;
 }
 
@@ -2924,9 +2926,9 @@ static int toluaI_get_player_player_type_leaving(lua_State* tolua_S)
 static int toluaI_set_player_player_type_leaving(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->leaving = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -2935,8 +2937,8 @@ static int toluaI_set_player_player_type_leaving(lua_State* tolua_S)
 static int toluaI_get_player_player_type_create_up_stair(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->create_up_stair);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->create_up_stair);
  return 1;
 }
 
@@ -2944,9 +2946,9 @@ static int toluaI_get_player_player_type_create_up_stair(lua_State* tolua_S)
 static int toluaI_set_player_player_type_create_up_stair(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->create_up_stair = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -2955,8 +2957,8 @@ static int toluaI_set_player_player_type_create_up_stair(lua_State* tolua_S)
 static int toluaI_get_player_player_type_create_down_stair(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->create_down_stair);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->create_down_stair);
  return 1;
 }
 
@@ -2964,9 +2966,9 @@ static int toluaI_get_player_player_type_create_down_stair(lua_State* tolua_S)
 static int toluaI_set_player_player_type_create_down_stair(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->create_down_stair = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -2975,8 +2977,8 @@ static int toluaI_set_player_player_type_create_down_stair(lua_State* tolua_S)
 static int toluaI_get_player_player_type_align(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->align);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->align);
  return 1;
 }
 
@@ -2984,9 +2986,9 @@ static int toluaI_get_player_player_type_align(lua_State* tolua_S)
 static int toluaI_set_player_player_type_align(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->align = ((s32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -2995,8 +2997,8 @@ static int toluaI_set_player_player_type_align(lua_State* tolua_S)
 static int toluaI_get_player_player_type_detectx(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->detectx);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->detectx);
  return 1;
 }
 
@@ -3004,9 +3006,9 @@ static int toluaI_get_player_player_type_detectx(lua_State* tolua_S)
 static int toluaI_set_player_player_type_detectx(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->detectx = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3015,8 +3017,8 @@ static int toluaI_set_player_player_type_detectx(lua_State* tolua_S)
 static int toluaI_get_player_player_type_detecty(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->detecty);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->detecty);
  return 1;
 }
 
@@ -3024,9 +3026,9 @@ static int toluaI_get_player_player_type_detecty(lua_State* tolua_S)
 static int toluaI_set_player_player_type_detecty(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->detecty = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3035,8 +3037,8 @@ static int toluaI_set_player_player_type_detecty(lua_State* tolua_S)
 static int toluaI_get_player_player_type_detected(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->detected);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->detected);
  return 1;
 }
 
@@ -3044,9 +3046,9 @@ static int toluaI_get_player_player_type_detected(lua_State* tolua_S)
 static int toluaI_set_player_player_type_detected(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->detected = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3055,8 +3057,8 @@ static int toluaI_set_player_player_type_detected(lua_State* tolua_S)
 static int toluaI_get_player_player_type_det_pad(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->det_pad);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->det_pad);
  return 1;
 }
 
@@ -3064,9 +3066,9 @@ static int toluaI_get_player_player_type_det_pad(lua_State* tolua_S)
 static int toluaI_set_player_player_type_det_pad(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->det_pad = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3075,8 +3077,8 @@ static int toluaI_set_player_player_type_det_pad(lua_State* tolua_S)
 static int toluaI_get_player_player_type_total_weight(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->total_weight);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->total_weight);
  return 1;
 }
 
@@ -3084,9 +3086,9 @@ static int toluaI_get_player_player_type_total_weight(lua_State* tolua_S)
 static int toluaI_set_player_player_type_total_weight(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->total_weight = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3095,8 +3097,8 @@ static int toluaI_set_player_player_type_total_weight(lua_State* tolua_S)
 static int toluaI_get_player_player_type_inven_cnt(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->inven_cnt);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->inven_cnt);
  return 1;
 }
 
@@ -3104,9 +3106,9 @@ static int toluaI_get_player_player_type_inven_cnt(lua_State* tolua_S)
 static int toluaI_set_player_player_type_inven_cnt(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->inven_cnt = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3115,8 +3117,8 @@ static int toluaI_set_player_player_type_inven_cnt(lua_State* tolua_S)
 static int toluaI_get_player_player_type_equip_cnt(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->equip_cnt);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->equip_cnt);
  return 1;
 }
 
@@ -3124,9 +3126,9 @@ static int toluaI_get_player_player_type_equip_cnt(lua_State* tolua_S)
 static int toluaI_set_player_player_type_equip_cnt(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->equip_cnt = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3135,8 +3137,8 @@ static int toluaI_set_player_player_type_equip_cnt(lua_State* tolua_S)
 static int toluaI_get_player_player_type_target_set(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->target_set);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->target_set);
  return 1;
 }
 
@@ -3144,9 +3146,9 @@ static int toluaI_get_player_player_type_target_set(lua_State* tolua_S)
 static int toluaI_set_player_player_type_target_set(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->target_set = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3155,8 +3157,8 @@ static int toluaI_set_player_player_type_target_set(lua_State* tolua_S)
 static int toluaI_get_player_player_type_target_who(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->target_who);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->target_who);
  return 1;
 }
 
@@ -3164,9 +3166,9 @@ static int toluaI_get_player_player_type_target_who(lua_State* tolua_S)
 static int toluaI_set_player_player_type_target_who(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->target_who = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3175,8 +3177,8 @@ static int toluaI_set_player_player_type_target_who(lua_State* tolua_S)
 static int toluaI_get_player_player_type_target_row(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->target_row);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->target_row);
  return 1;
 }
 
@@ -3184,9 +3186,9 @@ static int toluaI_get_player_player_type_target_row(lua_State* tolua_S)
 static int toluaI_set_player_player_type_target_row(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->target_row = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3195,8 +3197,8 @@ static int toluaI_set_player_player_type_target_row(lua_State* tolua_S)
 static int toluaI_get_player_player_type_target_col(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->target_col);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->target_col);
  return 1;
 }
 
@@ -3204,9 +3206,9 @@ static int toluaI_get_player_player_type_target_col(lua_State* tolua_S)
 static int toluaI_set_player_player_type_target_col(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->target_col = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3215,8 +3217,8 @@ static int toluaI_set_player_player_type_target_col(lua_State* tolua_S)
 static int toluaI_get_player_player_type_health_who(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->health_who);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->health_who);
  return 1;
 }
 
@@ -3224,9 +3226,9 @@ static int toluaI_get_player_player_type_health_who(lua_State* tolua_S)
 static int toluaI_set_player_player_type_health_who(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->health_who = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3235,8 +3237,8 @@ static int toluaI_set_player_player_type_health_who(lua_State* tolua_S)
 static int toluaI_get_player_player_type_monster_race_idx(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->monster_race_idx);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->monster_race_idx);
  return 1;
 }
 
@@ -3244,9 +3246,9 @@ static int toluaI_get_player_player_type_monster_race_idx(lua_State* tolua_S)
 static int toluaI_set_player_player_type_monster_race_idx(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->monster_race_idx = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3255,8 +3257,8 @@ static int toluaI_set_player_player_type_monster_race_idx(lua_State* tolua_S)
 static int toluaI_get_player_player_type_object_kind_idx(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->object_kind_idx);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->object_kind_idx);
  return 1;
 }
 
@@ -3264,9 +3266,9 @@ static int toluaI_get_player_player_type_object_kind_idx(lua_State* tolua_S)
 static int toluaI_set_player_player_type_object_kind_idx(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->object_kind_idx = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3275,8 +3277,8 @@ static int toluaI_set_player_player_type_object_kind_idx(lua_State* tolua_S)
 static int toluaI_get_player_player_type_energy_use(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->energy_use);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->energy_use);
  return 1;
 }
 
@@ -3284,9 +3286,9 @@ static int toluaI_get_player_player_type_energy_use(lua_State* tolua_S)
 static int toluaI_set_player_player_type_energy_use(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->energy_use = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3295,8 +3297,8 @@ static int toluaI_set_player_player_type_energy_use(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resting(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->resting);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->resting);
  return 1;
 }
 
@@ -3304,9 +3306,9 @@ static int toluaI_get_player_player_type_resting(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resting(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->resting = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3315,8 +3317,8 @@ static int toluaI_set_player_player_type_resting(lua_State* tolua_S)
 static int toluaI_get_player_player_type_running(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->running);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->running);
  return 1;
 }
 
@@ -3324,9 +3326,9 @@ static int toluaI_get_player_player_type_running(lua_State* tolua_S)
 static int toluaI_set_player_player_type_running(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->running = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3335,8 +3337,8 @@ static int toluaI_set_player_player_type_running(lua_State* tolua_S)
 static int toluaI_get_player_player_type_run_cur_dir(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->run_cur_dir);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->run_cur_dir);
  return 1;
 }
 
@@ -3344,9 +3346,9 @@ static int toluaI_get_player_player_type_run_cur_dir(lua_State* tolua_S)
 static int toluaI_set_player_player_type_run_cur_dir(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->run_cur_dir = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3355,8 +3357,8 @@ static int toluaI_set_player_player_type_run_cur_dir(lua_State* tolua_S)
 static int toluaI_get_player_player_type_run_old_dir(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->run_old_dir);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->run_old_dir);
  return 1;
 }
 
@@ -3364,9 +3366,9 @@ static int toluaI_get_player_player_type_run_old_dir(lua_State* tolua_S)
 static int toluaI_set_player_player_type_run_old_dir(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->run_old_dir = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3375,8 +3377,8 @@ static int toluaI_set_player_player_type_run_old_dir(lua_State* tolua_S)
 static int toluaI_get_player_player_type_run_unused(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->run_unused);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->run_unused);
  return 1;
 }
 
@@ -3384,9 +3386,9 @@ static int toluaI_get_player_player_type_run_unused(lua_State* tolua_S)
 static int toluaI_set_player_player_type_run_unused(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->run_unused = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3395,8 +3397,8 @@ static int toluaI_set_player_player_type_run_unused(lua_State* tolua_S)
 static int toluaI_get_player_player_type_run_open_area(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->run_open_area);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->run_open_area);
  return 1;
 }
 
@@ -3404,9 +3406,9 @@ static int toluaI_get_player_player_type_run_open_area(lua_State* tolua_S)
 static int toluaI_set_player_player_type_run_open_area(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->run_open_area = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3415,8 +3417,8 @@ static int toluaI_set_player_player_type_run_open_area(lua_State* tolua_S)
 static int toluaI_get_player_player_type_run_break_right(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->run_break_right);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->run_break_right);
  return 1;
 }
 
@@ -3424,9 +3426,9 @@ static int toluaI_get_player_player_type_run_break_right(lua_State* tolua_S)
 static int toluaI_set_player_player_type_run_break_right(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->run_break_right = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3435,8 +3437,8 @@ static int toluaI_set_player_player_type_run_break_right(lua_State* tolua_S)
 static int toluaI_get_player_player_type_run_break_left(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->run_break_left);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->run_break_left);
  return 1;
 }
 
@@ -3444,9 +3446,9 @@ static int toluaI_get_player_player_type_run_break_left(lua_State* tolua_S)
 static int toluaI_set_player_player_type_run_break_left(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->run_break_left = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3455,8 +3457,8 @@ static int toluaI_set_player_player_type_run_break_left(lua_State* tolua_S)
 static int toluaI_get_player_player_type_command_cmd(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->command_cmd);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->command_cmd);
  return 1;
 }
 
@@ -3464,9 +3466,9 @@ static int toluaI_get_player_player_type_command_cmd(lua_State* tolua_S)
 static int toluaI_set_player_player_type_command_cmd(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->command_cmd = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3475,8 +3477,8 @@ static int toluaI_set_player_player_type_command_cmd(lua_State* tolua_S)
 static int toluaI_get_player_player_type_command_arg(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->command_arg);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->command_arg);
  return 1;
 }
 
@@ -3484,9 +3486,9 @@ static int toluaI_get_player_player_type_command_arg(lua_State* tolua_S)
 static int toluaI_set_player_player_type_command_arg(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->command_arg = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3495,8 +3497,8 @@ static int toluaI_set_player_player_type_command_arg(lua_State* tolua_S)
 static int toluaI_get_player_player_type_command_rep(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->command_rep);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->command_rep);
  return 1;
 }
 
@@ -3504,9 +3506,9 @@ static int toluaI_get_player_player_type_command_rep(lua_State* tolua_S)
 static int toluaI_set_player_player_type_command_rep(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->command_rep = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3515,8 +3517,8 @@ static int toluaI_set_player_player_type_command_rep(lua_State* tolua_S)
 static int toluaI_get_player_player_type_command_dir(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->command_dir);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->command_dir);
  return 1;
 }
 
@@ -3524,9 +3526,9 @@ static int toluaI_get_player_player_type_command_dir(lua_State* tolua_S)
 static int toluaI_set_player_player_type_command_dir(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->command_dir = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3535,8 +3537,8 @@ static int toluaI_set_player_player_type_command_dir(lua_State* tolua_S)
 static int toluaI_get_player_player_type_command_see(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->command_see);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->command_see);
  return 1;
 }
 
@@ -3544,9 +3546,9 @@ static int toluaI_get_player_player_type_command_see(lua_State* tolua_S)
 static int toluaI_set_player_player_type_command_see(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->command_see = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3555,8 +3557,8 @@ static int toluaI_set_player_player_type_command_see(lua_State* tolua_S)
 static int toluaI_get_player_player_type_command_wrk(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->command_wrk);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->command_wrk);
  return 1;
 }
 
@@ -3564,9 +3566,9 @@ static int toluaI_get_player_player_type_command_wrk(lua_State* tolua_S)
 static int toluaI_set_player_player_type_command_wrk(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->command_wrk = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3575,8 +3577,8 @@ static int toluaI_set_player_player_type_command_wrk(lua_State* tolua_S)
 static int toluaI_get_player_player_type_command_new(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->command_new);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->command_new);
  return 1;
 }
 
@@ -3584,9 +3586,9 @@ static int toluaI_get_player_player_type_command_new(lua_State* tolua_S)
 static int toluaI_set_player_player_type_command_new(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->command_new = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3595,8 +3597,8 @@ static int toluaI_set_player_player_type_command_new(lua_State* tolua_S)
 static int toluaI_get_player_player_type_new_spells(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->new_spells);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->new_spells);
  return 1;
 }
 
@@ -3604,9 +3606,9 @@ static int toluaI_get_player_player_type_new_spells(lua_State* tolua_S)
 static int toluaI_set_player_player_type_new_spells(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->new_spells = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3615,8 +3617,8 @@ static int toluaI_set_player_player_type_new_spells(lua_State* tolua_S)
 static int toluaI_get_player_player_type_cumber_armor(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->cumber_armor);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->cumber_armor);
  return 1;
 }
 
@@ -3624,9 +3626,9 @@ static int toluaI_get_player_player_type_cumber_armor(lua_State* tolua_S)
 static int toluaI_set_player_player_type_cumber_armor(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->cumber_armor = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3635,8 +3637,8 @@ static int toluaI_set_player_player_type_cumber_armor(lua_State* tolua_S)
 static int toluaI_get_player_player_type_cumber_glove(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->cumber_glove);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->cumber_glove);
  return 1;
 }
 
@@ -3644,9 +3646,9 @@ static int toluaI_get_player_player_type_cumber_glove(lua_State* tolua_S)
 static int toluaI_set_player_player_type_cumber_glove(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->cumber_glove = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3655,8 +3657,8 @@ static int toluaI_set_player_player_type_cumber_glove(lua_State* tolua_S)
 static int toluaI_get_player_player_type_heavy_wield(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->heavy_wield);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->heavy_wield);
  return 1;
 }
 
@@ -3664,9 +3666,9 @@ static int toluaI_get_player_player_type_heavy_wield(lua_State* tolua_S)
 static int toluaI_set_player_player_type_heavy_wield(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->heavy_wield = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3675,8 +3677,8 @@ static int toluaI_set_player_player_type_heavy_wield(lua_State* tolua_S)
 static int toluaI_get_player_player_type_heavy_shoot(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->heavy_shoot);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->heavy_shoot);
  return 1;
 }
 
@@ -3684,9 +3686,9 @@ static int toluaI_get_player_player_type_heavy_shoot(lua_State* tolua_S)
 static int toluaI_set_player_player_type_heavy_shoot(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->heavy_shoot = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3695,8 +3697,8 @@ static int toluaI_set_player_player_type_heavy_shoot(lua_State* tolua_S)
 static int toluaI_get_player_player_type_icky_wield(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->icky_wield);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->icky_wield);
  return 1;
 }
 
@@ -3704,9 +3706,9 @@ static int toluaI_get_player_player_type_icky_wield(lua_State* tolua_S)
 static int toluaI_set_player_player_type_icky_wield(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->icky_wield = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3715,8 +3717,8 @@ static int toluaI_set_player_player_type_icky_wield(lua_State* tolua_S)
 static int toluaI_get_player_player_type_pad_byte(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->pad_byte);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->pad_byte);
  return 1;
 }
 
@@ -3724,9 +3726,9 @@ static int toluaI_get_player_player_type_pad_byte(lua_State* tolua_S)
 static int toluaI_set_player_player_type_pad_byte(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->pad_byte = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3735,8 +3737,8 @@ static int toluaI_set_player_player_type_pad_byte(lua_State* tolua_S)
 static int toluaI_get_player_player_type_cur_lite(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->cur_lite);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->cur_lite);
  return 1;
 }
 
@@ -3744,9 +3746,9 @@ static int toluaI_get_player_player_type_cur_lite(lua_State* tolua_S)
 static int toluaI_set_player_player_type_cur_lite(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->cur_lite = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3755,8 +3757,8 @@ static int toluaI_set_player_player_type_cur_lite(lua_State* tolua_S)
 static int toluaI_get_player_player_type_notice(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->notice);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->notice);
  return 1;
 }
 
@@ -3764,9 +3766,9 @@ static int toluaI_get_player_player_type_notice(lua_State* tolua_S)
 static int toluaI_set_player_player_type_notice(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->notice = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3775,8 +3777,8 @@ static int toluaI_set_player_player_type_notice(lua_State* tolua_S)
 static int toluaI_get_player_player_type_update(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->update);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->update);
  return 1;
 }
 
@@ -3784,9 +3786,9 @@ static int toluaI_get_player_player_type_update(lua_State* tolua_S)
 static int toluaI_set_player_player_type_update(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->update = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3795,8 +3797,8 @@ static int toluaI_set_player_player_type_update(lua_State* tolua_S)
 static int toluaI_get_player_player_type_redraw(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->redraw);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->redraw);
  return 1;
 }
 
@@ -3804,9 +3806,9 @@ static int toluaI_get_player_player_type_redraw(lua_State* tolua_S)
 static int toluaI_set_player_player_type_redraw(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->redraw = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3815,8 +3817,8 @@ static int toluaI_set_player_player_type_redraw(lua_State* tolua_S)
 static int toluaI_get_player_player_type_window(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->window);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->window);
  return 1;
 }
 
@@ -3824,9 +3826,9 @@ static int toluaI_get_player_player_type_window(lua_State* tolua_S)
 static int toluaI_set_player_player_type_window(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->window = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -3840,10 +3842,10 @@ static int toluaI_get_player_player_type_stat_use(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->stat_use[toluaI_index]);
  return 1;
 }
@@ -3857,10 +3859,10 @@ static int toluaI_set_player_player_type_stat_use(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->stat_use[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -3874,10 +3876,10 @@ static int toluaI_get_player_player_type_stat_top(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->stat_top[toluaI_index]);
  return 1;
 }
@@ -3891,10 +3893,10 @@ static int toluaI_set_player_player_type_stat_top(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->stat_top[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -3908,10 +3910,10 @@ static int toluaI_get_player_player_type_stat_add(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->stat_add[toluaI_index]);
  return 1;
 }
@@ -3925,10 +3927,10 @@ static int toluaI_set_player_player_type_stat_add(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->stat_add[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -3942,10 +3944,10 @@ static int toluaI_get_player_player_type_stat_ind(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushnumber(tolua_S,(long)self->stat_ind[toluaI_index]);
  return 1;
 }
@@ -3959,10 +3961,10 @@ static int toluaI_set_player_player_type_stat_ind(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=A_MAX)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->stat_ind[toluaI_index] = ((s16b)  tolua_getnumber(tolua_S,3,0));
  return 0;
 }
@@ -3971,8 +3973,8 @@ static int toluaI_set_player_player_type_stat_ind(lua_State* tolua_S)
 static int toluaI_get_player_player_type_immune_acid(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->immune_acid);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->immune_acid);
  return 1;
 }
 
@@ -3980,9 +3982,9 @@ static int toluaI_get_player_player_type_immune_acid(lua_State* tolua_S)
 static int toluaI_set_player_player_type_immune_acid(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->immune_acid = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -3991,8 +3993,8 @@ static int toluaI_set_player_player_type_immune_acid(lua_State* tolua_S)
 static int toluaI_get_player_player_type_immune_elec(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->immune_elec);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->immune_elec);
  return 1;
 }
 
@@ -4000,9 +4002,9 @@ static int toluaI_get_player_player_type_immune_elec(lua_State* tolua_S)
 static int toluaI_set_player_player_type_immune_elec(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->immune_elec = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4011,8 +4013,8 @@ static int toluaI_set_player_player_type_immune_elec(lua_State* tolua_S)
 static int toluaI_get_player_player_type_immune_fire(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->immune_fire);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->immune_fire);
  return 1;
 }
 
@@ -4020,9 +4022,9 @@ static int toluaI_get_player_player_type_immune_fire(lua_State* tolua_S)
 static int toluaI_set_player_player_type_immune_fire(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->immune_fire = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4031,8 +4033,8 @@ static int toluaI_set_player_player_type_immune_fire(lua_State* tolua_S)
 static int toluaI_get_player_player_type_immune_cold(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->immune_cold);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->immune_cold);
  return 1;
 }
 
@@ -4040,9 +4042,9 @@ static int toluaI_get_player_player_type_immune_cold(lua_State* tolua_S)
 static int toluaI_set_player_player_type_immune_cold(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->immune_cold = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4051,8 +4053,8 @@ static int toluaI_set_player_player_type_immune_cold(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_acid(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_acid);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_acid);
  return 1;
 }
 
@@ -4060,9 +4062,9 @@ static int toluaI_get_player_player_type_resist_acid(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_acid(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_acid = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4071,8 +4073,8 @@ static int toluaI_set_player_player_type_resist_acid(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_elec(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_elec);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_elec);
  return 1;
 }
 
@@ -4080,9 +4082,9 @@ static int toluaI_get_player_player_type_resist_elec(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_elec(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_elec = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4091,8 +4093,8 @@ static int toluaI_set_player_player_type_resist_elec(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_fire(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_fire);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_fire);
  return 1;
 }
 
@@ -4100,9 +4102,9 @@ static int toluaI_get_player_player_type_resist_fire(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_fire(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_fire = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4111,8 +4113,8 @@ static int toluaI_set_player_player_type_resist_fire(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_cold(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_cold);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_cold);
  return 1;
 }
 
@@ -4120,9 +4122,9 @@ static int toluaI_get_player_player_type_resist_cold(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_cold(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_cold = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4131,8 +4133,8 @@ static int toluaI_set_player_player_type_resist_cold(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_pois(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_pois);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_pois);
  return 1;
 }
 
@@ -4140,9 +4142,9 @@ static int toluaI_get_player_player_type_resist_pois(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_pois(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_pois = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4151,8 +4153,8 @@ static int toluaI_set_player_player_type_resist_pois(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_fear(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_fear);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_fear);
  return 1;
 }
 
@@ -4160,9 +4162,9 @@ static int toluaI_get_player_player_type_resist_fear(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_fear(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_fear = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4171,8 +4173,8 @@ static int toluaI_set_player_player_type_resist_fear(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_lite(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_lite);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_lite);
  return 1;
 }
 
@@ -4180,9 +4182,9 @@ static int toluaI_get_player_player_type_resist_lite(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_lite(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_lite = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4191,8 +4193,8 @@ static int toluaI_set_player_player_type_resist_lite(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_dark(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_dark);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_dark);
  return 1;
 }
 
@@ -4200,9 +4202,9 @@ static int toluaI_get_player_player_type_resist_dark(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_dark(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_dark = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4211,8 +4213,8 @@ static int toluaI_set_player_player_type_resist_dark(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_blind(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_blind);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_blind);
  return 1;
 }
 
@@ -4220,9 +4222,9 @@ static int toluaI_get_player_player_type_resist_blind(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_blind(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_blind = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4231,8 +4233,8 @@ static int toluaI_set_player_player_type_resist_blind(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_confu(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_confu);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_confu);
  return 1;
 }
 
@@ -4240,9 +4242,9 @@ static int toluaI_get_player_player_type_resist_confu(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_confu(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_confu = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4251,8 +4253,8 @@ static int toluaI_set_player_player_type_resist_confu(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_sound(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_sound);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_sound);
  return 1;
 }
 
@@ -4260,9 +4262,9 @@ static int toluaI_get_player_player_type_resist_sound(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_sound(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_sound = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4271,8 +4273,8 @@ static int toluaI_set_player_player_type_resist_sound(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_shard(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_shard);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_shard);
  return 1;
 }
 
@@ -4280,9 +4282,9 @@ static int toluaI_get_player_player_type_resist_shard(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_shard(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_shard = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4291,8 +4293,8 @@ static int toluaI_set_player_player_type_resist_shard(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_nexus(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_nexus);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_nexus);
  return 1;
 }
 
@@ -4300,9 +4302,9 @@ static int toluaI_get_player_player_type_resist_nexus(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_nexus(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_nexus = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4311,8 +4313,8 @@ static int toluaI_set_player_player_type_resist_nexus(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_nethr(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_nethr);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_nethr);
  return 1;
 }
 
@@ -4320,9 +4322,9 @@ static int toluaI_get_player_player_type_resist_nethr(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_nethr(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_nethr = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4331,8 +4333,8 @@ static int toluaI_set_player_player_type_resist_nethr(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_chaos(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_chaos);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_chaos);
  return 1;
 }
 
@@ -4340,9 +4342,9 @@ static int toluaI_get_player_player_type_resist_chaos(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_chaos(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_chaos = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4351,8 +4353,8 @@ static int toluaI_set_player_player_type_resist_chaos(lua_State* tolua_S)
 static int toluaI_get_player_player_type_resist_disen(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->resist_disen);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->resist_disen);
  return 1;
 }
 
@@ -4360,9 +4362,9 @@ static int toluaI_get_player_player_type_resist_disen(lua_State* tolua_S)
 static int toluaI_set_player_player_type_resist_disen(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->resist_disen = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4371,8 +4373,8 @@ static int toluaI_set_player_player_type_resist_disen(lua_State* tolua_S)
 static int toluaI_get_player_player_type_reflect(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->reflect);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->reflect);
  return 1;
 }
 
@@ -4380,9 +4382,9 @@ static int toluaI_get_player_player_type_reflect(lua_State* tolua_S)
 static int toluaI_set_player_player_type_reflect(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->reflect = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4391,8 +4393,8 @@ static int toluaI_set_player_player_type_reflect(lua_State* tolua_S)
 static int toluaI_get_player_player_type_sh_fire(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->sh_fire);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->sh_fire);
  return 1;
 }
 
@@ -4400,9 +4402,9 @@ static int toluaI_get_player_player_type_sh_fire(lua_State* tolua_S)
 static int toluaI_set_player_player_type_sh_fire(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->sh_fire = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4411,8 +4413,8 @@ static int toluaI_set_player_player_type_sh_fire(lua_State* tolua_S)
 static int toluaI_get_player_player_type_sh_elec(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->sh_elec);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->sh_elec);
  return 1;
 }
 
@@ -4420,9 +4422,9 @@ static int toluaI_get_player_player_type_sh_elec(lua_State* tolua_S)
 static int toluaI_set_player_player_type_sh_elec(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->sh_elec = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4431,8 +4433,8 @@ static int toluaI_set_player_player_type_sh_elec(lua_State* tolua_S)
 static int toluaI_get_player_player_type_anti_magic(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->anti_magic);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->anti_magic);
  return 1;
 }
 
@@ -4440,9 +4442,9 @@ static int toluaI_get_player_player_type_anti_magic(lua_State* tolua_S)
 static int toluaI_set_player_player_type_anti_magic(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->anti_magic = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4451,8 +4453,8 @@ static int toluaI_set_player_player_type_anti_magic(lua_State* tolua_S)
 static int toluaI_get_player_player_type_anti_tele(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->anti_tele);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->anti_tele);
  return 1;
 }
 
@@ -4460,9 +4462,9 @@ static int toluaI_get_player_player_type_anti_tele(lua_State* tolua_S)
 static int toluaI_set_player_player_type_anti_tele(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->anti_tele = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4471,8 +4473,8 @@ static int toluaI_set_player_player_type_anti_tele(lua_State* tolua_S)
 static int toluaI_get_player_player_type_sustain_str(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->sustain_str);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->sustain_str);
  return 1;
 }
 
@@ -4480,9 +4482,9 @@ static int toluaI_get_player_player_type_sustain_str(lua_State* tolua_S)
 static int toluaI_set_player_player_type_sustain_str(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->sustain_str = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4491,8 +4493,8 @@ static int toluaI_set_player_player_type_sustain_str(lua_State* tolua_S)
 static int toluaI_get_player_player_type_sustain_int(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->sustain_int);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->sustain_int);
  return 1;
 }
 
@@ -4500,9 +4502,9 @@ static int toluaI_get_player_player_type_sustain_int(lua_State* tolua_S)
 static int toluaI_set_player_player_type_sustain_int(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->sustain_int = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4511,8 +4513,8 @@ static int toluaI_set_player_player_type_sustain_int(lua_State* tolua_S)
 static int toluaI_get_player_player_type_sustain_wis(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->sustain_wis);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->sustain_wis);
  return 1;
 }
 
@@ -4520,9 +4522,9 @@ static int toluaI_get_player_player_type_sustain_wis(lua_State* tolua_S)
 static int toluaI_set_player_player_type_sustain_wis(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->sustain_wis = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4531,8 +4533,8 @@ static int toluaI_set_player_player_type_sustain_wis(lua_State* tolua_S)
 static int toluaI_get_player_player_type_sustain_dex(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->sustain_dex);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->sustain_dex);
  return 1;
 }
 
@@ -4540,9 +4542,9 @@ static int toluaI_get_player_player_type_sustain_dex(lua_State* tolua_S)
 static int toluaI_set_player_player_type_sustain_dex(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->sustain_dex = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4551,8 +4553,8 @@ static int toluaI_set_player_player_type_sustain_dex(lua_State* tolua_S)
 static int toluaI_get_player_player_type_sustain_con(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->sustain_con);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->sustain_con);
  return 1;
 }
 
@@ -4560,9 +4562,9 @@ static int toluaI_get_player_player_type_sustain_con(lua_State* tolua_S)
 static int toluaI_set_player_player_type_sustain_con(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->sustain_con = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4571,8 +4573,8 @@ static int toluaI_set_player_player_type_sustain_con(lua_State* tolua_S)
 static int toluaI_get_player_player_type_sustain_chr(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->sustain_chr);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->sustain_chr);
  return 1;
 }
 
@@ -4580,9 +4582,9 @@ static int toluaI_get_player_player_type_sustain_chr(lua_State* tolua_S)
 static int toluaI_set_player_player_type_sustain_chr(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->sustain_chr = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4591,8 +4593,8 @@ static int toluaI_set_player_player_type_sustain_chr(lua_State* tolua_S)
 static int toluaI_get_player_player_type_slow_digest(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->slow_digest);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->slow_digest);
  return 1;
 }
 
@@ -4600,9 +4602,9 @@ static int toluaI_get_player_player_type_slow_digest(lua_State* tolua_S)
 static int toluaI_set_player_player_type_slow_digest(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->slow_digest = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4611,8 +4613,8 @@ static int toluaI_set_player_player_type_slow_digest(lua_State* tolua_S)
 static int toluaI_get_player_player_type_ffall(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->ffall);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->ffall);
  return 1;
 }
 
@@ -4620,9 +4622,9 @@ static int toluaI_get_player_player_type_ffall(lua_State* tolua_S)
 static int toluaI_set_player_player_type_ffall(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->ffall = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4631,8 +4633,8 @@ static int toluaI_set_player_player_type_ffall(lua_State* tolua_S)
 static int toluaI_get_player_player_type_lite(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->lite);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->lite);
  return 1;
 }
 
@@ -4640,9 +4642,9 @@ static int toluaI_get_player_player_type_lite(lua_State* tolua_S)
 static int toluaI_set_player_player_type_lite(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->lite = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4651,8 +4653,8 @@ static int toluaI_set_player_player_type_lite(lua_State* tolua_S)
 static int toluaI_get_player_player_type_regenerate(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->regenerate);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->regenerate);
  return 1;
 }
 
@@ -4660,9 +4662,9 @@ static int toluaI_get_player_player_type_regenerate(lua_State* tolua_S)
 static int toluaI_set_player_player_type_regenerate(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->regenerate = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4671,8 +4673,8 @@ static int toluaI_set_player_player_type_regenerate(lua_State* tolua_S)
 static int toluaI_get_player_player_type_telepathy(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->telepathy);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->telepathy);
  return 1;
 }
 
@@ -4680,9 +4682,9 @@ static int toluaI_get_player_player_type_telepathy(lua_State* tolua_S)
 static int toluaI_set_player_player_type_telepathy(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->telepathy = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4691,8 +4693,8 @@ static int toluaI_set_player_player_type_telepathy(lua_State* tolua_S)
 static int toluaI_get_player_player_type_see_inv(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->see_inv);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->see_inv);
  return 1;
 }
 
@@ -4700,9 +4702,9 @@ static int toluaI_get_player_player_type_see_inv(lua_State* tolua_S)
 static int toluaI_set_player_player_type_see_inv(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->see_inv = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4711,8 +4713,8 @@ static int toluaI_set_player_player_type_see_inv(lua_State* tolua_S)
 static int toluaI_get_player_player_type_free_act(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->free_act);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->free_act);
  return 1;
 }
 
@@ -4720,9 +4722,9 @@ static int toluaI_get_player_player_type_free_act(lua_State* tolua_S)
 static int toluaI_set_player_player_type_free_act(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->free_act = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4731,8 +4733,8 @@ static int toluaI_set_player_player_type_free_act(lua_State* tolua_S)
 static int toluaI_get_player_player_type_hold_life(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->hold_life);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->hold_life);
  return 1;
 }
 
@@ -4740,9 +4742,9 @@ static int toluaI_get_player_player_type_hold_life(lua_State* tolua_S)
 static int toluaI_set_player_player_type_hold_life(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->hold_life = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4751,8 +4753,8 @@ static int toluaI_set_player_player_type_hold_life(lua_State* tolua_S)
 static int toluaI_get_player_player_type_impact(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->impact);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->impact);
  return 1;
 }
 
@@ -4760,9 +4762,9 @@ static int toluaI_get_player_player_type_impact(lua_State* tolua_S)
 static int toluaI_set_player_player_type_impact(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->impact = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4771,8 +4773,8 @@ static int toluaI_set_player_player_type_impact(lua_State* tolua_S)
 static int toluaI_get_player_player_type_aggravate(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->aggravate);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->aggravate);
  return 1;
 }
 
@@ -4780,9 +4782,9 @@ static int toluaI_get_player_player_type_aggravate(lua_State* tolua_S)
 static int toluaI_set_player_player_type_aggravate(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->aggravate = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4791,8 +4793,8 @@ static int toluaI_set_player_player_type_aggravate(lua_State* tolua_S)
 static int toluaI_get_player_player_type_teleport(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->teleport);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->teleport);
  return 1;
 }
 
@@ -4800,9 +4802,9 @@ static int toluaI_get_player_player_type_teleport(lua_State* tolua_S)
 static int toluaI_set_player_player_type_teleport(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->teleport = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4811,8 +4813,8 @@ static int toluaI_set_player_player_type_teleport(lua_State* tolua_S)
 static int toluaI_get_player_player_type_exp_drain(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->exp_drain);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->exp_drain);
  return 1;
 }
 
@@ -4820,9 +4822,9 @@ static int toluaI_get_player_player_type_exp_drain(lua_State* tolua_S)
 static int toluaI_set_player_player_type_exp_drain(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->exp_drain = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4831,8 +4833,8 @@ static int toluaI_set_player_player_type_exp_drain(lua_State* tolua_S)
 static int toluaI_get_player_player_type_bless_blade(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->bless_blade);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->bless_blade);
  return 1;
 }
 
@@ -4840,9 +4842,9 @@ static int toluaI_get_player_player_type_bless_blade(lua_State* tolua_S)
 static int toluaI_set_player_player_type_bless_blade(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->bless_blade = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4851,8 +4853,8 @@ static int toluaI_set_player_player_type_bless_blade(lua_State* tolua_S)
 static int toluaI_get_player_player_type_xtra_might(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->xtra_might);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->xtra_might);
  return 1;
 }
 
@@ -4860,9 +4862,9 @@ static int toluaI_get_player_player_type_xtra_might(lua_State* tolua_S)
 static int toluaI_set_player_player_type_xtra_might(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->xtra_might = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4871,8 +4873,8 @@ static int toluaI_set_player_player_type_xtra_might(lua_State* tolua_S)
 static int toluaI_get_player_player_type_pass_wall(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->pass_wall);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->pass_wall);
  return 1;
 }
 
@@ -4880,9 +4882,9 @@ static int toluaI_get_player_player_type_pass_wall(lua_State* tolua_S)
 static int toluaI_set_player_player_type_pass_wall(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->pass_wall = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -4891,8 +4893,8 @@ static int toluaI_set_player_player_type_pass_wall(lua_State* tolua_S)
 static int toluaI_get_player_player_type_dis_to_h(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->dis_to_h);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->dis_to_h);
  return 1;
 }
 
@@ -4900,9 +4902,9 @@ static int toluaI_get_player_player_type_dis_to_h(lua_State* tolua_S)
 static int toluaI_set_player_player_type_dis_to_h(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->dis_to_h = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -4911,8 +4913,8 @@ static int toluaI_set_player_player_type_dis_to_h(lua_State* tolua_S)
 static int toluaI_get_player_player_type_dis_to_d(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->dis_to_d);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->dis_to_d);
  return 1;
 }
 
@@ -4920,9 +4922,9 @@ static int toluaI_get_player_player_type_dis_to_d(lua_State* tolua_S)
 static int toluaI_set_player_player_type_dis_to_d(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->dis_to_d = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -4931,8 +4933,8 @@ static int toluaI_set_player_player_type_dis_to_d(lua_State* tolua_S)
 static int toluaI_get_player_player_type_dis_to_a(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->dis_to_a);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->dis_to_a);
  return 1;
 }
 
@@ -4940,9 +4942,9 @@ static int toluaI_get_player_player_type_dis_to_a(lua_State* tolua_S)
 static int toluaI_set_player_player_type_dis_to_a(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->dis_to_a = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -4951,8 +4953,8 @@ static int toluaI_set_player_player_type_dis_to_a(lua_State* tolua_S)
 static int toluaI_get_player_player_type_dis_ac(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->dis_ac);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->dis_ac);
  return 1;
 }
 
@@ -4960,9 +4962,9 @@ static int toluaI_get_player_player_type_dis_ac(lua_State* tolua_S)
 static int toluaI_set_player_player_type_dis_ac(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->dis_ac = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -4971,8 +4973,8 @@ static int toluaI_set_player_player_type_dis_ac(lua_State* tolua_S)
 static int toluaI_get_player_player_type_to_h(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->to_h);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->to_h);
  return 1;
 }
 
@@ -4980,9 +4982,9 @@ static int toluaI_get_player_player_type_to_h(lua_State* tolua_S)
 static int toluaI_set_player_player_type_to_h(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->to_h = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -4991,8 +4993,8 @@ static int toluaI_set_player_player_type_to_h(lua_State* tolua_S)
 static int toluaI_get_player_player_type_to_d(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->to_d);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->to_d);
  return 1;
 }
 
@@ -5000,9 +5002,9 @@ static int toluaI_get_player_player_type_to_d(lua_State* tolua_S)
 static int toluaI_set_player_player_type_to_d(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->to_d = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5011,8 +5013,8 @@ static int toluaI_set_player_player_type_to_d(lua_State* tolua_S)
 static int toluaI_get_player_player_type_to_a(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->to_a);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->to_a);
  return 1;
 }
 
@@ -5020,9 +5022,9 @@ static int toluaI_get_player_player_type_to_a(lua_State* tolua_S)
 static int toluaI_set_player_player_type_to_a(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->to_a = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5031,8 +5033,8 @@ static int toluaI_set_player_player_type_to_a(lua_State* tolua_S)
 static int toluaI_get_player_player_type_ac(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->ac);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->ac);
  return 1;
 }
 
@@ -5040,9 +5042,9 @@ static int toluaI_get_player_player_type_ac(lua_State* tolua_S)
 static int toluaI_set_player_player_type_ac(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->ac = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5051,8 +5053,8 @@ static int toluaI_set_player_player_type_ac(lua_State* tolua_S)
 static int toluaI_get_player_player_type_see_infra(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->see_infra);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->see_infra);
  return 1;
 }
 
@@ -5060,9 +5062,9 @@ static int toluaI_get_player_player_type_see_infra(lua_State* tolua_S)
 static int toluaI_set_player_player_type_see_infra(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->see_infra = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5071,8 +5073,8 @@ static int toluaI_set_player_player_type_see_infra(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skill_dis(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->skill_dis);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->skill_dis);
  return 1;
 }
 
@@ -5080,9 +5082,9 @@ static int toluaI_get_player_player_type_skill_dis(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skill_dis(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->skill_dis = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5091,8 +5093,8 @@ static int toluaI_set_player_player_type_skill_dis(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skill_dev(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->skill_dev);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->skill_dev);
  return 1;
 }
 
@@ -5100,9 +5102,9 @@ static int toluaI_get_player_player_type_skill_dev(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skill_dev(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->skill_dev = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5111,8 +5113,8 @@ static int toluaI_set_player_player_type_skill_dev(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skill_sav(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->skill_sav);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->skill_sav);
  return 1;
 }
 
@@ -5120,9 +5122,9 @@ static int toluaI_get_player_player_type_skill_sav(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skill_sav(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->skill_sav = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5131,8 +5133,8 @@ static int toluaI_set_player_player_type_skill_sav(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skill_stl(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->skill_stl);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->skill_stl);
  return 1;
 }
 
@@ -5140,9 +5142,9 @@ static int toluaI_get_player_player_type_skill_stl(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skill_stl(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->skill_stl = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5151,8 +5153,8 @@ static int toluaI_set_player_player_type_skill_stl(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skill_srh(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->skill_srh);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->skill_srh);
  return 1;
 }
 
@@ -5160,9 +5162,9 @@ static int toluaI_get_player_player_type_skill_srh(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skill_srh(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->skill_srh = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5171,8 +5173,8 @@ static int toluaI_set_player_player_type_skill_srh(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skill_fos(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->skill_fos);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->skill_fos);
  return 1;
 }
 
@@ -5180,9 +5182,9 @@ static int toluaI_get_player_player_type_skill_fos(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skill_fos(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->skill_fos = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5191,8 +5193,8 @@ static int toluaI_set_player_player_type_skill_fos(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skill_thn(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->skill_thn);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->skill_thn);
  return 1;
 }
 
@@ -5200,9 +5202,9 @@ static int toluaI_get_player_player_type_skill_thn(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skill_thn(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->skill_thn = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5211,8 +5213,8 @@ static int toluaI_set_player_player_type_skill_thn(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skill_thb(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->skill_thb);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->skill_thb);
  return 1;
 }
 
@@ -5220,9 +5222,9 @@ static int toluaI_get_player_player_type_skill_thb(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skill_thb(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->skill_thb = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5231,8 +5233,8 @@ static int toluaI_set_player_player_type_skill_thb(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skill_tht(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->skill_tht);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->skill_tht);
  return 1;
 }
 
@@ -5240,9 +5242,9 @@ static int toluaI_get_player_player_type_skill_tht(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skill_tht(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->skill_tht = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5251,8 +5253,8 @@ static int toluaI_set_player_player_type_skill_tht(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skill_dig(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->skill_dig);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->skill_dig);
  return 1;
 }
 
@@ -5260,9 +5262,9 @@ static int toluaI_get_player_player_type_skill_dig(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skill_dig(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->skill_dig = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5271,8 +5273,8 @@ static int toluaI_set_player_player_type_skill_dig(lua_State* tolua_S)
 static int toluaI_get_player_player_type_noise(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->noise);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->noise);
  return 1;
 }
 
@@ -5280,9 +5282,9 @@ static int toluaI_get_player_player_type_noise(lua_State* tolua_S)
 static int toluaI_set_player_player_type_noise(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->noise = ((u32b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5291,8 +5293,8 @@ static int toluaI_set_player_player_type_noise(lua_State* tolua_S)
 static int toluaI_get_player_player_type_num_blow(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->num_blow);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->num_blow);
  return 1;
 }
 
@@ -5300,9 +5302,9 @@ static int toluaI_get_player_player_type_num_blow(lua_State* tolua_S)
 static int toluaI_set_player_player_type_num_blow(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->num_blow = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5311,8 +5313,8 @@ static int toluaI_set_player_player_type_num_blow(lua_State* tolua_S)
 static int toluaI_get_player_player_type_num_fire(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->num_fire);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->num_fire);
  return 1;
 }
 
@@ -5320,9 +5322,9 @@ static int toluaI_get_player_player_type_num_fire(lua_State* tolua_S)
 static int toluaI_set_player_player_type_num_fire(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->num_fire = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5331,8 +5333,8 @@ static int toluaI_set_player_player_type_num_fire(lua_State* tolua_S)
 static int toluaI_get_player_player_type_ammo_mult(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->ammo_mult);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->ammo_mult);
  return 1;
 }
 
@@ -5340,9 +5342,9 @@ static int toluaI_get_player_player_type_ammo_mult(lua_State* tolua_S)
 static int toluaI_set_player_player_type_ammo_mult(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->ammo_mult = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5351,8 +5353,8 @@ static int toluaI_set_player_player_type_ammo_mult(lua_State* tolua_S)
 static int toluaI_get_player_player_type_ammo_tval(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->ammo_tval);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->ammo_tval);
  return 1;
 }
 
@@ -5360,9 +5362,9 @@ static int toluaI_get_player_player_type_ammo_tval(lua_State* tolua_S)
 static int toluaI_set_player_player_type_ammo_tval(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->ammo_tval = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5371,8 +5373,8 @@ static int toluaI_set_player_player_type_ammo_tval(lua_State* tolua_S)
 static int toluaI_get_player_player_type_bow_energy(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->bow_energy);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->bow_energy);
  return 1;
 }
 
@@ -5380,9 +5382,9 @@ static int toluaI_get_player_player_type_bow_energy(lua_State* tolua_S)
 static int toluaI_set_player_player_type_bow_energy(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->bow_energy = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5391,8 +5393,8 @@ static int toluaI_set_player_player_type_bow_energy(lua_State* tolua_S)
 static int toluaI_get_player_player_type_pspeed(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->pspeed);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->pspeed);
  return 1;
 }
 
@@ -5400,9 +5402,9 @@ static int toluaI_get_player_player_type_pspeed(lua_State* tolua_S)
 static int toluaI_set_player_player_type_pspeed(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->pspeed = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5411,8 +5413,8 @@ static int toluaI_set_player_player_type_pspeed(lua_State* tolua_S)
 static int toluaI_get_player_player_type_pet_follow_distance(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->pet_follow_distance);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->pet_follow_distance);
  return 1;
 }
 
@@ -5420,9 +5422,9 @@ static int toluaI_get_player_player_type_pet_follow_distance(lua_State* tolua_S)
 static int toluaI_set_player_player_type_pet_follow_distance(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->pet_follow_distance = ((s16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5431,8 +5433,8 @@ static int toluaI_set_player_player_type_pet_follow_distance(lua_State* tolua_S)
 static int toluaI_get_player_player_type_pet_open_doors(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->pet_open_doors);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->pet_open_doors);
  return 1;
 }
 
@@ -5440,9 +5442,9 @@ static int toluaI_get_player_player_type_pet_open_doors(lua_State* tolua_S)
 static int toluaI_set_player_player_type_pet_open_doors(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->pet_open_doors = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5451,8 +5453,8 @@ static int toluaI_set_player_player_type_pet_open_doors(lua_State* tolua_S)
 static int toluaI_get_player_player_type_pet_pickup_items(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->pet_pickup_items);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->pet_pickup_items);
  return 1;
 }
 
@@ -5460,9 +5462,9 @@ static int toluaI_get_player_player_type_pet_pickup_items(lua_State* tolua_S)
 static int toluaI_set_player_player_type_pet_pickup_items(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->pet_pickup_items = ((byte)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5476,10 +5478,10 @@ static int toluaI_get_player_player_type_options(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=OPT_PLAYER)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushbool(tolua_S,(int)self->options[toluaI_index]);
  return 1;
 }
@@ -5493,10 +5495,10 @@ static int toluaI_set_player_player_type_options(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=OPT_PLAYER)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->options[toluaI_index] = ((bool)  tolua_getbool(tolua_S,3,0));
  return 0;
 }
@@ -5510,10 +5512,10 @@ static int toluaI_get_player_player_type_birth(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=OPT_BIRTH)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
  tolua_pushbool(tolua_S,(int)self->birth[toluaI_index]);
  return 1;
 }
@@ -5527,10 +5529,10 @@ static int toluaI_set_player_player_type_birth(lua_State* tolua_S)
  lua_rawget(tolua_S,1);
  self = (player_type*)  lua_touserdata(tolua_S,-1);
  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- tolua_error(tolua_S,"invalid type in array indexing.");
+  tolua_error(tolua_S,"invalid type in array indexing.");
  toluaI_index = (int)tolua_getnumber(tolua_S,2,0)-1;
  if (toluaI_index<0 || toluaI_index>=OPT_BIRTH)
- tolua_error(tolua_S,"array indexing out of range.");
+  tolua_error(tolua_S,"array indexing out of range.");
   self->birth[toluaI_index] = ((bool)  tolua_getbool(tolua_S,3,0));
  return 0;
 }
@@ -5539,8 +5541,8 @@ static int toluaI_set_player_player_type_birth(lua_State* tolua_S)
 static int toluaI_get_player_player_type_skip_more(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->skip_more);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->skip_more);
  return 1;
 }
 
@@ -5548,9 +5550,9 @@ static int toluaI_get_player_player_type_skip_more(lua_State* tolua_S)
 static int toluaI_set_player_player_type_skip_more(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->skip_more = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -5559,8 +5561,8 @@ static int toluaI_set_player_player_type_skip_more(lua_State* tolua_S)
 static int toluaI_get_player_player_type_mon_fight(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->mon_fight);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->mon_fight);
  return 1;
 }
 
@@ -5568,9 +5570,9 @@ static int toluaI_get_player_player_type_mon_fight(lua_State* tolua_S)
 static int toluaI_set_player_player_type_mon_fight(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->mon_fight = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -5579,8 +5581,8 @@ static int toluaI_set_player_player_type_mon_fight(lua_State* tolua_S)
 static int toluaI_get_player_player_type_max_seen_r_idx(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushnumber(tolua_S,(long)self->max_seen_r_idx);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushnumber(tolua_S,(long)self->max_seen_r_idx);
  return 1;
 }
 
@@ -5588,9 +5590,9 @@ static int toluaI_get_player_player_type_max_seen_r_idx(lua_State* tolua_S)
 static int toluaI_set_player_player_type_max_seen_r_idx(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,LUA_TNUMBER,0))
+   TOLUA_ERR_ASSIGN;
   self->max_seen_r_idx = ((u16b)  tolua_getnumber(tolua_S,2,0));
  return 0;
 }
@@ -5599,8 +5601,8 @@ static int toluaI_set_player_player_type_max_seen_r_idx(lua_State* tolua_S)
 static int toluaI_get_player_player_type_monk_armour_stat(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- tolua_pushbool(tolua_S,(int)self->monk_armour_stat);
+  if (!self) TOLUA_ERR_SELF;
+  tolua_pushbool(tolua_S,(int)self->monk_armour_stat);
  return 1;
 }
 
@@ -5608,9 +5610,9 @@ static int toluaI_get_player_player_type_monk_armour_stat(lua_State* tolua_S)
 static int toluaI_set_player_player_type_monk_armour_stat(lua_State* tolua_S)
 {
   player_type* self = (player_type*)  tolua_getusertype(tolua_S,1,0);
- if (!self) TOLUA_ERR_SELF;
- if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
- TOLUA_ERR_ASSIGN;
+  if (!self) TOLUA_ERR_SELF;
+  if (!tolua_istype(tolua_S,2,tolua_tag(tolua_S,"bool"),0))
+   TOLUA_ERR_ASSIGN;
   self->monk_armour_stat = ((bool)  tolua_getbool(tolua_S,2,0));
  return 0;
 }
@@ -5618,43 +5620,43 @@ static int toluaI_set_player_player_type_monk_armour_stat(lua_State* tolua_S)
 /* get function: sp_ptr */
 static int toluaI_get_player_sp_ptr(lua_State* tolua_S)
 {
- tolua_pushusertype(tolua_S,(void*)sp_ptr,tolua_tag(tolua_S,"const player_sex"));
+  tolua_pushusertype(tolua_S,(void*)sp_ptr,tolua_tag(tolua_S,"const player_sex"));
  return 1;
 }
 
 /* get function: rp_ptr */
 static int toluaI_get_player_rp_ptr(lua_State* tolua_S)
 {
- tolua_pushusertype(tolua_S,(void*)rp_ptr,tolua_tag(tolua_S,"const player_race"));
+  tolua_pushusertype(tolua_S,(void*)rp_ptr,tolua_tag(tolua_S,"const player_race"));
  return 1;
 }
 
 /* get function: cp_ptr */
 static int toluaI_get_player_cp_ptr(lua_State* tolua_S)
 {
- tolua_pushusertype(tolua_S,(void*)cp_ptr,tolua_tag(tolua_S,"const player_class"));
+  tolua_pushusertype(tolua_S,(void*)cp_ptr,tolua_tag(tolua_S,"const player_class"));
  return 1;
 }
 
 /* get function: mp_ptr */
 static int toluaI_get_player_mp_ptr(lua_State* tolua_S)
 {
- tolua_pushusertype(tolua_S,(void*)mp_ptr,tolua_tag(tolua_S,"const player_magic"));
+  tolua_pushusertype(tolua_S,(void*)mp_ptr,tolua_tag(tolua_S,"const player_magic"));
  return 1;
 }
 
 /* get function: p_ptr */
 static int toluaI_get_player_player(lua_State* tolua_S)
 {
- tolua_pushusertype(tolua_S,(void*)p_ptr,tolua_tag(tolua_S,"player_type"));
+  tolua_pushusertype(tolua_S,(void*)p_ptr,tolua_tag(tolua_S,"player_type"));
  return 1;
 }
 
 /* set function: p_ptr */
 static int toluaI_set_player_player(lua_State* tolua_S)
 {
- if (!tolua_istype(tolua_S,1,tolua_tag(tolua_S,"player_type"),0))
- TOLUA_ERR_ASSIGN;
+  if (!tolua_istype(tolua_S,1,tolua_tag(tolua_S,"player_type"),0))
+   TOLUA_ERR_ASSIGN;
   p_ptr = ((player_type*)  tolua_getusertype(tolua_S,1,0));
  return 0;
 }
@@ -5663,17 +5665,17 @@ static int toluaI_set_player_player(lua_State* tolua_S)
 static int toluaI_player_set_blind00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_blind(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_blind(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5685,17 +5687,17 @@ tolua_lerror:
 static int toluaI_player_set_confused00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_confused(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_confused(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5707,17 +5709,17 @@ tolua_lerror:
 static int toluaI_player_set_poisoned00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_poisoned(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_poisoned(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5729,17 +5731,17 @@ tolua_lerror:
 static int toluaI_player_set_afraid00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_afraid(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_afraid(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5751,17 +5753,17 @@ tolua_lerror:
 static int toluaI_player_set_paralyzed00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_paralyzed(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_paralyzed(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5773,17 +5775,17 @@ tolua_lerror:
 static int toluaI_player_set_image00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_image(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_image(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5795,17 +5797,17 @@ tolua_lerror:
 static int toluaI_player_set_fast00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_fast(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_fast(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5817,17 +5819,17 @@ tolua_lerror:
 static int toluaI_player_set_slow00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_slow(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_slow(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5839,17 +5841,17 @@ tolua_lerror:
 static int toluaI_player_set_shield00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_shield(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_shield(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5861,17 +5863,17 @@ tolua_lerror:
 static int toluaI_player_set_blessed00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_blessed(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_blessed(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5883,17 +5885,17 @@ tolua_lerror:
 static int toluaI_player_set_hero00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_hero(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_hero(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5905,17 +5907,17 @@ tolua_lerror:
 static int toluaI_player_set_shero00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_shero(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_shero(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5927,17 +5929,17 @@ tolua_lerror:
 static int toluaI_player_set_protevil00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_protevil(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_protevil(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5949,17 +5951,17 @@ tolua_lerror:
 static int toluaI_player_set_invuln00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_invuln(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_invuln(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5971,17 +5973,17 @@ tolua_lerror:
 static int toluaI_player_set_tim_invis00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_tim_invis(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_tim_invis(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -5993,17 +5995,17 @@ tolua_lerror:
 static int toluaI_player_set_tim_infra00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_tim_infra(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_tim_infra(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6015,17 +6017,17 @@ tolua_lerror:
 static int toluaI_player_set_oppose_acid00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_oppose_acid(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_oppose_acid(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6037,17 +6039,17 @@ tolua_lerror:
 static int toluaI_player_set_oppose_elec00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_oppose_elec(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_oppose_elec(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6059,17 +6061,17 @@ tolua_lerror:
 static int toluaI_player_set_oppose_fire00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_oppose_fire(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_oppose_fire(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6081,17 +6083,17 @@ tolua_lerror:
 static int toluaI_player_set_oppose_cold00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_oppose_cold(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_oppose_cold(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6103,17 +6105,17 @@ tolua_lerror:
 static int toluaI_player_set_oppose_pois00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_oppose_pois(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_oppose_pois(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6125,17 +6127,17 @@ tolua_lerror:
 static int toluaI_player_set_stun00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_stun(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_stun(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6147,17 +6149,17 @@ tolua_lerror:
 static int toluaI_player_set_cut00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_cut(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_cut(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6169,17 +6171,17 @@ tolua_lerror:
 static int toluaI_player_set_food00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int v = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  set_food(v);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  set_food(v);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6191,14 +6193,14 @@ tolua_lerror:
 static int toluaI_player_check_experience00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  check_experience();
- }
+  {
+   check_experience();
+  }
  }
  return 0;
 tolua_lerror:
@@ -6210,16 +6212,16 @@ tolua_lerror:
 static int toluaI_player_gain_exp00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   s32b amount = ((s32b)  tolua_getnumber(tolua_S,1,0));
- {
-  gain_exp(amount);
- }
+  {
+   gain_exp(amount);
+  }
  }
  return 0;
 tolua_lerror:
@@ -6231,16 +6233,16 @@ tolua_lerror:
 static int toluaI_player_lose_exp00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   s32b amount = ((s32b)  tolua_getnumber(tolua_S,1,0));
- {
-  lose_exp(amount);
- }
+  {
+   lose_exp(amount);
+  }
  }
  return 0;
 tolua_lerror:
@@ -6252,17 +6254,17 @@ tolua_lerror:
 static int toluaI_player_hp_player00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int num = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  hp_player(num);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  hp_player(num);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6274,17 +6276,17 @@ tolua_lerror:
 static int toluaI_player_do_dec_stat00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int stat = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  do_dec_stat(stat);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  do_dec_stat(stat);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6296,17 +6298,17 @@ tolua_lerror:
 static int toluaI_player_do_res_stat00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int stat = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  do_res_stat(stat);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  do_res_stat(stat);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6318,17 +6320,17 @@ tolua_lerror:
 static int toluaI_player_do_inc_stat00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int stat = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  do_inc_stat(stat);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  do_inc_stat(stat);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6340,18 +6342,18 @@ tolua_lerror:
 static int toluaI_player_take_hit00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,2,LUA_TSTRING,0) ||
- !tolua_isnoobj(tolua_S,3)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,2,LUA_TSTRING,0) ||
+     !tolua_isnoobj(tolua_S,3)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int dam = ((int)  tolua_getnumber(tolua_S,1,0));
   cptr kb_str = ((cptr)  tolua_getstring(tolua_S,2,0));
- {
-  take_hit(dam,kb_str);
- }
+  {
+   take_hit(dam,kb_str);
+  }
  }
  return 0;
 tolua_lerror:
@@ -6363,17 +6365,17 @@ tolua_lerror:
 static int toluaI_player_inc_stat00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int stat = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  inc_stat(stat);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  inc_stat(stat);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6385,21 +6387,21 @@ tolua_lerror:
 static int toluaI_player_dec_stat00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
- !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,4)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,4)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int stat = ((int)  tolua_getnumber(tolua_S,1,0));
   int amount = ((int)  tolua_getnumber(tolua_S,2,0));
   int permanent = ((int)  tolua_getnumber(tolua_S,3,0));
- {
-  bool toluaI_ret = (bool)  dec_stat(stat,amount,permanent);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  dec_stat(stat,amount,permanent);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6411,17 +6413,17 @@ tolua_lerror:
 static int toluaI_player_res_stat00(lua_State* tolua_S)
 {
  if (
- !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
- !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,2)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
   int stat = ((int)  tolua_getnumber(tolua_S,1,0));
- {
-  bool toluaI_ret = (bool)  res_stat(stat);
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  res_stat(stat);
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6433,15 +6435,15 @@ tolua_lerror:
 static int toluaI_player_lose_all_info00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  bool toluaI_ret = (bool)  lose_all_info();
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  lose_all_info();
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:
@@ -6453,15 +6455,15 @@ tolua_lerror:
 static int toluaI_player_restore_level00(lua_State* tolua_S)
 {
  if (
- !tolua_isnoobj(tolua_S,1)
+     !tolua_isnoobj(tolua_S,1)
  )
- goto tolua_lerror;
+  goto tolua_lerror;
  else
  {
- {
-  bool toluaI_ret = (bool)  restore_level();
- tolua_pushbool(tolua_S,(int)toluaI_ret);
- }
+  {
+   bool toluaI_ret = (bool)  restore_level();
+   tolua_pushbool(tolua_S,(int)toluaI_ret);
+  }
  }
  return 1;
 tolua_lerror:

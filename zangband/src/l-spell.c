@@ -1,6 +1,6 @@
 /*
 ** Lua binding: spell
-** Generated automatically by tolua 4.0a - angband on Fri Nov  9 00:28:41 2001.
+** Generated automatically by tolua 4.0a - angband on Fri Nov  9 18:34:16 2001.
 */
 
 #include "lua/tolua.h"

@@ -1,5 +1,10 @@
 -- Use objects
 
+
+-- Larger values makes using devices harder
+USE_DEVICE = 3
+
+
 function eat_food(object)
 	local ident = FALSE
 
@@ -716,6 +721,152 @@ function use_staff(object)
 end
 
 
+function aim_wand(object)
+	local success
+	local dir
+
+	-- Allow direction to be cancelled for free
+	success, dir = get_aim_dir()
+	if not success then return FALSE, FALSE end
+
+	-- Take a turn
+	player.energy_use = min(75, 200 - 5 * player.skill_dev / 8)
+
+	-- Not identified yet
+	local ident = FALSE
+
+	-- Get the object level
+	local lev = k_info[object.k_idx].level
+
+	-- Base chance of success
+	local chance = player.skill_dev
+
+	-- Confusion hurts skill
+	if player.confused then chance = chance / 2 end
+
+	-- High level objects are harder
+	chance = chance - lev / 2
+
+	-- Give everyone a (slight) chance
+	if (chance < USE_DEVICE) and one_in_(USE_DEVICE - chance + 1) then
+		chance = USE_DEVICE
+	end
+
+	-- Roll for usage
+	if (chance < USE_DEVICE) or (randint1(chance) < USE_DEVICE) then
+		if flush_failure then flush() end
+		msg_print("You failed to use the wand properly.")
+		sound(SOUND_FAIL)
+		return FALSE, FALSE
+	end
+
+	-- The wand is already empty!
+	if object.pval <= 0 then
+		if flush_failure then flush() end
+		msg_print("The wand has no charges left.")
+
+		object.ident = bOr(object.ident, IDENT_EMPTY)
+		player.notice = bOr(player.notice, bOr(PN_COMBINE, PN_REORDER))
+		player.window = bOr(player.window, PW_INVEN)
+
+		return FALSE, FALSE
+	end
+
+	-- Sound
+	sound(SOUND_ZAP)
+
+	local sval = object.sval
+
+	-- Hack -- Wand of wonder can do anything before it
+	if sval == SV_WAND_WONDER then sval = randint0(SV_WAND_WONDER) end
+
+	if sval == SV_WAND_HEAL_MONSTER then
+		if heal_monster(dir) then ident = TRUE end
+	elseif sval == SV_WAND_HASTE_MONSTER then
+		if speed_monster(dir) then ident = TRUE end
+	elseif sval == SV_WAND_CLONE_MONSTER then
+		if clone_monster(dir) then ident = TRUE end
+	elseif sval == SV_WAND_TELEPORT_AWAY then
+		if teleport_monster(dir) then ident = TRUE end
+	elseif sval == SV_WAND_DISARMING then
+		if disarm_trap(dir) then ident = TRUE end
+	elseif sval == SV_WAND_TRAP_DOOR_DEST then
+		if destroy_door(dir) then ident = TRUE end
+	elseif sval == SV_WAND_STONE_TO_MUD then
+		if wall_to_mud(dir) then ident = TRUE end
+	elseif sval == SV_WAND_LITE then
+		msg_print("A line of blue shimmering light appears.")
+		lite_line(dir)
+		ident = TRUE
+	elseif sval == SV_WAND_SLEEP_MONSTER then
+		if sleep_monster(dir) then ident = TRUE end
+	elseif sval == SV_WAND_SLOW_MONSTER then
+		if slow_monster(dir) then ident = TRUE end
+	elseif sval == SV_WAND_CONFUSE_MONSTER then
+		if confuse_monster(dir, 20) then ident = TRUE end
+	elseif sval == SV_WAND_FEAR_MONSTER then
+		if fear_monster(dir, 20) then ident = TRUE end
+	elseif sval == SV_WAND_DRAIN_LIFE then
+		if drain_life(dir, 150) then ident = TRUE end
+	elseif sval == SV_WAND_POLYMORPH then
+		if poly_monster(dir) then ident = TRUE end
+	elseif sval == SV_WAND_STINKING_CLOUD then
+		ident = fire_ball(GF_POIS, dir, 15, 2)
+	elseif sval == SV_WAND_MAGIC_MISSILE then
+		ident = fire_bolt_or_beam(20, GF_MISSILE, dir, damroll(2, 6))
+	elseif sval == SV_WAND_ACID_BOLT then
+		ident = fire_bolt_or_beam(20, GF_ACID, dir, damroll(6, 8))
+	elseif sval == SV_WAND_CHARM_MONSTER then
+		ident = charm_monster(dir, 45)
+	elseif sval == SV_WAND_FIRE_BOLT then
+		ident = fire_bolt_or_beam(20, GF_FIRE, dir, damroll(10, 8))
+	elseif sval == SV_WAND_COLD_BOLT then
+		ident = fire_bolt_or_beam(20, GF_COLD, dir, damroll(6, 8))
+	elseif sval == SV_WAND_ACID_BALL then
+		ident = fire_ball(GF_ACID, dir, 125, 2)
+	elseif sval == SV_WAND_ELEC_BALL then
+		ident = fire_ball(GF_ELEC, dir, 75, 2)
+	elseif sval == SV_WAND_FIRE_BALL then
+		ident = fire_ball(GF_FIRE, dir, 150, 2)
+	elseif sval == SV_WAND_COLD_BALL then
+		ident = fire_ball(GF_COLD, dir, 100, 2)
+	elseif sval == SV_WAND_WONDER then
+		msg_print("Oops.  Wand of wonder activated.")
+	elseif sval == SV_WAND_DRAGON_FIRE then
+		ident = fire_ball(GF_FIRE, dir, 250, 3)
+		ident = TRUE
+	elseif sval == SV_WAND_DRAGON_COLD then
+		ident = fire_ball(GF_COLD, dir, 200, 3)
+		ident = TRUE
+	elseif sval == SV_WAND_DRAGON_BREATH then
+		local choice = randint1(5)
+
+		if choice == 1 then
+			ident = fire_ball(GF_ACID, dir, 250, 3)
+		elseif choice == 2 then
+			ident = fire_ball(GF_ELEC, dir, 150, 3)
+		elseif choice == 3 then
+			ident = fire_ball(GF_FIRE, dir, 200, 3)
+		elseif choice == 4 then
+			ident = fire_ball(GF_COLD, dir, 200, 3)
+		else
+			ident = fire_ball(GF_POIS, dir, 200, 3)
+		end
+
+		ident = TRUE
+	elseif sval == SV_WAND_ANNIHILATION then
+		ident = fire_ball(GF_DISINTEGRATE, dir, rand_range(125, 225), 2)
+	elseif sval == SV_WAND_ROCKETS then
+		msg_print("You launch a rocket!")
+		fire_ball(GF_ROCKET, dir, 250, 2)
+		ident = TRUE
+	end
+
+	return ident, TRUE
+end
+
+
+
 function use_object_hook(object)
 	local ident = FALSE
 	local used = FALSE
@@ -728,6 +879,8 @@ function use_object_hook(object)
 		ident, used = read_scroll(object)
 	elseif object.tval == TV_STAFF then
 		ident, used = use_staff(object)
+	elseif object.tval == TV_WAND then
+		ident, used = aim_wand(object)
 	end
 
 	return ident, used
