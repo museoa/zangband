@@ -2,6 +2,32 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
+ZAngband 2.6.0:
+- Added an alpha-quality gtk port, taken from Angband.  This is playable,
+  but will crash eventually.
+- Prevent object levels getting too high - or all you get are potions of
+  new life, which aren't all that useful.
+- Changed object distribution from chests.
+- Fixed the problem with examining spell books in stores, from realms that
+  you do not belong to.
+- Fixed bugs in new projection code.
+- Fixed a bug in the monster lighting code.
+- Changed how the sanity-blasting monster's effect works.  It will only
+  happen if you can see the monster.  Stats will not be drained.
+  However, you may become afraid, even if you have resist fear.
+- Made sanity blasting monsters much rarer in the dungeon.
+- Fixed bug that prevented loading of version 2.4.0 savefiles.
+- Fixed score abuse when you had zero hard quests.
+- Fixed problem with identify not being useable on items whose flavour
+  you have forgotten.
+- Fixed the weapons that were too cheap.
+- The game will now return the standard error-exit code of the system
+  when an error occurs.
+- Fixed problem with charisma not affecting building prices in the right way.
+- The rare book store now stocks more normal books, and less dungeon ones.
+- Nightmare mode is slightly harder.
+- Fixed problem with the xaw port not reading font information in .Xdefaults.
+
 ZAngband 2.5.6:
 - Shifted store names over so that the long ones fit along with the
   maximum price.
