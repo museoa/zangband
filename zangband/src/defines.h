@@ -1482,6 +1482,7 @@
 #define SV_EXECUTIONERS_SWORD           28  /* 4d5 */
 #define SV_ZWEIHANDER                   29  /* 4d6 */
 #define SV_BLADE_OF_CHAOS               30  /* 6d5 */
+#define SV_DIAMOND_EDGE                 31  /* 7d5 */
 
 /* The "sval" codes for TV_SHIELD */
 #define SV_SMALL_LEATHER_SHIELD          2

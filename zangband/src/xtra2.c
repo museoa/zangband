@@ -3030,6 +3030,9 @@ void gain_level_reward(int chosen_reward)
 				case 37:
 					dummy2 = SV_ZWEIHANDER;
 					break;
+				case 38:
+					dummy2 = SV_DIAMOND_EDGE;
+					break;
 				default:
 					dummy2 = SV_BLADE_OF_CHAOS;
 			}
