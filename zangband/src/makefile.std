@@ -317,8 +317,8 @@ risc: LD := link
 risc: CFLAGS := -IOS:,C: -throwback -depend !Depend -Wan -ff -zps1 #-g
 risc: LDFLAGS := -s symbols #-d
 risc: INSTALL := Squeeze zangband ^.!RunImage
-risc: OTHEROBJS := C:o.Stubs OSLib:o.OSLib C:o.eventlib
-risc: C:o.Stubs OSLib:o.OSLib C:o.eventlib
+risc: OTHEROBJS := o.Stubs o.OSLib o.eventlib
+risc: o.Stubs o.OSLib o.eventlib
 	# Blank line required here
 
 
@@ -433,7 +433,9 @@ endif
 ## (Installing directly is much nicer if you don't use the
 ## autoconf generated makefile system.)
 ##
-
+## Do not call this directly - you need to specify a port.
+## (This is why this isn't called "install".)
+##
 install_game: zangband$(EXEC)
 	$(INSTALL)
 
@@ -582,4 +584,4 @@ LUALIST := $(addprefix $(LUA), $(LUALIST))
 ##
 ## Phony targets
 ##
-.PHONY: install clean depend $(PORTS)
+.PHONY: install_game clean depend $(PORTS)
