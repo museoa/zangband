@@ -58,6 +58,10 @@
 /************************************************************************/
 
 /* What variant is this? Used in the highscore dump */
+#include "angband.h"
+
+
+#ifdef USE_AMI
 
 /* Yep, Bablos, this is still a mess! ;) */
 #define VERTITLE "Zangband 2.5.2b"
@@ -79,7 +83,7 @@
 #define ANG281                  /* Based upon Angband 2.8.1 ? */
 
 #ifndef __CEXTRACT__
-#include "angband.h"
+
 
 #include "vers.h"
 
@@ -5727,3 +5731,5 @@ static void quick_BltMaskBitMapRastPort( struct BitMap *src, int x, int y, struc
 }
 
 #endif
+
+#endif /* USE_AMI */
