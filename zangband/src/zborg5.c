@@ -2454,8 +2454,9 @@ void borg_map_erase(void)
 
 	/* Forget old objects */
 	C_WIPE(borg_takes, BORG_TAKES_MAX, borg_take);
-
-
+	
+	/* Forget old monsters */
+	C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
 }
 
 
