@@ -55,7 +55,7 @@ s16b modify_stat_value(int value, int amount)
 static void prt_field(cptr info, int col, int row)
 {
 	/* Dump 13 spaces to clear */
-	c_put_str(TERM_WHITE, "             ", col, row);
+	put_str("             ", col, row);
 
 	/* Dump the info itself */
 	c_put_str(TERM_L_BLUE, info, col, row);
@@ -401,19 +401,15 @@ static void prt_title(void)
  */
 static void prt_level(void)
 {
-	char tmp[32];
-
-	sprintf(tmp, "%6d", p_ptr->lev);
-
 	if (p_ptr->lev >= p_ptr->max_lev)
 	{
 		put_str("LEVEL ", 0, ROW_LEVEL);
-		c_put_str(TERM_L_GREEN, tmp, COL_LEVEL + 6, ROW_LEVEL);
+		put_fstr(COL_LEVEL + 6, ROW_LEVEL, COL_L_GREEN "%6d", p_ptr->lev);
 	}
 	else
 	{
 		put_str("Level ", 0, ROW_LEVEL);
-		c_put_str(TERM_YELLOW, tmp, COL_LEVEL + 6, ROW_LEVEL);
+		put_fstr(COL_LEVEL + 6, ROW_LEVEL, COL_YELLOW "%6d", p_ptr->lev);
 	}
 }
 
@@ -434,8 +430,6 @@ static void prt_exp(void)
 	{
 		attr = TERM_YELLOW;
 	}
-
-
 
 	if (toggle_xp)
 	{
@@ -474,11 +468,8 @@ static void prt_exp(void)
  */
 static void prt_gold(void)
 {
-	char tmp[32];
-
 	put_str("AU ", COL_GOLD, ROW_GOLD);
-	sprintf(tmp, "%9ld", (long)p_ptr->au);
-	c_put_str(TERM_L_GREEN, tmp, COL_GOLD + 3, ROW_GOLD);
+	put_fstr(COL_GOLD + 3, ROW_GOLD, COL_L_GREEN "%9ld", (long)p_ptr->au);
 }
 
 
@@ -488,11 +479,8 @@ static void prt_gold(void)
  */
 static void prt_ac(void)
 {
-	char tmp[32];
-
 	put_str("Cur AC ", COL_AC, ROW_AC);
-	sprintf(tmp, "%5d", p_ptr->dis_ac + p_ptr->dis_to_a);
-	c_put_str(TERM_L_GREEN, tmp, COL_AC + 7, ROW_AC);
+	put_fstr(COL_AC + 7, ROW_AC, COL_L_GREEN "%5d", p_ptr->dis_ac + p_ptr->dis_to_a);
 }
 
 
@@ -512,16 +500,12 @@ static void prt_hp(void)
 
 #endif /* !VARIABLE_PLAYER_GRAPH */
 
-	put_str("Max HP ", COL_MAXHP, ROW_MAXHP);
-
-	sprintf(tmp, "%5d", p_ptr->mhp);
-	color = TERM_L_GREEN;
-
-	c_put_str(color, tmp, COL_MAXHP + 7, ROW_MAXHP);
-
+	put_fstr(COL_MAXHP, ROW_MAXHP, "Max HP " COL_L_GREEN "%5d", p_ptr->mhp);
 
 	put_str("Cur HP ", COL_CURHP, ROW_CURHP);
 
+	color = TERM_L_GREEN;
+	
 	sprintf(tmp, "%5d", p_ptr->chp);
 
 	if (p_ptr->chp >= p_ptr->mhp)
@@ -585,18 +569,12 @@ static void prt_sp(void)
 	/* Do not show mana unless it matters */
 	if (!mp_ptr->spell_book) return;
 
-
-	put_str("Max SP ", COL_MAXSP, ROW_MAXSP);
-
-	sprintf(tmp, "%5d", p_ptr->msp);
-	color = TERM_L_GREEN;
-
-	c_put_str(color, tmp, COL_MAXSP + 7, ROW_MAXSP);
-
+	put_fstr(COL_MAXSP, ROW_MAXSP, "Max SP " COL_L_GREEN "%5d", p_ptr->msp);
 
 	put_str("Cur SP ", COL_CURSP, ROW_CURSP);
 
 	sprintf(tmp, "%5d", p_ptr->csp);
+	color = TERM_L_GREEN;
 
 	if (p_ptr->csp >= p_ptr->msp)
 	{
@@ -662,37 +640,37 @@ static void prt_hunger(void)
 	/* Fainting / Starving */
 	if (p_ptr->food < PY_FOOD_FAINT)
 	{
-		c_put_str(TERM_RED, "Weak  ", COL_HUNGRY, Term->hgt - 1);
+		put_cstr(COL_RED "Weak  ", COL_HUNGRY, Term->hgt - 1);
 	}
 
 	/* Weak */
 	else if (p_ptr->food < PY_FOOD_WEAK)
 	{
-		c_put_str(TERM_ORANGE, "Weak  ", COL_HUNGRY, Term->hgt - 1);
+		put_cstr(COL_ORANGE "Weak  ", COL_HUNGRY, Term->hgt - 1);
 	}
 
 	/* Hungry */
 	else if (p_ptr->food < PY_FOOD_ALERT)
 	{
-		c_put_str(TERM_YELLOW, "Hungry", COL_HUNGRY, Term->hgt - 1);
+		put_cstr(COL_YELLOW "Hungry", COL_HUNGRY, Term->hgt - 1);
 	}
 
 	/* Normal */
 	else if (p_ptr->food < PY_FOOD_FULL)
 	{
-		c_put_str(TERM_L_GREEN, "      ", COL_HUNGRY, Term->hgt - 1);
+		put_str("      ", COL_HUNGRY, Term->hgt - 1);
 	}
 
 	/* Full */
 	else if (p_ptr->food < PY_FOOD_MAX)
 	{
-		c_put_str(TERM_L_GREEN, "Full  ", COL_HUNGRY, Term->hgt - 1);
+		put_cstr(COL_L_GREEN "Full  ", COL_HUNGRY, Term->hgt - 1);
 	}
 
 	/* Gorged */
 	else
 	{
-		c_put_str(TERM_GREEN, "Gorged", COL_HUNGRY, Term->hgt - 1);
+		put_cstr(COL_GREEN "Gorged", COL_HUNGRY, Term->hgt - 1);
 	}
 }
 
@@ -704,7 +682,7 @@ static void prt_blind(void)
 {
 	if (p_ptr->blind)
 	{
-		c_put_str(TERM_ORANGE, "Blind", COL_BLIND, Term->hgt - 1);
+		put_cstr(COL_ORANGE "Blind", COL_BLIND, Term->hgt - 1);
 	}
 	else
 	{
@@ -720,7 +698,7 @@ static void prt_confused(void)
 {
 	if (p_ptr->confused)
 	{
-		c_put_str(TERM_ORANGE, "Confused", COL_CONFUSED, Term->hgt - 1);
+		put_cstr(COL_ORANGE "Confused", COL_CONFUSED, Term->hgt - 1);
 	}
 	else
 	{
@@ -736,7 +714,7 @@ static void prt_afraid(void)
 {
 	if (p_ptr->afraid)
 	{
-		c_put_str(TERM_ORANGE, "Afraid", COL_AFRAID, Term->hgt - 1);
+		put_str(COL_ORANGE "Afraid", COL_AFRAID, Term->hgt - 1);
 	}
 	else
 	{
@@ -752,7 +730,7 @@ static void prt_poisoned(void)
 {
 	if (p_ptr->poisoned)
 	{
-		c_put_str(TERM_ORANGE, "Poisoned", COL_POISONED, Term->hgt - 1);
+		put_cstr(COL_ORANGE "Poisoned", COL_POISONED, Term->hgt - 1);
 	}
 	else
 	{
@@ -946,31 +924,31 @@ static void prt_cut(void)
 
 	if (c > 1000)
 	{
-		c_put_str(TERM_L_RED, "Mortal wound", COL_CUT, ROW_CUT);
+		put_cstr(COL_L_RED "Mortal wound", COL_CUT, ROW_CUT);
 	}
 	else if (c > 200)
 	{
-		c_put_str(TERM_RED, "Deep gash   ", COL_CUT, ROW_CUT);
+		put_cstr(COL_RED "Deep gash   ", COL_CUT, ROW_CUT);
 	}
 	else if (c > 100)
 	{
-		c_put_str(TERM_RED, "Severe cut  ", COL_CUT, ROW_CUT);
+		put_cstr(COL_RED "Severe cut  ", COL_CUT, ROW_CUT);
 	}
 	else if (c > 50)
 	{
-		c_put_str(TERM_ORANGE, "Nasty cut   ", COL_CUT, ROW_CUT);
+		put_cstr(COL_ORANGE "Nasty cut   ", COL_CUT, ROW_CUT);
 	}
 	else if (c > 25)
 	{
-		c_put_str(TERM_ORANGE, "Bad cut     ", COL_CUT, ROW_CUT);
+		put_cstr(COL_ORANGE "Bad cut     ", COL_CUT, ROW_CUT);
 	}
 	else if (c > 10)
 	{
-		c_put_str(TERM_YELLOW, "Light cut   ", COL_CUT, ROW_CUT);
+		put_cstr(COL_YELLOW "Light cut   ", COL_CUT, ROW_CUT);
 	}
 	else if (c)
 	{
-		c_put_str(TERM_YELLOW, "Graze       ", COL_CUT, ROW_CUT);
+		put_cstr(COL_YELLOW "Graze       ", COL_CUT, ROW_CUT);
 	}
 	else
 	{
@@ -985,15 +963,15 @@ static void prt_stun(void)
 
 	if (s > 100)
 	{
-		c_put_str(TERM_RED, "Knocked out ", COL_STUN, ROW_STUN);
+		put_cstr(COL_RED "Knocked out ", COL_STUN, ROW_STUN);
 	}
 	else if (s > 50)
 	{
-		c_put_str(TERM_ORANGE, "Heavy stun  ", COL_STUN, ROW_STUN);
+		put_cstr(COL_ORANGE "Heavy stun  ", COL_STUN, ROW_STUN);
 	}
 	else if (s)
 	{
-		c_put_str(TERM_ORANGE, "Stun        ", COL_STUN, ROW_STUN);
+		put_cstr(COL_ORANGE "Stun        ", COL_STUN, ROW_STUN);
 	}
 	else
 	{

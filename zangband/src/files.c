@@ -1950,11 +1950,11 @@ static void display_player_flag_aux(int col, int row,
 		object_flags_known(o_ptr, &f[0], &f[1], &f[2]);
 
 		/* Default */
-		c_put_str(TERM_SLATE, ".", col, row);
+		put_cstr(COL_SLATE ".", col, row);
 
 		/* Check flags */
-		if (f[n - 1] & flag1) c_put_str(TERM_WHITE, "+", col, row);
-		if (f[n - 1] & flag2) c_put_str(TERM_WHITE, "*", col, row);
+		if (f[n - 1] & flag1) put_str("+", col, row);
+		if (f[n - 1] & flag2) put_str("*", col, row);
 
 		/* Advance */
 		col++;
@@ -1964,11 +1964,11 @@ static void display_player_flag_aux(int col, int row,
 	player_flags(&f[0], &f[1], &f[2]);
 
 	/* Default */
-	c_put_str(TERM_SLATE, ".", col, row);
+	put_cstr(COL_SLATE ".", col, row);
 
 	/* Check flags */
-	if (f[n - 1] & flag1) c_put_str(TERM_WHITE, "+", col, row);
-	if (f[n - 1] & flag2) c_put_str(TERM_WHITE, "*", col, row);
+	if (f[n - 1] & flag1) put_str("+", col, row);
+	if (f[n - 1] & flag2) put_str("*", col, row);
 }
 
 
@@ -1988,7 +1988,7 @@ static void display_player_flag_info(void)
 
 	display_player_equippy(col + 8, row++);
 
-	c_put_str(TERM_WHITE, "abcdefghijkl@", col + 8, row++);
+	put_str("abcdefghijkl@", col + 8, row++);
 
 	display_player_flag_aux(col, row++, "Acid  :", 2, TR2_RES_ACID,
 							TR2_IM_ACID);
@@ -2019,7 +2019,7 @@ static void display_player_flag_info(void)
 
 	display_player_equippy(col + 10, row++);
 
-	c_put_str(TERM_WHITE, "abcdefghijkl@", col + 10, row++);
+	put_str("abcdefghijkl@", col + 10, row++);
 
 	display_player_flag_aux(col, row++, "Speed   :", 1, TR1_SPEED, 0);
 	display_player_flag_aux(col, row++, "Reflect :", 2, TR2_REFLECT, 0);
@@ -2040,7 +2040,7 @@ static void display_player_flag_info(void)
 
 	display_player_equippy(col + 11, row++);
 
-	c_put_str(TERM_WHITE, "abcdefghijkl@", col + 11, row++);
+	put_str("abcdefghijkl@", col + 11, row++);
 
 	display_player_flag_aux(col, row++, "Free Actn:", 2, TR2_FREE_ACT, 0);
 	display_player_flag_aux(col, row++, "SeeInvis.:", 3, TR3_SEE_INVIS, 0);
@@ -2054,39 +2054,6 @@ static void display_player_flag_info(void)
 	display_player_flag_aux(col, row++, "EvilCurse:", 3, TR3_TY_CURSE, 0);
 }
 
-#if 0
-/*
- * Special display, part 2a
- */
-static void display_player_misc_info(void)
-{
-	char buf[80];
-
-	/* Display basics */
-	put_str("Name      :", 1, 2);
-	put_str("Sex       :", 1, 3);
-	put_str("Race      :", 1, 4);
-	put_str("Class     :", 1, 5);
-
-	c_put_str(TERM_L_BLUE, player_name, 13, 2);
-	c_put_str(TERM_L_BLUE, sp_ptr->title, 13, 3);
-	c_put_str(TERM_L_BLUE, rp_ptr->title, 13, 4);
-	c_put_str(TERM_L_BLUE, cp_ptr->title, 13, 5);
-
-	/* Display extras */
-	put_str("Level     :", 1, 6);
-	put_str("Hits(Max) :", 1, 7);
-	put_str("Mana(Max) :", 1, 8);
-
-	(void)sprintf(buf, "%d", (int)p_ptr->lev);
-	c_put_str(TERM_L_BLUE, buf, 13, 6);
-	(void)sprintf(buf, "%d(%d)", (int)p_ptr->chp, (int)p_ptr->mhp);
-	c_put_str(TERM_L_BLUE, buf, 13, 7);
-	(void)sprintf(buf, "%d(%d)", (int)p_ptr->csp, (int)p_ptr->msp);
-	c_put_str(TERM_L_BLUE, buf, 13, 8);
-}
-
-#endif
 
 /*
  * Special display, part 2b
@@ -2122,11 +2089,11 @@ static void display_player_stat_info(void)
 	row = 3;
 
 	/* Print out the labels for the columns */
-	c_put_str(TERM_WHITE, "Stat", stat_col, row - 1);
-	c_put_str(TERM_BLUE, "Intrnl", stat_col + 5, row - 1);
-	c_put_str(TERM_L_BLUE, "Rce Cls Mod", stat_col + 12, row - 1);
-	c_put_str(TERM_L_GREEN, "Actual", stat_col + 24, row - 1);
-	c_put_str(TERM_YELLOW, "Currnt", stat_col + 31, row - 1);
+	put_str("Stat", stat_col, row - 1);
+	put_cstr(COL_BLUE "Intrnl", stat_col + 5, row - 1);
+	put_cstr(COL_L_BLUE "Rce Cls Mod", stat_col + 12, row - 1);
+	put_cstr(COL_L_GREEN "Actual", stat_col + 24, row - 1);
+	put_cstr(COL_YELLOW "Currnt", stat_col + 31, row - 1);
 
 	/* Display the stats */
 	for (i = 0; i < A_MAX; i++)
@@ -2146,7 +2113,7 @@ static void display_player_stat_info(void)
 			e_adj = p_ptr->stat_top[i] - (p_ptr->stat_max[i] - 18) / 10 - 19;
 
 		/* Reduced name of stat */
-		c_put_str(TERM_WHITE, stat_names_reduced[i], stat_col, row + i);
+		put_str(stat_names_reduced[i], stat_col, row + i);
 
 		/* Internal "natural" max value.  Maxes at 18/100 */
 		/* This is useful to see if you are maxed out */
@@ -2154,12 +2121,9 @@ static void display_player_stat_info(void)
 		c_put_str(TERM_BLUE, buf, stat_col + 5, row + i);
 
 		/* Race, class, and equipment modifiers */
-		(void)sprintf(buf, "%3d", (int)rp_ptr->r_adj[i]);
-		c_put_str(TERM_L_BLUE, buf, stat_col + 12, row + i);
-		(void)sprintf(buf, "%3d", (int)cp_ptr->c_adj[i]);
-		c_put_str(TERM_L_BLUE, buf, stat_col + 16, row + i);
-		(void)sprintf(buf, "%3d", (int)e_adj);
-		c_put_str(TERM_L_BLUE, buf, stat_col + 20, row + i);
+		put_fstr(stat_col + 12, row + i, COL_L_BLUE "%3d", (int)rp_ptr->r_adj[i]);
+		put_fstr(stat_col + 16, row + i, COL_L_BLUE "%3d", (int)cp_ptr->c_adj[i]);
+		put_fstr(stat_col + 20, row + i, COL_L_BLUE "%3d", (int)e_adj);
 
 		/* Actual maximal modified value */
 		cnv_stat(p_ptr->stat_top[i], buf);
@@ -2177,8 +2141,8 @@ static void display_player_stat_info(void)
 	col = stat_col + 39;
 
 	/* Header and Footer */
-	c_put_str(TERM_WHITE, "abcdefghijkl@", col, row - 1);
-	c_put_str(TERM_L_GREEN, "Modifications", col, row + 6);
+	put_str("abcdefghijkl@", col, row - 1);
+	put_cstr(COL_L_GREEN "Modifications", col, row + 6);
 
 	/* Process equipment */
 	for (i = 0; i < EQUIP_MAX; i++)
@@ -2502,7 +2466,7 @@ static void display_player_middle(void)
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 	{
 		put_str("Exp to Adv.", COL_VALUE, 12);
-		c_put_str(TERM_L_GREEN, "       *****", COL_VALUE + 11, 12);
+		put_cstr(COL_L_GREEN "       *****", COL_VALUE + 11, 12);
 	}
 	else if (toggle_xp)
 	{
@@ -3770,11 +3734,8 @@ void change_player_name(void)
 		break;
 	}
 
-	/* Pad the name (to clear junk) */
-	sprintf(tmp, "%-15.15s", player_name);
-
 	/* Re-Draw the name (in light blue) */
-	c_put_str(TERM_L_BLUE, tmp, COL_NAME + WID_NAME, 2);
+	put_fstr(COL_NAME + WID_NAME, 2, COL_L_BLUE "%-15.15s", player_name);
 
 	/* Erase the prompt, etc */
 	clear_from(22);
