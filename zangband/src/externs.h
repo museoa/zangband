@@ -568,8 +568,10 @@ extern void get_table_name(char *out_string, bool quotes);
 extern void flavor_init(void);
 extern void object_desc(char *buf, const object_type *o_ptr, int pref,
 						int mode, int size);
+extern void object_fmt(char *buf, uint max, cptr fmt, va_list *vp);
 extern void object_desc_store(char *buf, const object_type *o_ptr, int pref,
 							  int mode, int size);
+extern void object_store_fmt(char *buf, uint max, cptr fmt, va_list *vp);
 
 /* object1.c */
 /* object2.c */

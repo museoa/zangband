@@ -1795,6 +1795,34 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
 	while ((*(buf++) = *(t++))) ;	/* copy the string over */
 }
 
+/*
+ * Wrapper around object_desc() for the '%v'
+ * format option.  This allows object_desc() to be
+ * called in a format string.
+ *
+ * The parameters are object_type (o_ptr), pref (int), mode(int).
+ */
+void object_fmt(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	const object_type *o_ptr;
+	int pref;
+	int mode;
+	
+	/* Unused parameter */
+	(void)fmt;
+	
+	/* Get the object */
+	o_ptr = va_arg(*vp, const object_type*);
+	
+	/* Get the pref */
+	pref = va_arg(*vp, int);
+	
+	/* Get the mode */
+	mode = va_arg(*vp, int);
+	
+	object_desc(buf, o_ptr, pref, mode, max);
+}
+
 
 /*
  * Hack -- describe an item currently in a store's inventory
@@ -1840,3 +1868,32 @@ void object_desc_store(char *buf, const object_type *o_ptr, int pref,
 	/* Restore the "info" */
 	q_ptr->info = info;
 }
+
+/*
+ * Wrapper around object_desc_store() for the '%v'
+ * format option.  This allows object_desc() to be
+ * called in a format string.
+ *
+ * The parameters are object_type (o_ptr), pref (int), mode(int).
+ */
+void object_store_fmt(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	const object_type *o_ptr;
+	int pref;
+	int mode;
+	
+	/* Unused parameter */
+	(void)fmt;
+	
+	/* Get the object */
+	o_ptr = va_arg(*vp, const object_type*);
+	
+	/* Get the pref */
+	pref = va_arg(*vp, int);
+	
+	/* Get the mode */
+	mode = va_arg(*vp, int);
+	
+	object_desc(buf, o_ptr, pref, mode, max);
+}
+
