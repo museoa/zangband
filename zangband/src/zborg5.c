@@ -3794,7 +3794,7 @@ static s32b borg_power_aux4(void)
 	/* If the borg has a reliable healing spell */
 	if (borg_spell_legal_fail(REALM_LIFE, 3, 4, 5) ||
 	    borg_spell_legal_fail(REALM_LIFE, 1, 6, 5) ||
-	    borg_spell_legal_fail(REALM_NATURE, 1, 6, 5))
+	    borg_spell_legal_fail(REALM_NATURE, 1, 7, 5))
 	{
 		/* Still take some potions along */
 		max_carry = 5;

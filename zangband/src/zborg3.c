@@ -31,11 +31,7 @@ borg_mind borg_minds[MINDCRAFT_MAX];
  *
  * The comments yield the "name" of the spell or prayer.
  *
- * Also, the leading letter in the comment indicates how we use the
- * spell or prayer, if at all, using "A" for "attack", "D" for "call
- * light" and "detection", "E" for "escape", "H" for healing, "O" for
- * "object manipulation", and "F" for "terrain feature manipulation",
- * plus "!" for entries that can soon be handled.
+ * If there is an "!" for entries that means the borg can't use it.
  */
 
 static byte borg_magic_method[8][4][8] =
@@ -84,40 +80,40 @@ static byte borg_magic_method[8][4][8] =
 	  BORG_MAGIC_NOP /*   "Detect Evil" */ ,
 	  BORG_MAGIC_NOP /*   "Cure Light Wounds" */ ,
 	  BORG_MAGIC_NOP /*   "Bless" */ ,
-	  BORG_MAGIC_NOP /* H "Remove Fear" */ ,
-	  BORG_MAGIC_NOP /* D "Call Light" */ ,
-	  BORG_MAGIC_NOP /* D "Find Traps" */ ,
-	  BORG_MAGIC_NOP /* D "Cure Medium Wounds" */ ,
+	  BORG_MAGIC_NOP /*   "Remove Fear" */ ,
+	  BORG_MAGIC_NOP /*   "Call Light" */ ,
+	  BORG_MAGIC_NOP /*   "Find Traps / Door" */ ,
+	  BORG_MAGIC_NOP /*   "Cure Medium Wounds" */ ,
 	  BORG_MAGIC_NOP /*   "Satisfy Hunger" */ ,},
 
 	 {							/* High Mass (sval 1) */
 	  BORG_MAGIC_NOP /*   "Remove Curse" */ ,
-	  BORG_MAGIC_NOP /* E "Cure Poison" */ ,
-	  BORG_MAGIC_NOP /* H "Cure Crit Wounds" */ ,
+	  BORG_MAGIC_NOP /*   "Cure Poison" */ ,
+	  BORG_MAGIC_NOP /*   "Cure Crit Wounds" */ ,
 	  BORG_MAGIC_NOP /*   "See Inv" */ ,
 	  BORG_MAGIC_AIM /*   "Holy Orb" */ ,
-	  BORG_MAGIC_NOP /* H "PFE" */ ,
+	  BORG_MAGIC_NOP /*   "PFE" */ ,
 	  BORG_MAGIC_NOP /*   "Healing" */ ,
-	  BORG_MAGIC_NOP /*   "Rune of Protection" */ ,},
+	  BORG_MAGIC_NOP /* ! "Rune of Protection" */ ,},
 
 	 {							/* Book of the Unicorn (sval 2) */
-	  BORG_MAGIC_NOP /* H "Exorcism" */ ,
-	  BORG_MAGIC_NOP /* A "Dispel Curse" */ ,
-	  BORG_MAGIC_NOP /* H "Disp Undead and Demon" */ ,
-	  BORG_MAGIC_NOP /*   "Day of Dove" */ ,
+	  BORG_MAGIC_NOP /*   "Exorcism" */ ,
+	  BORG_MAGIC_NOP /*   "Dispel Curse" */ ,
+	  BORG_MAGIC_NOP /*   "Disp Undead and Demon" */ ,
+	  BORG_MAGIC_NOP /* ! "Day of Dove" */ ,
 	  BORG_MAGIC_NOP /*   "Dispel Evil" */ ,
-	  BORG_MAGIC_NOP /* D "Banishment" */ ,
-	  BORG_MAGIC_NOP /* H "Holy Word" */ ,
-	  BORG_MAGIC_NOP /*   "Warding True" */ },
+	  BORG_MAGIC_NOP /*   "Banishment" */ ,
+	  BORG_MAGIC_NOP /*   "Holy Word" */ ,
+	  BORG_MAGIC_NOP /* ! "Warding True" */ },
 
 	 {							/* Blessings of the Grail (sval 3) */
 	  BORG_MAGIC_NOP /*   "Heroism" */ ,
-	  BORG_MAGIC_NOP /* ! "Prayer" */ ,
-	  BORG_MAGIC_NOP /* H "Bless Weapon" */ ,
-	  BORG_MAGIC_NOP /* ! "Restoration" */ ,
+	  BORG_MAGIC_NOP /*   "Prayer" */ ,
+	  BORG_MAGIC_NOP /* ! "Bless Weapon" */ ,
+	  BORG_MAGIC_NOP /*   "Restoration" */ ,
 	  BORG_MAGIC_NOP /*   "Healing True" */ ,
-	  BORG_MAGIC_OBJ /* ! "Holy Vision" */ ,
-	  BORG_MAGIC_NOP /*   "Divine Intervent" */ ,
+	  BORG_MAGIC_OBJ /*   "Holy Vision" */ ,
+	  BORG_MAGIC_NOP /* ! "Divine Intervent" */ ,
 	  BORG_MAGIC_NOP /*   "Holy Invuln" */ }
 
 	 },							/* endof Life Realm */
@@ -144,23 +140,23 @@ static byte borg_magic_method[8][4][8] =
 	  BORG_MAGIC_OBJ /*   "*ID*" */ },
 
 	 {							/* Pattern Sorcery (sval 2) */
-	  BORG_MAGIC_NOP /*   "Detect Obj" */ ,
-	  BORG_MAGIC_NOP /*   "Detect Enchant" */ ,
-	  BORG_MAGIC_ICK /*   "Charm Mon" */ ,
+	  BORG_MAGIC_NOP /* ! "Detect Obj & treasure" */ ,
+	  BORG_MAGIC_NOP /* ! "Detect Enchant" */ ,
+	  BORG_MAGIC_ICK /* ! "Charm Mon" */ ,
 	  BORG_MAGIC_AIM /*   "Dimension Door" */ ,
-	  BORG_MAGIC_NOP /*   "Sense Minds" */ ,
-	  BORG_MAGIC_NOP /*   "Self Knowledge" */ ,
+	  BORG_MAGIC_NOP /* ! "Sense Minds" */ ,
+	  BORG_MAGIC_NOP /* ! "Self Knowledge" */ ,
 	  BORG_MAGIC_NOP /*   "Teleport Level" */ ,
 	  BORG_MAGIC_NOP /*   "Word of Recall" */ },
 
 	 {							/* Grimoir of Power (sval 3) */
 	  BORG_MAGIC_AIM /*   "Stasis" */ ,
-	  BORG_MAGIC_ICK /*   "Telekinesis" */ ,
-	  BORG_MAGIC_ICK /*   "Explosive Rune" */ ,
+	  BORG_MAGIC_ICK /* ! "Telekinesis" */ ,
+	  BORG_MAGIC_ICK /* ! "Explosive Rune" */ ,
 	  BORG_MAGIC_NOP /*   "Clairvoyance" */ ,
 	  BORG_MAGIC_OBJ /*   "*Enchant Weap" */ ,
 	  BORG_MAGIC_OBJ /*   "*Enchant Armor" */ ,
-	  BORG_MAGIC_ICK /*   "Alchemy" */ ,
+	  BORG_MAGIC_OBJ /*   "Alchemy" */ ,
 	  BORG_MAGIC_NOP /*   "GOI" */ }
 	 },							/* End of Sorcery Realm */
 
@@ -168,53 +164,53 @@ static byte borg_magic_method[8][4][8] =
 	 {							/* Call of the Wild (sval 0) */
 	  BORG_MAGIC_NOP /*   "Detect Creature" */ ,
 	  BORG_MAGIC_NOP /*   "First Aid" */ ,
-	  BORG_MAGIC_NOP /* ! "Detect Door" */ ,
+	  BORG_MAGIC_NOP /*   "Detect Trap / Door" */ ,
 	  BORG_MAGIC_NOP /*   "Foraging" */ ,
 	  BORG_MAGIC_NOP /*   "Daylight" */ ,
-	  BORG_MAGIC_AIM /*   "Animal Taming" */ ,
+	  BORG_MAGIC_AIM /* ! "Animal Taming" */ ,
 	  BORG_MAGIC_NOP /*   "Resist Environment" */ ,
 	  BORG_MAGIC_NOP /*   "Cure Wound&Poison" */ },
 	 {							/* Nature Mastery (sval 1) */
-	  BORG_MAGIC_AIM /* ! "Stone to Mud" */ ,
-	  BORG_MAGIC_AIM /* ! "Lightning Bolt" */ ,
+	  BORG_MAGIC_AIM /*   "Stone to Mud" */ ,
+	  BORG_MAGIC_AIM /*   "Lightning Bolt" */ ,
 	  BORG_MAGIC_NOP /*   "Nature Awareness" */ ,
 	  BORG_MAGIC_AIM /*   "Frost Bolt" */ ,
 	  BORG_MAGIC_AIM /*   "Ray of Sunlight" */ ,
 	  BORG_MAGIC_NOP /*   "Entangle" */ ,
-	  BORG_MAGIC_ICK /*   "Summon Animals" */ ,
+	  BORG_MAGIC_ICK /* ! "Summon Animals" */ ,
 	  BORG_MAGIC_NOP /*   "Herbal Healing" */ },
 	 {							/* Nature Gifts (sval 2) */
 	  BORG_MAGIC_NOP /* ! "Door Building" */ ,
-	  BORG_MAGIC_NOP /*   "Stair Building" */ ,
-	  BORG_MAGIC_NOP /* ! "Stone Skin" */ ,
+	  BORG_MAGIC_NOP /* ! "Stair Building" */ ,
+	  BORG_MAGIC_NOP /*   "Stone Skin" */ ,
 	  BORG_MAGIC_NOP /*   "Resistance True" */ ,
-	  BORG_MAGIC_NOP /*   "Animal Friend" */ ,
+	  BORG_MAGIC_NOP /* ! "Animal Friend" */ ,
 	  BORG_MAGIC_OBJ /*   "Stone Tell" */ ,
-	  BORG_MAGIC_NOP /*   "Wall of Stone" */ ,
-	  BORG_MAGIC_OBJ /*   "Protect From Corros." */ },
+	  BORG_MAGIC_NOP /* ! "Wall of Stone" */ ,
+	  BORG_MAGIC_OBJ /* ! "Protect From Corros." */ },
 	 {							/* Natures Wrath (sval 3) */
-	  BORG_MAGIC_NOP /* ! "Earthquake" */ ,
+	  BORG_MAGIC_NOP /*   "Earthquake" */ ,
 	  BORG_MAGIC_NOP /*   "Whirlwind" */ ,
-	  BORG_MAGIC_AIM /* ! "Blizzard" */ ,
+	  BORG_MAGIC_AIM /*   "Blizzard" */ ,
 	  BORG_MAGIC_AIM /*   "Lightning" */ ,
 	  BORG_MAGIC_AIM /*   "Whirpool" */ ,
 	  BORG_MAGIC_NOP /*   "Call Sunlight" */ ,
-	  BORG_MAGIC_OBJ /*   "Elemental Brand" */ ,
+	  BORG_MAGIC_OBJ /* ! "Elemental Brand" */ ,
 	  BORG_MAGIC_NOP /*   "Natures Wrath" */ }
 	 },							/* end of Natural realm  */
 
 	{							/* 4.Chaos Realm */
 	 {							/* Sign of Chaos... (sval 0) */
-	  BORG_MAGIC_AIM /* "Magic Missile" */ ,
-	  BORG_MAGIC_NOP /* "Trap/Door Dest" */ ,
-	  BORG_MAGIC_NOP /* "Flash of Light" */ ,
-	  BORG_MAGIC_NOP /* "Touch of Conf" */ ,
-	  BORG_MAGIC_NOP /* "ManaBurst" */ ,
-	  BORG_MAGIC_AIM /* "Fire Bolt" */ ,
-	  BORG_MAGIC_AIM /* "Fist of Force" */ ,
-	  BORG_MAGIC_NOP /* "Teleport" */ },
+	  BORG_MAGIC_AIM /*   "Magic Missile" */ ,
+	  BORG_MAGIC_NOP /*   "Trap/Door Dest" */ ,
+	  BORG_MAGIC_NOP /*   "Flash of Light" */ ,
+	  BORG_MAGIC_NOP /* ! "Touch of Conf" */ ,
+	  BORG_MAGIC_NOP /*   "ManaBurst" */ ,
+	  BORG_MAGIC_AIM /*   "Fire Bolt" */ ,
+	  BORG_MAGIC_AIM /*   "Fist of Force" */ ,
+	  BORG_MAGIC_NOP /*   "Teleport" */ },
 	 {							/* Chaos Mastery... (sval 1) */
-	  BORG_MAGIC_ICK /*   "Wonder" */ ,
+	  BORG_MAGIC_ICK /* ! "Wonder" */ ,
 	  BORG_MAGIC_AIM /*   "Chaos Bolt" */ ,
 	  BORG_MAGIC_NOP /*   "Sonic Boom" */ ,
 	  BORG_MAGIC_AIM /*   "Doom Beam" */ ,
@@ -227,15 +223,15 @@ static byte borg_magic_method[8][4][8] =
 	  BORG_MAGIC_NOP /*   "Chain Lightn" */ ,
 	  BORG_MAGIC_OBJ /*   "Arcane Binding" */ ,
 	  BORG_MAGIC_AIM /*   "Disintegration" */ ,
-	  BORG_MAGIC_NOP /*   "Alter Reality" */ ,
-	  BORG_MAGIC_ICK /*   "Polymorph Self" */ ,
-	  BORG_MAGIC_ICK /*   "Chaos Brinding" */ ,
-	  BORG_MAGIC_ICK /*   "Summon Demon" */ },
+	  BORG_MAGIC_NOP /* ! "Alter Reality" */ ,
+	  BORG_MAGIC_ICK /* ! "Polymorph Self" */ ,
+	  BORG_MAGIC_ICK /* ! "Chaos Branding" */ ,
+	  BORG_MAGIC_ICK /* ! "Summon Demon" */ },
 	 {							/* Armageddon Tome (sval 3) */
 	  BORG_MAGIC_AIM /*   "Gravity Beam" */ ,
 	  BORG_MAGIC_AIM /*   "Meteor Swarm" */ ,
 	  BORG_MAGIC_NOP /*   "Flame Strike" */ ,
-	  BORG_MAGIC_NOP /*   "Call Chaos" */ ,
+	  BORG_MAGIC_NOP /* ! "Call Chaos" */ ,
 	  BORG_MAGIC_AIM /*   "Magic Rocket" */ ,
 	  BORG_MAGIC_AIM /*   "Mana Storm" */ ,
 	  BORG_MAGIC_AIM /*   "Breath Logrus" */ ,
@@ -244,16 +240,16 @@ static byte borg_magic_method[8][4][8] =
 
 	{							/* 5. Death Realm */
 	 {							/* Black Prayers (sval 0) */
-	  BORG_MAGIC_NOP /* ! "Detect Unlife" */ ,
+	  BORG_MAGIC_NOP /*   "Detect Unlife" */ ,
 	  BORG_MAGIC_AIM /*   "Malediction" */ ,
-	  BORG_MAGIC_NOP /* ! "Detect Evil" */ ,
+	  BORG_MAGIC_NOP /*   "Detect Evil" */ ,
 	  BORG_MAGIC_AIM /*   "Stinking Cloud" */ ,
 	  BORG_MAGIC_AIM /*   "Black Sleep" */ ,
 	  BORG_MAGIC_NOP /*   "Resist Poison" */ ,
 	  BORG_MAGIC_AIM /*   "Horrify" */ ,
-	  BORG_MAGIC_AIM /*   "Enslave Undead" */ },
+	  BORG_MAGIC_AIM /* ! "Enslave Undead" */ },
 	 {							/* Black Mass (sval 1) */
-	  BORG_MAGIC_AIM /* ! "Orb of Entropy" */ ,
+	  BORG_MAGIC_AIM /*   "Orb of Entropy" */ ,
 	  BORG_MAGIC_AIM /*   "Nether Bolt" */ ,
 	  BORG_MAGIC_NOP /*   "Terror" */ ,
 	  BORG_MAGIC_AIM /*   "Vamp Drain" */ ,
@@ -262,68 +258,68 @@ static byte borg_magic_method[8][4][8] =
 	  BORG_MAGIC_WHO /*   "Genocide" */ ,
 	  BORG_MAGIC_NOP /*   "Restore Life" */ },
 	 {							/* Black Channels (sval 2) */
-	  BORG_MAGIC_NOP /* ! "Berserk" */ ,
-	  BORG_MAGIC_NOP /*   "Invoke Spirits" */ ,
-	  BORG_MAGIC_AIM /* ! "Dark Bolt" */ ,
+	  BORG_MAGIC_NOP /*   "Berserk" */ ,
+	  BORG_MAGIC_NOP /* ! "Invoke Spirits" */ ,
+	  BORG_MAGIC_AIM /*   "Dark Bolt" */ ,
 	  BORG_MAGIC_NOP /*   "Battle Frenzy" */ ,
 	  BORG_MAGIC_AIM /*   "Vamp True" */ ,
-	  BORG_MAGIC_OBJ /*   "Vamp Brand" */ ,
+	  BORG_MAGIC_OBJ /* ! "Vamp Brand" */ ,
 	  BORG_MAGIC_AIM /*   "Dark Storm" */ ,
 	  BORG_MAGIC_NOP /*   "Mass Genocide" */ },
 	 {							/* Necronomicon (sval 3) */
-	  BORG_MAGIC_AIM /* ! "Death Ray" */ ,
-	  BORG_MAGIC_ICK /*   "Raise the Dead" */ ,
-	  BORG_MAGIC_OBJ /* ! "Esoteria" */ ,
+	  BORG_MAGIC_AIM /*   "Death Ray" */ ,
+	  BORG_MAGIC_ICK /* ! "Raise the Dead" */ ,
+	  BORG_MAGIC_OBJ /*   "Esoteria" */ ,
 	  BORG_MAGIC_NOP /*   "Word of Death" */ ,
 	  BORG_MAGIC_NOP /*   "Evocation" */ ,
 	  BORG_MAGIC_AIM /*   "Hellfire" */ ,
 	  BORG_MAGIC_NOP /*   "Omnicide" */ ,
-	  BORG_MAGIC_NOP /*   "Wraithform" */ }
+	  BORG_MAGIC_NOP /* ! "Wraithform" */ }
 	 },							/* end of Death Realm */
 
 	{							/* 6 Trump Realm */
 	 {							/* Conjuring and Tricks (sval 0) */
-	  BORG_MAGIC_NOP /* ! "Phase Door" */ ,
+	  BORG_MAGIC_NOP /*   "Phase Door" */ ,
 	  BORG_MAGIC_AIM /*   "Mind Blast" */ ,
-	  BORG_MAGIC_ICK /*   "Shuffle" */ ,
-	  BORG_MAGIC_ICK /*   "Reset Recall" */ ,
+	  BORG_MAGIC_ICK /* ! "Shuffle" */ ,
+	  BORG_MAGIC_ICK /* ! "Reset Recall" */ ,
 	  BORG_MAGIC_NOP /*   "Teleport Self" */ ,
 	  BORG_MAGIC_AIM /*   "Dimension Door" */ ,
-	  BORG_MAGIC_NOP /*   "Trump Spying" */ ,
+	  BORG_MAGIC_NOP /* ! "Trump Spying" */ ,
 	  BORG_MAGIC_AIM /*   "Teleport Away" */ },
 	 {							/* Deck of Many Things (sval 1) */
 	  BORG_MAGIC_ICK /* ! "Trump Object" */ ,
 	  BORG_MAGIC_ICK /* ! "Trump Animal" */ ,
-	  BORG_MAGIC_NOP /*   "Phantasmal Servant" */ ,
-	  BORG_MAGIC_ICK /*   "Trump Monster" */ ,
-	  BORG_MAGIC_ICK /*   "Conjure Elemental" */ ,
+	  BORG_MAGIC_NOP /* ! "Phantasmal Servant" */ ,
+	  BORG_MAGIC_ICK /* ! "Trump Monster" */ ,
+	  BORG_MAGIC_ICK /* ! "Conjure Elemental" */ ,
 	  BORG_MAGIC_NOP /*   "Teleport Level" */ ,
 	  BORG_MAGIC_NOP /*   "Word of Recall" */ ,
 	  BORG_MAGIC_NOP /*   "Banish" */ },
 	 {							/* Trumps of Doom (sval 2) */
 	  BORG_MAGIC_ICK /* ! "Joker Card" */ ,
-	  BORG_MAGIC_ICK /*   "Trump Spiders" */ ,
-	  BORG_MAGIC_ICK /*   "T. Reptiles" */ ,
-	  BORG_MAGIC_ICK /*   "T. Houdns" */ ,
-	  BORG_MAGIC_ICK /*   "T. Branding" */ ,
-	  BORG_MAGIC_ICK /*   "Living Trump" */ ,
-	  BORG_MAGIC_ICK /*   "Death Dealing" */ ,
-	  BORG_MAGIC_ICK /*   "T. Cyberdemon" */ },
+	  BORG_MAGIC_ICK /* ! "Trump Spiders" */ ,
+	  BORG_MAGIC_ICK /* ! "T. Reptiles" */ ,
+	  BORG_MAGIC_ICK /* ! "T. Houdns" */ ,
+	  BORG_MAGIC_ICK /* ! "T. Branding" */ ,
+	  BORG_MAGIC_ICK /* ! "Living Trump" */ ,
+	  BORG_MAGIC_NOP /*   "Death Dealing" */ ,
+	  BORG_MAGIC_ICK /* ! "T. Cyberdemon" */ },
 	 {							/* Five Aces (sval 3) */
-	  BORG_MAGIC_NOP /* ! "T. Divination" */ ,
+	  BORG_MAGIC_NOP /*   "T. Divination" */ ,
 	  BORG_MAGIC_OBJ /*   "T. Lore" */ ,
-	  BORG_MAGIC_ICK /*   "T. Undead" */ ,
-	  BORG_MAGIC_ICK /*   "T. Dragon" */ ,
-	  BORG_MAGIC_ICK /*   "Mass Trump" */ ,
-	  BORG_MAGIC_ICK /*   "T. Demon" */ ,
-	  BORG_MAGIC_ICK /*   "T. Ancient Dragon " */ ,
-	  BORG_MAGIC_ICK /*   "T. Greater Undead" */ }
+	  BORG_MAGIC_ICK /* ! "T. Undead" */ ,
+	  BORG_MAGIC_ICK /* ! "T. Dragon" */ ,
+	  BORG_MAGIC_ICK /* ! "Mass Trump" */ ,
+	  BORG_MAGIC_ICK /* ! "T. Demon" */ ,
+	  BORG_MAGIC_ICK /* ! "T. Ancient Dragon " */ ,
+	  BORG_MAGIC_ICK /* ! "T. Greater Undead" */ }
 	 },							/* end of Trump Realm */
 
 	{							/* 7 Arcane Realm */
 	 {							/* Cantrips (sval 0) */
-	  BORG_MAGIC_AIM /* ! "Zap" */ ,
-	  BORG_MAGIC_AIM /*   "Wiz Lock" */ ,
+	  BORG_MAGIC_AIM /*   "Zap" */ ,
+	  BORG_MAGIC_AIM /* ! "Wiz Lock" */ ,
 	  BORG_MAGIC_NOP /*   "Det Invis" */ ,
 	  BORG_MAGIC_NOP /*   "Det Mon" */ ,
 	  BORG_MAGIC_NOP /*   "Blink" */ ,
@@ -331,27 +327,27 @@ static byte borg_magic_method[8][4][8] =
 	  BORG_MAGIC_AIM /*   "Trap/Door Dest" */ ,
 	  BORG_MAGIC_NOP /*   "Cure Light Wounds" */ },
 	 {							/* Minor Arcana (sval 1) */
-	  BORG_MAGIC_NOP /* ! "Det Door/Trap" */ ,
-	  BORG_MAGIC_NOP /* ! "Phlogiston" */ ,
-	  BORG_MAGIC_NOP /*   "Det Treasure" */ ,
-	  BORG_MAGIC_NOP /*   "Det Enchant" */ ,
-	  BORG_MAGIC_NOP /*   "Det Object" */ ,
+	  BORG_MAGIC_NOP /*   "Det Door/Trap" */ ,
+	  BORG_MAGIC_NOP /*   "Phlogiston" */ ,
+	  BORG_MAGIC_NOP /* ! "Det Treasure" */ ,
+	  BORG_MAGIC_NOP /* ! "Det Enchant" */ ,
+	  BORG_MAGIC_NOP /* ! "Det Object" */ ,
 	  BORG_MAGIC_NOP /*   "Cure Poison" */ ,
 	  BORG_MAGIC_NOP /*   "Resist Cold" */ ,
 	  BORG_MAGIC_NOP /*   "Resist Fre" */ },
 	 {							/* Major Arcana (sval 2) */
-	  BORG_MAGIC_NOP /* ! "Resist Elec" */ ,
+	  BORG_MAGIC_NOP /*   "Resist Elec" */ ,
 	  BORG_MAGIC_NOP /*   "Resist Acid" */ ,
-	  BORG_MAGIC_NOP /* ! "Cure Med Wounds" */ ,
+	  BORG_MAGIC_NOP /*   "Cure Med Wounds" */ ,
 	  BORG_MAGIC_NOP /*   "Teleport" */ ,
 	  BORG_MAGIC_AIM /*   "Stone to Mud" */ ,
 	  BORG_MAGIC_AIM /*   "Ray of Light" */ ,
 	  BORG_MAGIC_NOP /*   "Satisfy Hunger" */ ,
 	  BORG_MAGIC_NOP /*   "See Invis" */ },
 	 {							/* Manual of Mastery (sval 3) */
-	  BORG_MAGIC_OBJ /* ! "Recharge" */ ,
+	  BORG_MAGIC_OBJ /*   "Recharge" */ ,
 	  BORG_MAGIC_NOP /*   "Teleport Level" */ ,
-	  BORG_MAGIC_OBJ /* ! "Ident" */ ,
+	  BORG_MAGIC_OBJ /*   "Ident" */ ,
 	  BORG_MAGIC_AIM /*   "Teleport Away" */ ,
 	  BORG_MAGIC_AIM /*   "Elemental Ball" */ ,
 	  BORG_MAGIC_NOP /*   "Detection" */ ,
@@ -445,24 +441,24 @@ static byte borg_magic_rating[8][4][8] =
 	  95 /*   "Holy Orb" */ ,
 	  85 /*   "Prot/Evil" */ ,
 	  65 /*   "Heal 300" */ ,
-	  55 /*   "Glyph" */ },
+	  0  /*   "Glyph" */ },
 	 {							/* Book of the Unicorn (sval 2) */
 	  65 /*   "Exorcism" */ ,
 	  65 /*   "Dispel Curse" */ ,
 	  55 /*   "Dispel Demon" */ ,
-	  0 /*   "Day of Dove" */ ,
+	  0  /*   "Day of Dove" */ ,
 	  65 /*   "Dispel Evil" */ ,
 	  55 /*   "Banishment" */ ,
 	  65 /*   "Holy Word" */ ,
-	  55 /*   "Warding True" */ },
+	  0  /*   "Warding True" */ },
 	 {							/* Blessings of the Grail (sval 3) */
 	  55 /*   "Heroism" */ ,
 	  65 /*   "Prayer" */ ,
-	  45 /*   "Bless Weapon" */ ,
+	  0  /*   "Bless Weapon" */ ,
 	  55 /*   "Restoration" */ ,
 	  65 /*   "Healing 2000" */ ,
 	  55 /*   "Holy Vision" */ ,
-	  55 /*   "Divine Intervent" */ ,
+	  0  /*   "Divine Intervent" */ ,
 	  55 /*   "Holy Invuln" */ }
 	 },							/* end of Life Magic */
 
@@ -486,22 +482,22 @@ static byte borg_magic_rating[8][4][8] =
 	  85 /*   "Detection True" */ ,
 	  75 /*   "*Identify*" */ },
 	 {							/* Pattern Sorcery (sval 2) */
-	  55 /*   "Detect Obj/Treasure" */ ,
-	  55 /*   "Detect Enchantment" */ ,
-	  75 /*   "Charm Monster" */ ,
+	  0  /*   "Detect Obj/Treasure" */ ,
+	  0  /*   "Detect Enchantment" */ ,
+	  0  /*   "Charm Monster" */ ,
 	  65 /*   "Dimension Door" */ ,
-	  65 /*   "Sense Minds" */ ,
-	  0 /*   "Self Knowledge" */ ,
+	  0  /*   "Sense Minds" */ ,
+	  0  /*   "Self Knowledge" */ ,
 	  65 /*   "Teleport Level" */ ,
 	  65 /*   "Word of Recall" */ },
 	 {							/* Grimoir of Power (sval 3) */
 	  55 /*   "Stasis" */ ,
-	  0 /*   "Telekinesis" */ ,
-	  0 /*   "Explosive Rune" */ ,
+	  0  /*   "Telekinesis" */ ,
+	  0  /*   "Explosive Rune" */ ,
 	  65 /*   "Clairvoyance" */ ,
 	  55 /*   "Enchant Weap" */ ,
 	  55 /*   "Enchant Armour" */ ,
-	  1 /*   "Alchemy" */ ,
+	  1  /*   "Alchemy" */ ,
 	  95 /*   "GOI" */ }
 	 },							/* end of Sorcery Realm */
 
@@ -509,53 +505,53 @@ static byte borg_magic_rating[8][4][8] =
 	 {							/* Call of the Wild (sval 0) */
 	  65 /*   "Detect Creature" */ ,
 	  65 /*   "First Aid" */ ,
-	  55 /* ! "Detect Door" */ ,
+	  55 /*   "Detect Trap/Door" */ ,
 	  75 /*   "Foraging" */ ,
 	  75 /*   "Daylight" */ ,
-	  55 /*   "Animal Taming" */ ,
+	  0  /*   "Animal Taming" */ ,
 	  75 /*   "Resist Environment" */ ,
 	  65 /*   "Cure Wound&Poison" */ },
 	 {							/* Nature Mastery (sval 1) */
-	  55 /* ! "Stone to Mud" */ ,
-	  65 /* ! "Lightning Bolt" */ ,
+	  55 /*   "Stone to Mud" */ ,
+	  65 /*   "Lightning Bolt" */ ,
 	  65 /*   "Nature Awareness" */ ,
 	  65 /*   "Frost Bolt" */ ,
 	  65 /*   "Ray of Sunlight" */ ,
 	  65 /*   "Entangle" */ ,
-	  65 /*   "Summon Animals" */ ,
+	  0  /*   "Summon Animals" */ ,
 	  65 /*   "Herbal Healing" */ },
 	 {							/* Nature Gifts (sval 2) */
-	  65 /* ! "Door Building" */ ,
-	  45 /*   "Stair Building" */ ,
-	  65 /* ! "Stone Skin" */ ,
+	  0  /*   "Door Building" */ ,
+	  0  /*   "Stair Building" */ ,
+	  65 /*   "Stone Skin" */ ,
 	  65 /*   "Resistance True" */ ,
-	  55 /*   "Animal Friend" */ ,
+	  0  /*   "Animal Friend" */ ,
 	  65 /*   "Stone Tell" */ ,
-	  45 /*   "Wall of Stone" */ ,
-	  45 /*   "Protect From Corros." */ },
+	  0  /*   "Wall of Stone" */ ,
+	  0  /*   "Protect From Corros." */ },
 	 {							/* Natures Wrath (sval 3) */
-	  65 /* ! "Earthquake" */ ,
+	  65 /*   "Earthquake" */ ,
 	  65 /*   "Whirlwind" */ ,
-	  65 /* ! "Blizzard" */ ,
+	  65 /*   "Blizzard" */ ,
 	  65 /*   "Lightning" */ ,
 	  65 /*   "Whirpool" */ ,
 	  65 /*   "Call Sunlight" */ ,
-	  45 /*   "Elemental Brand" */ ,
+	  0  /*   "Elemental Brand" */ ,
 	  65 /*   "Natures Wrath" */ }
 	 },							/* end of Natural realm  */
 
 	{							/* 4.Chaos Realm */
 	 {							/* Sign of Chaos... (sval 0) */
-	  95 /* "Magic Missile" */ ,
-	  65 /* "Trap/Door Dest" */ ,
-	  75 /* "Flash of Light" */ ,
-	  55 /* "Touch of Conf" */ ,
-	  65 /* "ManaBurst" */ ,
-	  65 /* "Fire Bolt" */ ,
-	  65 /* "Fist of Force" */ ,
-	  75 /* "Teleport" */ },
+	  95 /*   "Magic Missile" */ ,
+	  65 /*   "Trap/Door Dest" */ ,
+	  75 /*   "Flash of Light" */ ,
+	  0  /*   "Touch of Conf" */ ,
+	  65 /*   "ManaBurst" */ ,
+	  65 /*   "Fire Bolt" */ ,
+	  65 /*   "Fist of Force" */ ,
+	  75 /*   "Teleport" */ },
 	 {							/* Chaos Mastery... (sval 1) */
-	  5 /*   "Wonder" */ ,
+	  0  /*   "Wonder" */ ,
 	  65 /*   "Chaos Bolt" */ ,
 	  65 /*   "Sonic Boom" */ ,
 	  65 /*   "Doom Beam" */ ,
@@ -568,15 +564,15 @@ static byte borg_magic_rating[8][4][8] =
 	  65 /*   "Chain Lightn" */ ,
 	  65 /*   "Arcane Binding" */ ,
 	  65 /*   "Disintegration" */ ,
-	  55 /*   "Alter Reality" */ ,
-	  5 /*   "Polymorph Self" */ ,
-	  55 /*   "Chaos Binding" */ ,
-	  55 /*   "Summon Demon" */ },
+	  0  /*   "Alter Reality" */ ,
+	  0  /*   "Polymorph Self" */ ,
+	  0  /*   "Chaos Branding" */ ,
+	  0  /*   "Summon Demon" */ },
 	 {							/* Armageddon Tome (sval 3) */
 	  65 /*   "Gravity Beam" */ ,
 	  65 /*   "Meteor Swarm" */ ,
 	  65 /*   "Flame Strike" */ ,
-	  65 /*   "Call Chaos" */ ,
+	  0  /*   "Call Chaos" */ ,
 	  75 /*   "Magic Rocket" */ ,
 	  75 /*   "Mana Storm" */ ,
 	  65 /*   "Breath Logrus" */ ,
@@ -585,16 +581,16 @@ static byte borg_magic_rating[8][4][8] =
 
 	{							/* 5. Death Realm */
 	 {							/* Black Prayers (sval 0) */
-	  65 /* ! "Detect Unlife" */ ,
+	  65 /*   "Detect Unlife" */ ,
 	  75 /*   "Maledition" */ ,
-	  75 /* ! "Detect Evil" */ ,
+	  75 /*   "Detect Evil" */ ,
 	  75 /*   "Stinking Cloud" */ ,
 	  65 /*   "Black Sleep" */ ,
 	  65 /*   "Resist Poison" */ ,
 	  65 /*   "Horrify" */ ,
-	  65 /*   "Enslave Undead" */ },
+	  0  /*   "Enslave Undead" */ },
 	 {							/* Black Mass (sval 1) */
-	  70 /* ! "Orb of Entropy" */ ,
+	  70 /*   "Orb of Entropy" */ ,
 	  65 /*   "Nether Bolt" */ ,
 	  50 /*   "Terror" */ ,
 	  65 /*   "Vamp Drain" */ ,
@@ -603,18 +599,18 @@ static byte borg_magic_rating[8][4][8] =
 	  65 /*   "Genocide" */ ,
 	  65 /*   "Restore Life" */ },
 	 {							/* Black Channels (sval 2) */
-	  65 /* ! "Berserk" */ ,
-	  65 /*   "Invoke Spirits" */ ,
-	  65 /* ! "Dark Bolt" */ ,
+	  65 /*   "Berserk" */ ,
+	  0  /*   "Invoke Spirits" */ ,
+	  65 /*   "Dark Bolt" */ ,
 	  85 /*   "Battle Frenzy" */ ,
 	  65 /*   "Vamp True" */ ,
-	  65 /*   "Vamp Brand" */ ,
+	  0  /*   "Vamp Brand" */ ,
 	  65 /*   "Dark Storm" */ ,
 	  65 /*   "Mass Genocide" */ },
 	 {							/* Necronomicon (sval 3) */
-	  65 /* ! "Death Ray" */ ,
-	  65 /*   "Raise the Dead" */ ,
-	  75 /* ! "Esoteria" */ ,
+	  65 /*   "Death Ray" */ ,
+	  0  /*   "Raise the Dead" */ ,
+	  75 /*   "Esoteria" */ ,
 	  65 /*   "Word of Death" */ ,
 	  65 /*   "Evocation" */ ,
 	  65 /*   "Hellfire" */ ,
@@ -625,47 +621,47 @@ static byte borg_magic_rating[8][4][8] =
 
 	{							/* Trump Realm */
 	 {							/* Trump Magic (sval 0) */
-	  95 /* ! "Phase Door" */ ,
-	  85 /* ! "Mind Blast " */ ,
-	  0 /*   "Shuffle" */ ,
-	  0 /*   "Reset Recall" */ ,
+	  95 /*   "Phase Door" */ ,
+	  85 /*   "Mind Blast " */ ,
+	  0  /*   "Shuffle" */ ,
+	  0  /*   "Reset Recall" */ ,
 	  75 /*   "Tlelport Self" */ ,
 	  65 /*   "Dimension Door " */ ,
-	  65 /*   "Trump Spying " */ ,
+	  0  /*   "Trump Spying " */ ,
 	  70 /*   "Teleport Away " */ },
 	 {							/* Deck of Many Things (sval 1) */
-	  0 /* ! "Trump Object " */ ,
-	  0 /* ! "Trump animal " */ ,
-	  85 /*   "Phantasmal Servant " */ ,
-	  0 /*   "Trump Monster " */ ,
-	  0 /*   "Conjure Elemental " */ ,
+	  0  /*   "Trump Object " */ ,
+	  0  /*   "Trump animal " */ ,
+	  0  /*   "Phantasmal Servant " */ ,
+	  0  /*   "Trump Monster " */ ,
+	  0  /*   "Conjure Elemental " */ ,
 	  50 /*   "Teleport Level " */ ,
 	  65 /*   "Word of recall " */ ,
 	  65 /*   "Banishment" */ },
 	 {							/* Trump of Doom (sval 2) */
-	  0 /* ! "Joker Card " */ ,
-	  0 /*   "Trump Spiders " */ ,
-	  0 /*   "Trump Reptiles " */ ,
-	  0 /*   "Trump Hounds " */ ,
-	  0 /*   "Trump Branding " */ ,
-	  0 /*   "Living Trump " */ ,
-	  0 /*   "Death Dealing " */ ,
-	  0 /*   "Trump Cyberdemon " */ },
+	  0  /*   "Joker Card " */ ,
+	  0  /*   "Trump Spiders " */ ,
+	  0  /*   "Trump Reptiles " */ ,
+	  0  /*   "Trump Hounds " */ ,
+	  0  /*   "Trump Branding " */ ,
+	  0  /*   "Living Trump " */ ,
+	  55 /*   "Death Dealing " */ ,
+	  0  /*   "Trump Cyberdemon " */ },
 	 {							/* Five Aces (sval 3) */
-	  0 /* ! "Trump Divination " */ ,
-	  0 /*   "Trump Lore " */ ,
-	  0 /*   "Trump Undead " */ ,
-	  0 /*   "Trump Dragon " */ ,
-	  0 /*   "Mass Trump " */ ,
-	  0 /*   "Trump Demon " */ ,
-	  0 /*   "Trump Ancient Dragon " */ ,
-	  0 /*   "Trump Greater Undead " */ }
+	  45 /*   "Trump Divination " */ ,
+	  45 /*   "Trump Lore " */ ,
+	  0  /*   "Trump Undead " */ ,
+	  0  /*   "Trump Dragon " */ ,
+	  0  /*   "Mass Trump " */ ,
+	  0  /*   "Trump Demon " */ ,
+	  0  /*   "Trump Ancient Dragon " */ ,
+	  0  /*   "Trump Greater Undead " */ }
 	 },							/* end of Trump Realm */
 
 	{							/* 7 Arcane Realm */
 	 {							/* Cantrips (sval 0) */
-	  85 /* ! "Zap" */ ,
-	  85 /*   "Wiz Lock" */ ,
+	  85 /*   "Zap" */ ,
+	  0  /*   "Wiz Lock" */ ,
 	  75 /*   "Det Invis" */ ,
 	  75 /*   "Det Mon" */ ,
 	  75 /*   "Blink" */ ,
@@ -673,8 +669,8 @@ static byte borg_magic_rating[8][4][8] =
 	  85 /*   "Trap/Door Dest" */ ,
 	  75 /*   "Cure Light Wounds" */ },
 	 {							/* Minor Arcana (sval 1) */
-	  75 /* ! "Det Door/Trap" */ ,
-	  75 /* ! "Phlogiston" */ ,
+	  75 /*   "Det Door/Trap" */ ,
+	  75 /*   "Phlogiston" */ ,
 	  75 /*   "Det Treasure" */ ,
 	  75 /*   "Det Enchant" */ ,
 	  75 /*   "Det Object" */ ,
@@ -682,18 +678,18 @@ static byte borg_magic_rating[8][4][8] =
 	  75 /*   "Resist Cold" */ ,
 	  75 /*   "Resist Fre" */ },
 	 {							/* Major Arcana (sval 2) */
-	  75 /* ! "Resist Elec" */ ,
+	  75 /*   "Resist Elec" */ ,
 	  75 /*   "Resist Acid" */ ,
-	  75 /* ! "Cure Med Wounds" */ ,
+	  75 /*   "Cure Med Wounds" */ ,
 	  75 /*   "Teleport" */ ,
 	  85 /*   "Stone to Mud" */ ,
 	  85 /*   "Ray of Light" */ ,
 	  75 /*   "Satisfy Hunger" */ ,
 	  75 /*   "See Invis" */ },
 	 {							/* Manual of Mastery (sval 3) */
-	  75 /* ! "Recharge" */ ,
+	  75 /*   "Recharge" */ ,
 	  75 /*   "Teleport Level" */ ,
-	  85 /* ! "Ident" */ ,
+	  85 /*   "Ident" */ ,
 	  85 /*   "Teleport Away" */ ,
 	  70 /*   "Elemental Ball" */ ,
 	  75 /*   "Detection" */ ,
@@ -1784,9 +1780,6 @@ int borg_reserve_mana(void)
 	if (borg_mana_legal_fail(REALM_CHAOS, 1, 7, 15, &cost)) return (cost);
 	if (borg_mana_legal_fail(REALM_ARCANE, 2, 3, 15, &cost)) return (cost);
 
-	/* Stair Building */
-	if (borg_mana_legal_fail(REALM_NATURE, 2, 1, 15, &cost)) return (cost);
-
 	/* Phase Door? */
 	if (borg_mana_legal_fail(REALM_TRUMP, 0, 0, 15, &cost)) return (cost);
 	if (borg_mana_legal_fail(REALM_SORCERY, 0, 1, 15, &cost)) return (cost);
@@ -2157,7 +2150,11 @@ bool borg_spell(int realm, int book, int what)
 }
 
 
-/* Determines if a book contains spells that can be reliably cast */
+/*
+ * Determines if a book contains spells that can be reliably cast,
+ * regardless whether the borg has the book or not, otherwise he'll
+ * drop all his books at home and never picks them up to learn from them
+ */
 bool borg_uses_book(int realm, int book)
 {
 	int spell;
@@ -2166,7 +2163,7 @@ bool borg_uses_book(int realm, int book)
 	for (spell = 0; spell < 8; spell++)
 	{
 		/* Is this an easy spell? */
-		if (borg_spell_legal_fail(realm, book, spell, 40)) return (TRUE);
+		if (borg_spell_fail_rate(realm, book, spell) < 40) return (TRUE);
 	}
 
 	/* Only hard / impossible spells */
@@ -2780,7 +2777,6 @@ void borg_cheat_spell(int realm)
 	/* Can we use spells/prayers? */
 	if (realm == 0) return;
 
-
 	/* process books */
 	for (book = 0; book < 4; book++)
 	{
@@ -2823,8 +2819,8 @@ void borg_cheat_spell(int realm)
 
 			/* Note "untried" spells */
 			else if (!((realm == bp_ptr->realm1) ?
-					   (p_ptr->spell.r[0].learned & (1L << j)) :
-					   (p_ptr->spell.r[1].learned & (1L << j))))
+					   (p_ptr->spell.r[0].worked & (1L << j)) :
+					   (p_ptr->spell.r[1].worked & (1L << j))))
 			{
 				/* Untried */
 				as->status = BORG_MAGIC_TEST;

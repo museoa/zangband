@@ -2459,6 +2459,7 @@ static void borg_notice_aux2(void)
 		borg_spell_legal(REALM_SORCERY, 0, 2) ||
 		borg_spell_legal(REALM_ARCANE, 1, 0) ||
 		borg_spell_legal(REALM_NATURE, 1, 2) ||
+		borg_spell_legal(REALM_NATURE, 0, 2) ||
 		borg_mindcr_legal(MIND_PRECOGNIT, 2) ||
 		borg_racial_check(RACE_DWARF, TRUE) ||
 		borg_racial_check(RACE_NIBELUNG, TRUE))
@@ -2471,6 +2472,7 @@ static void borg_notice_aux2(void)
 	if (borg_spell_legal(REALM_LIFE, 0, 0) ||
 		borg_spell_legal(REALM_SORCERY, 0, 0) ||
 		borg_spell_legal(REALM_NATURE, 0, 0) ||
+		borg_spell_legal(REALM_DEATH, 0, 0) ||
 		borg_spell_legal(REALM_DEATH, 0, 2) ||
 		borg_mindcr_legal(MIND_PRECOGNIT, 1))
 	{
@@ -2490,8 +2492,6 @@ static void borg_notice_aux2(void)
 		borg_spell_legal(REALM_NATURE, 1, 2) ||
 		borg_mindcr_legal(MIND_PRECOGNIT, 20))
 	{
-		bp_ptr->able.det_door += 1000;
-		bp_ptr->able.det_trap += 1000;
 		bp_ptr->able.magic_map += 1000;
 	}
 

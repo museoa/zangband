@@ -1705,7 +1705,9 @@ bool borg_think_dungeon(void)
 	/*** Wait for recall ***/
 
 	/* Wait for recall, unless in danger */
-	if (goal_recalling && (borg_danger(c_x, c_y, 1, TRUE) <= 0))
+	if (goal_recalling &&
+		borg_on_safe_feat(map_loc(c_x, c_y)->feat) &&
+		(borg_danger(c_x, c_y, 1, TRUE) <= 0))
 	{
 		/* Take note */
 		borg_note("# Waiting for Recall...");

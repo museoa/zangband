@@ -505,8 +505,8 @@ static int borg_defend_aux_resist_f(int p1)
 
 	/* do it! */
 	return (borg_activate_artifact(ART_COLLUIN, FALSE) ||
-		borg_spell(REALM_SORCERY, 1, 6) ||
-		borg_spell(REALM_ARCANE, 0, 6) ||
+		borg_spell(REALM_NATURE, 0, 6) ||
+		borg_spell(REALM_ARCANE, 1, 7) ||
 		borg_spell(REALM_NATURE, 2, 3) ||
 		borg_mindcr(MIND_CHAR_ARMOUR, 20) ||
 		borg_quaff_potion(SV_POTION_RESIST_HEAT));
@@ -2713,7 +2713,7 @@ static int borg_perma_aux_see_invis(void)
 
 	/* do it! */
 	return (borg_spell(REALM_ARCANE, 2, 7) ||
-		borg_spell(REALM_SORCERY, 1, 3));
+		borg_spell(REALM_LIFE, 1, 3));
 }
 
 /* Shield for high AC */

@@ -4411,9 +4411,28 @@ static int borg_trump_damage_monster(int book, int spell)
 			}
 		}
 
-		/* No attack spells in these books */
-		case 1:
+		/* No attack spells in Deck of Many Things */
+		case 1: return (0);
+
+		/* Trumps of Doom */
 		case 2:
+		{
+			switch (spell)
+			{
+				/* Spell -- Death dealing */
+				case 6:
+				{
+					dam = 3 * bp_ptr->lev;
+
+					/* Choose optimal location-- */
+					return (borg_launch_dispel(dam, GF_DISP_LIVING, MAX_RANGE));
+				}
+
+				default: return (0);
+			}
+		}
+
+		/* Five Aces */
 		case 3: return (0);
 
 		default:

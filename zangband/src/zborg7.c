@@ -335,8 +335,7 @@ bool borg_use_things(void)
 	if (bp_ptr->status.hungry)
 	{
 		/* Attempt to satisfy hunger */
-		if (borg_spell_fail(REALM_SORCERY, 2, 0, 40) ||
-			borg_spell_fail(REALM_LIFE, 0, 7, 40) ||
+		if (borg_spell_fail(REALM_LIFE, 0, 7, 40) ||
 			borg_spell_fail(REALM_ARCANE, 2, 7, 40) ||
 			borg_spell_fail(REALM_NATURE, 0, 3, 40) ||
 			borg_eat_food(SV_FOOD_BISCUIT) ||
@@ -481,7 +480,9 @@ bool borg_check_lite(void)
 		if (borg_zap_rod(SV_ROD_DETECTION) ||
 			borg_activate_artifact(ART_HOLHENNETH, FALSE) ||
 			borg_activate_artifact(ART_OLORIN, FALSE) ||
+			borg_spell_fail(REALM_SORCERY, 1, 6, 20) ||
 			borg_spell_fail(REALM_ARCANE, 3, 5, 20) ||
+			borg_spell_fail(REALM_TRUMP, 3, 0, 20) ||
 			borg_spell_fail(REALM_NATURE, 1, 2, 20))
 		{
 			borg_note("# Checking for traps, doors, and evil.");
@@ -506,7 +507,7 @@ bool borg_check_lite(void)
 			borg_spell_fail(REALM_LIFE, 0, 5, 20) ||
 			borg_spell_fail(REALM_SORCERY, 0, 2, 20) ||
 			borg_spell_fail(REALM_ARCANE, 1, 0, 20) ||
-			borg_spell_fail(REALM_NATURE, 1, 2, 20) ||
+			borg_spell_fail(REALM_NATURE, 0, 2, 20) ||
 			borg_racial(RACE_DWARF) ||
 			borg_racial(RACE_NIBELUNG))
 		{
@@ -568,6 +569,7 @@ bool borg_check_lite(void)
 			borg_read_scroll(SV_SCROLL_MAPPING) ||
 			borg_use_staff(SV_STAFF_MAPPING) ||
 			borg_zap_rod(SV_ROD_MAPPING) ||
+			borg_spell(REALM_SORCERY, 1, 0) ||
 			borg_spell(REALM_NATURE, 1, 2) ||
 			borg_mindcr(MIND_PRECOGNIT, 20))
 		{
@@ -588,7 +590,8 @@ bool borg_check_lite(void)
 		if (borg_spell_fail(REALM_NATURE, 0, 0, 20) ||
 			borg_spell_fail(REALM_ARCANE, 0, 3, 20) ||
 			borg_spell_fail(REALM_SORCERY, 0, 0, 20) ||
-			borg_spell_fail(REALM_DEATH, 0, 3, 20) ||
+			borg_spell_fail(REALM_DEATH, 0, 2, 20) ||
+			borg_spell_fail(REALM_DEATH, 0, 0, 20) ||
 			borg_spell_fail(REALM_LIFE, 0, 0, 20) ||
 			borg_spell_fail(REALM_DEATH, 0, 0, 20))
 		{
@@ -2824,6 +2827,163 @@ bool borg_unwear_stuff(void)
 }
 
 
+/* 
+ * Prevent spells that appear in two realms to be learned in both.
+ * This is to make more different spells available at low levels.
+ * Only when the borg loses all his books containing the spell that he did learn
+ * he will learn the second spell.
+ *
+ * Light area is in 5 realms.
+ * Detect trap/door is in 4 realms.
+ * Detect monster is in 3 realms.
+ * Phase door is in 3 realms.
+ * Cure light wounds is in 3 realms.
+ * Detect evil is in 2 realms.
+ * Trap/door destruction is in 2 realms.
+ */
+static void borg_spell_prevent_learn(void)
+{
+	/* Find out which realms the borg has. */
+	int r_life = (borg_has_realm(REALM_LIFE)) ? 1 : 0,
+		r_sorcery = (borg_has_realm(REALM_SORCERY)) ? 1 : 0,
+		r_nature = (borg_has_realm(REALM_NATURE)) ? 1 : 0,
+		r_chaos = (borg_has_realm(REALM_CHAOS)) ? 1 : 0,
+		r_death = (borg_has_realm(REALM_DEATH)) ? 1 : 0,
+		r_trump = (borg_has_realm(REALM_TRUMP)) ? 1 : 0,
+		r_arcane = (borg_has_realm(REALM_ARCANE)) ? 1 : 0;
+
+
+	/* Does the borg have two realms containing light? */
+	if (r_life + r_sorcery + r_nature + r_chaos + r_arcane == 2)
+	{
+		/* Can the borg cast a light already? */
+		if (borg_spell_legal(REALM_LIFE, 0, 4) ||
+			borg_spell_legal(REALM_SORCERY, 0, 3) ||
+			borg_spell_legal(REALM_NATURE, 0, 4) ||
+			borg_spell_legal(REALM_CHAOS, 0, 2) ||
+			borg_spell_legal(REALM_ARCANE, 0, 5))
+		{
+			/* Prevent the learning of the second light spell */
+			if (borg_magics[REALM_LIFE][0][4].status == BORG_MAGIC_OKAY);
+				borg_magics[REALM_LIFE][0][4].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_SORCERY][0][3].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_SORCERY][0][3].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_NATURE][0][4].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_NATURE][0][4].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_CHAOS][0][2].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_CHAOS][0][2].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_ARCANE][0][5].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_ARCANE][0][5].status =  BORG_MAGIC_HIGH;
+		}
+	}
+
+	/* Does the borg have two realms containing detect trap/door? */
+	if (r_life + r_sorcery + r_nature + r_arcane == 2)
+	{
+		/* Can the borg detect trap/door already? */
+		if (borg_spell_legal(REALM_LIFE, 0, 5) ||
+			borg_spell_legal(REALM_SORCERY, 0, 2) ||
+			borg_spell_legal(REALM_NATURE, 0, 2) ||
+			borg_spell_legal(REALM_ARCANE, 1, 0))
+		{
+			/* Prevent the learning of the second detect trap/door spell */
+			if (borg_magics[REALM_LIFE][0][5].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_LIFE][0][5].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_SORCERY][0][2].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_SORCERY][0][2].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_NATURE][0][2].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_NATURE][0][2].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_ARCANE][1][0].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_ARCANE][1][0].status =  BORG_MAGIC_HIGH;
+		}
+	}
+
+	/* Does the borg have two realms containing detect monster? */
+	if (r_sorcery + r_nature + r_arcane == 2)
+	{
+		/* Can the borg cast a detect monster? */
+		if (borg_spell_legal(REALM_SORCERY, 0, 0) ||
+			borg_spell_legal(REALM_NATURE, 0, 0) ||
+			borg_spell_legal(REALM_ARCANE, 0, 3))
+		{
+			/* Prevent the learning of the second detect monster */
+			if (borg_magics[REALM_SORCERY][0][0].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_SORCERY][0][0].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_NATURE][0][0].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_NATURE][0][0].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_ARCANE][0][3].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_ARCANE][0][3].status =  BORG_MAGIC_HIGH;
+		}
+	}
+
+	/* Does the borg have two realms containing phase door? */
+	if (r_sorcery + r_trump + r_arcane == 2)
+	{
+		/* Can the borg phase door already? */
+		if (borg_spell_legal(REALM_SORCERY, 0, 1) ||
+			borg_spell_legal(REALM_TRUMP, 0, 0) ||
+			borg_spell_legal(REALM_ARCANE, 0, 4))
+		{
+			/* Prevent the learning of the second phase door spell */
+			if (borg_magics[REALM_SORCERY][0][1].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_SORCERY][0][1].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_TRUMP][0][0].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_TRUMP][0][0].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_ARCANE][0][4].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_ARCANE][0][4].status =  BORG_MAGIC_HIGH;
+		}
+	}
+
+	/* Does the borg have two realms containing cure light wounds? */
+	if (r_life + r_nature + r_arcane == 2)
+	{
+		/* Can the borg cure light wounds already? */
+		if (borg_spell_legal(REALM_LIFE, 0, 1) ||
+			borg_spell_legal(REALM_NATURE, 0, 1) ||
+			borg_spell_legal(REALM_ARCANE, 0, 7))
+		{
+			/* Prevent the learning of the second cure light wounds spell */
+			if (borg_magics[REALM_LIFE][0][1].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_LIFE][0][1].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_NATURE][0][1].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_NATURE][0][1].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_ARCANE][0][7].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_ARCANE][0][7].status =  BORG_MAGIC_HIGH;
+		}
+	}
+
+	/* Does the borg have both realms containing detect evil? */
+	if (r_life + r_death == 2)
+	{
+		/* Can the borg detect evil already? */
+		if (borg_spell_legal(REALM_LIFE, 0, 0) ||
+			borg_spell_legal(REALM_DEATH, 0, 2))
+		{
+			/* Prevent the learning of the second detect evil */
+			if (borg_magics[REALM_LIFE][0][0].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_LIFE][0][0].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_DEATH][0][2].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_DEATH][0][2].status =  BORG_MAGIC_HIGH;
+		}
+	}
+
+	/* Does the borg have both realms containing trap/door destruction? */
+	if (r_chaos + r_arcane == 2)
+	{
+		/* Can the borg detect evil already? */
+		if (borg_spell_legal(REALM_CHAOS, 0, 1) ||
+			borg_spell_legal(REALM_ARCANE, 0, 6))
+		{
+			/* Prevent the learning of the second detect evil */
+			if (borg_magics[REALM_CHAOS][0][1].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_CHAOS][0][1].status =  BORG_MAGIC_HIGH;
+			if (borg_magics[REALM_ARCANE][0][6].status == BORG_MAGIC_OKAY)
+				borg_magics[REALM_ARCANE][0][6].status =  BORG_MAGIC_HIGH;
+		}
+	}
+}
+
+
 /*
  * Study and/or Test spells/prayers
  */
@@ -2844,6 +3004,9 @@ bool borg_play_magic(bool bored)
 
 	/* Dark */
 	if (!bp_ptr->cur_lite) return (FALSE);
+
+	/* Low level borgs shouldn't learn the same spell twice */
+	if (bp_ptr->lev < 30) borg_spell_prevent_learn();
 
 	/* Check each realm, backwards */
 	for (realm = MAX_REALM; realm > 0; realm--)
@@ -2931,14 +3094,12 @@ bool borg_play_magic(bool bored)
 	/* Hack -- only when bored */
 	if (!bored) return (FALSE);
 
-
 	/* Check each realm backwards */
 	for (realm = MAX_REALM; realm > 0; realm--)
 	{
 		/* Check each book (backwards) */
 		for (book = 3; book >= 0; book--)
 		{
-
 			/* Only my realms */
 			if (!borg_has_realm(realm)) continue;
 
@@ -2987,7 +3148,7 @@ bool borg_play_magic(bool bored)
 					/* Hack -- Allow genocide spells */
 					if (as->method == BORG_MAGIC_WHO)
 					{
-						/* Hack -- target self */
+						/* Hack -- target townies */
 						borg_keypress('t');
 					}
 

@@ -2924,7 +2924,6 @@ bool borg_caution(void)
 	{
 		/* Attempt to satisfy hunger */
 		if (borg_eat_food_any() ||
-			borg_spell_fail(REALM_SORCERY, 2, 0, 45) ||
 			borg_spell_fail(REALM_LIFE, 0, 7, 45) ||
 			borg_spell_fail(REALM_ARCANE, 2, 7, 45) ||
 			borg_spell_fail(REALM_NATURE, 0, 3, 45))

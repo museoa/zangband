@@ -354,7 +354,7 @@ static void borg_hidden(void)
  */
 static bool borg_think(void)
 {
-	int i, ii;
+	int i;
 
 	byte t_a;
 
@@ -389,29 +389,29 @@ static bool borg_think(void)
 	if (borg_do_spell)
 	{
 		/* Assume no books */
-		for (ii = 0; ii < MAX_REALM; ii++)
+		for (i = 0; i < 4; i++)
 		{
-			for (i = 0; i < 4; i++) borg_book[ii][i] = -1;
+			borg_book[bp_ptr->realm1][i] = -1;
+			borg_book[bp_ptr->realm2][i] = -1;
 		}
 
 		/* Scan the pack */
-		for (ii = 1; ii < MAX_REALM; ii++)
+		for (i = 0; i < inven_num; i++)
 		{
-			/* skip non my realms */
-			if (!borg_has_realm(ii)) continue;
+			list_item *l_ptr = &inventory[i];
+			int realm;
 
-			for (i = 0; i < inven_num; i++)
-			{
-				list_item *l_ptr = &inventory[i];
+			/* Stop after the books have run out */
+			if (l_ptr->tval < TV_BOOKS_MIN) break;
 
-				/* Skip wrong-realm books */
-				if (l_ptr->tval != REALM1_BOOK &&
-					l_ptr->tval != REALM2_BOOK) continue;
+			/* Which realm is that? */
+			realm = l_ptr->tval - TV_BOOKS_MIN + 1;
 
-				/* Note book locations */
-				borg_book[l_ptr->tval - TV_LIFE_BOOK +
-						  1][k_info[l_ptr->k_idx].sval] = i;
-			}
+			/* Does this book belong to a realm that the borg knows */
+			if (!borg_has_realm(realm)) continue;
+
+			/* Make a note where in the inv the book is */
+			borg_book[realm][k_info[l_ptr->k_idx].sval] = i;
 		}
 	}
 
