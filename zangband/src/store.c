@@ -772,18 +772,6 @@ static object_type *store_carry(object_type *o_ptr)
 
 
 /*
- * Increase, by a given amount, the number of a certain item
- * in a certain store.	This can result in zero items.
- */
-static void store_item_increase(object_type *o_ptr, int num)
-{
-	/* Simply call standard list... */
-	item_increase(o_ptr, num);
-}
-
-
-
-/*
  * Attempt to delete (some of) a random item from the store
  * Hack -- we attempt to "maintain" piles of items when possible.
  */
@@ -818,7 +806,7 @@ static void store_delete(void)
 	}
 
 	/* Actually destroy (part of) the item */
-	store_item_increase(o_ptr, -num);
+	item_increase(o_ptr, -num);
 }
 
 
@@ -1607,7 +1595,7 @@ static void store_purchase(int *store_top)
 				i = get_list_length(st_ptr->stock);
 
 				/* Remove the bought items from the store */
-				store_item_increase(o_ptr, -amt);
+				item_increase(o_ptr, -amt);
 
 				/* Store is empty */
 				if (!st_ptr->stock)
@@ -1698,7 +1686,7 @@ static void store_purchase(int *store_top)
 		i = get_list_length(st_ptr->stock);
 
 		/* Remove the items from the home */
-		store_item_increase(o_ptr, -amt);
+		item_increase(o_ptr, -amt);
 
 		/* Hack -- Item is still here */
 		if (i == get_list_length(st_ptr->stock))
