@@ -100,6 +100,9 @@ u16b q_pop(void)
 
 		/* Skip live quests */
 		if (q_ptr->status != QUEST_STATUS_FINISHED) continue;
+
+		/* Skip find_place quests as these can be completed as a group */
+		if (q_ptr->type == QUEST_TYPE_FIND_PLACE) continue;
 		
 		/* Clear the old data */
 		quest_wipe(q_cnt);
@@ -1040,15 +1043,18 @@ void trigger_quest_complete(byte x_type, vptr data)
 					pl_ptr->data--;
 					
 					/* Are we done yet? */
-					if (pl_ptr->data) continue;
-				}
+					if (pl_ptr->data) break;
 
-				/* Complete the quest */
-				q_ptr->status = QUEST_STATUS_COMPLETED;
+					/* Finish the quest */
+					q_ptr->status = QUEST_STATUS_FINISHED;
+				}
 
 				if (q_ptr->type == QUEST_TYPE_FIND_PLACE)
 				{
 					msgf("You find the ruin you were looking for.");
+
+					/* Complete the quest */
+					q_ptr->status = QUEST_STATUS_COMPLETED;
 				}
 
 				break;
@@ -1062,6 +1068,8 @@ void trigger_quest_complete(byte x_type, vptr data)
 
 					/* Complete the quest */
 					q_ptr->status = QUEST_STATUS_COMPLETED;
+
+					break;
 				}
 			}
 			
@@ -1082,6 +1090,8 @@ void trigger_quest_complete(byte x_type, vptr data)
 				
 				msgf("You have found the place you were looking for and you deliver the message!");
 				message_flush();
+
+				break;
 			}
 		}
 
