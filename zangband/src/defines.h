@@ -3906,7 +3906,7 @@
  * Delete the current (floor) object we are scanning
  */
 #define OBJ_DEL_FCURRENT \
-	delete_object_idx(_this_o_idx)
+	delete_dungeon_object(_this_o_idx)
 
 
 

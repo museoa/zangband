@@ -17,46 +17,20 @@
 /*
  * Excise a dungeon object from any stacks
  */
-void excise_object_idx(int o_idx)
+void excise_object_idx(s16b *o_idx_ptr, int o_idx)
 {
 	object_type *j_ptr;
 
 	object_type *o_ptr;
-	monster_type *m_ptr;
-	cave_type *c_ptr;
-
-	s16b *target;
 
 	/* Object */
 	j_ptr = &o_list[o_idx];
-
-	/* Monster */
-	if (j_ptr->held_m_idx)
-	{
-		/* Monster */
-		m_ptr = &m_list[j_ptr->held_m_idx];
-
-		target = &m_ptr->hold_o_idx;
-	}
-	else
-	{
-		int y = j_ptr->iy;
-		int x = j_ptr->ix;
-
-		/* Exit if is a "dummy" object */
-		if ((x == 0) && (y == 0)) return;
-
-		/* Grid */
-		c_ptr = area(x, y);
-
-		target = &c_ptr->o_idx;
-	}
 
 	/* Reuse j_ptr as the previous object in the list */
 	j_ptr = NULL;
 
 	/* Scan all objects in the list */
-	OBJ_ITT_START (*target, o_ptr)
+	OBJ_ITT_START (*o_idx_ptr, o_ptr)
 	{
 		/* Hack - Done? */
 		if (_this_o_idx == o_idx)
@@ -65,7 +39,7 @@ void excise_object_idx(int o_idx)
 			if (!j_ptr)
 			{
 				/* Remove from list */
-				*target = o_ptr->next_o_idx;
+				*o_idx_ptr = o_ptr->next_o_idx;
 			}
 
 			/* Real previous */
@@ -94,28 +68,15 @@ void excise_object_idx(int o_idx)
  *
  * Handle "stacks" of objects correctly.
  */
-void delete_object_idx(int o_idx)
+void delete_held_object(s16b *o_idx_ptr, int o_idx)
 {
 	object_type *o_ptr;
 
 	/* Excise */
-	excise_object_idx(o_idx);
+	excise_object_idx(o_idx_ptr, o_idx);
 
 	/* Object */
 	o_ptr = &o_list[o_idx];
-
-	/* Dungeon floor */
-	if (!(o_ptr->held_m_idx))
-	{
-		int y, x;
-
-		/* Location */
-		y = o_ptr->iy;
-		x = o_ptr->ix;
-
-		/* Visual update */
-		lite_spot(x, y);
-	}
 
 	/* Wipe the object */
 	object_wipe(o_ptr);
@@ -132,14 +93,24 @@ void delete_dungeon_object(int o_idx)
 {
 	object_type *o_ptr;
 	
-	/* Excise */
-	excise_object_idx(o_idx);
-
+	int x, y;
+	
+	cave_type *c_ptr;
+	
 	/* Object */
 	o_ptr = &o_list[o_idx];
 	
+	/* Location */
+	x = o_ptr->ix;
+	y = o_ptr->iy;
+	
+	c_ptr = area(x, y);
+	
+	/* Excise */
+	excise_object_idx(&c_ptr->o_idx, o_idx);
+	
 	/* Visual update */
-	lite_spot(o_ptr->ix, o_ptr->iy);
+	lite_spot(x, y);
 
 	/* Wipe the object */
 	object_wipe(o_ptr);
@@ -327,6 +298,8 @@ void compact_objects(int size)
 	int cur_lev, cur_dis, chance;
 	
 	bool object_held;
+	
+	monster_type *m_ptr = NULL;
 
 
 	/* Compact */
@@ -368,8 +341,6 @@ void compact_objects(int size)
 			/* Monster */
 			if (o_ptr->held_m_idx)
 			{
-				monster_type *m_ptr;
-
 				/* Acquire monster */
 				m_ptr = &m_list[o_ptr->held_m_idx];
 
@@ -409,7 +380,7 @@ void compact_objects(int size)
 			/* Delete the object */
 			if (object_held)
 			{
-				delete_object_idx(i);
+				delete_held_object(&m_ptr->hold_o_idx, i);
 			}
 			else
 			{

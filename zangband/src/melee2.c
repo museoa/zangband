@@ -2577,7 +2577,7 @@ static void take_move(int m_idx, int *mm)
 						}
 
 						/* Hack Excise the object */
-						excise_object_idx(_this_o_idx);
+						excise_object_idx(&c_ptr->o_idx, _this_o_idx);
 
 						/* Forget mark */
 						o_ptr->marked = FALSE;

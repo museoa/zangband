@@ -3290,24 +3290,51 @@ static int toluaI_object_excise_object_idx00(lua_State* tolua_S)
 {
  if (
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
-     !tolua_isnoobj(tolua_S,2)
+     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,3)
  )
   goto tolua_lerror;
  else
  {
-  int o_idx = ((int)  tolua_getnumber(tolua_S,1,0));
+  s16b o_idx_ptr = ((s16b)  tolua_getnumber(tolua_S,1,0));
+  int o_idx = ((int)  tolua_getnumber(tolua_S,2,0));
   {
-   excise_object_idx(o_idx);
+   excise_object_idx(&o_idx_ptr,o_idx);
+   tolua_pushnumber(tolua_S,(long)o_idx_ptr);
   }
  }
- return 0;
+ return 1;
 tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'excise_object_idx'.");
  return 0;
 }
 
-/* function: delete_object_idx */
-static int toluaI_object_delete_object_idx00(lua_State* tolua_S)
+/* function: delete_held_object */
+static int toluaI_object_delete_held_object00(lua_State* tolua_S)
+{
+ if (
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,3)
+ )
+  goto tolua_lerror;
+ else
+ {
+  s16b o_idx_ptr = ((s16b)  tolua_getnumber(tolua_S,1,0));
+  int o_idx = ((int)  tolua_getnumber(tolua_S,2,0));
+  {
+   delete_held_object(&o_idx_ptr,o_idx);
+   tolua_pushnumber(tolua_S,(long)o_idx_ptr);
+  }
+ }
+ return 1;
+tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'delete_held_object'.");
+ return 0;
+}
+
+/* function: delete_dungeon_object */
+static int toluaI_object_delete_dungeon_object00(lua_State* tolua_S)
 {
  if (
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
@@ -3318,12 +3345,12 @@ static int toluaI_object_delete_object_idx00(lua_State* tolua_S)
  {
   int o_idx = ((int)  tolua_getnumber(tolua_S,1,0));
   {
-   delete_object_idx(o_idx);
+   delete_dungeon_object(o_idx);
   }
  }
  return 0;
 tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'delete_object_idx'.");
+ tolua_error(tolua_S,"#ferror in function 'delete_dungeon_object'.");
  return 0;
 }
 
@@ -3369,6 +3396,32 @@ static int toluaI_object_delete_object_list00(lua_State* tolua_S)
  return 1;
 tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'delete_object_list'.");
+ return 0;
+}
+
+/* function: drop_object_list */
+static int toluaI_object_drop_object_list00(lua_State* tolua_S)
+{
+ if (
+     !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
+     !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
+     !tolua_isnoobj(tolua_S,4)
+ )
+  goto tolua_lerror;
+ else
+ {
+  s16b o_idx_ptr = ((s16b)  tolua_getnumber(tolua_S,1,0));
+  int x = ((int)  tolua_getnumber(tolua_S,2,0));
+  int y = ((int)  tolua_getnumber(tolua_S,3,0));
+  {
+   drop_object_list(&o_idx_ptr,x,y);
+   tolua_pushnumber(tolua_S,(long)o_idx_ptr);
+  }
+ }
+ return 1;
+tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'drop_object_list'.");
  return 0;
 }
 
@@ -5817,9 +5870,11 @@ int tolua_object_open (lua_State* tolua_S)
  tolua_function(tolua_S,NULL,"toggle_inven_equip",toluaI_object_toggle_inven_equip00);
  tolua_function(tolua_S,NULL,"get_item",toluaI_object_get_item00);
  tolua_function(tolua_S,NULL,"excise_object_idx",toluaI_object_excise_object_idx00);
- tolua_function(tolua_S,NULL,"delete_object_idx",toluaI_object_delete_object_idx00);
+ tolua_function(tolua_S,NULL,"delete_held_object",toluaI_object_delete_held_object00);
+ tolua_function(tolua_S,NULL,"delete_dungeon_object",toluaI_object_delete_dungeon_object00);
  tolua_function(tolua_S,NULL,"delete_object",toluaI_object_delete_object00);
  tolua_function(tolua_S,NULL,"delete_object_list",toluaI_object_delete_object_list00);
+ tolua_function(tolua_S,NULL,"drop_object_list",toluaI_object_drop_object_list00);
  tolua_function(tolua_S,NULL,"compact_objects",toluaI_object_compact_objects00);
  tolua_function(tolua_S,NULL,"o_pop",toluaI_object_o_pop00);
  tolua_function(tolua_S,NULL,"get_obj_num_prep",toluaI_object_get_obj_num_prep00);
@@ -6907,9 +6962,11 @@ void tolua_object_close (lua_State* tolua_S)
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"toggle_inven_equip");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"get_item");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"excise_object_idx");
- lua_pushnil(tolua_S); lua_setglobal(tolua_S,"delete_object_idx");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"delete_held_object");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"delete_dungeon_object");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"delete_object");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"delete_object_list");
+ lua_pushnil(tolua_S); lua_setglobal(tolua_S,"drop_object_list");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"compact_objects");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"o_pop");
  lua_pushnil(tolua_S); lua_setglobal(tolua_S,"get_obj_num_prep");
