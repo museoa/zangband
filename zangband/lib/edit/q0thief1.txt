@@ -45,6 +45,9 @@ F:~:1:8:353
 # Normal floor
 F: :1:8
 
+# Floor on no Teleportation grid
+F:,:1:12
+
 # Object 10 levels out of depth
 F:O:1:8:0:*10
 
@@ -54,8 +57,8 @@ D:XOOO%!O!%!O!%OOOX
 D:XOTO%OOO%OOO%OTOX
 D:XT~T%O~O%O~O%T~TX
 D:X+++%+++%+++%+++X
-D:X   %   %   %   X
-D:X               X
+D:X,,,%,,,%,,,%,,,X
+D:X,,           ,,X
 D:X   % . % . %   X
 D:X   %   %   %   X
 D:X . %   %   % . X
@@ -67,4 +70,6 @@ D:XXXXXXXXXXXXXXXXX
 
 # Starting position
 P:13:8
+
+
 

@@ -82,7 +82,8 @@ F:b:129:3:0:0:0:0:0:14
 ?:[EQU $QUEST14 2]
 F:b:129:3:0:0:0:0:0:14
 
-# Quest 14 rewarding, reward is a Large Metal Shield, continue with quest 25
+# Quest 14 rewarding, reward is a Large Metal Shield,
+# continue with quest 25
 ?:[EQU $QUEST14 3]
 F:b:129:3:0:0:0:0:0:25
 F:!:1:3:0:131
@@ -105,7 +106,8 @@ F:b:129:3:0:0:0:0:0:25
 ?:[EQU $QUEST25 2]
 F:b:129:3:0:0:0:0:0:25
 
-# Quest 25 rewarding, reward is Staff of Dispel Evil, continue with quest 18
+# Quest 25 rewarding, reward is Staff of Dispel Evil,
+# continue with quest 18
 ?:[EQU $QUEST25 3]
 F:b:129:3:0:0:0:0:0:18
 F:!:1:3:0:320
@@ -136,7 +138,8 @@ F:b:129:3:0:0:0:0:0:18
 ?:[EQU $QUEST18 2]
 F:b:129:3:0:0:0:0:0:18
 
-# Quest 18 rewarding, reward is Ring of Poison Resistance, continue with quest 28
+# Quest 18 rewarding, reward is Ring of Poison Resistance,
+# continue with quest 28
 ?:[EQU $QUEST18 3]
 F:b:129:3:0:0:0:0:0:28
 F:!:1:3:0:143
@@ -257,11 +260,31 @@ F:a:128:3:0:0:0:0:0:27
 ?:[EQU $QUEST27 2]
 F:a:128:3:0:0:0:0:0:27
 
-# Quest 27 rewarding the Executioner's Sword 'Slayer'
+# Quest 27 rewarding (default reward if not given one from below)
+# the Executioner's Sword 'Slayer'
 # continue with quest 33
 ?:[EQU $QUEST27 3]
 F:a:128:3:0:0:0:0:0:33
 F:@:1:3:0:0:0:123
+
+# Quest 27 rewarding (Rogue gets Cloak of Houdini)
+# continue with quest 33
+?:[AND [EQU $QUEST27 3] [EQU $CLASS Rogue] ]
+F:a:128:3:0:0:0:0:0:33
+F:@:1:3:0:0:0:43
+
+# Quest 27 rewarding (Monk gets The Leather Jacket of Shiva's Avatar)
+# continue with quest 33
+?:[AND [EQU $QUEST27 3] [EQU $CLASS Monk] ]
+F:a:128:3:0:0:0:0:0:33
+F:@:1:3:0:0:0:26
+
+# Quest 27 rewarding (Mage, High-Mage, Mindcrafter, and Priest)
+# get Hard Leather Cap of Ben Franklin
+# continue with quest 33
+?:[AND [EQU $QUEST27 3] [IOR [IOR [EQU $CLASS Mage] [EQU $CLASS High-Mage] ] [IOR [EQU $CLASS Mindcrafter] [EQU $CLASS Priest] ] ] ]
+F:a:128:3:0:0:0:0:0:33
+F:@:1:3:0:0:0:33
 
 # Quest 27 finished, continue with quest 33
 ?:[EQU $QUEST27 4]
@@ -289,7 +312,7 @@ F:a:128:3:0:0:0:0:0:33
 ?:[EQU $QUEST33 2]
 F:a:128:3:0:0:0:0:0:33
 
-# Quest 33 rewarding 
+# Quest 33 rewarding
 # reward is The Pair of Soft Leather Boots of Shiva's Avatar
 # no new quest is available
 ?:[EQU $QUEST33 3]
@@ -322,6 +345,7 @@ B:0:R:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:0:0:0:0:0:0:1
 
 B:1:N:Mayor:Uldrik:Human
 B:1:A:0:Request quest:0:0:q:6:0
+
 
 
 ############### Town Layout ###############
@@ -439,5 +463,4 @@ P:46:109
 # Starting position when coming from quest 33
 ?:[EQU $LEAVING_QUEST 33]
 P:45:109
-
 

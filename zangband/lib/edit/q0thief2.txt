@@ -29,7 +29,7 @@ Q:30:T:Proceed to the next quest.
 ?:1
 
 # The Monsters
-# Death sword (level:6, Speed:130, XP:30, #:12, Tot:360)
+# Death sword (level:6, Speed:130, XP:30, #:16, Tot:480)
 F:|:1:8:107
 
 # Tengu (level:10, Speed:120, XP:40, #:8, Tot:320)
@@ -51,7 +51,7 @@ D:X                   X
 D:X j               j X
 D:X  %%%%%%DDD%%%%%%  X
 D:X  %             %  X
-D:X  %  % u | u %  %  X
+D:X  %  | u | u |  %  X
 D:X  %             %  X
 D:X  %  u | | | u  %  X
 D:X  %             %  X
@@ -59,7 +59,7 @@ D:X  %  | | " | |  %  X
 D:X  %             %  X
 D:X  %  u | | | u  %  X
 D:X  %             %  X
-D:X  %  % u | u %  %  X
+D:X  %  | u | u |  %  X
 D:X  %             %  X
 D:X  %%%%%%%%%%%%%%%  X
 D:X j               j X
@@ -68,6 +68,8 @@ D:XXXXXXXXXXXXXXXXXXXXX
 
 # Starting position
 P:17:10
+
+
 
 
 
