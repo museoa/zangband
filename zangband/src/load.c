@@ -66,30 +66,6 @@ static u32b v_check = 0L;
 static u32b x_check = 0L;
 
 
-
-/*
- * This function determines if the version of the savefile
- * currently being read is older than version "x.y.z".
- */
-static bool older_than(byte x, byte y, byte z)
-{
-	/* Much older, or much more recent */
-	if (sf_major < x) return (TRUE);
-	if (sf_major > x) return (FALSE);
-
-	/* Distinctly older, or distinctly more recent */
-	if (sf_minor < y) return (TRUE);
-	if (sf_minor > y) return (FALSE);
-
-	/* Barely older, or barely more recent */
-	if (sf_patch < z) return (TRUE);
-	if (sf_patch > z) return (FALSE);
-
-	/* Identical versions */
-	return (FALSE);
-}
-
-
 /*
  * The above function, adapted for Zangband
  */
@@ -938,16 +914,13 @@ static void rd_store(int town_num, int store_num)
 
 
 /*
- * Read RNG state (added in 2.8.0)
+ * Read RNG state
  */
 static void rd_randomizer(void)
 {
 	int i;
 
 	u16b tmp16u;
-
-	/* Old version */
-	if (older_than(2, 8, 0)) return;
 
 	/* Tmp */
 	rd_u16b(&tmp16u);
@@ -2692,14 +2665,6 @@ static errr rd_savefile_new_aux(void)
 
 	/* Mention the savefile version */
 	note(format("Loading a %d.%d.%d savefile...", z_major, z_minor, z_patch));
-
-
-	/* Hack -- Warn about "obsolete" versions */
-	if (older_than(2, 8, 0))
-	{
-		note("Warning -- converting obsolete save file.");
-	}
-
 
 	/* Strip the version bytes */
 	strip_bytes(4);
