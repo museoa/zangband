@@ -503,14 +503,6 @@ static bool cave_gen(void)
 			if ((x % 3) == 2) x--;
 		}
 
-		/* Destroyed levels are boring */
-		if (destroyed)
-		{
-			/* Attempt a "trivial" room */
-			if (room_build(y, x, 1)) continue;
-			continue;
-		}
-
 		/* Attempt an "unusual" room */
 		if (ironman_rooms || (rand_int(DUN_UNUSUAL) < dun_level))
 		{
