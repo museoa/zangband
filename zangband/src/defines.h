@@ -40,7 +40,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 2
+#define SAVEFILE_VERSION 3
 
 /* Added for ZAngband */
 #ifdef USE_SCRIPT
