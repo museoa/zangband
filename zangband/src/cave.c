@@ -4348,10 +4348,10 @@ void disturb(int stop_search, int unused_flag)
 	unused_flag = unused_flag;
 
 	/* Cancel repeated commands */
-	if (command_rep)
+	if (p_ptr->command_rep)
 	{
 		/* Cancel */
-		command_rep = 0;
+		p_ptr->command_rep = 0;
 
 		/* Redraw the state (later) */
 		p_ptr->redraw |= (PR_STATE);

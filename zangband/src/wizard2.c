@@ -1247,7 +1247,7 @@ static void do_cmd_wiz_cure_all(void)
 static void do_cmd_wiz_jump(void)
 {
 	/* Ask for level */
-	if (command_arg <= 0)
+	if (p_ptr->command_arg <= 0)
 	{
 		char	ppp[80];
 
@@ -1263,22 +1263,22 @@ static void do_cmd_wiz_jump(void)
 		if (!get_string(ppp, tmp_val, 10)) return;
 
 		/* Extract request */
-		command_arg = atoi(tmp_val);
+		p_ptr->command_arg = atoi(tmp_val);
 	}
 
 	/* Paranoia */
-	if (command_arg < 0) command_arg = 0;
+	if (p_ptr->command_arg < 0) p_ptr->command_arg = 0;
 
 	/* Paranoia */
-	if (command_arg > MAX_DEPTH - 1) command_arg = MAX_DEPTH - 1;
+	if (p_ptr->command_arg > MAX_DEPTH - 1) p_ptr->command_arg = MAX_DEPTH - 1;
 
 	/* Accept request */
-	msg_format("You jump to dungeon level %d.", command_arg);
+	msg_format("You jump to dungeon level %d.", p_ptr->command_arg);
 
 	if (autosave_l) do_cmd_save_game(TRUE);
 
 	/* Change level */
-	dun_level = command_arg;
+	dun_level = p_ptr->command_arg;
 
 	p_ptr->inside_arena = 0;
 	leaving_quest = p_ptr->inside_quest;
@@ -1315,7 +1315,7 @@ static void do_cmd_wiz_learn(void)
 		object_kind *k_ptr = &k_info[i];
 
 		/* Induce awareness */
-		if (k_ptr->level <= command_arg)
+		if (k_ptr->level <= p_ptr->command_arg)
 		{
 			/* Get local object */
 			q_ptr = &forge;
@@ -1852,7 +1852,7 @@ void do_cmd_debug(void)
 
 		/* Create a named artifact */
 		case 'C':
-		wiz_create_named_art(command_arg);
+		wiz_create_named_art(p_ptr->command_arg);
 		break;
 
 		/* Detect everything */
@@ -1872,13 +1872,13 @@ void do_cmd_debug(void)
 
 		/* Create feature */
 		case 'F':
-		if (command_arg > 0) do_cmd_wiz_feature(command_arg);
+		if (p_ptr->command_arg > 0) do_cmd_wiz_feature(p_ptr->command_arg);
 		break;
 
 		/* Good Objects */
 		case 'g':
-		if (command_arg <= 0) command_arg = 1;
-		acquirement(py, px, command_arg, FALSE, TRUE);
+		if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
+		acquirement(py, px, p_ptr->command_arg, FALSE, TRUE);
 		break;
 
 		/* Hitpoint rerating */
@@ -1922,22 +1922,22 @@ void do_cmd_debug(void)
 
 		/* Mutation */
 		case 'M':
-			(void)gain_random_mutation(command_arg);
+			(void)gain_random_mutation(p_ptr->command_arg);
 			break;
 
 		/* Specific reward */
 		case 'r':
-			(void)gain_level_reward(command_arg);
+			(void)gain_level_reward(p_ptr->command_arg);
 			break;
 
 		/* Summon _friendly_ named monster */
 		case 'N':
-			do_cmd_wiz_named_friendly(command_arg, TRUE);
+			do_cmd_wiz_named_friendly(p_ptr->command_arg, TRUE);
 			break;
 
 		/* Summon Named Monster */
 		case 'n':
-			do_cmd_wiz_named(command_arg, TRUE);
+			do_cmd_wiz_named(p_ptr->command_arg, TRUE);
 			break;
 
 		/* Object playing routines */
@@ -1990,8 +1990,8 @@ void do_cmd_debug(void)
 
 		/* Summon Random Monster(s) */
 		case 's':
-			if (command_arg <= 0) command_arg = 1;
-			do_cmd_wiz_summon(command_arg);
+			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
+			do_cmd_wiz_summon(p_ptr->command_arg);
 			break;
 
 		/* Teleport */
@@ -2001,8 +2001,8 @@ void do_cmd_debug(void)
 
 		/* Very Good Objects */
 		case 'v':
-			if (command_arg <= 0) command_arg = 1;
-			acquirement(py, px, command_arg, TRUE, TRUE);
+			if (p_ptr->command_arg <= 0) p_ptr->command_arg = 1;
+			acquirement(py, px, p_ptr->command_arg, TRUE, TRUE);
 			break;
 
 		/* Wizard Light the Level */
@@ -2023,9 +2023,9 @@ void do_cmd_debug(void)
 
 		/* Increase Experience */
 		case 'x':
-		if (command_arg)
+		if (p_ptr->command_arg)
 		{
-			gain_exp(command_arg);
+			gain_exp(p_ptr->command_arg);
 		}
 		else
 		{

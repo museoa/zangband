@@ -440,7 +440,7 @@ static void pattern_teleport(void)
 		if (!get_string(ppp, tmp_val, 10)) return;
 
 		/* Extract request */
-		command_arg = atoi(tmp_val);
+		p_ptr->command_arg = atoi(tmp_val);
 	}
 	else if (get_check("Normal teleport? "))
 	{
@@ -453,18 +453,18 @@ static void pattern_teleport(void)
 	}
 
 	/* Paranoia */
-	if (command_arg < min_level) command_arg = min_level;
+	if (p_ptr->command_arg < min_level) p_ptr->command_arg = min_level;
 
 	/* Paranoia */
-	if (command_arg > max_level) command_arg = max_level;
+	if (p_ptr->command_arg > max_level) p_ptr->command_arg = max_level;
 
 	/* Accept request */
-	msg_format("You teleport to dungeon level %d.", command_arg);
+	msg_format("You teleport to dungeon level %d.", p_ptr->command_arg);
 
 	if (autosave_l) do_cmd_save_game(TRUE);
 
 	/* Change level */
-	dun_level = command_arg;
+	dun_level = p_ptr->command_arg;
 
 	/* Leaving */
 	p_ptr->leaving = TRUE;
@@ -2588,7 +2588,7 @@ static void process_command(void)
 	repeat_check();
 
 	/* Parse the command */
-	switch (command_cmd)
+	switch (p_ptr->command_cmd)
 	{
 		/* Ignore */
 		case ESCAPE:
@@ -3365,7 +3365,7 @@ static void process_player(void)
 	if (!avoid_abort)
 	{
 		/* Check for "player abort" (semi-efficiently for resting) */
-		if (p_ptr->running || command_rep ||
+		if (p_ptr->running || p_ptr->command_rep ||
 		    (p_ptr->resting && !(p_ptr->resting & 0x0F)))
 		{
 			/* Do not wait */
@@ -3459,7 +3459,7 @@ static void process_player(void)
 
 
 		/* Hack -- cancel "lurking browse mode" */
-		if (!command_new) command_see = FALSE;
+		if (!p_ptr->command_new) p_ptr->command_see = FALSE;
 
 
 		/* Assume free turn */
@@ -3498,10 +3498,10 @@ static void process_player(void)
 		}
 
 		/* Repeated command */
-		else if (command_rep)
+		else if (p_ptr->command_rep)
 		{
 			/* Count this execution */
-			command_rep--;
+			p_ptr->command_rep--;
 
 			/* Redraw the state */
 			p_ptr->redraw |= (PR_STATE);
@@ -3734,11 +3734,11 @@ static void dungeon(void)
 	p_ptr->leaving = FALSE;
 
 	/* Reset the "command" vars */
-	command_cmd = 0;
-	command_new = 0;
-	command_rep = 0;
-	command_arg = 0;
-	command_dir = 0;
+	p_ptr->command_cmd = 0;
+	p_ptr->command_new = 0;
+	p_ptr->command_rep = 0;
+	p_ptr->command_arg = 0;
+	p_ptr->command_dir = 0;
 
 
 	/* Cancel the target */

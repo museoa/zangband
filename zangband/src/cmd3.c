@@ -23,7 +23,7 @@ void do_cmd_inven(void)
 	char out_val[160];
 
 	/* Note that we are in "inventory" mode */
-	command_wrk = (USE_INVEN);
+	p_ptr->command_wrk = (USE_INVEN);
 
 	/* Save screen */
 	screen_save();
@@ -45,25 +45,24 @@ void do_cmd_inven(void)
 	prt(out_val, 0, 0);
 
 	/* Get a new command */
-	command_new = inkey();
+	p_ptr->command_new = inkey();
 
 	/* Load screen */
 	screen_load();
 
 
 	/* Process "Escape" */
-	if (command_new == ESCAPE)
+	if (p_ptr->command_new == ESCAPE)
 	{
 		/* Reset stuff */
-		command_new = 0;
-		command_gap = 50;
+		p_ptr->command_new = 0;
 	}
 
 	/* Process normal keys */
 	else
 	{
 		/* Hack -- Use "display" mode */
-		command_see = TRUE;
+		p_ptr->command_see = TRUE;
 	}
 }
 
@@ -76,7 +75,7 @@ void do_cmd_equip(void)
 	char out_val[160];
 
 	/* Note that we are in "equipment" mode */
-	command_wrk = (USE_EQUIP);
+	p_ptr->command_wrk = (USE_EQUIP);
 
 	/* Save the screen */
 	screen_save();
@@ -99,25 +98,23 @@ void do_cmd_equip(void)
 	prt(out_val, 0, 0);
 
 	/* Get a new command */
-	command_new = inkey();
+	p_ptr->command_new = inkey();
 
 	/* Restore the screen */
 	screen_load();
 
 
 	/* Process "Escape" */
-	if (command_new == ESCAPE)
+	if (p_ptr->command_new == ESCAPE)
 	{
 		/* Reset stuff */
-		command_new = 0;
-		command_gap = 50;
+		p_ptr->command_new = 0;
 	}
-
 	/* Process normal keys */
 	else
 	{
 		/* Enter "display" mode */
-		command_see = TRUE;
+		p_ptr->command_see = TRUE;
 	}
 }
 
@@ -458,7 +455,7 @@ void do_cmd_destroy(void)
 	cptr q, s;
 
 	/* Hack -- force destruction */
-	if (command_arg > 0) force = TRUE;
+	if (p_ptr->command_arg > 0) force = TRUE;
 
 
 	/* Get an item */

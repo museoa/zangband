@@ -3067,7 +3067,7 @@ bool get_aim_dir(int *dp)
 	*dp = 0;
 
 	/* Global direction */
-	dir = command_dir;
+	dir = p_ptr->command_dir;
 
 	/* Hack -- auto-target if requested */
 	if (use_old_target && target_okay()) dir = 5;
@@ -3141,7 +3141,7 @@ bool get_aim_dir(int *dp)
 	if (!dir) return (FALSE);
 
 	/* Save the direction */
-	command_dir = dir;
+	p_ptr->command_dir = dir;
 
 	/* Check for confusion */
 	if (p_ptr->confused)
@@ -3151,7 +3151,7 @@ bool get_aim_dir(int *dp)
 	}
 
 	/* Notice confusion */
-	if (command_dir != dir)
+	if (p_ptr->command_dir != dir)
 	{
 		/* Warn the user */
 		msg_print("You are confused.");
@@ -3160,7 +3160,7 @@ bool get_aim_dir(int *dp)
 	/* Save direction */
 	(*dp) = dir;
 
-	repeat_push(command_dir);
+	repeat_push(p_ptr->command_dir);
 
 	/* A "valid" direction was entered */
 	return (TRUE);
@@ -3197,7 +3197,7 @@ bool get_rep_dir(int *dp, bool under)
 	(*dp) = 0;
 
 	/* Global direction */
-	dir = command_dir;
+	dir = p_ptr->command_dir;
 
 	/* Get a direction */
 	while (!dir)
@@ -3221,7 +3221,7 @@ bool get_rep_dir(int *dp, bool under)
 	if (!dir) return (FALSE);
 
 	/* Save desired direction */
-	command_dir = dir;
+	p_ptr->command_dir = dir;
 
 	/* Apply "confusion" */
 	if (p_ptr->confused)
@@ -3235,7 +3235,7 @@ bool get_rep_dir(int *dp, bool under)
 	}
 
 	/* Notice confusion */
-	if (command_dir != dir)
+	if (p_ptr->command_dir != dir)
 	{
 		/* Warn the user */
 		msg_print("You are confused.");
@@ -3798,7 +3798,7 @@ bool get_hack_dir(int *dp)
 	if (!dir) return (FALSE);
 
 	/* Save the direction */
-	command_dir = dir;
+	p_ptr->command_dir = dir;
 
 	/* Check for confusion */
 	if (p_ptr->confused)
@@ -3809,7 +3809,7 @@ bool get_hack_dir(int *dp)
 	}
 
 	/* Notice confusion */
-	if (command_dir != dir)
+	if (p_ptr->command_dir != dir)
 	{
 		/* Warn the user */
 		msg_print("You are confused.");

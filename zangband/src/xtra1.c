@@ -822,15 +822,15 @@ static void prt_state(void)
 	}
 
 	/* Repeating */
-	else if (command_rep)
+	else if (p_ptr->command_rep)
 	{
-		if (command_rep > 999)
+		if (p_ptr->command_rep > 999)
 		{
-			(void)sprintf(text, "Rep. %3d00", command_rep / 100);
+			(void)sprintf(text, "Rep. %3d00", p_ptr->command_rep / 100);
 		}
 		else
 		{
-			(void)sprintf(text, "Repeat %3d", command_rep);
+			(void)sprintf(text, "Repeat %3d", p_ptr->command_rep);
 		}
 	}
 

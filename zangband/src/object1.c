@@ -1758,11 +1758,8 @@ void show_inven(void)
 	char		c;
 
 
-	/* Starting column */
-	col = command_gap;
-
 	/* Default "max-length" */
-	len = 79 - col;
+	len = 79 - 50;
 
 	/* Maximum space allowed for descriptions */
 	lim = 79 - 3;
@@ -1872,9 +1869,6 @@ void show_inven(void)
 
 	/* Make a "shadow" below the list (only if needed) */
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
-
-	/* Save the new column */
-	command_gap = col;
 }
 
 
@@ -1896,11 +1890,8 @@ void show_equip(void)
 	char		c;
 
 
-	/* Starting column */
-	col = command_gap;
-
 	/* Maximal length */
-	len = 79 - col;
+	len = 79 - 50;
 
 	/* Maximum space allowed for descriptions */
 	lim = 79 - 3;
@@ -2020,9 +2011,6 @@ void show_equip(void)
 
 	/* Make a "shadow" below the list (only if needed) */
 	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
-
-	/* Save the new column */
-	command_gap = col;
 }
 
 
@@ -2135,7 +2123,7 @@ static bool get_item_allow(int item)
 	while (s)
 	{
 		/* Check the "restriction" */
-		if ((s[1] == command_cmd) || (s[1] == '*'))
+		if ((s[1] == p_ptr->command_cmd) || (s[1] == '*'))
 		{
 			/* Verify the choice */
 			if (!verify("Really try", item)) return (FALSE);
@@ -2211,7 +2199,7 @@ static int get_tag(int *cp, char tag)
 			}
 
 			/* Check the special tags */
-			if ((s[1] == command_cmd) && (s[2] == tag))
+			if ((s[1] == p_ptr->command_cmd) && (s[2] == tag))
 			{
 				/* Save the actual inventory ID */
 				*cp = i;
@@ -2574,7 +2562,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	if (!allow_inven && !allow_equip && !allow_floor)
 	{
 		/* Cancel p_ptr->command_see */
-		command_see = FALSE;
+		p_ptr->command_see = FALSE;
 
 		/* Oops */
 		oops = TRUE;
@@ -2587,33 +2575,33 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	else
 	{
 		/* Hack -- Start on equipment if requested */
-		if (command_see && (command_wrk == (USE_EQUIP)) && allow_equip)
+		if (p_ptr->command_see && (p_ptr->command_wrk == (USE_EQUIP)) && allow_equip)
 		{
 			/* This line is redundant */
-			command_wrk = (USE_EQUIP);
+			p_ptr->command_wrk = (USE_EQUIP);
 		}
 
 		/* Use inventory if allowed */
 		else if (allow_inven)
 		{
-			command_wrk = (USE_INVEN);
+			p_ptr->command_wrk = (USE_INVEN);
 		}
 
 		/* Use equipment if allowed */
 		else if (allow_equip)
 		{
-			command_wrk = (USE_EQUIP);
+			p_ptr->command_wrk = (USE_EQUIP);
 		}
 
 		/* Use floor if allowed */
 		else if (allow_floor)
 		{
-			command_wrk = (USE_FLOOR);
+			p_ptr->command_wrk = (USE_FLOOR);
 		}
 	}
 
 	/* Hack -- start out in "display" mode */
-	if (command_see)
+	if (p_ptr->command_see)
 	{
 		/* Save screen */
 		screen_save();
@@ -2639,8 +2627,8 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 		}
 
 		/* Toggle if needed */
-		if ((command_wrk == (USE_EQUIP) && ni && !ne) ||
-			(command_wrk == (USE_INVEN) && !ni && ne))
+		if ((p_ptr->command_wrk == (USE_EQUIP) && ni && !ne) ||
+			(p_ptr->command_wrk == (USE_INVEN) && !ni && ne))
 		{
 			/* Toggle */
 			toggle_inven_equip();
@@ -2656,29 +2644,29 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 		window_stuff();
 
 		/* Inventory screen */
-		if (command_wrk == (USE_INVEN))
+		if (p_ptr->command_wrk == (USE_INVEN))
 		{
 			/* Extract the legal requests */
 			n1 = I2A(i1);
 			n2 = I2A(i2);
 
 			/* Redraw if needed */
-			if (command_see) show_inven();
+			if (p_ptr->command_see) show_inven();
 		}
 
 		/* Equipment screen */
-		else if (command_wrk == (USE_EQUIP))
+		else if (p_ptr->command_wrk == (USE_EQUIP))
 		{
 			/* Extract the legal requests */
 			n1 = I2A(e1 - INVEN_WIELD);
 			n2 = I2A(e2 - INVEN_WIELD);
 
 			/* Redraw if needed */
-			if (command_see) show_equip();
+			if (p_ptr->command_see) show_equip();
 		}
 
 		/* Floor screen */
-		else if (command_wrk == (USE_FLOOR))
+		else if (p_ptr->command_wrk == (USE_FLOOR))
 		{
 			j = floor_top;
 			k = MIN(floor_top + 23, floor_num) - 1;
@@ -2688,11 +2676,11 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			n2 = I2A(k - floor_top);
 
 			/* Redraw if needed */
-			if (command_see && easy_floor) show_floor(py, px);
+			if (p_ptr->command_see && easy_floor) show_floor(py, px);
 		}
 
 		/* Viewing inventory */
-		if (command_wrk == (USE_INVEN))
+		if (p_ptr->command_wrk == (USE_INVEN))
 		{
 			/* Begin the prompt */
 			sprintf(out_val, "Inven:");
@@ -2705,7 +2693,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			strcat(out_val, tmp_val);
 
 			/* Indicate ability to "view" */
-			if (!command_see) strcat(out_val, " * to see,");
+			if (!p_ptr->command_see) strcat(out_val, " * to see,");
 
 			/* Append */
 			if (allow_equip) strcat(out_val, " / for Equip,");
@@ -2715,7 +2703,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 		}
 
 		/* Viewing equipment */
-		else if (command_wrk == (USE_EQUIP))
+		else if (p_ptr->command_wrk == (USE_EQUIP))
 		{
 			/* Begin the prompt */
 			sprintf(out_val, "Equip:");
@@ -2728,7 +2716,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			strcat(out_val, tmp_val);
 
 			/* Indicate ability to "view" */
-			if (!command_see) strcat(out_val, " * to see,");
+			if (!p_ptr->command_see) strcat(out_val, " * to see,");
 
 			/* Append */
 			if (allow_inven) strcat(out_val, " / for Inven,");
@@ -2738,7 +2726,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 		}
 
 		/* Viewing floor */
-		else if (command_wrk == (USE_FLOOR) && easy_floor)
+		else if (p_ptr->command_wrk == (USE_FLOOR) && easy_floor)
 		{
 			/* Begin the prompt */
 			sprintf(out_val, "Floor:");
@@ -2750,7 +2738,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			strcat(out_val, tmp_val);
 
 			/* Indicate ability to "view" */
-			if (!command_see) strcat(out_val, " * to see,");
+			if (!p_ptr->command_see) strcat(out_val, " * to see,");
 
 			/* Append */
 			if (allow_inven)
@@ -2794,10 +2782,10 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			case ' ':
 			{
 				/* Hide the list */
-				if (command_see)
+				if (p_ptr->command_see)
 				{
 					/* Flip flag */
-					command_see = FALSE;
+					p_ptr->command_see = FALSE;
 
 					/* Load screen */
 					screen_load();
@@ -2810,40 +2798,40 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 					screen_save();
 
 					/* Flip flag */
-					command_see = TRUE;
+					p_ptr->command_see = TRUE;
 				}
 				break;
 			}
 
 			case '/':
 			{
-				if (command_wrk == (USE_INVEN))
+				if (p_ptr->command_wrk == (USE_INVEN))
 				{
 					if (!allow_equip)
 					{
 						bell();
 						break;
 					}
-					command_wrk = (USE_EQUIP);
+					p_ptr->command_wrk = (USE_EQUIP);
 				}
-				else if (command_wrk == (USE_EQUIP))
+				else if (p_ptr->command_wrk == (USE_EQUIP))
 				{
 					if (!allow_inven)
 					{
 						bell();
 						break;
 					}
-					command_wrk = (USE_INVEN);
+					p_ptr->command_wrk = (USE_INVEN);
 				}
-				else if (command_wrk == (USE_FLOOR))
+				else if (p_ptr->command_wrk == (USE_FLOOR))
 				{
 					if (allow_inven)
 					{
-						command_wrk = (USE_INVEN);
+						p_ptr->command_wrk = (USE_INVEN);
 					}
 					else if (allow_equip)
 					{
-						command_wrk = (USE_EQUIP);
+						p_ptr->command_wrk = (USE_EQUIP);
 					}
 					else
 					{
@@ -2853,7 +2841,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				}
 
 				/* Hack -- Fix screen */
-				if (command_see)
+				if (p_ptr->command_see)
 				{
 					/* Load screen */
 					screen_load();
@@ -2905,7 +2893,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				 */
 				else if (floor_num == 1)
 				{
-					if ((command_wrk == (USE_FLOOR)) || (!carry_query_flag))
+					if ((p_ptr->command_wrk == (USE_FLOOR)) || (!carry_query_flag))
 					{
 						/* Special index */
 						k = 0 - floor_list[0];
@@ -2927,7 +2915,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				}
 
 				/* Hack -- Fix screen */
-				if (command_see)
+				if (p_ptr->command_see)
 				{
 					/* Load screen */
 					screen_load();
@@ -2936,7 +2924,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 					screen_save();
 				}
 
-				command_wrk = (USE_FLOOR);
+				p_ptr->command_wrk = (USE_FLOOR);
 
 				break;
 			}
@@ -2985,19 +2973,19 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 			case '\r':
 			{
 				/* Choose "default" inventory item */
-				if (command_wrk == (USE_INVEN))
+				if (p_ptr->command_wrk == (USE_INVEN))
 				{
 					k = ((i1 == i2) ? i1 : -1);
 				}
 
 				/* Choose "default" equipment item */
-				else if (command_wrk == (USE_EQUIP))
+				else if (p_ptr->command_wrk == (USE_EQUIP))
 				{
 					k = ((e1 == e2) ? e1 : -1);
 				}
 
 				/* Choose "default" floor item */
-				else if (command_wrk == (USE_FLOOR))
+				else if (p_ptr->command_wrk == (USE_FLOOR))
 				{
 					if (floor_num == 1)
 					{
@@ -3049,19 +3037,19 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				which = tolower(which);
 
 				/* Convert letter to inventory index */
-				if (command_wrk == (USE_INVEN))
+				if (p_ptr->command_wrk == (USE_INVEN))
 				{
 					k = label_to_inven(which);
 				}
 
 				/* Convert letter to equipment index */
-				else if (command_wrk == (USE_EQUIP))
+				else if (p_ptr->command_wrk == (USE_EQUIP))
 				{
 					k = label_to_equip(which);
 				}
 
 				/* Convert letter to floor index */
-				else if (command_wrk == USE_FLOOR)
+				else if (p_ptr->command_wrk == USE_FLOOR)
 				{
 					k = islower(which) ? A2I(which) : -1;
 					if (k < 0 || k >= floor_num)
@@ -3075,7 +3063,7 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 				}
 
 				/* Validate the item */
-				if ((command_wrk != USE_FLOOR) && !get_item_okay(k))
+				if ((p_ptr->command_wrk != USE_FLOOR) && !get_item_okay(k))
 				{
 					bell();
 					break;
@@ -3105,13 +3093,13 @@ bool get_item(int *cp, cptr pmt, cptr str, int mode)
 	}
 
 	/* Fix the screen if necessary */
-	if (command_see)
+	if (p_ptr->command_see)
 	{
 		/* Load screen */
 		screen_load();
 
 		/* Hack -- Cancel "display" */
-		command_see = FALSE;
+		p_ptr->command_see = FALSE;
 	}
 
 

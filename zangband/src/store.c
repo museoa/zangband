@@ -3187,13 +3187,13 @@ static void store_process_command(void)
 	/* Handle repeating the last command */
 	repeat_check();
 
-	if (rogue_like_commands && command_cmd == 'l')
+	if (rogue_like_commands && p_ptr->command_cmd == 'l')
 	{
-		command_cmd = 'x';	/* hack! */
+		p_ptr->command_cmd = 'x';	/* hack! */
 	}
 
 	/* Parse the command */
-	switch (command_cmd)
+	switch (p_ptr->command_cmd)
 	{
 		/* Leave */
 		case ESCAPE:
@@ -3676,13 +3676,13 @@ void do_cmd_store(void)
 
 
 	/* No command argument */
-	command_arg = 0;
+	p_ptr->command_arg = 0;
 
 	/* No repeated command */
-	command_rep = 0;
+	p_ptr->command_rep = 0;
 
 	/* No automatic command */
-	command_new = 0;
+	p_ptr->command_new = 0;
 
 
 	/* Save the store number */
@@ -3849,10 +3849,10 @@ void do_cmd_store(void)
 
 
 	/* Hack -- Cancel automatic command */
-	command_new = 0;
+	p_ptr->command_new = 0;
 
 	/* Hack -- Cancel "see" mode */
-	command_see = FALSE;
+	p_ptr->command_see = FALSE;
 
 
 	/* Flush messages XXX XXX XXX */

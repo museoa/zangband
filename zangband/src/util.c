@@ -3108,13 +3108,13 @@ s16b get_quantity(cptr prompt, int max)
 
 
 	/* Use "command_arg" */
-	if (command_arg)
+	if (p_ptr->command_arg)
 	{
 		/* Extract a number */
-		amt = command_arg;
+		amt = p_ptr->command_arg;
 
 		/* Clear "command_arg" */
-		command_arg = 0;
+		p_ptr->command_arg = 0;
 
 		/* Enforce the maximum */
 		if (amt > max) amt = max;
@@ -3239,29 +3239,29 @@ void request_command(int shopping)
 
 
 	/* No command yet */
-	command_cmd = 0;
+	p_ptr->command_cmd = 0;
 
 	/* No "argument" yet */
-	command_arg = 0;
+	p_ptr->command_arg = 0;
 
 	/* No "direction" yet */
-	command_dir = 0;
+	p_ptr->command_dir = 0;
 
 
 	/* Get command */
 	while (1)
 	{
 		/* Hack -- auto-commands */
-		if (command_new)
+		if (p_ptr->command_new)
 		{
 			/* Flush messages */
 			msg_print(NULL);
 
 			/* Use auto-command */
-			cmd = (char)command_new;
+			cmd = (char)p_ptr->command_new;
 
 			/* Forget it */
-			command_new = 0;
+			p_ptr->command_new = 0;
 		}
 
 		/* Get a keypress in "command" mode */
@@ -3284,10 +3284,10 @@ void request_command(int shopping)
 		/* Command Count */
 		if (cmd == '0')
 		{
-			int old_arg = command_arg;
+			int old_arg = p_ptr->command_arg;
 
 			/* Reset */
-			command_arg = 0;
+			p_ptr->command_arg = 0;
 
 			/* Begin the input */
 			prt("Count: ", 0, 0);
@@ -3302,34 +3302,34 @@ void request_command(int shopping)
 				if ((cmd == 0x7F) || (cmd == KTRL('H')))
 				{
 					/* Delete a digit */
-					command_arg = command_arg / 10;
+					p_ptr->command_arg = p_ptr->command_arg / 10;
 
 					/* Show current count */
-					prt(format("Count: %d", command_arg), 0, 0);
+					prt(format("Count: %d", p_ptr->command_arg), 0, 0);
 				}
 
 				/* Actual numeric data */
 				else if (cmd >= '0' && cmd <= '9')
 				{
 					/* Stop count at 9999 */
-					if (command_arg >= 1000)
+					if (p_ptr->command_arg >= 10000)
 					{
 						/* Warn */
 						bell();
 
 						/* Limit */
-						command_arg = 9999;
+						p_ptr->command_arg = 9999;
 					}
 
 					/* Increase count */
 					else
 					{
 						/* Incorporate that digit */
-						command_arg = command_arg * 10 + D2I(cmd);
+						p_ptr->command_arg = p_ptr->command_arg * 10 + D2I(cmd);
 					}
 
 					/* Show current count */
-					prt(format("Count: %d", command_arg), 0, 0);
+					prt(format("Count: %d", p_ptr->command_arg), 0, 0);
 				}
 
 				/* Exit on "unusable" input */
@@ -3340,23 +3340,23 @@ void request_command(int shopping)
 			}
 
 			/* Hack -- Handle "zero" */
-			if (command_arg == 0)
+			if (p_ptr->command_arg == 0)
 			{
 				/* Default to 99 */
-				command_arg = 99;
+				p_ptr->command_arg = 99;
 
 				/* Show current count */
-				prt(format("Count: %d", command_arg), 0, 0);
+				prt(format("Count: %d", p_ptr->command_arg), 0, 0);
 			}
 
 			/* Hack -- Handle "old_arg" */
 			if (old_arg != 0)
 			{
 				/* Restore old_arg */
-				command_arg = old_arg;
+				p_ptr->command_arg = old_arg;
 
 				/* Show current count */
-				prt(format("Count: %d", command_arg), 0, 0);
+				prt(format("Count: %d", p_ptr->command_arg), 0, 0);
 			}
 
 			/* Hack -- white-space means "enter command now" */
@@ -3366,7 +3366,7 @@ void request_command(int shopping)
 				if (!get_com("Command: ", &cmd))
 				{
 					/* Clear count */
-					command_arg = 0;
+					p_ptr->command_arg = 0;
 
 					/* Continue */
 					continue;
@@ -3416,20 +3416,20 @@ void request_command(int shopping)
 
 
 		/* Use command */
-		command_cmd = cmd;
+		p_ptr->command_cmd = cmd;
 
 		/* Done */
 		break;
 	}
 
 	/* Hack -- Auto-repeat certain commands */
-	if (always_repeat && (command_arg <= 0))
+	if (always_repeat && (p_ptr->command_arg <= 0))
 	{
 		/* Hack -- auto repeat certain commands */
-		if (strchr("TBDoc+", command_cmd))
+		if (strchr("TBDoc+", p_ptr->command_cmd))
 		{
 			/* Repeat 99 times */
-			command_arg = 99;
+			p_ptr->command_arg = 99;
 		}
 	}
 
@@ -3437,16 +3437,16 @@ void request_command(int shopping)
 	if (shopping == 1)
 	{
 		/* Convert */
-		switch (command_cmd)
+		switch (p_ptr->command_cmd)
 		{
 			/* Command "p" -> "purchase" (get) */
-		case 'p': command_cmd = 'g'; break;
+			case 'p': p_ptr->command_cmd = 'g'; break;
 
 			/* Command "m" -> "purchase" (get) */
-		case 'm': command_cmd = 'g'; break;
+			case 'm': p_ptr->command_cmd = 'g'; break;
 
 			/* Command "s" -> "sell" (drop) */
-		case 's': command_cmd = 'd'; break;
+			case 's': p_ptr->command_cmd = 'd'; break;
 		}
 	}
 
@@ -3473,13 +3473,13 @@ void request_command(int shopping)
 		while (s)
 		{
 			/* Check the "restriction" character */
-			if ((s[1] == command_cmd) || (s[1] == '*'))
+			if ((s[1] == p_ptr->command_cmd) || (s[1] == '*'))
 			{
 				/* Hack -- Verify command */
 				if (!get_check("Are you sure? "))
 				{
 					/* Hack -- Use space */
-					command_cmd = ' ';
+					p_ptr->command_cmd = ' ';
 				}
 			}
 
@@ -3656,13 +3656,13 @@ void repeat_check(void)
 	int		what;
 
 	/* Ignore some commands */
-	if (command_cmd == ESCAPE) return;
-	if (command_cmd == ' ') return;
-	if (command_cmd == '\r') return;
-	if (command_cmd == '\n') return;
+	if (p_ptr->command_cmd == ESCAPE) return;
+	if (p_ptr->command_cmd == ' ') return;
+	if (p_ptr->command_cmd == '\r') return;
+	if (p_ptr->command_cmd == '\n') return;
 
 	/* Repeat Last Command */
-	if (command_cmd == 'n')
+	if (p_ptr->command_cmd == 'n')
 	{
 		/* Reset */
 		repeat__idx = 0;
@@ -3671,7 +3671,7 @@ void repeat_check(void)
 		if (repeat_pull(&what))
 		{
 			/* Save the command */
-			command_cmd = what;
+			p_ptr->command_cmd = what;
 		}
 	}
 
@@ -3682,7 +3682,7 @@ void repeat_check(void)
 		repeat__cnt = 0;
 		repeat__idx = 0;
 
-		what = command_cmd;
+		what = p_ptr->command_cmd;
 
 		/* Save this command */
 		repeat_push(what);
