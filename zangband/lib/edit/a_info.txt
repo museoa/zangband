@@ -1870,7 +1870,11 @@ P:0:6d6:16:16:0
 F:VAMPIRIC | STR | CON | FREE_ACT | HOLD_LIFE | RES_NEXUS
 F:RES_CHAOS | RES_NETHER | RES_CONF | INSTA_ART | CURSED
 F:HEAVY_CURSE | NO_TELE | QUESTITEM
-L:MAKE:	if (one_in_(2) ~= 0) then set_flag(object, TR2_DRAIN_EXP) else set_flag(TR2_AGGRAVATE) end
+L:MAKE:	if (one_in_(2) ~= 0) then
+L:MAKE:		set_obj_flag(object, 2, TR2_DRAIN_EXP)
+L:MAKE:	else
+L:MAKE:		set_obj_flag(object, 2, TR2_AGGRAVATE)
+L:MAKE:	end
 D:The Stormbringer is now under your control.  It still thrists for souls.
 
 
@@ -1892,3 +1896,48 @@ L:HIT:		dam = dam * 3
 L:HIT:	end
 D:This trident has the likeness of a demonic face carved on the hilt.  When 
 D:you are hungry the mouth opens to reveal dozens of sharp teeth.
+
+# The Flail of the Miser
+
+# Note: This is twice as heavy as a normal flail
+# Unique power: One extra damage per 100,000 au
+N:132:of the Miser
+I:21:13:-2
+W:60:25:300:500000
+P:0:2d6:12:6:0
+F:HOLD_LIFE | CHR
+F:INSTA_ART
+L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
+L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:MAKE:	add_ego_power(EGO_XTRA_ABILITY, object)
+L:HIT:	dam = dam + player.au / 100000
+D:A metal flail made of pure gold, enchanted to be harder than steel.  
+D:It would look perfect in the center of a huge pile of treasure...
+
+# The Cloak of the Jade Dragon
+
+# Variable bonus: +1 speed per 10 levels (round up), monks only
+# Unique power: Recharge is faster for monks
+N:133:of the Jade Dragon
+I:35:1:0
+W:95:20:10:800000
+P:1:0d0:8:8:35
+F:ACTIVATE | RES_LITE | RES_DARK | RES_NETHER | RES_NEXUS | RES_DISEN
+F:HOLD_LIFE | SLOW_DIGEST | REGEN
+F:SUST_STR | SUST_CON | SUST_DEX | SUST_INT | SUST_WIS | SUST_CHR
+F:INSTA_ART
+L:USE:	msgf("Your cloak glows bright green...")
+L:USE:	inc_fast(rand_range(75, 150))
+L:USE:	if player.rp.pclass == CLASS_MONK then
+L:USE:		object.timeout = rand_range(30, 60)
+L:USE:	else
+L:USE:		object.timeout = rand_range(150, 300)
+L:USE:	end
+L:DESC:	if player.rp.pclass == CLASS_MONK then
+L:DESC:		return "haste self (75-150) every 30-60 turns"
+L:DESC:	else
+L:DESC:		return "haste self (75-150) every 150-300 turns"
+L:DESC:	end
+L:BONUS:	if player.rp.pclass == CLASS_MONK then
+L:BONUS:		b.pspeed = (player.lev + 9) / 10
+L:BONUS:	end
