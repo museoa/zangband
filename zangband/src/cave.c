@@ -2473,6 +2473,9 @@ void update_mon_lite(void)
 	/* Clear all monster lit squares */
 	for (i = 0; i < lite_n; i++)
 	{
+		/* Paranoia */
+		if (!in_boundsp(lite_x[i], lite_y[i])) continue;
+		
 		/* Point to grid */
 		c_ptr = area(lite_x[i], lite_y[i]);
 		pc_ptr = parea(lite_x[i], lite_y[i]);
