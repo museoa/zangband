@@ -30,117 +30,12 @@ int *g_background = NULL;
 bool g_icon_map_changed = FALSE;
 
 
-/*
- * Determine the icon type/index of a real icon type from the given
- * icon type/index. This routine is used to get the actual frame of
- * a sprite for example. Usually the given icon type/index is returned.
- */
-void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr)
-{
-	iconOut->type = assignPtr->type;
-	iconOut->index = assignPtr->index;
-}
-
 void init_palette(void)
 {
 	if (Palette_Init(g_interp) != TCL_OK)
 		quit(Tcl_GetStringResult(g_interp));
 
 	g_palette_rgb = Palette_GetRGB();
-}
-
-
-char *AssignToString_Icon(char *buf, t_assign_icon *assign)
-{
-	strnfmt(buf, 128, "icon %s %d",
-			g_icon_data[assign->type].desc,
-			assign->index);
-
-	return buf;
-}
-
-static int Icon_Validate(Tcl_Interp *interp, char *typeName, int index, IconSpec *specPtr)
-{
-	t_icon_data *iconDataPtr;
-	int type;
-
-	/* Look up the icon type by name */
-	if (Icon_FindTypeByName(interp, &type, typeName) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	iconDataPtr = &g_icon_data[type];
-
-	/* Verify index */
-	if ((index < 0) || (index >= iconDataPtr->icon_count))
-	{
-		/* Set the error */
-		Tcl_SetStringObj(Tcl_GetObjResult(interp),
-			format("bad icon index \"%d\": must be from 0 to %d",
-			index, iconDataPtr->icon_count - 1), -1);
-
-		/* Failure */
-		return TCL_ERROR;
-	}
-
-	specPtr->type = type;
-	specPtr->index = index;
-
-	/* Success */
-	return TCL_OK;
-}
-
-static int StringToAssign_Icon(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
-{
-	char option[64], typeName[64];
-	IconSpec iconSpec;
-
-	if (sscanf(desc, "%s %s %d", option, typeName, &iconSpec.index) < 3)
-	{
-		Tcl_SetResult(interp, format("malformed assignment \"%s\"",
-			desc), TCL_VOLATILE);
-		return TCL_ERROR;
-	}
-
-	if (Icon_Validate(interp, typeName, iconSpec.index, &iconSpec) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	assignPtr->type = iconSpec.type;
-	assignPtr->index = iconSpec.index;
-
-	return TCL_OK;
-}
-
-
-cptr keyword_assign_type[] = {"icon", NULL};
-
-int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc)
-{
-	char option[64];
-	Tcl_Obj *objPtr;
-	int assignType;
-
-	/* Ex. "icon dungeon 10" */
-	if (sscanf(desc, "%s", option) != 1)
-	{
-		Tcl_SetResult(interp, format("malformed assignment \"%s\"",
-			desc), TCL_VOLATILE);
-		return TCL_ERROR;
-	}
-
-	objPtr = Tcl_NewStringObj(option, -1);
-	if (Tcl_GetIndexFromObj(interp, objPtr, keyword_assign_type,
-		"option", 0, &assignType) != TCL_OK)
-	{
-		Tcl_DecrRefCount(objPtr);
-		return TCL_ERROR;
-	}
-	Tcl_DecrRefCount(objPtr);
-
-	return StringToAssign_Icon(interp, assignPtr, desc);
 }
 
 

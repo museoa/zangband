@@ -95,8 +95,4 @@ typedef struct t_assign_group {
 
 extern byte *g_palette_rgb;
 
-extern void FinalIcon(IconSpec *iconOut, t_assign_icon *assignPtr);
-extern int assign_parse(Tcl_Interp *interp, t_assign_icon *assignPtr, cptr desc);
-extern char *AssignToString_Icon(char *buf, t_assign_icon *assign);
-
 #endif /* _INCLUDE_ICON_H_ */
