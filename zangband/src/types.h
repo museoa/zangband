@@ -925,8 +925,24 @@ typedef struct field_action field_action;
 
 struct field_action
 {
-field_action_type action;	/* The function to call */
-char *func;			/* The name of the function */
+	field_action_type action;	/* The function to call */
+	char *func;			/* The name of the function */
+};
+
+
+/* 
+ * Structure required to pass infomation to the
+ * FIELD_ACT_MAGIC_TARGET action functions.
+ */
+typedef struct field_magic_target field_magic_target;
+
+struct field_magic_target
+{
+	int who;	/* The source */
+	int dist;	/* Distance from the center of the explosion */
+	int dam;	/* Damage parameter */
+	int typ;	/* GF type of interaction */
+	bool notice; /* Does the player notice? */
 };
 
 

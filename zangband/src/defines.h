@@ -2029,7 +2029,7 @@
  *   KILL: Affect each monster in the "blast area" in some way
  *   HIDE: Hack -- disable "visual" feedback from projection
  *   FRND: Stop if hit a friendly monster / player.
- *	 FELD: Create fields using GF_XXX value as type.
+ *	 MFLD: Make fields using GF_XXX value as type.
  */
 #define PROJECT_JUMP    0x0001
 #define PROJECT_BEAM    0x0002
@@ -2040,7 +2040,7 @@
 #define PROJECT_KILL    0x0040
 #define PROJECT_HIDE    0x0080
 #define PROJECT_FRND	0x0100
-#define PROJECT_FELD	0x0200
+#define PROJECT_MFLD	0x0200
 
 /*
  * Bit flags for the "enchant()" function
@@ -3680,7 +3680,7 @@ extern int PlayerUID;
 #define FIELD_INFO_RAND		0x0010	/* Randomize first 4 data values */
 #define FIELD_INFO_NO_LOOK	0x0020	/* Do not describe when looked at */
 #define FIELD_INFO_NFT_LOOK	0x0040  /* Do not describe feat when looked at */
-#define FIELD_INFO_DUMMY6	0x0080
+#define FIELD_INFO_MERGE	0x0080  /* Merge counter with similar fields */ 
 #define FIELD_INFO_DUMMY7	0x0100
 #define FIELD_INFO_DUMMY8	0x0200
 #define FIELD_INFO_DUMMY9	0x0400

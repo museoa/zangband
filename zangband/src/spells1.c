@@ -237,6 +237,8 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 	int m;
 
 	cave_type *c_ptr;
+	
+	bool m_can_enter;
 
 	/* No path necessary (or allowed) */
 	if ((x1 == x2) && (y1 == y2)) return (0);
@@ -311,6 +313,15 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
+			
+			/* Can the magic enter? */
+			m_can_enter = TRUE;
+			
+			/* Check for a field that blocks magic */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_MAGIC_TEST, &m_can_enter);
+
+			/* Require "empty" fields */
+			if (!m_can_enter) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if ((c_ptr->m_idx != 0) && (n > 0))
@@ -381,6 +392,15 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
+			
+			/* Can the magic enter? */
+			m_can_enter = TRUE;
+			
+			/* Check for a field that blocks magic */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_MAGIC_TEST, &m_can_enter);
+
+			/* Require "empty" fields */
+			if (!m_can_enter) break;
 
 			/* Sometimes stop at non-initial monsters/players */
 			if ((c_ptr->m_idx != 0) && (n > 0))
@@ -442,6 +462,15 @@ sint project_path(coord *gp, int range, int y1, int x1, int y2, int x2, u16b flg
 			if (!in_bounds(y, x)) break;
 
 			c_ptr = area(y, x);
+			
+			/* Can the magic enter? */
+			m_can_enter = TRUE;
+			
+			/* Check for a field that blocks magic */
+			field_hook(&c_ptr->fld_idx, FIELD_ACT_MAGIC_TEST, &m_can_enter);
+
+			/* Require "empty" fields */
+			if (!m_can_enter) break;
 
 			/* Always stop at non-initial wall grids */
 			if ((n > 0) && !cave_floor_grid(c_ptr)) break;
@@ -4188,6 +4217,8 @@ int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
  * XXX XXX XXX
  * Modified version of los() for calculation of disintegration balls.
  * Disintegration effects are stopped by permanent walls.
+ *
+ * Hack - fields do _not_ stop disintegration.
  */
 static bool in_disintegration_range(int y1, int x1, int y2, int x2)
 {
@@ -4461,13 +4492,12 @@ static bool in_disintegration_range(int y1, int x1, int y2, int x2)
  * "virtual targets" far away from the player.
  *
  * One can also use PROJECT_THRU to send a beam/bolt along an angled path,
- * continuing until it actually hits somethings (useful for "stone to mud").
+ * continuing until it actually hits something (useful for "stone to mud").
  *
  * Bolts and Beams explode INSIDE walls, so that they can destroy doors.
  *
  * Balls must explode BEFORE hitting walls, or they would affect monsters
- * on both sides of a wall.  Some bug reports indicate that this is still
- * happening in 2.7.8 for Windows, though it appears to be impossible.
+ * on both sides of a wall.
  *
  * We "pre-calculate" the blast area only in part for efficiency.
  * More importantly, this lets us do "explosions" from the "inside" out.
@@ -4581,7 +4611,10 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 
 	/* Is the player blind? */
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
-
+	
+	/* Can magic pass a particular "pile" of fields? */
+	bool m_can_enter;
+	
 	/* Number of grids in the "path" */
 	int path_n = 0;
 
@@ -4704,6 +4737,15 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 
 		/* Hack -- Balls explode before reaching walls */
 		if (!cave_floor_grid(c_ptr) && (rad > 0)) break;
+		
+		/* Can the magic enter? */
+		m_can_enter = TRUE;
+			
+		/* Check for a field that blocks magic */
+		field_hook(&c_ptr->fld_idx, FIELD_ACT_MAGIC_TEST, &m_can_enter);
+
+		/* Require "empty" fields for balls */
+		if (!m_can_enter && (rad > 0)) break;
 
 		/* Advance */
 		y = ny;
@@ -4739,8 +4781,13 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				/* Visual effects */
 				print_rel(c, a, y, x);
 				move_cursor_relative(y, x);
+				
 				if (fresh_before) Term_fresh();
+				
+				/* Delay */
 				Term_xtra(TERM_XTRA_DELAY, msec);
+				
+				/* Show it */
 				lite_spot(y, x);
 				if (fresh_before) Term_fresh();
 
@@ -4834,8 +4881,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 							/* Enforce an arc */
 							if (distance(by, bx, y, x) != cdis) continue;
 
-							/* The blast is stopped by walls */
-							if (!los(by, bx, y, x)) continue;
+							/* The blast is stopped by walls/fields */
+							if (!projectable(by, bx, y, x)) continue;
 
 							/* Save this grid */
 							gy[grids] = y;
@@ -4914,8 +4961,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 						}
 						else
 						{
-							/* Ball explosions are stopped by walls */
-							if (!los(y2, x2, y, x)) continue;
+							/* Ball explosions are stopped by walls/fields */
+							if (!projectable(y2, x2, y, x)) continue;
 						}
 
 						/* Save this grid */
@@ -5017,6 +5064,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 	/* Check features */
 	if (flg & (PROJECT_GRID))
 	{
+		field_magic_target f_m_t;
+		
 		/* Start with "dist" of zero */
 		dist = 0;
 
@@ -5037,15 +5086,42 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 
 				/* Affect the grid */
 				if (project_f(who, d, y, x, dam, typ)) notice = TRUE;
+				
+				/* Store information into structure to pass to action */
+				f_m_t.who = who;
+				f_m_t.dist = d;
+				f_m_t.dam = dam;
+				f_m_t.typ = typ;
+				f_m_t.notice = notice;
+				
+				/* Affect fields on the grid */
+				field_hook(&area(py, px)->fld_idx,
+					FIELD_ACT_MAGIC_TARGET, (void *) &f_m_t);
+				
+				/* Restore notice variable */
+				notice = f_m_t.notice;
 			}
 			else
 			{
 				/* Affect the grid */
 				if (project_f(who, dist, y, x, dam, typ)) notice = TRUE;
+				
+				/* Store information into structure to pass to action */
+				f_m_t.who = who;
+				f_m_t.dist = dist;
+				f_m_t.dam = dam;
+				f_m_t.typ = typ;
+				f_m_t.notice = notice;
+				
+				/* Affect fields on the grid */
+				field_hook(&area(py, px)->fld_idx,
+					FIELD_ACT_MAGIC_TARGET, (void *) &f_m_t);
+				
+				/* Restore notice variable */
+				notice = f_m_t.notice;
 			}
 		}
 	}
-
 
 	/* Update stuff if needed */
 	if (p_ptr->update) update_stuff();
