@@ -126,16 +126,7 @@ proc NSConfig::Load {} {
 
 proc NSConfig::InitIcons {iconSize} {
 
-	if {[Platform unix]} {
-		angband init_icons $iconSize [winfo depth .]
-	}
-	if {[Platform windows]} {
-		set depth [winfo depth .]
-		if {$depth != 8} {
-			set depth 16
-		}
-		angband init_icons $iconSize $depth
-	}
+	angband init_icons $iconSize [winfo depth .]
 
 	return
 }

@@ -569,7 +569,6 @@ proc NSMainWindow::InitMenus {oop} {
 
 	NSObject::New NSMenu $mbarId -tearoff 0 -identifier MENU_PREFERENCES
 	set entries {}
-	lappend entries [list -type command -label "Color" -identifier E_PREF_COLOR]
 	lappend entries [list -type command -label "Font" -identifier E_PREF_FONT]
 	lappend entries [list -type command -label "Options" -identifier E_PREF_OPTIONS]
 	NSMenu::MenuInsertEntries $mbarId -end MENU_PREFERENCES $entries
@@ -666,8 +665,7 @@ proc NSMainWindow::SetupMenus {oop mbarId} {
 
 	lappend identList E_WINDOW_SAVEPOS E_WINDOW_DEFPOS \
 		E_WINDOW_LOADPOS E_WINDOW_AUTOSAVE E_WINDOW_MAXIMIZE E_ABOUT E_TIPS
-	lappend identList M_PREFERENCES E_PREF_COLOR \
-		E_PREF_FONT
+	lappend identList M_PREFERENCES E_PREF_FONT
 
 	lappend identList E_CHOICEWINDOW E_WINDOW_MESSAGE E_WINDOW_MESSAGES \
 		E_WINDOW_MISC E_WINDOW_RECALL
@@ -787,17 +785,9 @@ proc NSMainWindow::MenuInvoke {oop menuId ident} {
 		E_ACTION_WALK {DoUnderlyingCommand ";"}
 		E_ACTION_WALK_TOGGLE {DoUnderlyingCommand -}
 		
-		E_PREF_COLOR {
-			NSModule::LoadIfNeeded NSColorPreferences
-			NSWindowManager::Display color
-		}
 		E_PREF_FONT {
 			NSModule::LoadIfNeeded NSFont
 			NSWindowManager::Display font
-		}
-		E_PREF_COLOR {
-			NSModule::LoadIfNeeded NSColorPreferences
-			NSWindowManager::Display color
 		}
 		E_PREF_OPTIONS {DoUnderlyingCommand =}
 
