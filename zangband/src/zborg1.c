@@ -52,7 +52,6 @@
 
 /* dynamic borg stuff */
 bool borg_plays_risky;
-bool borg_slow_optimizehome;
 bool borg_scums_uniques;
 
 /* HACK... this should really be a parm into borg_prepared */
@@ -79,10 +78,6 @@ bool borg_cancel;	/* Being cancelled */
 bool borg_stop_king = TRUE;
 bool borg_dont_react = FALSE;
 int successful_target = 0;
-int sold_item_tval;
-int sold_item_sval;
-int sold_item_pval;
-int sold_item_store;
 
 /*
  * Various silly flags

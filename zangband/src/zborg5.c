@@ -2938,14 +2938,6 @@ void borg_update(void)
 		/* Wipe the danger */
 		borg_danger_wipe = TRUE;
 
-		/* Clear our sold flags */
-		sold_item_tval = 0;
-		sold_item_pval = 0;
-		sold_item_tval = 0;
-		sold_item_sval = 0;
-		sold_item_pval = 0;
-		sold_item_store = 0;
-
 		/* Update some stuff */
 		borg_do_update_view = TRUE;
 

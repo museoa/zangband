@@ -193,7 +193,7 @@ bool borg_item_icky(list_item *l_ptr)
 		l_ptr = &equipment[slot];
 
 		/* Is my item an ego or artifact? */
-		if (l_ptr->xtra_name) return (TRUE);
+		if (l_ptr->xtra_name && *l_ptr->xtra_name) return (TRUE);
 	}
 	/* Assume not icky, I should have extra ID for the item */
 	return (FALSE);
@@ -1617,7 +1617,7 @@ bool borg_crush_junk(void)
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
 		/* hack check anything interesting */
-		if (l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
+		if (l_ptr->xtra_name && *l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
 
 		/* Message */
 		borg_note(format("# Junking junk (valued at %d)", value));
@@ -1718,7 +1718,7 @@ bool borg_crush_hole(void)
 		if (l_ptr->tval == mp_ptr->spell_book) continue;
 
 		/* Hack -- skip artifacts and ego items not fully identified */
-		if (l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
+		if (l_ptr->xtra_name && *l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
@@ -1840,7 +1840,7 @@ bool borg_crush_slow(void)
 		if (!(l_ptr->info & OB_KNOWN) && !borg_item_icky(l_ptr)) continue;
 
 		/* Hack -- Skip artifacts */
-		if (l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
+		if (l_ptr->xtra_name && *l_ptr->xtra_name && !(l_ptr->info & OB_MENTAL)) continue;
 		if (strstr(l_ptr->o_name, "{special")) continue;
 		if (strstr(l_ptr->o_name, "{terrible")) continue;
 
@@ -1980,7 +1980,7 @@ bool borg_test_stuff(bool star_id)
 		{
 			/* go ahead and check egos and artifacts */
 			if (l_ptr->info & OB_MENTAL) continue;
-			if (!l_ptr->xtra_name) continue;
+			if (!(l_ptr->xtra_name && *l_ptr->xtra_name)) continue;
 		}
 
 		/* Track it */
@@ -2003,7 +2003,7 @@ bool borg_test_stuff(bool star_id)
 		else
 		{
 			if (l_ptr->info & OB_MENTAL) continue;
-			if (l_ptr->xtra_name) break;
+			if (l_ptr->xtra_name && *l_ptr->xtra_name) break;
 		}
 
 		/* Assume nothing */
@@ -2504,7 +2504,7 @@ bool borg_wear_stuff(void)
 			!strstr(l_ptr->o_name, "{special")) continue;
 
 		/* apw do not wear not *idd* artifacts */
-		if (!(l_ptr->info & OB_MENTAL) && l_ptr->xtra_name) continue;
+		if (!(l_ptr->info & OB_MENTAL) && l_ptr->xtra_name && *l_ptr->xtra_name) continue;
 
 		/* skip it if it has not been decursed */
 		if ((l_ptr->kn_flags3 & TR3_CURSED) || (l_ptr->kn_flags3 & TR3_HEAVY_CURSE)) continue;
@@ -2790,11 +2790,6 @@ bool borg_best_stuff(void)
 			i -= 100;
 
 			item = &borg_shops[BORG_HOME].ware[i];
-
-			/* Dont do it if you just sold this item */
-			if (sold_item_tval == item->tval && sold_item_sval == item->sval &&
-				sold_item_pval == item->pval &&
-				sold_item_store == BORG_HOME) return (FALSE);
 
 			/* Get the item */
 			borg_note(format("# Getting (Best Fit) %s.", item->desc));

@@ -5753,7 +5753,7 @@ static int borg_attack_aux_launch(void)
 		list_item *l_ptr = &inventory[k];
 
 		/* Skip Ego branded items--they are looked at later */
-		if (l_ptr->xtra_name) continue;
+		if (l_ptr->xtra_name && *l_ptr->xtra_name) continue;
 
 		/* Skip bad missiles */
 		if (l_ptr->tval != my_ammo_tval) continue;

@@ -182,13 +182,8 @@ extern bool borg_cancel;	/* Being cancelled */
 extern bool borg_stop_king;
 extern bool borg_dont_react;
 extern int successful_target;
-extern int sold_item_tval;
-extern int sold_item_sval;
-extern int sold_item_pval;
-extern int sold_item_store;
 
 extern bool borg_plays_risky;
-extern bool borg_slow_optimizehome;
 extern bool borg_scums_uniques;
 
 /* HACK... this should really be a parm into borg_prepared */
@@ -398,7 +393,8 @@ extern int size_obj;
 #define BI_AGOI		188			/* GOI spell */
 #define BI_AHWORD	189			/* Holy Word prayer */
 
-#define BI_MAX		190
+#define BI_WEIGHT	190
+#define BI_MAX		191
 
 
 /*

@@ -2226,7 +2226,6 @@ static void init_borg_txt_file(void)
 	/* use default values */
 	borg_plays_risky = FALSE;
 	borg_scums_uniques = TRUE;
-	borg_slow_optimizehome = FALSE;
 	borg_stop_king = TRUE;
 
 	/* Success */
@@ -2658,8 +2657,7 @@ static void borg_display_item(object_type *item2)
 	prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
 			   item->pval, item->to_a, item->to_h, item->to_d), j, 6);
 
-	prt(format("xtra_name = %-4d  value = %d   cursed = %ld",
-			   item->xtra_name, (long)item->value, item->cursed), j, 7);
+	prt(format("xtra_name = %s, item->xtra_name, j, 7);
 
 	prt(format("able = %d      fully_id = %d  timeout = %-d",
 			   item->able, item->fully_identified, item->timeout), j, 8);

@@ -504,7 +504,7 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		borg_skill[BI_ARMOR] += l_ptr->to_a;
 
 		/* Keep track of weight */
-		borg_skill[BI_ENCUMBERD] += l_ptr->weight;
+		borg_skill[BI_WEIGHT] += l_ptr->weight;
 
 		/* Hack -- do not apply "weapon" bonuses */
 		if (i == EQUIP_WIELD) continue;
@@ -1726,7 +1726,7 @@ static void borg_notice_inven_item(list_item *l_ptr)
 	borg_has[l_ptr->k_idx] += number;
 
 	/* Keep track of weight */
-	borg_skill[BI_ENCUMBERD] += l_ptr->weight * number;
+	borg_skill[BI_WEIGHT] += l_ptr->weight * number;
 
 	/* Get item type */
 	k_ptr = &k_info[l_ptr->k_idx];
@@ -2296,19 +2296,22 @@ static void borg_notice_aux2(void)
 	if (borg_skill[BI_ISWEAK] && (borg_skill[BI_FOOD] >= 1000))
 		borg_skill[BI_FOOD] -= 1000;
 
-	/* Correct BI_ENCUMBERD from total weight to the degree
+	/*
+	 * Correct BI_ENCUMBERD from total weight to the degree
 	 * of being overweight.
 	 */
 	/* Extract the "weight limit" (in tenth pounds) */
 	carry_capacity = (adj_str_wgt[my_stat_ind[A_STR]] * 100) / 2;
 
 	/* over or under the limit */
-	if (borg_skill[BI_ENCUMBERD] > carry_capacity)
+	if (borg_skill[BI_WEIGHT] > carry_capacity)
 	{
-		borg_skill[BI_ENCUMBERD] = (borg_skill[BI_ENCUMBERD] - carry_capacity);
+		borg_skill[BI_ENCUMBERD] = (borg_skill[BI_WEIGHT] - carry_capacity);
 	}
 	else
+	{
 		borg_skill[BI_ENCUMBERD] = 0;
+	}
 }
 
 
@@ -2345,7 +2348,6 @@ static void borg_notice_home_clear(void)
 
 	/* Reset basic */
 	num_food = 0;
-	num_mold = 0;
 	num_ident = 0;
 	num_star_ident = 0;
 	num_recall = 0;
@@ -3115,6 +3117,346 @@ static void borg_notice_home_player(void)
 
 
 /*
+ * Notice a particular item
+ */
+static void borg_notice_home_item(list_item *l_ptr, int i)
+{
+	/* Analyze the item */
+	switch (l_ptr->tval)
+	{
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		{
+			num_armor += l_ptr->number;
+
+			/* see if this item is duplicated */
+			borg_notice_home_dupe(l_ptr, FALSE, i);
+			break;
+		}
+
+		case TV_DRAG_ARMOR:
+		{
+			num_armor += l_ptr->number;
+
+			/* see if this item is duplicated */
+			borg_notice_home_dupe(l_ptr, TRUE, i);
+			break;
+		}
+
+		case TV_CLOAK:
+		{
+			num_cloaks += l_ptr->number;
+
+			/* see if this item is duplicated */
+			borg_notice_home_dupe(l_ptr, FALSE, i);
+
+			break;
+		}
+
+		case TV_SHIELD:
+		{
+			num_shields += l_ptr->number;
+
+			/* see if this item is duplicated */
+			borg_notice_home_dupe(l_ptr, FALSE, i);
+			break;
+		}
+
+		case TV_HELM:
+		case TV_CROWN:
+		{
+			num_hats += l_ptr->number;
+
+			/* see if this item is duplicated */
+			borg_notice_home_dupe(l_ptr, FALSE, i);
+
+			break;
+		}
+
+		case TV_GLOVES:
+		{
+			num_gloves += l_ptr->number;
+
+			/* most gloves hurt magic for spell-casters */
+			if (borg_skill[BI_INTMANA] && borg_skill[BI_MAXSP] > 3)
+			{
+				/* Penalize non-usable gloves */
+				if (l_ptr->number &&
+					(!(l_ptr->kn_flags2 & TR2_FREE_ACT)) &&
+					(!((l_ptr->kn_flags1 & TR1_DEX) && (l_ptr->pval > 0))))
+				{
+					num_bad_gloves += l_ptr->number;
+				}
+			}
+
+			/* gloves of slaying give a damage bonus */
+			home_damage += l_ptr->to_d * 3;
+
+			/* see if this item is duplicated */
+			borg_notice_home_dupe(l_ptr, FALSE, i);
+
+			break;
+		}
+
+		case TV_LITE:
+		{
+			if (l_ptr->kn_flags3 & TR3_INSTA_ART)
+			{
+				num_lite += l_ptr->number;
+			}
+			break;
+		}
+
+		case TV_BOOTS:
+		{
+			num_boots += l_ptr->number;
+
+			/* see if this item is duplicated */
+			borg_notice_home_dupe(l_ptr, FALSE, i);
+			break;
+		}
+
+		case TV_SWORD:
+		case TV_POLEARM:
+		case TV_HAFTED:
+		case TV_DIGGING:
+		{
+			/* Look at weapon information */
+			borg_notice_home_weapon(l_ptr);
+
+			/* see if this item is a duplicate */
+			borg_notice_home_dupe(l_ptr, FALSE, i);
+			break;
+		}
+
+		case TV_BOW:
+		{
+			num_bow += l_ptr->number;
+
+			/* see if this item is a duplicate */
+			borg_notice_home_dupe(l_ptr, FALSE, i);
+			break;
+		}
+
+		case TV_RING:
+		{
+			num_rings += l_ptr->number;
+
+			/* see if this item is a duplicate */
+			borg_notice_home_dupe(l_ptr, TRUE, i);
+
+			break;
+		}
+
+		case TV_AMULET:
+		{
+			num_neck += l_ptr->number;
+
+			/* see if this item is a duplicate */
+			borg_notice_home_dupe(l_ptr, TRUE, i);
+			break;
+		}
+
+		case TV_LIFE_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_LIFE ||
+				borg_skill[BI_REALM2] == REALM_LIFE)
+				num_book[REALM_LIFE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+			break;
+		}
+
+		case TV_SORCERY_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_SORCERY ||
+				borg_skill[BI_REALM2] == REALM_SORCERY)
+				num_book[REALM_SORCERY][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+			break;
+		}
+
+		case TV_NATURE_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_NATURE ||
+				borg_skill[BI_REALM2] == REALM_NATURE)
+				num_book[REALM_NATURE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+			break;
+		}
+		case TV_CHAOS_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_CHAOS ||
+				borg_skill[BI_REALM2] == REALM_CHAOS)
+				num_book[REALM_CHAOS][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+			break;
+		}
+		case TV_DEATH_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_DEATH ||
+				borg_skill[BI_REALM2] == REALM_DEATH)
+				num_book[REALM_DEATH][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+			break;
+		}
+		case TV_TRUMP_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_TRUMP ||
+				borg_skill[BI_REALM2] == REALM_TRUMP)
+				num_book[REALM_TRUMP][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+			break;
+		}
+		case TV_ARCANE_BOOK:
+		{
+			/* Count good books */
+			if (borg_skill[BI_REALM1] == REALM_ARCANE ||
+				borg_skill[BI_REALM2] == REALM_ARCANE)
+				num_book[REALM_ARCANE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
+			break;
+		}
+
+		case TV_FOOD:
+		{
+			/* Food */
+
+			/* Analyze */
+			switch (k_info[l_ptr->k_idx].sval)
+			{
+				case SV_FOOD_WAYBREAD:
+				case SV_FOOD_RATION:
+				{
+					if (borg_race >= RACE_SPRITE && borg_race <= RACE_IMP)
+					{
+						num_food += l_ptr->number;
+					}
+					break;
+				}
+
+				case SV_FOOD_RESTORE_STR:
+				{
+					num_fix_stat[A_STR] += l_ptr->number;
+					break;
+				}
+
+				case SV_FOOD_RESTORE_CON:
+				{
+					num_fix_stat[A_CON] += l_ptr->number;
+					break;
+				}
+
+				case SV_FOOD_RESTORING:
+				{
+					num_fix_stat[A_STR] += l_ptr->number;
+					num_fix_stat[A_INT] += l_ptr->number;
+					num_fix_stat[A_WIS] += l_ptr->number;
+					num_fix_stat[A_DEX] += l_ptr->number;
+					num_fix_stat[A_CON] += l_ptr->number;
+					num_fix_stat[A_CHR] += l_ptr->number;
+					num_fix_stat[6] += l_ptr->number;
+					break;
+				}
+			}
+
+			break;
+		}
+
+
+		case TV_POTION:
+		{
+			/* Potions */
+			borg_notice_home_potion(l_ptr);
+
+			break;
+		}
+
+
+		case TV_SCROLL:
+		{
+			/* Scrolls */
+			borg_notice_home_scroll(l_ptr);
+			
+			break;
+		}
+
+
+		case TV_ROD:
+		{
+			/* Rods */
+
+			/* Analyze */
+			switch (k_info[l_ptr->k_idx].sval)
+			{
+				case SV_ROD_IDENTIFY:
+				{
+					num_ident += l_ptr->number * 100;
+					break;
+				}
+
+				case SV_ROD_RECALL:
+				{
+					num_recall += l_ptr->number * 100;
+					break;
+				}
+			}
+
+			break;
+		}
+
+		case TV_STAFF:
+		{
+			/* Staffs */
+
+			/* Only collect staves with more than 3 charges at high level */
+			if (l_ptr->pval <= 3 && borg_skill[BI_CLEVEL] > 30)
+				break;
+
+			/* Analyze */
+			switch (k_info[l_ptr->k_idx].sval)
+			{
+				case SV_STAFF_IDENTIFY:
+				{
+					num_ident += l_ptr->number * l_ptr->pval;
+					break;
+				}
+
+				case SV_STAFF_TELEPORTATION:
+				{
+					/*
+					 * Don't use them deep in the dungeon because the
+					 * charges will get drained and he wont have any
+					 * scrolls left to read
+					 */
+					if (borg_skill[BI_MAXDEPTH] < 97)
+					{
+						num_teleport += l_ptr->number * l_ptr->pval;
+					}
+					break;
+				}
+			}
+
+			break;
+		}
+
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+		{
+			/* Missiles */
+		
+			/* Hack -- ignore invalid missiles */
+			if (l_ptr->tval != my_ammo_tval) break;
+
+			/* Count them */
+			num_missile += l_ptr->number;
+
+			break;
+		}
+	}
+}
+
+
+/*
  * Helper function -- notice the home inventory
  */
 static void borg_notice_home_aux(void)
@@ -3138,346 +3480,9 @@ static void borg_notice_home_aux(void)
 		
 		/* Notice item flags */
 		borg_notice_home_flags(l_ptr);
-
-
-		/* Analyze the item */
-		switch (l_ptr->tval)
-		{
-			case TV_SOFT_ARMOR:
-			case TV_HARD_ARMOR:
-			{
-				num_armor += l_ptr->number;
-
-				/* see if this item is duplicated */
-				borg_notice_home_dupe(l_ptr, FALSE, i);
-				break;
-			}
-
-			case TV_DRAG_ARMOR:
-			{
-				num_armor += l_ptr->number;
-
-				/* see if this item is duplicated */
-				borg_notice_home_dupe(l_ptr, TRUE, i);
-				break;
-			}
-
-			case TV_CLOAK:
-			{
-				num_cloaks += l_ptr->number;
-
-				/* see if this item is duplicated */
-				borg_notice_home_dupe(l_ptr, FALSE, i);
-
-				break;
-			}
-
-			case TV_SHIELD:
-			{
-				num_shields += l_ptr->number;
-
-				/* see if this item is duplicated */
-				borg_notice_home_dupe(l_ptr, FALSE, i);
-				break;
-			}
-
-			case TV_HELM:
-			case TV_CROWN:
-			{
-				num_hats += l_ptr->number;
-
-				/* see if this item is duplicated */
-				borg_notice_home_dupe(l_ptr, FALSE, i);
-
-				break;
-			}
-
-			case TV_GLOVES:
-			{
-				num_gloves += l_ptr->number;
-
-				/* most gloves hurt magic for spell-casters */
-				if (borg_skill[BI_INTMANA] && borg_skill[BI_MAXSP] > 3)
-				{
-					/* Penalize non-usable gloves */
-					if (l_ptr->number &&
-						(!(l_ptr->kn_flags2 & TR2_FREE_ACT)) &&
-						(!((l_ptr->kn_flags1 & TR1_DEX) && (l_ptr->pval > 0))))
-					{
-						num_bad_gloves += l_ptr->number;
-					}
-				}
-
-				/* gloves of slaying give a damage bonus */
-				home_damage += l_ptr->to_d * 3;
-
-				/* see if this item is duplicated */
-				borg_notice_home_dupe(l_ptr, FALSE, i);
-
-				break;
-			}
-
-			case TV_LITE:
-			{
-				if (l_ptr->kn_flags3 & TR3_INSTA_ART)
-				{
-					num_lite += l_ptr->number;
-				}
-				break;
-			}
-
-			case TV_BOOTS:
-			{
-				num_boots += l_ptr->number;
-
-				/* see if this item is duplicated */
-				borg_notice_home_dupe(l_ptr, FALSE, i);
-				break;
-			}
-
-			case TV_SWORD:
-			case TV_POLEARM:
-			case TV_HAFTED:
-			case TV_DIGGING:
-			{
-				/* Look at weapon information */
-				borg_notice_home_weapon(l_ptr);
-
-				/* see if this item is a duplicate */
-				borg_notice_home_dupe(l_ptr, FALSE, i);
-				break;
-			}
-
-			case TV_BOW:
-			{
-				num_bow += l_ptr->number;
-
-				/* see if this item is a duplicate */
-				borg_notice_home_dupe(l_ptr, FALSE, i);
-				break;
-			}
-
-			case TV_RING:
-			{
-				num_rings += l_ptr->number;
-
-				/* see if this item is a duplicate */
-				borg_notice_home_dupe(l_ptr, TRUE, i);
-
-				break;
-			}
-
-			case TV_AMULET:
-			{
-				num_neck += l_ptr->number;
-
-				/* see if this item is a duplicate */
-				borg_notice_home_dupe(l_ptr, TRUE, i);
-				break;
-			}
-
-			case TV_LIFE_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_LIFE ||
-					borg_skill[BI_REALM2] == REALM_LIFE)
-					num_book[REALM_LIFE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
-				break;
-			}
-
-			case TV_SORCERY_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_SORCERY ||
-					borg_skill[BI_REALM2] == REALM_SORCERY)
-					num_book[REALM_SORCERY][k_info[l_ptr->k_idx].sval] += l_ptr->number;
-				break;
-			}
-
-			case TV_NATURE_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_NATURE ||
-					borg_skill[BI_REALM2] == REALM_NATURE)
-					num_book[REALM_NATURE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
-				break;
-			}
-			case TV_CHAOS_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_CHAOS ||
-					borg_skill[BI_REALM2] == REALM_CHAOS)
-					num_book[REALM_CHAOS][k_info[l_ptr->k_idx].sval] += l_ptr->number;
-				break;
-			}
-			case TV_DEATH_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_DEATH ||
-					borg_skill[BI_REALM2] == REALM_DEATH)
-					num_book[REALM_DEATH][k_info[l_ptr->k_idx].sval] += l_ptr->number;
-				break;
-			}
-			case TV_TRUMP_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_TRUMP ||
-					borg_skill[BI_REALM2] == REALM_TRUMP)
-					num_book[REALM_TRUMP][k_info[l_ptr->k_idx].sval] += l_ptr->number;
-				break;
-			}
-			case TV_ARCANE_BOOK:
-			{
-				/* Count good books */
-				if (borg_skill[BI_REALM1] == REALM_ARCANE ||
-					borg_skill[BI_REALM2] == REALM_ARCANE)
-					num_book[REALM_ARCANE][k_info[l_ptr->k_idx].sval] += l_ptr->number;
-				break;
-			}
-
-			case TV_FOOD:
-			{
-				/* Food */
-
-				/* Analyze */
-				switch (k_info[l_ptr->k_idx].sval)
-				{
-					case SV_FOOD_WAYBREAD:
-					case SV_FOOD_RATION:
-					{
-						if (borg_race >= RACE_SPRITE && borg_race <= RACE_IMP)
-						{
-							num_food += l_ptr->number;
-						}
-						break;
-					}
-
-					case SV_FOOD_SLIME_MOLD:
-					{
-						num_mold += l_ptr->number;
-						break;
-					}
-
-					case SV_FOOD_RESTORE_STR:
-					{
-						num_fix_stat[A_STR] += l_ptr->number;
-						break;
-					}
-
-					case SV_FOOD_RESTORE_CON:
-					{
-						num_fix_stat[A_CON] += l_ptr->number;
-						break;
-					}
-
-					case SV_FOOD_RESTORING:
-					{
-						num_fix_stat[A_STR] += l_ptr->number;
-						num_fix_stat[A_INT] += l_ptr->number;
-						num_fix_stat[A_WIS] += l_ptr->number;
-						num_fix_stat[A_DEX] += l_ptr->number;
-						num_fix_stat[A_CON] += l_ptr->number;
-						num_fix_stat[A_CHR] += l_ptr->number;
-						num_fix_stat[6] += l_ptr->number;
-						break;
-					}
-				}
-
-				break;
-			}
-
-
-			case TV_POTION:
-			{
-				/* Potions */
-				borg_notice_home_potion(l_ptr);
-
-				break;
-			}
-
-
-			case TV_SCROLL:
-			{
-				/* Scrolls */
-				borg_notice_home_scroll(l_ptr);
-				
-				break;
-			}
-
-
-			case TV_ROD:
-			{
-				/* Rods */
-
-				/* Analyze */
-				switch (k_info[l_ptr->k_idx].sval)
-				{
-					case SV_ROD_IDENTIFY:
-					{
-						num_ident += l_ptr->number * 100;
-						break;
-					}
-
-					case SV_ROD_RECALL:
-					{
-						num_recall += l_ptr->number * 100;
-						break;
-					}
-				}
-
-				break;
-			}
-
-			case TV_STAFF:
-			{
-				/* Staffs */
-
-				/* Only collect staves with more than 3 charges at high level */
-				if (l_ptr->pval <= 3 && borg_skill[BI_CLEVEL] > 30)
-					break;
-
-				/* Analyze */
-				switch (k_info[l_ptr->k_idx].sval)
-				{
-					case SV_STAFF_IDENTIFY:
-					{
-						num_ident += l_ptr->number * l_ptr->pval;
-						break;
-					}
-
-					case SV_STAFF_TELEPORTATION:
-					{
-						/*
-						 * Don't use them deep in the dungeon because the
-						 * charges will get drained and he wont have any
-						 * scrolls left to read
-						 */
-						if (borg_skill[BI_MAXDEPTH] < 97)
-						{
-							num_teleport += l_ptr->number * l_ptr->pval;
-						}
-						break;
-					}
-				}
-
-				break;
-			}
-
-			case TV_SHOT:
-			case TV_ARROW:
-			case TV_BOLT:
-			{
-				/* Missiles */
-			
-				/* Hack -- ignore invalid missiles */
-				if (l_ptr->tval != my_ammo_tval) break;
-
-				/* Count them */
-				num_missile += l_ptr->number;
-
-				break;
-			}
-		}
+		
+		/* Notice the item itself */
+		borg_notice_home_item(l_ptr, i);
 	}
 
 
@@ -3655,7 +3660,8 @@ static s32b borg_power_aux3(void)
 		value += (borg_skill[BI_SHOTS] * damage * 9L);
 
 		/* AJG - slings force you to carry heavy ammo.  Penalty for that unles you have lots of str  */
-		if (k_info[l_ptr->k_idx].sval == SV_SLING && !l_ptr->xtra_name &&
+		if (k_info[l_ptr->k_idx].sval == SV_SLING &&
+			 !(l_ptr->xtra_name && *l_ptr->xtra_name) &&
 			my_stat_ind[A_STR] < 14)
 		{
 			value -= 5000L;
@@ -4044,9 +4050,9 @@ my_stat_ind[A_INT] * 35000L;
 	/*** Penalize various things ***/
 
 	/* Penalize various flags */
-	if (borg_skill[BI_CRSTELE]) value -= 100000L;
+	if (borg_skill[BI_CRSTELE]) value -= 10000L;
 	if (borg_skill[BI_CRSAGRV]) value -= 8000L;
-	if (borg_skill[BI_CRSNOTELE]) value -= 100000L;
+	if (borg_skill[BI_CRSNOTELE]) value -= 10000L;
 	if (borg_skill[BI_CRSNOMAGIC]) value -= 100000L;
 
 	/*** Penalize armor weight ***/
@@ -4083,8 +4089,7 @@ my_stat_ind[A_INT] * 35000L;
 		/* Mega-Hack -- Penalize heavy armor which hurts mana */
 		value -= (((cur_wgt - max_wgt) / 10) * 3600L);
 	}
-
-
+	
 	/*** Penalize bad magic ***/
 
 	/* Hack -- most gloves hurt magic for spell-casters */
@@ -4215,30 +4220,20 @@ static s32b borg_power_aux4(void)
 
 	/*** Basic abilities ***/
 
-	/* apw
-	 * In here, we must subtract out the bonus granted from certain
-	 * Artifacts.  They grant amt_x = 1000 then the power is increased
-	 * by 1000 times whatever bonus.  In the case of Gondor.  This is
-	 * 1000 heals times 4000 points per heal.
-	 *
-	 */
-
 	/* Reward fuel */
-	k = 0;
-	for (; k < 5 && k < borg_skill[BI_AFUEL]; k++) value += 60000L;
+	for (k = 0; k < 5 && k < borg_skill[BI_AFUEL]; k++) value += 60000L;
 	for (; k < 10 && k < borg_skill[BI_AFUEL]; k++) value += 6000L;
 
 	/* Reward Food */
 	/* if hungry, food is THE top priority */
 	if ((borg_skill[BI_ISHUNGRY] || borg_skill[BI_ISWEAK]) &&
 		borg_skill[BI_FOOD]) value += 100000;
-	k = 0;
-	for (; k < 5 && k < borg_skill[BI_FOOD]; k++) value += 50000L;
+
+	for (k = 0; k < 5 && k < borg_skill[BI_FOOD]; k++) value += 50000L;
 	for (; k < 10 && k < borg_skill[BI_FOOD]; k++) value += 200L;
 	if (borg_skill[BI_REG] && !borg_skill[BI_SDIG])
 	{
-		k = 0;
-		for (; k < 10 && k < borg_skill[BI_FOOD]; k++) value += 500L;
+		for (k = 0; k < 10 && k < borg_skill[BI_FOOD]; k++) value += 500L;
 	}
 	/* Prefere to buy HiCalorie foods over LowCalorie */
 	if (amt_food_hical <= 5) value += amt_food_hical * 50;
@@ -4250,9 +4245,8 @@ static s32b borg_power_aux4(void)
 		borg_skill[BI_AHEAL]) value += 50000;
 	if ((borg_skill[BI_ISCUT] || borg_skill[BI_ISPOISONED]) &&
 		borg_skill[BI_ACSW])
-	{							/* usually takes more than one */
-		k = 0;
-		for (; k < 5 && k < borg_skill[BI_ACSW]; k++) value += 25000L;
+	{
+		for (k = 0; k < 5 && k < borg_skill[BI_ACSW]; k++) value += 25000L;
 	}
 	if (borg_skill[BI_ISPOISONED] && borg_skill[BI_ACUREPOIS]) value += 15000;
 	if (borg_skill[BI_ISPOISONED] && amt_slow_poison) value += 5000;
@@ -4260,254 +4254,199 @@ static s32b borg_power_aux4(void)
 	/* Reward Resistance Potions for Warriors */
 	if (borg_class == CLASS_WARRIOR)
 	{
-		k = 0;
-		for (; k < 4 && k < borg_skill[BI_ARESHEAT]; k++) value += 500L;
-		k = 0;
-		for (; k < 4 && k < borg_skill[BI_ARESCOLD]; k++) value += 500L;
+		for (k = 0; k < 4 && k < borg_skill[BI_ARESHEAT]; k++) value += 500L;
+		for (k = 0; k < 4 && k < borg_skill[BI_ARESCOLD]; k++) value += 500L;
 	}
 
 	/* Reward ident */
-	k = 0;
-	for (; k < 10 && k < borg_skill[BI_AID]; k++) value += 6000L;
+	for (k = 0; k < 10 && k < borg_skill[BI_AID]; k++) value += 6000L;
 	for (; k < 15 && k < borg_skill[BI_AID]; k++) value += 600L;
 
 	/*  Reward *id* apw carry lots of these */
-	k = 0;
-	for (; k < 8 && k < borg_has[177]; k++) value += 10000L;
+	for (k = 0; k < 8 && k < borg_has[177]; k++) value += 10000L;
 	for (; k < 15 && k < borg_has[177]; k++) value += 2000L;
 
 	/*  Reward PFE  carry lots of these */
-	k = 0;
-	for (; k < 10 && k < borg_skill[BI_APFE]; k++) value += 10000L;
+	for (k = 0; k < 10 && k < borg_skill[BI_APFE]; k++) value += 10000L;
 	for (; k < 25 && k < borg_skill[BI_APFE]; k++) value += 2000L;
 
 	/*  apw Reward Glyph- Rune of Protection-  carry lots of these */
-	k = 0;
-	for (; k < 10 && k < borg_skill[BI_AGLYPH]; k++) value += 10000L;
+	for (k = 0; k < 10 && k < borg_skill[BI_AGLYPH]; k++) value += 10000L;
 	for (; k < 25 && k < borg_skill[BI_AGLYPH]; k++) value += 2000L;
 
 	/* Reward recall */
-	k = 0;
-	for (; k < 3 && k < borg_skill[BI_RECALL]; k++) value += 50000L;
+	for (k = 0; k < 3 && k < borg_skill[BI_RECALL]; k++) value += 50000L;
 	for (; k < 7 && k < borg_skill[BI_RECALL]; k++) value += 5000L;
 
-	/* Reward phase */
-	k = 1;
 	/* first phase door is very important */
 	if (amt_phase) value += 50000;
-	for (; k < 15 && k < amt_phase; k++) value += 500L;
+	for (k = 1; k < 15 && k < amt_phase; k++) value += 500L;
 
 	/* Reward escape */
-	k = 0;
-	for (; k < 5 && k < borg_skill[BI_AESCAPE]; k++) value += 10000L;
+	for (k = 0; k < 5 && k < borg_skill[BI_AESCAPE]; k++) value += 10000L;
 	if (borg_skill[BI_CDEPTH] > 90)
 	{
 		for (; k < 15 && k < borg_skill[BI_AESCAPE]; k++) value += 10000L;
 	}
 
 	/* Reward teleport */
-	k = 0;
-	for (; k < 10 && k < borg_skill[BI_ATELEPORT]; k++) value += 10000L;
+	for (k = 0; k < 10 && k < borg_skill[BI_ATELEPORT]; k++) value += 10000L;
 
 	/* Reward Teleport Level scrolls */
 	if (borg_skill[BI_MAXDEPTH] >= 99)
 	{
-		k = 0;
-		for (; k < 5 && k < borg_skill[BI_ATELEPORTLVL]; k++) value += 5000L;
+		for (k = 0; k < 5 && k < borg_skill[BI_ATELEPORTLVL]; k++) value += 5000L;
 	}
 
 
 	/*** Healing ***/
 	if (borg_class == CLASS_WARRIOR || borg_class == CLASS_ROGUE)
 	{
-		k = 0;
-		for (; k < 15 && k < borg_skill[BI_AHEAL]; k++) value += 8000L;
+		for (k = 0; k < 15 && k < borg_skill[BI_AHEAL]; k++) value += 8000L;
 
-		k = 0;					/* carry a couple for emergency. Store the rest. */
-		for (; k < 2 && k < borg_has[419]; k++) value += 10000L;
+		for (k = 0; k < 2 && k < borg_has[419]; k++) value += 10000L;
 		if (borg_has[419] == 0)
 		{
-			k = 0;				/* carry a couple for emergency. Store the rest. */
-			for (; k < 2 && k < borg_has[420]; k++) value += 10000L;
+			for (k = 0; k < 2 && k < borg_has[420]; k++) value += 10000L;
 		}
 
-		/* These guys need to carry the rods more, town runs low on supply. */
-		k = 0;
-		for (; k < 4 && k < borg_has[374]; k++) value += 20000L;
+		for (k = 0; k < 4 && k < borg_has[374]; k++) value += 20000L;
 	}
 	else if (borg_class == CLASS_RANGER || borg_class == CLASS_PALADIN ||
 			 borg_class == CLASS_MAGE)
 	{
-		k = 0;
-		for (; k < 10 && k < borg_skill[BI_AHEAL]; k++) value += 4000L;
+		for (k = 0; k < 10 && k < borg_skill[BI_AHEAL]; k++) value += 4000L;
 
-		k = 0;					/* carry a couple for emergency. Store the rest. */
-		for (; k < 2 && k < borg_has[419]; k++) value += 9000L;
+		for (k = 0; k < 2 && k < borg_has[419]; k++) value += 9000L;
 		if (borg_has[419] == 0)
 		{
-			k = 0;				/* carry a couple for emergency. Store the rest. */
-			for (; k < 2 && k < borg_has[420]; k++) value += 9000L;
+			for (k = 0; k < 2 && k < borg_has[420]; k++) value += 9000L;
 		}
 
 		if (borg_class == CLASS_PALADIN)
 		{
 			/* Reward heal potions */
-			k = 0;
-			for (; k < 3 && k < borg_has[242]; k++) value += 5000L;
+			for (k = 0; k < 3 && k < borg_has[242]; k++) value += 5000L;
 		}
 
 	}
 	else if (borg_class == CLASS_PRIEST)
 	{
 		/* Reward heal potions */
-		k = 0;
-		for (; k < 5 && k < borg_has[242]; k++) value += 2000L;
+		for (k = 0; k < 5 && k < borg_has[242]; k++) value += 2000L;
 
-		k = 0;					/* carry a couple for emergency. Store the rest. */
-		for (; k < 2 && k < borg_has[419]; k++) value += 9000L;
+		for (k = 0; k < 2 && k < borg_has[419]; k++) value += 9000L;
 		if (borg_has[419] == 0)
 		{
-			k = 0;				/* carry a couple for emergency. Store the rest. */
-			for (; k < 2 && k < borg_has[420]; k++) value += 9000L;
+			for (k = 0; k < 2 && k < borg_has[420]; k++) value += 9000L;
 		}
-	}
-
-	/* Level 1 priests are given a Potion of Healing.  It is better
-	 * for them to sell that potion and buy equipment or several
-	 * Cure Crits with it.
-	 */
-	if (borg_skill[BI_CLEVEL] == 1)
-	{
-		k = 0;
-		for (; k < 10 && k < borg_has[242]; k++) value -= 20000L;
 	}
 
 	/* Restore Mana */
 	if (borg_skill[BI_MAXSP] > 100)
 	{
-		k = 0;
-		for (; k < 10 && k < borg_has[266]; k++) value += 4000L;
-		k = 0;
-		for (; k < 100 && k < borg_skill[BI_ASTFMAGI]; k++) value += 4000L;
+		for (k = 0; k < 10 && k < borg_has[266]; k++) value += 4000L;
+		for (k = 0; k < 100 && k < borg_skill[BI_ASTFMAGI]; k++) value += 4000L;
 	}
 
 	/* Reward cure critical.  Heavy reward on first 5 */
 	if (borg_skill[BI_CLEVEL] < 35 || !borg_skill[BI_RCONF])
 	{
-		k = 0;
-		for (; k < 10 && k < borg_skill[BI_ACCW]; k++) value += 5000L;
+		for (k = 0; k < 10 && k < borg_skill[BI_ACCW]; k++) value += 5000L;
 		for (; k < 15 && k < borg_skill[BI_ACCW]; k++) value += 500L;
 	}
 	else
 	{
 		/* Reward cure critical.  Later on in game. */
-		k = 0;
-		for (; k < 10 && k < borg_skill[BI_ACCW]; k++) value += 5000L;
+		for (k = 0; k < 10 && k < borg_skill[BI_ACCW]; k++) value += 5000L;
 	}
 
 	/* Reward cure serious -- only reward serious if low on crits */
-	if (borg_skill[BI_ACCW] < 10 &&
-		(borg_skill[BI_CLEVEL] < 35 || !borg_skill[BI_RCONF]))
+	if (borg_skill[BI_ACCW] < 10)
 	{
-		k = 0;
-		for (; k < 5 && k < borg_skill[BI_ACSW]; k++) value += 50L;
+		for (k = 0; k < 5 && k < borg_skill[BI_ACSW]; k++) value += 50L;
 		for (; k < 10 && k < borg_skill[BI_ACSW]; k++) value += 5L;
 	}
 
 	/* Reward cure serious -- Low Level Characters */
 	if (borg_skill[BI_CLEVEL] < 15)
 	{
-		k = 0;
-		for (; k < 5 && k < borg_skill[BI_ACSW]; k++) value += 250L;
+		for (k = 0; k < 5 && k < borg_skill[BI_ACSW]; k++) value += 250L;
 		for (; k < 10 && k < borg_skill[BI_ACSW]; k++) value += 55L;
 	}
 
 	/* Reward Cures */
 	if (!borg_skill[BI_RCONF])
 	{
-		k = 0;
-		for (; k < 10 && k < amt_cure_confusion; k++) value += 400L;
+		for (k = 0; k < 10 && k < amt_cure_confusion; k++) value += 400L;
 	}
 	if (!borg_skill[BI_RBLIND])
 	{
-		k = 0;
-		for (; k < 5 && k < amt_cure_blind; k++) value += 300L;
+		for (k = 0; k < 5 && k < amt_cure_blind; k++) value += 300L;
 	}
 	if (!borg_skill[BI_RPOIS])
 	{
-		k = 0;
-		for (; k < 5 && k < borg_skill[BI_ACUREPOIS]; k++) value += 250L;
+		for (k = 0; k < 5 && k < borg_skill[BI_ACUREPOIS]; k++) value += 250L;
 	}
 
 	/*** Detection ***/
 
 	/* Reward detect trap */
-	k = 0;
-	for (; k < 1 && k < borg_skill[BI_ADETTRAP]; k++) value += 4000L;
+	for (k = 0; k < 1 && k < borg_skill[BI_ADETTRAP]; k++) value += 4000L;
 
 	/* Reward detect door */
-	k = 0;
-	for (; k < 1 && k < borg_skill[BI_ADETDOOR]; k++) value += 2000L;
+	for (k = 0; k < 1 && k < borg_skill[BI_ADETDOOR]; k++) value += 2000L;
 
 	/* Reward detect evil */
 	if (!borg_skill[BI_ESP])
 	{
-		k = 0;
-		for (; k < 1 && k < borg_skill[BI_ADETEVIL]; k++) value += 1000L;
+		for (k = 0; k < 1 && k < borg_skill[BI_ADETEVIL]; k++) value += 1000L;
 	}
 
 	/* Reward magic mapping */
-	k = 0;
-	for (; k < 1 && k < borg_skill[BI_AMAGICMAP]; k++) value += 4000L;
+	for (k = 0; k < 1 && k < borg_skill[BI_AMAGICMAP]; k++) value += 4000L;
 
 	/* Genocide scrolls. Just scrolls, mainly used for Morgoth */
 	if (borg_skill[BI_MAXDEPTH] >= 98)
 	{
-		k = 0;
-		for (; k < 10 && k < borg_has[207]; k++) value += 10000L;
+		for (k = 0; k < 10 && k < borg_has[207]; k++) value += 10000L;
 		for (; k < 25 && k < borg_has[207]; k++) value += 2000L;
 	}
 
 	/* Mass Genocide scrolls. Just scrolls, mainly used for Morgoth */
 	if (borg_skill[BI_MAXDEPTH] >= 98)
 	{
-		k = 0;
-		for (; k < 10 && k < borg_has[200]; k++) value += 10000L;
+		for (k = 0; k < 10 && k < borg_has[200]; k++) value += 10000L;
 		for (; k < 25 && k < borg_has[200]; k++) value += 2000L;
 	}
 
 	/* Reward speed potions/staves */
 	if (borg_skill[BI_MAXDEPTH] <= 98)
 	{
-		k = 0;
-		for (; k < 20 && k < borg_skill[BI_ASPEED]; k++) value += 5000L;
+		for (k = 0; k < 20 && k < borg_skill[BI_ASPEED]; k++) value += 5000L;
 	}
 
 	/* Invuln Potions, mainly used for Morgoth */
 	if (borg_skill[BI_MAXDEPTH] >= 98)
 	{
-		k = 0;
-		for (; k < 15 && k < borg_has[238]; k++) value += 10000L;
+		for (k = 0; k < 15 && k < borg_has[238]; k++) value += 10000L;
 		for (; k < 99 && k < borg_has[238]; k++) value += 2000L;
 	}
 
 	/* Reward Recharge ability */
-	k = 0;
-	for (; k < 5 && k < borg_skill[BI_ARECHARGE]; k++) value += 2000L;
+	for (k = 0; k < 5 && k < borg_skill[BI_ARECHARGE]; k++) value += 2000L;
 
 	/*** Missiles ***/
 
 	/* Reward missiles */
 	if (borg_class == CLASS_RANGER)
 	{
-		k = 0;
-		for (; k < 30 && k < borg_skill[BI_AMISSILES]; k++) value += 1000L;
+		for (k = 0; k < 30 && k < borg_skill[BI_AMISSILES]; k++) value += 1000L;
 		for (; k < 80 && k < borg_skill[BI_AMISSILES]; k++) value += 100L;
 	}
 	else
 	{
-		k = 0;
-		for (; k < 20 && k < borg_skill[BI_AMISSILES]; k++) value += 1000L;
+		for (k = 0; k < 20 && k < borg_skill[BI_AMISSILES]; k++) value += 1000L;
 		for (; k < 50 && k < borg_skill[BI_AMISSILES]; k++) value += 100L;
 	}
 
@@ -4526,11 +4465,15 @@ static s32b borg_power_aux4(void)
 	if (amt_add_stat[A_STR]) value += 50000;
 	if (amt_add_stat[A_INT]) value += 20000;
 	if (borg_skill[BI_INTMANA])
+	{
 		if (amt_add_stat[A_INT]) value += 50000;
+	}
 
 	if (amt_add_stat[A_WIS]) value += 20000;
 	if (borg_skill[BI_WISMANA])
+	{
 		if (amt_add_stat[A_WIS]) value += 50000;
+	}
 	if (amt_add_stat[A_DEX]) value += 50000;
 	if (amt_add_stat[A_CON]) value += 50000;
 	if (amt_add_stat[A_CHR]) value += 10000;
@@ -4588,9 +4531,10 @@ static s32b borg_power_aux4(void)
 			if (book >= 2)
 			{
 				/* Reward the book */
-				k = 0;
-				for (; k < 1 && k < amt_book[realm][book];
-					 k++) value += 300000L;
+				for (k = 0; k < 1 && k < amt_book[realm][book]; k++)
+				{
+					value += 300000L;
+				}
 			}
 
 			/* The "easy" books */
@@ -4612,24 +4556,37 @@ static s32b borg_power_aux4(void)
 					(when >= borg_skill[BI_MAXCLEVEL] + 2)) continue;
 
 				/* Reward the book */
-				k = 0;
-				for (; k < 1 && k < amt_book[realm][book];
-					 k++) value += 500000L;
+				for (k = 0; k < 1 && k < amt_book[realm][book]; k++)
+				{
+					value += 500000L;
+				}
 				if (borg_skill[BI_MAXDEPTH] > 5)
-					for (; k < 2 && k < amt_book[realm][book];
-						 k++) value += 10000L;
+				{
+					for (; k < 2 && k < amt_book[realm][book]; k++)
+					{
+						value += 10000L;
+					}
 				if (borg_skill[BI_MAXDEPTH] > 50)
-					for (; k < 3 && k < amt_book[realm][book];
-						 k++) value += 2500L;
+				{
+					for (; k < 3 && k < amt_book[realm][book];  k++)
+					{
+						value += 2500L;
+					}
+				}
 			}
-		}						/* book */
-	}							/* Realm */
+		}
+	}
 
 	/* Hack -- Apply "encumbrance" from weight */
 	if (borg_skill[BI_ENCUMBERD])
 	{
 		value -= (borg_skill[BI_ENCUMBERD] * 500L);
 	}
+	
+	/* Being too heavy is really bad */
+	value -= borg_skill[BI_WEIGHT] * borg_skill[BI_WEIGHT] * 1000
+		 / (adj_str_wgt[my_stat_ind[A_STR]] * adj_str_wgt[my_stat_ind[A_STR]]);
+
 
 	/* Reward empty slots */
 	if (INVEN_PACK - inven_num < 5)
@@ -4681,13 +4638,17 @@ static s32b borg_power_home_aux1(void)
 {
 	s32b value = 0L;
 
-	/* This would be better seperated by item type (so 1 bonus for resist cold armor */
-	/*   1 bonus for resist cold shield... but that would take a bunch more code. */
+	/*
+	 * This would be better seperated by item type
+	 * (so 1 bonus for resist cold armor
+	 *   1 bonus for resist cold shield...
+	 * but that would take a bunch more code.
+	 *
+	 * Try to collect at least 2 of each resist/power (for swapping)
+	 * This can be used to get rid of extra artifacts...
+	 */
 
-	/* try to collect at least 2 of each resist/power (for swapping) */
-	/* This can be used to get rid of extra artifacts... */
-
-	/* spare lite sources.  Artifacts only */
+	/* Spare lite sources.  Artifacts only */
 	if (num_lite == 1)
 		value += 150L;
 	else if (num_lite == 2)
@@ -4874,8 +4835,11 @@ static s32b borg_power_home_aux1(void)
 	else if (num_resist_neth > 2)
 		value += 7000L + (num_resist_neth - 2) * 45L;
 
-	/* stat gain items as well...(good to carry ring of dex +6 in */
-	/*                            house even if I don't need it right now) */
+	/*
+	 * Stat gain items as well...
+	 * (good to carry ring of dex +6 in
+	 * house even if I don't need it right now)
+	 */
 	if (home_stat_add[A_STR] < 9)
 		value += home_stat_add[A_STR] * 300L;
 	else if (home_stat_add[A_STR] < 15)
@@ -4890,7 +4854,6 @@ static s32b borg_power_home_aux1(void)
 	else
 		value += 9 * 300L + 6 * 200L + (home_stat_add[A_DEX] - 15) * 1L;
 
-	/* HACK extra con for thorin and other such things */
 	if (home_stat_add[A_CON] < 15)
 		value += home_stat_add[A_CON] * 300L;
 	else if (home_stat_add[A_CON] < 21)
@@ -4962,8 +4925,11 @@ static s32b borg_power_home_aux1(void)
 	else if (num_sustain_all > 2)
 		value += 1500L + (num_sustain_all - 2) * 1L;
 
-	/* do a minus for too many duplicates.  This way we do not store */
-	/* useless items and spread out types of items. */
+	/*
+	 * Do a minus for too many duplicates.
+	 * This way we do not store useless items
+	 * and spread out types of items.
+	 */
 	if (num_weapons > 5)
 		value -= (num_weapons - 5) * 2000L;
 	else if (num_weapons > 1)
@@ -4991,18 +4957,16 @@ static s32b borg_power_home_aux1(void)
 	if (num_boots > 2)
 		value -= (num_boots - 2) * 1000L;
 
-
 	value += home_damage;
 
-	/* if edged and priest, dump it   */
+	/* If edged and priest, dump it   */
 	value -= num_edged_weapon * 3000L;
 
-	/* if gloves and mage or ranger and not FA/Dex, dump it. */
+	/* If gloves and mage or ranger and not FA/Dex, dump it. */
 	value -= num_bad_gloves * 3000L;
 
-	/* do not allow duplication of items. */
+	/* Do not allow duplication of items. */
 	value -= num_duplicate_items * 5000L;
-
 
 	/* Return the value */
 	return (value);
@@ -5012,7 +4976,7 @@ static s32b borg_power_home_aux1(void)
 /*
  * Helper function -- calculate power of items in the home
  *
- * The weird calculations help spread out the purchase order
+ * The wierd calculations help spread out the purchase order
  */
 static s32b borg_power_home_aux2(void)
 {
@@ -5025,9 +4989,6 @@ static s32b borg_power_home_aux2(void)
 
 	/* Collect food */
 	for (k = 0; k < 50 && k < num_food; k++) value += 8000L - k * 10L;
-
-	/* Collect Molds as pets */
-	for (k = 0; k < 10 && k < num_mold; k++) value += 10L - k;
 
 	/* Collect ident */
 	for (k = 0; k < 50 && k < num_ident; k++) value += 2000L - k * 10L;
@@ -5073,7 +5034,7 @@ static s32b borg_power_home_aux2(void)
 	/* Collect Invuln Potions */
 	for (k = 0; k < 99 && k < num_goi_pot; k++) value += 5000L - k * 10L;
 
-	/* collect heal/mana/ */
+	/* Collect heal/mana/ */
 	for (k = 0; k < 99 && k < num_heal; k++) value += 3000L - k * 8L;
 	for (k = 0; k < 99 && k < num_ez_heal; k++) value += 8000L - k * 8L;
 	if (borg_skill[BI_MAXSP] > 1)
@@ -5081,30 +5042,18 @@ static s32b borg_power_home_aux2(void)
 		for (k = 0; k < 99 && k < num_mana; k++) value += 6000L - k * 8L;
 	}
 
-	/* Level 1 priests are given a Potion of Healing.  It is better
-	 * for them to sell that potion and buy equipment or several
-	 * Cure Crits with it.
-	 */
-	if (borg_skill[BI_CLEVEL] == 1)
-	{
-		k = 0;
-		for (; k < 10 && k < num_heal; k++) value -= 5000L;
-	}
-
 	/*** Healing ***/
 
 	/* Collect cure critical */
 	for (k = 0; k < 99 && k < num_cure_critical; k++) value += 1500L - k * 10L;
 
-	/* junk cure serious if we have some in the home */
-	if (borg_skill[BI_CLEVEL] > 35)	/* dont bother keeping them if high level */
-		for (k = 0; k < 99 && k < num_cure_serious;
-			 k++) value -= 1500L - k * 10L;
-
+	/* Collect cure serious - but they aren't as good */
+	for (k = 0; k < 99 && k < num_cure_serious; k++) value += 750L - k * 100L;
+	
 	/*** Various ***/
 
 	/* Fixing Stats */
-	if (borg_skill[BI_CLEVEL] == 50) value -= 7500L * num_fix_exp;
+	if (borg_skill[BI_CLEVEL] == 50) value += 500L * num_fix_exp;
 	if (borg_skill[BI_CLEVEL] > 35)
 		for (k = 0; k < 70 && k < num_fix_exp; k++) value += 5000L - k * 10L;
 	else
@@ -5113,36 +5062,38 @@ static s32b borg_power_home_aux2(void)
 	/* Keep shrooms in the house */
 	for (k = 0; k < 99 && k < num_fix_stat[6]; k++) value += 5000L;
 
-
 	/*** Hack -- books ***/
 
 	/* Scan Realms */
 	for (realm = 0; realm < MAX_REALM; realm++)
 	{
-		/* only my realms */
+		/* Only my realms */
 		if (realm != borg_skill[BI_REALM1] &&
 			realm != borg_skill[BI_REALM2]) continue;
 
 		/* Scan Books */
 		for (book = 0; book < 4; book++)
 		{
-
 			if (borg_skill[BI_CLEVEL] > 35)
+			{
 				/* Collect up to 20 copies of each normal book */
 				for (k = 0; k < 20 && k < num_book[realm][book]; k++)
 				{
 					/* Hack -- only stockpile useful books */
 					if (num_book[realm][book]) value += 5000L - k * 10L;
 				}
+			}
 			else
+			{
 				/* Collect up to 5 copies of each normal book */
 				for (k = 0; k < 5 && k < num_book[realm][book]; k++)
 				{
 					/* Hack -- only stockpile useful books */
 					if (num_book[realm][book]) value += 5000L - k * 10L;
 				}
-		}						/* book */
-	}							/* realm */
+			}
+		}
+	}
 
 	/* Return the value */
 	return (value);
@@ -8345,10 +8296,6 @@ static cptr borg_prepared_aux2(int depth)
 	/* Scrolls of Word of Recall */
 	if (borg_skill[BI_RECALL] < 4) return ("4 recalls");
 
-#if 0
-	/* Scrolls of Identify */
-	if (amt_ident < 5 && (borg_skill[BI_CDEPTH])) return ("5 idents");
-#endif
 	/* Potions of Cure Serious/Critical Wounds */
 	if ((borg_skill[BI_MAXCLEVEL] < 30) &&
 		borg_skill[BI_ACSW] + borg_skill[BI_ACCW] < 5) return ("5 cures");
@@ -8413,10 +8360,7 @@ static cptr borg_prepared_aux2(int depth)
 			}
 		}
 	}
-#if 0
-	/* Identify */
-	if (amt_ident < 10) return ("ident10");
-#endif
+
 	/* Potions of Cure Critical Wounds */
 	if ((borg_skill[BI_MAXCLEVEL] < 30) &&
 		borg_skill[BI_ACCW] < 5) return ("cure crit5");

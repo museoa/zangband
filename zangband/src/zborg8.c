@@ -14,9 +14,6 @@
 #include "zborg7.h"
 #include "zborg8.h"
 
-s32b *b_home_power;
-
-#if 0
 /*
  * Determine if an item can "absorb" a second item
  *
@@ -40,25 +37,27 @@ s32b *b_home_power;
  * Ego items may stack as long as they have the same ego-item type.
  * This is primarily to allow ego-missiles to stack.
  */
-static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
+static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 {
 	/* NOTE: This assumes the giving of one item at a time */
-	int total = o_ptr->iqty + 1;
-
+	int total = l_ptr->number + 1;
+	
+	/* Maximal "stacking" limit */
+	if (total >= MAX_STACK_SIZE) return (FALSE);
 
 	/* Require identical object types */
-	if (o_ptr->kind != j_ptr->kind) return (0);
+	if (l_ptr->k_idx != q_ptr->k_idx) return (FALSE);
 
 
 	/* Analyze the items */
-	switch (o_ptr->tval)
+	switch (l_ptr->tval)
 	{
 		case TV_CHEST:
 		{
 			/* Chests */
 
 			/* Never okay */
-			return (0);
+			return (FALSE);
 		}
 
 		case TV_FOOD:
@@ -77,7 +76,7 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
 			/* Staffs and Wands */
 
 			/* Require knowledge */
-			if ((!o_ptr->able) || (!j_ptr->able)) return (0);
+			if (!(l_ptr->info & OB_KNOWN) || !(q_ptr->info & OB_KNOWN)) return (FALSE);
 
 			/* Fall through */
 		}
@@ -86,11 +85,8 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
 		{
 			/* Staffs and Wands and Rods */
 
-			/* Require permission */
-			/* if (!testing_stack) return (0); */
-
 			/* Require identical charges */
-			if (o_ptr->pval != j_ptr->pval) return (0);
+			if (l_ptr->pval != q_ptr->pval) return (FALSE);
 
 			/* Probably okay */
 			break;
@@ -113,13 +109,6 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
 		{
 			/* Weapons and Armor */
 
-			/* Require permission */
-			/* if (!testing_stack) return (0); */
-
-			/* XXX XXX XXX Require identical "sense" status */
-			/* if ((o_ptr->info & OB_SENSE) != */
-			/*     (j_ptr->info & OB_SENSE)) return (0); */
-
 			/* Fall through */
 		}
 
@@ -130,7 +119,7 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
 			/* Rings, Amulets, Lites */
 
 			/* Require full knowledge of both items */
-			if ((!o_ptr->able) || (!j_ptr->able)) return (0);
+			if (!(l_ptr->info & OB_KNOWN) || !(q_ptr->info & OB_KNOWN)) return (FALSE);
 
 			/* Fall through */
 		}
@@ -142,28 +131,28 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
 			/* Missiles */
 
 			/* Require identical "bonuses" */
-			if (o_ptr->to_h != j_ptr->to_h) return (FALSE);
-			if (o_ptr->to_d != j_ptr->to_d) return (FALSE);
-			if (o_ptr->to_a != j_ptr->to_a) return (FALSE);
+			if (l_ptr->to_h != q_ptr->to_h) return (FALSE);
+			if (l_ptr->to_d != q_ptr->to_d) return (FALSE);
+			if (l_ptr->to_a != q_ptr->to_a) return (FALSE);
 
 			/* Require identical "pval" code */
-			if (o_ptr->pval != j_ptr->pval) return (FALSE);
+			if (l_ptr->pval != q_ptr->pval) return (FALSE);
 
-			/* Require identical "artifact" names */
-			if (o_ptr->xtra_name) return (FALSE);
+			/* Hack -- "artifact" or "ego" items don't stack */
+			if (l_ptr->xtra_name && *l_ptr->xtra_name) return (FALSE);
 
 			/* Hack -- Never stack "powerful" items */
-			if (o_ptr->flags1 || j_ptr->flags1) return (FALSE);
-			if (o_ptr->flags2 || j_ptr->flags2) return (FALSE);
-			if (o_ptr->flags3 || j_ptr->flags3) return (FALSE);
+			if (l_ptr->kn_flags1 || q_ptr->kn_flags1) return (FALSE);
+			if (l_ptr->kn_flags2 || q_ptr->kn_flags2) return (FALSE);
+			if (l_ptr->kn_flags3 || q_ptr->kn_flags3) return (FALSE);
 
 			/* Hack -- Never stack recharging items */
-			if (o_ptr->timeout || j_ptr->timeout) return (FALSE);
+			if (l_ptr->timeout || q_ptr->timeout) return (FALSE);
 
 			/* Require identical "values" */
-			if (o_ptr->ac != j_ptr->ac) return (FALSE);
-			if (o_ptr->dd != j_ptr->dd) return (FALSE);
-			if (o_ptr->ds != j_ptr->ds) return (FALSE);
+			if (l_ptr->ac != q_ptr->ac) return (FALSE);
+			if (l_ptr->dd != q_ptr->dd) return (FALSE);
+			if (l_ptr->ds != q_ptr->ds) return (FALSE);
 
 			/* Probably okay */
 			break;
@@ -174,7 +163,8 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
 			/* Various */
 
 			/* Require knowledge */
-			if ((!o_ptr->able) || (!j_ptr->able)) return (0);
+			if ((!(l_ptr->info & OB_KNOWN) || !(q_ptr->info & OB_KNOWN)))
+				return (FALSE);
 
 			/* Probably okay */
 			break;
@@ -183,33 +173,15 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
 
 
 	/* Hack -- Require identical "broken" status */
-	if ((o_ptr->fully_identified) != (j_ptr->fully_identified)) return (0);
-
-	/* The stuff with 'note' is not right but it is close.  I think it */
-	/* has him assuming that he can't stack sometimes when he can.  This */
-	/* is alright, it just causes him to take a bit more time to do */
-	/* some exchanges. */
-	/* Hack -- require semi-matching "inscriptions" */
-	if (((o_ptr->note != NULL) && (j_ptr->note != NULL)) &&
-		(o_ptr->note[0] && j_ptr->note[0]) &&
-		(!streq(o_ptr->note, j_ptr->note)))
-		return (0);
+	if ((l_ptr->info & OB_MENTAL) != (q_ptr->info & OB_MENTAL)) return (FALSE);
 
 	/* Hack -- normally require matching "inscriptions" */
-	if (!stack_force_notes && (!streq(o_ptr->note, j_ptr->note))) return (0);
-
-	/* Hack -- normally require matching "discounts" */
-	if (!stack_force_costs && (o_ptr->discount != j_ptr->discount)) return (0);
-
-
-	/* Maximal "stacking" limit */
-	if (total >= MAX_STACK_SIZE) return (0);
-
+	if (!stack_force_notes && (!streq(l_ptr->o_name, q_ptr->o_name))) return (FALSE);
 
 	/* They match, so they must be similar */
 	return (TRUE);
 }
-#endif /* 0 */
+
 
 
 /*
@@ -218,8 +190,8 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
  * Store interaction strategy
  *
  *   (1) Sell items to the home (for later use)
- ** optimize the stuff in the home... this involves buying and selling stuff
- ** not in the 'best' list.
+ *  optimize the stuff in the home... this involves buying and selling stuff
+ *  not in the 'best' list.
  *       We sell anything we may need later (see step 4)
  *
  *   (2) Sell items to the shops (for money)
@@ -245,166 +217,46 @@ static bool borg_object_similar(borg_item *o_ptr, borg_item *j_ptr)
  */
 
 #if 0
-/* this optimized the home storage by trying every combination... it was too slow.*/
-/* put this code back when running this on a Cray. */
-static void borg_think_home_sell_aux2_slow(int n, int start_i)
-{
-	int i;
-
-	/* All done */
-	if (n == STORE_INVEN_MAX)
-	{
-		s32b home_power;
-
-		/* Examine the home  */
-		borg_notice_home();
-
-		/* Evaluate the home */
-		home_power = borg_power_home();
-
-		/* Track best */
-		if (home_power > *b_home_power)
-		{
-			/* Save the results */
-			for (i = 0; i < STORE_INVEN_MAX; i++) best[i] = test[i];
-
-			/* Use it */
-			*b_home_power = home_power;
-		}
-
-		/* Success */
-		return;
-	}
-
-	/* Note the attempt */
-	test[n] = n;
-
-	/* Evaluate the default item */
-	borg_think_home_sell_aux2_slow(n + 1, start_i);
-
-	/* if this slot and the previous slot is empty, move on to previous slot */
-	/* this will prevent trying a thing in all the empty slots to see if */
-	/* empty slot b is better than empty slot a. */
-	if ((n != 0) && !borg_shops[BORG_HOME].ware[n].iqty &&
-		!borg_shops[BORG_HOME].ware[n - 1].iqty)
-		return;
-
-	/* try other combinations */
-	for (i = start_i; i < INVEN_PACK; i++)
-	{
-		borg_item *item;
-		borg_item *item2;
-		bool stacked = FALSE;
-
-		item = &borg_items[i];
-		item2 = &borg_shops[BORG_HOME].ware[n];
-
-		/* Skip empty items */
-		/* Require "aware" */
-		/* Require "known" */
-		if (!item->iqty || !item->kind || !item->able)
-			continue;
-
-		/* Hack -- ignore "worthless" items */
-		if (!item->value) continue;
-
-		/* stacking? */
-		if (borg_object_similar(item2, item))
-		{
-			item2->iqty++;
-			item->iqty--;
-			stacked = TRUE;
-		}
-		else
-		{
-			int k;
-			bool found_match = FALSE;
-
-			/* eliminate items that would stack else where in the list. */
-			for (k = 0; k < STORE_INVEN_MAX; k++)
-			{
-				if (borg_object_similar(&safe_home[k], item))
-				{
-					found_match = TRUE;
-					break;
-				}
-			}
-			if (found_match)
-				continue;
-
-			/* replace current item with this item */
-			COPY(item2, item, borg_item);
-
-			/* only move one into a non-stack slot */
-			item2->iqty = 1;
-
-			/* remove item from pack */
-			item->iqty--;
-		}
-
-		/* Note the attempt */
-		test[n] = i + STORE_INVEN_MAX;
-
-		/* Evaluate the possible item */
-		borg_think_home_sell_aux2_slow(n + 1, i + 1);
-
-		/* restore stuff */
-		COPY(item2, &safe_home[n], borg_item);
-
-		/* put item back into pack */
-		item->iqty++;
-	}
-}
-#endif /* 0 */
-
-
-#if 0
 /*
- * this will see what single addition/substitution is best for the home.
- * The formula is not as nice as the one above because it will
- * not check all possible combinations of items. but it is MUCH faster.
+ * This will see what single addition/substitution is best for the home.
  */
-
-static void borg_think_home_sell_aux2_fast(int n, int start_i)
+static void borg_think_home_sell_aux2(void)
 {
 	borg_item *item;
 	borg_item *item2;
 	s32b home_power;
-	int i, k;
+	int i, k, n;
 	bool stacked = FALSE;
-
-	/* Hack - ignore parameter */
-	(void)start_i;
+	
+	s32b old_home_power;
 
 	/* get the starting best (current) */
 	/* Examine the home  */
 	borg_notice_home();
 
 	/* Evaluate the home  */
-	*b_home_power = borg_power_home();
+	best_home_power = borg_power_home();
 
 	/* try individual substitutions/additions.   */
 	for (n = 0; n < STORE_INVEN_MAX; n++)
 	{
-		item2 = &borg_shops[BORG_HOME].ware[n];
+		item2 = &borg_home[n];
 		for (i = 0; i < INVEN_PACK; i++)
 		{
 			item = &borg_items[i];
 
-			/* Skip empty items */
 			/* Require "aware" */
+			if (!l_ptr->k_idx) continue;
+			
 			/* Require "known" */
+			if (!(l_ptr->info & OB_KNOWN)) continue;
 
-			if (!item->iqty || !item->kind || !item->able)
-				continue;
-
-			/* Do not dump stuff at home that is not fully id'd and should be  */
-			/* this is good with random artifacts. */
-			if (!item->fully_identified && item->xtra_name) continue;
-
-			/* Hack -- ignore "worthless" items */
-			if (!item->value) continue;
-
+			/*
+			 * Do not dump stuff at home that is not fully id'd and should be
+			 * This is good with random artifacts.
+			 */
+			if (!(l_ptr->info & OB_MENTAL) &&
+				 l_ptr->xtra_name && *l_ptr->xtra_name) continue;
 
 			/* stacking? */
 			if (borg_object_similar(item2, item))
@@ -417,7 +269,7 @@ static void borg_think_home_sell_aux2_fast(int n, int start_i)
 			{
 				bool found_match = FALSE;
 
-				/* eliminate items that would stack else where in the list. */
+				/* eliminate items that would stack elsewhere in the list. */
 				for (k = 0; k < STORE_INVEN_MAX; k++)
 				{
 					if (borg_object_similar(&safe_home[k], item))
@@ -450,30 +302,13 @@ static void borg_think_home_sell_aux2_fast(int n, int start_i)
 			home_power = borg_power_home();
 
 			/* Track best */
-			if (home_power > *b_home_power)
+			if (home_power > best_home_power)
 			{
 				/* Save the results */
 				for (k = 0; k < STORE_INVEN_MAX; k++) best[k] = test[k];
 
-#if 0
-				/* dump, for debugging */
-				borg_note(format("Trying Combo (best home power %ld)",
-								 *b_home_power));
-				borg_note(format("             (test home power %ld)",
-								 home_power));
-				for (i = 0; i < STORE_INVEN_MAX; i++)
-					if (borg_shops[BORG_HOME].ware[i].iqty)
-						borg_note(format("store %d %s (qty-%d).", i,
-										 borg_shops[BORG_HOME].ware[i].desc,
-										 borg_shops[BORG_HOME].ware[i].iqty));
-					else
-						borg_note(format("store %d (empty).", i));
-
-				borg_note(" ");	/* add a blank line */
-#endif
-
 				/* Use it */
-				*b_home_power = home_power;
+				best_home_power = home_power;
 			}
 
 			/* restore stuff */
@@ -548,28 +383,25 @@ static void borg_think_home_sell_aux3()
 /*
  * Step 1 -- sell "useful" things to the home (for later)
  */
-static bool borg_think_home_sell_aux(bool save_best)
+static bool borg_think_home_sell_aux(void)
 {
 	int icky = STORE_INVEN_MAX - 1;
 
 	s32b home_power = -1L;
+	s32b best_home_power = -1L;
 
 	int i = -1;
 
 	byte test_a[STORE_INVEN_MAX];
 	byte best_a[STORE_INVEN_MAX];
 
-	/* if the best is being saved (see borg_think_shop_grab_aux) */
-	if (!save_best)
-		b_home_power = &home_power;
 	test = test_a;
 	best = best_a;
 
 	/* if I have not been to home, do not try this yet. */
 	if (!borg_shops[BORG_HOME].when) return FALSE;
 
-	/* Hack -- the home is full */
-	/* and pack is full */
+	/* Hack -- the home is full and pack is full */
 	if (borg_shops[BORG_HOME].ware[icky].iqty &&
 		borg_items[INVEN_PACK - 1].iqty)
 		return (FALSE);
@@ -593,11 +425,14 @@ static bool borg_think_home_sell_aux(bool save_best)
 	/* get rid of useless items */
 	borg_think_home_sell_aux3();
 
-	/* Examine the borg once more with full inventory then swap in the */
-	/* safe_items for the home optimization */
+	/*
+	 * Examine the borg once more with
+	 * full inventory then swap in the
+	 * safe_items for the home optimization
+	 */
 	borg_notice();
 
-	/* swap quantities (this should be all that is different) */
+	/* Swap quantities (this should be all that is different) */
 	for (i = 0; i < INVEN_PACK; i++)
 	{
 		byte save_qty;
@@ -607,17 +442,10 @@ static bool borg_think_home_sell_aux(bool save_best)
 		borg_items[i].iqty = save_qty;
 	}
 
-	*b_home_power = -1;
+	best_home_power = -1;
 
 	/* find best combo for home. */
-	if (borg_slow_optimizehome)
-	{
-		borg_think_home_sell_aux2_slow(0, 0);
-	}
-	else
-	{
-		borg_think_home_sell_aux2_fast(0, 0);
-	}
+	borg_think_home_sell_aux2();
 
 	/* restore bonuses and such */
 	for (i = 0; i < STORE_INVEN_MAX; i++)
@@ -672,12 +500,6 @@ static bool borg_think_home_sell_aux(bool save_best)
 				/* there before take it. */
 				if (borg_object_similar(item, item2))
 					continue;
-
-				/* skip stuff if we sold bought it */
-				if (sold_item_tval == item2->tval &&
-					sold_item_sval == item2->sval &&
-					sold_item_pval == item2->pval &&
-					sold_item_store == BORG_HOME) return (FALSE);
 
 				goal_shop = BORG_HOME;
 				goal_ware = i;
@@ -779,7 +601,7 @@ static bool borg_good_sell(list_item *l_ptr, int who)
 	}
 
 	/* Do not sell stuff that is not fully id'd and should be  */
-	if (!(l_ptr->info & OB_MENTAL) && l_ptr->xtra_name)
+	if (!(l_ptr->info & OB_MENTAL) && l_ptr->xtra_name && *l_ptr->xtra_name)
 	{
 		/* For now check all artifacts */
 		return (FALSE);
@@ -1131,18 +953,6 @@ static bool borg_think_home_buy_aux(void)
 		/* second check on empty */
 		if (!item->kind) continue;
 
-		/* Skip it if I just sold it */
-		if (sold_item_tval == item->tval && sold_item_sval == item->sval &&
-			sold_item_pval == item->pval && sold_item_store == BORG_HOME)
-		{
-#if 0
-			borg_note(format
-					  ("# Choosing not to buy back '%s' from home.",
-					   item->desc));
-#endif
-			continue;
-		}
-
 		/* Save shop item */
 		COPY(&safe_shops[BORG_HOME].ware[n], &borg_shops[BORG_HOME].ware[n],
 			 borg_item);
@@ -1192,15 +1002,7 @@ static bool borg_think_home_buy_aux(void)
 
 					/* Evaluate the inventory */
 					p_left = borg_power();
-#if 0
-					/* dump list and power...  for debugging */
-					borg_note(format
-							  ("Trying Item %s (best power %ld)",
-							   borg_items[slot].desc, p_left));
-					borg_note(format
-							  ("   Against Item %s   (borg_power %ld)",
-							   safe_items[slot].desc, my_power));
-#endif
+
 					/* Restore old item */
 					COPY(&borg_items[slot], &safe_items[slot], borg_item);
 				}
@@ -1234,15 +1036,6 @@ static bool borg_think_home_buy_aux(void)
 					/* Evaluate the inventory */
 					p_right = borg_power();
 
-#if 0
-					/* dump list and power...  for debugging */
-					borg_note(format
-							  ("Trying Item %s (best power %ld)",
-							   borg_items[INVEN_RIGHT].desc, p_right));
-					borg_note(format
-							  ("   Against Item %s   (borg_power %ld)",
-							   safe_items[INVEN_RIGHT].desc, my_power));
-#endif
 					/* Restore old item */
 					COPY(&borg_items[INVEN_RIGHT], &safe_items[INVEN_RIGHT],
 						 borg_item);
@@ -1280,15 +1073,7 @@ static bool borg_think_home_buy_aux(void)
 
 				/* Evaluate the inventory */
 				p = borg_power();
-#if 0
-				/* dump list and power...  for debugging */
-				borg_note(format
-						  ("Trying Item %s (best power %ld)",
-						   borg_items[slot].desc, p));
-				borg_note(format
-						  ("   Against Item %s   (borg_power %ld)",
-						   safe_items[slot].desc, my_power));
-#endif
+
 				/* Restore old item */
 				COPY(&borg_items[slot], &safe_items[slot], borg_item);
 			}					/* non rings */
@@ -1364,8 +1149,6 @@ static bool borg_think_shop_grab_aux(void)
 	s32b c, b_c = 0L;
 	s32b borg_empty_home_power;
 
-	b_home_power = &s;
-
 	/* Require two empty slots */
 	if (borg_items[INVEN_PACK - 1].iqty) return (FALSE);
 	if (borg_items[INVEN_PACK - 2].iqty) return (FALSE);
@@ -1412,7 +1195,7 @@ static bool borg_think_shop_grab_aux(void)
 			borg_items[INVEN_PACK - 2].iqty = qty;
 
 			/* optimize the home inventory */
-			if (!borg_think_home_sell_aux(TRUE)) continue;
+			if (!borg_think_home_sell_aux()) continue;
 
 			/* Obtain the "cost" of the item */
 			c = item->cost * qty;
@@ -1496,11 +1279,6 @@ static bool borg_think_home_grab_aux(void)
 
 		/* Skip empty items */
 		if (!item->iqty) continue;
-
-		/* skip stuff if we sold bought it */
-		if (sold_item_tval == item->tval && sold_item_sval == item->sval &&
-			sold_item_pval == item->pval &&
-			sold_item_store == BORG_HOME) continue;
 
 		/* Save shop item */
 		COPY(&safe_shops[BORG_HOME].ware[n], &borg_shops[BORG_HOME].ware[n],
@@ -1592,18 +1370,6 @@ static bool borg_think_shop_sell(void)
 		borg_keypress('\n');
 		borg_keypress('\n');
 		borg_keypress('\n');
-
-		/* Mark our last item sold but not ezheals */
-		if (item->tval != TV_POTION &&
-			item->sval != SV_POTION_STAR_HEALING &&
-			item->sval != SV_POTION_LIFE)
-		{
-			sold_item_pval = item->pval;
-			sold_item_tval = item->tval;
-			sold_item_sval = item->sval;
-			sold_item_store = goal_shop;
-		}
-
 
 		/* The purchase is complete */
 		goal_shop = goal_item = -1;
@@ -1723,7 +1489,7 @@ static bool borg_choose_shop(void)
 
 #if 0
 	/* Step 1 -- Sell items to the home */
-	if (borg_think_home_sell_aux(FALSE)) return (TRUE);
+	if (borg_think_home_sell_aux()) return (TRUE);
 #endif /* 0 */
 
 	/* Step 2 -- Sell items to the shops */
