@@ -1649,7 +1649,7 @@ F:EASY_KNOW
 L:USE:	if player.state.confusing == 0 then
 L:USE:		msgf("Your hands begin to glow.")
 L:USE:		player.state.confusing = TRUE
-L:USE:		player.redraw = b0r(player.redraw, PR_STATUS)
+L:USE:		player.redraw = bOr(player.redraw, PR_STATUS)
 L:USE:	else ident = FALSE end
 
 N:189:Magic Mapping
