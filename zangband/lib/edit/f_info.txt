@@ -15,6 +15,22 @@
 
 # Note that terrain feature zero contains the "darkness" picture.
 
+# === Understanding f_info.txt ===
+
+# N:serial number:terrain name
+# G:symbol:color
+
+# N' indicates the beginning of an entry. The serial number must
+# increase for each new item.
+
+# 'G' is for graphics - symbol and color. There are 16 colors, as
+# follows:
+
+# D - Black        w - White          s - Gray          o - Orange
+# r - Red          g - Green          b - Blue          u - Brown
+# d - Dark Gray    W - Light Gray     v - Violet        y - Yellow
+# R - Light Red    G - Light Green    B - Light Blue    U - Light Brown
+
 
 # Version stamp (required)
 
