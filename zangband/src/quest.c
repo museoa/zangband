@@ -246,7 +246,7 @@ errr init_quests(void)
  */
 void get_player_quests(void)
 {
-	/* char inp[80]; */
+	char inp[80];
 
 	monster_race *r_ptr;
 
@@ -260,7 +260,6 @@ void get_player_quests(void)
 	/* Reset number of quests */
 	q_max = 1;
 
-#if 0
 	/* Extra info */
 	Term_putstr(5, 15, -1, TERM_WHITE,
 		"You can enter the number of quests you'd like to perform in addition");
@@ -305,14 +304,15 @@ void get_player_quests(void)
 		}
 		break;
 	}
-#endif /* 0 */
+#if 0
 
 	/*
 	 * Hard-code number of dungeon quests until
 	 * we get the quest-giver stores working.
 	 */
 	v = 20;
-
+	
+#endif /* 0 */
 
 	/* Prepare allocation table */
 	get_mon_num_prep(monster_quest, NULL);
