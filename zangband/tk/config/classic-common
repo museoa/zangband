@@ -74,19 +74,19 @@ set attr(stack) [icon ascii create -foreground [palette set 225] \
 
 # Create 1 ascii attribute (for multi-hued monster)
 set attr(multi) [icon ascii create -foreground [palette set 0] \
-	-background [palette set 222] -mode attr_multi]
+	-background [palette set 222]]
 
 # Create 1 ascii attribute (for multi-hued unique monster)
 set attr(multi,unique) [icon ascii create -foreground [palette set 0] \
-	-background [palette set 221] -mode attr_multi]
+	-background [palette set 221]]
 
 # Create 1 ascii attribute (for shape-changing monster)
 set attr(shape) [icon ascii create -foreground [palette set 0] \
-	-background [palette set 222] -mode shapechanger]
+	-background [palette set 222]]
 
 # Create 1 ascii attribute (for shape-changing unique monster)
 set attr(shape,unique) [icon ascii create -foreground [palette set 0] \
-	-background [palette set 221] -mode shapechanger]
+	-background [palette set 221]]
 
 # Attribute characters used by monsters and objects
 # set attrStr "dwsorgbuDWvyRGBU"
