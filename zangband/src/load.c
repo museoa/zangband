@@ -1160,14 +1160,17 @@ static void rd_extra(void)
 	byte tmp8u;
 	s16b tmp16s;
 	s16b dummy;
+	
+	char old_history[60];
 
 	rd_string(player_name, 32);
 
 	rd_string(p_ptr->state.died_from, 80);
 
+	/* Read and ignore old history data */
 	for (i = 0; i < 4; i++)
 	{
-		rd_string(p_ptr->history[i], 60);
+		rd_string(old_history, 60);
 	}
 
 	/* Class/Race/Gender/Spells */

@@ -491,7 +491,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 	static cptr cmdOptions[] = {"ability", "age", "armor_class",
 		"blows_per_round", "died_from",
-		"exp", "food", "gold", "height", "history", "hitpoints",
+		"exp", "food", "gold", "height", "hitpoints",
 		"infravision", "level", "mana", "max_depth", "position",
 		"sex", "shots_per_round", "social_class",
 		"title", "to_dam", "to_hit", "weight",
@@ -503,7 +503,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		NULL};
 	enum {IDX_ABILITY, IDX_AGE, IDX_ARMOR_CLASS,
 		IDX_BLOWS_PER_ROUND, IDX_DIED_FROM,
-		IDX_EXP, IDX_FOOD, IDX_GOLD, IDX_HEIGHT, IDX_HISTORY, IDX_HITPOINTS,
+		IDX_EXP, IDX_FOOD, IDX_GOLD, IDX_HEIGHT, IDX_HITPOINTS,
 		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_POSITION,
 		IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS,
 		IDX_TITLE, IDX_TO_DAM, IDX_TO_HIT, IDX_WEIGHT,
@@ -520,7 +520,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	int i, tmp;
 	long expadv;
 	double pct;
-	char buf[512];
 	cptr t;
 
 	static cptr abilityOptions[] = {"fighting", "bows_throw", "saving_throw",
@@ -636,17 +635,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 
 		case IDX_HEIGHT: /* height */
 			Tcl_SetIntObj(resultPtr, p_ptr->rp.ht);
-			break;
-
-		case IDX_HISTORY: /* history */
-			buf[0] = '\0';
-			for (i = 0; i < 4; i++)
-			{
-				(void) strcat(buf, format("%s\n", p_ptr->history[i]));
-			}
-			i = strlen(buf) - 1;
-			while (buf[i] == '\n') buf[i--] = '\0';
-			ExtToUtf_SetResult(interp, buf);
 			break;
 
 		case IDX_HITPOINTS: /* hitpoints */

@@ -1481,8 +1481,6 @@ struct player_type
 
 	s16b player_hp[PY_MAX_LEVEL];	/* HP Array */
 
-	char history[4][60];	/* Initial history */
-
 	u16b expfact;	/* Experience factor
 					 * Note: was byte, causing overflow for Amberite
 					 * characters (such as Amberite Paladins)

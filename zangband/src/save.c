@@ -880,9 +880,10 @@ static void wr_extra(void)
 
 	wr_string(p_ptr->state.died_from);
 
+	/* Old history-dumping code */
 	for (i = 0; i < 4; i++)
 	{
-		wr_string(p_ptr->history[i]);
+		wr_string("");
 	}
 
 	/* Race/Class/Gender/Spells */

@@ -2585,29 +2585,6 @@ static void display_player_standard(void)
 
 
 /*
- * Display the standard player information and history
- */
-static void display_player_history(void)
-{
-	int i;
-
-	/* Basic info */
-	display_player_top();
-
-	/* Extra info */
-	display_player_middle();
-
-	put_fstr(25, 15, "(Character Background)");
-
-	/* Dump the history */
-	for (i = 0; i < 4; i++)
-	{
-		put_fstr(10, i + 16, p_ptr->history[i]);
-	}
-}
-
-
-/*
  * Display a summary of the player's attributes
  *
  * See "http://www.cs.berkeley.edu/~davidb/angband.html"
@@ -2627,9 +2604,6 @@ static display_func displays[DISPLAY_PLAYER_MAX] =
 {
 	/* Standard display with skills */
 	display_player_standard,
-
-	/* Standard display with history */
-	display_player_history,
 
 	/* Summary of various things */
 	display_player_summary,
@@ -2798,32 +2772,6 @@ errr file_character(cptr name, bool full)
 
 	/* Dump part of the screen */
 	for (y = 2; y < 22; y++)
-	{
-		/* Dump each row */
-		for (x = 0; x < 79; x++)
-		{
-			/* Get the attr/char */
-			(void)(Term_what(x, y, &a, &c));
-
-			/* Dump it */
-			buf[x] = c;
-		}
-
-		/* End the string */
-		buf[x] = '\0';
-
-		/* Kill trailing spaces */
-		while ((x > 0) && (buf[x - 1] == ' ')) buf[--x] = '\0';
-
-		/* End the row */
-		fprintf(fff, "%s\n", buf);
-	}
-
-	/* Display history */
-	display_player(DISPLAY_PLAYER_HISTORY);
-
-	/* Dump part of the screen */
-	for (y = 15; y < 20; y++)
 	{
 		/* Dump each row */
 		for (x = 0; x < 79; x++)

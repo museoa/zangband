@@ -87,9 +87,9 @@ void init_file_paths(char *path)
 {
 	char *tail;
 
-#ifdef SET_UID
+#ifdef PRIVATE_USER_PATH
 	char buf[1024];
-#endif /* SET_UID */
+#endif /* PRIVATE_USER_PATH */
 
 	/*** Free everything ***/
 
