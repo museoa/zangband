@@ -280,6 +280,26 @@ static void building_prt_gold(void)
 	prt(tmp_str, 55, 23);
 }
 
+/* Does the player have enough gold for this action? */
+bool test_gold(s32b *cost)
+{
+	if (p_ptr->au < *cost)
+	{
+		/* Player does not have enough gold */
+
+		msg_format("You need %ld gold to do this!", (long)*cost);
+		message_flush();
+
+		*cost = 0;
+
+		return (FALSE);
+	}
+
+	/* Player has enough gold */
+	return (TRUE);
+}
+
+
 
 /*
  * Display a building.
@@ -1528,38 +1548,40 @@ bool building_healer(void)
 }
 
 
-static int collect_magetower_links(store_type *st_ptr, int n, int which,
-                                  int link_p[], int link_w[])
+static int collect_magetower_links(int n, int *link_p, int *link_w, s32b *cost)
 {
+	place_type *pl_ptr = &place[p_ptr->place_num];
+	
     int i, j;
     int max_link = 0;
+	
+	/* Get current town location*/
+	int x = pl_ptr->x, y = pl_ptr->y;
 
     /* Find the magetowers we're linked to */
     for (i = 0; i < place_count; i++)
     {
-        place_type *pl_ptr2 = &place[i];
+        place_type *pl_ptr = &place[i];
 
         /* Skip current town */
-        if (i == p_ptr->place_num)
-            continue;
+        if (i == p_ptr->place_num) continue;
 
-        for (j = 0; j < pl_ptr2->numstores; j++)
+        for (j = 0; j < pl_ptr->numstores; j++)
         {
-            store_type *st_ptr2 = &pl_ptr2->store[j];
+            store_type *st_ptr = &pl_ptr->store[j];
 
-            if (max_link >= n)
-                return max_link;
+            if (max_link >= n) return (max_link);
 
-            /* Only allow teleportation to known magetowers */
-            if (!(st_ptr2->x || st_ptr2->y))
-                continue;
+            /* Hack - only allow teleportation to known magetowers */
+            if (!st_ptr->insult_cur) continue;
 
-            /* Hack - store link data in good_buy and bad_buy */
-            if ((st_ptr2->type == BUILD_MAGETOWER0) ||
-                (st_ptr2->type == BUILD_MAGETOWER1))
+            /* Is it a mage tower? */
+            if ((st_ptr->type == BUILD_MAGETOWER0) ||
+                (st_ptr->type == BUILD_MAGETOWER1))
             {
                 link_p[max_link] = i;
                 link_w[max_link] = j;
+				cost[max_link] = distance(x, y, pl_ptr->x, pl_ptr->y) * 250;
                 max_link++;
 
                 /* Only collect 1 link per city */
@@ -1573,59 +1595,45 @@ static int collect_magetower_links(store_type *st_ptr, int n, int which,
 
 bool building_magetower(bool display)
 {
-    int which = -1;
-    int i;
-
-    store_type *st_ptr = NULL;
-
-    place_type *pl_ptr = &place[p_ptr->place_num];
-
+	store_type *st_ptr;
+   
     int link_p[12], link_w[12];
     int max_link = 0;
-
-	/* Get the building the player is on */
-	for (i = 0; i < pl_ptr->numstores; i++)
-	{
-		if ((p_ptr->py - pl_ptr->y * 16 == pl_ptr->store[i].y) &&
-			(p_ptr->px - pl_ptr->x * 16 == pl_ptr->store[i].x))
-		{
-			which = i;
-		}
-	}
-
-	/* Paranoia */
-	if (which == -1)
-	{
-		msg_print("Could not locate building!");
-		return (FALSE);
-	}
+	int i;
+	
+	s32b cost[12];
+	
+	char out_val[160];
+	
 
 	/* Save the store pointer */
-    st_ptr = &pl_ptr->store[which];
+    st_ptr = get_current_store();
+	
+	/* Paranoia */
+	if (!st_ptr) return (FALSE);
 
     /* Collect links */
-    max_link = collect_magetower_links(st_ptr, 12, which, link_p, link_w);
+    max_link = collect_magetower_links(12, link_p, link_w, cost);
 
     if (display)
     {
-        char out_val[160];
-
         for (i = 0; i < max_link; i++)
         {
             /* Label it, clear the line --(-- */
             (void)sprintf(out_val, "%c) ", I2A(i));
             prt(out_val, 0, i + 4);
+			
+			/* Print cost */
+			(void)sprintf(out_val, "$%ld", (long) cost[i]);
+            prt(out_val, 3, i + 4);
 
             /* Print place name */
-            prt(place[link_p[i]].name, 3, i + 4);
+            prt(place[link_p[i]].name, 10, i + 4);
         }
     }
     else
     {
         char command;
-        int index = -1;
-
-        char out_val[160];
 
         if (max_link == 0)
         {
@@ -1646,35 +1654,43 @@ bool building_magetower(bool display)
 
             k = (islower(command) ? A2I(command) : -1);
 
-            if (k >= 0 && k < max_link)
+            if ((k >= 0) && (k < max_link) && test_gold(&cost[k]))
             {
-                index = k;
-                break;
+				place_type *pl_ptr2 = &place[link_p[k]];
+	            store_type *st_ptr2 = &pl_ptr2->store[link_w[k]];
+				
+				/* Subtract off cost */
+            	p_ptr->au -= cost[k];
+
+	            /* Move the player */
+	            p_ptr->px =  pl_ptr2->x * 16 + st_ptr2->x;
+    	        p_ptr->py =  pl_ptr2->y * 16 + st_ptr2->y;
+				
+				p_ptr->wilderness_x = p_ptr->px;
+				p_ptr->wilderness_y = p_ptr->py;
+				
+				/* Notice the move */
+	            move_wild();
+
+				/* Check for new panel (redraw map) */
+    	        verify_panel();
+				
+				/* Update stuff */
+				p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
+
+				/* Update the monsters */
+				p_ptr->update |= (PU_DISTANCE);
+
+				/* Window stuff */
+				p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+
+        	    force_build_exit = TRUE;
+
+	            return (TRUE);
             }
 
             /* Oops */
-            bell("Illegal town choice!");
-        }
-
-        if (index >= 0)
-        {
-            place_type *pl_ptr2 = &place[link_p[index]];
-            store_type *st_ptr2 = &pl_ptr2->store[link_w[index]];
-
-            /* Move the player */
-            p_ptr->px = p_ptr->wilderness_x = pl_ptr2->x * 16 + st_ptr2->x;
-            p_ptr->py = p_ptr->wilderness_y = pl_ptr2->y * 16 + st_ptr2->y;
-
-            move_wild();
-
-            verify_panel();
-
-            /* Avoid problems */
-            lite_n = 0;
-
-            force_build_exit = TRUE;
-
-            return (TRUE);
+            bell("Illegal choice!");
         }
     }
 

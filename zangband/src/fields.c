@@ -3528,27 +3528,6 @@ bool field_action_door_build(field_type *f_ptr, vptr nothing)
 	return (FALSE);
 }
 
-/* Does the player have enough gold for this action? */
-static bool test_gold(s32b *cost)
-{
-	if (p_ptr->au < *cost)
-	{
-		/* Player does not have enough gold */
-
-		msg_format("You need %ld gold to do this!", (long)*cost);
-		message_flush();
-
-		*cost = 0;
-
-		return (FALSE);
-
-	}
-
-	/* Player has enough gold */
-	return (TRUE);
-}
-
-
 
 /*
  * Weaponmaster1
@@ -4125,11 +4104,22 @@ bool field_action_magetower1(field_type *f_ptr, vptr input)
 	char tmp_str[80];
 
     int factor = *((int *)input);
+	
+	store_type *st_ptr;
 
     /* Display options */
     building_magetower(TRUE);
+	
+	st_ptr = get_current_store();
+	
+	/* We only need to do this once */
+	if (st_ptr && !st_ptr->insult_cur)
+	{
+		sprintf(tmp_str, " E) Enjoin Location (%dgp)", f_ptr->data[1] * factor);
+		c_put_str(TERM_YELLOW, tmp_str, 35, 18);
+	}
 
-	sprintf(tmp_str, " T) Teleport (%dgp)", f_ptr->data[1] * factor);
+	sprintf(tmp_str, " T) Teleport");
 	c_put_str(TERM_YELLOW, tmp_str, 35, 19);
 
     /* Done */
@@ -4143,8 +4133,38 @@ bool field_action_magetower1(field_type *f_ptr, vptr input)
 bool field_action_magetower2(field_type *f_ptr, vptr input)
 {
 	int *factor = ((int *)input);
+	
+	store_type *st_ptr;
 
 	s32b cost;
+
+	if (p_ptr->command_cmd == 'E')
+	{
+		cost = f_ptr->data[1] * *factor;
+
+		if (test_gold(&cost))
+		{
+			st_ptr = get_current_store();
+			
+			if (st_ptr && !st_ptr->insult_cur)
+			{
+				/*
+				 * Hack XXX - save the fact we have "noticed" this tower
+				 * in this variable, which later will have to be removed
+				 * from store_type anyway.
+				 */
+				st_ptr->insult_cur = 1;
+			
+				/* Subtract off cost */
+            	p_ptr->au -= cost;
+				
+				msg_print("The portal keeper notes your aura.");
+			}
+        }
+
+        /* Hack, use factor as a return value */
+        *factor = TRUE;
+	}
 
 	if (p_ptr->command_cmd == 'T')
 	{

@@ -3384,28 +3384,13 @@ bool allocate_store(store_type *st_ptr)
 	return TRUE;
 }
 
-
-/*
- * Enter a store, and interact with it.
- *
- * Note that we use the standard "request_command()" function
- * to get a command, allowing us to use "command_arg" and all
- * command macros and other nifty stuff, but we use the special
- * "shopping" argument, to force certain commands to be converted
- * into other commands, normally, we convert "p" (pray) and "m"
- * (cast magic) into "g" (get), and "s" (search) into "d" (drop).
- */
-void do_cmd_store(field_type *f1_ptr)
+store_type *get_current_store(void)
 {
-	int which = -1;
-	int maintain_num;
-	int tmp_chr;
-	int i;
-	int store_top;
-
-	place_type *pl_ptr = &place[p_ptr->place_num];
-
-	/* Get the store the player is on */
+   place_type *pl_ptr = &place[p_ptr->place_num];
+	
+	int i, which = -1;
+	
+	/* Get the building the player is on */
 	for (i = 0; i < pl_ptr->numstores; i++)
 	{
 		if ((p_ptr->py - pl_ptr->y * 16 == pl_ptr->store[i].y) &&
@@ -3419,14 +3404,39 @@ void do_cmd_store(field_type *f1_ptr)
 	if (which == -1)
 	{
 		msg_print("Could not locate building!");
-		return;
+		return (NULL);
 	}
+	
+	/* Return a pointer to the store */
+	return (&pl_ptr->store[which]);
+}
+
+
+/*
+ * Enter a store, and interact with it.
+ *
+ * Note that we use the standard "request_command()" function
+ * to get a command, allowing us to use "command_arg" and all
+ * command macros and other nifty stuff, but we use the special
+ * "shopping" argument, to force certain commands to be converted
+ * into other commands, normally, we convert "p" (pray) and "m"
+ * (cast magic) into "g" (get), and "s" (search) into "d" (drop).
+ */
+void do_cmd_store(field_type *f1_ptr)
+{
+	int maintain_num;
+	int tmp_chr;
+	int i;
+	int store_top;
 
 	/* Hack - save f1_ptr for later */
 	f_ptr = f1_ptr;
 
 	/* Save the store pointer */
-	st_ptr = &pl_ptr->store[which];
+	st_ptr = get_current_store();
+	
+	/* Paranoia */
+	if (!st_ptr) return;
 
 	/* Hack - save interesting flags for later */
 	info_flags = f_ptr->data[7];
