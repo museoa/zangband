@@ -87,8 +87,8 @@ wild_building_type wild_build[MAX_CITY_BUILD] =
 	{0, FT_STORE_WARHALL1,		BT_STORE,	50, 50, 50, 20},
 	{0, FT_STORE_WARHALL2,		BT_STORE,	100, 50, 100, 40},
 	{0, FT_STORE_WARHALL3,		BT_STORE,	100, 100, 100, 50},
-	{0, FT_STORE_WARHALL4,		BT_STORE,	150, 100, 200, 100},
-	{0, FT_STORE_WARHALL5,		BT_STORE,	150, 150, 250, 200},
+	{0, FT_STORE_WARHALL4,		BT_STORE,	150, 100, 200, 80},
+	{0, FT_STORE_WARHALL5,		BT_STORE,	150, 150, 250, 100},
 	{0, FT_STORE_CLOTH0,		BT_STORE,	200, 100, 150, 10},
 	{0, FT_STORE_CLOTH1,		BT_STORE,	150, 150, 150, 10},
 	{0, FT_STORE_HARMOUR0,		BT_STORE,	150, 100, 100, 10},
@@ -106,10 +106,10 @@ wild_building_type wild_build[MAX_CITY_BUILD] =
 	{0, FT_STORE_JEWEL2,		BT_STORE,	200, 200, 200, 40},
 	{0, FT_STORE_JEWEL3,		BT_STORE,	200, 250, 200, 80},
 	{0, FT_STORE_JEWEL4,		BT_STORE,	200, 250, 250, 160},
-	{0, FT_STORE_STATUE0,		BT_STORE,	250, 150, 150, 10},
-	{0, FT_STORE_STATUE1,		BT_STORE,	250, 150, 150, 10},
-	{0, FT_STORE_FIGUR0,		BT_STORE,	200, 200, 150, 10},
-	{0, FT_STORE_FIGUR1,		BT_STORE,	200, 200, 200, 10},
+	{0, FT_STORE_STATUE0,		BT_STORE,	250, 150, 150, 20},
+	{0, FT_STORE_STATUE1,		BT_STORE,	250, 150, 150, 20},
+	{0, FT_STORE_FIGUR0,		BT_STORE,	200, 200, 150, 20},
+	{0, FT_STORE_FIGUR1,		BT_STORE,	200, 200, 200, 20},
 	{0, FT_STORE_POTION0,		BT_STORE,	150, 150, 150, 10},
 	{0, FT_STORE_POTION1,		BT_STORE,	150, 150, 150, 20},
 	{0, FT_STORE_POTION2,		BT_STORE,	200, 200, 200, 40},
@@ -128,7 +128,7 @@ wild_building_type wild_build[MAX_CITY_BUILD] =
 	{0, FT_STORE_BOOK1,			BT_STORE,	200, 250, 250, 20},
 	{0, FT_STORE_TEMPLE1,		BT_STORE,	50, 100, 150, 10},
 	{0, FT_STORE_TEMPLE2,		BT_STORE,	100, 150, 150, 20},
-	{0, FT_STORE_TEMPLE3,		BT_STORE,	150, 200, 200, 40},
+	{0, FT_STORE_TEMPLE3,		BT_STORE,	150, 200, 200, 80},
 	{0, FT_STORE_SUPPLIES0,		BT_STORE,	150, 50, 150, 10},
 	{0, FT_STORE_SUPPLIES1,		BT_STORE,	100, 100, 150, 10},
 	{0, FT_STORE_BLACK1,		BT_STORE,	200, 150, 50, 40},
@@ -172,8 +172,11 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 				ABS(magic - wild_build[i].magic) +
 				ABS(law - wild_build[i].law) + 1;
 
+		/* Effect due to rarity */
+		total += wild_build[i].rarity * 5;
+		
 		/* Effect due to total count */
-		total += build[i] * 20 * wild_build[i].rarity;
+		total +=  build[i] * 100;
 
 		/* calculate probability based on location */
 		wild_build[i].gen = ((u16b) MAX_SHORT / total);
@@ -353,9 +356,16 @@ static bool create_city(int x, int y, int town_num)
 	u16b build[MAX_CITY_BUILD];
 	u16b build_list[WILD_BLOCK_SIZE * WILD_BLOCK_SIZE];
 
-	/* Hack - the first town must have stairs - so use a low pop */
-	if (town_num == 1) pop = 32 + 128;
-	
+	/* Hack - the first town is special */
+	if (town_num == 1)
+	{ 
+		/* the first town must have stairs - so use a low pop */
+		pop = 32 + 128;
+		
+		/* Medium magic */
+		magic = 150;
+	}
+		
 	/* Wipe the list of allocated buildings */
 	(void)C_WIPE(build, MAX_CITY_BUILD, u16b);
 	(void)C_WIPE(build_list, (WILD_BLOCK_SIZE * WILD_BLOCK_SIZE), u16b);
