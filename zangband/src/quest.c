@@ -564,16 +564,47 @@ void activate_quests(int level)
 				/* Correct dungeon level? */
 				if (q_ptr->data.dun.level != level) break;
 				
-				/* Follow through */
-			}
-			
-
-			case QUEST_TYPE_BOUNTY:
-			{
-				q_ptr->flags |= QUEST_FLAG_ACTIVE;
-
 				/* Hack - toggle QUESTOR flag */
 				SET_FLAG(&r_info[q_ptr->data.dun.r_idx], RF_QUESTOR);
+				
+				/* Activate the quest */
+				q_ptr->flags |= QUEST_FLAG_ACTIVE;
+
+				break;
+			}
+			
+			case QUEST_TYPE_BOUNTY:
+			{
+				dun_type *d_ptr = dungeon();
+				u32b habitat = 0;
+				monster_race *r_ptr = &r_info[q_ptr->data.bnt.r_idx];
+
+				/* Hack - toggle QUESTOR flag */
+				SET_FLAG(r_ptr, RF_QUESTOR);
+
+				/* Is the player inside the right sort of dungeon? */
+				if (level &&
+					r_ptr->flags[7] & d_ptr->habitat)
+				{
+					/* Create a starting level */
+					int min_level = d_ptr->min_level;
+
+					/* Create an ending level */
+					int max_level = MIN(d_ptr->max_level, 99);
+
+					/* How many have been killed? */
+					int cur_num = q_ptr->data.bnt.cur_num;
+
+					/* Top out at how many monsters? */
+					int max_num = q_ptr->data.bnt.max_num;
+
+					/* Spread the monsters evenly throughout the dungeon */
+					if (level == min_level + (max_level * (cur_num + 1)) / (max_num + 1))
+					{
+						/* Activate the quest */
+						q_ptr->flags |= QUEST_FLAG_ACTIVE;
+					}
+				}
 				
 				break;
 			}
@@ -707,9 +738,27 @@ static void display_monster_quest(quest_type *q_ptr)
 	else
 	{
 		bool group;
+		int number, r_idx;
 
-		for (j = 0; j < (q_ptr->data.dun.max_num
-							- q_ptr->data.dun.cur_num); j++)
+		/* Create a number of monsters depending on quest_type */
+		if (q_ptr->type == QUEST_TYPE_BOUNTY)
+		{
+			/* One at a time */
+			number = 1;
+
+			/* Which monster? */
+			r_idx = q_ptr->data.bnt.r_idx;
+		}
+		else
+		{
+			/* All remaining at once */
+			number = q_ptr->data.dun.max_num - q_ptr->data.dun.cur_num;
+
+			/* Which monster? */
+			r_idx = q_ptr->data.dun.r_idx;
+		}
+
+		for (j = 0; j < number; j++)
 		{
 			for (k = 0; k < 5000; k++)
 			{
@@ -725,8 +774,8 @@ static void display_monster_quest(quest_type *q_ptr)
 					c_ptr = area(x, y);
 
 					if (!cave_naked_grid(c_ptr)) continue;
-					if (distance(x, y, p_ptr->px, p_ptr->py) <
-						10) continue;
+					if (distance(x, y, p_ptr->px, p_ptr->py) < 10)
+						continue;
 					else
 						break;
 				}
@@ -738,8 +787,7 @@ static void display_monster_quest(quest_type *q_ptr)
 
 				/* Try to place the monster */
 				if (place_monster_aux
-					(x, y, q_ptr->data.dun.r_idx, FALSE, group,
-					 FALSE, FALSE, TRUE))
+					(x, y, r_idx, FALSE, group, FALSE, FALSE, TRUE))
 				{
 					/* Success */
 					break;
@@ -940,14 +988,12 @@ void trigger_quest_complete(byte x_type, vptr data)
 					/* Are we done yet? */
 					if (pl_ptr->data) continue;
 				}
-
-				/* find a place breaks the link between place and quest */
+				/* Different treatment for the find_place quest */
 				else if (q_ptr->type == QUEST_TYPE_FIND_PLACE)
 				{
 					/* Break the link between place and quest */
 					pl_ptr->quest_num = 0;
 				}
-
 
 				/* Complete the quest */
 				q_ptr->status = QUEST_STATUS_COMPLETED;
@@ -1055,6 +1101,7 @@ void reward_quest(quest_type *q_ptr)
 			}
 			else
 			{
+				msgf("%s", q_ptr->name);
 				msgf("Still looking?");
 			}
 			
@@ -1089,6 +1136,7 @@ void reward_quest(quest_type *q_ptr)
 			}
 			else
 			{
+				msgf("%s", q_ptr->name);
 				msgf("Still looking for them?");
 			}
 			
@@ -1122,6 +1170,7 @@ void reward_quest(quest_type *q_ptr)
 			}
 			else
 			{
+				msgf("%s", q_ptr->name);
 				msgf("Please deliver it as soon as possible!");
 			}
 			
@@ -1155,6 +1204,7 @@ void reward_quest(quest_type *q_ptr)
 			}
 			else
 			{
+				msgf("%s", q_ptr->name);
 				msgf("Please find it as soon as possible!");
 			}
 			
@@ -1242,8 +1292,10 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
 				
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 128, "Find the relic %s, which is hidden %s of %s.", a_name + a_ptr->name, town_dir, town_name);
-	
+	(void)strnfmt(q_ptr->name, 128, "For %s, find the relic %s, which is hidden %s of %s.",
+				  place[p_ptr->place_num].name, 	
+				  a_name + a_ptr->name, town_dir, town_name);
+
 	/* Artifact is now a quest item */
 	SET_FLAG(a_ptr, TR_QUESTITEM);
 	
@@ -1304,23 +1356,40 @@ static bool request_find_item(int dummy)
 
 static bool monster_quest(const monster_race *r_ptr)
 {
+	int i;
+
 	/* No bounty quests for multiplying monsters */
-	if (FLAG(r_ptr, RF_MULTIPLY)) return FALSE;
+	if (FLAG(r_ptr, RF_MULTIPLY)) return (FALSE);
 
 	/* No bounty to kill friendly monsters */
-	if (FLAG(r_ptr, RF_FRIENDLY)) return FALSE;
+	if (FLAG(r_ptr, RF_FRIENDLY)) return (FALSE);
+	
+	/* Allow silly monsters only if the silly_monster flag is set */
+	if (!silly_monsters && FLAG(r_ptr, RF_SILLY)) return (FALSE);
 	
 	/* Only "hard" monsters for quests */
-	if (FLAG(r_ptr, RF_NEVER_MOVE) || FLAG(r_ptr, RF_FRIENDS)) return FALSE;
+	if (FLAG(r_ptr, RF_NEVER_MOVE) || FLAG(r_ptr, RF_FRIENDS)) return (FALSE);
 	
 	/* No uniques that are already dead */
 	if ((FLAG(r_ptr, RF_UNIQUE) || FLAG(r_ptr, RF_UNIQUE_7))
 			&& (r_ptr->cur_num >= r_ptr->max_num))
 		{
-			return FALSE;
+			return (FALSE);
 		}
 
-	return TRUE;
+	/* For all the quests */
+	for (i = 0; i < q_max; i++)
+	{
+		/* If there is already a bounty quest for this monster then give up */
+		if (quest[i].type == QUEST_TYPE_BOUNTY &&
+			&r_info[quest[i].data.bnt.r_idx] == r_ptr) return (FALSE);
+
+		/* Don't accidentally quest for Oberon or the Serpent */
+		if (quest[i].x_type == QX_KILL_WINNER &&
+			&r_info[quest[i].data.dun.r_idx] == r_ptr) return (FALSE);
+	}
+
+	return (TRUE);
 }
 
 
@@ -1353,16 +1422,18 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 		plural_aux(buf);
 
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 128, "Kill %d %s.", (int)num, buf);
+		(void)strnfmt(q_ptr->name, 128, "%s offers a bounty for killing %d %s.",
+			place[p_ptr->place_num].name, (int)num, buf);
 	}
 	else
 	{
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 128, "Kill %s.", mon_race_name(r_ptr));
+		(void)strnfmt(q_ptr->name, 128, "%s offers a bounty for killing %s.",
+			place[p_ptr->place_num].name, mon_race_name(r_ptr));
 	}
 	
 	/* No need to specially create anything */
-	q_ptr->c_type = QC_NONE;
+	q_ptr->c_type = QC_DUN_MONST;
 
 	/* We need to trigger when the monsters are killed */
 	if (FLAG(r_ptr, RF_UNIQUE))
@@ -1458,7 +1529,7 @@ static bool request_bounty(int dummy)
 			
 			
 	/* Display a helpful message. */
-	msgf("My bounty is: %s.", q_ptr->name);
+	msgf("%s", q_ptr->name);
 				  
 	message_flush();
 			
@@ -1521,8 +1592,10 @@ static quest_type *insert_message_quest(int dist)
 		   st_ptr->type == BUILD_STORE_HOME);
 
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 128, "Carry a message to %s in %s.",
-					quark_str(st_ptr->owner_name), pl_ptr->name);
+	(void)strnfmt(q_ptr->name, 128, "Carry a message from %s to %s in %s.",
+					place[p_ptr->place_num].name, 
+					quark_str(st_ptr->owner_name),
+					pl_ptr->name);
 	
 	
 	/* Save the quest data */
@@ -1615,7 +1688,8 @@ static quest_type *insert_find_place_quest(int dist)
 	town_name = describe_quest_location(&town_dir, pl_ptr->x, pl_ptr->y);
 				
 	/* XXX XXX Create quest name */
-	(void)strnfmt(q_ptr->name, 128, "Find a certain lost ruin, which is hidden %s of %s.", town_dir, town_name);
+	(void)strnfmt(q_ptr->name, 128, "For %s, find a certain lost ruin, which is hidden %s of %s.",
+				  place[p_ptr->place_num].name, town_dir, town_name);
 
 	q_ptr->data.fpl.place = place_num;
 	
@@ -1750,7 +1824,13 @@ bool do_cmd_knowledge_quests(int dummy)
 				if (taken)
 				{
 					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
+					strnfmt(tmp_str, 256, "%s  You have killed %d.\n\n",
+							q_ptr->name, quest[i].data.bnt.cur_num);
+				}
+				else if (finished)
+				{
+					/* Hack - this is simple */
+					strnfmt(tmp_str, 256, "%s (Completed)\n", q_ptr->name);
 				}
 				else
 				{
