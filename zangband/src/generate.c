@@ -197,7 +197,7 @@ static bool alloc_stairs(int feat, int num, int walls)
  */
 static void alloc_object(int set, int typ, int num)
 {
-	int y, x, k;
+	int x = 0, y = 0, k;
 	int dummy = 0;
 	cave_type *c_ptr = NULL;
 
