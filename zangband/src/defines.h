@@ -142,11 +142,21 @@
 #define STORE_BLACK     6
 #define STORE_HOME      7
 #define STORE_BOOK      8
+#define STORE_WEAPON1	9
+#define STORE_WEAPON2	10
+#define STORE_WEAPON3	11
+#define STORE_WEAPON4	12
+#define STORE_WEAPON5	13
+#define STORE_ARMOUR1	14
+#define STORE_ARMOUR2	15
+#define STORE_ARMOUR3	16
+#define STORE_ARMOUR4	17
+#define STORE_ARMOUR5	18
 
 /*
  * Total number of stores (see "store.c", etc)
  */
-#define MAX_STORES      9
+#define MAX_STORES      19
 
 
 /*
@@ -193,15 +203,45 @@
 #define BUILD_NONE				15
 #define BUILD_BLANK				16
 #define BUILD_MAP				17
+#define BUILD_WEAPON1			18
+#define BUILD_WEAPON2			19
+#define BUILD_WEAPON3			20
+#define BUILD_WEAPON4			21
+#define BUILD_WEAPON5			22
+#define BUILD_ARMOUR1			23
+#define BUILD_ARMOUR2			24
+#define BUILD_ARMOUR3			25
+#define BUILD_ARMOUR4			26
+#define BUILD_ARMOUR5			27
 
 /* Maximum number of "building" types in a city */
-#define MAX_CITY_BUILD			18
+#define MAX_CITY_BUILD			28
 
 
 /*
  * Total number of owners per building (see "bldg.c", etc)
  */
 #define MAX_B_OWN			5
+
+
+/*
+ * Store constants
+ */
+#define STORE_INVEN_MAX 24		/* Max number of discrete objs in inven */
+
+#define STORE_TURNOVER  9		/* Normal shop turnover, per day */
+#define STORE_MIN_KEEP  6		/* Min slots to "always" keep full */
+#define STORE_MAX_KEEP  18		/* Max slots to "always" keep full */
+#define STORE_SHUFFLE   21		/* 1/Chance (per day) of an owner changing */
+#define STORE_TURNS     1000	/* Number of turns between turnovers */
+
+/* Store extra flags */
+#define ST_REST_BLESSED		0x01	/* Blessed items */
+#define ST_REST_GOOD		0x02	/* Good items only */
+#define ST_REST_GREAT		0x04	/* Great items only */
+#define ST_HALF_INVEN		0x08	/* One page of inventory */
+#define ST_ULTRA_GREED		0x10	/* Double prices */
+
 
 
 /*
@@ -501,25 +541,6 @@
  * Maximum value storable in a "s16b" (hard-coded)
  */
 #define MAX_SHORT       32767
-
-
-/*
- * Store constants
- */
-#define STORE_INVEN_MAX 24		/* Max number of discrete objs in inven */
-
-#define STORE_TURNOVER  9		/* Normal shop turnover, per day */
-#define STORE_MIN_KEEP  6		/* Min slots to "always" keep full */
-#define STORE_MAX_KEEP  18		/* Max slots to "always" keep full */
-#define STORE_SHUFFLE   21		/* 1/Chance (per day) of an owner changing */
-#define STORE_TURNS     1000	/* Number of turns between turnovers */
-
-/* Store extra flags */
-#define ST_REST_BLESSED		0x01	/* Blessed items */
-#define ST_REST_GOOD		0x02	/* Good items only */
-#define ST_REST_GREAT		0x04	/* Great items only */
-#define ST_HALF_INVEN		0x08	/* One page of inventory */
-#define ST_ULTRA_GREED		0x10	/* Double prices */
 
 
 /*
@@ -908,7 +929,7 @@
 #define ROW_STATBAR             14
 #define COL_STATBAR             0       /* "Status bar" */
 
-#define MAX_EFFECTS		30	/* Max #of player timed effects*/
+#define MAX_EFFECTS				30	/* Max #of player timed effects*/
 
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
@@ -929,8 +950,8 @@
 
 /* Passable floors */
 
-#define FEAT_SAND		0x08
-#define FEAT_SALT		0x09
+#define FEAT_SAND			0x08
+#define FEAT_SALT			0x09
 #define FEAT_WET_MUD		0x0A
 #define FEAT_DRY_MUD		0x0B
 #define FEAT_FLOOR_TILE		0x0C
@@ -1091,6 +1112,18 @@
 #define FT_BUILD_PLUS_ARMOUR	0x002E
 #define FT_BUILD_MUTATE			0x002F
 #define FT_BUILD_MAP			0x0030
+#define FT_STORE_WEAPON1		0x0031
+#define FT_STORE_WEAPON2		0x0032
+#define FT_STORE_WEAPON3		0x0033
+#define FT_STORE_WEAPON4		0x0034
+#define FT_STORE_WEAPON5		0x0035
+#define FT_STORE_ARMOUR1		0x0036
+#define FT_STORE_ARMOUR2		0x0037
+#define FT_STORE_ARMOUR3		0x0038
+#define FT_STORE_ARMOUR4		0x0039
+#define FT_STORE_ARMOUR5		0x003A
+
+
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
 
