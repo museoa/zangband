@@ -2923,7 +2923,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 				/* multiply by critical shot. (10x inflation) + level damage bonus*/
 				tdam *= critical_shot(chance2, sleeping_bonus, FALSE,
-					o_name, m_name, visible)+p_ptr->lev*2/3;
+					o_name, m_name, visible);
 
 				/* Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
