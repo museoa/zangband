@@ -3038,6 +3038,9 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 	/* Process "P:<y>:<x>" -- player position */
 	else if (buf[0] == 'P')
 	{
+		
+		#if 0
+		
 		if (init_flags & INIT_CREATE_DUNGEON)
 		{
 			if (tokenize(buf + 2, 2, zz, 0) == 2)
@@ -3087,7 +3090,9 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 				}
 			}
 		}
-
+		
+		#endif 0
+		
 		return (0);
 	}
 

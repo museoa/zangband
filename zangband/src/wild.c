@@ -122,8 +122,8 @@ static cave_type *access_wild(int y, int x)
 	 * Logical AND with 15 to get location within block.
 	 */
 	
-	return &wild_grid.block_ptr[(y>>4)-wild_grid.y][(x>>4)-wild_grid.x]
-			[y&15][x&15];
+	return &wild_grid.block_ptr[((u16b) y>>4)-wild_grid.y]
+		[((u16b) x>>4)-wild_grid.x][y&15][x&15];
 }
 
 
@@ -284,6 +284,7 @@ static blk_ptr allocate_block(int x,int y)
 {
 	int i, n, dist, maxdist;
 	
+	#if 0
 	/* See if block is in cache */
 	for (i = 0; i < wild_grid.cache_count; i++)
 	{
@@ -294,6 +295,9 @@ static blk_ptr allocate_block(int x,int y)
 	
 	}
 	
+	#endif
+	
+	#if 0
 	/* See if cache is paritally empty */
 	if (wild_grid.cache_count < WILD_BLOCKS)
 	{
@@ -331,7 +335,10 @@ static blk_ptr allocate_block(int x,int y)
 			n=i;		
 		}		
 	}
-
+	#endif
+	
+	n = x - wild_grid.x + WILD_GRID_SIZE * (y - wild_grid.y);
+	
 	/* Delete the block */
 	del_block(wild_cache[n].block_ptr);
 	
@@ -361,8 +368,8 @@ void move_wild(void)
 	/* Get upper left hand block in grid. */
 	
 	/* Divide by 16 to get block from (x,y) coord + shift it.*/
-	x = (px>>4) - WILD_GRID_SIZE/2;
-	y = (py>>4) - WILD_GRID_SIZE/2;
+	x = ((u16b) p_ptr->wilderness_x>>4) - WILD_GRID_SIZE/2;
+	y = ((u16b) p_ptr->wilderness_y>>4) - WILD_GRID_SIZE/2;
 	
 	/* Move if out of bounds */
 	if (x < 0) x = 0;
@@ -437,46 +444,39 @@ void create_wilderness(void)
 	
 	/* Hack - Reset player position to centre. */
 	p_ptr->wilderness_x = 32*16;
-	p_ptr->wilderness_y = 31*16;
+	p_ptr->wilderness_y = 32*16;
 	
 	if(!dun_level)
 	{
 		px = p_ptr->wilderness_x;
 		py = p_ptr->wilderness_y;
-		p_ptr->oldpx = px;
-		p_ptr->oldpy = py;
 	}
 	
 	max_wild_y = WILD_SIZE*16;
 	max_wild_x = WILD_SIZE*16;
 	
+	/* Determine number of panels */
+	max_panel_rows = WILD_SIZE*16 * 2 - 2;
+	max_panel_cols = WILD_SIZE*16 * 2 - 2;
+
+	/* Assume illegal panel */
+	panel_row = max_panel_rows;
+	panel_col = max_panel_cols;
+	
 	/* Clear cache */
 	wild_grid.cache_count = 0;
 	
 	/* Fix location of grid */
-	wild_grid.x = 32 - (WILD_GRID_SIZE)/2;
-	wild_grid.y = 31 - (WILD_GRID_SIZE)/2;
 	
-	wild_grid.y_max = ((wild_grid.y+WILD_GRID_SIZE)<<4) - 1;
-	wild_grid.y_min = (wild_grid.y<<4) + 1;
-	
-	wild_grid.x_max = ((wild_grid.x+WILD_GRID_SIZE)<<4) - 1;
-	wild_grid.x_min = (wild_grid.x<<4) + 1;
-	
+	/* Hack - set the coords to crazy values so move_wild() works. */
+	wild_grid.x = -1;
+	wild_grid.y = -1;
 	
 	/* A dodgy town */
 	wild[32][32].done.town = 1;
 	
 	/* Allocate blocks around player */
-	for(i = 0; i < WILD_GRID_SIZE; i++)
-	{
-		for(j = 0; j < WILD_GRID_SIZE; j++)
-		{
-			/* Allocate block and link to the grid */
-			wild_grid.block_ptr[j][i] =
-				allocate_block(i + wild_grid.x, j + wild_grid.y);	
-		}	
-	}
+	move_wild();
 }
 
 

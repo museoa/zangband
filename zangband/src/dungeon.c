@@ -4120,8 +4120,6 @@ void play_game(bool new_game)
 		
 		/* Make the function pointers point the the correct data type */
 		change_level(dun_level);
-		
-		p_ptr->redraw = TRUE;
 	}
 
 	/* Generate a dungeon level if needed */

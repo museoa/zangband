@@ -2504,11 +2504,6 @@ static errr rd_dungeon(void)
 	rd_s16b(&dun_level);
 	
 	change_level(dun_level);
-	
-	/* Hack - recreate wilderness */
-	create_wilderness();
-
-	p_ptr->redraw = TRUE;
 
 	/* Set the base level for old versions */
 	base_level = dun_level;
@@ -2526,7 +2521,9 @@ static errr rd_dungeon(void)
 	rd_s16b(&cur_wid);
 	rd_s16b(&max_panel_rows);
 	rd_s16b(&max_panel_cols);
-
+	
+	create_wilderness();
+	
 	if(dun_level)
 	{
 		/* Old method */
