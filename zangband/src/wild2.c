@@ -1537,13 +1537,13 @@ static void town_gen_hack(u16b town_num)
 	int y, x, k, n, xx, yy;
 	
 	/* Add an extra column to make it symmetrical */
-	int rooms[MAX_STORES + 3];
+	int rooms[3 * 4];
 	byte feat;
 
 	cave_type *c_ptr;
 
 	/* Prepare an array of "remaining stores", and count them */
-	for (n = 0; n < MAX_STORES + 3; n++) rooms[n] = n;
+	for (n = 0; n < 3 * 4; n++) rooms[n] = n;
 
 	/* Place three rows of stores */
 	for (y = 0; y < 3; y++)
