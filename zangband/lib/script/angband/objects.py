@@ -258,8 +258,13 @@ class object_typePtr :
         if name == "marked" :
             objectsc.object_type_marked_set(self.this,value)
             return
+<<<<<<< objects.py
+        if name == "inscription" :
+            objectsc.object_type_inscription_set(self,value)
+=======
         if name == "inscription" :
             objectsc.object_type_inscription_set(self.this,value)
+>>>>>>> 1.2
             return
         if name == "art_name" :
             objectsc.object_type_art_name_set(self.this,value)
@@ -324,9 +329,15 @@ class object_typePtr :
         if name == "ident" : 
             return objectsc.object_type_ident_get(self.this)
         if name == "marked" : 
+<<<<<<< objects.py
+            return objectsc.object_type_marked_get(self)
+        if name == "inscription" : 
+            return objectsc.object_type_inscription_get(self)
+=======
             return objectsc.object_type_marked_get(self.this)
         if name == "inscription" : 
             return objectsc.object_type_inscription_get(self.this)
+>>>>>>> 1.2
         if name == "art_name" : 
             return objectsc.object_type_art_name_get(self.this)
         if name == "art_flags1" : 

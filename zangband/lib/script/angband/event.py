@@ -110,6 +110,8 @@ free_object_kind_list_callback = eventc.free_object_kind_list_callback
 
 init_object_kind_list_callback = eventc.init_object_kind_list_callback
 
+use_skill_callback = eventc.use_skill_callback
+
 set_callback = eventc.set_callback
 
 get_callback = eventc.get_callback
@@ -156,4 +158,5 @@ INIT_OBJECT_KIND_LIST_EVENT = eventc.INIT_OBJECT_KIND_LIST_EVENT
 GET_PLAYER_REALMS_EVENT = eventc.GET_PLAYER_REALMS_EVENT
 GET_WORLD_EVENT = eventc.GET_WORLD_EVENT
 COPY_MONSTER_EVENT = eventc.COPY_MONSTER_EVENT
+USE_SKILL_EVENT = eventc.USE_SKILL_EVENT
 MAX_EVENT = eventc.MAX_EVENT
