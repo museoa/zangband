@@ -423,10 +423,6 @@ proc NSInitStartup::FinalizeStartupWindow {} {
 		-side top -expand no -pady 0 -padx 20
 	pack [frame .filler3 -height $fillHeight -borderwidth 0] \
 		-side top
-	pack .config \
-		-side top -expand no -pady 0 -padx 20
-	pack [frame .filler4 -height $fillHeight -borderwidth 0] \
-		-side top
 	pack .quit \
 		-side top -expand no -pady 0 -padx 20
 
@@ -437,8 +433,6 @@ proc NSInitStartup::FinalizeStartupWindow {} {
 		"tkButtonInvoke .newgame"
 	bind . <KeyPress-o> \
 		"tkButtonInvoke .opengame"
-	bind . <KeyPress-s> \
-		"tkButtonInvoke .config"
 	bind . <KeyPress-q> \
 		"tkButtonInvoke .quit"
 	bind . <KeyPress-Return> \
