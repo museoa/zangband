@@ -6,7 +6,6 @@
 
 %}
 
-
 typedef char *cptr;
 typedef unsigned char byte;
 typedef signed short s16b;
@@ -15,17 +14,15 @@ typedef signed int s32b;
 typedef unsigned int u32b;
 
 
-%{
-	player_magic* get_player_magic(int class)
-	{
-		return &magic_info[class];
-	}
-%}
+typedef struct magic_type magic_type;
 
-
-extern player_magic *mp_ptr;
-
-extern player_magic magic_info[MAX_CLASS];
+struct magic_type
+{
+	byte slevel;		/* Required level (to learn) */
+	byte smana;			/* Required mana (to cast) */
+	byte sfail;			/* Minimum chance of failure */
+	byte sexp;			/* Encoded experience bonus */
+};
 
 
 /*
@@ -33,6 +30,8 @@ extern player_magic magic_info[MAX_CLASS];
  *
  * Note that a player with a "spell_book" of "zero" is illiterate.
  */
+
+typedef struct player_magic player_magic;
 
 struct player_magic
 {
@@ -62,4 +61,16 @@ struct player_magic
 	}
 };
 
+
+extern player_magic *mp_ptr;
+
+extern player_magic magic_info[MAX_CLASS];
+
 extern player_magic* get_player_magic(int class);
+
+%{
+	player_magic* get_player_magic(int class)
+	{
+		return &magic_info[class];
+	}
+%}

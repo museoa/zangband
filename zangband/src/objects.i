@@ -193,13 +193,12 @@ typedef struct object_type
 		{
 			object_aware(self);
 		}
-
+#ifdef USE_SCRIPT
 		void set_python(PyObject *python)
 		{
-#ifdef USE_SCRIPT
 			self->python = python;
-#endif
 		}
+#endif /* USE_SCRIPT */
 	}
 } object_type;
 

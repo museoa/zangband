@@ -15,6 +15,89 @@ typedef unsigned int u32b;
 
 
 
+typedef struct object_type object_type;
+
+struct object_type
+{
+	s16b k_idx;			/* Kind index (zero if "dead") */
+
+	s16b iy;			/* Y-position on map, or zero */
+	s16b ix;			/* X-position on map, or zero */
+
+	byte tval;			/* Item type (from kind) */
+	byte sval;			/* Item sub-type (from kind) */
+
+	s16b pval;			/* Item extra-parameter */
+
+	byte discount;		/* Discount (if any) */
+
+	byte number;		/* Number of items */
+
+	s16b weight;		/* Item weight */
+
+	s16b to_h;			/* Plusses to hit */
+	s16b to_d;			/* Plusses to damage */
+	s16b to_a;			/* Plusses to AC */
+
+	s16b ac;			/* Normal AC */
+
+	s16b timeout;		/* Timeout Counter */
+
+	byte dd, ds;		/* Damage dice/sides */	
+
+	byte ident;			/* Special flags  */
+
+	byte marked;		/* Object is marked */
+
+	u16b inscription;	/* Inscription index */
+	u16b xtra_name;      /* Extra Name (Artifacts and ego items) */
+
+	u32b flags1;        /* Flags, set 1 */
+	u32b flags2;        /* Flags, set 2 */
+	u32b flags3;        /* Flags, set 3 */
+	
+	u32b kn_flags1;     /* Known Flags, set 1 */
+	u32b kn_flags2;     /* Known Flags, set 2 */
+	u32b kn_flags3;     /* Known Flags, set 3 */
+
+	s16b next_o_idx;	/* Next object in stack (if any) */
+
+	s16b held_m_idx;	/* Monster holding us (if any) */
+
+	s32b cost;			/* Object "base cost" */
+	
+	byte feeling;       /* Game generated inscription number (eg, pseudo-id) */
+
+	byte activate;		/* Activation type */
+
+#ifdef USE_SCRIPT
+	PyObject *python;
+#endif /* USE_SCRIPT */
+
+#ifdef SCRIPT_OBJ_KIND
+	char *name;
+
+	byte d_attr;		/* Default object attribute */
+	char d_char;		/* Default object character */
+
+
+	byte x_attr;		/* Desired object attribute */
+	char x_char;		/* Desired object character */
+
+
+	byte flavor;		/* Special object flavor (or zero) */
+
+	bool easy_know;		/* This object is always known (if aware) */
+
+
+	bool aware;			/* The player is "aware" of the item's effects */
+
+	bool tried;			/* The player has "tried" one of the items */
+#endif /* SCRIPT_OBJ_KIND */
+};
+
+
+
 /*
  * A store owner
  */

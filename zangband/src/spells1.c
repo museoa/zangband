@@ -147,7 +147,7 @@ static byte spell_color(int type)
  *
  * If the distance is not "one", we (may) return "*".
  */
-static void bolt_pict(int y, int x, int ny, int nx, int typ, byte *a, byte *c)
+void bolt_pict(int y, int x, int ny, int nx, int typ, byte *a, byte *c)
 {
 	int base;
 

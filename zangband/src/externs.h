@@ -717,6 +717,7 @@ extern void remove_loc(void);
 
 /* spells1.c */
 extern void take_hit(int damage, cptr kb_str);
+extern void bolt_pict(int y, int x, int ny, int nx, int typ, byte *a, byte *c);
 extern int dist_to_line(int y, int x, int y1, int x1, int y2, int x2);
 extern bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg);
 

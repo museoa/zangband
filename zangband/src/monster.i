@@ -13,6 +13,12 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
+typedef int errr;
+typedef bool (*monster_hook_type)(int r_idx);
+
+
+typedef struct monster_type monster_type;
+
 struct monster_type
 {
 	s16b r_idx;			/* Monster race index */
@@ -76,6 +82,7 @@ monster_type *get_monster(int i);
  *	- Damage Dice
  *	- Damage Sides
  */
+typedef struct monster_blow monster_blow;
 
 struct monster_blow
 {
@@ -189,8 +196,6 @@ struct monster_race
 	u32b r_flags7;			/* Observed racial flags */
 };
 
-
-extern void sanity_blast(const monster_type *m_ptr, bool necro);
 extern void delete_monster_idx(int i);
 extern void delete_monster(int y, int x);
 extern void compact_monsters(int size);

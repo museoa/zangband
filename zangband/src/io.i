@@ -27,6 +27,109 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
+typedef int sint;
+typedef unsigned long huge;
+typedef int errr;
+typedef void *vptr;
+
+
+typedef struct term_win term_win;
+
+struct term_win
+{
+	bool cu, cv;
+	byte cx, cy;
+
+	byte **a;
+	char **c;
+
+	byte *va;
+	char *vc;
+
+#ifdef USE_TRANSPARENCY
+	byte **ta;
+	char **tc;
+
+	byte *vta;
+	char *vtc;
+#endif /* USE_TRANSPARENCY */
+
+};
+
+
+typedef struct term term;
+
+struct term
+{
+	vptr user;
+
+	vptr data;
+
+	bool user_flag;
+
+	bool data_flag;
+
+	bool active_flag;
+	bool mapped_flag;
+	bool total_erase;
+	bool fixed_shape;
+	bool icky_corner;
+	bool soft_cursor;
+	bool always_pict;
+	bool higher_pict;
+	bool always_text;
+	bool unused_flag;
+	bool never_bored;
+	bool never_frosh;
+
+	byte attr_blank;
+	char char_blank;
+
+	char *key_queue;
+
+	u16b key_head;
+	u16b key_tail;
+	u16b key_xtra;
+	u16b key_size;
+
+	byte wid;
+	byte hgt;
+
+	byte y1;
+	byte y2;
+
+	byte *x1;
+	byte *x2;
+
+	term_win *old;
+	term_win *scr;
+
+	term_win *tmp;
+	term_win *mem;
+
+	void (*init_hook)(term *t);
+	void (*nuke_hook)(term *t);
+
+	errr (*user_hook)(int n);
+
+	errr (*xtra_hook)(int n, int v);
+
+	errr (*curs_hook)(int x, int y);
+
+	errr (*wipe_hook)(int x, int y, int n);
+
+	errr (*text_hook)(int x, int y, int n, byte a, cptr s);
+
+	void (*resize_hook)(void);
+
+#ifdef USE_TRANSPARENCY
+	errr (*pict_hook)(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp);
+#else /* USE_TRANSPARENCY */
+	errr (*pict_hook)(int x, int y, int n, const byte *ap, const char *cp);
+#endif /* USE_TRANSPARENCY */
+
+};
+
 
 extern cptr get_line(void);
 

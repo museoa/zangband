@@ -13,6 +13,112 @@ typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
 
+typedef struct cave_type cave_type;
+
+struct cave_type
+{
+	byte info;		/* Hack -- cave flags */
+
+	byte feat;		/* Hack -- feature type */
+
+	s16b o_idx;		/* Object in this grid */
+
+	s16b m_idx;		/* Monster in this grid */
+
+	s16b fld_idx;		/* Field in this grid */
+
+	byte cost;		/* Hack -- cost of flowing */
+	byte when;		/* Hack -- when cost was computed */
+};
+
+/* Forward declare */
+typedef struct field_type field_type;
+
+/*
+ * A function pointer to an action.  The function takes two values:
+ * 1) a pointer to the index of the field that is undergoing the action.
+ * 2) a pointer to a structure cast to void that contains the
+ *	information the action needs to complete its job.
+ */
+typedef void (*field_action_type)(s16b *field_ptr, vptr);
+
+
+
+/*
+ * The thaumaturgical list of fields.
+ *
+ * (Equivalent to monster races, or object kinds.
+ *  They had to be called something. ;-) )
+ *
+ * Eventually most of this, and the following struct
+ * will be wrapped inside a python object.  Only things
+ * that need to be accessed quickly will be left as is.
+ */
+
+typedef struct field_thaum field_thaum;
+struct field_thaum
+{
+	byte f_attr;			/* attribute */
+	char f_char;			/* character */
+	
+	byte d_attr;			/* Default attribute */
+	char d_char;			/* Default char */
+
+	byte priority;			/* LOS priority higher = more visible */
+
+	byte type;			/* Type of field */
+
+	s16b count_init;		/* Counter for timed effects */
+
+	field_action_type action[FIELD_ACTION_MAX]; /* Function indexs for the actions */
+
+	/* Storage space for the actions to interact with. */
+	byte data_init[8];
+
+	u16b info;			/* Information flags */
+
+	char *name;			/* The name of the field */
+};
+
+
+/*
+ * The field structure.
+ *
+ * Fields will be used to create a variety of effects from
+ * the ability to place traps on _all_ terrains (not just 
+ * dungeon floor), to the nightmare mode automatic corpse raising.
+ *
+ * The new building / store code will use this structure.
+ *
+ */
+struct field_type
+{
+	byte f_attr;			/* attribute */
+	char f_char;			/* character */
+
+	s16b t_idx;			/* field type index */
+
+	s16b fy;			/* Y location on map */
+	s16b fx;			/* X location on map */
+
+	s16b next_f_idx;		/* Pointer to next field in list */
+
+	u16b info;			/* quick access flags */
+
+	/* Storage space for the actions to interact with. */
+	byte data[8];
+
+	field_action_type action[FIELD_ACTION_MAX]; /* Function pointers for the actions */
+
+	s16b counter;			/* Counter for timed effects */
+	
+	byte priority;			/* LOS priority higher = more visible */
+
+#ifdef USE_SCRIPT
+	PyObject *python;
+#endif /* USE_SCRIPT */
+};
+
 
 extern void do_cmd_view_map(void);
 extern void do_cmd_go_up(void);

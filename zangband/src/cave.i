@@ -67,6 +67,7 @@ typedef unsigned int u32b;
 
 %name (set_feat) void cave_set_feat(int y, int x, int feat);
 
+typedef struct cave_type cave_type;
 
 struct cave_type
 {
@@ -85,7 +86,8 @@ struct cave_type
 
 #endif /* MONSTER_FLOW */
 
-}
+};
+
 
 %{
 	cave_type *tile(int y, int x)
