@@ -3254,15 +3254,16 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		/* Goto the selected line */
 		while (1)
 		{
-			/* Skip a line */
+			/* Get a line */
 			if (my_fgets(fff, buf, 1024)) break;
 
-			/* Skip tags */
+			/* Skip tags/links */
 			if (prefix(buf, "***** ")) continue;
 
+			/* Count the lines */
 			next++;
 
-			/* Goto the selected line */
+			/* Stop at the selected line */
 			if (next >= line) break;
 		}
 
