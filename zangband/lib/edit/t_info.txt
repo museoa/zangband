@@ -55,7 +55,7 @@ D:0:0:0:0:0:0:0:0
 N:1:blank
 G:.:w
 W:0:4:0
-I:FEAT | TRANS | NO_LOOK | NO_ENTER | NO_MAGIC | NO_OBJECT
+I:FEAT | NO_LOOK | NO_ENTER | NO_MAGIC | NO_OBJECT
 D:0:0:0:0:0:0:0:0
 F:10,field_action_wall_tunnel | 11,field_action_wall_gf
 F:16,field_action_interact_tunnel
@@ -80,7 +80,7 @@ F:17,field_action_glyph_explode
 N:4:corpse
 G:~:v
 W:50:7:100
-I:TEMP | FEAT | TRANS | VIS
+I:TEMP | FEAT | VIS
 D:0:0:0:0:0:0:0:0
 F:0,field_action_corpse_init | 1,field_action_corpse_load
 F:12,field_action_corpse_look | 13,field_action_corpse_decay
@@ -90,7 +90,7 @@ F:15,field_action_corpse_raise
 N:5:skeleton
 G:~:w
 W:50:7:100
-I:TEMP | FEAT | TRANS | VIS
+I:TEMP | FEAT | VIS
 D:0:0:0:0:0:0:0:0
 F:0,field_action_corpse_init | 1,field_action_corpse_load
 F:12,field_action_corpse_look | 13,field_action_corpse_decay
@@ -211,7 +211,7 @@ N:17:dart trap
 G:^:r
 W:100:1:0
 I:FEAT | TRANS | NO_OBJECT | NO_LOOK
-D:20:200:0:6:0:0:0:0
+D:20:125:0:6:0:0:0:0
 F:0,field_action_trap_init | 2,field_action_hit_trap_perm_stat
 F:10,field_action_trap_disarm | 15,field_action_trap_disarm
 F:16,field_action_interact_disarm | 11,field_action_trap_gf
