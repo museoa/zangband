@@ -2329,8 +2329,7 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Get passability of field(s) if there */
-	p_cant_pass_fields = fields_have_flags(c_ptr->fld_idx,
-											FIELD_INFO_NO_ENTER);
+	p_cant_pass_fields = fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER);
 
 	/* Hack -- attack monsters */
 	if (c_ptr->m_idx

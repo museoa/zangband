@@ -220,7 +220,7 @@ void teleport_to_player(int m_idx)
 			c_ptr = area(nx, ny);
 
 			/* Check for a field that blocks movement */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
+			if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER))
 			{
 				continue;
 			}
@@ -381,7 +381,7 @@ void teleport_player(int dis)
 			if ((y == py) && (x == px)) continue;
 
 			/* Check for a field that blocks movement */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
+			if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER))
 			{
 				continue;
 			}
@@ -539,8 +539,7 @@ void teleport_player_to(int nx, int ny)
 
 		/* Can enter grid? */
 		if (cave_empty_grid(c_ptr) && !(c_ptr->info & CAVE_ICKY) && 
-				!(fields_have_flags(c_ptr->fld_idx,
-														  FIELD_INFO_NO_ENTER)))
+				!(fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER)))
 			break;
 
 		/* Occasionally advance the distance */

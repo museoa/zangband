@@ -484,7 +484,7 @@ bool test_monster_square(cave_type *c_ptr, monster_race *r_ptr)
 	if (cave_pattern_grid(c_ptr)) return (FALSE);
 	
 	/* Check to see if fields dissallow placement or movement */
-	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
+	if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER))
 	{
 		/* Cannot create */
 		return (FALSE);
@@ -2661,7 +2661,7 @@ bool summon_specific(int who, int x1, int y1, int req_lev, int type, bool group,
 		if (cave_pattern_grid(c_ptr)) continue;
 
 		/* Check for a field that blocks movement */
-		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER)) continue;
+		if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER)) continue;
 
 		/* 
 		 * Test for fields that will not allow this

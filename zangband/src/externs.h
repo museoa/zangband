@@ -1099,7 +1099,7 @@ extern void field_prep(field_type *f_ptr, s16b t_idx);
 extern void init_fields(void);
 extern field_type *field_is_type(const cave_type *c_ptr, byte typ);
 extern field_type *field_first_known(const cave_type *c_ptr, byte typ);
-extern u16b fields_have_flags(s16b fld_idx, u16b info);
+extern u16b fields_have_flags(const cave_type *c_ptr, u16b info);
 extern bool field_detect_type(s16b fld_idx, byte typ);
 extern void field_destroy_type(s16b fld_idx, byte typ);
 extern field_type *place_field(int x, int y, s16b t_idx);

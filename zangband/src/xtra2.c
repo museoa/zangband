@@ -2429,7 +2429,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 		FLD_ITT_END;
 
 		/* Sometimes a field stops the feat from being mentioned */
-		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NFT_LOOK))
+		if (fields_have_flags(c_ptr, FIELD_INFO_NFT_LOOK))
 		{
 			/* 
 			 * Only if we know about the field will it stop the

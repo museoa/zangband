@@ -607,7 +607,7 @@ static bool project_stop(const cave_type *c_ptr, u16b flg)
 	if (cave_los_grid(c_ptr))
 	{
 		/* Require fields do not block magic */
-		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC))
+		if (fields_have_flags(c_ptr, FIELD_INFO_NO_MAGIC))
 		{
 			return (TRUE);
 		}
@@ -891,7 +891,7 @@ static bool cave_stop_ball(const cave_type *c_ptr)
 	if (!cave_los_grid(c_ptr)) return (TRUE);
 
 	/* Fields can block magic */
-	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC)) return (TRUE);
+	if (fields_have_flags(c_ptr, FIELD_INFO_NO_MAGIC)) return (TRUE);
 
 	/* Seems ok */
 	return (FALSE);
@@ -919,7 +919,7 @@ static bool cave_stop_disintegration(const cave_type *c_ptr)
 	}
 
 	/* Fields can block disintegration to */
-	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) return (TRUE);
+	if (fields_have_flags(c_ptr, FIELD_INFO_PERM)) return (TRUE);
 
 	/* Seems ok */
 	return (FALSE);

@@ -912,14 +912,14 @@ void field_destroy_type(s16b fld_idx, byte typ)
  *
  * This is used to see of a grid blocks movement or magic
  */
-u16b fields_have_flags(s16b fld_idx, u16b info)
+u16b fields_have_flags(const cave_type *c_ptr, u16b info)
 {
 	field_type *f_ptr;
 
 	u16b flags = 0;
 
 	/* Scan the fields */
-	FLD_ITT_START (fld_idx, f_ptr)
+	FLD_ITT_START (c_ptr->fld_idx, f_ptr)
 	{
 		/* Or the flags together */
 		flags |= f_ptr->info;

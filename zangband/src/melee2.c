@@ -2283,7 +2283,7 @@ static void take_move(int m_idx, int *mm)
 		}
 
 		/* Require "empty" fields */
-		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
+		if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER))
 		{
 			do_move = FALSE;
 		}

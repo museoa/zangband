@@ -4123,7 +4123,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 				(c_ptr->feat == FEAT_SHAL_WATER)) continue;
 
 			/* Check to see if fields dissallow placement */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_OBJCT))
+			if (fields_have_flags(c_ptr, FIELD_INFO_NO_OBJCT))
 			{
 				continue;
 			}
@@ -4212,7 +4212,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 		c_ptr = area(tx, ty);
 
 		/* Check to see if fields dissallow placement */
-		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_OBJCT)) continue;
+		if (fields_have_flags(c_ptr, FIELD_INFO_NO_OBJCT)) continue;
 
 		/* Bounce to that location */
 		by = ty;

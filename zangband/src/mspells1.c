@@ -319,7 +319,7 @@ static bool summon_possible(int x1, int y1)
 			if (cave_perma_grid(c_ptr)) continue;
 
 			/* Check to see if fields dissallow placement */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
+			if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER))
 			{
 				/* Cannot create */
 				return (FALSE);

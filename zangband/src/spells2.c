@@ -2118,7 +2118,7 @@ bool destroy_area(int x1, int y1, int r)
 			}
 
 			/* Fields can block destruction */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) continue;
+			if (fields_have_flags(c_ptr, FIELD_INFO_PERM)) continue;
 
 			/* Destroy the fields on the square */
 			delete_field(x, y);
@@ -2301,7 +2301,7 @@ bool earthquake(int cx, int cy, int r)
 			if (map[16 + y - cy][16 + x - cx]) continue;
 
 			/* Check for a field that blocks movement */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER))
+			if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER))
 			{
 				continue;
 			}
@@ -2481,8 +2481,7 @@ bool earthquake(int cx, int cy, int r)
 							if ((y == py) && (x == px)) continue;
 
 							/* Check for a field that blocks movement */
-							if (fields_have_flags(c_ptr->fld_idx,
-												  FIELD_INFO_NO_ENTER))
+							if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER))
 								continue;
 
 							/*
@@ -2598,7 +2597,7 @@ bool earthquake(int cx, int cy, int r)
 			if ((yy == py) && (xx == px)) continue;
 
 			/* Fields can block destruction */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) continue;
+			if (fields_have_flags(c_ptr, FIELD_INFO_PERM)) continue;
 
 			/* Destroy the fields on the square */
 			delete_field(xx, yy);

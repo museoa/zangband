@@ -250,7 +250,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			/* Destroy Doors (and traps) */
 
 			/* Fields can block destruction */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) break;
+			if (fields_have_flags(c_ptr, FIELD_INFO_PERM)) break;
 
 			/* Destroy all open doors */
 			if ((c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_BROKEN) ||
@@ -276,7 +276,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			/* Destroy Traps (and Locks) */
 
 			/* Fields can block destruction */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) break;
+			if (fields_have_flags(c_ptr, FIELD_INFO_PERM)) break;
 
 			/* Reveal secret doors */
 			if (c_ptr->feat == FEAT_SECRET)
@@ -323,7 +323,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			if (cave_perma_grid(c_ptr)) break;
 
 			/* Fields can block destruction */
-			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) break;
+			if (fields_have_flags(c_ptr, FIELD_INFO_PERM)) break;
 
 			/* Terrain */
 			if (c_ptr->feat >= FEAT_TREES)
@@ -4250,7 +4250,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 		if (cave_wall_grid(c_ptr) && (rad > 0)) break;
 
 		/* Require fields do not block magic */
-		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_MAGIC)) break;
+		if (fields_have_flags(c_ptr, FIELD_INFO_NO_MAGIC)) break;
 
 		/* Advance */
 		y = ny;
@@ -4440,8 +4440,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 
 							c_ptr = area(x, y);
 
-							if (fields_have_flags
-								(c_ptr->fld_idx, FIELD_INFO_PERM)) continue;
+							if (fields_have_flags(c_ptr, FIELD_INFO_PERM)) continue;
 
 							/* Delete fields on the square */
 							delete_field_location(c_ptr);
