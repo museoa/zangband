@@ -141,15 +141,6 @@
 #define IDM_WINDOW_FONT_6		216
 #define IDM_WINDOW_FONT_7		217
 
-#define IDM_WINDOW_BIZ_0		230
-#define IDM_WINDOW_BIZ_1		231
-#define IDM_WINDOW_BIZ_2		232
-#define IDM_WINDOW_BIZ_3		233
-#define IDM_WINDOW_BIZ_4		234
-#define IDM_WINDOW_BIZ_5		235
-#define IDM_WINDOW_BIZ_6		236
-#define IDM_WINDOW_BIZ_7		237
-
 #define IDM_WINDOW_I_WID_0		240
 #define IDM_WINDOW_I_WID_1		241
 #define IDM_WINDOW_I_WID_2		242
@@ -402,8 +393,6 @@ struct _term_data
 
 	bool visible;
 	bool maximized;
-
-	bool bizarre;
 
 	cptr font_want;
 
@@ -973,10 +962,6 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 	strcpy(buf, td->font_file ? td->font_file : "8X13.FON");
 	WritePrivateProfileString(sec_name, "Font", buf, ini_file);
 
-	/* Bizarre */
-	strcpy(buf, td->bizarre ? "1" : "0");
-	WritePrivateProfileString(sec_name, "Bizarre", buf, ini_file);
-
 	/* Tile size (x) */
 	wsprintf(buf, "%d", td->tile_wid);
 	WritePrivateProfileString(sec_name, "TileWid", buf, ini_file);
@@ -1072,9 +1057,6 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 
 	/* Desired font, with default */
 	GetPrivateProfileString(sec_name, "Font", "8X13.FON", tmp, 127, ini_file);
-
-	/* Bizarre */
-	td->bizarre = (GetPrivateProfileInt(sec_name, "Bizarre", TRUE, ini_file) != 0);
 
 	/* Analyze font, save desired font name */
 	td->font_want = string_make(analyze_font(tmp, &wid, &hgt));
@@ -1657,9 +1639,6 @@ static void term_change_font(term_data *td)
 			(void)term_force_font(td, tmp);
 		}
 
-		/* HACK - Assume bizarre */
-		td->bizarre = TRUE;
-
 		/* Reset the tile info */
 		td->tile_wid = td->font_wid;
 		td->tile_hgt = td->font_hgt;
@@ -2146,7 +2125,63 @@ static errr Term_xtra_win(int n, int v)
 	return 1;
 }
 
+#if 0
+/*
+ * Find the square a particular pixel is part of.
+ */
+static void pixel_to_square(int *x, int *y, int ox, int oy)
+{
+	term_data *td = (term_data*)(Term->data);
+	
+	if (td->map_active)
+	{
+		(*x) = (ox - td->size_ow1) / td->map_tile_wid;
+		(*y) = (oy - td->size_oh1) / td->map_tile_hgt;
+	}
+	else
+	{
+		(*x) = (ox - td->size_ow1) / td->tile_wid;
+		(*y) = (oy - td->size_oh1) / td->tile_hgt;
+	
+		if ((use_bigtile) && ((*y) >= Term->scr->big_y1)
+			&& ((*y) <= Term->scr->big_y2)
+			&& ((*x) >= Term->scr->big_x1))
+		{
+			(*x) -= ((*x) - Term->scr->big_x1 + 1) / 2;
+		}
+	}
+}
+#endif /* 0 */
 
+/*
+ * Find the pixel at the top-left corner of a square.
+ */
+static void square_to_pixel(int *x, int *y, int ox, int oy)
+{
+	term_data *td = (term_data*)(Term->data);
+	
+	if (td->map_active)
+	{
+		(*x) = ox * td->map_tile_wid + td->size_ow1;
+		(*y) = oy * td->map_tile_hgt + td->size_oh1;
+	}
+	else
+	{
+		(*y) = oy * td->tile_hgt + td->size_oh1;
+	
+		if ((use_bigtile) && (oy >= Term->scr->big_y1)
+				&& (oy <= Term->scr->big_y2)
+				&& (ox > Term->scr->big_x1))
+		{
+			(*x) = ox * td->tile_wid * 2 + td->size_ow1 -
+					Term->scr->big_x1 * td->tile_wid;
+		}
+		else
+		{
+			(*x) = ox * td->tile_wid + td->size_ow1;
+		}
+	}
+}
 
 /*
  * Low level graphics (Assumes valid input).
@@ -2160,66 +2195,37 @@ static errr Term_curs_win(int x, int y)
 	RECT rc;
 	HDC hdc;
 
+	int x1, y1;
 	int tile_wid, tile_hgt;
+	
+	/* Top left hand corner */
+	square_to_pixel(&x1, &y1, x, y);
 
+	/* Frame the grid */
+	rc.left = x1;
+	rc.top = y1;
+	
 	if (td->map_active)
 	{
 		tile_wid = td->map_tile_wid;
 		tile_hgt = td->map_tile_hgt;
+		
+		rc.right = rc.left + tile_wid;
 	}
 	else
 	{
 		tile_wid = td->tile_wid;
 		tile_hgt = td->tile_hgt;
+		
+		if (is_bigtiled(x, y))
+		{
+			rc.right = rc.left + tile_wid * 2;
+		}
+		else
+		{
+			rc.right = rc.left + tile_wid;
+		}
 	}
-
-	/* Frame the grid */
-	rc.left = x * tile_wid + td->size_ow1;
-	rc.right = rc.left + tile_wid;
-	rc.top = y * tile_hgt + td->size_oh1;
-	rc.bottom = rc.top + tile_hgt;
-
-	/* Cursor is done as a yellow "box" */
-	hdc = GetDC(td->w);
-	FrameRect(hdc, &rc, hbrYellow);
-	ReleaseDC(td->w, hdc);
-
-	/* Success */
-	return 0;
-}
-
-
-
-
-/*
- * Low level graphics (Assumes valid input).
- * Draw a "cursor" at (x,y), using a "yellow box".
- */
-static errr Term_bigcurs_win(int x, int y)
-{
-	term_data *td = (term_data*)(Term->data);
-
-	RECT rc;
-	HDC hdc;
-
-	int tile_wid, tile_hgt;
-
-	if (td->map_active)
-	{
-	 	/* Normal cursor in map window */
-	 	Term_curs_win(x, y);
-	 	return 0;
-	}
-	else
-	{
-	 	tile_wid = td->tile_wid;
-	 	tile_hgt = td->tile_hgt;
-	}
-
-	/* Frame the grid */
-	rc.left = x * tile_wid + td->size_ow1;
-	rc.right = rc.left + 2 * tile_wid;
-	rc.top = y * tile_hgt + td->size_oh1;
 	rc.bottom = rc.top + tile_hgt;
 
 	/* Cursor is done as a yellow "box" */
@@ -2242,12 +2248,18 @@ static errr Term_wipe_win(int x, int y, int n)
 
 	HDC hdc;
 	RECT rc;
-
+	
+	int x1, y1, x2, y2;
+	
+	/*** Find the dimensions ***/
+	square_to_pixel(&x1, &y1, x, y);
+	square_to_pixel(&x2, &y2, x + n, y);
+	
 	/* Rectangle to erase in client coords */
-	rc.left = x * td->tile_wid + td->size_ow1;
-	rc.right = rc.left + n * td->tile_wid;
-	rc.top = y * td->tile_hgt + td->size_oh1;
-	rc.bottom = rc.top + td->tile_hgt;
+	rc.left = x1;
+	rc.right = x2;
+	rc.top = y1;
+	rc.bottom = y1 + td->tile_hgt;
 
 	hdc = GetDC(td->w);
 	SetBkColor(hdc, RGB(0, 0, 0));
@@ -2271,18 +2283,15 @@ static errr Term_wipe_win(int x, int y, int n)
  * what color it should be using to draw with, but perhaps simply changing
  * it every time is not too inefficient.  XXX XXX XXX
  */
-static errr Term_text_win(int x, int y, int n, byte a, cptr s)
+static errr Term_text_win(int cx, int cy, int n, byte a, cptr s)
 {
 	term_data *td = (term_data*)(Term->data);
 	RECT rc;
 	HDC hdc;
 
-
-	/* Total rectangle */
-	rc.left = x * td->tile_wid + td->size_ow1;
-	rc.right = rc.left + n * td->tile_wid;
-	rc.top = y * td->tile_hgt + td->size_oh1;
-	rc.bottom = rc.top + td->tile_hgt;
+	int i;
+	
+	int x, y;
 
 	/* Acquire DC */
 	hdc = GetDC(td->w);
@@ -2307,41 +2316,42 @@ static errr Term_text_win(int x, int y, int n, byte a, cptr s)
 	/* Use the font */
 	SelectObject(hdc, td->font_id);
 
-	/* Bizarre size */
-	if (td->bizarre ||
-	    (td->tile_hgt != td->font_hgt) ||
-	    (td->tile_wid != td->font_wid))
+	/* Erase complete rectangle */
+	Term_wipe_win(cx, cy, n);
+	
+	/* Get top left corner */
+	square_to_pixel(&x, &y, cx, cy);
+
+	rc.top = y + ((td->tile_hgt - td->font_hgt) / 2);
+	rc.bottom = rc.top + td->font_hgt;
+
+	/* Dump each character */
+	for (i = 0; i < n; i++)
 	{
-		int i;
-
-		/* Erase complete rectangle */
-		ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL);
-
-		/* New rectangle */
-		rc.left += ((td->tile_wid - td->font_wid) / 2);
-		rc.right = rc.left + td->font_wid;
-		rc.top += ((td->tile_hgt - td->font_hgt) / 2);
-		rc.bottom = rc.top + td->font_hgt;
-
-		/* Dump each character */
-		for (i = 0; i < n; i++)
+		if (is_bigtiled(cx + i, cy))
 		{
+			rc.left = x + ((td->tile_wid - td->font_wid) / 2);
+			rc.right = rc.left + td->font_wid;
+			
 			/* Dump the text */
 			ExtTextOut(hdc, rc.left, rc.top, 0, &rc,
-			           s+i, 1, NULL);
+						s+i, 1, NULL);
 
 			/* Advance */
-			rc.left += td->tile_wid;
-			rc.right += td->tile_wid;
+			x += td->tile_wid * 2;
 		}
-	}
+		else
+		{
+			rc.left = x + ((td->tile_wid - td->font_wid) / 2);
+			rc.right = rc.left + td->font_wid;
+			
+			/* Dump the text */
+			ExtTextOut(hdc, rc.left, rc.top, 0, &rc,
+						s+i, 1, NULL);
 
-	/* Normal size */
-	else
-	{
-		/* Dump the text */
-		ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED, &rc,
-		           s, n, NULL);
+			/* Advance */
+			x += td->tile_wid;
+		}
 	}
 
 	/* Release DC */
@@ -2411,9 +2421,8 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp, c
 			tw2 = w2;
 	}
 
-	/* Location of window cell */
-	x2 = x * w2 + td->size_ow1;
-	y2 = y * h2 + td->size_oh1;
+	/* Starting point */
+	square_to_pixel(&x2, &y2, x, y);
 
 	/* Info */
 	hdc = GetDC(td->w);
@@ -2792,9 +2801,6 @@ static void init_windows(void)
 			/* Oops */
 			td->tile_wid = 8;
 			td->tile_hgt = 13;
-
-			/* Hack - Assume bizarre */
-			td->bizarre = TRUE;
 		}
 
 		/* Analyze the font */
@@ -2978,23 +2984,6 @@ static void setup_menus(void)
 		{
 			EnableMenuItem(hm, IDM_WINDOW_FONT_0 + i,
 			               MF_BYCOMMAND | MF_ENABLED);
-		}
-	}
-
-	/* Menu "Window::Bizarre Display" */
-	for (i = 0; i < MAX_TERM_DATA; i++)
-	{
-		EnableMenuItem(hm, IDM_WINDOW_BIZ_0 + i,
-		               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
-
-		CheckMenuItem(hm, IDM_WINDOW_BIZ_0 + i,
-		              (data[i].bizarre ? MF_CHECKED : MF_UNCHECKED));
-
-		if (data[i].visible)
-		{
-			EnableMenuItem(hm, IDM_WINDOW_BIZ_0 + i,
-	    		           MF_BYCOMMAND | MF_ENABLED);
-
 		}
 	}
 
@@ -3598,31 +3587,6 @@ static void process_menus(WORD wCmd)
 			break;
 		}
 
-		/* Bizarre Display */
-		case IDM_WINDOW_BIZ_0:
-		case IDM_WINDOW_BIZ_1:
-		case IDM_WINDOW_BIZ_2:
-		case IDM_WINDOW_BIZ_3:
-		case IDM_WINDOW_BIZ_4:
-		case IDM_WINDOW_BIZ_5:
-		case IDM_WINDOW_BIZ_6:
-		case IDM_WINDOW_BIZ_7:
-		{
-			i = wCmd - IDM_WINDOW_BIZ_0;
-
-			if ((i < 0) || (i >= MAX_TERM_DATA)) break;
-
-			td = &data[i];
-
-			td->bizarre = !td->bizarre;
-
-			term_getsize(td);
-
-			term_window_resize(td);
-
-			break;
-		}
-
 		/* Increase Tile Width */
 		case IDM_WINDOW_I_WID_0:
 		case IDM_WINDOW_I_WID_1:
@@ -3829,10 +3793,7 @@ static void process_menus(WORD wCmd)
 			}
 
 			/* Toggle "use_bigtile" */
-			use_bigtile = !use_bigtile;
-
-			/* Mega-Hack : Redraw screen */
-			Term_key_push(KTRL('R'));
+			toggle_bigtile();
 	
 			break;
 		}
