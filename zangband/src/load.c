@@ -2741,7 +2741,7 @@ static errr rd_savefile_new_aux(void)
 
 #if SAVEFILE_VERSION
 	/* Read the version number of the savefile */
-	if (!z_older_than(2, 2, 7) &&
+	if (!z_older_than(2, 2, 8) &&
 	    !(z_major == 2 && z_minor == 3 && z_patch == 0))
 		rd_u32b(&sf_version);
 #endif /* SAVEFILE_VERSION */
