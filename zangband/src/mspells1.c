@@ -722,14 +722,14 @@ static int choose_attack_spell(int m_idx, byte spells[], byte num)
 	/*** Try to pick an appropriate spell type ***/
 
 	/* Hurt badly or afraid, attempt to flee */
-	if ((m_ptr->hp < m_ptr->maxhp / 3) || m_ptr->monfear)
+	if (((m_ptr->hp < m_ptr->maxhp / 3) || m_ptr->monfear) && (!rand_int(2)))
 	{
 		/* Choose escape spell if possible */
 		if (escape_num) return (escape[rand_int(escape_num)]);
 	}
 
 	/* Still hurt badly, couldn't flee, attempt to heal */
-	if (m_ptr->hp < m_ptr->maxhp / 3)
+	if ((m_ptr->hp < m_ptr->maxhp / 3) && (!rand_int(2)))
 	{
 		/* Choose heal spell if possible */
 		if (heal_num) return (heal[rand_int(heal_num)]);
