@@ -1201,7 +1201,7 @@ static void display_player_middle(void)
 
 	/* Dump the bonuses to hit/dam */
 	prt_num("+ To Hit    ", show_tohit, 9, 1, TERM_L_BLUE);
-	prt_num("+ To Damage ", show_todam, 10, 1, TERM_L_BLUE);
+	prt_num("  Deadliness", show_todam, 10, 1, TERM_L_BLUE);
 
 	/* Dump the armor class bonus */
 	prt_num("+ To AC     ", p_ptr->dis_to_a, 11, 1, TERM_L_BLUE);
@@ -1366,6 +1366,7 @@ static void display_player_various(void)
 	int			xdis, xdev, xsav, xstl;
 	cptr		desc;
 	int         muta_att = 0;
+	long		avgdam;
 
 	object_type		*o_ptr;
 
@@ -1448,25 +1449,34 @@ static void display_player_various(void)
 	put_str("Shots/Round:", 17, 55);
 	put_str(format("%d", p_ptr->num_fire), 17, 69);
 
-	put_str("Wpn.dmg/Rnd:", 18, 55);	/* From PsiAngband */
+	put_str("Avg Wpn.dmg/Rnd:", 18, 55);
 
-	if ((damdice == 0) || (damsides == 0))
+	
+	if (dambonus > 0)
+		avgdam = (100 + deadliness_conversion[dambonus]);
+	else if (dambonus > -31)
+		avgdam = (100 - deadliness_conversion[ABS(dambonus)]);
+	else
+		avgdam = 0;
+	/* Effect of damage dice x2 */
+	avgdam *= damdice*(damdice+1);
+	
+	/* number of blows */
+	avgdam *= blows;
+	
+	/*rescale*/
+	avgdam /= 200;
+	
+	if (avgdam==0)
 	{
-		if (dambonus <= 0)
-			desc = "nil!";
-		else
-			desc = format("%d", blows * dambonus);
+		desc = "nil!";		
 	}
 	else
 	{
-		if (dambonus == 0)
-			desc = format("%dd%d", blows * damdice, damsides);
-		else
-			desc = format("%dd%d%s%d", blows * damdice, damsides,
-			              (dambonus < 0 ? "":"+"), blows * dambonus);
+		desc = format("%d", avgdam);
 	}
 
-	put_str(desc, 18, 69);
+	put_str(desc, 18, 72);
 
 	put_str("Infra-Vision:", 19, 55);
 	put_str(format("%d feet", p_ptr->see_infra * 10), 19, 69);
