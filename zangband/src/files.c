@@ -4634,8 +4634,14 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 		/* Get the random line */
 		for (counter = 0; counter < line; counter++)
 		{
-			/* Try to read the line */
-			if (my_fgets(fp, buf, 1024) != 0)
+			/* Try to read the line, skipping comments */
+			while (TRUE)
+			{
+				test = my_fgets(fp, buf, 1024);
+				if (test != 0 || buf[0] != '#') break;
+			}
+
+			if (test != 0)
 			{
 				/* Error - End of file */
 				msg_format("Error - end of file.");
