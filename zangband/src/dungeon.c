@@ -3746,28 +3746,12 @@ void play_game(bool new_game)
 	/* React to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);
 
-	/* Need to recalculate some transient things */
-	p_ptr->update |= (PU_BONUS | PU_SPELLS);
-	
-	/* Update stuff */
-	update_stuff();
-	
-	/* Window stuff */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_MONSTER);
-
-	/* Window stuff */
-	window_stuff();
-
 	/* Generate a dungeon level if needed */
 	if (!character_dungeon) generate_cave();
 
 
 	/* Character is now "complete" */
 	character_generated = TRUE;
-
 
 	/* Hack -- Character is no longer "icky" */
 	character_icky = FALSE;
@@ -3778,18 +3762,36 @@ void play_game(bool new_game)
 
 	/* Hack -- Enforce "delayed death" */
 	if (p_ptr->chp < 0) p_ptr->is_dead = TRUE;
-
+	
 	/* Resize / init the map */
 	map_panel_size();
 
 	/* Verify the (possibly resized) panel */
 	verify_panel();
+		
+	/* Enter "xtra" mode */
+	character_xtra = TRUE;
+
+	/* Need to recalculate some transient things */
+	p_ptr->update |= (PU_BONUS | PU_SPELLS);
 	
 	/* Update some stuff not stored in the savefile any more */
 	p_ptr->update |= (PU_VIEW | PU_MON_LITE);
-
+	
 	/* Update stuff */
 	update_stuff();
+	
+	/* Leave "xtra" mode */
+	character_xtra = FALSE;	
+	
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_MONSTER);
+
+	/* Window stuff */
+	window_stuff();
 	
 	/* Process */
 	while (TRUE)
