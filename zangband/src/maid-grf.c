@@ -842,7 +842,7 @@ list_item *inventory;
 int inven_num;
 
 
-/* Current list */
+/* Current list (Usually used for stores) */
 list_item *cur_list;
 int cur_num;
 
@@ -971,12 +971,6 @@ static void copy_list(term_list *t_ptr, int num1, list_item **l_ptr_ptr,
  */
 static void save_object_list(term_list *l_ptr, int num, byte list_type)
 {
-	/* Delete the old current list */
-	delete_list(&cur_list, &cur_num);
-
-	/* Copy over with the new list */
-	copy_list(l_ptr, num, &cur_list, &cur_num);
-
 	if (list_type == LIST_INVEN)
 	{
 		/* Delete old inventory list */
@@ -993,6 +987,15 @@ static void save_object_list(term_list *l_ptr, int num, byte list_type)
 
 		/* Copy over with the new list */
 		copy_list(l_ptr, num, &equipment, &equip_num);
+	}
+	
+	if ((list_type == LIST_STORE) || (list_type == LIST_HOME))
+	{
+		/* Delete the old current list */
+		delete_list(&cur_list, &cur_num);
+
+		/* Copy over with the new list */
+		copy_list(l_ptr, num, &cur_list, &cur_num);
 	}
 
 	/* Notify port */
