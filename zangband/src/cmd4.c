@@ -1244,12 +1244,9 @@ void do_cmd_options(byte flags)
 
 					k = inkey();
 
-					if (k == ESCAPE)
-						break;
-					else if (isdigit(k))
-						delay_factor = D2I(k);
-					else
-						bell("Illegal delay factor!");
+					if (k == ESCAPE) break;
+					if (isdigit(k)) delay_factor = D2I(k);
+					else bell("Illegal delay factor!");
 				}
 
 				screen_load();
@@ -1261,6 +1258,11 @@ void do_cmd_options(byte flags)
 			case 'H':
 			case 'h':
 			{
+				screen_save();
+
+				/* Clear screen */
+				Term_clear();
+				
 				/* Prompt */
 				prt("Command: Hitpoint Warning", 0, 18);
 
@@ -1270,11 +1272,15 @@ void do_cmd_options(byte flags)
 					prt(format("Current hitpoint warning: %d0%%",
 					           hitpoint_warn), 0, 22);
 					prt("Hitpoint Warning (0-9 or ESC to accept): ", 0, 20);
+					
 					k = inkey();
+					
 					if (k == ESCAPE) break;
 					if (isdigit(k)) hitpoint_warn = D2I(k);
 					else bell("Illegal hitpoint warning!");
 				}
+
+				screen_load();
 
 				break;
 			}
