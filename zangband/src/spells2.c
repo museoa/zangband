@@ -1766,8 +1766,8 @@ bool raise_dead(int y, int x, bool pet)
 		if (!f_ptr->t_idx) continue;
 
 		/* Want a corpse / skeleton */
-		if (!(f_ptr->t_idx == FT_CORPSE) ||
-		     (f_ptr->t_idx == FT_SKELETON)) continue;
+		if (!(f_ptr->t_idx == FT_CORPSE ||
+		      f_ptr->t_idx == FT_SKELETON)) continue;
 
 		/* Location */
 		fy = f_ptr->fy;
