@@ -637,7 +637,7 @@
 /*
  * Monsters can drop corpses when killed
  */
-/* #define USE_CORPSES */
+#define USE_CORPSES
 
 /*
  * Add caverns and lakes to the dungeon

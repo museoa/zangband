@@ -1511,18 +1511,10 @@ static void process_world(void)
 
 	regen_amount = (regen_amount * mutant_regenerate_mod) / 100;
 
-	/* Regenerate Hit Points if needed */
-	if ((p_ptr->chp < p_ptr->mhp) && !cave_no_regen)
+	/* Regenerate Hit Points */
+	if (p_ptr->chp < p_ptr->mhp)
 	{
-		if ((c_ptr->feat < FEAT_PATTERN_END) &&
-		    (c_ptr->feat >= FEAT_PATTERN_START))
-		{
-			regenhp(regen_amount / 5); /* Hmmm. this should never happen? */
-		}
-		else
-		{
-			regenhp(regen_amount);
-		}
+		regenhp(regen_amount);
 	}
 
 
@@ -2166,6 +2158,9 @@ static void process_world(void)
 	{
 		/* Get the object */
 		o_ptr = &inventory[i];
+		
+		/* Skip non-objects */
+		if (!o_ptr->k_idx) continue;
 
 		object_flags(o_ptr, &f1, &f2, &f3);
 
@@ -2215,10 +2210,6 @@ static void process_world(void)
 			}
 		}
 
-
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
-
 		/* Recharge activatable objects */
 		if (o_ptr->timeout > 0)
 		{
@@ -2254,8 +2245,11 @@ static void process_world(void)
 		/* Skip non-objects */
 		if (!o_ptr->k_idx) continue;
 
+		/* Must have a timeout */
+		if (!o_ptr->timeout) continue;
+
 		/* Examine all charging rods or stacks of charging rods. */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
+		if (o_ptr->tval == TV_ROD)
 		{
 			/* Determine how many rods are charging. */
 			temp = (o_ptr->timeout + (k_ptr->pval - 1)) / k_ptr->pval;
@@ -2273,6 +2267,46 @@ static void process_world(void)
 				recharged_notice(o_ptr);
 				j++;
 			}
+		}
+		
+		/* Should corpses decay when carried? */
+		else if (o_ptr->tval == TV_CORPSE )
+		{
+			/* Decrease counter */
+			o_ptr->timeout--;
+			
+			/* Notice changes */
+			if (!o_ptr->timeout)
+			{	
+				char o_name[80];
+
+				if (ironman_nightmare)
+				{
+					/* Make a monster nearby if possible */
+					if (!(summon_named_creature(py, px,
+						 o_ptr->pval, FALSE, FALSE, FALSE)))
+						msg_format("The %s rises.");
+				}
+				else
+				{			
+					/* Describe the object */
+					object_desc(o_name, o_ptr, FALSE, 0);
+					
+					/* Let player know what happened. */
+					msg_format("The %s decays.", o_name);
+				}
+				
+				/* The corpse/skeleton is destroyed */
+				inven_item_increase(i, -1);
+				inven_item_describe(i);
+				inven_item_optimize(i);
+				
+				/* Hack- everything is shifted up */
+				i--;
+				
+				/* Notice something */
+				j++;
+			}	
 		}
 	}
 
@@ -2300,15 +2334,40 @@ static void process_world(void)
 
 		/* Skip dead objects */
 		if (!o_ptr->k_idx) continue;
+		
+		if (!o_ptr->timeout) continue;
 
 		/* Recharge rods on the ground.  No messages. */
-		if ((o_ptr->tval == TV_ROD) && (o_ptr->timeout))
+		if (o_ptr->tval == TV_ROD)
 		{
 			/* Charge it */
 			o_ptr->timeout -= o_ptr->number;
 
 			/* Boundary control. */
 			if (o_ptr->timeout < 0) o_ptr->timeout = 0;
+		}
+		else
+		{
+			/* Decrease counter */
+			o_ptr->timeout--;
+			
+			/* Notice changes */
+			if (!o_ptr->timeout)
+			{	
+				if (ironman_nightmare)
+				{
+					/* Make a monster nearby if possible */
+					summon_named_creature(o_ptr->iy, o_ptr->ix,
+						 o_ptr->pval, FALSE, FALSE, FALSE);
+				}
+				
+				/* The corpse/skeleton is destroyed */
+				floor_item_increase(i, -1);
+				floor_item_optimize(i);
+				
+				/* Hack, decrease counter properly */
+				i--;
+			}
 		}
 	}
 

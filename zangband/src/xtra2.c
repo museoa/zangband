@@ -531,6 +531,15 @@ void monster_death(int m_idx)
 		apply_magic(q_ptr, object_level, FALSE, FALSE, FALSE, FALSE);
 
 		q_ptr->pval = m_ptr->r_idx;
+		
+		if(ironman_nightmare)
+		{
+			q_ptr->timeout = CORPSE_NIGHTMARE;
+		}
+		else
+		{
+			q_ptr->timeout = CORPSE_DECAY;
+		}
 
 #ifdef USE_SCRIPT
 		q_ptr->python = object_create_callback(q_ptr);

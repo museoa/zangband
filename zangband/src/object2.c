@@ -1486,10 +1486,9 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 		case TV_FIGURINE:
 		case TV_CORPSE:
 		{
-			/* Same monster */
-			if (o_ptr->pval != j_ptr->pval) return (0);
-
-			/* Assume okay */
+			/* Never okay */
+			
+			/* This is because of the timeouts... */
 			break;
 		}
 

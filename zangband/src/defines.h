@@ -571,6 +571,12 @@
 #define FUEL_TORCH      5000    /* Maximum amount of fuel in a torch */
 #define FUEL_LAMP       15000   /* Maximum amount of fuel in a lantern */
 
+/*
+ * Corpse decay / rising times.
+ */
+#define CORPSE_DECAY		100	/* Turns / 10 for a corpse to decay */
+#define CORPSE_NIGHTMARE	100	/* Turns / 10 for a corpse to raise */
+
 
 /*
  * More maximum values
@@ -3698,9 +3704,9 @@ extern int PlayerUID;
 #define FTYPE_TRAP	1
 #define FTYPE_DOOR	2
 #define FTYPE_BUILD	3
-#define FTYPE_FIELD	4
-#define FTYPE_OBJ	5
-#define FTYPE_MON	6
+#define FTYPE_EVENT	4
+#define FTYPE_QUEST	5
+#define FTYPE_FIELD	6
 
 /*
  * Field Actions
@@ -3719,9 +3725,8 @@ extern int PlayerUID;
 #define FIELD_ACT_MAGIC_TARGET	11	/* Targeting this square */
 #define FIELD_ACT_COMPACT	12	/* Compaction if too many */
 #define FIELD_ACT_EXIT		13	/* Field is destroyed */
-#define FIELD_ACT_RECALC	14	/* Recalculating monster / object flags */
 
-#define FIELD_ACTION_MAX	15	/* The last action + 1 */
+#define FIELD_ACTION_MAX	14	/* The last action + 1 */
 
 
 /*
@@ -3731,5 +3736,6 @@ extern int PlayerUID;
 #define DISPLAY_PLAYER_HISTORY		1	/* standard display with history */
 #define DISPLAY_PLAYER_SUMMARY		2	/* summary of various things */
 
-#define DISPLAY_PLAYER_MAX			3
+#define DISPLAY_PLAYER_MAX		3
+
 
