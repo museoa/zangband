@@ -2613,9 +2613,17 @@ void display_map(int *cx, int *cy)
 					/* Hack make a char /attr */
 					if (place[twn].quest_num)
 					{
+                        place_type *pl_ptr = &place[twn];
+
+                        wild_type *w_ptr = &wild[pl_ptr->y][pl_ptr->x];
+
+                        int depth = (w_ptr->done.mon_gen - 1) / 10;
+
+                        if (depth > 9) depth = 9;
+
 						/* Quests are red */
 						ma[j + 1][i + 1] = TERM_RED;
-						mc[j + 1][i + 1] = '0' + twn % 10;
+						mc[j + 1][i + 1] = '0' + depth;
 						feat = FEAT_NONE;
 					}
 					else
