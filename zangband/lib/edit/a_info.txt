@@ -92,8 +92,8 @@ L:USE:	detect_traps(); detect_doors(); detect_stairs()
 L:USE:	if get_check("Activate recall? ") then word_of_recall() end
 L:USE:	object.timeout = rand_range(20, 40)
 L:DESC:	return "dangerous clairvoyance and recall every 20-40 turns"
-L:TIMED:	if randint0(999) == 0 and bAnd(player.flags3, TR3_NO_MAGIC) == 0 and
-L:TIMED:	not player.tim_invuln then
+L:TIMED:	if randint0(999) == 0 and bAnd(player.flags[2], TR2_NO_MAGIC) == 0
+L:TIMED:	and not player.tim_invuln then
 L:TIMED:		msgf("The Jewel of Judgement drains life from you!")
 L:TIMED:		take_hit(player.lev, "The Jewel of Judgement")
 L:TIMED:	end
@@ -624,8 +624,8 @@ L:MAKE:	if player.rp.pclass == CLASS_WARRIOR then
 L:MAKE:		add_ego_power(EGO_XTRA_ABILITY, object)
 L:MAKE:		add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:MAKE:	else
-L:MAKE:		object.flags3 = bOr(object.flags3, TR3_CURSED, TR3_HEAVY_CURSE, 
-L:MAKE:			TR3_AGGRAVATE, TR3_TY_CURSE)
+L:MAKE:		set_obj_flags(object, 2, bOr(object.flags2, bOr(TR2_CURSED,
+L:MAKE:			bOr(TR2_HEAVY_CURSE, bOr(TR2_AGGRAVATE, TR2_TY_CURSE)))))
 L:MAKE:	end
 
 
