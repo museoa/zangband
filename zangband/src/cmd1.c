@@ -2257,7 +2257,7 @@ void move_player(int dir, int do_pickup)
 
 	bool p_can_pass_walls = FALSE;
 	bool stormbringer = FALSE;
-	bool p_cant_pass_fields;
+	bool p_cant_pass_fields = FALSE;
 
 	bool oktomove = TRUE;
 
@@ -2308,7 +2308,7 @@ void move_player(int dir, int do_pickup)
 	}
 
 	/* Get passability of field(s) if there */
-	p_cant_pass_fields = fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER);
+	if (fields_have_flags(c_ptr, FIELD_INFO_NO_ENTER)) p_cant_pass_fields = TRUE;
 
 	/* Hack -- attack monsters */
 	if (c_ptr->m_idx
