@@ -487,16 +487,10 @@ static void wreck_the_pattern(void)
 		    (area(r_x, r_y)->feat < FEAT_PATTERN_XTRA2))
 		{
 			cave_set_feat(r_x, r_y, FEAT_PATTERN_XTRA2);
-			
-			/* Hack - notice the change */
-			note_spot(r_x, r_y);
 		}
 	}
 
 	cave_set_feat(px, py, FEAT_PATTERN_XTRA2);
-	
-	/* Hack - notice the change */
-	note_spot(px, py);
 }
 
 
@@ -533,7 +527,7 @@ static bool pattern_effect(void)
 		(void)do_res_stat(A_CHR);
 		(void)restore_level();
 		(void)hp_player(1000);
-		c_ptr->feat = FEAT_PATTERN_OLD;
+		cave_set_feat(p_ptr->px, p_ptr->py, FEAT_PATTERN_OLD);
 		msg_print("This section of the Pattern looks less powerful.");
 	}
 
@@ -3059,9 +3053,6 @@ static void dungeon(void)
 			{
 				cave_set_feat(p_ptr->px, p_ptr->py, FEAT_LESS);
 			}
-
-			/* Mark the stairs as known */
-			parea(p_ptr->px, p_ptr->py)->feat = area(p_ptr->px, p_ptr->py)->feat;
 		}
 
 		/* Cancel the stair request */

@@ -4862,12 +4862,53 @@ void wiz_dark(void)
 void cave_set_feat(int x, int y, int feat)
 {
 	cave_type *c_ptr = area(x, y);
+	
+	/* Does los change? */
+	if (cave_floor_grid(c_ptr))
+	{
+		/* Is new eat a wall grid? */
+		if (feat & 0x20)
+		{
+			/* Update some things */
+			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
+			
+			/* Redraw map */
+			p_ptr->redraw |= (PR_MAP);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+		}
+	}
+	else
+	{
+		/* Is new feat a floor grid? */
+		if (!(feat & 0x20))
+		{
+			/* Update some things */
+			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
+			
+			/* Redraw map */
+			p_ptr->redraw |= (PR_MAP);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+		}
+	}
 
 	/* Change the feature */
 	c_ptr->feat = feat;
 
 	/* Notice + Redraw */
 	if (character_dungeon) note_spot(x, y);
+	
+	/* Hack - if under player, notice change */
+	if ((x == p_ptr->px) && (y == p_ptr->py))
+	{
+		parea(x, y)->feat = feat;
+		
+		/* Draw change */
+		lite_spot(x, y);
+	}
 }
 
 

@@ -268,18 +268,8 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 					obvious = TRUE;
 				}
 
-				if (c_ptr->feat == FEAT_CLOSED)
-				{
-					/* Update some things */
-					p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS |
-						 PU_MON_LITE);
-				}
-
 				/* Now is floor */
-				c_ptr->feat = FEAT_FLOOR;
-					
-				/* Note + Lite the spot */
-				note_spot(x, y);
+				cave_set_feat(x, y, FEAT_FLOOR);
 			}
 
 			break;
@@ -346,8 +336,6 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 				{
 					msg_print("It disappears!");
 					obvious = TRUE;
-					
-					note_spot(x, y);
 				}
 			}
 
@@ -362,13 +350,11 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 				{
 					msg_print("The wall turns into mud!");
 					obvious = TRUE;
-					
-					note_spot(x, y);
 				}
 			}
 
 			/* Quartz / Magma with treasure */
-			else if (c_ptr->feat >= FEAT_MAGMA_H)
+			else if (c_ptr->feat >= FEAT_MAGMA_K)
 			{
 				/* Destroy the wall */
 				cave_set_feat(x, y, FEAT_FLOOR);
@@ -382,8 +368,6 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 					msg_print("The vein turns into mud!");
 					msg_print("You have found something!");
 					obvious = TRUE;
-					
-					note_spot(x, y);
 				}
 			}
 
@@ -398,8 +382,6 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 				{
 					msg_print("The vein turns into mud!");
 					obvious = TRUE;
-					
-					note_spot(x, y);
 				}
 			}
 
@@ -414,8 +396,6 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 				{
 					msg_print("The rubble turns into mud!");
 					obvious = TRUE;
-					
-					note_spot(x, y);
 				}
 
 				/* Hack -- place an object */
@@ -429,8 +409,6 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 					{
 						msg_print("There was something buried in the rubble!");
 						obvious = TRUE;
-						
-						note_spot(x, y);
 					}
 				}
 			}
@@ -446,13 +424,8 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 				{
 					msg_print("The door turns into mud!");
 					obvious = TRUE;
-					
-					note_spot(x, y);
 				}
 			}
-
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
 
 			break;
 		}
@@ -473,13 +446,7 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			if (known)
 			{
 				obvious = TRUE;
-				
-				/* Notice */
-				note_spot(x, y);
 			}
-
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 
 			break;
 		}
@@ -523,12 +490,6 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 
 			/* Place a wall */
 			cave_set_feat(x, y, FEAT_WALL_EXTRA);
-			
-			/* Notice */
-			note_spot(x, y);
-
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 
 			break;
 		}
@@ -4438,13 +4399,6 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 								else
 									cave_set_feat(x, y, FEAT_FLOOR);
 							}
-							
-							/* Notice */
-							note_spot(x, y);
-
-							/* Update some things -- similar to GF_KILL_WALL */
-							p_ptr->update |= (PU_VIEW | PU_FLOW
-								 | PU_MONSTERS | PU_MON_LITE);
 						}
 						else
 						{

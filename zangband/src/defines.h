@@ -1108,8 +1108,8 @@
 /* Seams */
 #define FEAT_MAGMA              0x32
 #define FEAT_QUARTZ             0x33
-#define FEAT_MAGMA_H            0x34
-#define FEAT_QUARTZ_H           0x35
+/* #define FEAT_MAGMA_H            0x34 */
+/* #define FEAT_QUARTZ_H           0x35 */
 #define FEAT_MAGMA_K            0x36
 #define FEAT_QUARTZ_K           0x37
 

@@ -792,12 +792,6 @@ bool do_cmd_open_aux(int x, int y)
 	{
 		/* Open the door */
 		cave_set_feat(x, y, FEAT_OPEN);
-		
-		/* Notice the change */
-		note_spot(x, y);
-
-		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 
 		/* Sound */
 		sound(SOUND_OPENDOOR);
@@ -956,12 +950,6 @@ static bool do_cmd_close_aux(int x, int y)
 	{
 		/* Close the door */
 		cave_set_feat(x, y, FEAT_CLOSED);
-		
-		/* Notice the chance */
-		note_spot(x, y);
-
-		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 
 		/* Sound */
 		sound(SOUND_SHUTDOOR);
@@ -1073,12 +1061,6 @@ static bool twall(int x, int y, byte feat)
 
 	/* Remove the feature */
 	cave_set_feat(x, y, feat);
-	
-	/* Notice the chance */
-	note_spot(x, y);
-
-	/* Update some things */
-	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
 
 	/* Result */
 	return (TRUE);
@@ -1267,7 +1249,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 		bool hard = FALSE;
 
 		/* Found gold */
-		if (c_ptr->feat >= FEAT_MAGMA_H) gold = TRUE;
+		if (c_ptr->feat >= FEAT_MAGMA_K) gold = TRUE;
 
 		/* Extract "quartz" flag XXX XXX XXX */
 		if ((c_ptr->feat - FEAT_MAGMA) & 0x01) hard = TRUE;

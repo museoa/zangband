@@ -430,12 +430,6 @@ static void do_cmd_wiz_feature(int feat)
 	
 	/* Change knowledge of grid */
 	parea(x, y)->feat = feat;
-	
-	/* Notice */
-	note_spot(x, y);
-
-	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
 }
 
 

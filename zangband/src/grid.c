@@ -977,11 +977,11 @@ static bool set_tunnel(int *x, int *y, bool affectwall)
 				if (cave_p(i, j)->feat == FEAT_WALL_OUTER)
 				{
 					/* Change the wall to a "solid" wall */
-					cave_set_feat(i, j, FEAT_WALL_SOLID);
+					set_feat_bold(i, j, FEAT_WALL_SOLID);
 				}
 			}
 		}
-		cave_set_feat(*x, *y, FEAT_FLOOR);
+		set_feat_bold(*x, *y, FEAT_FLOOR);
 
 		return TRUE;
 	}

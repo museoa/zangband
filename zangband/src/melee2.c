@@ -1931,7 +1931,6 @@ static void process_monster(int m_idx)
 
 	bool            do_turn;
 	bool            do_move;
-	bool            do_view;
 
 	bool            did_open_door;
 	bool            did_bash_door;
@@ -2397,7 +2396,6 @@ static void process_monster(int m_idx)
 	/* Assume nothing */
 	do_turn = FALSE;
 	do_move = TRUE;
-	do_view = FALSE;
 
 	/* Assume nothing */
 	did_open_door = FALSE;
@@ -2496,15 +2494,6 @@ static void process_monster(int m_idx)
 
 			/* Notice */
 			cave_set_feat(nx, ny, FEAT_FLOOR);
-
-			/* Note changes to viewable region */
-			if (player_can_see_bold(nx, ny))
-			{
-				do_view = TRUE;
-				
-				/* Forget the wall */
-				note_spot(nx, ny);
-			}
 		}
 		
 		else if (c_ptr->feat & 0x20)
@@ -2557,12 +2546,6 @@ static void process_monster(int m_idx)
 		{
 			/* Open the door */
 			cave_set_feat(nx, ny, FEAT_OPEN);
-
-			/* Handle viewable doors */
-			if (player_can_see_bold(nx, ny)) do_view = TRUE;
-			
-			/* Notice the change */
-			note_spot(nx, ny);
 				
 			/* Take a turn */
 			do_turn = TRUE;
@@ -2880,14 +2863,6 @@ static void process_monster(int m_idx)
 	{
 		/* Cast spell */
 		if (make_attack_spell(m_idx)) return;
-	}
-
-
-	/* Notice changes in view */
-	if (do_view)
-	{
-		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS | PU_MON_LITE);
 	}
 
 	/* Notice changes in view */

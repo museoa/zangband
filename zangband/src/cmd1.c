@@ -3024,10 +3024,6 @@ static bool run_test(void)
 				case FEAT_MAGMA:
 				case FEAT_QUARTZ:
 
-				/* Hidden treasure */
-				case FEAT_MAGMA_H:
-				case FEAT_QUARTZ_H:
-
 				/* Walls */
 				case FEAT_WALL_EXTRA:
 				case FEAT_WALL_INNER:

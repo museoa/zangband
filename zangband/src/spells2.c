@@ -999,16 +999,6 @@ bool detect_treasure(void)
 			c_ptr = area(x, y);
 			pc_ptr = parea(x, y);
 
-			/* Notice embedded gold */
-
-			/* Does "embeded" gold really exist??? */
-			if ((c_ptr->feat == FEAT_MAGMA_H) ||
-			    (c_ptr->feat == FEAT_QUARTZ_H))
-			{
-				/* Expose the gold */
-				c_ptr->feat += 0x02;
-			}
-
 			/* Magma/Quartz + Known Gold */
 			if ((c_ptr->feat == FEAT_MAGMA_K) ||
 			    (c_ptr->feat == FEAT_QUARTZ_K))
@@ -2289,30 +2279,33 @@ bool destroy_area(int x1, int y1, int r)
 				if (t < 20)
 				{
 					/* Create granite wall */
-					c_ptr->feat = FEAT_WALL_EXTRA;
+					cave_set_feat(x, y, FEAT_WALL_EXTRA);
 				}
 
 				/* Quartz */
 				else if (t < 70)
 				{
 					/* Create quartz vein */
-					c_ptr->feat = FEAT_QUARTZ;
+					cave_set_feat(x, y, FEAT_QUARTZ);
 				}
 
 				/* Magma */
 				else if (t < 100)
 				{
 					/* Create magma vein */
-					c_ptr->feat = FEAT_MAGMA;
+					cave_set_feat(x, y, FEAT_MAGMA);
 				}
 
 				/* Floor */
 				else
 				{
 					/* Create floor */
-					c_ptr->feat = FEAT_FLOOR;
+					cave_set_feat(x, y, FEAT_FLOOR);
 				}
 			}
+			
+			/* Hack - forget the square */
+			pc_ptr->feat = FEAT_NONE;
 		}
 	}
 
@@ -2330,22 +2323,6 @@ bool destroy_area(int x1, int y1, int r)
 			(void)set_blind(p_ptr->blind + rand_range(10, 20));
 		}
 	}
-
-
-	/* Mega-Hack -- Forget the view */
-	p_ptr->update |= (PU_UN_VIEW);
-
-	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
-
-	/* Update the monsters */
-	p_ptr->update |= (PU_MONSTERS);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Success */
 	return (TRUE);
@@ -2757,6 +2734,7 @@ bool earthquake(int cx, int cy, int r)
 
 			/* Access the cave grid */
 			c_ptr = area(xx, yy);
+			pc_ptr = parea(xx, yy);
 
 			/* Paranoia -- never affect player */
 			if ((yy == py) && (xx == px)) continue;
@@ -2765,7 +2743,7 @@ bool earthquake(int cx, int cy, int r)
 			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) continue;
 
 			/* Destroy the fields on the square */
-			delete_field(x, y);
+			delete_field(xx, yy);
 			
 			/* Destroy location (if valid) */
 			if (cave_valid_grid(c_ptr))
@@ -2782,51 +2760,38 @@ bool earthquake(int cx, int cy, int r)
 				if (t < 20)
 				{
 					/* Create granite wall */
-					c_ptr->feat = FEAT_WALL_EXTRA;
+					cave_set_feat(xx, yy, FEAT_WALL_EXTRA);
 				}
 
 				/* Quartz */
 				else if (t < 70)
 				{
 					/* Create quartz vein */
-					c_ptr->feat = FEAT_QUARTZ;
+					cave_set_feat(xx, yy, FEAT_QUARTZ);
 				}
 
 				/* Magma */
 				else if (t < 100)
 				{
 					/* Create magma vein */
-					c_ptr->feat = FEAT_MAGMA;
+					cave_set_feat(xx, yy, FEAT_MAGMA);
 				}
 
 				/* Floor */
 				else
 				{
 					/* Create floor */
-					c_ptr->feat = FEAT_FLOOR;
+					cave_set_feat(xx, yy, FEAT_FLOOR);
 				}
 			}
+			
+			/* Hack - forget square */
+			pc_ptr->feat = FEAT_NONE;
 		}
 	}
 
-
-	/* Mega-Hack -- Forget the view */
-	p_ptr->update |= (PU_UN_VIEW);
-
-	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
-
-	/* Update the monsters */
-	p_ptr->update |= (PU_DISTANCE);
-
 	/* Update the health bar */
 	p_ptr->redraw |= (PR_HEALTH);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 
 	/* Success */
 	return (TRUE);

@@ -1606,9 +1606,6 @@ void stair_creation(void)
 	{
 		cave_set_feat(px, py, FEAT_LESS);
 	}
-	
-	/* Notice */
-	note_spot(px, py);
 }
 
 
