@@ -219,7 +219,7 @@ extern char angband_term_name[8][16];
 extern byte angband_color_table[256][4];
 extern char angband_sound_name[SOUND_MAX][16];
 extern cave_type *cave[MAX_HGT];
-extern cave_type *(*area)(int, int);
+extern cave_type *(*area)(u16b, u16b);
 extern u16b *temp_block[WILD_BLOCK_SIZE + 1];
 extern cave_type **wild_cache[WILD_BLOCKS];
 extern wild_grid_type wild_grid;

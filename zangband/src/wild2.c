@@ -109,21 +109,21 @@ static void day_night(void)
 
 
 /* Access the old cave array. */
-static cave_type *access_cave(int y, int x)
+static cave_type *access_cave(u16b y, u16b x)
 {
 	return &cave[y][x];
 }
 
 /* Access wilderness */
-static cave_type *access_wild(int y, int x)
+static cave_type *access_wild(u16b y, u16b x)
 {
 	/*
 	 * Divide by 16 to get block.
 	 * Logical AND with 15 to get location within block.
 	 */
 
-	return &wild_grid.block_ptr[((u16b) y>>4) - wild_grid.y]
-		[((u16b) x>>4) - wild_grid.x][y & 15][x & 15];
+	return &wild_grid.block_ptr[(y>>4) - wild_grid.y]
+		[(x>>4) - wild_grid.x][y & 15][x & 15];
 }
 
 
@@ -2007,25 +2007,13 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 
 	u16b w_type;
 
-	/* Initialise temporary block */
-	clear_temp_block();
-
-	/* Boundary is at half probability */
-	set_temp_corner_val(WILD_BLOCK_SIZE * 128);
-
-	/* This is the "full" value so that the center of the block stays as normal */
-	set_temp_mid(WILD_BLOCK_SIZE * 256);
-
-	/* Generate plasma factal */
-	frac_block();
-
 	/* Blend based on height map */
 	for (j = 0; j < WILD_BLOCK_SIZE; j++)
 	{
 		for (i = 0; i < WILD_BLOCK_SIZE; i++)
 		{
-			/* Chance to blend is based on element in fractal */
-			if (randint0(WILD_BLOCK_SIZE * 256) > temp_block[j][i]) continue;
+			/* Chance to blend is 1 in 2 */
+			if (quick_rand()) continue;
 
 			/* Work out adjacent block */
 			if (i < WILD_BLOCK_SIZE / 4)

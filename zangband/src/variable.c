@@ -472,7 +472,7 @@ cave_type *cave[MAX_HGT];
  * In the wilderness, things are more complicated.
  */
 
-cave_type *(*area)(int, int);
+cave_type *(*area)(u16b, u16b);
 
 /*
  * Variables used to access the scrollable wilderness.
