@@ -437,11 +437,17 @@ bool borg_test_bad_curse(list_item *l_ptr)
 {
 	int i;
 
+	list_item temp;
+
+
 	/* Just checking */
 	if (!l_ptr) return (FALSE);
 
 	/* No borg can handle not teleporting */
 	if (KN_FLAG(l_ptr, TR_NO_TELE)) return (TRUE);
+
+	/* The borg can't keep up with this drain */
+	if (KN_FLAG(l_ptr, TR_DRAIN_EXP)) return (TRUE);
 
 	/* Only high level borgs can handle topi */
 	if (KN_FLAG(l_ptr, TR_TY_CURSE) && bp_ptr->lev < 50) return (TRUE);
@@ -452,8 +458,6 @@ bool borg_test_bad_curse(list_item *l_ptr)
 	/* This curse is no problem if all stats are sustained */
 	if (KN_FLAG(l_ptr, TR_DRAIN_STATS))
 	{
-		list_item temp;
-
 		/* Clear */
 		temp.kn_flags[1] = 0;
 
