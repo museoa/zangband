@@ -13157,12 +13157,8 @@ bool borg_flow_shop_entry(int i)
 	/* Spread the flow */
 	borg_flow_spread(250, TRUE, FALSE, FALSE);
 
-	borg_note("# About to commit flow");
-
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("shop", GOAL_MISC)) return (FALSE);
-
-	borg_note("# About to take step");
 
 	/* Take one step */
 	if (!borg_flow_old(GOAL_MISC)) return (FALSE);
