@@ -3358,14 +3358,21 @@ errr init_xpj(int argc, char *argv[])
 		ii = 1;
 		jj = (depth - 1) >> 2;
 		while (jj >>= 1) ii <<= 1;
-			
+		
+		/* Pad the scanline to a multiple of 4 bytes */
 		if (i == 0)
 		{
-			total = P_TILE_SIZE * P_TILE_SIZE * ii;
+			/* Main screen */
+			total = P_TILE_SIZE * ii;
+			total = (total + 3) & ~3;
+			total *= P_TILE_SIZE;
 		}
 		else
 		{
-			total = td->fnt->wid * td->fnt->hgt * ii;
+			/* Other terms */
+			total = td->fnt->wid * ii;
+			total = (total + 3) & ~3;
+			total *= td->fnt->hgt;
 		}
 			
 		/* Save number of bytes per pixel */

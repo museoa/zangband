@@ -2014,14 +2014,14 @@ static errr Term_pict_x11(int x, int y, int n, const byte *ap, const char *cp, c
 		c = *cp++;
 
 		/* For extra speed - cache these values */
-		x1 = (c&0x7F) * td->fnt->wid;
+		x1 = (c&0x3F) * td->fnt->wid;
 		y1 = (a&0x7F) * td->fnt->hgt;
 
 		ta = *tap++;
 		tc = *tcp++;
 
 		/* For extra speed - cache these values */
-		x2 = (tc&0x7F) * td->fnt->wid;
+		x2 = (tc&0x3F) * td->fnt->wid;
 		y2 = (ta&0x7F) * td->fnt->hgt;
 
 		/* Optimise the common case */
