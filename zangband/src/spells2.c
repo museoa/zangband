@@ -1556,7 +1556,7 @@ bool detect_monsters_living(void)
 /*
  * Detect all (string) monsters in range
  */
-bool detect_monsters_string(cptr Match)
+bool detect_monsters_string(cptr match)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -1581,7 +1581,7 @@ bool detect_monsters_string(cptr Match)
 		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect monsters with the same symbol */
-		if (strchr(Match, r_ptr->d_char))
+		if (strchr(match, r_ptr->d_char))
 		{
 			/* Update monster recall window */
 			if (p_ptr->monster_race_idx == m_ptr->r_idx)
