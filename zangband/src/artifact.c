@@ -1748,6 +1748,15 @@ bool activate_effect(object_type *o_ptr)
 				break;
 			}
 
+			case ART_ELEMENTS:
+			{
+				msg_print("The ring glows in multiple colours...");
+				if (!get_aim_dir(&dir)) return FALSE;
+				fire_ball(GF_MISSILE, dir, 400, 3);
+				o_ptr->timeout = (s16b)rand_range(250, 500);
+				break;
+			}
+			
 			case ART_RAZORBACK:
 			{
 				int num = damroll(5, 3);
@@ -2158,6 +2167,35 @@ bool activate_effect(object_type *o_ptr)
 				o_ptr->timeout = 15;
 				break;
 			}
+			
+			case ART_WHIRLWIND:
+			{
+				int y, x;
+				cave_type       *c_ptr;
+				monster_type    *m_ptr;
+			
+				msg_print("Your ball and chain swings through the air...");
+
+				for (dir = 0; dir <= 9; dir++)
+				{
+					y = py + ddy[dir];
+					x = px + ddx[dir];
+
+					/* paranoia */
+					if (!in_bounds2(x, y)) continue;
+
+					c_ptr = area(x, y);
+
+					/* Get the monster */
+					m_ptr = &m_list[c_ptr->m_idx];
+
+					/* Hack -- attack monsters */
+					if (c_ptr->m_idx && (m_ptr->ml || cave_floor_grid(c_ptr)))
+						py_attack(x, y);
+				}
+				o_ptr->timeout = rand_range(50, 100);
+				break;
+			}
 
 			case ART_FIRESTAR:
 			{
@@ -2168,9 +2206,9 @@ bool activate_effect(object_type *o_ptr)
 				break;
 			}
 
-			case ART_TARATOL:
+			case ART_ENERGY:
 			{
-				msg_print("Your mace glows bright green...");
+				msg_print("Your scythe glows bright green...");
 				if (!p_ptr->fast)
 				{
 					(void)set_fast(rand_range(20, 40));
@@ -2207,6 +2245,15 @@ bool activate_effect(object_type *o_ptr)
 				if (!get_aim_dir(&dir)) return FALSE;
 				(void)drain_life(dir, 200);
 				o_ptr->timeout = 70;
+				break;
+			}
+			
+			case ART_CATAPULT:
+			{
+				msg_print("Your sling hums...");
+				(void)set_afraid(0);
+				(void)hp_player(45);
+				o_ptr->timeout = 10;
 				break;
 			}
 

@@ -555,7 +555,11 @@ cptr item_activation(const object_type *o_ptr)
 			{
 				return "word of recall every 200 turns";
 			}
-			case ART_TARATOL:
+			case ART_WHIRLWIND:
+			{
+				return "whirlwind every 50+d50 turns";
+			}
+			case ART_ENERGY:
 			{
 				return "haste self (20+d20 turns) every 100+d100 turns";
 			}
@@ -574,6 +578,10 @@ cptr item_activation(const object_type *o_ptr)
 			case ART_LOTHARANG:
 			{
 				return "cure wounds (100) every 3+d3 turns";
+			}
+			case ART_CATAPULT:
+			{
+				return "heal (45) every 10 turns";
 			}
 			case ART_BRAND:
 			{
@@ -714,6 +722,10 @@ cptr item_activation(const object_type *o_ptr)
 			case ART_POWER:
 			{
 				return "bizarre things every 450+d450 turns";
+			}
+			case ART_ELEMENTS:
+			{
+				return "the elements (400) every 250+d250 turns";
 			}
 			case ART_DOR: case ART_TERROR:
 			{

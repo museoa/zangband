@@ -1322,10 +1322,14 @@
 #define ART_NENYA               11
 #define ART_VILYA               12
 #define ART_POWER               13
+#define ART_ELEMENTS			14
 
 /* Dragon Scale */
 #define ART_RAZORBACK           16
 #define ART_BLADETURNER         17
+
+/* Robe */
+#define ART_THAUMATURGIST		18
 
 /* Hard Armour */
 #define ART_SOULKEEPER          19
@@ -1335,10 +1339,13 @@
 #define ART_CELEBORN            23
 #define ART_ARVEDUI             24
 #define ART_CASPANION           25
+#define ART_NEMOVEBLA			26
 
 /* Soft Armour */
 #define ART_HITHLOMIR           27
 #define ART_THALKETTOTH         28
+
+/* Gap */
 
 /* Shields */
 #define ART_THORIN              30
@@ -1419,7 +1426,7 @@
 #define ART_AEGLOS              97
 #define ART_OROME               98
 #define ART_NIMLOTH             99
-#define ART_EORLINGAS           100
+#define ART_SOULSUCKER          100
 #define ART_DURIN               101
 #define ART_EONWE               102
 #define ART_BALLI               103
@@ -1437,9 +1444,9 @@
 #define ART_GROND               111
 #define ART_TOTILA              112
 #define ART_THUNDERFIST         113
-#define ART_BLOODSPIKE          114
+#define ART_WHIRLWIND           114
 #define ART_FIRESTAR            115
-#define ART_TARATOL             116
+#define ART_ENERGY              116
 #define ART_AULE                117
 #define ART_NAR                 118
 #define ART_ERIRIL              119
@@ -1447,10 +1454,14 @@
 #define ART_DEATHWREAKER        121
 #define ART_TURMIL              122
 
+/* Sling */
+#define ART_CATAPULT			123
+
 /* Bows */
 #define ART_BELTHRONDING        124
 #define ART_BARD                125
 #define ART_BRAND               126
+#define ART_MARKSMAN			127
 
 
 
@@ -2042,6 +2053,7 @@
 #define SV_RING_RES_BLINDNESS           47
 #define SV_RING_LORDLY                  48
 #define SV_RING_ATTACKS                 49
+#define SV_RING_ELEMENTS				50
 
 /* The "sval" codes for TV_STAFF */
 #define SV_STAFF_DARKNESS                0
