@@ -400,7 +400,7 @@ N:34:General Store
 G:1:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:0:0:10:0:50:0:50:0
+D:0:0:10:0:50:0:50:8
 F:2,field_action_door_store
 F:18,field_action_isweaparmour_tester
 
@@ -445,7 +445,7 @@ N:39:Magic Wares
 G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:5:5:30:0:0:100:0:0
+D:5:5:30:0:0:100:0:8
 F:2,field_action_door_store
 F:18,field_action_isbook_tester
 
@@ -470,7 +470,7 @@ N:42:Book Store
 G:5:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:8:17:35:0:0:100:0:0
+D:8:17:35:0:0:100:0:8
 F:2,field_action_door_store
 F:19,field_action_isbook_tester
 
@@ -686,7 +686,7 @@ N:66:Advanced Shieldsman
 G:2:w
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:1:10:50:0:100:0:0:8
+D:1:20:50:0:100:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isshield_tester
 
@@ -695,7 +695,7 @@ N:67:Expert Shieldsman
 G:2:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:1:20:75:0:100:0:0:8
+D:1:30:75:0:100:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isshield_tester
 
@@ -740,7 +740,7 @@ N:72:Advanced Axeman
 G:3:D
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:2:1:50:0:100:0:0:8
+D:2:20:50:0:100:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isnonsword_tester
 
@@ -848,7 +848,7 @@ N:84:Warrior Hall
 G:6:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:2:1:20:0:100:0:0:8
+D:2:1:20:0:100:0:0:0
 F:2,field_action_door_store
 F:19,field_action_isweaparmour_tester
 
@@ -857,7 +857,7 @@ N:85:Advanced Warrior Hall
 G:6:s
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:2:20:50:0:100:0:0:8
+D:2:20:50:0:100:0:0:0
 F:2,field_action_door_store
 F:19,field_action_isweaparmour_tester
 
@@ -866,7 +866,7 @@ N:86:Expert Warrior Hall
 G:6:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:2:50:75:0:100:0:0:8
+D:2:40:75:0:100:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isweaparmour_tester
 
@@ -911,7 +911,7 @@ N:91:Expensive Clothes Store
 G:0:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:0:20:50:0:80:0:20:24
+D:0:0:50:0:80:0:20:24
 F:2,field_action_door_store
 F:19,field_action_isclothes_tester
 
@@ -920,7 +920,7 @@ N:92:Heavy Armoury
 G:2:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:1:1:25:0:100:0:0:8
+D:1:1:30:0:100:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isphardarmour_tester
 
@@ -929,7 +929,7 @@ N:93:Advanced Heavy Armoury
 G:2:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:1:1:50:20:80:0:0:8
+D:1:20:60:20:80:0:0:8
 F:2,field_action_door_store
 F:19,field_action_isphardarmour_tester
 
@@ -1082,7 +1082,7 @@ N:110:Expensive Figurine Store
 G:5:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:5:50:90:100:0:0:0:24
+D:5:50:90:100:0:0:0:16
 F:2,field_action_door_store
 F:19,field_action_isfigurine_tester
 
@@ -1091,7 +1091,7 @@ N:111:Potion Store
 G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:4:1:30:0:0:100:0:8
+D:4:1:30:0:0:100:0:0
 F:2,field_action_door_store
 F:19,field_action_ispotion_tester
 
@@ -1100,7 +1100,7 @@ N:112:Cultured Potion Store
 G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:4:20:50:0:0:100:0:8
+D:4:20:40:0:0:100:0:24
 F:2,field_action_door_store
 F:19,field_action_ispotion_tester
 
@@ -1136,7 +1136,7 @@ N:116:Scroll Store
 G:5:W
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:8:1:30:0:0:100:0:8
+D:8:1:30:0:0:100:0:0
 F:2,field_action_door_store
 F:19,field_action_isscroll_tester
 
@@ -1181,7 +1181,7 @@ N:121:Magic Store
 G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:5:1:30:0:0:100:0:8
+D:5:1:20:0:0:100:0:8
 F:2,field_action_door_store
 F:19,field_action_isrecharge_tester
 
@@ -1190,7 +1190,7 @@ N:122:Crafted Magic Store
 G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:5:20:50:0:0:100:0:8
+D:5:20:40:0:0:100:0:8
 F:2,field_action_door_store
 F:19,field_action_isrecharge_tester
 
@@ -1199,7 +1199,7 @@ N:123:Expensive Magic Store
 G:6:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:5:40:70:0:0:100:0:24
+D:5:40:60:0:0:100:0:24
 F:2,field_action_door_store
 F:19,field_action_isrecharge_tester
 
