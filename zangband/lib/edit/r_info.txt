@@ -105,6 +105,7 @@
 # G: symbol : color
 # I: speed : hit points : vision : armor class : alertness
 # W: depth : rarity : unused (always 0) : experience for kill
+# O: treasure : combat items: magic items
 # B: attack method : attack effect : damage
 # S: spell frequency |
 # S: spell type | spell type | etc
@@ -14742,3 +14743,46 @@ F:ANIMAL | FRIENDS | FRIENDLY | WILD_GRASS |
 F:DROP_CORPSE | DROP_SKELETON |
 F:STUPID | EMPTY_MIND | RAND_50 | RAND_25
 D:Awww, look at the sheep isn't it cute...
+
+N:890:Warp drake
+G:d:o
+I:110:50d8:25:55:15
+W:55:5:0:34500
+O:40:50:10
+B:CLAW:HURT:2d5
+B:CLAW:HURT:2d5
+B:BITE:HURT:2d8
+F:FORCE_SLEEP | FORCE_MAXHP | DUN_CAVERN | WILD_FOREST2
+F:ONLY_ITEM | DROP_1D2 | DROP_GOOD |
+F:INVISIBLE | ATTR_CLEAR |
+F:CAN_FLY | PASS_WALL |
+F:DRAGON | NO_CONF | NO_SLEEP |
+F:WEIRD_MIND |
+F:RES_NEXU | RES_TELE |
+S:1_IN_6 |
+S:BLINK | TPORT | TELE_TO | TELE_AWAY | TELE_LEVEL |
+S:BR_NEXU | BR_GRAV |
+D:A vaguely dragon-shaped distortion in the ether; it shimmers
+D:like a heat haze as you study it carefully.
+
+N:891:Great Dimensional Wyrm
+G:D:G
+I:120:16d125:25:55:15
+W:70:6:0:218000
+O:50:50:0
+B:CLAW:HURT:6d15
+B:CLAW:HURT:6d15
+B:BITE:HURT:8d15
+F:FORCE_SLEEP | FORCE_MAXHP | DUN_CAVERN | WILD_FOREST1 | WILD_GRASS
+F:ONLY_ITEM | DROP_3D2 |
+F:INVISIBLE | ATTR_CLEAR | DROP_GOOD |
+F:CAN_FLY | PASS_WALL | POWERFUL | MOVE_BODY |
+F:SMART | WEIRD_MIND |
+F:DRAGON | NO_CONF | NO_SLEEP |
+F:RES_NEXU | RES_TELE |
+S:1_IN_4 |
+S:BR_GRAV | BR_INER | BR_NEXU | BR_TIME |
+S:HASTE | SLOW | HOLD |
+S:BLINK | TPORT | TELE_TO | TELE_AWAY | TELE_LEVEL |
+D:This immense, vaguely dragon-shaped distortion in the ether has
+D:mastered the magics of both space and time.

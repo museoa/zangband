@@ -26,7 +26,7 @@ M:A:128
 M:E:128
 
 # Maximum number of monster races
-M:R:890
+M:R:892
 
 # Maximum number of vaults
 M:V:126
