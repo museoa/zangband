@@ -575,8 +575,6 @@ proc angband_initialized {} {
 	Source library texist.tcl
 	angband_startup "    toplevel.tcl"
 	Source library toplevel.tcl
-#	angband_startup "    utils.tcl"
-#	Source library utils.tcl
 	angband_startup "    window-manager.tcl"
 	Source library window-manager.tcl
 

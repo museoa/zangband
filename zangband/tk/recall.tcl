@@ -445,52 +445,6 @@ proc NSRecall::Close {oop} {
 	return
 }
 
-# NSRecall::RecallArtifact --
-#
-#	Show info about an artifact.
-#
-# Arguments:
-#	arg1					about arg1
-#
-# Results:
-#	What happened.
-
-proc NSRecall::RecallArtifact {a_idx} {
-
-	variable Priv
-
-	if {![Value recall,show]} return
-
-	# Hack -- Get the object id
-	set oop [Global recall,oop]
-	
-	if {[string length [Info $oop hook]]} return
-
-	# Get the icon
-	set icon [angband a_info info $a_idx icon]
-
-	# Get the name
-	set name [angband a_info info $a_idx object_desc]
-
-	# Get the memory
-	set memory [angband a_info info $a_idx memory]
-
-	# Get the color
-	set k_idx [angband a_info info $a_idx k_idx]
-	set tval [angband k_info set $k_idx tval]
-	set color [default_tval_to_attr $tval]
-
-	# Set the text
-	SetText $oop $icon $color $name $memory
-
-	set Priv(icon,to) artifact
-	set Priv(icon,toindex) $a_idx
-	set Priv(icon,valid) 1
-	set Priv(icon,known) 0
-
-	return
-}
-
 
 # NSRecall::RecallMindcraft --
 #

@@ -33,7 +33,6 @@ proc NSDebugAlloc::InitModule {} {
 
 	MsgCatInit know
 
-	lappend Priv(hook) alloc_hook_artifact [mc Artifacts]
 	lappend Priv(hook) alloc_hook_monster [mc Monsters]
 	lappend Priv(hook) alloc_hook_object [mc Objects]
 
@@ -970,119 +969,6 @@ proc NSDebugAlloc::Configure {oop canvas} {
 		set right [expr {($canvasWidth - 1) - 4}]
 		set coords [lreplace $coords 0 0 $right]
 		eval $canvas coords $itemId $coords
-	}
-
-	return
-}
-
-proc NSDebugAlloc::alloc_hook_artifact {oop message args} {
-
-	switch -- $message {
-
-		set_list_group {
-
-			set canvistId [Info $oop group,canvistId]
-
-			# Collect info for each row
-			set itemList {}
-
-			set groupMatch {}
-			set groupIndex -1
-
-			foreach {title findSpec} [Global groups,a_info] {
-
-				incr groupIndex
-
-				# Find the last artifact in the group
-				set match [eval angband a_info find -limit 1 \
-					-backwards $findSpec]
-
-				# Require some artifacts (must consider random artifacts)
-				if {![llength $match]} continue
-
-				# Get the icon
-				set icon [angband a_info info [lindex $match 0] icon]
-
-				# Collect info for each row
-				lappend itemList [list $icon [mc $title]]
-
-				lappend groupMatch $groupIndex
-			}
-
-			# Add each row to the list
-			NSCanvist::InsertMany $canvistId end $itemList
-
-			Info $oop group,match $groupMatch
-		}
-
-		set_list_member {
-
-			set row [lindex $args 0]
-
-			set canvistId [Info $oop member,canvistId]
-			set group [lindex [Info $oop group,match] $row]
-
-			set findSpec [lindex [Global groups,a_info] [expr {$group * 2 + 1}]]
-
-			# Get a list of monsters in the group
-			set match [eval angband a_info find $findSpec]
-
-			# Collect info for each row
-			set itemList {}
-
-			# Add each match to the list
-			foreach index $match {
-		
-				# Get the icon and name
-				set icon [angband a_info info $index icon]
-				set name [angband a_info info $index object_desc]
-
-				# Collect info for each row
-				lappend itemList [list $icon $name]
-			}
-
-			# Add each row to the list
-			NSCanvist::InsertMany $canvistId end $itemList
-
-			# Keep a list of matching indexes
-			Info $oop member,match $match
-		}
-
-		select_member {
-			set row [lindex $args 0]
-			set a_idx [lindex [Info $oop member,match] $row]
-			[Info $oop win].statusBar itemconfigure t2 -text #$a_idx
-			NSRecall::RecallArtifact $a_idx
-		}
-
-		allocate {
-			set row [Info $oop member,current]
-			set a_idx [lindex [Info $oop member,match] $row]
-			StatusBar $oop "Allocate artifact #$a_idx" 1
-			debug create_artifact $a_idx
-			angband keypress " "
-		}
-
-		group_names {
-			set result {}
-			foreach {title findSpec} [Global groups,a_info] {
-				if {[llength [eval angband a_info find -limit 1 $findSpec]]} {
-					lappend result $title
-				}
-			}
-			return $result
-		}
-
-		member_name {
-			return [angband a_info info [lindex $args 0] object_desc]
-		}
-
-		member_list {
-			set row [lindex $args 0]
-			set group [lindex [Info $oop group,match] $row]
-			set findSpec [lindex [Global groups,a_info] [expr {$group * 2 + 1}]]
-			return [eval angband a_info find $findSpec]
-		}
 	}
 
 	return
