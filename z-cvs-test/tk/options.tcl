@@ -58,7 +58,7 @@ proc NSOptions::InitModule {} {
 	lappend Priv(page) Other
 
 	# Hack -- Verify that all displayed options are valid
-	if {$::DEBUG} {
+	if {1} {
 		foreach page $Priv(page) {
 			foreach option [GetPage $page] {
 				Setting $option
@@ -899,6 +899,8 @@ proc NSOptions::SetList {oop page} {
 #	What happened.
 
 proc NSOptions::GetPage {page} {
+
+	variable optionList
 
 	switch -- $page {
 
