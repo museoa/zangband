@@ -1587,11 +1587,10 @@ void py_attack(int y, int x)
 		msg_format("You've found %s!", m_name2);
 	}
 
-	/* Stop if friendly */
-	if (!is_hostile(m_ptr) &&
-	    !(p_ptr->stun || p_ptr->confused || p_ptr->image ||
-	    ((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero) ||
-	    !m_ptr->ml))
+	/* Stop if friendly and visible */
+	if (!is_hostile(m_ptr) && !p_ptr->stun && !p_ptr->confused
+		 && !p_ptr->image && !((p_ptr->muta2 & MUT2_BERS_RAGE) && p_ptr->shero)
+		  && m_ptr->ml)
 	{
 		if (!inventory[INVEN_WIELD].xtra_name)
 		{
