@@ -3116,6 +3116,13 @@
 
 
 /*
+ * Used to see if square is transparent.
+ * Trees now block sight only half the time.
+ */
+#define cave_half_bold(Y,X) \
+	((cave[Y][X].feat == FEAT_TREES)&&(quick_rand()))
+
+/*
  * Determine if a "legal" grid is a "clean" floor grid
  *
  * Line 1 -- forbid non-floors
@@ -3186,6 +3193,12 @@
  */
 #define cave_floor_grid(C) \
     (!((C)->feat & 0x20))
+
+/*
+ * True half the time for trees. (Block line of sight half the time.)
+ */
+#define cave_half_grid(C) \
+    (((C)->feat == FEAT_TREES)&&(quick_rand()))
 
 
 /*

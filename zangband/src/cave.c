@@ -2399,7 +2399,7 @@ void update_lite(void)
 	if (p_ptr->cur_lite >= 2)
 	{
 		/* South of the player */
-		if (cave_floor_bold(py+1, px))
+		if ((cave_floor_bold(py+1, px))||(cave_half_bold(py+1, px)))
 		{
 			cave_lite_hack(py+2, px);
 			cave_lite_hack(py+2, px+1);
@@ -2407,7 +2407,7 @@ void update_lite(void)
 		}
 
 		/* North of the player */
-		if (cave_floor_bold(py-1, px))
+		if ((cave_floor_bold(py-1, px))||(cave_half_bold(py-1, px)))
 		{
 			cave_lite_hack(py-2, px);
 			cave_lite_hack(py-2, px+1);
@@ -2415,7 +2415,7 @@ void update_lite(void)
 		}
 
 		/* East of the player */
-		if (cave_floor_bold(py, px+1))
+		if ((cave_floor_bold(py, px+1))||(cave_half_bold(py, px+1)))
 		{
 			cave_lite_hack(py, px+2);
 			cave_lite_hack(py+1, px+2);
@@ -2423,7 +2423,7 @@ void update_lite(void)
 		}
 
 		/* West of the player */
-		if (cave_floor_bold(py, px-1))
+		if ((cave_floor_bold(py, px-1))||(cave_half_bold(py, px-1)))
 		{
 			cave_lite_hack(py, px-2);
 			cave_lite_hack(py+1, px-2);
@@ -2443,25 +2443,25 @@ void update_lite(void)
 		if (p > 5) p = 5;
 
 		/* South-East of the player */
-		if (cave_floor_bold(py+1, px+1))
+		if ((cave_floor_bold(py+1, px+1))||(cave_half_bold(py+1, px+1)))
 		{
 			cave_lite_hack(py+2, px+2);
 		}
 
 		/* South-West of the player */
-		if (cave_floor_bold(py+1, px-1))
+		if ((cave_floor_bold(py+1, px-1))||(cave_half_bold(py+1, px-1)))
 		{
 			cave_lite_hack(py+2, px-2);
 		}
 
 		/* North-East of the player */
-		if (cave_floor_bold(py-1, px+1))
+		if ((cave_floor_bold(py-1, px+1))||(cave_half_bold(py-1, px+1)))
 		{
 			cave_lite_hack(py-2, px+2);
 		}
 
 		/* North-West of the player */
-		if (cave_floor_bold(py-1, px-1))
+		if ((cave_floor_bold(py-1, px-1))||(cave_half_bold(py-1, px-1)))
 		{
 			cave_lite_hack(py-2, px-2);
 		}
@@ -2635,8 +2635,8 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
 
 
 	/* Check for walls */
-	f1 = (cave_floor_grid(g1_c_ptr));
-	f2 = (cave_floor_grid(g2_c_ptr));
+	f1 = (cave_floor_grid(g1_c_ptr))||(cave_half_grid(g1_c_ptr));
+	f2 = (cave_floor_grid(g2_c_ptr))||(cave_half_grid(g2_c_ptr));
 
 	/* Totally blocked by physical walls */
 	if (!f1 && !f2) return (TRUE);
@@ -2655,7 +2655,7 @@ static bool update_view_aux(int y, int x, int y1, int x1, int y2, int x2)
 
 
 	/* Check for walls */
-	wall = (!cave_floor_grid(c_ptr));
+	wall = (!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr));
 
 
 	/* Check the "ease" of visibility */
@@ -2898,7 +2898,7 @@ void update_view(void)
 		c_ptr = &cave[y+d][x+d];
 		c_ptr->info |= (CAVE_XTRA);
 		cave_view_hack(c_ptr, y+d, x+d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
 	}
 
 	/* Scan south-west */
@@ -2907,7 +2907,7 @@ void update_view(void)
 		c_ptr = &cave[y+d][x-d];
 		c_ptr->info |= (CAVE_XTRA);
 		cave_view_hack(c_ptr, y+d, x-d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
 	}
 
 	/* Scan north-east */
@@ -2916,7 +2916,7 @@ void update_view(void)
 		c_ptr = &cave[y-d][x+d];
 		c_ptr->info |= (CAVE_XTRA);
 		cave_view_hack(c_ptr, y-d, x+d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
 	}
 
 	/* Scan north-west */
@@ -2925,7 +2925,7 @@ void update_view(void)
 		c_ptr = &cave[y-d][x-d];
 		c_ptr->info |= (CAVE_XTRA);
 		cave_view_hack(c_ptr, y-d, x-d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
 	}
 
 
@@ -2937,7 +2937,7 @@ void update_view(void)
 		c_ptr = &cave[y+d][x];
 		c_ptr->info |= (CAVE_XTRA);
 		cave_view_hack(c_ptr, y+d, x);
-		if (!cave_floor_grid(c_ptr)) break;
+		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
 	}
 
 	/* Initialize the "south strips" */
@@ -2949,7 +2949,7 @@ void update_view(void)
 		c_ptr = &cave[y-d][x];
 		c_ptr->info |= (CAVE_XTRA);
 		cave_view_hack(c_ptr, y-d, x);
-		if (!cave_floor_grid(c_ptr)) break;
+		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
 	}
 
 	/* Initialize the "north strips" */
@@ -2961,7 +2961,7 @@ void update_view(void)
 		c_ptr = &cave[y][x+d];
 		c_ptr->info |= (CAVE_XTRA);
 		cave_view_hack(c_ptr, y, x+d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
 	}
 
 	/* Initialize the "east strips" */
@@ -2973,7 +2973,7 @@ void update_view(void)
 		c_ptr = &cave[y][x-d];
 		c_ptr->info |= (CAVE_XTRA);
 		cave_view_hack(c_ptr, y, x-d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if ((!cave_floor_grid(c_ptr))&&(!cave_half_grid(c_ptr))) break;
 	}
 
 	/* Initialize the "west strips" */
