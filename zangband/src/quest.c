@@ -989,6 +989,8 @@ void reward_quest(quest_type *q_ptr)
 			{
 				msgf("Still looking?");
 			}
+			
+			break;
 		}
 		
 		case QUEST_TYPE_BOUNTY:
@@ -1021,6 +1023,8 @@ void reward_quest(quest_type *q_ptr)
 			{
 				msgf("Still looking for them?");
 			}
+			
+			break;
 		}
 		
 		case QUEST_TYPE_MESSAGE:
@@ -1052,6 +1056,8 @@ void reward_quest(quest_type *q_ptr)
 			{
 				msgf("Please deliver it as soon as possible!");
 			}
+			
+			break;
 		}
 
 		
