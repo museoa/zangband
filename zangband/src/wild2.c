@@ -3976,3 +3976,26 @@ void wipe_all_list(void)
 	in_bounds2 = NULL;
 	in_boundsp = NULL;
 }
+
+/*
+ * Return the building name given a building "type"
+ */
+cptr building_name(byte build_type)
+{
+	/* Must be static so we can return it */
+	static char name[80];
+
+	u16b field_num;
+
+	/* Start off by clearing the name from previous calls */
+	memset(name, 0, 80);
+
+	/* Look up the field type */
+	field_num = wild_build[build_type].field;
+
+	/* Find the name of the building */
+	strcpy(name, t_info[field_num].name);
+
+	return name;
+
+}

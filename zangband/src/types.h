@@ -1735,6 +1735,7 @@ struct place_type
 	byte gates_y[MAX_GATES];
 
 	char name[T_NAME_LEN];	/* Town name */
+
 };
 
 /* Dungeons */

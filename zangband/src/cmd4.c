@@ -3712,6 +3712,114 @@ static void do_cmd_knowledge_notes(void)
 	(void)show_file(fname, "Notes", 0, 0);
 }
 
+/*
+ * Display information about wilderness areas
+ */
+static void do_cmd_knowledge_wild(void)
+{
+	int k , j;
+
+	FILE *fff;
+
+	char place_info[1024];
+	char stores_info[2048] = "";
+
+	char file_name[1024];
+
+	char build_name[80];
+
+	bool stairs_exist = FALSE;
+
+	bool visited = FALSE;
+
+	/* Open a temporary file */
+	fff = my_fopen_temp(file_name, 1024);
+
+	/* Failure */
+	if (!fff) return;
+
+	/* Cycle through the places */
+	for (k = 1; k < place_count; k++)
+	{
+
+		/* Is this a town? */
+		if (!place[k].quest_num)
+		{
+			/* Hack -- determine the town has been visited */
+			visited = FALSE;
+
+			for (j = 0; j < place[k].numstores; j++)
+			{
+				/* Stores are not given coordinates until you visit a town */
+				if (place[k].store[j].x !=0 && place[k].store[j].y !=0)
+				{
+					visited = TRUE;
+				}
+			}
+
+			/* Build a buffer with information (if visited, and if it is a town)*/
+			if (visited) 
+			{
+
+				/* Clear stores and place information */
+				memset(stores_info, 0, 2048);
+				memset(place_info, 0, 1024);
+				stairs_exist = FALSE;
+
+				/* Build stores information */
+				for (j = 0; j < place[k].numstores; j++)
+				{
+				
+					/* Clear building */
+					memset(build_name, 0, 80);
+
+					/* Extract name of building */
+					strcpy(build_name, building_name(place[k].store[j].type));
+
+					/* Make a string, but only if this is a real building */
+					if (strcmp(build_name, "Nothing"))
+					{
+						strcat(stores_info, "     ");
+						strcat(stores_info, build_name);
+						strcat(stores_info, "\n");
+					}
+
+					/* Note if there are stairs in this town */
+					if (place[k].store[j].type == BUILD_STAIRS)
+					{
+					stairs_exist = TRUE;
+					}
+			       
+				}
+
+				/* Build town information */
+				if (stairs_exist)
+				{
+					sprintf(place_info, "%s -- Stairs\n",place[k].name);
+				}
+				else
+				{
+					sprintf(place_info, "%s\n",place[k].name);
+				}
+
+				/* Write to file */
+				fprintf(fff, place_info);
+				fprintf(fff, stores_info);
+				fprintf(fff, "\n");
+			}
+		}
+	}
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Display the file contents */
+	(void)show_file(file_name, "Towns", 0, 0);
+
+	/* Remove the file */
+	(void)fd_kill(file_name);
+	
+}
 
 /*
  * Interact with "knowledge"
@@ -3745,6 +3853,8 @@ void do_cmd_knowledge(void)
 		/* prt("(7) Display virtues", 10, 5); */
 		if (take_notes)
 			prt("(8) Display notes", 5, 11);
+		if (!vanilla_town)
+			prt("(9) Display wilderness places", 5, 12);
 
 		/* Prompt */
 		prt("Command: ", 0, 13);
@@ -3806,6 +3916,14 @@ void do_cmd_knowledge(void)
 					do_cmd_knowledge_notes();
 				else
 					bell("You have not turned on note taking!");
+				break;
+			}
+			case '9':
+			{
+				if (!vanilla_town)
+					do_cmd_knowledge_wild();
+				else
+					bell("You do not have a wilderness!");
 				break;
 			}
 			default:

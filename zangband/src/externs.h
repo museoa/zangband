@@ -1092,6 +1092,7 @@ extern void init_wild_cache(void);
 extern void shift_in_bounds(int *x, int *y);
 extern void change_level(int);
 extern void wipe_all_list(void);
+extern cptr building_name(byte build_type);
 
 /* avatar.c */
 extern cptr virtue[MAX_VIRTUE];
