@@ -3454,9 +3454,9 @@ static s32b borg_power_aux3(void)
 
 
 	/*** Reward powerful armor ***/
-	value += 2000 * MIN(bp_ptr->ac, 15);
-	value += 1500 * MIN_FLOOR(bp_ptr->ac, 15, 75);
-	value += 500 * MIN_FLOOR(bp_ptr->ac, 75, 200);
+	value += 200 * MIN(bp_ptr->ac, 15);
+	value += 150 * MIN_FLOOR(bp_ptr->ac, 15, 75);
+	value += 50 * MIN_FLOOR(bp_ptr->ac, 75, 200);
 
 	/*** Penalize various things ***/
 
@@ -3553,6 +3553,10 @@ static s32b borg_power_aux3(void)
 
 		/* Skip empty items */
 		if (!l_ptr) continue;
+
+		/* Avoid wearing two Rings of Light and Dark Resistance */
+		if (l_ptr->tval == TV_RING &&
+			k_info[l_ptr->k_idx].sval == SV_RING_RES_LD) continue;
 
 		/* Good to have one item with multiple high resists */
 		multibonus = (KN_FLAG(l_ptr, TR_RES_POIS) +
@@ -3849,7 +3853,7 @@ static s32b borg_power_aux4(void)
 
 	/* Take them home too */
 	value += 500 * MIN_FLOOR(bp_ptr->able.ccw, 10, 20);
-	value += 100 * MIN(bp_ptr->able.csw, 99);
+	if (bp_ptr->mhp < 500) value += 100 * MIN(bp_ptr->able.csw, 99);
 	if (bp_ptr->mhp < 250) value += 50 * MIN(bp_ptr->able.clw, 99);
 
 	/* If the borg has no confucius resist */

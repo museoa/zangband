@@ -530,6 +530,7 @@ extern int dim_door_x;
 
 extern int bad_obj_x[50];	/* Dropped cursed artifact at location (X) */
 extern int bad_obj_y[50];	/* Dropped cursed artifact at location (Y) */
+extern int bad_obj_n;
 
 /*
  * Some estimated state variables

@@ -33,14 +33,11 @@ extern bool borg_enchanting(void);
 extern bool borg_recharging(void);
 extern bool borg_destroy(void);
 extern bool borg_obj_star_id_able(list_item *l_ptr);
-extern bool borg_test_stuff(void);
-extern bool borg_test_stuff_pseudo(void);
-extern bool borg_test_stuff_star(void);
+extern bool borg_id_meta(void);
 extern bool borg_wear_stuff(void);
 extern bool borg_unwear_stuff(void);
 extern bool borg_wears_cursed(bool heavy);
 extern bool borg_play_magic(bool bored);
-extern bool borg_remove_stuff(void);
 extern bool borg_wear_recharge(void);
 
 /*

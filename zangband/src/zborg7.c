@@ -1685,26 +1685,21 @@ static void borg_destroy_item(list_item *l_ptr, int slot, int number)
 	}
 	else
 	{
-		int a;
-
 		/* worthless artifacts are dropped. */
 		borg_keypress('d');
 
 		/*
-		 * Mark the spot that the object was dropped so that
-		 * it will not be picked up again.
+		 * Mark the spot that the object was dropped so that it will not be
+		 * picked up again.  The wrap around is ok because the dropped object
+		 * is not always right at the players feet, because of doors, stairs
+		 * or other objects.  As one bad object can spawn multiple entries in
+		 * this list, it is ok to start over.
 		 */
-		for (a = 0; a < 50; a++)
-		{
-			if (bad_obj_x[a] != -1) continue;
-			if (bad_obj_y[a] != -1) continue;
+		bad_obj_n = (bad_obj_n + 1) % 50;
 
-			bad_obj_x[a] = c_x;
-			bad_obj_y[a] = c_y;
-			borg_note_fmt
-				("# Crappy artifact at %d,%d", bad_obj_x[a], bad_obj_y[a]);
-			break;
-		}
+		bad_obj_x[bad_obj_n] = c_x;
+		bad_obj_y[bad_obj_n] = c_y;
+		borg_note_fmt("# Crappy artifact at %d,%d", c_x, c_y);
 	}
 
 	borg_keypress(I2A(slot));
@@ -2027,7 +2022,7 @@ bool borg_destroy(void)
  * the preference for identifying items that appear early in the pack.
  * Also, preventing inventory motion would allow proper time-stamping.
  */
-bool borg_test_stuff(void)
+static bool borg_test_stuff(void)
 {
 	int i, b_i = -1;
 	s32b v, b_v = -1;
@@ -2036,16 +2031,13 @@ bool borg_test_stuff(void)
 
 	bool inven = FALSE;
 
-	/* don't ID stuff when you can't recover spent spell point immediately */
-	if (bp_ptr->csp < 50  &&
-		!borg_check_rest() &&
-		(borg_spell_legal(REALM_ARCANE, 3, 2) ||
-		borg_spell_legal(REALM_SORCERY, 1, 1) ||
-		borg_mindcr_legal(MIND_PSYCHOMETRY, 25)))
-		return (FALSE);
-
-	/* No ID if in danger */
-	if (borg_danger(c_x, c_y, 1, TRUE) > 1) return (FALSE);
+	/* Is there a way to identify things? */
+	if (!borg_equips_rod_fail(SV_ROD_IDENTIFY) &&
+		!borg_spell_legal_fail(REALM_ARCANE, 3, 2, 60) &&
+		!borg_spell_legal_fail(REALM_SORCERY, 1, 1, 60) &&
+		!borg_mindcr_legal_fail(MIND_PSYCHOMETRY, 25, 60) &&
+		!borg_equips_staff_fail(SV_STAFF_IDENTIFY) &&
+		!borg_read_scroll_fail(SV_SCROLL_IDENTIFY)) return (FALSE);
 
 	/* Look for an item to identify (equipment) */
 	for (i = 0; i < equip_num; i++)
@@ -2227,33 +2219,25 @@ bool borg_test_stuff(void)
  * an id-spell (or rod) then all identifying is done with *id*.  This way the
  * borg does not have to worry about id-ing so much.
  */
-bool borg_test_stuff_star(void)
+static bool borg_test_stuff_star(void)
 {
 	int i, b_i = -1;
 
 	list_item *l_ptr;
 
-	bool inven = FALSE;
-
-	/* don't ID stuff when you can't recover spent spell point immediately */
-	if (bp_ptr->csp < 50 &&
-		!borg_check_rest() &&
-		(borg_spell_legal(REALM_SORCERY, 1, 7) ||
-		borg_spell_legal(REALM_NATURE, 2, 5) ||
-		borg_spell_legal(REALM_DEATH, 3, 2) ||
-		borg_spell_legal(REALM_TRUMP, 3, 1) ||
-		borg_spell_legal(REALM_LIFE, 3, 5)))
-		return (FALSE);
-
-	/* No ID if in danger */
-	if (borg_danger(c_x, c_y, 1, TRUE) > 1) return (FALSE);
+	/* Do we have the ability? */
+	if (!borg_spell_legal(REALM_SORCERY, 1, 7) &&
+		!borg_spell_legal(REALM_NATURE, 2, 5) &&
+		!borg_spell_legal(REALM_DEATH, 3, 2) &&
+		!borg_spell_legal(REALM_TRUMP, 3, 1) &&
+		!borg_spell_legal(REALM_LIFE, 3, 5) &&
+		!borg_read_scroll_fail(SV_SCROLL_STAR_IDENTIFY)) return (FALSE);
 
 	/* Look for an item to identify (equipment) */
 	for (i = 0; i < equip_num + inven_num; i++)
 	{
 		if (i >= equip_num)
 		{
-			inven = TRUE;
 			l_ptr = &inventory[i - equip_num];
 		}
 		else
@@ -2277,14 +2261,7 @@ bool borg_test_stuff_star(void)
 			continue;
 
 		/* Track it */
-		if (inven)
-		{
-			b_i = i - equip_num;
-		}
-		else
-		{
-			b_i = i;
-		}
+		b_i = i;
 
 		break;
 	}
@@ -2295,12 +2272,15 @@ bool borg_test_stuff_star(void)
 		if (borg_spell(REALM_SORCERY, 1, 7) ||
 			borg_spell(REALM_NATURE, 2, 5) ||
 			borg_spell(REALM_DEATH, 3, 2) ||
-			borg_spell(REALM_LIFE, 3, 5) ||
 			borg_spell(REALM_TRUMP, 3, 1) ||
+			borg_spell(REALM_LIFE, 3, 5) ||
 			borg_read_scroll(SV_SCROLL_STAR_IDENTIFY))
 		{
-			if (inven)
+			if (b_i >= equip_num)
 			{
+				/* Adapt to the inventory */
+				b_i -= equip_num;
+
 				l_ptr = &inventory[b_i];
 			}
 			else
@@ -2347,34 +2327,149 @@ bool borg_test_stuff_star(void)
 	return (FALSE);
 }
 
-/* use the Mindcrafter Psychometry power to pesudo-id items */
-bool borg_test_stuff_pseudo(void)
+
+/* This function (copied from dungeon.c) delivers the chance for pseudo-id. */
+static int borg_calc_pseudo(void)
+{
+	int difficulty;
+
+	/* Based on race get the basic feel factor. */
+	switch (borg_class)
+	{
+		case CLASS_WARRIOR:
+		{
+			/* Good (heavy) sensing */
+			difficulty = 9000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_MAGE:
+		case CLASS_HIGH_MAGE:
+		{
+			/* Very bad (light) sensing */
+			difficulty = 240000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_PRIEST:
+		{
+			/* Good (light) sensing */
+			difficulty = 10000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_ROGUE:
+		{
+			/* Okay sensing */
+			difficulty = 20000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_RANGER:
+		{
+			/* Bad (heavy) sensing */
+			difficulty = 95000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_PALADIN:
+		{
+			/* Bad (heavy) sensing */
+			difficulty = 77777L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_WARRIOR_MAGE:
+		{
+			/* Bad sensing */
+			difficulty = 75000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_MINDCRAFTER:
+		{
+			/* Bad sensing */
+			difficulty = 55000L;
+	
+			/* Done */
+			break;
+		}
+
+		case CLASS_CHAOS_WARRIOR:
+		{
+			/* Bad (heavy) sensing */
+			difficulty = 80000L;
+
+			/* Done */
+			break;
+		}
+
+		case CLASS_MONK:
+		{
+			/* Okay sensing */
+			difficulty = 20000L;
+
+			/* Done */
+			break;
+		}
+
+		default:
+		{
+			/* Paranoia */
+			difficulty = 0;
+		}
+	}
+
+	/* Factor in the sensing ability */
+	difficulty /= MAX(bp_ptr->skill_sns, 1);
+
+	/* Rescale larger by a facter of 25 */
+	difficulty *= 25;
+
+	/* Sensing gets better as you get more experienced */
+	difficulty /= p_ptr->lev * p_ptr->lev + 40;
+
+	/* Give the answer */
+	return (difficulty);
+}
+
+/* 
+ * use the Mindcrafter Psychometry power to pseudo-id items
+ * or determine if it is smart to wait it out
+ */
+static bool borg_test_stuff_pseudo(void)
 {
 	int i, b_i = -1;
 
 	list_item *l_ptr;
 
-	bool inven = FALSE;
-
-	/* Only valid for mindcrafters between lvl 14 and 25 */
-	if (borg_class != CLASS_MINDCRAFTER || 
-		bp_ptr->lev < 15 || bp_ptr->lev > 24) return (FALSE);
-
-	/* don't ID stuff when you can't recover spent spell point immediately */
-	if (bp_ptr->csp < 50 &&
-		!borg_check_rest() &&
-		borg_mindcr_legal(MIND_PSYCHOMETRY, 15))
-		return (FALSE);
-
-	/* No ID if in danger */
-	if (borg_danger(c_x, c_y, 1, TRUE) > 1) return (FALSE);
+	/* Can the borg cast the spell? */
+	if (!borg_mindcr_legal_fail(MIND_PSYCHOMETRY, 15, 60) ||
+		bp_ptr->lev > 24)
+	{
+		/* Is the pseudo id likely to kick in by itself? */
+		if (borg_calc_pseudo() > 50) return (FALSE);
+	}
 
 	/* Look for an item to pseudo identify */
 	for (i = 0; i < equip_num + inven_num; i++)
 	{
 		if (i >= equip_num)
 		{
-			inven = TRUE;
 			l_ptr = &inventory[i - equip_num];
 		}
 		else
@@ -2395,59 +2490,85 @@ bool borg_test_stuff_pseudo(void)
 		if (strstr(l_ptr->o_name, "{")) continue;
 
 		/* Track it */
-		if (inven)
-		{
-			b_i = i - equip_num;
-		}
-		else
-		{
-			b_i = i;
-		}
+		b_i = i;
 
 		break;
 	}
 
-	/* Found something */
-	if (b_i >= 0)
-	{
-		if (borg_mindcr(MIND_PSYCHOMETRY, 15))
-		{
-			if (inven)
-			{
-				l_ptr = &inventory[b_i];
-			}
-			else
-			{
-				l_ptr = &equipment[b_i];
+	/* Found nothing */
+	if (b_i < 0) return (FALSE);
 
-				/* Switch to equipment but not in case you go there immediately */
-				for (i = 0; i < inven_num; i++)
+	if (borg_mindcr(MIND_PSYCHOMETRY, 15))
+	{
+		if (b_i >= equip_num)
+		{
+			/* Adapt to the inventory */
+			b_i -= equip_num;
+
+			l_ptr = &inventory[b_i];
+		}
+		else
+		{
+			l_ptr = &equipment[b_i];
+
+			/* Switch to equipment but not in case you go there immediately */
+			for (i = 0; i < inven_num; i++)
+			{
+				if (inventory[i].tval >= TV_SHOT &&
+					inventory[i].tval <= TV_DRAG_ARMOR &&
+					!borg_obj_known_p(&inventory[i]))
 				{
-					if (inventory[i].tval >= TV_SHOT &&
-						inventory[i].tval <= TV_DRAG_ARMOR &&
-						!borg_obj_known_p(&inventory[i]))
-					{
-						borg_keypress('/');
-						break;
-					}
+					borg_keypress('/');
+					break;
 				}
 			}
-
-			/* Log -- may be cancelled */
-			borg_note_fmt("# pseudo identifying %s.", l_ptr->o_name);
-
-			/* Select the item */
-			borg_keypress(I2A(b_i));
-
-			/* press enter a few time (get rid of display) */
-			borg_keypress(ESCAPE);
-
-			/* Success */
-			return (TRUE);
 		}
+
+		/* Log -- may be cancelled */
+		borg_note_fmt("# pseudo identifying %s.", l_ptr->o_name);
+
+		/* Select the item */
+		borg_keypress(I2A(b_i));
+
+		/* press enter a few time (get rid of display) */
+		borg_keypress(ESCAPE);
+
+		/* Success */
+		return (TRUE);
 	}
 
-	/* Nothing to do */
+	/* Make a note */
+	borg_note("# Waiting for psudo id to kick in");
+
+	/* Wait a bit for the pseudo-id to kick in */
+	borg_keypress('0');
+	borg_keypress('9');
+	borg_keypress('R');
+
+	/* Ready */
+	return (TRUE);
+}
+
+
+/* Catch all function that does the common part for the id routines */
+bool borg_id_meta(void)
+{
+	/* No ID if in danger */
+	if (borg_danger(c_x, c_y, 1, TRUE) > 1) return (FALSE);
+
+	/* don't ID stuff when you can't recover spent spell point immediately */
+	if (bp_ptr->csp < 50 &&	!borg_check_rest()) return (FALSE);
+
+	/* Identify unknown things */
+	if (borg_test_stuff()) return (TRUE);
+
+	/* *Id* unknown things */
+	if (borg_test_stuff_star()) return (TRUE);
+
+	/* Pseudo identify unknown things */
+	if (borg_test_stuff_pseudo()) return (TRUE);
+
+	/* nothing */
 	return (FALSE);
 }
 
@@ -2466,13 +2587,12 @@ bool borg_test_stuff_pseudo(void)
 bool borg_wear_stuff(void)
 {
 	int slot, b_slot = -1;
-	int d;
+	int ii, i, b_i = -1;
+	int danger, d;
+
 	bool ring_repeat = FALSE;
 
 	s32b p, b_p = borg_power();
-
-	int ii, i, b_i = -1;
-	int danger;
 
 	list_item *l_ptr;
 
@@ -2549,7 +2669,7 @@ bool borg_wear_stuff(void)
 		l_ptr->treat_as = TREAT_AS_NORM;
 
 		/* Ignore "bad" swaps */
-		if ((b_i >= 0) && (p <= b_p)) continue;
+		if (p <= b_p) continue;
 
 		/* Ignore if more dangerous */
 		if (danger < d) continue;
@@ -2560,35 +2680,35 @@ bool borg_wear_stuff(void)
 		b_slot = slot;
 	}
 
-	/* No item */
-	if ((b_i >= 0) && (b_p > borg_power()))
+	/* No item so give up */
+	if (b_i < 0) return (FALSE);
+
+	/* Get the item */
+	l_ptr = &inventory[b_i];
+
+	/* Log */
+	borg_note_fmt("# Wearing %s. (%c)", l_ptr->o_name, b_i);
+
+	/* Wear it */
+	borg_keypress('w');
+	borg_keypress(I2A(b_i));
+
+	/* Check for two rings */
+	if ((b_slot == EQUIP_LEFT || b_slot == EQUIP_RIGHT) &&
+		equipment[EQUIP_LEFT].number && equipment[EQUIP_RIGHT].number)
 	{
-		/* Get the item */
-		l_ptr = &inventory[b_i];
-
-		/* Log */
-		borg_note_fmt("# Wearing %s. (%c)", l_ptr->o_name, b_i);
-
-		/* Wear it */
-		borg_keypress('w');
-		borg_keypress(I2A(b_i));
-
-		/* Check for two rings */
-		if ((b_slot == EQUIP_LEFT || b_slot == EQUIP_RIGHT) &&
-			equipment[EQUIP_LEFT].number && equipment[EQUIP_RIGHT].number)
+		/* On right hand? */
+		if (b_slot == EQUIP_RIGHT)
 		{
-			/* On right hand? */
-			if (b_slot == EQUIP_RIGHT)
-			{
-				borg_keypress('y');
-			}
-			else
-			{
-				borg_keypress('n');
-			}
+			borg_keypress('y');
 		}
-		return (TRUE);
+		else
+		{
+			borg_keypress('n');
+		}
 	}
+	return (TRUE);
+
 
 	/* Nope */
 	return (FALSE);

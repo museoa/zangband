@@ -1162,12 +1162,13 @@ static void borg_notice_lite(void)
 			/* Permanently glowing */
 			bp_ptr->britelite = TRUE;
 			
-			/* Is this not a Lantern of Everburning without fuel. */
-			if (k_ptr->sval != SV_LITE_LANTERN ||
-				l_ptr->timeout)
+			/* A Lantern of Everburning needs fuel only when it is empty. */
+			if (k_ptr->sval != SV_LITE_LANTERN || l_ptr->timeout)
 			{
 				/* No need for fuel */
 				bp_ptr->able.fuel += 1000;
+				amt_lantern = 1000;
+				amt_flask = 1000;
 			}
 		}
 		
@@ -2309,59 +2310,7 @@ static void borg_notice_inven(void)
  */
 static void borg_notice_aux2(void)
 {
-	int i, ii;
 	int carry_capacity;
-
-	/*** Reset counters ***/
-
-
-	/* Reset basic */
-	amt_food_scroll = 0;
-	amt_food_lowcal = 0;
-	amt_torch = 0;
-	amt_lantern = 0;
-	amt_flask = 0;
-
-	/* Reset healing */
-	amt_slow_poison = 0;
-	amt_pot_curing = 0;
-	amt_star_heal = 0;
-	amt_life = 0;
-	amt_rod_heal = 0;
-
-	/* Reset books */
-	for (i = 0; i < MAX_REALM; i++)
-	{
-		for (ii = 0; ii < 4; ii++)
-		{
-			amt_book[i][ii] = 0;
-		}
-	}
-
-	/* Reset various */
-	amt_add_stat[A_STR] = 0;
-	amt_add_stat[A_INT] = 0;
-	amt_add_stat[A_WIS] = 0;
-	amt_add_stat[A_DEX] = 0;
-	amt_add_stat[A_CON] = 0;
-	amt_add_stat[A_CHR] = 0;
-	amt_fix_stat[A_STR] = 0;
-	amt_fix_stat[A_INT] = 0;
-	amt_fix_stat[A_WIS] = 0;
-	amt_fix_stat[A_DEX] = 0;
-	amt_fix_stat[A_CON] = 0;
-	amt_fix_stat[A_CHR] = 0;
-	amt_fix_stat[6] = 0;
-
-	amt_fix_exp = 0;
-	amt_digger = 0;
-
-	/* Reset enchantment */
-	amt_enchant_to_a = 0;
-	amt_enchant_to_d = 0;
-	amt_enchant_to_h = 0;
-
-	amt_brand_weapon = 0;
 
 	/*** Process the inventory ***/
 	borg_notice_inven();
@@ -2848,12 +2797,73 @@ void borg_update_frame(void)
 
 
 /*
+ * This procedure sets to zero the various variables that are used for
+ * determining a borg value.  This has to be done asap so that these can be
+ * used both in the equipment and the inventory appraisal.
+ */
+void borg_clear_vars(void)
+{
+	int i, ii;
+
+	/* clear the struct */
+	(void) WIPE(bp_ptr, borg_player);
+
+	/* Reset basic */
+	amt_food_scroll = 0;
+	amt_food_lowcal = 0;
+	amt_torch = 0;
+	amt_lantern = 0;
+	amt_flask = 0;
+
+	/* Reset healing */
+	amt_slow_poison = 0;
+	amt_pot_curing = 0;
+	amt_star_heal = 0;
+	amt_life = 0;
+	amt_rod_heal = 0;
+
+	/* Reset books */
+	for (i = 0; i < MAX_REALM; i++)
+	{
+		for (ii = 0; ii < 4; ii++)
+		{
+			amt_book[i][ii] = 0;
+		}
+	}
+
+	/* Reset various */
+	amt_add_stat[A_STR] = 0;
+	amt_add_stat[A_INT] = 0;
+	amt_add_stat[A_WIS] = 0;
+	amt_add_stat[A_DEX] = 0;
+	amt_add_stat[A_CON] = 0;
+	amt_add_stat[A_CHR] = 0;
+	amt_fix_stat[A_STR] = 0;
+	amt_fix_stat[A_INT] = 0;
+	amt_fix_stat[A_WIS] = 0;
+	amt_fix_stat[A_DEX] = 0;
+	amt_fix_stat[A_CON] = 0;
+	amt_fix_stat[A_CHR] = 0;
+	amt_fix_stat[6] = 0;
+
+	amt_fix_exp = 0;
+	amt_digger = 0;
+
+	/* Reset enchantment */
+	amt_enchant_to_a = 0;
+	amt_enchant_to_d = 0;
+	amt_enchant_to_h = 0;
+
+	amt_brand_weapon = 0;
+}
+
+/*
  * Analyze the equipment and inventory
  */
 void borg_notice(void)
 {
 	/* Clear out the player information */
-	(void) WIPE(bp_ptr, borg_player);
+	borg_clear_vars();
 
 	/*
 	 * Many of our variables are tied to borg_player.
@@ -4621,7 +4631,7 @@ static s32b borg_power_home_aux2(void)
 	value += 3500 * MIN(num_cure_critical, 99);
 
 	/* Collect cure serious - but they aren't as good */
-	value += 400 * MIN(num_cure_serious, 99);
+	if (bp_ptr->mhp < 500) value += 400 * MIN(num_cure_serious, 399);
 
 	/* Borgs with low HP collect cure light wounds */
 	if (bp_ptr->mhp < 250) value += 200 * MIN(num_cure_light, 99);

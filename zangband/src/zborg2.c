@@ -4249,12 +4249,8 @@ void borg_update(void)
 		g_y = c_y;
 
 		/* wipe out bad artifacts list */
-		for (i = 0; i < 50; i++)
-		{
-			bad_obj_x[i] = -1;
-			bad_obj_y[i] = -1;
-		}
-
+		bad_obj_n = -1;
+		
 		/* save once per level */
 		if (borg_flag_save) borg_save = TRUE;
 

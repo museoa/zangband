@@ -5266,6 +5266,9 @@ void borg_temp_fill(void)
 		if (goal_ignoring && !bp_ptr->status.afraid &&
 			FLAG(&r_info[kill->r_idx], RF_MULTIPLY)) continue;
 
+		/* If it is a pet, ignore it */
+		if (kill->m_flags & (MONST_FRIEND | MONST_PET)) continue;
+
 		/* Acquire location */
 		x = kill->x;
 		y = kill->y;

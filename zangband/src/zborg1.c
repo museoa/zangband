@@ -218,6 +218,7 @@ int dim_door_x;
 /* BIG HACK! Assume only 50 cursed artifacts */
 int bad_obj_x[50];	/* Dropped cursed artifact at location (X) */
 int bad_obj_y[50];	/* Dropped cursed artifact at location (Y) */
+int bad_obj_n = -1;
 
 /*
  * Some estimated state variables

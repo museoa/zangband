@@ -1779,7 +1779,7 @@ static int borg_defend_aux_esp(int p1)
 		if (p1 > avoidance * 7) return (0);
 
 		/* Do I have anything that will work? */
-		if (!borg_spell_okay_fail(REALM_SORCERY, 3, 3, fail_allowed) &&
+		if (!borg_spell_okay_fail(REALM_SORCERY, 2, 4, fail_allowed) &&
 			!borg_spell_okay_fail(REALM_ARCANE, 3, 7, fail_allowed) &&
 			!borg_mindcr_okay_fail(MIND_PRECOGNIT, 24, fail_allowed))
 			return (0);
@@ -1789,7 +1789,7 @@ static int borg_defend_aux_esp(int p1)
 	}
 
 	/* long time */
-	return (borg_spell(REALM_SORCERY, 3, 3) ||
+	return (borg_spell(REALM_SORCERY, 2, 4) ||
 		borg_spell(REALM_ARCANE, 3, 7) ||
 		borg_mindcr(MIND_PRECOGNIT, 24));
 }
@@ -2680,10 +2680,10 @@ static int borg_perma_aux_telepathy(void)
 			cost = borg_spell_mana(REALM_ARCANE, 3, 7);
 		}
 		/* Is the Sorcery telepathy spell available? */
-		else if (borg_spell_okay_fail(REALM_SORCERY, 3, 3, fail_allowed))
+		else if (borg_spell_okay_fail(REALM_SORCERY, 2, 4, fail_allowed))
 		{
 			/* Obtain the cost of the spell */
-			cost = borg_spell_mana(REALM_SORCERY, 3, 3);
+			cost = borg_spell_mana(REALM_SORCERY, 2, 4);
 		}
 		else if (borg_mindcr_okay_fail(MIND_PRECOGNIT, 24, fail_allowed) &&
 				bp_ptr->lev < 40)
@@ -2706,13 +2706,11 @@ static int borg_perma_aux_telepathy(void)
 
 	/* do it! */
 	return (borg_spell(REALM_ARCANE, 3, 7) ||
-		borg_spell(REALM_SORCERY, 3, 3) ||
+		borg_spell(REALM_SORCERY, 2, 4) ||
 		borg_mindcr(MIND_PRECOGNIT, 24));
 }
 
-/*
- * Telepathy
- */
+/* See invisible */
 static int borg_perma_aux_see_invis(void)
 {
 	int fail_allowed = 5, cost;
@@ -3171,7 +3169,7 @@ bool borg_check_rest(void)
 	}
 
 	/* Now check the ground to see if safe. */
-	if (borg_on_safe_feat(map_loc(c_x, c_y)->feat) == FALSE) return (FALSE);
+	if (!borg_on_safe_feat(map_loc(c_x, c_y)->feat)) return (FALSE);
 
 	/* Examine all the monsters */
 	for (i = 1; i < borg_kills_nxt; i++)

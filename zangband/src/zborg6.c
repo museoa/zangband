@@ -2193,7 +2193,7 @@ bool borg_flow_take(bool viewable, int nearness)
 
 		/* look to see if this is on the bad items list */
 		item_bad = FALSE;
-		for (a = 0; a < 50; a++)
+		for (a = 0; a < bad_obj_n; a++)
 		{
 			if (x == bad_obj_x[a] && y == bad_obj_y[a])
 				item_bad = TRUE;

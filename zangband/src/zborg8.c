@@ -595,7 +595,7 @@ static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
 }
 
 
-/* Make sure the borg keeps money back for food and light */
+/* Make sure the borg keeps money back for food and light and recall */
 static bool borg_spends_gold_okay(list_item *l_ptr)
 {
 	/* Always allow buying fuel */
@@ -611,7 +611,13 @@ static bool borg_spends_gold_okay(list_item *l_ptr)
 		k_info[l_ptr->k_idx].sval == SV_SCROLL_SATISFY_HUNGER)) return (TRUE);
 
 	/* Nothing else to be bought if the borg is this low on money */
-	if (borg_gold < 100) return (FALSE);
+	if (borg_gold < 80) return (FALSE);
+
+	if (l_ptr->tval == TV_SCROLL &&
+		k_info[l_ptr->k_idx].sval == SV_SCROLL_WORD_OF_RECALL) return (TRUE);
+
+	/* Nothing else to be bought if the borg is this low on money */
+	if (borg_gold < 200) return (FALSE);
 
 	/* Spend away */
 	return (TRUE);
@@ -1580,14 +1586,8 @@ bool borg_think_dungeon(void)
 	/* Use things */
 	if (borg_use_things()) return (TRUE);
 
-	/* Pseudo identify unknown things */
-	if (borg_test_stuff_pseudo()) return (TRUE);
-
-	/* Identify unknown things */
-	if (borg_test_stuff()) return (TRUE);
-
-	/* *Id* unknown things */
-	if (borg_test_stuff_star()) return (TRUE);
+	/* Try to identify things */
+	if (borg_id_meta()) return (TRUE);
 
 	/* Enchant things */
 	if (borg_enchanting()) return (TRUE);
