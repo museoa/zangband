@@ -71,7 +71,6 @@ int *borg_skill;
 int size_class;
 int size_depth;
 int size_obj;
-int *formula[1000];
 
 /*
  * Some variables

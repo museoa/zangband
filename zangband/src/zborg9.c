@@ -2551,8 +2551,6 @@ static void borg_parse(cptr msg)
 
 static void init_borg_txt_file(void)
 {
-	int i;
-
 	/* Array of borg variables is stored as */
 	/* 0 to k_max = items in inventory */
 	/* k_max to 2*k_max  = items being worn */
@@ -3996,18 +3994,13 @@ void do_cmd_borg(void)
 		{
 			/* Command: Nothing */
 
-			int i;
 			/*** Hack -- initialize borg.ini options ***/
 
 			/* Message */
 			borg_note("Reloading the Borg rules... (zborg.txt)");
 
 			KILL(borg_has);
-			for (i = 0; i < 1000; i++)
-			{
-				if (formula[i])
-					KILL(formula[i]);
-			}
+
 			init_borg_txt_file();
 			borg_note("# Ready...");
 			break;

@@ -449,8 +449,6 @@ enum
 	BFO_MULT
 };
 
-extern int *formula[1000];
-
 /*
  * Hack -- optional cheating flags
  */
