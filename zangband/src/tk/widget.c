@@ -249,33 +249,10 @@ byte *get_icon_ptr(BitmapPtr bitmap_ptr, int x, int y)
 	return (bitmap_ptr->pixelPtr + x * bitmap_ptr->pixelSize + y * bitmap_ptr->pitch);
 }
 
-/* Colours for the text */
-static u32b colors[16];
-
-static void set_colours(void)
-{
-	int i;
-		
-	for (i = 0; i < 16; i++)
-	{
-		u32b r, g, b;
-		
-		r = angband_color_table[i][1];
-		g = angband_color_table[i][2];
-		b = angband_color_table[i][3];
-		
-		colors[i] = (r << 16) + (g << 8) + b;
-	}
-}
-
-
 errr Term_xtra_tnb_react(void)
 {
 	/* Paranoia */
 	if (!tnb_term) return (1);
-
-	/* React to colours */
-	set_colours();
 
 	/* Redraw later */
 	Widget_EventuallyRedraw(tnb_term);
@@ -296,8 +273,6 @@ static void draw_char(int x, int y, byte a, char c, Widget *widgetPtr)
 	
 	byte *src, *dest;
 	
-	u32b pixel;
-	
 	u32b r, g, b;
 		
 	/* Draw a blank square first */
@@ -317,17 +292,16 @@ static void draw_char(int x, int y, byte a, char c, Widget *widgetPtr)
 			/* Get pixel */
 			if (*src)
 			{
-				pixel = colors[a];
+				r = angband_color_table[a][1];
+				g = angband_color_table[a][2];
+				b = angband_color_table[a][3];
 			}
 			else
 			{
-				pixel = 0;
-			}
-						
-			r = (pixel & 0x00FF0000) >> 16;
-			g = (pixel & 0x0000FF00) >> 8;
-			b = pixel & 0xFF;
-						
+				r = 0;
+				g = 0;
+				b = 0;
+			}						
 			
 			/* Convert to bitdepth of screen bitmap and display */
 			
@@ -1537,9 +1511,6 @@ int init_widget(Tcl_Interp *interp, int g_icon_depth)
 	
 	/* Initialise palette stuff */
 	if (g_icon_depth == 16) init_masks(interp);
-	
-	/* Initialize colours */
-	set_colours();
 
 	/* Success */
     return TCL_OK;
