@@ -2716,6 +2716,8 @@ errr file_character(cptr name, bool full)
 	char		o_name[80];
 	char		buf[1024];
 
+   int msg_max = message_num();
+
 
 	/* Drop priv's */
 	safe_setuid_drop();
@@ -3036,6 +3038,15 @@ errr file_character(cptr name, bool full)
 			fprintf(fff, "\n\n");
 		}
 	}
+
+	
+	fprintf(fff, "  [Message Log (last %d messages)]\n\n", msg_max);
+
+	for (i = msg_max - 1; i >= 0; i--)
+	{
+		fprintf(fff, "%s\n", message_str(i));
+	}
+	fprintf(fff, "\n\n");
 
 
 	/* Close it */
