@@ -4147,28 +4147,16 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 	/* Start at monster */
 	else if (who > 0)
 	{
-		if (ironman_los)
-		{
-			/*
-			 * Start at player, and go to monster
-			 * This means that monsters always can hit the player
-			 * if the player can see them
-			 */
-			y1 = y;
-			x1 = x;
+		/*
+		 * Start at player, and go to monster
+		 * This means that monsters always can hit the player
+		 * if the player can see them
+		 */
+		y1 = y;
+		x1 = x;
 
-			x2 = m_list[who].fx;
-			y2 = m_list[who].fy;
-		}
-		else
-		{
-			/* Start at monster, and go to player */
-			y2 = y;
-			x2 = x;
-
-			x1 = m_list[who].fx;
-			y1 = m_list[who].fy;
-		}
+		x2 = m_list[who].fx;
+		y2 = m_list[who].fy;
 	}
 
 	/* Hack -- verify stuff */
@@ -4192,7 +4180,7 @@ bool project(int who, int rad, int x, int y, int dam, int typ, u16b flg)
 	path_n = project_path(path_g, x1, y1, x2, y2, flg);
 
 	/* Do we need to invert the path? */
-	if (ironman_los && !jump && (who > 0))
+	if (!jump && (who > 0))
 	{
 		/* Reverse the path */
 		for (i = path_n - 2, j = 0; i > j; i--, j++)

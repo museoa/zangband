@@ -6339,7 +6339,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 6, "ironman_downward",		"Don't allow climbing upwards/recalling" },
 	{FALSE, 6, "ironman_autoscum",		"Permanently enable the autoscummer" },
 	{FALSE, 6, "ironman_hard_quests",	"Quest monsters get reinforcements" },
-	{FALSE, 6, "ironman_los",			"Monsters use player line of sight" },
+	{TRUE,	0, NULL,						"Number 199" },
 	{FALSE, 6, "ironman_empty_levels",	"Always create empty 'arena' levels" },
 	{TRUE,  6, "terrain_streams",		"Create terrain 'streamers' in the dungeon" },
 	{FALSE, 6, "ironman_moria",			"The good old days..." },

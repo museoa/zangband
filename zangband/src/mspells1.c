@@ -352,11 +352,6 @@ static bool summon_possible(int x1, int y1)
 
 
 /*
- * Originally, it was possible for a friendly to shoot another friendly.
- * Change it so a "clean shot" means no equally friendly monster is
- * between the attacker and target.
- */
-/*
  * Determine if a bolt spell will hit the player.
  *
  * This is exactly like "projectable", but it will
@@ -366,8 +361,13 @@ static bool summon_possible(int x1, int y1)
  *
  * This change has been implelemented via a flag - much quicker
  * and simpler than before.
+ *
+ * Originally, it was possible for a friendly to shoot another friendly.
+ * Change it so a "clean shot" means no equally friendly monster is
+ * between the attacker and target.
+ *
+ * This must be the same as projectable().
  */
-/* Must be the same as projectable() */
 bool clean_shot(int x1, int y1, int x2, int y2, bool friendly)
 {
 	int grid_n;
@@ -385,30 +385,15 @@ bool clean_shot(int x1, int y1, int x2, int y2, bool friendly)
 		flg = PROJECT_STOP;
 	}
 
-	if (ironman_los)
-	{
-		/* Check the projection path - endpoints reversed */
-		grid_n = project_path(grid_g, x2, y2, x1, y1, flg);
+	/* Check the projection path - endpoints reversed */
+	grid_n = project_path(grid_g, x2, y2, x1, y1, flg);
 
-		/* No grid is ever projectable from itself */
-		if (!grid_n) return (FALSE);
+	/* No grid is ever projectable from itself */
+	if (!grid_n) return (FALSE);
 
-		/* May not end in an unrequested grid */
-		if ((grid_g[grid_n - 1].y != y1) ||
-			(grid_g[grid_n - 1].x != x1)) return (FALSE);
-	}
-	else
-	{
-		/* Check the projection path */
-		grid_n = project_path(grid_g, x1, y1, x2, y2, flg);
-
-		/* No grid is ever projectable from itself */
-		if (!grid_n) return (FALSE);
-
-		/* May not end in an unrequested grid */
-		if ((grid_g[grid_n - 1].y != y2) ||
-			(grid_g[grid_n - 1].x != x2)) return (FALSE);
-	}
+	/* May not end in an unrequested grid */
+	if ((grid_g[grid_n - 1].y != y1) ||
+		(grid_g[grid_n - 1].x != x1)) return (FALSE);
 
 	return (TRUE);
 }

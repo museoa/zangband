@@ -4845,7 +4845,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 	if (!done)
 	{
 		/* Put it on the ground */
-		if (!put_object(j_ptr, bx, by));
+		if (!put_object(j_ptr, bx, by))
 		{
 			/* Message */
 			msg_format("The %s disappear%s.", o_name, (plural ? "" : "s"));
