@@ -330,7 +330,7 @@ void build_cmd_quest(int level)
 /*
  * Display a building.
  */
-void display_build(field_type *f_ptr)
+void display_build(const field_type *f_ptr)
 {
 	int factor;
 
@@ -347,7 +347,7 @@ void display_build(field_type *f_ptr)
 	prtf(0, 19, "You may:");
 
 	/* Display building-specific information */
-	(void) field_script_single(f_ptr, FIELD_ACT_BUILD_ACT1, "i", LUA_VAR(factor));
+	(void) field_script_const(f_ptr, FIELD_ACT_BUILD_ACT1, "i", LUA_VAR(factor));
 
 	prtf(0, 23, " ESC) Exit building");
 
@@ -1708,7 +1708,7 @@ bool building_magetower(int factor, bool display)
 }
 
 
-static bool process_build_hook(field_type *f_ptr)
+static bool process_build_hook(const field_type *f_ptr)
 {
 	int factor;
 	
@@ -1725,7 +1725,7 @@ static bool process_build_hook(field_type *f_ptr)
 	command[0] = (byte) p_ptr->cmd.cmd;
 	command[1] = '\0';
 
-	field_script_single(f_ptr, FIELD_ACT_BUILD_ACT2, "is:b",
+	field_script_const(f_ptr, FIELD_ACT_BUILD_ACT2, "is:b",
 						LUA_VAR(factor), LUA_VAR(command),
 						LUA_RETURN(done));
 	
@@ -1749,7 +1749,7 @@ static bool process_build_hook(field_type *f_ptr)
  * people use the roguelike keyset and press a 'direction' key
  * which also corresponds to a building command.
  */
-static bool build_process_command(field_type *f_ptr)
+static bool build_process_command(const field_type *f_ptr)
 {
 	/* Hack - Get a command */
 	p_ptr->cmd.cmd = inkey();
@@ -1929,7 +1929,7 @@ static bool build_process_command(field_type *f_ptr)
 /*
  * Do building commands
  */
-void do_cmd_bldg(field_type *f_ptr)
+void do_cmd_bldg(const field_type *f_ptr)
 {
 	store_type *b_ptr;
 	bool leave_build = FALSE;
@@ -1946,7 +1946,7 @@ void do_cmd_bldg(field_type *f_ptr)
 	build_ptr = b_ptr;
 	
 	/* Init building if required */
-	field_script_single(f_ptr, FIELD_ACT_SB_INIT, "");
+	field_script_const(f_ptr, FIELD_ACT_SB_INIT, "");
 	
 	/* Some quests are finished by finding a building */
 	trigger_quest_complete(QX_FIND_SHOP, (vptr)b_ptr);

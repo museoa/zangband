@@ -44,8 +44,7 @@ extern bool use_object(object_type *o_ptr, bool *ident, int aim);
  * Execute a script attached to a field
  */
 extern bool apply_field_trigger(cptr script, field_type *f_ptr, cptr format, va_list vp);
-
-
+extern void const_field_trigger(cptr script, const field_type *f_ptr, cptr format, va_list vp);
 
 /*
  * Debug lua stack depth

@@ -657,6 +657,24 @@ bool apply_field_trigger(cptr script, field_type *f_ptr, cptr format, va_list vp
 	return (delete);
 }
 
+
+/*
+ * Apply an field trigger, a small lua script which does
+ * what the old field action functions did.
+ *
+ * This version doesn't modify the field, but uses a copy instead.
+ * This allows const versions of field hooks.
+ *
+ * The field cannot be deleted.
+ */
+void const_field_trigger(cptr script, const field_type *f_ptr, cptr format, va_list vp)
+{
+	/* Structure copy to get local working version */
+	field_type temp_field = *f_ptr;
+	
+	(void) apply_field_trigger(script, &temp_field, format, vp);
+}
+
 static void line_hook(lua_State *L, lua_Debug *ar)
 {
 	int j;

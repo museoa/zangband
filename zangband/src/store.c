@@ -155,7 +155,7 @@ static store_type *st_ptr = NULL;
 /*
  * We store the current field here so that it can be accessed everywhere
  */
-static field_type *f_ptr = NULL;
+static const field_type *f_ptr = NULL;
 
 /* Save info flags for store */
 static byte info_flags;
@@ -587,7 +587,7 @@ static bool store_will_stock(const object_type *o_ptr)
 	bool result = FALSE;
 
 	/* Will the store !not! buy this item? */
-	field_script_single(f_ptr, FIELD_ACT_STORE_ACT1, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
+	field_script_const(f_ptr, FIELD_ACT_STORE_ACT1, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
 
 	/* We don't want this item type? */
 	if (result == TRUE) return (FALSE);
@@ -596,7 +596,7 @@ static bool store_will_stock(const object_type *o_ptr)
 	result = TRUE;
 
 	/* Will the store buy this item? */
-	field_script_single(f_ptr, FIELD_ACT_STORE_ACT2, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
+	field_script_const(f_ptr, FIELD_ACT_STORE_ACT2, "p:b", LUA_OBJECT(o_ptr), LUA_RETURN(result));
 
 	/* Finally check to see if we will buy the item */
 	return (result && store_will_buy(o_ptr));
@@ -1232,7 +1232,7 @@ static void store_shuffle(store_type *st_ptr)
 	 *
 	 * Note that this assumes the player is in this store
 	 */
-	field_script_single(f_ptr, FIELD_ACT_SB_INIT, "");
+	field_script_const(f_ptr, FIELD_ACT_SB_INIT, "");
 
 	/* Reset the owner data */
 	st_ptr->data = 0;
@@ -2366,7 +2366,7 @@ store_type *get_current_store(void)
  * into other commands, normally, we convert "p" (pray) and "m"
  * (cast magic) into "g" (get), and "s" (search) into "d" (drop).
  */
-void do_cmd_store(field_type *f1_ptr)
+void do_cmd_store(const field_type *f1_ptr)
 {
 	int maintain_num;
 	int tmp_chr;
@@ -2387,7 +2387,7 @@ void do_cmd_store(field_type *f1_ptr)
 	if (!st_ptr) return;
 	
 	/* Init store if required */
-	field_script_single(f1_ptr, FIELD_ACT_SB_INIT, "");
+	field_script_const(f1_ptr, FIELD_ACT_SB_INIT, "");
 	
 	/* Some quests are finished by finding a shop */
 	trigger_quest_complete(QX_FIND_SHOP, (vptr)st_ptr);

@@ -973,9 +973,9 @@ field_type *place_field(int x, int y, s16b t_idx)
 
 
 /*
- * Call the action function for the field pointed to by *field_ptr.
+ * Call the script for the field *f_ptr.
  *
- * This function does not do a list of fields like the one below.
+ * This function does not do a list of fields like field_script().
  *
  * It returns FALSE if the field deleted itself, TRUE otherwise.
  */
@@ -1032,6 +1032,36 @@ bool field_script_single(field_type *f_ptr, int action, cptr format, ...)
 		return FALSE;
 	}
 }
+
+/*
+ * This is the const version of the above function.
+ * The field cannot delete itself, which simplifies things.
+ */
+void field_script_const(const field_type *f_ptr, int action, cptr format, ...)
+{
+	va_list vp;
+	cptr script;
+
+	/* Point to the field */
+	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
+    
+	/* Paranoia - Is there a function to call? */
+	if (t_ptr->action[action])
+	{
+		 /* Begin the Varargs Stuff */
+		va_start(vp, format);
+	
+		/* Get script to use */
+		script = quark_str(t_ptr->action[action]);
+	
+		/* Call the action script */
+		const_field_trigger(script, f_ptr, format, vp);
+		
+		/* End the Varargs Stuff */
+		va_end(vp);
+	}
+}
+
 
 /*
  * Call the specified action script for each field
