@@ -1100,7 +1100,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	}
 
 	/* Must be a wall/door/etc */
-	if (cave_floor_grid(c_ptr))
+	if (cave_floor_grid(c_ptr) && !(cave_semi_grid(c_ptr)))
 	{
 		/* Message */
 		msgf("You see nothing there to tunnel.");
@@ -1397,7 +1397,7 @@ void do_cmd_tunnel(void)
 		}
 
 		/* No tunnelling through air */
-		else if (cave_floor_grid(c_ptr))
+		else if (cave_floor_grid(c_ptr) && !cave_semi_grid(c_ptr))
 		{
 			/* Message */
 			msgf("You cannot tunnel through air.");
