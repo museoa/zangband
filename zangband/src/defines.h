@@ -888,6 +888,10 @@
  */
 #define MAX_STACK_SIZE		100
 
+/*
+ * A "stack" of items is limited to less than or equal to 20.0 lbs.
+ */
+#define MAX_STACK_WEIGHT        200
 
 
 /*
