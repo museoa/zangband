@@ -9973,14 +9973,15 @@ static int borg_defend_aux_prot_evil(int p1)
 {
 	int p2;
 	int fail_allowed;
-
-	/* Get the allowed fail_rate */
-	fail_allowed = borg_fail_allowed(p1);
+	bool pfe_spell = FALSE;
 
 	if (borg_simulate)
 	{
 		/* if already protected */
 		if (borg_prot_from_evil || FLAG(bp_ptr, TR_SLAY_EVIL)) return (0);
+
+		/* Get the allowed fail_rate */
+		fail_allowed = borg_fail_allowed(p1);
 
 		/* Is the spell available? */
 		if (!borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed) ||
@@ -10007,7 +10008,7 @@ static int borg_defend_aux_prot_evil(int p1)
 	}
 
 	/* do it! */
-	return (borg_spell_fail(REALM_LIFE, 1, 5, fail_allowed) ||
+	return (borg_spell(REALM_LIFE, 1, 5) ||
 		borg_activate_artifact(ART_CARLAMMAS, FALSE) ||
 		borg_read_scroll(SV_SCROLL_PROTECTION_FROM_EVIL));
 }
@@ -10164,17 +10165,14 @@ static int borg_defend_aux_hero(int p1)
 	}
 
 	/* do it! */
-	if (borg_spell(REALM_LIFE, 3, 0) ||
+	return (borg_spell(REALM_LIFE, 3, 0) ||
 		borg_spell(REALM_DEATH, 2, 0) ||
 		borg_mindcr(MIND_ADRENALINE, 23) ||
 		borg_racial(RACE_HALF_TROLL) ||
 		borg_racial(RACE_BARBARIAN) ||
 		borg_mutation(MUT1_BERSERK) ||
 		borg_quaff_potion(SV_POTION_BERSERK_STRENGTH) ||
-		borg_quaff_potion(SV_POTION_HEROISM))
-		return 1;
-
-	return 0;
+		borg_quaff_potion(SV_POTION_HEROISM));
 }
 
 
@@ -10554,7 +10552,7 @@ static int borg_defend_aux_mass_genocide(int p1)
 static int borg_defend_aux_genocide(int p1, int *genocide_target)
 {
 	int i, p, u, b_i = 0;
-	int p2 = p1;
+	int p2;
 	int threat = 0;
 	int max = 1;
 
@@ -10659,6 +10657,9 @@ static int borg_defend_aux_genocide(int p1, int *genocide_target)
 				/* track the race */
 				max = b_threat[i];
 				b_threat_id = i;
+
+				/* Asses the danger on the level */
+				p2 = MAX(p1 - b_threat[i], 0);
 			}
 
 		}
@@ -10931,7 +10932,7 @@ static int borg_defend_aux_destruction(int p1)
 
 static int borg_defend_aux_banishment(int p1)
 {
-	int p2;
+	int p2 = 1;
 	int fail_allowed = 15;
 	int i;
 
@@ -10947,7 +10948,7 @@ static int borg_defend_aux_banishment(int p1)
 			!borg_spell_okay_fail(REALM_TRUMP, 1, 7, fail_allowed)) return (0);
 
 		/* reset initial danger */
-		p1 = p2 = 1;
+		p1 = 1;
 
 		/* Two passes to determine exact danger */
 		for (i = 0; i < borg_beam_n; i++)
