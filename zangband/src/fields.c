@@ -16,9 +16,9 @@
 
 
 /*
- * Notice changes to a field
+ * Is the field visible to the player?
  */
-void notice_field(field_type *f_ptr)
+static bool field_visible(field_type *f_ptr)
 {
 	int x = f_ptr->fx;
 	int y = f_ptr->fy;
@@ -29,9 +29,22 @@ void notice_field(field_type *f_ptr)
 		/* Can the player see the square? */
 		if (player_has_los_grid(parea(x, y)))
 		{
-			/* Note + Lite the spot */
-			note_spot(x, y);
+			return (TRUE);
 		}
+	}
+	
+	return (FALSE);
+}
+
+/*
+ * Notice changes to a field
+ */
+void notice_field(field_type *f_ptr)
+{
+	if (field_visible(f_ptr))
+	{
+		/* Note + Lite the spot */
+		note_spot(f_ptr->fx, f_ptr->fy);
 	}
 }
 
@@ -401,11 +414,8 @@ void compact_fields(int size)
 			if (randint0(100) < chance) continue;
 
 			/* Call completion routine */
-			if (field_hook_single(f_ptr, FIELD_ACT_EXIT))
-			{
-				/* It didn't delete itself, so we do it now */
-				delete_field_ptr(f_ptr);
-			}
+			field_script_single(f_ptr, FIELD_ACT_EXIT,
+								"b", LUA_VAR_NAMED(field_visible(f_ptr), "visible"));
 
 			/* Count it */
 			num++;
@@ -876,11 +886,8 @@ void field_destroy_type(cave_type *c_ptr, byte typ)
 		if (t_info[f_ptr->t_idx].type == typ)
 		{
 			/* Call completion routine */
-			if (field_hook_single(f_ptr, FIELD_ACT_EXIT))
-			{
-				/* It didn't delete itself, so we do it now */
-				delete_field_ptr(f_ptr);
-			}
+			field_script_single(f_ptr, FIELD_ACT_EXIT,
+								"b", LUA_VAR_NAMED(field_visible(f_ptr), "visible"));
 		}
 	}
 	FLD_ITT_END;
@@ -1290,11 +1297,8 @@ void process_fields(void)
 			if (!f_ptr->counter)
 			{
 				/* Call completion routine */
-				if (field_hook_single(f_ptr, FIELD_ACT_EXIT))
-				{
-					/* It didn't delete itself - do it now */
-					delete_field_ptr(f_ptr);
-				}
+				field_script_single(f_ptr, FIELD_ACT_EXIT,
+									"b", LUA_VAR_NAMED(field_visible(f_ptr), "visible"));
 
 				/* Nothing else to do now */
 				continue;
@@ -1479,7 +1483,7 @@ bool field_action_glyph_warding(field_type *f_ptr, va_list vp)
 		&& (randint1(BREAK_GLYPH) < r_ptr->level))
 	{
 		/* Describe observable breakage */
-		if (player_has_los_grid(parea(f_ptr->fx, f_ptr->fy)))
+		if (field_visible(f_ptr))
 		{
 			msgf("The rune of protection is broken!");
 		}
@@ -1555,75 +1559,6 @@ bool field_action_glyph_explode(field_type *f_ptr, va_list vp)
 
 	/* Done */
 	return (FALSE);
-}
-
-
-/* 
- * Corpses disappear after the 100 turns...
- *
- * In nightmare mode, they reappear as monsters.
- */
-bool field_action_corpse_decay(field_type *f_ptr, va_list vp)
-{
-	field_thaum *t_ptr = &t_info[f_ptr->t_idx];
-
-	/*
-	 * Data[1] * 256 + Data[2] = r_idx of monster.
-	 */
-
-	/* Monster race */
-	u16b r_idx = ((u16b)f_ptr->data[1]) * 256 + f_ptr->data[2];
-
-	monster_type *m_ptr;
-	
-	bool visible = FALSE;
-	
-	/* Hack - ignore 'vp' */
-	(void) vp;
-	
-	/* Is it visible? */
-	if (in_boundsp(f_ptr->fx, f_ptr->fy))
-	{
-		pcave_type *pc_ptr = parea(f_ptr->fx, f_ptr->fy);
-		
-		if (player_has_los_grid(pc_ptr)) visible = TRUE;
-	}
-	
-	if (ironman_nightmare)
-	{
-		/* Make a monster nearby if possible */
-		m_ptr = summon_named_creature(f_ptr->fx, f_ptr->fy,
-								  r_idx, FALSE, FALSE, FALSE);
-		if (m_ptr)
-		{
-			if (visible)
-			{
-				if (disturb_minor) msgf("The %s rises.", t_ptr->name);
-			}
-
-			/* Set the cloned flag, so no treasure is dropped */
-			m_ptr->smart |= SM_CLONED;
-		}
-
-		/* Paranoia */
-		else if (visible)
-		{
-			/* Let player know what happened. */
-			if (disturb_minor) msgf("The %s decays.", t_ptr->name);
-		}
-
-	}
-	else
-	{
-		if (visible)
-		{
-			/* Let player know what happened. */
-			if (disturb_minor) msgf("The %s decays.", t_ptr->name);
-		}
-	}
-
-	/* Delete the field */
-	return (TRUE);
 }
 
 

@@ -1123,7 +1123,6 @@ DECL_FIELD_ACTION(nothing);
 DECL_FIELD_ACTION(delete);
 DECL_FIELD_ACTION(glyph_warding);
 DECL_FIELD_ACTION(glyph_explode);
-DECL_FIELD_ACTION(corpse_decay);
 DECL_FIELD_ACTION(corpse_look);
 extern void place_trap(int x, int y);
 DECL_FIELD_ACTION(hit_trap_door);

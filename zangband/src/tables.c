@@ -6854,9 +6854,6 @@ const field_action f_action[] =
 	
 	/* Explosive rune function */
 	{field_action_glyph_explode, "field_action_glyph_explode"},
-	
-	/* Corpse decay function */
-	{field_action_corpse_decay, "field_action_corpse_decay"},
 			
 	/* Function returning name of the monster the corpse once was. */
 	{field_action_corpse_look, "field_action_corpse_look"},
