@@ -477,26 +477,34 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
  *
  * Return whether we want this choice verified or not.
  */
-static int get_choice(char c, int num, bool *ask)
+static int get_choice(char *c, int num, bool *ask)
 {
 	int asked;
 	
 	int i;
+	
+	*c = inkey();
+	
+	/* Handle "cancel" */
+	if (*c == ESCAPE)
+    {
+        	return (-2);
+    }
 
 	if (num < 19)
 	{
-		if (isalpha(c))
+		if (isalpha(*c))
 		{
 			/* Note verify */
-			asked = (isupper(c));
+			asked = (isupper(*c));
 
 			/* Lowercase */
-			if (asked) c = tolower(c);
+			if (asked) *c = tolower(*c);
 			
 			*ask = (asked != FALSE);
 
 			/* Extract request */
-			return(islower(c) ? A2I(c) : -1);
+			return(A2I(*c));
 		}
 		
 		/* Invalid choice */
@@ -507,7 +515,7 @@ static int get_choice(char c, int num, bool *ask)
 	/* Else - look for a match */
 	for (i = 0; i < num; i++)
 	{
-		if (listsym[i] == c)
+		if (listsym[i] == *c)
 		{
 			/* Hack - we cannot ask if there are too many options */
 			*ask = FALSE;
@@ -572,22 +580,22 @@ bool display_menu(menu_type *options, int select, bool scroll, int (* disp)(int)
 	}
    
 	/* Get a command from the user */
-	while ((choice = inkey()))
+	while (TRUE)
 	{
+		/* Try to get previously saved value */
+		if (!repeat_pull(&i))
+		{
+			/* Try to match with available options */
+			i = get_choice(&choice, num, &ask);
+    	}
+	
     	/* Handle "cancel" */
-		if (choice == ESCAPE)
+		if (i == -2)
         {
 			/* Restore the screen */
 			screen_load();
         	return (FALSE);
         }
-		
-		/* Try to get previously saved value */
-		if (!repeat_pull(&i))
-		{
-			/* Try to match with available options */
-			i = get_choice(choice, num, &ask);
-    	}
 		
 		/* No match? */
 		if (i == -1)
