@@ -4031,7 +4031,7 @@ int dist_to_line(int y, int x, int y1, int x1, int y2, int x2)
  */
 bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 {
-	int i, t, dist;
+	int i, j, t, dist;
 
 	int y1, x1;
 	int y2, x2;
@@ -4163,27 +4163,32 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 	/* Do we need to invert the path? */
 	if (ironman_los && !jump && (who > 0))
 	{
-		for (i = 0; i < path_n / 2; i++)
+		/* Reverse the path */
+		for (i = path_n - 2, j = 0; i > j; i--, j++)
 		{
 			/* Swap y coords */
 			t = path_g[i].y;
-			path_g[i].y = path_g[path_n - 1 - i].y;
-			path_g[path_n - 1 - i].y = t;
+			path_g[i].y = path_g[j].y;
+			path_g[j].y = t;
 		
 			/* Swap x coords */
 			t = path_g[i].x;
-			path_g[i].x = path_g[path_n - 1 - i].x;
-			path_g[path_n - 1 - i].x = t;
-	
-			/* Swap the initial and final coords */
-			t = y1;
-			y1 = y2;
-			y2 = t;
-		
-			t = x1;
-			x1 = x2;
-			x2 = t;
+			path_g[i].x = path_g[j].x;
+			path_g[j].x = t;
 		}
+		
+		/* Get correct ending coords */
+		path_g[path_n - 1].x = x1;
+		path_g[path_n - 1].y = y1;
+	
+		/* Swap the initial and final coords */
+		t = y1;
+		y1 = y2;
+		y2 = t;
+		
+		t = x1;
+		x1 = x2;
+		x2 = t;
 	}
 
 	/* Hack -- Assume there will be no blast (max radius 32) */
