@@ -1498,9 +1498,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	}
 	
 	/* Nor on the Pattern */
-	if ((c_ptr->feat >= FEAT_PATTERN_START)
-		&& (c_ptr->feat <= FEAT_PATTERN_XTRA2))
-		return (FALSE);
+	if (cave_perma_grid(c_ptr) && cave_floor_grid(c_ptr)) return (FALSE);
 
 	/* Paranoia */
 	if (!r_idx) return (FALSE);
@@ -2462,9 +2460,7 @@ bool summon_specific(int who, int x1, int y1, int lev, int type, bool group,
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* ... nor on the Pattern */
-		if ((c_ptr->feat >= FEAT_PATTERN_START)
-			&& (c_ptr->feat <= FEAT_PATTERN_XTRA2))
-			continue;
+		if (cave_perma_grid(c_ptr) && cave_floor_grid(c_ptr)) continue;
 
 		/* Check for a field that blocks movement */
 		if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_NO_ENTER)) continue;
