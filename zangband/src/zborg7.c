@@ -2307,7 +2307,7 @@ bool borg_remove_stuff(void)
 	
 	/* Start with good power */
 	b_p = borg_power();
-
+	
 	/* Scan equip */
 	for (i = 0; i < equip_num; i++)
 	{
@@ -2332,7 +2332,7 @@ bool borg_remove_stuff(void)
 
 		/* Evaluate the inventory */
 		p = borg_power();
-
+		
 		/* Put it back on */
 		l_ptr->treat_as = TREAT_AS_NORM;
 
@@ -2835,8 +2835,7 @@ bool borg_leave_level(bool bored)
 			else
 			{
 				/* recall unless way out of our league */
-				if ((cptr)NULL !=
-					borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10))
+				if (borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10))
 				{
 					cptr reason = borg_prepared(borg_skill[BI_MAXDEPTH]);
 					borg_note_fmt
@@ -2865,7 +2864,7 @@ bool borg_leave_level(bool bored)
 	/** In the Dungeon **/
 
 	/* do not hangout on boring levels for *too* long */
-	if ((cptr)NULL == borg_prepared(borg_skill[BI_CDEPTH] + 1)) g = 1;
+	if (!borg_prepared(borg_skill[BI_CDEPTH] + 1)) g = 1;
 
 	/* Count sellable items */
 	k = borg_count_sell();
@@ -2885,7 +2884,7 @@ bool borg_leave_level(bool bored)
 	}
 
 	/* Rise a level if bored and unable to dive. */
-	if (bored && ((cptr)NULL != borg_prepared(borg_skill[BI_CDEPTH] + 1)))
+	if (bored && borg_prepared(borg_skill[BI_CDEPTH] + 1))
 	{
 		cptr reason = borg_prepared(borg_skill[BI_CDEPTH] + 1);
 		g = -1;
@@ -2893,10 +2892,10 @@ bool borg_leave_level(bool bored)
 	}
 
 	/* Power dive if I am playing too shallow */
-	if ((cptr)NULL == borg_prepared(borg_skill[BI_CDEPTH] + 5)) g = 1;
+	if (!borg_prepared(borg_skill[BI_CDEPTH] + 5)) g = 1;
 
 	/* Hack -- Power-climb upwards when needed */
-	if ((cptr)NULL != borg_prepared(borg_skill[BI_CDEPTH]) && !unique_on_level)
+	if (borg_prepared(borg_skill[BI_CDEPTH]) && !unique_on_level)
 	{
 		cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
 
@@ -2904,7 +2903,7 @@ bool borg_leave_level(bool bored)
 		g = -1;
 
 		/* if I must restock go to town */
-		if ((cptr)NULL != borg_restock(borg_skill[BI_CDEPTH]))
+		if (borg_restock(borg_skill[BI_CDEPTH]))
 		{
 			cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
 
@@ -2914,7 +2913,7 @@ bool borg_leave_level(bool bored)
 		}
 
 		/* if I am really out of depth go to town */
-		if ((cptr)NULL != borg_prepared(borg_skill[BI_MAXDEPTH] * 5 / 10))
+		if (borg_prepared(borg_skill[BI_MAXDEPTH] * 5 / 10))
 		{
 			cptr reason = borg_prepared(borg_skill[BI_CDEPTH]);
 			borg_note_fmt("# returning to town (too deep: %s)", reason);
@@ -2923,8 +2922,8 @@ bool borg_leave_level(bool bored)
 	}
 
 	/* Hack -- if I am playing way too shallow return to town */
-	if ((cptr)NULL == borg_prepared(borg_skill[BI_CDEPTH] + 20) &&
-		(cptr)NULL == borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10) &&
+	if (!borg_prepared(borg_skill[BI_CDEPTH] + 20) &&
+		!borg_prepared(borg_skill[BI_MAXDEPTH] * 6 / 10) &&
 		borg_skill[BI_MAXDEPTH] > borg_skill[BI_CDEPTH] + 10)
 	{
 		borg_note("# returning to town to recall back down (too shallow)");
@@ -2932,7 +2931,7 @@ bool borg_leave_level(bool bored)
 	}
 
 	/* Power dive too 100 if ready */
-	if ((cptr)NULL == borg_prepared(100)) g = 1;
+	if (!borg_prepared(100)) g = 1;
 
 	/* Power dive if Morgoth is dead */
 	if (borg_skill[BI_KING]) g = 1;

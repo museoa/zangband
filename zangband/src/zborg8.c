@@ -1200,7 +1200,7 @@ static bool borg_think_dungeon_brave(void)
 
 		/* Only go down if fleeing or prepared. */
 		stair_more = goal_fleeing;
-		if ((cptr)NULL == borg_prepared(borg_skill[BI_CDEPTH] + 1))
+		if (!borg_prepared(borg_skill[BI_CDEPTH] + 1))
 			stair_more = TRUE;
 
 		/* Continue fleeing the level */
@@ -1639,7 +1639,7 @@ bool borg_think_dungeon(void)
 	if (goal_leaving && !goal_recalling && !unique_on_level)
 	{
 		/* Only go down if fleeing or prepared. */
-		if ((cptr)NULL == borg_prepared(borg_skill[BI_CDEPTH] + 1))
+		if (!borg_prepared(borg_skill[BI_CDEPTH] + 1))
 			stair_more = TRUE;
 
 		/* Continue leaving the level */

@@ -3051,7 +3051,7 @@ bool borg_caution(void)
 		 * but not when starving, or lacking food
 		 */
 		stair_more = goal_fleeing;
-		if ((cptr)NULL == borg_prepared(borg_skill[BI_CDEPTH] + 1))
+		if (!borg_prepared(borg_skill[BI_CDEPTH] + 1))
 			stair_more = TRUE;
 
 		/* Its ok to go one level deep if evading scary guy */
@@ -12898,7 +12898,7 @@ bool borg_flow_stair_more(int why)
 	if (!track_more_num) return (FALSE);
 
 	/* if not fleeing do not go down unless safe */
-	if (!goal_fleeing && (cptr)NULL != borg_prepared(borg_skill[BI_CDEPTH] + 1))
+	if (!goal_fleeing && borg_prepared(borg_skill[BI_CDEPTH] + 1))
 		return (FALSE);
 
 	/* dont go down if hungry or low on food, unless fleeing a scary town */

@@ -4109,7 +4109,7 @@ void do_cmd_borg(void)
 			for (i = 1; i <= 127; i++)
 			{
 				/* Dump fear code */
-				if ((cptr)NULL != borg_prepared(i)) break;
+				if (borg_prepared(i)) break;
 			}
 
 			msg_format("Max Level: %d  Prep'd For: %d  Reason: %s",
