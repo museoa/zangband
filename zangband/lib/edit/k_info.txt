@@ -1185,7 +1185,7 @@ A:100/1
 F:SPEED | HIDE_TYPE
 D:This ring almost vibrates with power.
 L:MAKE:	object.pval = randint1(object.pval / 2) + m_bonus(object.pval, level)
-L:MAKE:	while (one_in_(2) != 0) do object.pval = object.pval + 1 end
+L:MAKE:	while (one_in_(2) ~= 0) do object.pval = object.pval + 1 end
 L:MAKE:	allow_curse = TRUE
 L:MAKE:	rating_boost = 25
 
@@ -1492,7 +1492,7 @@ F:FREE_ACT | SEE_INVIS | SENSE |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 L:MAKE:	object.pval = randint1(5) + m_bonus(object.pval, level)
 L:MAKE:	object.to_a = randint1(5) + m_bonus(5, level)
-L:MAKE:	if (one_in_(3) != 0) then set_obj_flags(object, 2, TR2_SLOW_DIGEST) end
+L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flags(object, 2, TR2_SLOW_DIGEST) end
 L:MAKE:	rating_boost = 25
 
 N:172:Destruction
@@ -2192,12 +2192,12 @@ A:0/1
 P:0:1d1:0:0:0
 F:EASY_KNOW
 L:USE:	ident = not player_res(TR2_RES_CONF) and inc_confused(rand_range(15, 35))
-L:USE:	if not player_res(TR2_RES_CHAOS) and (one_in_(2) != 0) and
+L:USE:	if not player_res(TR2_RES_CHAOS) and (one_in_(2) ~= 0) and
 L:USE:		inc_image(rand_range(150, 300)) then ident = TRUE end
-L:USE:	if not player_res(TR2_RES_CHAOS) and (one_in_(13) != 0) then
+L:USE:	if not player_res(TR2_RES_CHAOS) and (one_in_(13) ~= 0) then
 L:USE:		ident = TRUE
 L:USE:		if player.depth > 0 then
-L:USE:			if (one_in_(3) != 0) then lose_all_info() else wiz_dark() end
+L:USE:			if (one_in_(3) ~= 0) then lose_all_info() else wiz_dark() end
 L:USE:			teleport_player(100)
 L:USE:			wiz_dark()
 L:USE:		else
@@ -4033,7 +4033,7 @@ W:105:0:2:100000
 A:100/5
 F:RES_DISEN | RES_POIS | HOLD_LIFE | FREE_ACT
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
-L:MAKE:	while (one_in_(4) != 0) do add_ego_power(EGO_XTRA_HI_RESIST, object) end
+L:MAKE:	while (one_in_(4) ~= 0) do add_ego_power(EGO_XTRA_HI_RESIST, object) end
 L:MAKE:	object.to_a = rand_range(10, 15) + m_bonus(10, level)
 L:MAKE:	rating_boost = 5
 
@@ -4043,7 +4043,7 @@ I:45:49:1
 W:75:0:2:10000
 A:75/8:100/2
 F:BLOWS
-L:MAKE:	if (one_in_(7) != 0) then object.pval = 2 end
+L:MAKE:	if (one_in_(7) ~= 0) then object.pval = 2 end
 L:MAKE:	allow_curse = TRUE
 
 N:437:Cure Light Wounds
@@ -4429,8 +4429,8 @@ W:75:0:3:5000
 A:75/4
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-L:MAKE:	if (one_in_(3) != 0) then add_ego_power(EGO_XTRA_HI_RESIST, object) end
-L:MAKE:	if (one_in_(5) != 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
+L:MAKE:	if (one_in_(3) ~= 0) then add_ego_power(EGO_XTRA_HI_RESIST, object) end
+L:MAKE:	if (one_in_(5) ~= 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
 
 ##### New arms #####
 
@@ -4895,7 +4895,7 @@ W:13:0:2:150
 A:13/2
 F:STEALTH | INFRA
 L:MAKE:	object.pval = 1 + m_bonus(object.pval, level)
-L:MAKE:	if (one_in_(3) != 0) then set_obj_flag(object, 1, TR1_SUST_DEX) end
+L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 1, TR1_SUST_DEX) end
 L:MAKE:	allow_curse = TRUE
 
 N:585:Fate

@@ -80,7 +80,7 @@ W:15:8:0:5000
 C:0:0:10:0
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-L:MAKE:	if (one_in_(4) != 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
+L:MAKE:	if (one_in_(4) ~= 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 
 # OnePower
@@ -162,7 +162,7 @@ W:25:8:0:5000
 C:0:0:10:0
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-L:MAKE:	if (one_in_(4) != 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
+L:MAKE:	if (one_in_(4) ~= 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 
 N:21:of Reflection
@@ -224,7 +224,7 @@ X:33:8
 W:30:2:0:1000
 C:0:0:0:5
 F:SENSE | RES_BLIND | SEE_INVIS
-L:MAKE:	if (one_in_(7) != 0) then set_obj_flag(object, 2, TR2_TELEPATHY) end
+L:MAKE:	if (one_in_(7) ~= 0) then set_obj_flag(object, 2, TR2_TELEPATHY) end
 
 N:31:of Infravision
 X:33:11
@@ -388,7 +388,7 @@ N:56:of Levitation
 X:35:7
 W:30:4:0:250
 F:FEATHER
-L:MAKE:	if (one_in_(2) != 0) then add_ego_power(EGO_XTRA_HI_RESIST, object) end
+L:MAKE:	if (one_in_(2) ~= 0) then add_ego_power(EGO_XTRA_HI_RESIST, object) end
 
 N:57:of Stealth
 X:35:16
@@ -442,7 +442,7 @@ L:MAKE:	if player.class == CLASS_PALADIN then
 L:MAKE:		set_obj_flag(object, 3, TR3_LUCK_10) 
 L:MAKE:	end
 L:MAKE:	add_ego_power(EGO_XTRA_SUSTAIN, object)
-L:MAKE:	if (one_in_(4) != 0) then
+L:MAKE:	if (one_in_(4) ~= 0) then
 L:MAKE:		set_obj_flag(object, 0, TR0_BLOWS)
 L:MAKE:		object.pval = randint1(4) - object.dd / 2
 L:MAKE:		if object.pval < 1 then object.pval = 1 end
@@ -458,7 +458,7 @@ F:STEALTH |
 F:FREE_ACT | SEE_INVIS | FEATHER | REGEN | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-L:MAKE:	if (one_in_(3) != 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
+L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 L:MAKE:	add_ego_power(EGO_XTRA_SUSTAIN, object)
 
@@ -481,7 +481,7 @@ C:5:5:0:2
 F:STR | DEX | CON | 
 F:SLAY_ORC | SLAY_TROLL | SLAY_GIANT | 
 F:FREE_ACT | SEE_INVIS
-L:MAKE:	if (one_in_(3) != 0) then set_obj_flag(object, 1, TR1_RES_FEAR) end
+L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 1, TR1_RES_FEAR) end
 
 N:69:of Extra Attacks
 X:24:20
@@ -494,7 +494,7 @@ N:70:of Slaying
 X:24:15
 W:75:3:0:2000
 L:MAKE:	object.ds = object.ds + (object.ds * randint1(5)) / 5
-L:MAKE:	if (one_in_(5) != 0) then set_obj_flag(object, 0, TR0_BRAND_POIS) end
+L:MAKE:	if (one_in_(5) ~= 0) then set_obj_flag(object, 0, TR0_BRAND_POIS) end
 
 
 # 71 (unused)
@@ -547,7 +547,7 @@ X:24:20
 W:50:2:0:2000
 F:TUNNEL | IMPACT
 L:MAKE:	object.pval = m_bonus(3, level) + 3
-L:MAKE:	if (one_in_(3) != 0) then
+L:MAKE:	if (one_in_(3) ~= 0) then
 L:MAKE:		set_obj_flag(object, 0, TR0_BLOWS)
 L:MAKE:		object.pval = object.pval - object.dd / 2
 L:MAKE:		if object.pval < 1 then object.pval = 1 end
@@ -645,7 +645,7 @@ X:24:24
 W:70:15:0:1500
 C:0:0:0:1
 F:CON | SLAY_DRAGON | KILL_DRAGON
-L:MAKE:	if (one_in_(3) != 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
+L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 1, TR1_RES_POIS) end
 L:MAKE:	add_ego_power(EGO_XTRA_LO_RESIST)
 L:MAKE:	add_ego_power(EGO_XTRA_LO_RESIST)
 
@@ -666,8 +666,8 @@ L:USE:	msgf("Your weapon twists space around you...")
 L:USE:	teleport_player(100)
 L:USE:	object.timeout = rand_range(50, 100)
 L:DESC:	return "teleport every 50-100 turns"
-L:MAKE:	if (one_in_(5) != 0) then set_obj_flag(object, 0, TR0_SLAY_DEMON) end
-L:MAKE:	if (one_in_(7) != 0) then add_ego_power(EGO_XTRA_ABILITY, object) end
+L:MAKE:	if (one_in_(5) ~= 0) then set_obj_flag(object, 0, TR0_SLAY_DEMON) end
+L:MAKE:	if (one_in_(7) ~= 0) then add_ego_power(EGO_XTRA_ABILITY, object) end
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 
 
@@ -678,9 +678,9 @@ C:6:6:0:2
 F:STR | CON |
 F:SLAY_EVIL | SLAY_DEMON | SLAY_UNDEAD |
 F:FREE_ACT | SEE_INVIS |
-L:MAKE:	if (one_in_(3) != 0) then set_obj_flag(object, 1, TR1_HOLD_LIFE) end
-L:MAKE:	if (one_in_(3) != 0) then set_obj_flag(object, 0, TR0_DEX) end
-L:MAKE:	if (one_in_(3) != 0) then set_obj_flag(object, 1, TR1_RES_FEAR) end
+L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 1, TR1_HOLD_LIFE) end
+L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 0, TR0_DEX) end
+L:MAKE:	if (one_in_(3) ~= 0) then set_obj_flag(object, 1, TR1_RES_FEAR) end
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 
 N:100:of Digging
