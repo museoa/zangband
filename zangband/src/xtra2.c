@@ -1405,6 +1405,12 @@ bool change_panel(int dy, int dx)
 		if (y < wild_grid.y_min) y = wild_grid.y_min;
 		if (x > wild_grid.x_max - SCREEN_WID) x = wild_grid.x_max - SCREEN_WID;
 		if (x < wild_grid.x_min) x = wild_grid.x_min;
+		
+		if (vanilla_town)
+		{
+			x = max_wild * 8 - SCREEN_WID / 2 - 15;
+			y = max_wild * 8 - SCREEN_HGT / 2 - 5;
+		}
 	}
 
 	/* Handle "changes" */
@@ -1448,6 +1454,13 @@ void verify_panel(void)
 	int y = py;
 	int x = px;
 
+	/* Hack - in vanilla town mode - do not move the screen */
+	if (vanilla_town && (!dun_level))
+	{
+		(void) change_panel(0, 0);
+		return;
+	}
+	
 	/* Center on player */
 	if (center_player && (!avoid_center || !running))
 	{
