@@ -6485,5 +6485,5 @@ cptr silly_attacks[MAX_SILLY_ATTACK] =
 
 	"falsifies",
 	"disbelieves",
-	"molests",
+	"molests"
 };
