@@ -17,8 +17,8 @@
 #include <tcl.h>
 #include "angband.h"
 
-#if !defined(PLATFORM_MAC) && !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
-#error "You must define one of PLATFORM_MAC, PLATFORM_WIN or PLATFORM_X11"
+#if !defined(PLATFORM_WIN) && !defined(PLATFORM_X11)
+#error "You must define one of PLATFORM_WIN or PLATFORM_X11"
 #endif /* */
 
 #if (TK_MINOR_VERSION != 3)
