@@ -173,7 +173,7 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([floor ftruncate gethostname memchr memmove memset mkdir modf select setlocale strchr strcspn strdup strerror strpbrk strrchr strstr strtol strtoul])
 
 AC_CHECK_FUNCS([Tk_SetClassProcs])
-AC_CHECK_FUNCS([mkstemp])
+AC_CHECK_FUNCS([mkstemp usleep])
 
 dnl A nice function to test compiler options (like warnings)
 AC_DEFUN(AC_CHECK_CC_OPT,
@@ -181,9 +181,9 @@ AC_DEFUN(AC_CHECK_CC_OPT,
 echo 'void f(void); void f(){}' > conftest.c
 if test -z "`${CC-cc} -c ${CFLAGS} $1 conftest.c 2>&1`"; then
   CFLAGS="$1 $CFLAGS"
-  AC_MSG_RESULT($1)
+  AC_MSG_RESULT(yes)
 else
-  AC_MSG_RESULT(no $1)
+  AC_MSG_RESULT(no)
 fi
 rm -f conftest*
 ])
