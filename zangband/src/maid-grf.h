@@ -137,7 +137,8 @@ struct map_block
 	/* Save what it looks like */
 
 #ifdef TERM_MAP_GLYPH
-	u16b feature_code;
+	byte a;
+	char c;
 #endif /* TERM_MAP_GLYPH */
 
 	/* Save the cave info itself - used by the borg */

@@ -4077,12 +4077,13 @@ static void ami_map_info(map_block *mb_ptr, term_map *map)
     /* Store feature code for later */
     if (map->terrain) 
     {
-    	mb_ptr->feature_code = f_info[map->terrain].x_attr * 256 +
-        						 f_info[map->terrain].x_char;
+    	mb_ptr->a = f_info[map->terrain].x_attr;
+		mb_ptr->c = f_info[map->terrain].x_char;
     }
     else
     {
-    	mb_ptr->feature_code = 0;
+    	mb_ptr->a = 0;
+		mb_ptr->c = 0;
     }
 
 	/* Finally - chain into the old hook, if it exists */
@@ -4162,8 +4163,8 @@ static void amiga_map( void )
                 {
                 	mb_ptr = map_loc(x, y);
                     
-                    ta = mb_ptr->feature_code / 256;
-                    tc = mb_ptr->feature_code & 0xFF;
+                    ta = mb_ptr->a;
+                    tc = mb_ptr->c;
                     
                     /* Ignore non-graphics */
 					if ( ta & 0x80 )

@@ -579,6 +579,11 @@
 #define TERM_MAP_GLYPH
 #endif /* USE_AMI */
 
+#ifdef USE_TNB
+#define TERM_MAP_GLYPH
+#endif /* USE_TNB */
+
+
 #endif
 
 /*
