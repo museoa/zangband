@@ -1,0 +1,586 @@
+D:\z-2.3\src\io_wrap.c
+
+[ Python Module : io ]
+
+
+path_parse(buf,max,file)
+        [ returns errr  ]
+
+path_temp(buf,max)
+        [ returns errr  ]
+
+path_build(buf,max,path,file)
+        [ returns errr  ]
+
+my_fopen(file,mode)
+        [ returns FILE * ]
+
+my_fgets(fff,buf,n)
+        [ returns errr  ]
+
+my_fputs(fff,buf,n)
+        [ returns errr  ]
+
+my_fclose(fff)
+        [ returns errr  ]
+
+fd_kill(file)
+        [ returns errr  ]
+
+fd_move(file,what)
+        [ returns errr  ]
+
+fd_copy(file,what)
+        [ returns errr  ]
+
+fd_make(file,mode)
+        [ returns int  ]
+
+fd_open(file,flags)
+        [ returns int  ]
+
+fd_lock(fd,what)
+        [ returns errr  ]
+
+fd_seek(fd,n)
+        [ returns errr  ]
+
+fd_chop(fd,n)
+        [ returns errr  ]
+
+fd_read(fd,buf,n)
+        [ returns errr  ]
+
+fd_write(fd,buf,n)
+        [ returns errr  ]
+
+fd_close(fd)
+        [ returns errr  ]
+
+flush()
+        [ returns void  ]
+
+bell()
+        [ returns void  ]
+
+sound(num)
+        [ returns void  ]
+
+move_cursor(row,col)
+        [ returns void  ]
+
+text_to_ascii(buf,str)
+        [ returns void  ]
+
+ascii_to_text(buf,str)
+        [ returns void  ]
+
+macro_add(pat,act)
+        [ returns errr  ]
+
+macro_find_exact(pat)
+        [ returns sint  ]
+
+inkey()
+        [ returns char  ]
+
+quark_str(num)
+        [ returns char * ]
+
+quark_add(str)
+        [ returns s16b  ]
+
+message_num()
+        [ returns s16b  ]
+
+message_str(age)
+        [ returns char * ]
+
+message_add(msg)
+        [ returns void  ]
+
+msg_print(msg)
+        [ returns void  ]
+
+screen_save()
+        [ returns void  ]
+
+screen_load()
+        [ returns void  ]
+
+c_put_str(attr,str,row,col)
+        [ returns void  ]
+
+put_str(str,row,col)
+        [ returns void  ]
+
+c_prt(attr,str,row,col)
+        [ returns void  ]
+
+prt(str,row,col)
+        [ returns void  ]
+
+c_roff(attr,str)
+        [ returns void  ]
+
+roff(str)
+        [ returns void  ]
+
+clear_from(row)
+        [ returns void  ]
+
+askfor_aux(buf,len)
+        [ returns bool  ]
+
+get_string(prompt,buf,len)
+        [ returns bool  ]
+
+get_check(prompt)
+        [ returns bool  ]
+
+get_com(prompt,command)
+        [ returns bool  ]
+
+get_quantity(prompt,max)
+        [ returns s16b  ]
+
+pause_line(row)
+        [ returns void  ]
+
+request_command(shopping)
+        [ returns void  ]
+
+is_a_vowel(ch)
+        [ returns bool  ]
+
+get_keymap_dir(ch)
+        [ returns int  ]
+
+TERM_XTRA_EVENT = 1
+        [ Constant: int  ]
+
+TERM_XTRA_FLUSH = 2
+        [ Constant: int  ]
+
+TERM_XTRA_CLEAR = 3
+        [ Constant: int  ]
+
+TERM_XTRA_SHAPE = 4
+        [ Constant: int  ]
+
+TERM_XTRA_FROSH = 5
+        [ Constant: int  ]
+
+TERM_XTRA_FRESH = 6
+        [ Constant: int  ]
+
+TERM_XTRA_NOISE = 7
+        [ Constant: int  ]
+
+TERM_XTRA_SOUND = 8
+        [ Constant: int  ]
+
+TERM_XTRA_BORED = 9
+        [ Constant: int  ]
+        React to global changes (optional) 
+
+TERM_XTRA_REACT = 10
+        [ Constant: int  ]
+        Change the "hard" level (optional) 
+
+TERM_XTRA_ALIVE = 11
+        [ Constant: int  ]
+        Change the "soft" level (optional) 
+
+TERM_XTRA_LEVEL = 12
+        [ Constant: int  ]
+        Delay some milliseconds (optional) 
+
+TERM_XTRA_DELAY = 13
+        [ Constant: int  ]
+
+cvar.Term
+        [ Global : term * Term ]
+
+Term_user(n)
+        [ returns errr  ]
+
+Term_xtra(n,v)
+        [ returns errr  ]
+
+Term_queue_chars(x,y,n,a,s)
+        [ returns void  ]
+
+Term_fresh()
+        [ returns errr  ]
+
+Term_set_cursor(v)
+        [ returns errr  ]
+
+Term_gotoxy(x,y)
+        [ returns errr  ]
+
+Term_draw(x,y,a,c)
+        [ returns errr  ]
+
+Term_addch(a,c)
+        [ returns errr  ]
+
+Term_addstr(n,a,s)
+        [ returns errr  ]
+
+Term_putch(x,y,a,c)
+        [ returns errr  ]
+
+Term_putstr(x,y,n,a,s)
+        [ returns errr  ]
+
+Term_erase(x,y,n)
+        [ returns errr  ]
+
+Term_clear()
+        [ returns errr  ]
+
+Term_redraw()
+        [ returns errr  ]
+
+Term_get_cursor(v)
+        [ returns errr  ]
+
+Term_get_size(w,h)
+        [ returns errr  ]
+
+Term_locate(x,y)
+        [ returns errr  ]
+
+Term_what(x,y,a,c)
+        [ returns errr  ]
+
+Term_flush()
+        [ returns errr  ]
+
+Term_keypress(k)
+        [ returns errr  ]
+
+Term_key_push(k)
+        [ returns errr  ]
+
+Term_inkey(ch,wait,take)
+        [ returns errr  ]
+
+Term_save()
+        [ returns errr  ]
+
+Term_load()
+        [ returns errr  ]
+
+Term_exchange()
+        [ returns errr  ]
+
+Term_resize(w,h)
+        [ returns errr  ]
+
+Term_activate(t)
+        [ returns errr  ]
+
+term_nuke(t)
+        [ returns errr  ]
+
+term_init(t,w,h,k)
+        [ returns errr  ]
+
+TERM_DARK = 0
+        [ Constant: int  ]
+        4,4,4 
+
+TERM_WHITE = 1
+        [ Constant: int  ]
+        2,2,2 
+
+TERM_SLATE = 2
+        [ Constant: int  ]
+        4,2,0 
+
+TERM_ORANGE = 3
+        [ Constant: int  ]
+        3,0,0 
+
+TERM_RED = 4
+        [ Constant: int  ]
+        0,2,1 
+
+TERM_GREEN = 5
+        [ Constant: int  ]
+        0,0,4 
+
+TERM_BLUE = 6
+        [ Constant: int  ]
+        2,1,0 
+
+TERM_UMBER = 7
+        [ Constant: int  ]
+        1,1,1 
+
+TERM_L_DARK = 8
+        [ Constant: int  ]
+        3,3,3 
+
+TERM_L_WHITE = 9
+        [ Constant: int  ]
+        4,0,4 
+
+TERM_VIOLET = 10
+        [ Constant: int  ]
+        4,4,0 
+
+TERM_YELLOW = 11
+        [ Constant: int  ]
+        4,0,0 
+
+TERM_L_RED = 12
+        [ Constant: int  ]
+        0,4,0 
+
+TERM_L_GREEN = 13
+        [ Constant: int  ]
+        0,4,4 
+
+TERM_L_BLUE = 14
+        [ Constant: int  ]
+        3,2,1 
+
+TERM_L_UMBER = 15
+        [ Constant: int  ]
+
+SOUND_HIT = 1
+        [ Constant: int  ]
+
+SOUND_MISS = 2
+        [ Constant: int  ]
+
+SOUND_FLEE = 3
+        [ Constant: int  ]
+
+SOUND_DROP = 4
+        [ Constant: int  ]
+
+SOUND_KILL = 5
+        [ Constant: int  ]
+
+SOUND_LEVEL = 6
+        [ Constant: int  ]
+
+SOUND_DEATH = 7
+        [ Constant: int  ]
+
+SOUND_STUDY = 8
+        [ Constant: int  ]
+
+SOUND_TELEPORT = 9
+        [ Constant: int  ]
+
+SOUND_SHOOT = 10
+        [ Constant: int  ]
+
+SOUND_QUAFF = 11
+        [ Constant: int  ]
+
+SOUND_ZAP = 12
+        [ Constant: int  ]
+
+SOUND_WALK = 13
+        [ Constant: int  ]
+
+SOUND_TPOTHER = 14
+        [ Constant: int  ]
+
+SOUND_HITWALL = 15
+        [ Constant: int  ]
+
+SOUND_EAT = 16
+        [ Constant: int  ]
+
+SOUND_STORE1 = 17
+        [ Constant: int  ]
+
+SOUND_STORE2 = 18
+        [ Constant: int  ]
+
+SOUND_STORE3 = 19
+        [ Constant: int  ]
+
+SOUND_STORE4 = 20
+        [ Constant: int  ]
+
+SOUND_DIG = 21
+        [ Constant: int  ]
+
+SOUND_OPENDOOR = 22
+        [ Constant: int  ]
+
+SOUND_SHUTDOOR = 23
+        [ Constant: int  ]
+
+SOUND_TPLEVEL = 24
+        [ Constant: int  ]
+
+SOUND_SCROLL = 25
+        [ Constant: int  ]
+
+SOUND_BUY = 26
+        [ Constant: int  ]
+
+SOUND_SELL = 27
+        [ Constant: int  ]
+
+SOUND_WARN = 28
+        [ Constant: int  ]
+        Somebody's shooting rockets 
+
+SOUND_ROCKET = 29
+        [ Constant: int  ]
+        The player kills a non-living/undead monster 
+
+SOUND_N_KILL = 30
+        [ Constant: int  ]
+        The player kills a unique 
+
+SOUND_U_KILL = 31
+        [ Constant: int  ]
+        The player has just completed a quest 
+
+SOUND_QUEST = 32
+        [ Constant: int  ]
+        The player was healed a little bit 
+
+SOUND_HEAL = 33
+        [ Constant: int  ]
+        The player was healed full health 
+
+SOUND_X_HEAL = 34
+        [ Constant: int  ]
+        A monster bites you 
+
+SOUND_BITE = 35
+        [ Constant: int  ]
+        A monster claws you 
+
+SOUND_CLAW = 36
+        [ Constant: int  ]
+        A monster casts a miscellaneous spell 
+
+SOUND_M_SPELL = 37
+        [ Constant: int  ]
+        A monster casts a summoning spell 
+
+SOUND_SUMMON = 38
+        [ Constant: int  ]
+        A monster breathes 
+
+SOUND_BREATH = 39
+        [ Constant: int  ]
+        A monster casts a ball / bolt spell 
+
+SOUND_BALL = 40
+        [ Constant: int  ]
+        A monster heals itself somehow 
+
+SOUND_M_HEAL = 41
+        [ Constant: int  ]
+        A monster casts a misc. offensive spell 
+
+SOUND_ATK_SPELL = 42
+        [ Constant: int  ]
+        Something nasty has just happened! 
+
+SOUND_EVIL = 43
+        [ Constant: int  ]
+        A monster touches you 
+
+SOUND_TOUCH = 44
+        [ Constant: int  ]
+        A monster stings you 
+
+SOUND_STING = 45
+        [ Constant: int  ]
+        A monster crushes / envelopes you 
+
+SOUND_CRUSH = 46
+        [ Constant: int  ]
+        A monster drools/spits/etc on you 
+
+SOUND_SLIME = 47
+        [ Constant: int  ]
+        A monster wails 
+
+SOUND_WAIL = 48
+        [ Constant: int  ]
+        Just won the game! 
+
+SOUND_WINNER = 49
+        [ Constant: int  ]
+        An item was burned 
+
+SOUND_FIRE = 50
+        [ Constant: int  ]
+        An item was destroyed by acid 
+
+SOUND_ACID = 51
+        [ Constant: int  ]
+        An item was destroyed by electricity 
+
+SOUND_ELEC = 52
+        [ Constant: int  ]
+        An item was shattered 
+
+SOUND_COLD = 53
+        [ Constant: int  ]
+        Illegal command attempted 
+
+SOUND_ILLEGAL = 54
+        [ Constant: int  ]
+        Fail to get a spell off / activate an item 
+
+SOUND_FAIL = 55
+        [ Constant: int  ]
+        A monster wakes up 
+
+SOUND_WAKEUP = 56
+        [ Constant: int  ]
+        Invulnerability! 
+
+SOUND_INVULN = 57
+        [ Constant: int  ]
+        Falling through a trapdoor... 
+
+SOUND_FALL = 58
+        [ Constant: int  ]
+        A monster is in pain! 
+
+SOUND_PAIN = 59
+        [ Constant: int  ]
+        An item was destroyed by misc. means 
+
+SOUND_DESTITEM = 60
+        [ Constant: int  ]
+        A monster makes a moan/beg/insult attack 
+
+SOUND_MOAN = 61
+        [ Constant: int  ]
+        A monster makes a "show" attack 
+
+SOUND_SHOW = 62
+        [ Constant: int  ]
+        (no sound for gaze attacks) 
+
+SOUND_UNUSED = 63
+        [ Constant: int  ]
+        Something (or somebody) explodes 
+
+SOUND_EXPLODE = 64
+        [ Constant: int  ]
+        * Mega-Hack -- maximum known sounds 
+
+SOUND_MAX = 65
+        [ Constant: int  ]
+

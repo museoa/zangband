@@ -1,0 +1,76 @@
+D:\z-2.3\src\realms_wrap.c
+
+[ Python Module : realms ]
+
+
+cvar.mp_ptr
+        [ Global : player_magic * mp_ptr ]
+
+cvar.spell_learned1
+        [ Global : u32b spell_learned1 ]
+
+cvar.spell_learned2
+        [ Global : u32b spell_learned2 ]
+
+cvar.spell_worked1
+        [ Global : u32b spell_worked1 ]
+
+cvar.spell_worked2
+        [ Global : u32b spell_worked2 ]
+
+cvar.spell_forgotten1
+        [ Global : u32b spell_forgotten1 ]
+
+cvar.spell_forgotten2
+        [ Global : u32b spell_forgotten2 ]
+
+cvar.spell_order
+        [ Global : byte * spell_order ]
+
+cvar.magic_info
+        [ Global : player_magic * magic_info ]
+
+1.  class player_magic
+======================
+[ created from struct player_magic ]
+
+
+self.spell_book
+        [ Member data: returns int  ]
+        Tval of spell books (if any) 
+
+self.spell_xtra
+        [ Member data: returns int  ]
+        Something for later 
+
+self.spell_stat
+        [ Member data: returns int  ]
+        Stat for spells (if any) 
+
+self.spell_type
+        [ Member data: returns int  ]
+        Spell type (mage/priest) 
+
+self.spell_first
+        [ Member data: returns int  ]
+        Level of first spell 
+
+self.spell_weight
+        [ Member data: returns int  ]
+        Weight that hurts spells 
+
+self.info
+        [ Member data: returns magic_type * ]
+        The available spells 
+
+player_magic()
+        [ Constructor: returns struct player_magic * ]
+
+del this
+        [ Destructor: returns void  ]
+
+----------
+
+get_player_magic(class)
+        [ returns player_magic * ]
+

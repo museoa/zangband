@@ -1,0 +1,52 @@
+D:\z-2.3\src\terrain_wrap.c
+
+[ Python Module : terrain ]
+
+
+1.  class feature_type
+======================
+[ created from struct feature_type ]
+
+
+self.name
+        [ Member data: returns u32b  ]
+        Name (offset) 
+
+self.text
+        [ Member data: returns u32b  ]
+        Text (offset) 
+
+self.mimic
+        [ Member data: returns byte  ]
+        Feature to mimic 
+
+self.extra
+        [ Member data: returns byte  ]
+        Extra byte (unused) 
+
+self.unused
+        [ Member data: returns s16b  ]
+        Extra bytes (unused) 
+
+self.d_attr
+        [ Member data: returns byte  ]
+        Default feature attribute 
+
+self.d_char
+        [ Member data: returns char  ]
+        Default feature character 
+
+self.x_attr
+        [ Member data: returns byte  ]
+        Desired feature attribute 
+
+self.x_char
+        [ Member data: returns char  ]
+        Desired feature character 
+
+feature_type()
+        [ Constructor: returns struct feature_type * ]
+
+del this
+        [ Destructor: returns void  ]
+

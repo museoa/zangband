@@ -1,0 +1,99 @@
+D:\z-2.3\src\store_wrap.c
+
+[ Python Module : store ]
+
+
+1.  class owner_type
+====================
+[ created from struct owner_type ]
+
+
+self.owner_name
+        [ Member data: returns char * ]
+        Name 
+
+self.max_cost
+        [ Member data: returns s16b  ]
+        Purse limit 
+
+self.max_inflate
+        [ Member data: returns byte  ]
+        Inflation (max) 
+
+self.min_inflate
+        [ Member data: returns byte  ]
+        Inflation (min) 
+
+self.haggle_per
+        [ Member data: returns byte  ]
+        Haggle unit 
+
+self.insult_max
+        [ Member data: returns byte  ]
+        Insult limit 
+
+self.owner_race
+        [ Member data: returns byte  ]
+        Owner race 
+
+2.  class store_type
+====================
+[ created from struct store_type ]
+
+
+self.type
+        [ Member data: returns byte  ]
+        Store type 
+
+self.owner
+        [ Member data: returns byte  ]
+        Owner index 
+
+self.extra
+        [ Member data: returns byte  ]
+        Unused for now 
+
+self.insult_cur
+        [ Member data: returns s16b  ]
+        Insult counter 
+
+self.good_buy
+        [ Member data: returns s16b  ]
+        Number of "good" buys 
+
+self.bad_buy
+        [ Member data: returns s16b  ]
+        Number of "bad" buys 
+
+self.store_open
+        [ Member data: returns s32b  ]
+        Closed until this turn 
+
+self.last_visit
+        [ Member data: returns s32b  ]
+        Last visited on this turn 
+
+self.table_num
+        [ Member data: returns s16b  ]
+        Table -- Number of entries 
+
+self.table_size
+        [ Member data: returns s16b  ]
+        Table -- Total Size of Array 
+
+self.table
+        [ Member data: returns s16b * ]
+        Table -- Legal item kinds 
+
+self.stock_num
+        [ Member data: returns byte  ]
+        Stock -- Number of entries 
+
+self.stock_size
+        [ Member data: returns s16b  ]
+        Stock -- Total Size of Array 
+
+self.stock
+        [ Member data: returns object_type * ]
+        Stock -- Actual stock items 
+

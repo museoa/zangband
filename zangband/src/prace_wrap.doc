@@ -1,0 +1,130 @@
+D:\z-2.3\src\prace_wrap.c
+
+[ Python Module : prace ]
+
+
+1.  class player_race
+=====================
+[ created from struct player_race ]
+
+
+self.title
+        [ Member data: returns cptr  ]
+        Type of race 
+
+self.r_adj
+        [ Member data: returns s16b * ]
+        Racial stat bonuses 
+
+self.r_dis
+        [ Member data: returns s16b  ]
+        disarming 
+
+self.r_dev
+        [ Member data: returns s16b  ]
+        magic devices 
+
+self.r_sav
+        [ Member data: returns s16b  ]
+        saving throw 
+
+self.r_stl
+        [ Member data: returns s16b  ]
+        stealth 
+
+self.r_srh
+        [ Member data: returns s16b  ]
+        search ability 
+
+self.r_fos
+        [ Member data: returns s16b  ]
+        search frequency 
+
+self.r_thn
+        [ Member data: returns s16b  ]
+        combat (normal) 
+
+self.r_thb
+        [ Member data: returns s16b  ]
+        combat (shooting) 
+
+self.r_mhp
+        [ Member data: returns byte  ]
+        Race hit-dice modifier 
+
+self.r_exp
+        [ Member data: returns byte  ]
+        Race experience factor 
+
+self.b_age
+        [ Member data: returns byte  ]
+        base age 
+
+self.m_age
+        [ Member data: returns byte  ]
+        mod age 
+
+self.m_b_ht
+        [ Member data: returns byte  ]
+        base height (males) 
+
+self.m_m_ht
+        [ Member data: returns byte  ]
+        mod height (males) 
+
+self.m_b_wt
+        [ Member data: returns byte  ]
+        base weight (males) 
+
+self.m_m_wt
+        [ Member data: returns byte  ]
+        mod weight (males) 
+
+self.f_b_ht
+        [ Member data: returns byte  ]
+        base height (females) 
+
+self.f_m_ht
+        [ Member data: returns byte  ]
+        mod height (females) 
+
+self.f_b_wt
+        [ Member data: returns byte  ]
+        base weight (females) 
+
+self.f_m_wt
+        [ Member data: returns byte  ]
+        mod weight (females) 
+
+self.infra
+        [ Member data: returns byte  ]
+        Infra-vision range 
+
+self.choice
+        [ Member data: returns u16b  ]
+        Legal class choices 
+
+self.str_mod
+        [ Member data: returns s16b  ]
+
+self.int_mod
+        [ Member data: returns s16b  ]
+
+self.wis_mod
+        [ Member data: returns s16b  ]
+
+self.dex_mod
+        [ Member data: returns s16b  ]
+
+self.con_mod
+        [ Member data: returns s16b  ]
+
+self.chr_mod
+        [ Member data: returns s16b  ]
+
+player_race()
+        [ Constructor: returns struct player_race * ]
+
+del this
+        [ Destructor: returns void  ]
+

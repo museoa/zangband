@@ -1,0 +1,47 @@
+D:\z-2.3\src\spells_wrap.c
+
+[ Python Module : spells ]
+
+
+detect_traps()
+        [ returns bool  ]
+
+detect_doors()
+        [ returns bool  ]
+
+detect_stairs()
+        [ returns bool  ]
+
+detect_treasure()
+        [ returns bool  ]
+
+detect_objects_gold()
+        [ returns bool  ]
+
+detect_objects_normal()
+        [ returns bool  ]
+
+detect_objects_magic()
+        [ returns bool  ]
+
+detect_monsters_normal()
+        [ returns bool  ]
+
+detect_monsters_invis()
+        [ returns bool  ]
+
+detect_monsters_evil()
+        [ returns bool  ]
+
+detect_monsters_xxx(match_flag)
+        [ returns bool  ]
+
+detect_monsters_string(char *)
+        [ returns bool  ]
+
+detect_monsters_nonliving()
+        [ returns bool  ]
+
+detect_all()
+        [ returns bool  ]
+

@@ -1,0 +1,230 @@
+D:\z-2.3\src\commands_wrap.c
+
+[ Python Module : commands ]
+
+
+do_cmd_view_map()
+        [ returns void  ]
+
+do_cmd_go_up()
+        [ returns void  ]
+
+do_cmd_go_down()
+        [ returns void  ]
+
+do_cmd_search()
+        [ returns void  ]
+
+do_cmd_toggle_search()
+        [ returns void  ]
+
+do_cmd_open()
+        [ returns void  ]
+
+do_cmd_close()
+        [ returns void  ]
+
+do_cmd_tunnel()
+        [ returns void  ]
+
+do_cmd_disarm()
+        [ returns void  ]
+
+do_cmd_bash()
+        [ returns void  ]
+
+do_cmd_alter()
+        [ returns void  ]
+
+do_cmd_spike()
+        [ returns void  ]
+
+do_cmd_walk(pickup)
+        [ returns void  ]
+
+do_cmd_stay(pickup)
+        [ returns void  ]
+
+do_cmd_run()
+        [ returns void  ]
+
+do_cmd_rest()
+        [ returns void  ]
+
+do_cmd_fire()
+        [ returns void  ]
+
+do_cmd_throw()
+        [ returns void  ]
+
+do_cmd_throw_aux(mult)
+        [ returns void  ]
+
+do_cmd_inven()
+        [ returns void  ]
+
+do_cmd_equip()
+        [ returns void  ]
+
+do_cmd_wield()
+        [ returns void  ]
+
+do_cmd_takeoff()
+        [ returns void  ]
+
+do_cmd_drop()
+        [ returns void  ]
+
+do_cmd_destroy()
+        [ returns void  ]
+
+do_cmd_observe()
+        [ returns void  ]
+
+do_cmd_uninscribe()
+        [ returns void  ]
+
+do_cmd_inscribe()
+        [ returns void  ]
+
+do_cmd_refill()
+        [ returns void  ]
+
+do_cmd_target()
+        [ returns void  ]
+
+do_cmd_look()
+        [ returns void  ]
+
+do_cmd_locate()
+        [ returns void  ]
+
+do_cmd_query_symbol()
+        [ returns void  ]
+
+do_cmd_redraw()
+        [ returns void  ]
+
+do_cmd_change_name()
+        [ returns void  ]
+
+do_cmd_message_one()
+        [ returns void  ]
+
+do_cmd_messages()
+        [ returns void  ]
+
+do_cmd_options_aux(page,info)
+        [ returns void  ]
+
+do_cmd_options()
+        [ returns void  ]
+
+do_cmd_pref()
+        [ returns void  ]
+
+do_cmd_macros()
+        [ returns void  ]
+
+do_cmd_visuals()
+        [ returns void  ]
+
+do_cmd_colors()
+        [ returns void  ]
+
+do_cmd_note()
+        [ returns void  ]
+
+do_cmd_version()
+        [ returns void  ]
+
+do_cmd_feeling()
+        [ returns void  ]
+
+do_cmd_load_screen()
+        [ returns void  ]
+
+do_cmd_save_screen()
+        [ returns void  ]
+
+do_cmd_knowledge()
+        [ returns void  ]
+
+do_cmd_checkquest()
+        [ returns void  ]
+
+do_cmd_time()
+        [ returns void  ]
+
+do_cmd_browse()
+        [ returns void  ]
+
+do_cmd_study()
+        [ returns void  ]
+
+do_cmd_cast()
+        [ returns void  ]
+
+do_cmd_pray()
+        [ returns void  ]
+
+do_cmd_pet()
+        [ returns void  ]
+
+do_cmd_eat_food()
+        [ returns void  ]
+
+do_cmd_quaff_potion()
+        [ returns void  ]
+
+do_cmd_read_scroll()
+        [ returns void  ]
+
+do_cmd_aim_wand()
+        [ returns void  ]
+
+do_cmd_use_staff()
+        [ returns void  ]
+
+do_cmd_zap_rod()
+        [ returns void  ]
+
+do_cmd_activate()
+        [ returns void  ]
+
+do_cmd_rerate()
+        [ returns void  ]
+
+do_cmd_help()
+        [ returns void  ]
+
+do_cmd_suicide()
+        [ returns void  ]
+
+do_cmd_save_game(is_autosave)
+        [ returns void  ]
+
+do_cmd_save_and_exit()
+        [ returns void  ]
+
+do_cmd_racial_power()
+        [ returns void  ]
+
+do_cmd_store()
+        [ returns void  ]
+
+do_cmd_bldg()
+        [ returns void  ]
+
+do_cmd_quest()
+        [ returns void  ]
+
+do_cmd_mindcraft()
+        [ returns void  ]
+
+do_cmd_knowledge_mutations()
+        [ returns void  ]
+
+do_cmd_disarm_aux(y,x,dir)
+        [ returns bool  ]
+
