@@ -2944,13 +2944,13 @@ void borg_status_window(void)
 			prtf(1, 6, "%sFear", attr);
 
 			if (FLAG(bp_ptr, TR_RES_LITE)) attr = CLR_BLUE;
-			else
-				attr = CLR_SLATE;
+			else if (FLAG(bp_ptr, TR_IM_LITE)) attr = CLR_WHITE;
+			else attr = CLR_SLATE;
 			prtf(1, 7, "%sLite", attr);
 
 			if (FLAG(bp_ptr, TR_RES_DARK)) attr = CLR_BLUE;
-			else
-				attr = CLR_SLATE;
+			else if (FLAG(bp_ptr, TR_IM_POIS)) attr = CLR_WHITE;
+			else attr = CLR_SLATE;
 			prtf(1, 8, "%sDark", attr);
 
 			if (FLAG(bp_ptr, TR_RES_BLIND)) attr = CLR_BLUE;
