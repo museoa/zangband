@@ -1880,7 +1880,7 @@ static byte priority(byte a, char c)
 }
 
 /*
- * Tunnels are important.  (Whist bare floor is not.)
+ * Tunnels are important.  (While bare floor is not.)
  */
 static int priority_tunnel(int y, int x)
 {
@@ -2348,7 +2348,7 @@ void do_cmd_view_map(void)
  * regions, which is nice.
  *
  * Note that the calls to the nasty "los()" function have been removed with
- * regardes to the view/lite code.  This results in a huge speed increase.
+ * regards to the view/lite code.  This results in a huge speed increase.
  *
  *
  * Note that every "CAVE_LITE" grid is also a "CAVE_VIEW" grid, and in
