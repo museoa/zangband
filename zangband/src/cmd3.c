@@ -1167,7 +1167,6 @@ void do_cmd_query_symbol(void)
 {
 	int i, n, r_idx;
 	char sym, query;
-	char buf[128];
 
 	bool all = FALSE;
 	bool uniq = FALSE;
@@ -1304,9 +1303,9 @@ void do_cmd_query_symbol(void)
 
 	/* Query */
 	query = inkey();
-
-	/* Restore */
-	prtf(0, 0, buf);
+	
+	/* Clear top line */
+	clear_msg();
 
 	why = 2;
 
@@ -1426,9 +1425,9 @@ void do_cmd_query_symbol(void)
 
 	/* Free the "who" array */
 	KILL(who);
-
-	/* Re-display the identity */
-	prtf(0, 0, buf);
+	
+	/* Clear top line */
+	clear_msg();
 }
 
 
