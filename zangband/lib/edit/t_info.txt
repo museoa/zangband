@@ -89,7 +89,6 @@ G:~:v
 W:50:7:1000
 I:TEMP | VIS | IGNORE
 D:0:0:0:0:0:0:0:0
-F:12,field_action_corpse_look | 13,field_action_corpse_decay
 L:INIT:corpse_init()
 L:LOAD:local race
 L:LOAD:race = monst_race(field.data[1] * 256 + field.data[2])
@@ -98,6 +97,7 @@ L:SPEC:local race
 L:SPEC:race = monst_race(field.data[1] * 256 + field.data[2])
 L:SPEC:summon_cloned_creature(field.fx, field.fy, race, pet)
 L:SPEC:deleteme
+L:LOOK:corpse_look()
 L:EXIT:corpse_decay()
 
 # Skeleton
@@ -106,7 +106,6 @@ G:~:w
 W:50:7:1000
 I:TEMP | VIS | IGNORE
 D:0:0:0:0:0:0:0:0
-F:12,field_action_corpse_look | 13,field_action_corpse_decay
 L:INIT:corpse_init()
 L:LOAD:local race
 L:LOAD:race = monst_race(field.data[1] * 256 + field.data[2])
@@ -115,6 +114,7 @@ L:SPEC:local race
 L:SPEC:race = monst_race(field.data[1] * 256 + field.data[2])
 L:SPEC:summon_cloned_creature(field.fx, field.fy, race, pet)
 L:SPEC:deleteme
+L:LOOK:corpse_look()
 L:EXIT:corpse_decay()
 
 # Trapdoor
