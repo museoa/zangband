@@ -4989,6 +4989,16 @@ static s16b *look_up_list(object_type *o_ptr)
 
 	/* Some objects have no list */
 	if (!o_ptr->allocated) return (NULL);
+	
+	/* Scan player inventory */
+	OBJ_ITT_START (p_ptr->inventory, j_ptr)
+	{
+		if (o_ptr == j_ptr) return (&p_ptr->inventory);
+		
+		/* Debug - make sure we don't have a corrupted inventory */
+		if (o_ptr->ix || o_ptr->iy) quit("Corrupted inventory contains dungeon objects!");
+	}
+	OBJ_ITT_END;
 
 	/* Scan dungeon */
 	if (o_ptr->ix || o_ptr->iy)
@@ -5002,13 +5012,6 @@ static s16b *look_up_list(object_type *o_ptr)
 		}
 		OBJ_ITT_END;
 	}
-
-	/* Scan player inventory */
-	OBJ_ITT_START (p_ptr->inventory, j_ptr)
-	{
-		if (o_ptr == j_ptr) return (&p_ptr->inventory);
-	}
-	OBJ_ITT_END;
 
 	/* Scan stores */
 	for (i = 0; i < pl_ptr->numstores; i++)
