@@ -72,12 +72,9 @@ int Widget_WidgetObjCmd _ANSI_ARGS_((ClientData clientData,
 int Widget_Photo(ClientData clientData, Tcl_Interp *interp,
 	int objc, Tcl_Obj *CONST objv[]);
 void Widget_Calc(Widget *widgetPtr);
-void IsoView_Calc(Widget *widgetPtr);
 
 static void Widget_CreateBitmap(Widget *widgetPtr);
 static void Widget_DeleteBitmap(Widget *widgetPtr);
-
-static void WindowToBitmap(Widget *widgetPtr, int *y, int *x);
 
 /* Table of procedures for the "Widget" class */
 TkClassProcs widgetProcs = { 
@@ -95,6 +92,12 @@ DoubleLinker WidgetList;
 DoubleLinker WidgetListMap;
 
 static Widget_CreateProc *g_create_proc;
+
+static void WindowToBitmap(Widget *widgetPtr, int *y, int *x)
+{
+	*y += widgetPtr->by;
+	*x += widgetPtr->bx;
+}
 
 #define BAD_COLOR(c) (((c) < 0) || ((c) > 255))
 
@@ -351,7 +354,6 @@ widgetPtr->linkerItemVis.what = "itemVis";
 	widgetPtr->invalid = NULL;
 	widgetPtr->anim = NULL;
 	widgetPtr->yp = widgetPtr->xp = NULL;
-	widgetPtr->yo = widgetPtr->xo = NULL;
 
 	/*
 	 * Arrange for our routine to be called when any of the specified
@@ -950,10 +952,6 @@ void Widget_Destroy(Widget *widgetPtr)
 		Tcl_FreeDebug(widgetPtr->yp);
 	if (widgetPtr->xp)
 		Tcl_FreeDebug(widgetPtr->xp);
-	if (widgetPtr->yo)
-		Tcl_FreeDebug(widgetPtr->yo);
-	if (widgetPtr->xo)
-		Tcl_FreeDebug(widgetPtr->xo);
 
 	widgetPtr->tkwin = NULL;
 
@@ -1088,16 +1086,6 @@ void Widget_WorldChanged(ClientData instanceData)
 		{
 			Tcl_FreeDebug((char *) widgetPtr->xp);
 			widgetPtr->xp = NULL;
-		}
-		if (widgetPtr->yo)
-		{
-			Tcl_FreeDebug((char *) widgetPtr->yo);
-			widgetPtr->yo = NULL;
-		}
-		if (widgetPtr->xo)
-		{
-			Tcl_FreeDebug((char *) widgetPtr->xo);
-			widgetPtr->xo = NULL;
 		}
 	}
 
@@ -1418,164 +1406,6 @@ void Widget_Calc(Widget *widgetPtr)
 	}
 }
 
-void IsoView_Calc(Widget *widgetPtr)
-{
-	int cc, rc, r, c, yy, xx, yp, xp, yo, xo;
-	int dLeft, cLeft, dRight, cRight;
-	int dTop, rTop, dBottom, rBottom;
-	int ignoreLeft, ignoreRight;
-	int ignoreTop, ignoreBottom;
-
-	dLeft = (widgetPtr->width - ISO_WID2) / 2;
-	cLeft = dLeft / ISO_WID2;
-	if (dLeft % ISO_WID2)
-		++cLeft;
-	if (!(dLeft % ISO_WID2) || ((dLeft % ISO_WID2) > ISO_WID2 / 2))
-	{
-		++cLeft;
-		ignoreLeft = 1;
-	}
-	else
-		ignoreLeft = 0;
-
-	dRight = widgetPtr->width - dLeft - ISO_WID2;
-	cRight = dRight / ISO_WID2;
-	if (dRight % ISO_WID2)
-		++cRight;
-	if (!(dRight % ISO_WID2) || ((dRight % ISO_WID2) > ISO_WID2 / 2))
-	{
-		++cRight;
-		ignoreRight = 1;
-	}
-	else
-		ignoreRight = 0;
-
-	dTop = (widgetPtr->height - ISO_FH2) / 2;
-	rTop = dTop / ISO_FH2;
-	if (dTop % ISO_FH2)
-		++rTop;
-	if (!(dTop % ISO_FH2) || ((dTop % ISO_FH2) > ISO_FH2 / 2))
-	{
-		++rTop;
-		ignoreTop = 1;
-	}
-	else
-		ignoreTop = 0;
-
-	dBottom = widgetPtr->height - dTop - ISO_FH2;
-	rBottom = dBottom / ISO_FH2;
-	if (dBottom % ISO_FH2)
-		++rBottom;
-	if (!(dBottom % ISO_FH2) || ((dBottom % ISO_FH2) > ISO_FH2 / 2))
-	{
-		++rBottom;
-		ignoreBottom = 1;
-	}
-	else
-		ignoreBottom = 0;
-
-	cc = cLeft + 1 + cRight;
-	rc = (rTop + 1 + rBottom) * 2;
-	
-	widgetPtr->tc = rc * cc;
-	widgetPtr->rc = rc;
-	widgetPtr->cc = cc;
-
-	widgetPtr->cLeft = cLeft;
-	widgetPtr->cRight = cRight;
-	widgetPtr->rTop = rTop;
-	widgetPtr->rBottom = rBottom;
-
-	widgetPtr->bw = (cc - ignoreLeft - ignoreRight) * ISO_WID2 +
-		(ignoreLeft + ignoreRight) * (ISO_WID2 / 2) + 4;
-	widgetPtr->bh = (ISO_HGT - ISO_FH) + (rc - ignoreTop - ignoreBottom + 1) * (ISO_FH2 / 2) + 2;
-
-	widgetPtr->bx = cLeft * ISO_WID2 - ignoreLeft * (ISO_WID2 / 2) - dLeft + 1;
-	widgetPtr->by = (ISO_HGT - ISO_FH) + (rTop * 2 - ignoreTop) * (ISO_FH2 / 2) - dTop;
-
-	widgetPtr->cx = ignoreLeft ? (ISO_WID2 / 2) : 0;
-	widgetPtr->cy = ignoreTop ? (ISO_FH2 / 2) : 0;
-
-	widgetPtr->ignoreLeft = ignoreLeft;
-	widgetPtr->ignoreTop = ignoreTop;
-	widgetPtr->ignoreRight = ignoreRight;
-	widgetPtr->ignoreBottom = ignoreBottom;
-
-	widgetPtr->centerTile = (rTop * 2) * cc + cLeft;
-
-	if (widgetPtr->anim)
-		Tcl_FreeDebug((char *) widgetPtr->anim);
-	if (widgetPtr->info)
-		Tcl_FreeDebug((char *) widgetPtr->info);
-	if (widgetPtr->invalid)
-		Tcl_FreeDebug((char *) widgetPtr->invalid);
-	if (widgetPtr->yp)
-		Tcl_FreeDebug((char *) widgetPtr->yp);
-	if (widgetPtr->xp)
-		Tcl_FreeDebug((char *) widgetPtr->xp);
-	if (widgetPtr->yo)
-		Tcl_FreeDebug((char *) widgetPtr->yo);
-	if (widgetPtr->xo)
-		Tcl_FreeDebug((char *) widgetPtr->xo);
-
-	widgetPtr->anim = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-	widgetPtr->animCnt = 0;
-	widgetPtr->info = (short *) Tcl_AllocDebug(sizeof(short) * rc * cc);
-	widgetPtr->invalid = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-	widgetPtr->invalidCnt = 0;
-	widgetPtr->yp = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-	widgetPtr->xp = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-	widgetPtr->yo = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-	widgetPtr->xo = (int *) Tcl_AllocDebug(sizeof(int) * rc * cc);
-
-	yy = 0;
-	xx = 0;
-
-	for (r = 0; r < rc; r++)
-	{
-		yp = r * (ISO_FH2 / 2);
-		if (ignoreTop)
-			yp -= (ISO_FH2 / 2);
-
-		if (r & 1)
-			++xx;
-		else if (r)
-			++yy;
-
-		yo = yy;
-		xo = xx;
-
-		for (c = 0; c < cc; c++)
-		{
-			widgetPtr->info[r * cc + c] = 0;
-
-			if ((ignoreLeft && !c && !(r & 1)) ||
-				(ignoreTop && !r) ||
-				(!ignoreRight && (c == cc - 1) && (r & 1)) ||
-				(ignoreRight && (c == cc - 1) && !(r & 1)) ||
-				(ignoreBottom && (r == rc - 1)))
-			{
-				widgetPtr->info[r * cc + c] |= WIDGET_INFO_IGNORE;
-			}
-
-			xp = c * ISO_WID2;
-			if (ignoreLeft)
-				xp -= (ISO_WID2 / 2);
-			if (r & 1)
-				xp += (ISO_WID2 / 2);
-
-			widgetPtr->yp[r * cc + c] = yp;
-			widgetPtr->xp[r * cc + c] = xp;
-
-			widgetPtr->yo[r * cc + c] = yo;
-			widgetPtr->xo[r * cc + c] = xo;
-
-			++xo;
-			--yo;
-		}
-	}
-}
-
 /*
  * Create a bitmap as big as the given Widget. We get the address of
  * the bits so we can write directly into the bitmap. The bitmap is
@@ -1754,28 +1584,8 @@ void Widget_EventuallyRedraw(Widget *widgetPtr)
 	widgetPtr->flags |= WIDGET_REDRAW;
 }
 
-static void WindowToBitmap(Widget *widgetPtr, int *y, int *x)
-{
-	*y += widgetPtr->by;
-	*x += widgetPtr->bx;
-}
-
-static void BitmapToCanvas(Widget *widgetPtr, int *y, int *x)
-{
-	*y += widgetPtr->cy - (ISO_HGT - ISO_FH);
-	*x += widgetPtr->cx;
-}
-
 int Widget_CaveToView(Widget *widgetPtr, int y, int x, int *rowPtr, int *colPtr)
 {
-	int rc = widgetPtr->rc;
-	int cc = widgetPtr->cc;
-	int *pyo = widgetPtr->yo;
-	int *pxo = widgetPtr->xo;
-	int r, c, yt, xt, yy, xx;
-int y1, x1, y2, x2, isoy, isox,  isoy1, isox1,  isoy2, isox2;
-int guess, row = 0, col = 0;
-
 	if ((y < widgetPtr->y_min) || (y >= widgetPtr->y_max))
 		return FALSE;
 	if ((x < widgetPtr->x_min) || (x >= widgetPtr->x_max))

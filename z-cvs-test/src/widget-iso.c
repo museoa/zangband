@@ -982,8 +982,8 @@ void iso_draw_all(Widget *widgetPtr)
 	int rc = widgetPtr->rc;
 	int cc = widgetPtr->cc;
 	short *pinfo = widgetPtr->info;
-	int *pyo = widgetPtr->yo;
-	int *pxo = widgetPtr->xo;
+	int *pyo = NULL;
+	int *pxo = NULL;
 	int *pyp = widgetPtr->yp;
 	int *pxp = widgetPtr->xp;
 	IconSpec *peffect = ((ExWidget *) widgetPtr)->effect;
@@ -1258,8 +1258,8 @@ void iso_draw_invalid(Widget *widgetPtr)
 	int tile, i, yp, xp, yt, xt;
 	int rc = widgetPtr->rc;
 	int cc = widgetPtr->cc;
-	int *pyo = widgetPtr->yo;
-	int *pxo = widgetPtr->xo;
+	int *pyo = NULL;
+	int *pxo = NULL;
 	int *pyp = widgetPtr->yp;
 	int *pxp = widgetPtr->xp;
 	int *pinvalid = widgetPtr->invalid;
