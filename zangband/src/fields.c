@@ -3379,3 +3379,20 @@ void field_action_door_store(s16b *field_ptr, void *nothing)
 	 */
 	do_cmd_store(f_ptr);
 }
+
+
+/*
+ * Interact with a building
+ */
+void field_action_door_build(s16b *field_ptr, void *nothing)
+{	
+	field_type *f_ptr = &fld_list[*field_ptr];
+
+	/* Disturb */
+	disturb(0, 0);
+
+	/*
+	 * data[0] contains the type of building.
+	 */
+	do_cmd_bldg(f_ptr);
+}

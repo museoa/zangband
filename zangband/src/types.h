@@ -1576,7 +1576,19 @@ struct owner_type
 };
 
 
+/*
+ * A building owner
+ */
+typedef struct b_own_type b_own_type;
 
+struct b_own_type
+{
+	cptr owner_name;	/* Name */
+
+	byte inflate;	/* Inflation */
+
+	byte owner_race;	/* Owner race */
+};
 
 /*
  * A store, with an owner, various state flags, a current stock

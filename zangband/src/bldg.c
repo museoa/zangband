@@ -9,6 +9,7 @@
  * bldg.c as written by Ivan Tkatchev
  *
  * Changed for ZAngband by Robert Ruehlmann
+ * Rewritten yet again by Steven Fuerst to use the fields code.
  */
 
 #include "angband.h"
@@ -259,6 +260,7 @@ static cptr find_quest[] =
 	"There is a sign saying",
 	"Something is written on the staircase",
 	"You find a scroll with the following message",
+	"You hear",
 };
 
 
@@ -277,7 +279,7 @@ void quest_discovery(int q_idx)
 
 	strcpy(name, (r_name + r_ptr->name));
 
-	msg_print(find_quest[rand_range(0, 4)]);
+	msg_print(find_quest[rand_range(0, 5)]);
 	msg_print(NULL);
 
 	if (q_num == 1)
@@ -367,7 +369,6 @@ int number_of_quests(void)
 #if 0
 
 /* hack as in leave_store in store.c */
-static bool leave_bldg = FALSE;
 
 static bool is_owner(building_type *bldg)
 {
@@ -424,6 +425,8 @@ static void clear_bldg(int min_row, int max_row)
 		prt("", i, 0);
 }
 
+#endif /* 0 */
+
 static void building_prt_gold(void)
 {
 	char tmp_str[80];
@@ -438,93 +441,28 @@ static void building_prt_gold(void)
 /*
  * Display a building.
  */
-static void show_building(building_type* bldg)
+static void display_build(field_type *f_ptr, store_type *b_ptr)
 {
-	char buff[20];
-	int i;
-	byte action_color;
 	char tmp_str[80];
+	
+	b_own_type *bo_ptr = &b_owners[b_ptr->type][b_ptr->owner];
+	
+	cptr build_name = t_info[f_ptr->t_idx].name;
+	cptr owner_name = (bo_ptr->owner_name);
+	cptr race_name = race_info[bo_ptr->owner_race].title;
 
 	Term_clear();
-	sprintf(tmp_str, "%s (%s) %35s", bldg->owner_name, bldg->owner_race,
-		 bldg->name);
+	sprintf(tmp_str, "%s (%s) %35s", owner_name, race_name, build_name);
 	prt(tmp_str, 2, 1);
 	prt("You may:", 19, 0);
 
-	for (i = 0; i < 6; i++)
-	{
-		if (bldg->letters[i])
-		{
-			if (bldg->action_restr[i] == 0)
-			{
-				if ((is_owner(bldg) && (bldg->member_costs[i] == 0)) ||
-					(!is_owner(bldg) && (bldg->other_costs[i] == 0)))
-				{
-					action_color = TERM_WHITE;
-					buff[0] = '\0';
-				}
-				else if (is_owner(bldg))
-				{
-					action_color = TERM_YELLOW;
-					sprintf(buff, "(%dgp)", bldg->member_costs[i]);
-				}
-				else
-				{
-					action_color = TERM_YELLOW;
-					sprintf(buff, "(%dgp)", bldg->other_costs[i]);
-				}
-			}
-			else if (bldg->action_restr[i] == 1)
-			{
-				if (!is_member(bldg))
-				{
-					action_color = TERM_L_DARK;
-					strcpy(buff, "(closed)");
-				}
-				else if ((is_owner(bldg) && (bldg->member_costs[i] == 0)) ||
-					(is_member(bldg) && (bldg->other_costs[i] == 0)))
-				{
-					action_color = TERM_WHITE;
-					buff[0] = '\0';
-				}
-				else if (is_owner(bldg))
-				{
-					action_color = TERM_YELLOW;
-					sprintf(buff, "(%dgp)", bldg->member_costs[i]);
-				}
-				else
-				{
-					action_color = TERM_YELLOW;
-					sprintf(buff, "(%dgp)", bldg->other_costs[i]);
-				}
-			}
-			else
-			{
-				if (!is_owner(bldg))
-				{
-					action_color = TERM_L_DARK;
-					strcpy(buff, "(closed)");
-				}
-				else if (bldg->member_costs[i] != 0)
-				{
-					action_color = TERM_YELLOW;
-					sprintf(buff, "(%dgp)", bldg->member_costs[i]);
-				}
-				else
-				{
-					action_color = TERM_WHITE;
-					buff[0] = '\0';
-				}
-			}
-
-			sprintf(tmp_str, " %c) %s %s", bldg->letters[i], bldg->act_names[i], buff);
-			c_put_str(action_color, tmp_str, 19 + (i / 2), 35 * (i % 2));
-		}
-	}
 
 	prt(" ESC) Exit building", 23, 0);
+
+	building_prt_gold();
 }
 
+#if 0
 
 /*
  * display fruit for dice slots
@@ -1551,9 +1489,6 @@ static void building_recharge(void)
 			object_desc(tmp_str, o_ptr, TRUE, 3);
 
 			msg_format("You have: %s.", tmp_str);
-
-			/* Update the gold display */
-			building_prt_gold();
 		}
 		else
 		{
@@ -1680,8 +1615,10 @@ static void building_recharge(void)
 	/* Finished */
 	return;
 }
+#endif /* 0 */
 
 
+#if 0
 /*
  * Execute a building command
  */
@@ -1892,72 +1829,340 @@ void do_cmd_quest(void)
 }
 
 
+#endif /* 0 */
+
+/*
+ * Hack -- set this to leave the building
+ */
+static bool leave_build = FALSE;
+
+
+/*
+ * Process a command in a building
+ *
+ * Note that we must disable some commands which are allowed
+ * in the dungeon but not in the stores, to prevent chaos.
+ */
+static void build_process_command(field_type *f_ptr, store_type *b_ptr)
+{
+	/* Handle repeating the last command */
+	repeat_check();
+
+	if (rogue_like_commands && p_ptr->command_cmd == 'l')
+	{
+		p_ptr->command_cmd = 'x';	/* hack! */
+	}
+
+	/* Parse the command */
+	switch (p_ptr->command_cmd)
+	{
+		/* Leave */
+		case ESCAPE:
+		{
+			leave_build = TRUE;
+			break;
+		}
+
+		/* Redraw */
+		case KTRL('R'):
+		{
+			do_cmd_redraw();
+			display_build(f_ptr, b_ptr);
+			break;
+		}
+
+		/* Ignore return */
+		case '\r':
+		{
+			break;
+		}
+
+		/*** Inventory Commands ***/
+
+		/* Wear/wield equipment */
+		case 'w':
+		{
+			do_cmd_wield();
+			break;
+		}
+
+		/* Take off equipment */
+		case 't':
+		{
+			do_cmd_takeoff();
+			break;
+		}
+
+		/* Destroy an item */
+		case 'k':
+		{
+			do_cmd_destroy();
+			break;
+		}
+
+		/* Equipment list */
+		case 'e':
+		{
+			do_cmd_equip();
+			break;
+		}
+
+		/* Inventory list */
+		case 'i':
+		{
+			do_cmd_inven();
+			break;
+		}
+
+
+		/*** Various commands ***/
+
+		/* Identify an object */
+		case 'I':
+		{
+			do_cmd_observe();
+			break;
+		}
+
+		/* Hack -- toggle windows */
+		case KTRL('I'):
+		{
+			toggle_inven_equip();
+			break;
+		}
+
+
+
+		/*** Use various objects ***/
+
+		/* Browse a book */
+		case 'b':
+		{
+			do_cmd_browse();
+			break;
+		}
+
+		/* Inscribe an object */
+		case '{':
+		{
+			do_cmd_inscribe();
+			break;
+		}
+
+		/* Uninscribe an object */
+		case '}':
+		{
+			do_cmd_uninscribe();
+			break;
+		}
+
+
+
+		/*** Help and Such ***/
+
+		/* Help */
+		case '?':
+		{
+			do_cmd_help();
+			break;
+		}
+
+		/* Identify symbol */
+		case '/':
+		{
+			do_cmd_query_symbol();
+			break;
+		}
+
+		/* Character description */
+		case 'C':
+		{
+			do_cmd_character();
+			display_build(f_ptr, b_ptr);
+			break;
+		}
+
+
+		/*** System Commands ***/
+
+		/* Hack -- User interface */
+		case '!':
+		{
+			(void)Term_user(0);
+			break;
+		}
+
+		/* Single line from a pref file */
+		case '"':
+		{
+			do_cmd_pref();
+			break;
+		}
+
+		/* Interact with macros */
+		case '@':
+		{
+			do_cmd_macros();
+			break;
+		}
+
+		/* Interact with visuals */
+		case '%':
+		{
+			do_cmd_visuals();
+			break;
+		}
+
+		/* Interact with colors */
+		case '&':
+		{
+			do_cmd_colors();
+			break;
+		}
+
+		/* Interact with options */
+		case '=':
+		{
+			do_cmd_options(OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
+			break;
+		}
+
+		/*** Misc Commands ***/
+
+		/* Take notes */
+		case ':':
+		{
+			do_cmd_note();
+			break;
+		}
+
+		/* Version info */
+		case 'V':
+		{
+			do_cmd_version();
+			break;
+		}
+
+		/* Repeat level feeling */
+		case KTRL('F'):
+		{
+			do_cmd_feeling();
+			break;
+		}
+
+		/* Show previous message */
+		case KTRL('O'):
+		{
+			do_cmd_message_one();
+			break;
+		}
+
+		/* Show previous messages */
+		case KTRL('P'):
+		{
+			do_cmd_messages();
+			break;
+		}
+
+		/* Check artifacts, uniques etc. */
+		case '~':
+		case '|':
+		{
+			do_cmd_knowledge();
+			break;
+		}
+
+		/* Load "screen dump" */
+		case '(':
+		{
+			do_cmd_load_screen();
+			break;
+		}
+
+		/* Save "screen dump" */
+		case ')':
+		{
+			do_cmd_save_screen();
+			break;
+		}
+
+		/* Hack -- Unknown command */
+		default:
+		{
+			msg_print("That command does not work in buildings.");
+			break;
+		}
+	}
+}
+
+
 /*
  * Do building commands
  */
-void do_cmd_bldg(void)
+void do_cmd_bldg(field_type *f_ptr)
 {
-	int px = p_ptr->px;
-	int py = p_ptr->py;
+	int             i, which = -1;
+	store_type   *b_ptr;
 
-	int             i, which;
-	char            command;
-	bool            validcmd;
-	building_type   *bldg;
-
-	if (!((area(py, px)->feat >= FEAT_BLDG_HEAD) &&
-		(area(py, px)->feat <= FEAT_BLDG_TAIL)))
+	town_type	*twn_ptr = &town[p_ptr->town_num];
+	
+	/* Get the building the player is on */
+	for (i = 0; i < twn_ptr->numstores; i++)
 	{
-		msg_print("You see no building here.");
+		if ((p_ptr->py - twn_ptr->y * 16 == twn_ptr->store[i].y) && 
+		 (p_ptr->px - twn_ptr->x * 16 == twn_ptr->store[i].x))
+		{
+			which = i;
+		}
+	}
+	
+	/* Paranoia */
+	if (which == -1)
+	{
+		msg_print("Could not locate building!");
 		return;
 	}
 
-	which = (area(py, px)->feat - FEAT_BLDG_HEAD);
 
-	bldg = &building[which];
+	b_ptr = &twn_ptr->store[which];
 
 	/* Forget the view */
 	forget_view();
 
 	/* Hack -- Increase "icky" depth */
 	character_icky++;
+	
+	/* No command argument */
+	p_ptr->command_arg = 0;
 
-	command_arg = 0;
-	command_rep = 0;
-	command_new = 0;
+	/* No repeated command */
+	p_ptr->command_rep = 0;
 
-	show_building(bldg);
-	leave_bldg = FALSE;
+	/* No automatic command */
+	p_ptr->command_new = 0;
 
-	while (!leave_bldg)
+	/* Display the building */
+	display_build(f_ptr, b_ptr);
+
+	/* Interact with player */
+	while (!leave_build)
 	{
-		validcmd = FALSE;
 		prt("", 1, 0);
 
-		building_prt_gold();
+		/* Clear */
+		clear_from(21);
 
-		command = inkey();
+		/* Basic commands */
+		prt(" ESC) Exit from Building.", 22, 0);
+		
+		/* Get a command */
+		request_command(FALSE);
 
-		if (command == ESCAPE)
-		{
-			leave_bldg = TRUE;
-			break;
-		}
+		/* Process the command */
+		build_process_command(f_ptr, b_ptr);
 
-		for (i = 0; i < 6; i++)
-		{
-			if (bldg->letters[i])
-			{
-				if (bldg->letters[i] == command)
-				{
-					validcmd = TRUE;
-					break;
-				}
-			}
-		}
-
-		if (validcmd)
-			bldg_process_command(bldg, i);
+		/* Hack -- Character is still in "icky" mode */
+		character_icky = TRUE;
 
 		/* Notice stuff */
 		notice_stuff();
@@ -1966,26 +2171,41 @@ void do_cmd_bldg(void)
 		handle_stuff();
 	}
 
+	/* Free turn XXX XXX XXX */
+	p_ptr->energy_use = 0;
+
+	/* Hack -- Character is no longer in "icky" mode */
+	character_icky = FALSE;
+
+
+	/* Hack -- Cancel automatic command */
+	p_ptr->command_new = 0;
+
+	/* Hack -- Cancel "see" mode */
+	p_ptr->command_see = FALSE;
+
+
 	/* Flush messages XXX XXX XXX */
 	msg_print(NULL);
 
-	/* Hack -- Decrease "icky" depth */
-	character_icky--;
 
 	/* Clear the screen */
 	Term_clear();
 
-	/* Update the visuals */
-	p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_BONUS);
+
+	/* Update everything */
+	p_ptr->update |= (PU_VIEW);
+	p_ptr->update |= (PU_MONSTERS);
 
 	/* Redraw entire screen */
-	p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_EQUIPPY | PR_MAP);
+	p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_EQUIPPY);
+
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
 }
-
-#endif /* 0 */
 
 /*
  * Initialize a building
@@ -1994,6 +2214,9 @@ void build_init(int town_num, int build_num, byte build_type)
 {
 	/* Activate that building */
 	store_type *st_ptr = &town[town_num].store[build_num];
+
+	/* Pick an owner */
+	st_ptr->owner = (byte)randint0(MAX_B_OWN);
 
 	/* Set the type */
 	st_ptr->type = build_type;

@@ -46,6 +46,7 @@ extern byte adj_con_fix[];
 extern byte adj_con_mhp[];
 extern byte blows_table[12][12];
 extern owner_type owners[MAX_STORES][MAX_OWNERS];
+extern b_own_type b_owners[MAX_BLDG][MAX_B_OWN];
 extern byte extract_energy[200];
 extern s32b player_exp[PY_MAX_LEVEL];
 extern player_sex sex_info[MAX_SEXES];
@@ -859,7 +860,7 @@ extern void move_to_black_market(object_type * o_ptr);
 /* bldg.c */
 extern bool get_nightmare(int r_idx);
 extern void have_nightmare(int r_idx);
-extern void do_cmd_bldg(void);
+extern void do_cmd_bldg(field_type *f_ptr);
 extern void do_cmd_quest(void);
 extern void quest_discovery(int q_idx);
 extern int quest_number(int level);
@@ -1169,8 +1170,8 @@ extern void field_action_door_bash(s16b *field_ptr, void *input);
 extern void field_action_door_lock_monster(s16b *field_ptr, void *input);
 extern void field_action_door_jam_monster(s16b *field_ptr, void *input);
 extern void field_action_door_gf(s16b *field_ptr, void *input);
-extern void field_action_door_store(s16b *field_ptr, void *input);
-
+extern void field_action_door_store(s16b *field_ptr, void *nothing);
+extern void field_action_door_build(s16b *field_ptr, void *nothing);
 /*
  * Hack -- conditional (or "bizarre") externs
  */

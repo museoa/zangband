@@ -1084,17 +1084,14 @@ byte blows_table[12][12] =
 
 
 /*
- * Store owners (exactly four "possible" owners per store, chosen randomly)
- * { name, purse, max greed, min greed, haggle_per, tolerance, race, unused }
+ * Store owners (exactly MAX_OWNERS owners per store, chosen randomly)
+ * { name, purse, max greed, min greed, haggle_per, tolerance, race}
  *
  * Lifted extra shopkeepers from CthAngband (don't you just love open source
  * development? ;-)). Since this gave less than 32 unique names for some
  * shops, those have their first x names copied to reach 32.
  *
  * For the weapon and armour shops, several owners have a limit of 5k.
- *
- * I want to do 50k owners, but the purse is currently s16b. Perhaps
- * we should just store 1/10th of the purse?
  */
 owner_type owners[MAX_STORES][MAX_OWNERS] =
 {
@@ -1415,7 +1412,18 @@ owner_type owners[MAX_STORES][MAX_OWNERS] =
 	}
 };
 
-
+/*
+ * The list of owners for the new buildings
+ * Building owners (exactly MAX_B_OWN owners per building, chosen randomly)
+ * { name, greed, race}
+ */
+b_own_type b_owners[MAX_BLDG][MAX_B_OWN] =
+{
+	{
+		/* Weaponsmith */
+		{ "Suiyan",			150,			RACE_HUMAN},
+	}
+};
 
 
 /*
@@ -6596,5 +6604,8 @@ field_action f_action[FIELD_ACTION_TYPES] =
 	
 	/* Stores open when walked on */
 	{field_action_door_store, "field_action_door_store"},
+	
+	/* Buildings open when walked on */
+	{field_action_door_build, "field_action_door_build"},
 };
 

@@ -123,7 +123,7 @@
 /*
  * Number of buildings
  */
-#define MAX_BLDG		32
+#define MAX_BLDG		1
 
 #define STORE_GENERAL   0
 #define STORE_ARMOURY   1
@@ -144,6 +144,12 @@
  * Total number of owners per store (see "store.c", etc)
  */
 #define MAX_OWNERS			32
+
+/*
+ * Total number of owners per building (see "bldg.c", etc)
+ */
+#define MAX_B_OWN			1
+
 
 /*
  * Maximum number of player "sex" types (see "table.c", etc)
@@ -4073,7 +4079,7 @@ extern int PlayerUID;
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 
 
-#define FIELD_ACTION_TYPES  51 /* Number of FIELD_ACT functions in tables.c */
+#define FIELD_ACTION_TYPES  52 /* Number of FIELD_ACT functions in tables.c */
 
 
 

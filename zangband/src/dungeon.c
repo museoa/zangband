@@ -2800,14 +2800,7 @@ static void process_command(void)
 
 		/*** Stairs and Doors and Chests and Traps ***/
 
-#if 0
-		/* Enter building -KMW- */
-		case ']':
-		{
-			do_cmd_bldg();
-			break;
-		}
-#endif
+
 #if 0
 		/* Enter quest level -KMW- */
 		case '[':

@@ -3576,7 +3576,7 @@ bool allocate_store(store_type *st_ptr)
  */
 void do_cmd_store(field_type *f_ptr)
 {
-	int which = 0;
+	int which = -1;
 	int maintain_num;
 	int tmp_chr;
 	int i;
@@ -3594,6 +3594,13 @@ void do_cmd_store(field_type *f_ptr)
 		{
 			which = i;
 		}
+	}
+	
+	/* Paranoia */
+	if (which == -1)
+	{
+		msg_print("Could not locate building!");
+		return;
 	}
 
 	/* Save the store and owner pointers */

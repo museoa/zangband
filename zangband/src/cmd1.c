@@ -2580,18 +2580,6 @@ void move_player(int dir, int do_pickup)
 		carry(do_pickup != always_pickup);
 
 #if 0
-		/* Handle "building doors" -KMW- */
-		else if ((c_ptr->feat >= FEAT_BLDG_HEAD) &&
-		    (c_ptr->feat <= FEAT_BLDG_TAIL))
-		{
-			/* Disturb */
-			disturb(0, 0);
-
-			/* Hack -- Enter building */
-			p_ptr->command_new = ']';
-		}
-#endif
-#if 0
 
 		/* Handle quest areas -KMW- */
 		else if (area(y,x)->feat == FEAT_QUEST_ENTER)
