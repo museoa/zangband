@@ -2239,30 +2239,7 @@ void mutation_power_aux(u32b power)
 		case MUT1_RECALL:
 			if (racial_aux(17, 50, A_INT, 16))
 			{
-				if (ironman_downward)
-				{
-					msg_print("Your skill fails.");
-				}
-				else
-				{
-					if (p_ptr->depth && (p_ptr->max_depth > p_ptr->depth))
-					{
-						if (get_check("Reset recall depth? "))
-							p_ptr->max_depth = p_ptr->depth;
-					}
-					if (!p_ptr->word_recall)
-					{
-						p_ptr->word_recall = randint0(21) + 15;
-						msg_print("The air about you becomes charged...");
-						p_ptr->redraw |= (PR_STATUS);
-					}
-					else
-					{
-						p_ptr->word_recall = 0;
-						msg_print("A tension leaves the air around you...");
-						p_ptr->redraw |= (PR_STATUS);
-					}
-				}
+				word_of_recall();
 			}
 			break;
 
