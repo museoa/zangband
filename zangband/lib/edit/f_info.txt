@@ -526,7 +526,7 @@ G:%:D
 
 
 N:128:bush
-G:%:r
+G:%:y
 
 N:129:dead bush
 G:%:s

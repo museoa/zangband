@@ -2568,7 +2568,7 @@ D:It looks very cute, except for the razor sharp teeth. It moans
 D:ominously as it jumps at your throat!
 
 N:206:Old Man Willow
-G:#:s
+G:%:s
 I:110:16d20:20:10:20
 W:11:5:0:150
 B:TOUCH:PARALYZE
@@ -10040,7 +10040,7 @@ D:horror and hatefulness and unutterabl evil of that forbidden spawn
 D:of black chaos, and illimitable night."
 
 N:708:Ent
-G:#:G
+G:%:G
 I:120:40d70:30:60:15
 W:46:3:0:12500
 B:CRUSH:HURT:10d11
@@ -10121,7 +10121,7 @@ D:brother to win a treasure hoard, and then transformed himself into
 D:a dragon, greedily watching over his hoard.
 
 N:713:Fangorn
-G:#:G
+G:%:G
 I:120:35d100:30:60:15
 W:47:3:0:13500
 B:CRUSH:HURT:12d11
