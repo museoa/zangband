@@ -8119,7 +8119,7 @@ D:skeletal figure wearing a ruined plate mail.
 N:556:Young multi-hued dragon
 G:d:v
 I:110:24d7:20:35:50
-W:60:1:0:63000
+W:50:1:0:63000
 O:50:50:0
 B:CLAW:HURT:1d9
 B:CLAW:HURT:1d9
