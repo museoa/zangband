@@ -2909,9 +2909,9 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				/* multiply by slays or brands. (10x inflation) */
 				tdam = tot_dam_aux(q_ptr, tdam, m_ptr);
 
-				/* multiply by critical shot. (10x inflation) */
+				/* multiply by critical shot. (10x inflation) + level damage bonus*/
 				tdam *= critical_shot(chance2, sleeping_bonus, FALSE,
-					o_name, m_name, visible);
+					o_name, m_name, visible)+p_ptr->lev*2/3;
 
 				/* Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
