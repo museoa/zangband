@@ -14,6 +14,8 @@
 
 #include "script.h"
 
+#include <math.h>
+
 
 /*
  * Hack -- Rerate Hitpoints
@@ -161,6 +163,84 @@ static void prt_binary(u32b flags, int col, int row)
 	}
 }
 
+static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
+{
+	int i;
+	long value1, total;
+    alloc_entry *table = alloc_kind_table;
+    double p;
+
+    /* We need to do the intermediate math in floating point... */
+    double r_db[MAX_DEPTH];
+
+    int level;
+
+    for (i = 0; i < MAX_DEPTH; i++)
+        r_db[i] = 0;
+
+    for (level = 0; level < MAX_DEPTH * 2; level++)
+    {
+        /* Reset total */
+        total = 0L;
+
+        /* Process probabilities */
+        for (i = 0; i < alloc_kind_size; i++)
+        {
+            /* Objects are sorted by depth */
+            if (table[i].level > level) break;
+
+            /* What John West rejects, makes John West the best. */
+            if (table[i].level < min_level) continue;
+
+            /* Total */
+            total += table[i].prob2;
+        }
+
+        /* No legal objects */
+        if (total <= 0) continue;
+
+        value1 = 0;
+        p = 0;
+
+        /* Find the object */
+        for (i = 0; i < alloc_kind_size; i++)
+        {
+            /* Objects are sorted by depth */
+            if (table[i].level > level) break;
+
+            /* What John West rejects, makes John West the best. */
+            if (table[i].level < min_level) continue;
+
+            if (table[i].index == obj_num)
+            {
+                p += (pow(value1 + table[i].prob2, 4) - pow(value1, 4)) /
+                    pow(total, 4);
+            }
+
+            /* Increment */
+            value1 += table[i].prob2;
+        }
+
+        /* Add base probability */
+        if (level < MAX_DEPTH)
+            r_db[level] += p * (GREAT_OBJ - 1) / GREAT_OBJ;
+
+        /* Add the probability for out-of-depth objects */
+        for (i = 1; i <= MAX_DEPTH; i++)
+        {
+            if (level - MAX_DEPTH / i >= 0 &&
+                level - MAX_DEPTH / i < MAX_DEPTH)
+            {
+                r_db[level - MAX_DEPTH / i] += p / GREAT_OBJ / MAX_DEPTH;
+            }
+        }
+    }
+
+    /* Convert to fixed point */
+    for (i = 0; i < MAX_DEPTH; i++)
+        rarity[i] = (int)(0x10000 * r_db[i]);
+}
+
 
 /*
  * Output a rarity graph for a type of object.
@@ -190,16 +270,27 @@ static void prt_alloc(const object_type *o_ptr, int col, int row, u32b monte)
 	/* Refresh */
 	Term_fresh();
 
-	/* Scan all entries */
-	for (i = 0; i < MAX_DEPTH; i++)
-	{
-		for (j = 0; j < monte; j++)
-		{
-			if (get_obj_num(i, 0) == kind) rarity[i]++;
-		}
+    if (monte > 0)
+    {
+        /* Scan all entries */
+        for (i = 0; i < MAX_DEPTH; i++)
+        {
+            for (j = 0; j < monte; j++)
+            {
+                if (get_obj_num(i, 0) == kind) rarity[i]++;
+            }
 
-		total[i] = monte;
-	}
+            total[i] = monte;
+        }
+    }
+    else
+    {
+        /* Calculate */
+        get_obj_dist(0, kind, rarity);
+
+        for (i = 0; i < MAX_DEPTH; i++)
+            total[i] = 0x10000;
+    }
 
 	/* Find maxima */
 	for (i = 0; i < MAX_DEPTH; i++)
@@ -913,7 +1004,7 @@ static void wiz_statistics(object_type *o_ptr)
 
 	sprintf(tmp_val, "%ld", (long)test_roll);
 	if (get_string(p, tmp_val, 11)) test_roll = atol(tmp_val);
-	test_roll = MAX(1, test_roll);
+	test_roll = MAX(0, test_roll);
 
 	/* Display the rarity graph */
 	prt_alloc(o_ptr, 0, 2, test_roll);
