@@ -772,7 +772,7 @@ static bool cave_stop_disintegration(cave_type *c_ptr)
 	{
 		return (TRUE);
 	}
-	
+
 	/* Fields can block disintegration to */
 	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_PERM)) return (TRUE);
 
@@ -1579,7 +1579,7 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
 	 */
 	if (view_bright_lite && !p_ptr->blind
 		&& (!(f_ptr->flags & FF_BLOCK)
-			 || (view_granite_lite && !view_torch_grids)))
+			|| (view_granite_lite && !view_torch_grids)))
 	{
 		/* It's not in view or no lighting effects? */
 		if (((!(player & (GRID_VIEW))) && view_special_lite)
@@ -2325,8 +2325,8 @@ static const byte priority_table[][2] =
 	{FEAT_WALL_INNER, 10},
 	{FEAT_WALL_OUTER, 10},
 	{FEAT_WALL_SOLID, 10},
-	
-	
+
+
 	/* Perm Walls */
 	{FEAT_PERM_EXTRA, 10},
 	{FEAT_PERM_INNER, 10},
@@ -3902,7 +3902,7 @@ void update_view(void)
 					bits3 &= ~(p->bits[3]);
 					bits4 &= ~(p->bits[4]);
 				}
-				
+
 				/* All ready seen.  Next... */
 				if (player & GRID_VIEW) continue;
 
@@ -3930,7 +3930,7 @@ void update_view(void)
 						player &= ~(GRID_LITE);
 					}
 				}
-				
+
 				/* Save cave info */
 				c_ptr->info = info;
 				pc_ptr->player = player;
@@ -4640,7 +4640,7 @@ void update_flow(void)
 			{
 				continue;
 			}
-			
+
 			/*
 			 * Hack - do not overwrite loud sounds with quiet ones,
 			 * unless some time has passed
@@ -4703,7 +4703,7 @@ void map_area(void)
 
 			/* All non-walls are "checked" */
 			if (!((c_ptr->feat >= FEAT_MAGMA) &&
-				(c_ptr->feat <= FEAT_PERM_SOLID)))
+				  (c_ptr->feat <= FEAT_PERM_SOLID)))
 			{
 				/* Memorize normal features */
 				if (c_ptr->feat != FEAT_FLOOR)

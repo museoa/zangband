@@ -1486,7 +1486,7 @@ void do_cmd_query_symbol(void)
 		all = killed = TRUE;
 		strcpy(buf, "Killed monster list.");
 	}
-	
+
 	else if (ident_info[i])
 	{
 		sprintf(buf, "%c - %s.", sym, ident_info[i] + 2);
@@ -1515,7 +1515,7 @@ void do_cmd_query_symbol(void)
 
 		/* Require unique monsters if needed */
 		if (uniq && !(r_ptr->flags1 & (RF1_UNIQUE))) continue;
-		
+
 		/* Require killed monsters if needed */
 		if (killed && !r_ptr->r_pkills) continue;
 

@@ -1496,7 +1496,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	{
 		return (FALSE);
 	}
-	
+
 	/* Nor on the Pattern */
 	if (cave_perma_grid(c_ptr) && cave_floor_grid(c_ptr)) return (FALSE);
 

@@ -3794,4 +3794,3 @@ void repeat_check(void)
 		repeat_push(what);
 	}
 }
-

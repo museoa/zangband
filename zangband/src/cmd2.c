@@ -712,9 +712,9 @@ static int coords_to_dir(int x, int y)
 {
 	int d[3][3] =
 	{
-		{7, 4, 1},
-		{8, 5, 2},
-		{9, 6, 3}
+	{7, 4, 1},
+	{8, 5, 2},
+	{9, 6, 3}
 	};
 	int dy = y - p_ptr->py;
 	int dx = x - p_ptr->px;
@@ -1826,7 +1826,7 @@ void do_cmd_alter(void)
 				}
 			}
 		}
-		
+
 		/* Open closed doors */
 		else if (c_ptr->feat == FEAT_CLOSED)
 		{

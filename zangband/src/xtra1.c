@@ -3430,7 +3430,7 @@ static void calc_bonuses(void)
 	}
 	/* Add all class and race-specific adjustments to missile Skill. -LM- */
 	p_ptr->skill_thb += add_special_missile_skill(p_ptr->pclass);
-	
+
 	/* Add all other class-specific adjustments to melee Skill. -LM- */
 	p_ptr->skill_thn += add_special_melee_skill(p_ptr->pclass, o_ptr);
 
@@ -3524,7 +3524,7 @@ static void calc_bonuses(void)
 
 	/* Assume not heavy */
 	p_ptr->heavy_wield = FALSE;
-	
+
 	/* Are we using a weapon? */
 	if (o_ptr->k_idx)
 	{
@@ -3537,7 +3537,7 @@ static void calc_bonuses(void)
 
 			/* Heavy weapon */
 			p_ptr->heavy_wield = TRUE;
-	
+
 			/* The player gets to swing a heavy weapon only once. -LM- */
 			p_ptr->num_blow = 1;
 		}
@@ -3548,9 +3548,9 @@ static void calc_bonuses(void)
 			int str_index, dex_index;
 
 			int effective_weight = 0, mul = 6;
-			
+
 			int skill;
-	
+
 			/* Enforce a minimum weight of three pounds. */
 			effective_weight = (o_ptr->weight < 30 ? 30 : o_ptr->weight);
 
@@ -3570,10 +3570,10 @@ static void calc_bonuses(void)
 
 			/* Use the blows table */
 			p_ptr->num_blow = blows_table[str_index][dex_index];
-			
+
 			/* Get weapon skill */
 			skill = p_ptr->skill_thn + (p_ptr->to_h * BTH_PLUS_ADJ);
-			
+
 			/* Require high skill to get large number of blows */
 			if ((skill < 100) && (p_ptr->num_blow > 3))
 			{
@@ -3596,7 +3596,7 @@ static void calc_bonuses(void)
 			p_ptr->skill_dig += (o_ptr->weight / 10);
 		}
 	}
-	
+
 	/* No weapon */
 	else
 	{

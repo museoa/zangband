@@ -4355,15 +4355,14 @@ void place_object(int x, int y, bool good, bool great)
 
 	/* Require nice floor space */
 	if (!cave_nice_grid(c_ptr)) return;
-	
+
 	/* Do not generate items on "nasty" terrain */
 	if ((c_ptr->feat == FEAT_SHAL_LAVA) ||
-		(c_ptr->feat == FEAT_SHAL_WATER) ||
-		(c_ptr->feat == FEAT_SHAL_ACID))
+		(c_ptr->feat == FEAT_SHAL_WATER) || (c_ptr->feat == FEAT_SHAL_ACID))
 	{
 		return;
 	}
-	
+
 	/* Get local object */
 	q_ptr = &forge;
 
@@ -4628,7 +4627,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 
 			/* Require floor space */
 			if (!cave_nice_grid(c_ptr)) continue;
-			
+
 			/* Not on "nasty" terrains */
 			if ((c_ptr->feat == FEAT_SHAL_LAVA) ||
 				(c_ptr->feat == FEAT_SHAL_ACID) ||
@@ -4739,7 +4738,7 @@ s16b drop_near(object_type *j_ptr, int chance, int x, int y)
 
 		/* Require floor space */
 		if (!cave_nice_grid(c_ptr)) continue;
-		
+
 		/* Not on "nasty" terrains */
 		if ((c_ptr->feat == FEAT_SHAL_LAVA) ||
 			(c_ptr->feat == FEAT_SHAL_ACID) ||

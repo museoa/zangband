@@ -94,7 +94,7 @@ bool teleport_away(int m_idx, int dis)
 
 			/* ...nor onto the Pattern */
 			if (cave_perma_grid(c_ptr)) continue;
-			
+
 			/* Not on bad terrain */
 			if (!monster_can_cross_terrain(c_ptr->feat, r_ptr)) continue;
 
@@ -1427,7 +1427,7 @@ static int remove_curse_aux(int all)
 
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);
-		
+
 		/* Combine / Reorder the pack (later) */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
@@ -1684,7 +1684,7 @@ static int enchant_table_dam[ENCHANT_MAX_DAM + 1] =
  */
 static int enchant_table[ENCHANT_MAX + 1] =
 {
-	0, 10,  50, 100, 200,
+	0, 10, 50, 100, 200,
 	300, 400, 500, 650, 800,
 	950, 987, 993, 995, 998,
 	1000

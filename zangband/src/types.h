@@ -108,8 +108,8 @@ typedef struct feature_type feature_type;
 
 struct feature_type
 {
-	u32b name;		/* Name (offset) */
-	u32b text;		/* Text (offset) */
+	u32b name;	/* Name (offset) */
+	u32b text;	/* Text (offset) */
 
 	byte d_attr;	/* Default feature attribute */
 	char d_char;	/* Default feature character */
@@ -120,8 +120,8 @@ struct feature_type
 
 	byte w_attr;	/* Desired extra feature attribute */
 	char w_char;	/* Desired extra feature character */
-	
-	byte flags;		/* Properties of the feature */
+
+	byte flags;	/* Properties of the feature */
 };
 
 

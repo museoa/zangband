@@ -77,7 +77,7 @@ void do_cmd_redraw(void)
 		/* Refresh */
 		Term_fresh();
 	}
-	
+
 	/* Restore */
 	Term_activate(old);
 }

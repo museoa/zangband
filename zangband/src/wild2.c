@@ -1534,10 +1534,10 @@ static void build_store(int xx, int yy, store_type *st_ptr)
 static void town_gen_hack(u16b town_num)
 {
 	int y, x, k, n, xx, yy;
-	
+
 	/* Add an extra column to make it symmetrical */
 	int rooms[3 * 4];
-	
+
 	cave_type *c_ptr;
 
 	/* Prepare an array of "remaining stores", and count them */

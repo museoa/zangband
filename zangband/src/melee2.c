@@ -1388,7 +1388,7 @@ static bool get_moves(int m_idx, int *mm)
 			int i, i2;
 			int xx2, yy2;
 			int cx = px, cy = py;
-			
+
 			monster_type *fm_ptr;
 			monster_race *fr_ptr;
 
@@ -1458,11 +1458,11 @@ static bool get_moves(int m_idx, int *mm)
 					}
 
 					if (!blocked) continue;
-					
+
 					/* If we're blocking something, move to free space */
 					tx = cx;
 					ty = cy;
-					
+
 					break;
 				}
 			}

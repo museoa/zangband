@@ -2181,7 +2181,7 @@ bool load_player(void)
 			{
 				/* A character was loaded */
 				character_loaded = TRUE;
-				
+
 				/*
 				 * We need to initialise things properly here.
 				 * The wilderness is not loaded (or saved when dead)

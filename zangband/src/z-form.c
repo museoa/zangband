@@ -576,11 +576,11 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				/* Prevent buffer overflows */
 				strncpy(arg2, arg, 1024);
 
-#ifdef ALLOW_BORG				
+#ifdef ALLOW_BORG
 				/* Ultra - Paranoia */
 				if (strlen(arg) > 1023) quit("String too long in vstrnfmt");
 #endif /* ALLOW_BORG */
-			
+
 				/* Terminate */
 				arg2[1023] = '\0';
 

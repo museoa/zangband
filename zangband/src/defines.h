@@ -3942,7 +3942,7 @@
  */
 #define cave_wall_grid(C) \
     (f_info[(C)->feat].flags & FF_BLOCK)
-	
+
 /*
  * True half the time for trees. (Block line of sight half the time.)
  */

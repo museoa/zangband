@@ -1234,7 +1234,7 @@ errr parse_f_info(char *buf, header *head)
 			{
 				return (PARSE_ERROR_INVALID_FLAG);
 			}
-			
+
 			/* Start the next entry */
 			s = t;
 		}
@@ -1489,7 +1489,7 @@ errr parse_k_info(char *buf, header *head)
 			{
 				return (PARSE_ERROR_INVALID_FLAG);
 			}
-			
+
 			/* Start the next entry */
 			s = t;
 		}

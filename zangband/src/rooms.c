@@ -1272,12 +1272,16 @@ static const vault_aux_type *pick_vault_type(const vault_aux_type *l_ptr)
 		if (n_ptr->level > p_ptr->depth)
 		{
 			/* Out of depth - decreased chances */
-			total += n_ptr->chance * MAX_DEPTH * 2 / (n_ptr->level - p_ptr->depth + 1);
+			total +=
+				n_ptr->chance * MAX_DEPTH * 2 / (n_ptr->level - p_ptr->depth +
+												 1);
 		}
 		else
 		{
 			/* Normal selection */
-			total += n_ptr->chance * MAX_DEPTH * 10 / (p_ptr->depth - n_ptr->level + 5);
+			total +=
+				n_ptr->chance * MAX_DEPTH * 10 / (p_ptr->depth - n_ptr->level +
+												  5);
 		}
 	}
 
@@ -1290,11 +1294,15 @@ static const vault_aux_type *pick_vault_type(const vault_aux_type *l_ptr)
 		/* Count this possibility */
 		if (n_ptr->level > p_ptr->depth)
 		{
-			total += n_ptr->chance * MAX_DEPTH * 2 / (n_ptr->level - p_ptr->depth + 1);
+			total +=
+				n_ptr->chance * MAX_DEPTH * 2 / (n_ptr->level - p_ptr->depth +
+												 1);
 		}
 		else
 		{
-			total += n_ptr->chance * MAX_DEPTH * 10 / (p_ptr->depth - n_ptr->level + 5);
+			total +=
+				n_ptr->chance * MAX_DEPTH * 10 / (p_ptr->depth - n_ptr->level +
+												  5);
 		}
 
 		/* Found the type */
@@ -1340,8 +1348,10 @@ static void draw_pit(int x1, int y1, int x2, int y2, int xh, int yh)
 	generate_draw(x1, y1, x2, y2, FEAT_WALL_OUTER);
 
 	/* Shrink to inner floor */
-	x1++; x2--;
-	y1++; y2--;
+	x1++;
+	x2--;
+	y1++;
+	y2--;
 
 	/* Generate inner floor */
 	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
@@ -1359,7 +1369,7 @@ static void draw_pit(int x1, int y1, int x2, int y2, int xh, int yh)
 
 			/* Not in middle room area */
 			if ((x >= x1 + xh) && (x <= x2 - xh) &&
-				 (y >= y1 + yh) && (y <= y2 - yh))
+				(y >= y1 + yh) && (y <= y2 - yh))
 			{
 				continue;
 			}
@@ -1368,7 +1378,7 @@ static void draw_pit(int x1, int y1, int x2, int y2, int xh, int yh)
 			{
 				/* Outer wall */
 				if ((x < x1 + wid) || (x > x2 - wid) ||
-					 (y < y1 + hgt) || (y > y2 - hgt))
+					(y < y1 + hgt) || (y > y2 - hgt))
 				{
 					set_feat_bold(x, y, FEAT_PILLAR);
 				}
@@ -1377,7 +1387,7 @@ static void draw_pit(int x1, int y1, int x2, int y2, int xh, int yh)
 			{
 				/* Inner wall */
 				if ((x > x1 + xh - 1 - wid) && (x < x2 - xh + 1 + wid) &&
-					 (y > y1 + yh - 1 - hgt) && (y < y2 - yh + 1 + hgt))
+					(y > y1 + yh - 1 - hgt) && (y < y2 - yh + 1 + hgt))
 				{
 					set_feat_bold(x, y, FEAT_PILLAR);
 				}
@@ -1465,7 +1475,7 @@ static void build_type5(int bx0, int by0)
 	if (!room_alloc(wid, hgt, TRUE, bx0, by0, &cx, &cy)) return;
 
 	/* Process a preparation function if necessary */
-	if (n_ptr->prep_func) (*(n_ptr->prep_func))();
+	if (n_ptr->prep_func) (*(n_ptr->prep_func)) ();
 
 	/* Outer room walls */
 	x1 = cx - dx;
@@ -1503,7 +1513,7 @@ static void build_type5(int bx0, int by0)
 
 			/* Decline incorrect alignment */
 			if (((align < 0) && (r_info[r_idx].flags3 & RF3_GOOD)) ||
-				 ((align > 0) && (r_info[r_idx].flags3 & RF3_EVIL)))
+				((align > 0) && (r_info[r_idx].flags3 & RF3_EVIL)))
 			{
 				continue;
 			}
@@ -1533,8 +1543,10 @@ static void build_type5(int bx0, int by0)
 	}
 
 	/* Shrink to contents of nest */
-	in_x1++; in_x2--;
-	in_y1++; in_y2--;
+	in_x1++;
+	in_x2--;
+	in_y1++;
+	in_y2--;
 
 	/* Place some monsters */
 	for (y = in_y1; y <= in_y2; y++)
@@ -1553,7 +1565,7 @@ static void build_type5(int bx0, int by0)
 
 	/* Sometimes nests cause a special feeling */
 	if ((p_ptr->depth <= 40) &&
-		 (randint1(p_ptr->depth * p_ptr->depth + 50) < 300))
+		(randint1(p_ptr->depth * p_ptr->depth + 50) < 300))
 	{
 		dun_ptr->good_item_flag = TRUE;
 	}
@@ -1667,7 +1679,7 @@ static void build_type6(int bx0, int by0)
 	}
 
 	/* Process a preparation function if necessary */
-	if (n_ptr->prep_func) (*(n_ptr->prep_func))();
+	if (n_ptr->prep_func) (*(n_ptr->prep_func)) ();
 
 	/* Outer room walls */
 	x1 = cx - dx;
@@ -1682,7 +1694,7 @@ static void build_type6(int bx0, int by0)
 	in_y2 = cy + y_cent + 1;
 
 	/* Size of inner room */
-   in_wid = 2 * x_cent + 1;
+	in_wid = 2 * x_cent + 1;
 	in_hgt = 2 * y_cent + 1;
 
 	/* Draw the outer room */
@@ -1709,7 +1721,7 @@ static void build_type6(int bx0, int by0)
 
 			/* Decline incorrect alignment */
 			if (((align < 0) && (r_info[r_idx].flags3 & RF3_GOOD)) ||
-				 ((align > 0) && (r_info[r_idx].flags3 & RF3_EVIL)))
+				((align > 0) && (r_info[r_idx].flags3 & RF3_EVIL)))
 			{
 				continue;
 			}
@@ -1792,11 +1804,10 @@ static void build_type6(int bx0, int by0)
 			{
 				power[y][x]++;
 
-				if (copy_v) power[in_hgt - 1 - y][             x]++;
-				if (copy_h) power[             y][in_wid - 1 - x]++;
+				if (copy_v) power[in_hgt - 1 - y][x]++;
+				if (copy_h) power[y][in_wid - 1 - x]++;
 
-				if (copy_v &&
-					 copy_h) power[in_hgt - 1 - y][in_wid - 1 - x]++;
+				if (copy_v && copy_h) power[in_hgt - 1 - y][in_wid - 1 - x]++;
 			}
 		}
 	}
@@ -1815,8 +1826,10 @@ static void build_type6(int bx0, int by0)
 	}
 
 	/* Shrink to contents of pit */
-	in_x1++; in_x2--;
-	in_y1++; in_y2--;
+	in_x1++;
+	in_x2--;
+	in_y1++;
+	in_y2--;
 
 	/* Place the monsters */
 	for (y = 0; y < in_hgt; y++)
@@ -1827,7 +1840,8 @@ static void build_type6(int bx0, int by0)
 			power[y][x] = (power[y][x] - min) * 16 / (max - min + 1);
 
 			/* And place the monster */
-			place_monster_aux(x + in_x1, y + in_y1, what[power[y][x]], FALSE, FALSE, FALSE, FALSE);
+			place_monster_aux(x + in_x1, y + in_y1, what[power[y][x]], FALSE,
+							  FALSE, FALSE, FALSE);
 		}
 	}
 
@@ -1836,7 +1850,7 @@ static void build_type6(int bx0, int by0)
 
 	/* Sometimes pits cause a special feeling */
 	if ((p_ptr->depth <= 40) &&
-		 (randint1(p_ptr->depth * p_ptr->depth + 50) < 300))
+		(randint1(p_ptr->depth * p_ptr->depth + 50) < 300))
 	{
 		dun_ptr->good_item_flag = TRUE;
 	}

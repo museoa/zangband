@@ -68,6 +68,9 @@ struct map_block
 #ifdef ALLOW_BORG
 	byte info;		/* info flags */
 	byte xtra;		/* search count */
+	
+	byte flow;		/* "flow" data */
+	byte cost;		/* "cost" data */
 #endif /* ALLOW_BORG */
 
 	/* We need to save the flags to get the refcounting right. */

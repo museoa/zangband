@@ -2431,7 +2431,7 @@ void move_player(int dir, int do_pickup)
 		(void)do_cmd_disarm_aux(c_ptr, dir);
 		return;
 	}
-	
+
 	else if (cave_floor_grid(c_ptr))
 	{
 		oktomove = TRUE;
@@ -2670,7 +2670,7 @@ static int see_wall(int dir, int x, int y)
 	if (!in_boundsp(x, y)) return (TRUE);
 
 	pc_ptr = parea(x, y);
-	
+
 	f_ptr = &f_info[pc_ptr->feat];
 
 	/* Return block-los status */
