@@ -2499,8 +2499,8 @@ void move_player(int dir, int do_pickup)
 	/* unless in Shadow Form */
 	if (p_ptr->wraith_form || p_ptr->pass_wall)
 		p_can_pass_walls = TRUE;
-	if ((area(y,x)->feat >= FEAT_PERM_EXTRA) &&
-	    (area(y,x)->feat <= FEAT_PERM_SOLID))
+	if ((c_ptr->feat >= FEAT_PERM_EXTRA) &&
+	    (c_ptr->feat <= FEAT_PERM_SOLID))
 	{
 		p_can_pass_walls = FALSE;
 	}
@@ -2959,27 +2959,38 @@ void move_player(int dir, int do_pickup)
  */
 static int see_wall(int dir, int y, int x)
 {
+	cave_type *c_ptr;
+
 	/* Get the new location */
 	y += ddy[dir];
 	x += ddx[dir];
 
-	/* Illegal grids are not known walls */
-	if (!in_bounds2(y, x)) return (FALSE);
+	/* Illegal grids are "walls" */
+	if (!in_bounds2(y, x)) return (TRUE);
+
+	c_ptr = area(y, x);
 
 	/* Non-wall grids are not known walls */
-	if (area(y,x)->feat < FEAT_SECRET) return (FALSE);
+	if (c_ptr->feat < FEAT_SECRET) return (FALSE);
 
-	if ((area(y,x)->feat >= FEAT_DEEP_WATER) &&
-	    (area(y,x)->feat <= FEAT_TRAP_TRAPS)) return (FALSE);
+	if ((c_ptr->feat >= FEAT_DEEP_WATER) &&
+	    (c_ptr->feat <= FEAT_TRAP_TRAPS)) return (FALSE);
 
-	if ((area(y,x)->feat >= FEAT_SHOP_HEAD) &&
-	    (area(y,x)->feat <= FEAT_SHOP_TAIL)) return (FALSE);
+	if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
+	    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (FALSE);
 
-	if ((area(y,x)->feat >= FEAT_OCEAN_WATER) &&
-	    (area(y,x)->feat <= FEAT_PILLAR)) return (FALSE);
+	/* Semi - transparent terrains */
+	if ((c_ptr->feat & 60) == 60) return (FALSE);
+	
+	if ((c_ptr->feat == FEAT_GRASS) ||
+		(c_ptr->feat == FEAT_DIRT) ||
+		(c_ptr->feat == FEAT_TREE_WATER)) return (FALSE);
+	
+	if ((c_ptr->feat >= FEAT_BUSH) &&
+	    (c_ptr->feat <= FEAT_SNOW)) return (FALSE);
 
 	/* Must be known to the player */
-	if (!(area(y,x)->info & (CAVE_MARK))) return (FALSE);
+	if (!(c_ptr->info & (CAVE_MARK))) return (FALSE);
 
 	/* Default */
 	return (TRUE);
@@ -3202,6 +3213,17 @@ static void run_init(int dir)
 	int             row, col, deepleft, deepright;
 	int             i, shortleft, shortright;
 
+	
+	if (!dun_level)
+	{
+		/* If in the wilderness - run max 32 squares at a time */
+		running = 32;
+	}
+	else
+	{
+		/* Large number to prevent infinite loops */
+		running = 1000;
+	}
 
 	/* Save the direction */
 	find_current = dir;
@@ -3389,12 +3411,35 @@ static bool run_test(void)
 				case FEAT_PERM_OUTER:
 				case FEAT_PERM_SOLID:
 				/* dirt, grass, trees, ... */
+				case FEAT_SAND:
+				case FEAT_SALT:
+				case FEAT_WET_MUD:
+				case FEAT_DRY_MUD:
+				case FEAT_FLOOR_TILE:
+				case FEAT_FLOOR_WOOD:
+				case FEAT_PEBBLES:
+				case FEAT_SOLID_LAVA:
 				case FEAT_SHAL_WATER:
 				case FEAT_DIRT:
 				case FEAT_GRASS:
-				case FEAT_DARK_PIT:
+				case FEAT_TREE_WATER:
+				
 				case FEAT_TREES:
 				case FEAT_MOUNTAIN:
+				case FEAT_SNOW_MOUNTAIN:
+				case FEAT_PINE_TREE:
+				case FEAT_SNOW_TREE:
+				case FEAT_OBELISK:
+				case FEAT_PILLAR:
+				
+				case FEAT_BUSH:
+				case FEAT_DEAD_BUSH:
+				case FEAT_GRASS_LONG:
+				case FEAT_ROCK_GEN:
+				case FEAT_ROCK_SNOW:
+				case FEAT_TREE_GEN:
+				case FEAT_TREE_SNOW:
+				case FEAT_SNOW:
 				{
 					/* Ignore */
 					notice = FALSE;
@@ -3434,7 +3479,19 @@ static bool run_test(void)
 					break;
 				}
 				
+				case FEAT_DEEP_SWAMP:
+				case FEAT_SHAL_SWAMP:
+				{
+					/* Ignore */
+					if (p_ptr->invuln) notice = FALSE;
+
+					/* Done */
+					break;
+				}
+				
+				
 				case FEAT_DEEP_WATER:
+				case FEAT_OCEAN_WATER:
 				{
 					/* Ignore */
 					if (p_ptr->ffall) notice = FALSE;
@@ -3475,7 +3532,7 @@ static bool run_test(void)
 
 		/* Analyze unknown grids and floors */
 		if (inv || cave_floor_grid(c_ptr) ||
-		    (c_ptr->feat == FEAT_TREES))
+		    ((c_ptr->feat & 60) == 60 ))
 		{
 			/* Looking for open area */
 			if (find_openarea)
@@ -3556,7 +3613,10 @@ static bool run_test(void)
 			if (!(c_ptr->info & (CAVE_MARK)) ||
 			    ((c_ptr->feat < FEAT_SECRET) ||
 			    ((c_ptr->feat >= FEAT_DEEP_WATER) &&
-				 (c_ptr->feat <= FEAT_GRASS))))
+				 (c_ptr->feat <= FEAT_GRASS)) ||
+			    ((c_ptr->feat >= FEAT_BUSH) &&
+			    (c_ptr->feat <= FEAT_SHAL_SWAMP)) ||
+			    (c_ptr->feat == FEAT_TREE_WATER)))
 
 			{
 				/* Looking to break right */
@@ -3592,7 +3652,10 @@ static bool run_test(void)
 			if (!(c_ptr->info & (CAVE_MARK)) ||
 			    ((c_ptr->feat < FEAT_SECRET) ||
 			    ((c_ptr->feat >= FEAT_DEEP_WATER) &&
-				 (c_ptr->feat <= FEAT_GRASS))))
+				 (c_ptr->feat <= FEAT_GRASS)) ||
+			    ((c_ptr->feat >= FEAT_BUSH) &&
+			    (c_ptr->feat <= FEAT_SHAL_SWAMP)) ||
+			    (c_ptr->feat == FEAT_TREE_WATER)))
 
 			{
 				/* Looking to break left */
@@ -3703,7 +3766,6 @@ static bool run_test(void)
 }
 
 
-
 /*
  * Take one step along the current "run" path
  */
@@ -3741,14 +3803,18 @@ void run_step(int dir)
 		{
 			/* Disturb */
 			disturb(0, 0);
-
+	
 			/* Done */
 			return;
 		}
 	}
 
 	/* Decrease the run counter */
-	if (--running <= 0) return;
+	if (--running <= 0) 
+	{
+		running = 0;
+		return;
+	}
 
 	/* Take time */
 	energy_use = 100;
