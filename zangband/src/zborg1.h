@@ -240,7 +240,6 @@ struct borg_ability
 	s16b remove_curse_item;
 	s16b star_remove_curse;
 	s16b star_remove_curse_item;
-	s16b pfe;
 	s16b glyph;
 
 	s16b ccw;

@@ -46,7 +46,6 @@ int num_fix_exp;
 int num_mana;
 int num_heal;
 int num_ez_heal;
-int num_pfe;
 int num_glyph;
 int num_mass_genocide;
 int num_goi_pot;
@@ -547,12 +546,13 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 			if (k_info[l_ptr->k_idx].sval == SV_AMULET_SUSTENANCE)
 			{
 				bp_ptr->food += 5;
+				SET_FLAG(bp_ptr, TR_SLOW_DIGEST);
 			}
 
 			/* You can only see the luck flag when it has *id* */
 			if (k_info[l_ptr->k_idx].sval == SV_AMULET_LUCK)
 			{
-				bp_ptr->flags[3] |= TR3_LUCK_10;
+				SET_FLAG(bp_ptr, TR_LUCK_10);
 			}
 		}
 
@@ -563,8 +563,8 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 			if (k_info[l_ptr->k_idx].sval == SV_SHADOW_CLOAK)
 			{
 				/* Add the dark and light flags */
-				bp_ptr->flags[1] |= TR1_RES_DARK;
-				bp_ptr->flags[1] |= TR1_RES_LITE;
+				SET_FLAG(bp_ptr, TR_RES_DARK);
+				SET_FLAG(bp_ptr, TR_RES_LITE);
 			}
 
 			/* Elven cloak */
@@ -630,7 +630,6 @@ static void borg_notice_equip(int *extra_blows, int *extra_shots,
 		if (KN_FLAG(l_ptr, TR_IM_ACID)) my_oppose_elec = TRUE;
 		if (KN_FLAG(l_ptr, TR_IM_COLD)) my_oppose_elec = TRUE;
 		if (KN_FLAG(l_ptr, TR_IM_ELEC)) my_oppose_elec = TRUE;
-		if (KN_FLAG(l_ptr, TR_SLAY_EVIL)) bp_ptr->able.pfe = 1000;
 
 		/* Sustain flags */
 		if (KN_FLAG(l_ptr, TR_SUST_STR)) bp_ptr->sust[A_STR] = TRUE;
@@ -1996,11 +1995,6 @@ static void borg_notice_scrolls(list_item *l_ptr, int number)
 
 			break;
 		}
-		case SV_SCROLL_PROTECTION_FROM_EVIL:
-		{
-			bp_ptr->able.pfe += number;
-			break;
-		}
 		case SV_SCROLL_RUNE_OF_PROTECTION:
 		{
 			bp_ptr->able.glyph += number;
@@ -2867,12 +2861,6 @@ static void borg_notice_aux2(void)
 		bp_ptr->able.lite += 1000;
 	}
 
-	/* Handle "protection from evil" */
-	if (borg_spell_legal_fail(REALM_LIFE, 1, 5, 40))
-	{
-		bp_ptr->able.pfe += 1000;
-	}
-
 	/* Handle "phlogiston" */
 	if (borg_spell_legal_fail(REALM_ARCANE, 1, 1, 40))
 	{
@@ -3332,7 +3320,6 @@ static void borg_notice_home_clear(void)
 	num_teleport_level = 0;
 
 	num_invisible = 0;
-	num_pfe = 0;
 	num_glyph = 0;
 	num_genocide = 0;
 	num_mass_genocide = 0;
@@ -3979,12 +3966,6 @@ static void borg_notice_home_scroll(list_item *l_ptr)
 			break;
 		}
 
-		case SV_SCROLL_PROTECTION_FROM_EVIL:
-		{
-			num_pfe += l_ptr->number;
-			break;
-		}
-
 		case SV_SCROLL_RUNE_OF_PROTECTION:
 		{
 			num_glyph += l_ptr->number;
@@ -4058,12 +4039,6 @@ static void borg_notice_home_spells(void)
 	{
 		num_enchant_to_h += 1000;
 		num_enchant_to_d += 1000;
-	}
-
-	/* apw Handle "protection from evil" */
-	if (borg_spell_legal_fail(REALM_LIFE, 1, 5, 40))
-	{
-		num_pfe += 1000;
 	}
 
 	/* apw Handle "rune of protection" glyph */
@@ -5037,9 +5012,6 @@ static s32b borg_power_home_aux2(void)
 	/* Collect *remove curse* */
 	value += 5000 * MIN(num_star_remove_curse, 5);
 	value += 750 * MIN_FLOOR(num_star_remove_curse, 5, pile);
-
-	/* apw Collect pfe */
-	value += 300 * MIN(num_pfe, pile);
 
 	/* apw Collect glyphs */
 	value += 1000 * MIN(num_glyph, pile);

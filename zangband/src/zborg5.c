@@ -3864,9 +3864,6 @@ static s32b borg_power_aux4(void)
 		/* *identify* scrolls */
 		value += 5000 * MIN(bp_ptr->able.star_id, 5);
 		value += 500 * MIN_FLOOR(bp_ptr->able.star_id, 5, 10);
-
-		/*  Reward PFE */
-		value += 300 * MIN(bp_ptr->able.pfe, 10);
 	}
 
 	if (bp_ptr->lev > 40)

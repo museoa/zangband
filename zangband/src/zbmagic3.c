@@ -2860,7 +2860,8 @@ static int borg_perma_aux_prot_evil(void)
 		if (unique_on_level) fail_allowed = 10;
 		if (borg_fighting_unique) fail_allowed = 15;
 
-		if (!borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed)) return (0);
+		if (!borg_spell_okay_fail(REALM_LIFE, 1, 5, fail_allowed) &&
+			!borg_activate_fail(BORG_ACT_PROT_EVIL)) return (0);
 
 		/* Obtain the cost of the spell */
 		cost = borg_spell_mana(REALM_LIFE, 1, 5);
@@ -2873,7 +2874,8 @@ static int borg_perma_aux_prot_evil(void)
 	}
 
 	/* do it! */
-	return (borg_spell_fail(REALM_LIFE, 1, 5, fail_allowed));
+	return (borg_activate(BORG_ACT_PROT_EVIL) ||
+		borg_spell_fail(REALM_LIFE, 1, 5, fail_allowed));
 }
 
 /*
