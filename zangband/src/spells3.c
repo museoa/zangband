@@ -1518,7 +1518,6 @@ bool alchemy(void)
 	bool force = FALSE;
 	object_type *o_ptr;
 	char o_name[256];
-	char out_val[512];
 
 	cptr q, s;
 
@@ -1557,8 +1556,7 @@ bool alchemy(void)
 		if (!(auto_destroy && (object_value(o_ptr) < 1)))
 		{
 			/* Make a verification */
-			sprintf(out_val, "Really turn %s to gold? ", o_name);
-			if (!get_check(out_val)) return FALSE;
+			if (!get_check("Really turn %s to gold? ", o_name)) return FALSE;
 		}
 	}
 

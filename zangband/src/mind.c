@@ -269,13 +269,8 @@ static int get_mindcraft_power(int *sn)
 		/* Verify it */
 		if (ask)
 		{
-			char tmp_val[160];
-
-			/* Prompt */
-			(void)strnfmt(tmp_val, 78, "Use %s? ", mindcraft_powers[i].name);
-
 			/* Belay that order */
-			if (!get_check(tmp_val)) continue;
+			if (!get_check("Use %s? ", mindcraft_powers[i].name)) continue;
 		}
 
 		/* Stop the loop */

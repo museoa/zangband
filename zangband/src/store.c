@@ -1329,7 +1329,6 @@ static int get_stock(int *com_val, cptr pmt, int maxobj)
 
 static bool store_access_item(const object_type *o_ptr, s32b price, bool buy)
 {
-	char out_val[160];
 	char o_name[256];
 
 	if (buy)
@@ -1346,10 +1345,8 @@ static bool store_access_item(const object_type *o_ptr, s32b price, bool buy)
 	put_fstr(0, 1, "%s %s, offer :  %ld",
 				  (buy) ? "Buying" : "Selling", o_name, (long)price);
 
-	(void)sprintf(out_val, "Do you want to %s it? ", (buy) ? "buy" : "sell");
-
 	/* Ask the user for a response */
-	if (!get_check(out_val)) return (FALSE);
+	if (!get_check("Do you want to %s it? ", (buy) ? "buy" : "sell")) return (FALSE);
 
 
 	/* Chose to make transaction */

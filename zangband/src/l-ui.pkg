@@ -253,7 +253,7 @@ extern void request_command(bool shopping);
 extern bool askfor_aux(char *buf, int len);
 extern bool get_string(cptr prompt, char *buf, int len);
 extern s16b get_quantity(cptr prompt, int max);
-extern bool get_check(cptr prompt);
+extern bool get_check(cptr prompt, ...);
 extern bool get_com(cptr prompt, char *command);
 */
 

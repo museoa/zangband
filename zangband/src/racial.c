@@ -805,13 +805,8 @@ void do_cmd_racial_power(void)
 			/* Verify it */
 			if (ask)
 			{
-				char tmp_val[160];
-
-				/* Prompt */
-				(void)strnfmt(tmp_val, 78, "Use %s? ", power_desc[i].name);
-
 				/* Belay that order */
-				if (!get_check(tmp_val)) continue;
+				if (!get_check("Use %s? ", power_desc[i].name)) continue;
 			}
 
 			/* Stop the loop */

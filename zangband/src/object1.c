@@ -2736,16 +2736,12 @@ void toggle_inven_equip(void)
 static bool verify(cptr prompt, object_type *o_ptr)
 {
 	char o_name[256];
-	char out_val[512];
 
 	/* Describe */
 	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
-	/* Prompt */
-	(void)sprintf(out_val, "%s %s? ", prompt, o_name);
-
 	/* Query */
-	return (get_check(out_val));
+	return (get_check("%s %s? ", prompt, o_name));
 }
 
 

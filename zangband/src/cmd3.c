@@ -162,14 +162,10 @@ void do_cmd_wield(void)
 	if (cursed_p(q_ptr) && confirm_wear &&
 		(object_known_p(q_ptr) || (q_ptr->info & OB_SENSE)))
 	{
-		char dummy[512];
-
 		/* Describe it */
 		object_desc(o_name, q_ptr, FALSE, 0, 256);
 
-		sprintf(dummy, "Really use the %s {cursed}? ", o_name);
-
-		if (!get_check(dummy))
+		if (!get_check("Really use the %s {cursed}? ", o_name))
 			return;
 	}
 
@@ -472,8 +468,6 @@ void do_cmd_destroy(void)
 
 	char o_name[256];
 
-	char out_val[512];
-
 	cptr q, s;
 
 	/* Hack -- force destruction */
@@ -512,8 +506,7 @@ void do_cmd_destroy(void)
 		if (!(auto_destroy && (object_value(o_ptr) < 1)))
 		{
 			/* Make a verification */
-			sprintf(out_val, "Really destroy %s? ", o_name);
-			if (!get_check(out_val)) return;
+			if (!get_check("Really destroy %s? ", o_name)) return;
 		}
 	}
 

@@ -2646,16 +2646,11 @@ errr file_character(cptr name, bool full)
 	/* Existing file */
 	if (fd >= 0)
 	{
-		char out_val[160];
-
 		/* Close the file */
 		(void)fd_close(fd);
 
-		/* Build query */
-		(void)sprintf(out_val, "Replace existing file %s? ", buf);
-
 		/* Ask */
-		if (get_check(out_val)) fd = -1;
+		if (get_check("Replace existing file %s? ", buf)) fd = -1;
 	}
 
 	/* Open the non-existing file */

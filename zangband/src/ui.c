@@ -353,7 +353,6 @@ bool display_menu(int num, cptr *options, menu_select_type *cmd, int select)
 	char choice;
 	byte x = 0;
 	char prompt[160];
-	char buf[160];
 
 	/* Build a prompt */
 	(void)strnfmt(prompt, 78, "(Command (a-%c), ESC=exit) Select a command: ",
@@ -415,11 +414,8 @@ bool display_menu(int num, cptr *options, menu_select_type *cmd, int select)
 		/* Verify it */
 		if (ask)
 		{
-			/* Prompt */
-			(void)strnfmt(buf, 78, "Use %s? ", options[i]);
-
 			/* Belay that order */
-			if (!get_check(buf)) continue;
+			if (!get_check("Use %s? ", options[i])) continue;
 		}
 
 		/* Call the function */
@@ -990,9 +986,22 @@ bool get_string(cptr prompt, char *buf, int len)
  *
  * Note that "[y/n]" is appended to the prompt.
  */
-bool get_check(cptr prompt)
+bool get_check(cptr prompt, ...)
 {
 	int i;
+    
+    va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, prompt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, prompt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
 
 	/* Do not skip */
 	p_ptr->skip_more = FALSE;
@@ -1001,7 +1010,7 @@ bool get_check(cptr prompt)
 	message_flush();
 
 	/* Prompt for it */
-	prtf(0, 0, "%.70s[y/n] ", prompt);
+	prtf(0, 0, "%.70s[y/n] ", buf);
 
 	/* Get an acceptable answer */
 	while (TRUE)

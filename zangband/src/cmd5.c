@@ -135,18 +135,13 @@ static int get_spell(int *sn, cptr prompt, int sval, bool known, bool realm_2)
 		/* Verify it */
 		if (ask)
 		{
-			char tmp_val[160];
-
 			/* Access the spell */
 			s_ptr = &mp_ptr->info[use_realm - 1][spell % 32];
 
-			/* Prompt */
-			(void)strnfmt(tmp_val, 78, "%^s %s (%d mana, %d%% fail)? ",
-						  prompt, spell_names[use_realm - 1][spell % 32],
-						  s_ptr->smana, spell_chance(spell, use_realm - 1));
-
 			/* Belay that order */
-			if (!get_check(tmp_val)) continue;
+			if (!get_check("%^s %s (%d mana, %d%% fail)? ",
+						  prompt, spell_names[use_realm - 1][spell % 32],
+						  s_ptr->smana, spell_chance(spell, use_realm - 1))) continue;
 		}
 
 		/* Stop the loop */
@@ -2977,7 +2972,6 @@ void do_cmd_pet(void)
 	int mode = 0;
 	byte y = 1, x = 0;
 	int ctr = 0;
-	char buf[160];
 	int num = 0;
 
 
@@ -3102,11 +3096,8 @@ void do_cmd_pet(void)
 		/* Verify it */
 		if (ask)
 		{
-			/* Prompt */
-			(void)strnfmt(buf, 78, "Use %s? ", power_desc[i]);
-
 			/* Belay that order */
-			if (!get_check(buf)) continue;
+			if (!get_check("Use %s? ", power_desc[i])) continue;
 		}
 
 		/* Stop the loop */
@@ -3145,11 +3136,10 @@ void do_cmd_pet(void)
 						delete_this = TRUE;
 					else
 					{
-						char friend_name[80], check_friend[80];
+						char friend_name[80];
 						monster_desc(friend_name, m_ptr, 0x80);
-						sprintf(check_friend, "Dismiss %s? ", friend_name);
 
-						if (get_check(check_friend))
+						if (get_check("Dismiss %s? ", friend_name))
 							delete_this = TRUE;
 					}
 

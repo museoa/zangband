@@ -1383,8 +1383,8 @@ void building_recharge(s32b cost)
 
 	if (o_ptr->tval == TV_ROD)
 	{
-		if (get_check(format("Recharge the %s for %d gold? ",
-							 ((o_ptr->number > 1) ? "rods" : "rod"), price)))
+		if (get_check("Recharge the %s for %d gold? ",
+							 ((o_ptr->number > 1) ? "rods" : "rod"), price))
 		{
 			/* Recharge fully */
 			o_ptr->timeout = 0;
