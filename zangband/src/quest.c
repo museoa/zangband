@@ -653,6 +653,9 @@ void activate_quests(int level)
 				if (place_num != p_ptr->place_num) break;
 				
 				pl_ptr = &place[place_num];
+				
+				/* paranoia */
+				if (!pl_ptr->dungeon) break;
 			
 				/* Correct dungeon level? */
 				if (level != pl_ptr->dungeon->max_level) break;
