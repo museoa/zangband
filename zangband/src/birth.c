@@ -1533,8 +1533,6 @@ static void player_outfit(void)
 #define REALM1_COL		48
 #define REALM2_COL		60
 
-#define INVALID_CHOICE 255
-
 
 /*
  * Clear the previous question
@@ -1602,16 +1600,22 @@ static void race_aux_hook(cptr r_str)
 	if (race == MAX_RACES) return;
 
 	/* Display relevant details. */
-	for (i = 0; i < A_MAX; i++)
-	{
-		put_fstr(RACE_AUX_COL, TABLE_ROW + i, "%s%+d",
-				 stat_names_reduced[i], race_info[race].r_adj[i]);
-	}
-
-	put_fstr(RACE_AUX_COL, TABLE_ROW + A_MAX,
+	put_fstr(RACE_AUX_COL, TABLE_ROW,
+    			"%s%+d\n"
+                "%s%+d\n"
+                "%s%+d\n"
+                "%s%+d\n"
+                "%s%+d\n"
+                "%s%+d\n"
 				"Hit die: %d \n"
 				"Experience: %2d%% \n"
 				"Infravision: %d ft",
+                stat_names_reduced[0], race_info[race].r_adj[0],
+                stat_names_reduced[1], race_info[race].r_adj[1],
+                stat_names_reduced[2], race_info[race].r_adj[2],
+                stat_names_reduced[3], race_info[race].r_adj[3],
+                stat_names_reduced[4], race_info[race].r_adj[4],
+                stat_names_reduced[5], race_info[race].r_adj[5],
 				race_info[race].r_mhp,
 				race_info[race].r_exp,
 				race_info[race].infra * 10);
@@ -1686,15 +1690,21 @@ static void class_aux_hook(cptr c_str)
 	if (class_idx == MAX_CLASS) return;
 
 	/* Display relevant details. */
-	for (i = 0; i < A_MAX; i++)
-	{
-		put_fstr(CLASS_AUX_COL, TABLE_ROW + i, "%s%+d", stat_names_reduced[i],
-				class_info[class_idx].c_adj[i]);
-	}
-
-	put_fstr(CLASS_AUX_COL, TABLE_ROW + A_MAX,
+	put_fstr(CLASS_AUX_COL, TABLE_ROW,
+    			"%s%+d\n"
+                "%s%+d\n"
+                "%s%+d\n"
+                "%s%+d\n"
+                "%s%+d\n"
+                "%s%+d\n"
 				"Hit die: %d \n"
 				"Experience: %2d%%",
+                stat_names_reduced[0], class_info[class_idx].c_adj[0],
+                stat_names_reduced[1], class_info[class_idx].c_adj[1],
+                stat_names_reduced[2], class_info[class_idx].c_adj[2],
+                stat_names_reduced[3], class_info[class_idx].c_adj[3],
+                stat_names_reduced[4], class_info[class_idx].c_adj[4],
+                stat_names_reduced[5], class_info[class_idx].c_adj[5],
 			 	class_info[class_idx].c_mhp,
 				class_info[class_idx].c_exp);
 }
