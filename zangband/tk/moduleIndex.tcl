@@ -10,8 +10,6 @@ IndexOne NSChooseMonster choose-monster.tcl
 IndexOne NSColorPreferences color.tcl
 IndexOne NSDisplayInfo display-info.tcl
 IndexOne NSFont font.tcl
-IndexOne NSHelp help-html.tcl
-IndexOne NSHelpList help-list.tcl
 IndexOne NSChoiceWindow choice-window.tcl
 IndexOne NSInfoWindow info-window.tcl
 IndexOne NSInventory inventory.tcl

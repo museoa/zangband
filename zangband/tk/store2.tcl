@@ -339,20 +339,6 @@ proc NSStore2::InitWindow {oop} {
 	set padRing 2
 	set widthStore [expr {3 + 6 * (6 + $widthBoxMax) + 6 + 3 + $padRing}]
 
-	# Background image
-	if {0 && [string equal [Global config,prefix] dg32]} {
-		if {![ImageExists Image_StoreBackground]} {
-			image create photo Image_StoreBackground -width $widthStore \
-				-height $heightStore
-			set image Image_StoreTemp
-			image create photo $image -width [icon size] -height [icon size]
-			icon photo $image -type town1 -index 0
-			Image_StoreBackground copy $image -to 0 0 $widthStore $heightStore
-			image delete $image
-		}
-		$canvas create image 0 0 -image Image_StoreBackground -anchor nw
-	}
-
 	# Store items
 	MakeBorder $oop $canvas 0 0 $widthStore $heightStore
 	MakeHeader $oop $canvas 0 0 $widthStore Store store,title

@@ -193,11 +193,7 @@ proc angband_display {window action args} {
 #eval RequestDisplay $window $action $args
 #return
 			}	
-	
-			help {
-				NSModule::LoadIfNeeded NSHelp
-			}
-	
+		
 			info {
 				NSModule::LoadIfNeeded NSInfoWindow
 				NSInfoWindow::SetList [Global info,oop] [lindex $args 0] \
