@@ -666,6 +666,9 @@ static u16b get_gen_type(byte hgt, byte pop, byte law)
 			}
 		}	
 	}
+
+	/* Paranoia - should never get to here */
+	return(0);
 }
 
 /* The number of allocated nodes in the decsion tree */
@@ -1865,6 +1868,9 @@ static u16b add_node(wild_bound_box_type *bound,
 			}
 		}	
 	}
+	
+	/* Paranoia - should never get to here */
+	return(0);
 }
 
 /*
@@ -2368,6 +2374,9 @@ static void blend_block(int x, int y, blk_ptr block_ptr, u16b type)
 			/* Check to see if adjacent square is not in bounds */
 			if (((y + dy) < 0) || ((y + dy) >= max_wild) ||
 				((x + dx) < 0) || ((x + dx) >= max_wild)) continue;
+			
+			/* Don't blend with yourself */
+			if ((dx == 0) && (dy == 0)) continue;
 			
 			w_type = wild[y + dy][x + dx].done.wild;
 			
@@ -3407,8 +3416,8 @@ void create_wilderness(void)
 	/* Fix location of grid */
 
 	/* Hack - set the coords to crazy values so move_wild() works. */
-	wild_grid.x = -1;
-	wild_grid.y = -1;
+	wild_grid.x = max_wild + 1;
+	wild_grid.y = max_wild + 1;
 
 	/* A dodgy town */
 	init_towns();
