@@ -218,20 +218,6 @@ static errr Term_curs_tnb(int x, int y)
 	return 0;
 }
 
-static errr Term_pict_tnb(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
-{
-	/* Hack - ignore parameters for now */
-	(void) x;
-	(void) y;
-	(void) n;
-	(void) ap;
-	(void) cp;
-	(void) tap;
-	(void) tcp;
-
-	return 0;
-}
-
 
 static void term_data_link(term *t)
 {

@@ -196,6 +196,19 @@ errr Term_wipe_tnb(int x, int y, int n)
 	return (0);
 }
 
+
+errr Term_pict_tnb(int x, int y, int n, const byte *ap, const char *cp, const byte *tap, const char *tcp)
+{
+	/* Hack - ignore parameters for now */
+	(void) ap;
+	(void) cp;
+	(void) tap;
+	(void) tcp;
+	
+	/* Hack - we don't support icons here (yet) */
+	return (Term_wipe_tnb(x, y, n));
+}
+
 /* Colours for the text */
 static u32b colors[16];
 
