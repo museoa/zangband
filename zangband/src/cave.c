@@ -1112,46 +1112,6 @@ static byte breath_attr(monster_race *r_ptr)
 
 
 /*
- * The 16x16 tile of the terrain supports lighting
- */
-static const bool feat_supports_lighting[256] =
-{
-	FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE,	/* 0x00 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x08 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x10 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x18 */
-	FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,	/* 0x20 */
-	FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,	/* 0x28 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x30 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x38 */
-	TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,	/* 0x40 */
-	FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,	/* 0x48 */
-	FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x50 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x58 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x60 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x68 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x70 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x78 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x80 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x88 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x90 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0x98 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xA0 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xA8 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xB0 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xB8 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xC0 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xC8 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xD8 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xD8 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xE0 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xE8 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,	/* 0xF0 */
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE	/* 0xF8 */
-};
-
-
-/*
  * Two arrays listing the effects of "brightness"
  * and "darkness" on various "base" colours.
  *
@@ -1631,7 +1591,7 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
 				a = darking_colours[a];
 			}
 			else if ((use_graphics == GRAPHICS_ADAM_BOLT)
-					 && feat_supports_lighting[feat])
+					 && (f_ptr->flags & FF_USE_TRANS))
 			{
 				/* Use a dark tile */
 				c++;
@@ -1647,7 +1607,7 @@ static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)
 				a = lighting_colours[a];
 			}
 			else if ((use_graphics == GRAPHICS_ADAM_BOLT)
-					 && feat_supports_lighting[feat])
+					 && (f_ptr->flags & FF_USE_TRANS))
 			{
 				/* Use a light tile */
 				c += 2;
