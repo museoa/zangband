@@ -531,7 +531,7 @@ static int bizarre_num[MAX_BIZARRE] =
 };
 
 
-void wild_magic(int spell)
+static void wild_magic(int spell)
 {
 	switch (randint(spell) + randint(8) + 1)
 	{
@@ -650,12 +650,12 @@ void wild_magic(int spell)
 		case 36:
 		case 37:
 		{
-			activate_hi_summon();
+			(void)activate_hi_summon();
 			break;
 		}
 		case 38:
 		{
-			summon_cyber(py, px);
+			(void)summon_cyber(py, px);
 			break;
 		}
 		default:
@@ -2581,10 +2581,10 @@ static bool cast_arcane_spell(int spell)
 
 		switch (randint(4))
 		{
-			case 1:  dummy = GF_FIRE;
-			case 2:  dummy = GF_ELEC;
-			case 3:  dummy = GF_COLD;
-			default: dummy = GF_ACID;
+			case 1:  dummy = GF_FIRE; break;
+			case 2:  dummy = GF_ELEC; break;
+			case 3:  dummy = GF_COLD; break;
+			default: dummy = GF_ACID; break;
 		}
 		fire_ball(dummy, dir, 75 + (plev), 2);
 		break;
