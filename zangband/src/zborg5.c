@@ -93,6 +93,18 @@ static int borg_wank_num = 0;
 
 static borg_wank *borg_wanks;
 
+/*
+ * Monster tracking
+ */
+static u16b mon_used_head = 0;
+static u16b mon_used_tail = 0;
+static u16b mon_new_head = 0;
+static u16b mon_new_tail = 0;
+static u16b mon_old_head = 0;
+static u16b mon_old_tail = 0;
+static u16b mon_move_head = 0;
+static u16b mon_move_tail = 0;
+
 
 /*
  * Delete an old "object" record
@@ -475,6 +487,151 @@ static void borg_fear_grid(cptr who, int y, int x, uint k, bool seen_guy)
 }
 
 
+static int get_blank_kill(void)
+{
+	int i;
+
+	/* Look for a "dead" monster */
+	for (i = 1; i < borg_kills_nxt; i++)
+	{
+		/* Find empty entries */
+		if (!borg_kills[i].r_idx) return (i);
+	}
+
+	/* Allocate a new monster */
+	if (borg_kills_nxt < BORG_KILLS_MAX)
+	{
+		/* Acquire the entry, advance */
+		return (borg_kills_nxt++);
+	}
+
+	/* Hack -- steal an old monster */
+	borg_note("# Too many monsters");
+
+	/* Hack -- Pick a random monster */
+	i = randint1(borg_kills_nxt - 1);
+
+	/* Kill it */
+	borg_delete_kill(i);
+	
+	return (i);
+}
+
+
+static void get_list(u16b **list_head, u16b **list_tail, byte type)
+{
+	switch (type)
+	{
+		case BORG_MON_USED:
+		{
+			*list_head = &mon_used_head;
+			*list_tail = &mon_used_tail;
+			break;
+		}
+		
+		case BORG_MON_NEW:
+		{
+			*list_head = &mon_new_head;
+			*list_tail = &mon_new_tail;
+			break;
+		}
+	
+		case BORG_MON_OLD:
+		{
+			*list_head = &mon_old_head;
+			*list_tail = &mon_old_tail;
+			break;
+		}
+		
+		case BORG_MON_MOVE:
+		{
+			*list_head = &mon_move_head;
+			*list_tail = &mon_move_tail;
+			break;
+		}
+	}
+}
+
+/*
+ * Get a new kill entry for a list
+ */
+int get_new_mon(byte type)
+{
+	u16b *list_head = NULL;
+	u16b *list_tail = NULL;
+	
+	int new;
+	
+	borg_kill *kill;
+	
+	/* Get the required list */
+	get_list(&list_head, &list_tail, type);
+	
+	/* Do we already have a list? */
+	if (!(*list_head))
+	{
+		/* Get a new empty kill struct */
+		new = get_blank_kill();
+		*list_head = new;
+	}
+	else
+	{	
+		/* Get last node in list */
+		kill = &borg_kills[*list_tail];
+	
+		/* Get a new empty kill struct */
+		new = get_blank_kill();
+	
+		/* Link to new node */
+		kill->next_kill = new;
+	}
+	
+	/* Move the tail now */
+	*list_tail = new;
+	
+	/* Blank out the link */
+	kill = &borg_kills[new];
+	kill->next_kill = 0;
+	
+	/* Done */
+	return (new);
+}
+
+/*
+ * Move a kill entry from one list to another
+ */
+void move_mon_entry(int i, u16b *node_ptr, byte type)
+{
+	borg_kill *kill = &borg_kills[i];
+	
+	u16b *list_head = NULL;
+	u16b *list_tail = NULL;
+	
+	/* Get the required list */
+	get_list(&list_head, &list_tail, type);
+	
+	/* Excise the node */
+	*node_ptr = kill->next_kill;
+	kill->next_kill = 0;
+	
+	if (*list_head)
+	{
+		/* Just connect to the tail of the list */
+		kill = &borg_kills[*list_tail];
+		
+		kill->next_kill = i;
+	}
+	else
+	{
+		/* We need to make this the first node */
+		*list_head = i;
+	}
+	
+	/* This is now the list tail */
+	*list_tail = i;
+}
+
+
 /*
  * Delete an old "kill" record
  */
@@ -587,7 +744,7 @@ static void borg_update_kill(int i)
  */
 static int borg_new_kill(int r_idx, int y, int x)
 {
-	int i, n = -1;
+	int n;
 	int p = 0;
 
 	map_block *mb_ptr;
@@ -596,33 +753,8 @@ static int borg_new_kill(int r_idx, int y, int x)
 
 	monster_race *r_ptr;
 
-	/* Look for a "dead" monster */
-	for (i = 1; (n < 0) && (i < borg_kills_nxt); i++)
-	{
-		/* Skip real entries */
-		if (!borg_kills[i].r_idx) n = i;
-	}
-
-	/* Allocate a new monster */
-	if ((n < 0) && (borg_kills_nxt < BORG_KILLS_MAX))
-	{
-		/* Acquire the entry, advance */
-		n = borg_kills_nxt++;
-	}
-
-	/* Hack -- steal an old monster */
-	if (n < 0)
-	{
-		/* Note */
-		borg_note("# Too many monsters");
-
-		/* Hack -- Pick a random monster */
-		n = randint1(borg_kills_nxt - 1);
-
-		/* Kill it */
-		borg_delete_kill(n);
-	}
-
+	/* Get an empty kill */
+	n = get_blank_kill();
 
 	/* Count the monsters */
 	borg_kills_cnt++;

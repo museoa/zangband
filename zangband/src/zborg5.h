@@ -20,6 +20,12 @@
 /* Hack - this is a field, so define it here */
 #define FEAT_INVIS	0x02
 
+/* Types of monster list */
+#define BORG_MON_USED	1
+#define BORG_MON_NEW	2
+#define BORG_MON_OLD	3
+#define BORG_MON_MOVE	4
+
 
 /* Old overhead map hooks to chain into */
 extern map_info_hook_type old_info_hook;
@@ -63,6 +69,12 @@ extern void borg_update(void);
  * React to various "important" messages
  */
 extern void borg_react(cptr msg, cptr buf);
+
+/*
+ * Monster kill list interface
+ */
+extern int get_new_mon(byte type);
+extern void move_mon_entry(int i, u16b *node_ptr, byte type);
 extern void borg_delete_kill(int i);
 
 
