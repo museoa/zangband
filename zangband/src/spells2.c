@@ -3747,7 +3747,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				{
 					msg_print("The ground trembles...");
 					earthquake(py, px, 5 + randint0(10));
-					if (randint1(6) != 1) break;
+					if (!one_in_(6)) break;
 				}
 			}
 			case 30: case 31:
@@ -3757,7 +3757,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					msg_print("A portal opens to a plane of raw mana!");
 					destroy_area(py, px, 20);
 					project(1, 3, py, px, damroll(10, 5), GF_MANA, flg);
-					if (randint1(6) != 1) break;
+					if (!one_in_(6)) break;
 				}
 			}
 			case 32: case 33:
@@ -3766,40 +3766,40 @@ bool activate_ty_curse(bool stop_ty, int *count)
 				{
 					msg_print("Space warps about you!");
 					teleport_player(damroll(10, 10));
-					if (randint0(13)) (*count) += activate_hi_summon();
-					if (randint1(6) != 1) break;
+					if (!one_in_(13)) (*count) += activate_hi_summon();
+					if (!one_in_(6)) break;
 				}
 			}
 			case 34:
 			{
 				msg_print("You feel a surge of energy!");
 				wall_breaker();
-				if (!randint0(7))
+				if (one_in_(7))
 				{
 					project(1, 7, py, px, 50, GF_KILL_WALL, flg);
 				}
-				if (randint1(6) != 1) break;
+				if (!one_in_(6)) break;
 			}
 			case 1: case 2: case 3: case 16: case 17:
 			{
 				aggravate_monsters(0);
-				if (randint1(6) != 1) break;
+				if (!one_in_(6)) break;
 			}
 			case 4: case 5: case 6:
 			{
 				(*count) += activate_hi_summon();
-				if (randint1(6) != 1) break;
+				if (!one_in_(6)) break;
 			}
 			case 7: case 8: case 9: case 18:
 			{
 				(*count) += summon_specific(0, py, px, p_ptr->depth, 0, TRUE, FALSE, FALSE);
-				if (randint1(6) != 1) break;
+				if (!one_in_(6)) break;
 			}
 			case 10: case 11: case 12:
 			{
 				msg_print("You feel your life draining away...");
 				lose_exp(p_ptr->exp / 16);
-				if (randint1(6) != 1) break;
+				if (!one_in_(6)) break;
 			}
 			case 13: case 14: case 15: case 19: case 20:
 			{
@@ -3825,13 +3825,13 @@ bool activate_ty_curse(bool stop_ty, int *count)
 			case 21: case 22: case 23:
 			{
 				(void)do_dec_stat(randint0(6));
-				if (randint1(6) != 1) break;
+				if (!one_in_(6)) break;
 			}
 			case 24:
 			{
 				msg_print("Huh? Who am I? What am I doing here?");
 				lose_all_info();
-				if (randint1(6) != 1) break;
+				if (!one_in_(6)) break;
 			}
 			case 25:
 			{
@@ -3844,7 +3844,7 @@ bool activate_ty_curse(bool stop_ty, int *count)
 					stop_ty = TRUE;
 					break;
 				}
-				if (randint1(6) != 1) break;
+				if (!one_in_(6)) break;
 			}
 			default:
 			{
