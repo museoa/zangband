@@ -567,7 +567,7 @@ extern void get_table_name(char *out_string, bool quotes);
 extern void flavor_init(void);
 extern void object_desc(char *buf, const object_type *o_ptr, int pref,
 						int mode, int size);
-extern void object_desc_store(char *buf, const object_type *o_ptr, int pref,
+extern void object_desc_store(char *buf, object_type *o_ptr, int pref,
 							  int mode, int size);
 
 /* object1.c */

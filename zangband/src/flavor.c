@@ -1797,40 +1797,40 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
  * Hack -- describe an item currently in a store's inventory
  * This allows an item to *look* like the player is "aware" of it
  */
-void object_desc_store(char *buf, const object_type *o_ptr, int pref,
+void object_desc_store(char *buf, object_type *o_ptr, int pref,
                        int mode, int size)
 {
-	object_type *q_ptr;
-
 	byte hack_flavor;
 	bool hack_aware;
-
-	/* Duplicate the object */
-	q_ptr = object_dup(o_ptr);
+	byte info;
 
 	/* Save the "flavor" */
-	hack_flavor = k_info[q_ptr->k_idx].flavor;
+	hack_flavor = k_info[o_ptr->k_idx].flavor;
 
 	/* Save the "aware" flag */
-	hack_aware = k_info[q_ptr->k_idx].aware;
+	hack_aware = k_info[o_ptr->k_idx].aware;
 
+	/* Save the "info" */
+	info = o_ptr->info;
+	
 	/* Clear the flavor */
-	k_info[q_ptr->k_idx].flavor = FALSE;
-
+	k_info[o_ptr->k_idx].flavor = FALSE;
+	
 	/* Set the "known" flag */
-	q_ptr->info |= (OB_KNOWN);
+	o_ptr->info |= (OB_KNOWN);
 
 	/* Force "aware" for description */
-	k_info[q_ptr->k_idx].aware = TRUE;
-
+	k_info[o_ptr->k_idx].aware = TRUE;
 
 	/* Describe the object */
-	object_desc(buf, q_ptr, pref, mode, size);
-
+	object_desc(buf, o_ptr, pref, mode, size);
 
 	/* Restore "flavor" value */
-	k_info[q_ptr->k_idx].flavor = hack_flavor;
+	k_info[o_ptr->k_idx].flavor = hack_flavor;
 
 	/* Restore "aware" flag */
-	k_info[q_ptr->k_idx].aware = hack_aware;
+	k_info[o_ptr->k_idx].aware = hack_aware;
+	
+	/* Restore the "info" */
+	o_ptr->info = info;
 }

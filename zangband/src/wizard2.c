@@ -513,7 +513,7 @@ static void learn_map(void)
  * Originally by David Reeve Sward <sward+@CMU.EDU>
  * Verbose item flags by -Bernd-
  */
-static void wiz_display_item(const object_type *o_ptr)
+static void wiz_display_item(object_type *o_ptr)
 {
 	int i, j = 13;
 	u32b f1, f2, f3;
@@ -821,9 +821,6 @@ static bool wiz_reroll_item(object_type *o_ptr)
 	while (TRUE)
 	{
         /* Display full item debug information */
-        /* XXX wiz_display_item() calls something that clobbers the temp
-         object - which this function uses to hold the object being played
-         with. This results in strange things happening. -RML- */
 		wiz_display_item(o_ptr);
 
 		/* Ask wizard what to do. */
