@@ -847,6 +847,12 @@ static char vault_aux_char;
 /* Breath mask for "monster pit (dragon)" */
 static u32b vault_aux_dragon_mask4;
 
+/* Breath mask for "monster pit (elemental)" */
+static u32b vault_aux_elemental_mask4;
+
+/* Attack type for "monster pit (elemental)" */
+static int vault_aux_elemental_attack;
+
 
 /*
  * Helper monster selection function
@@ -1124,6 +1130,32 @@ static bool vault_aux_cthulhu(int r_idx)
 	return (TRUE);
 }
 
+/*
+ * Helper function for "monster pit (elemental)"
+ */
+static bool vault_aux_elemental(int r_idx)
+{
+    int i;
+
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Validate the monster */
+	if (!vault_monster_okay(r_idx)) return (FALSE);
+
+	/* Hack -- Accept correct "breath attack" */
+    if (r_ptr->flags4 == vault_aux_elemental_mask4) return (TRUE);
+
+    /* Accept correct "melee attack" */
+    for (i = 0; i < 4; i++)
+    {
+        if (!r_ptr->blow[i].method) break;
+        if (r_ptr->blow[i].effect == vault_aux_elemental_attack) return (TRUE);
+    }
+
+    /* Reject */
+    return (FALSE);
+}
+
 
 /*
  * Helper function for "monster pit (clone)"
@@ -1239,6 +1271,57 @@ static void vault_prep_dragon(void)
 	}
 }
 
+/*
+ * Helper function for "monster pit (elemental)"
+ */
+static void vault_prep_elemental(void)
+{
+	/* Pick dragon type */
+	switch (randint0(3))
+	{
+		case 0:
+		{
+			/* Fire */
+
+			/* Restrict elemental breath type */
+            vault_aux_elemental_mask4 = RF4_BR_FIRE;
+
+            /* Restrict melee attack type */
+            vault_aux_elemental_attack = RBE_FIRE;
+
+			/* Done */
+			break;
+		}
+
+		case 1:
+		{
+			/* Cold */
+
+			/* Restrict elemental breath type */
+            vault_aux_elemental_mask4 = RF4_BR_COLD;
+
+            /* Restrict melee attack type */
+            vault_aux_elemental_attack = RBE_COLD;
+
+			/* Done */
+			break;
+		}
+
+        default:
+		{
+			/* Elec */
+
+			/* Restrict elemental breath type */
+            vault_aux_elemental_mask4 = RF4_BR_ELEC;
+
+            /* Restrict melee attack type */
+            vault_aux_elemental_attack = RBE_ELEC;
+
+			/* Done */
+			break;
+        }
+    }
+}
 
 typedef struct vault_aux_type vault_aux_type;
 
@@ -1316,7 +1399,8 @@ static const vault_aux_type *pick_vault_type(const vault_aux_type *l_ptr)
 static const vault_aux_type nest_types[] =
 {
 	{"clone", vault_aux_clone, vault_prep_clone, 7, 6},
-	{"jelly", vault_aux_jelly, NULL, 7, 2},
+    {"jelly", vault_aux_jelly, NULL, 7, 2},
+    {"elemental", vault_aux_elemental, vault_prep_elemental, 15, 3},
 	{"symbol clone", vault_aux_symbol, vault_prep_symbol, 40, 6},
 	{"mimic", vault_aux_mimic, NULL, 45, 2},
 	{"lovecraftian", vault_aux_cthulhu, NULL, 80, 2},
