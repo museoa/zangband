@@ -1672,7 +1672,7 @@ static void road_connect(u16b *x, u16b *y, u16b town_num)
 	u16b x1 = *x, y1 = *y;
 
 	/* Check town type */
-	if (t_ptr->type == 2)
+	if (t_ptr->type == TOWN_FRACT)
 	{
 		for (k = 0; k < MAX_GATES; k++)
 		{
@@ -1689,14 +1689,14 @@ static void road_connect(u16b *x, u16b *y, u16b town_num)
 				{
 					case 0:
 					{
-						*x = t_ptr->x + (t_ptr->gates_x[0] + 1) / 2;
+						*x = t_ptr->x + t_ptr->gates_x[0] / 2;
 						*y = t_ptr->y + t_ptr->gates_y[0] / 2;
 						break;
 					}
 
 					case 1:
 					{
-						*x = t_ptr->x + (t_ptr->gates_x[1] - 1) / 2;
+						*x = t_ptr->x + t_ptr->gates_x[1] / 2;
 						*y = t_ptr->y + t_ptr->gates_y[1] / 2;
 						break;
 					}
@@ -1704,14 +1704,14 @@ static void road_connect(u16b *x, u16b *y, u16b town_num)
 					case 2:
 					{
 						*x = t_ptr->x + t_ptr->gates_x[2] / 2;
-						*y = t_ptr->y + (t_ptr->gates_y[2] + 1) / 2;
+						*y = t_ptr->y + t_ptr->gates_y[2] / 2;
 						break;
 					}
 
 					case 3:
 					{
 						*x = t_ptr->x + t_ptr->gates_x[3] / 2;
-						*y = t_ptr->y + (t_ptr->gates_y[3] - 1) / 2;
+						*y = t_ptr->y + t_ptr->gates_y[3] / 2;
 						break;
 					}
 				}
@@ -1723,8 +1723,8 @@ static void road_connect(u16b *x, u16b *y, u16b town_num)
 	}
 
 	/* Dodgy hack = just output median town square */
-	*x = town[town_num].x + 2;
-	*y = town[town_num].y;
+	*x = t_ptr->x + t_ptr->xsize / 2;
+	*y = t_ptr->y + t_ptr->ysize / 2;
 }
 
 
@@ -2002,6 +2002,9 @@ static void create_roads(void)
 			/* If there are no problems - link the two towns */
 			if (j == 0)
 			{
+				x1 = town[town2].x;
+				y1 = town[town2].y;
+				
 				/* Get connection square for town1 */
 				road_connect(&x1, &y1, town1);
 

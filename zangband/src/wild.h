@@ -30,7 +30,7 @@
 #define ROAD_MIN		3
 
 /* Minimum separation between towns */
-#define TOWN_MIN_DIST	16
+#define TOWN_MIN_DIST	10
 
 /* Minimum separation between quests */
 #define QUEST_MIN_DIST	10
