@@ -1058,7 +1058,7 @@ static void create_cata_tunnel(int x, int y)
  * It is designed to use very simple algorithms to go from (x1,y1) to (x2,y2)
  * It doesn't need to add any complexity - straight lines are fine.
  * The SOLID walls are avoided by a recursive algorithm which tries random ways
- * around the obstical until it works.  The number of itterations is counted, and it
+ * around the obstical until it works.  The number of iterations is counted, and it
  * this gets too large the routine exits. This should stop any crashes - but may leave
  * small gaps in the tunnel where there are too many SOLID walls.
  *

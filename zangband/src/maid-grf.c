@@ -133,7 +133,7 @@ void build_gamma_table(int gamma)
 			 * Note that everything is scaled by 256 for accuracy,
 			 * plus another factor of 256 for the final result to
 			 * be from 0-255.  Thus gamma_helper[] * gamma must be
-			 * divided by 256*256 each itteration, to get back to
+			 * divided by 256*256 each iteration, to get back to
 			 * the original power series.
 			 */
 			diff = (((diff / 256) * gamma_helper[i]) *

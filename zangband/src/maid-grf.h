@@ -75,7 +75,7 @@
 		} \
 	}
 
-/* Macro to extract location during itteration */
+/* Macro to extract location during iteration */
 #define MAP_GET_LOC(X, Y)\
 	(((X) = _map_i + map_cache_x[_map_count] * WILD_BLOCK_SIZE), \
 	 ((Y) = _map_j + map_cache_y[_map_count] * WILD_BLOCK_SIZE))

@@ -238,7 +238,7 @@ static void borg_flow_clear(void)
 {
 	map_block *mb_ptr;
 
-	/* Itterate over the map */
+	/* Iterate over the map */
 	MAP_ITT_START (mb_ptr)
 	{
 		mb_ptr->cost = 255;
@@ -13290,7 +13290,7 @@ static bool borg_flow_commit(cptr who, int why)
 	/* Message */
 	if (who) borg_note(format("# Flowing toward %s at cost %d", who, cost));
 
-	/* Itterate over all grids */
+	/* Iterate over all grids */
 	MAP_ITT_START (mb_ptr)
 	{
 		/* Obtain the "flow" information */

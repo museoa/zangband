@@ -82,7 +82,7 @@ struct maxima
  * Structure used to store information required for LOS
  * calculatations.  The same data can be inverted to
  * get the squares affected by a projection.  Those squares
- * can be itterated over to get a 'flight path' for arrows
+ * can be iterated over to get a 'flight path' for arrows
  * and thrown items...
  */
 
