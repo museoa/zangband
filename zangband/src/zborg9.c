@@ -2166,46 +2166,32 @@ static char borg_inkey_hack(int flush_first)
 		borg_prompt = TRUE;
 	}
 
-
-	/*
-	 * Mega-Hack -- Catch "Die? [y/n]" messages
-	 * If there is text on the first line...
-	 * And the game does not want a command...
-	 * And the cursor is on the top line...
-	 * And the text acquired above is "Die?" 
-	 */
-	if (borg_prompt && !p_ptr->cmd.inkey_flag &&
-		(y == 0) && (x >= 4) && streq(buf, "Die?") && borg_cheat_death)
-	{
-		/* Flush messages */
-		borg_parse(NULL);
-
-		/* flush the buffer */
-		borg_flush();
-
-		/* Take note */
-		borg_note("# Cheating death...");
-
-		/* Log the death */
-		borg_log_death();
-		borg_log_death_data();
-
-		/* Cheat death */
-		return ('n');
-	}
-
 	/* Mega-Hack -- Handle death */
 	if (p_ptr->state.is_dead)
 	{
+		/* Flush messages */
+		borg_parse(NULL);
+	
 		/* Log death */
 		borg_log_death();
 		borg_log_death_data();
 
 		/* flush the buffer */
 		borg_flush();
-
-		/* Oops  */
-		borg_oops("player died");
+		
+		if (borg_cheat_death)
+		{
+			/* Ignore death, and just print a message */
+			borg_note("Player died, continuing with borg_cheat_death");
+			
+			/* Cheat death */
+			return ('n');
+		}
+		else
+		{
+			/* Oops  */
+			borg_oops("player died");
+		}
 
 		/* Useless keypress */
 		return (KTRL('C'));
