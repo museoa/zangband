@@ -1773,6 +1773,8 @@ static void do_cmd_use_staff_aux(int item)
 			int num = damroll(5, 3);
 			int y, x;
 			int attempts;
+			
+			cave_type *c_ptr;
 
 			if (!p_ptr->blind)
 			{
@@ -1786,7 +1788,8 @@ static void do_cmd_use_staff_aux(int item)
 				{
 					scatter(&y, &x, py, px, 4, 0);
 
-					if (!cave_floor_bold(y, x)) continue;
+					c_ptr = area(y, x);
+					if (!cave_floor_grid(c_ptr)) continue;
 
 					if ((y != py) || (x != px)) break;
 				}
@@ -3145,6 +3148,7 @@ static void do_cmd_activate_aux(int item)
 				int num = damroll(5, 3);
 				int y, x;
 				int attempts;
+				cave_type *c_ptr;
 
 				msg_print("Your armor is surrounded by lightning...");
 
@@ -3156,7 +3160,8 @@ static void do_cmd_activate_aux(int item)
 					{
 						scatter(&y, &x, py, px, 4, 0);
 
-						if (!cave_floor_bold(y, x)) continue;
+						c_ptr = area(y, x);
+						if (!cave_floor_grid(c_ptr)) continue;
 
 						if ((y != py) || (x != px)) break;
 					}
