@@ -1048,6 +1048,8 @@ static void random_major_theme_weapon(object_type *o_ptr)
 		
 		if (o_ptr->tval == TV_SWORD)
 			o_ptr->flags2 |= TR2_THROW;
+
+		break;
 	}
 
 	if (o_ptr->activate)
@@ -1056,7 +1058,7 @@ static void random_major_theme_weapon(object_type *o_ptr)
 
 static void random_minor_theme_armor(object_type *o_ptr)
 {
-	switch (randint1(25))
+	switch (randint1(33))
 	{
 		case 1:
 		case 2:
@@ -1072,6 +1074,12 @@ static void random_minor_theme_armor(object_type *o_ptr)
 			o_ptr->flags2 |= TR2_SUST_STR;
 			if (one_in_(3))
 				o_ptr->flags2 |= TR2_RES_FEAR;
+
+			if (!o_ptr->activate)
+			{
+				if (one_in_(8))
+					o_ptr->activate = ACT_BERSERK;
+			}
 			
 			break;
 
@@ -1082,6 +1090,12 @@ static void random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags3 |= TR3_FEATHER;
 			
+			if (!o_ptr->activate)
+			{
+				if (one_in_(8))
+					o_ptr->activate = ACT_ID_PLAIN;
+			}
+			
 			break;
 
 		case 8:
@@ -1091,6 +1105,12 @@ static void random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags3 |= TR3_SEE_INVIS;
 
+			if (!o_ptr->activate)
+			{
+				if (one_in_(8))
+					o_ptr->activate = ACT_DETECT_ALL;
+			}
+			
 			break;
 
 		case 10:
@@ -1100,6 +1120,12 @@ static void random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags2 |= TR2_FREE_ACT;
 
+			if (!o_ptr->activate)
+			{
+				if (one_in_(8))
+					o_ptr->activate = ACT_SPEED;
+			}
+			
 			break;
 
 		case 12:
@@ -1109,6 +1135,12 @@ static void random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags3 |= TR3_REGEN;
 
+			if (!o_ptr->activate)
+			{
+				if (one_in_(8))
+					o_ptr->activate = ACT_SATIATE;
+			}
+			
 			break;
 
 		case 14:
@@ -1118,6 +1150,12 @@ static void random_minor_theme_armor(object_type *o_ptr)
 			if (one_in_(3))
 				o_ptr->flags3 |= TR3_LITE;
 
+			if (!o_ptr->activate)
+			{
+				if (one_in_(8))
+					o_ptr->activate = ACT_RECALL;
+			}
+			
 			break;
 
 		case 16:
@@ -1196,6 +1234,88 @@ static void random_minor_theme_armor(object_type *o_ptr)
 			if (!o_ptr->activate)
 			{
 				o_ptr->activate = ACT_ESP;
+			}
+
+			break;
+
+		case 26:
+			o_ptr->flags2 |= TR2_RES_DARK;
+
+			if (!o_ptr->activate)
+			{
+				o_ptr->activate = ACT_SUNLIGHT;
+			}
+
+			break;
+
+		case 27:
+			o_ptr->flags2 |= TR2_RES_CHAOS;
+			o_ptr->flags2 |= TR2_RES_CONF;
+
+			break;
+
+		case 28:
+			o_ptr->flags2 |= TR2_RES_NETHER;
+			o_ptr->flags2 |= TR2_HOLD_LIFE;
+
+			if (!o_ptr->activate)
+			{
+				if (one_in_(6))
+					o_ptr->activate = ACT_REST_LIFE;
+			}
+
+			break;
+
+		case 29:
+			o_ptr->flags2 |= TR2_RES_SOUND;
+			o_ptr->flags2 |= TR2_RES_SHARDS;
+
+			break;
+
+		case 30:
+			o_ptr->flags2 |= TR2_RES_FEAR;
+
+			if (!o_ptr->activate)
+			{
+				o_ptr->activate = ACT_TERROR;
+			}
+
+			break;
+
+		case 31:
+			o_ptr->flags1 |= TR1_SLAY_ANIMAL;
+
+			if (!o_ptr->activate)
+			{
+				if (one_in_(3))
+					o_ptr->activate = ACT_CHARM_ANIMAL;
+				else if (one_in_(2))
+					o_ptr->activate = ACT_CHARM_ANIMALS;
+				else
+					o_ptr->activate = ACT_SUMMON_ANIMAL;
+			}
+
+			break;
+
+		case 32:
+			o_ptr->flags1 |= TR1_SLAY_UNDEAD;
+
+			if (!o_ptr->activate)
+			{
+				if (one_in_(2))
+					o_ptr->activate = ACT_CHARM_UNDEAD;
+				else
+					o_ptr->activate = ACT_SUMMON_UNDEAD;
+			}
+
+			break;
+
+		case 33:
+			o_ptr->flags1 |= TR1_SLAY_DEMON;
+
+			if (!o_ptr->activate)
+			{
+				o_ptr->activate = ACT_SUMMON_DEMON;
 			}
 
 			break;
