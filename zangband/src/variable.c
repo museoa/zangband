@@ -90,9 +90,6 @@ bool use_transparency = FALSE;	/* Use transparent tiles */
 
 s16b signal_count;	/* Hack -- Count interupts */
 
-/* Is this needed? */
-bool hack_mutation;
-
 s16b o_max = 1;	/* Number of allocated objects */
 s16b o_cnt = 0;	/* Number of live objects */
 

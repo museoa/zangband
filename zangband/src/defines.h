@@ -2582,6 +2582,7 @@
 #define PC_WIZ_LITE		0x00000001L	/* Redraw map after a wiz_lite() */
 #define PC_SHIMMER		0x00000002L /* Shimmer monsters */
 #define PC_REPAIR		0x00000004L	/* Repair monsters */
+#define PC_MUTATE		0x00000008L	/* Mutate player (on birth) */
 
 
 /*

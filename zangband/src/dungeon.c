@@ -2594,13 +2594,6 @@ static void process_command(void)
  */
 static void process_player(void)
 {
-	if (hack_mutation)
-	{
-		msgf("You feel different!");
-		(void)gain_mutation(0);
-		hack_mutation = FALSE;
-	}
-
 	/*** Check for interupts ***/
 
 	/* Complete resting */
@@ -3168,8 +3161,6 @@ static void load_all_pref_files(void)
 void play_game(bool new_game)
 {
 	int i;
-
-	hack_mutation = FALSE;
 
 	/* Hack -- Character is "icky" */
 	character_icky = TRUE;

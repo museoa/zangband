@@ -131,7 +131,6 @@ extern s32b friend_align;
 extern s16b store_cache_num;
 extern store_type **store_cache;
 extern char summon_kin_type;
-extern bool hack_mutation;
 extern bool track_follow;
 extern bool track_target;
 extern byte hitpoint_warn;

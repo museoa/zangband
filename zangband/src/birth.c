@@ -811,11 +811,7 @@ static bool get_player_race(void)
 	/* Give beastman a mutation at character birth */
 	if (p_ptr->rp.prace == RACE_BEASTMAN)
 	{
-		hack_mutation = TRUE;
-	}
-	else
-	{
-		hack_mutation = FALSE;
+		p_ptr->change |= (PC_MUTATE);
 	}
 
 	/* Save the race pointer */

@@ -3727,4 +3727,13 @@ void change_stuff(void)
 		
 		change_repair();
 	}
+	
+	/* Give beastman mutation at birth */
+	if (p_ptr->change & (PC_MUTATE))
+	{
+		p_ptr->change &= ~(PC_MUTATE);
+		
+		msgf("You feel different!");
+		(void)gain_mutation(0);
+	}
 }
