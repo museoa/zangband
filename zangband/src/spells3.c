@@ -1405,11 +1405,11 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 	{
 		/* Let the player know */
 		o_ptr->kn_flags3 |= TR3_PERMA_CURSE;
-		
+
 		/* Done */
 		return (FALSE);
 	}
-	
+
 	/* Perma-Cursed Items can NEVER be uncursed */
 	if (f3 & TR3_PERMA_CURSE) return (FALSE);
 
@@ -1419,8 +1419,8 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 	/* Uncurse the item */
 	o_ptr->flags3 &= ~(TR3_CURSED);
 	o_ptr->flags3 &= ~(TR3_HEAVY_CURSE);
-	
-	
+
+
 	/* Recalculate the bonuses */
 	p_ptr->update |= (PU_BONUS);
 

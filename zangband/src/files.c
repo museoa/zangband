@@ -3004,7 +3004,7 @@ errr file_character(cptr name, bool full)
 		fprintf(fff, "%c%s %s\n", I2A(i), paren, o_name);
 	}
 	fprintf(fff, "\n\n");
-	
+
 
 	/* Dump the inventory */
 	fprintf(fff, "  [Character Inventory]\n\n");
@@ -4234,7 +4234,7 @@ static void show_info(void)
 	flush();
 
 	if (inkey() == ESCAPE) return;
-	
+
 
 	/* Show inventory */
 	Term_clear();

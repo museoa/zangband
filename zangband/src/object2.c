@@ -69,7 +69,7 @@ void delete_held_object(s16b *o_idx_ptr, object_type *o_ptr)
 
 	/* Wipe the object */
 	object_wipe(o_ptr);
-;
+	;
 	/* Count objects */
 	o_cnt--;
 }
@@ -5154,7 +5154,6 @@ void item_optimize(object_type *o_ptr)
 
 		/* Window stuff */
 		p_ptr->window |= (PW_EQUIP);
-
 	}
 	else
 	{
@@ -5253,7 +5252,7 @@ static bool reorder_pack_comp(object_type *o1_ptr, object_type *o2_ptr)
  *
  * Usually we only need to make a few swaps.
  */
-static bool reorder_pack_aux(object_type **q_ptr)
+static void reorder_pack_aux(object_type **q_ptr)
 {
 	object_type *o_ptr, *j_ptr;
 
@@ -5284,9 +5283,6 @@ static bool reorder_pack_aux(object_type **q_ptr)
 		OBJ_ITT_END;
 	}
 	OBJ_ITT_END;
-
-	/* Did we move anything? */
-	return (flag);
 }
 
 
@@ -5357,7 +5353,7 @@ object_type *inven_carry(object_type *o_ptr)
 	o_ptr = add_object_list(&p_ptr->inventory, o_ptr);
 
 	/* Reorder the pack */
-	(void)reorder_pack_aux(&o_ptr);
+	reorder_pack_aux(&o_ptr);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -5522,8 +5518,6 @@ void inven_drop(object_type *o_ptr, int amt)
 
 /*
  * Combine items in the pack
- *
- * Note special handling of the "overflow" slot
  */
 void combine_pack(void)
 {
@@ -5573,15 +5567,10 @@ void combine_pack(void)
  */
 void reorder_pack(void)
 {
-	bool flag;
-
-	flag = reorder_pack_aux(NULL);
+	reorder_pack_aux(NULL);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
-
-	/* Message */
-	if (flag) msg_print("You reorder some items in your pack.");
 }
 
 
