@@ -26,7 +26,9 @@ Done since 2.3.0:
 -Fixed a bug in patterns in *greater* vaults that made it impossible
  to walk them.
 -Added new quests (and changed ones) by Shayne Steele.
- 
+-Changed the rewards for two quests
+-Toned down Jack of Shadows, changed the level of Hrus
+
 ZAngband 2.3.0
 -Maximize mode, preserve mode, and the autoroller are now specified in
  the startup-options.
