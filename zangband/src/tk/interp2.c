@@ -1036,10 +1036,10 @@ objcmd_info(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
 
 	static cptr cmdOptions[] = {"class_name", "gender_name", "race_name",
-		"tval", "flavor_color", "stat_name", "term_attr",
+		"tval", "flavor_color", "term_attr",
 		NULL};
 	enum {IDX_CLASS_NAME, IDX_GENDER_NAME, IDX_RACE_NAME,
-		IDX_TVAL, IDX_FLAVOR_COLOR, IDX_STAT_NAME, IDX_TERM_ATTR
+		IDX_TVAL, IDX_FLAVOR_COLOR, IDX_TERM_ATTR
 		} option;
 	int index;
 
@@ -1119,12 +1119,7 @@ objcmd_info(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST 
 			}
 			Tcl_SetObjResult(interp, listObjPtr);
 			return TCL_OK;
-		
-		case IDX_STAT_NAME: /* stat_name */
-			names = (char **) keyword_stat;
-			nameCount = 6;
-			break;
-		
+				
 		case IDX_TERM_ATTR: /* term_attr */
 			names = (char **) keyword_term_color;
 			nameCount = 16;

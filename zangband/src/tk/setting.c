@@ -234,17 +234,6 @@ void init_settings(void)
 
 	/* Allocate the game settings master */
 	g_setting = Setting_Init(g_interp);
-
-	/*
-	 * Create a list of setting keywords for use with bind.c stuff.
-	 */
-	group = (SettingGroup *) g_setting;
-	C_MAKE(keyword_setting, group->count + 1, cptr);
-	for (i = 0; i < group->count; i++)
-	{
-		keyword_setting[i] = group->setting[i].name;
-	}
-	keyword_setting[i] = NULL;
 }
 
 

@@ -288,7 +288,6 @@ extern cptr keyword_stat[];
 extern cptr keyword_status[];
 extern cptr keyword_target[];
 extern cptr *keyword_setting;
-extern void init_bindings(void);
 
 /* birth-tnb.c */
 extern void init_birth(void);

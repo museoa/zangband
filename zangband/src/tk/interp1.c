@@ -675,7 +675,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		"exp", "food", "gold", "height", "history", "hitpoints",
 		"infravision", "level", "mana", "max_depth", "position",
 		"sex", "shots_per_round", "social_class", "spell_book",
-		"status", "title", "to_dam", "to_hit", "weight",
+		"title", "to_dam", "to_hit", "weight",
 		"total_weight", "preserve", "base_name",
 		"is_dead", "turn", "max_level", "disturb", "new_spells",
 		"command_rep", "running", "prayer_or_spell", "health_who",
@@ -687,7 +687,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 		IDX_EXP, IDX_FOOD, IDX_GOLD, IDX_HEIGHT, IDX_HISTORY, IDX_HITPOINTS,
 		IDX_INFRAVISION, IDX_LEVEL, IDX_MANA, IDX_MAX_DEPTH, IDX_POSITION,
 		IDX_SEX, IDX_SHOTS_PER_ROUND, IDX_SOCIAL_CLASS, IDX_SPELL_BOOK,
-		IDX_STATUS, IDX_TITLE, IDX_TO_DAM, IDX_TO_HIT, IDX_WEIGHT,
+		IDX_TITLE, IDX_TO_DAM, IDX_TO_HIT, IDX_WEIGHT,
 		IDX_TOTAL_WEIGHT, IDX_PRESERVE, IDX_BASE_NAME,
 		IDX_IS_DEAD, IDX_TURN, IDX_MAX_LEVEL, IDX_DISTURB, IDX_NEW_SPELLS,
 		IDX_COMMAND_REP, IDX_RUNNING, IDX_PRAYER_OR_SPELL, IDX_HEALTH_WHO,
@@ -703,7 +703,7 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	long expadv;
 	double pct;
 	char buf[512];
-	cptr t, p;
+	cptr t;
 	Tcl_Obj *listObjPtr;
 
 	static cptr abilityOptions[] = {"fighting", "bows_throw", "saving_throw",
@@ -904,21 +904,6 @@ objcmd_player(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 					Tcl_NewStringObj((char *) cstr, -1));
 			}
 			Tcl_SetObjResult(interp, listObjPtr);
-			break;
-
-		case IDX_STATUS: /* status */
-		    if (objC != 3)
-			{
-				Tcl_WrongNumArgs(interp, infoCmd->depth + 2, objv, (char *) "status");
-				return TCL_ERROR;
-		    }
-		    if (Tcl_GetIndexFromObj(interp, objV[2], (char **) keyword_status,
-				(char *) "status", 0, &index) != TCL_OK)
-			{
-				return TCL_ERROR;
-			}
-			t = player_status(index, &i);
-			Tcl_SetStringObj(resultPtr, format("{%s} %d", t, i), -1);
 			break;
 
 		case IDX_TITLE: /* title */
@@ -2298,21 +2283,10 @@ void angtk_init(void)
 	/* Tcl commands */
 	CommandInfo_Init(g_interp, commandInit, NULL);
 
-	/* Cool quasi-event bindings */
-	init_bindings();
-
 	init_const(g_interp);
 
 	/* Standard color palette */
 	init_palette();
-#if 0	
-	/* Testing */
-	path_build(path, 1024, ANGBAND_DIR_TK, "term.tcl");
-	if (angtk_eval_file(path) == TCL_ERROR)
-	{
-		HandleError();
-	}
-#endif /* 0 */
 	
 	/* Source the "startup script" */
 	path_build(path, 1024, ANGBAND_DIR_TK, "init-startup.tcl");

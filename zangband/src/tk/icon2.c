@@ -814,31 +814,6 @@ static int objcmd_alternate_insert(ClientData clientData, Tcl_Interp *interp, in
 	return TCL_OK;
 }
 
-/* (assign) groups */
-static int objcmd_assign_groups(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	int i;
-	Tcl_Obj *listObjPtr;
-
-	/* Hack - ignore parameters */
-	(void) objc;
-	(void) objv;
-	(void) clientData;
-
-	listObjPtr = Tcl_NewListObj(0, NULL);
-	
-	for (i = 0; i < ASSIGN_MAX; i++)
-	{
-		Tcl_ListObjAppendElement(interp, listObjPtr,
-			Tcl_NewStringObj(keyword_assign[i], -1));
-	}
-
-	Tcl_SetObjResult(interp, listObjPtr);
-
-	return TCL_OK;
-}
-
 /* (assign) types */
 static int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int objc,
 	Tcl_Obj *CONST objv[])
@@ -864,72 +839,6 @@ static int objcmd_assign_types(ClientData clientData, Tcl_Interp *interp, int ob
 	return TCL_OK;
 }
 
-/*
- * (assign) set $group $member ?$assign?
- */
-static int objcmd_assign_set(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	int objC = objc - infoCmd->depth;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	int group, member;
-	t_assign *assignPtr;
-	char buf[128];
-
-	if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_assign,
-		(char *) "group", 0, &group) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if (Tcl_GetIntFromObj(interp, objV[2], &member) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	if ((member < 0) || (member >= g_assign[group].count))
-	{
-		Tcl_SetObjResult(interp,
-			Tcl_NewStringObj(format("bad member \"%d\" : "
-			"must be from 0 to %d", member, g_assign[group].count - 1), -1));
-		return TCL_ERROR;
-	}
-	assignPtr = &g_assign[group].assign[member];
-
-	/* Return the current assignment */
-	if (objC == 3)
-	{
-		(void) assign_print(buf, assignPtr);
-		Tcl_SetResult(interp, buf, TCL_VOLATILE);
-		return TCL_OK;
-	}
-
-	if (assign_parse(interp, assignPtr, Tcl_GetString(objV[3])) != TCL_OK)
-	{
-		return TCL_ERROR;
-	}
-
-	/*
-	 * XXX Hack -- If we assigned a sprite to a feature, we are
-	 * going to set the lighting mode for that feature to "none".
-	 * Otherwise the get_display_info() will give back an invalid
-	 * icon. We could set the lighting mode to FT_LIGHT_TINT.
-	 */
-	if ((group == ASSIGN_FEATURE) &&
-		(assignPtr->assignType == ASSIGN_TYPE_SPRITE) &&
-		g_feat_lite[member])
-	{
-		g_feat_lite[member] = FT_LIGHT_NONE;
-	}
-
-	g_icon_map_changed = TRUE;
-
-	/* Fire off an event to inform the world of the assignment */
-	/* Bind_Assign(group + 1, member, assignPtr); */
-
-	return TCL_OK;
-}
 
 /* (assign) toicon $assign */
 static int objcmd_assign_toicon(ClientData clientData, Tcl_Interp *interp, int objc,
@@ -973,27 +882,6 @@ static int objcmd_assign_validate(ClientData clientData, Tcl_Interp *interp, int
     return assign_parse(interp, &assign, t);
 }
 
-/* (assign) count $group */
-static int objcmd_assign_count(ClientData clientData, Tcl_Interp *interp, int objc,
-	Tcl_Obj *CONST objv[])
-{
-	CommandInfo *infoCmd = (CommandInfo *) clientData;
-	Tcl_Obj *CONST *objV = objv + infoCmd->depth;
-	int group;
-
-	/* Hack - ignore parameter */
-	(void) objc;
-
-    if (Tcl_GetIndexFromObj(interp, objV[1], (char **) keyword_assign,
-    	(char *) "option", 0, &group) != TCL_OK)
-	{
-		return TCL_ERROR;
-    }
-    Tcl_SetObjResult(interp, Tcl_NewIntObj(g_assign[group].count));
-
-	/* Success */
-	return TCL_OK;
-}
 
 /* Indexes are EFFECT_SPELL_XXX constants */
 cptr keyword_effect_spell[] = {
@@ -2088,10 +1976,7 @@ CommandInit assignCmdInit[] = {
 		{1, "get", 2, 3, "alternateIndex ?frameIndex?", objcmd_alternate_get, (ClientData) 0},
 		{1, "insert", 3, 0, "alternateIndex frameIndex ?args ...?", objcmd_alternate_insert, (ClientData) 0},
 	{0, "assign", 0, 0, NULL, NULL, (ClientData) 0},
-		{1, "count", 2, 2, "group", objcmd_assign_count, (ClientData) 0},
-		{1, "groups", 1, 1, NULL, objcmd_assign_groups, (ClientData) 0},
 		{1, "types", 1, 1, NULL, objcmd_assign_types, (ClientData) 0},
-		{1, "set", 3, 4, "group member ?assign?", objcmd_assign_set, (ClientData) 0},
 		{1, "toicon", 2, 2, "assign", objcmd_assign_toicon, (ClientData) 0},
 		{1, "validate", 2, 2, "assign", objcmd_assign_validate, (ClientData) 0},
 	{0, "effect", 0, 0, NULL, NULL, (ClientData) 0},
