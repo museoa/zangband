@@ -2287,7 +2287,6 @@ static void HandleError(void)
 static void angtk_character_generated(void)
 {
 	char path[1024];
-	int y, x;
 
 	/* Source a file to create the interface */
 	path_build(path, 1024, ANGBAND_DIR_TK, "init-other.tcl");
@@ -2433,12 +2432,6 @@ void angtk_angband_initialized(void)
 	/* Ack! Angband has dynamic p_info array */
 	/* Names of gender, race and class */
 	init_keyword_misc();
-
-	C_MAKE(g_feat_flag, z_info->f_max, byte);
-	for (i = 0; i < z_info->f_max; i++)
-	{
-		g_feat_flag[i] = 0;
-	}
 
 	/* These are required for savefile loading (see lite_spot()) */
 	for (i = 0; i < MAX_HGT; i++)

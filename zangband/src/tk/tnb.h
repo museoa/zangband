@@ -125,11 +125,6 @@ extern int CommandInfo_ObjCmd(ClientData clientData, Tcl_Interp *interp,
 extern void angtk_flavor_init(int *max, byte **attr);
 extern void angtk_flavor_swap(int n, int a, int b);
 
-/* Constants for g_feat_flag[] */
-#define FEAT_FLAG_TOWN 0x02 /* Feature uses lighting in the town */
-
-extern byte *g_feat_flag;
-
 /* Constants for t_grid.dark */
 #define GRID_LITE_TORCH 0
 #define GRID_LITE_NORMAL 1

@@ -28,7 +28,6 @@ int g_alternate_count;  /* Number of elems in g_alternate[] array */
 t_effect *g_effect; /* Array of effect icon info */
 int *g_feat_lite = NULL;
 int *g_background = NULL;
-byte *g_feat_flag = NULL;
 t_darken g_darken[3];
 TintTable g_yellow;
 t_assign *g_icon_map[ICON_LAYER_MAX][MAX_HGT];
