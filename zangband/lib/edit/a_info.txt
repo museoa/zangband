@@ -769,8 +769,11 @@ F:STEALTH | FREE_ACT | IM_ACID | SEE_INVIS | INSTA_ART
 N:52:of the Ogre
 I:31:1:3
 W:17:6:5:5000
-P:1:0d0:8:8:15
+P:1:0d0:6:6:6
 F:STR | CON | HIDE_TYPE | SHOW_MODS | INSTA_ART
+L:ALTER:	object.pval = object.to_a / 2
+D:Legend says that these gloves provide their wearer with the 
+D:strength and skill of an ogre.
 
 
 # The Set of Leather Gloves 'Cammithrim'

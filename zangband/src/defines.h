@@ -132,7 +132,7 @@
 /*
  * Script triggers
  */
-#define MAX_TRIGGER     8
+#define MAX_TRIGGER     9
 
 #define TRIGGER_USE     0
 #define TRIGGER_MAKE    1
@@ -142,6 +142,7 @@
 #define TRIGGER_TIMED   5
 #define TRIGGER_HIT     6
 #define TRIGGER_ATTACK  7
+#define TRIGGER_ALTER   8
 
 
 /*

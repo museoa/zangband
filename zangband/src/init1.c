@@ -78,6 +78,7 @@ static cptr k_info_triggers[] =
 	"TIMED",
 	"HIT",
 	"ATTACK",
+	"ALTER",
 	NULL
 };
 

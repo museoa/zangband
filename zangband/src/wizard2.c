@@ -910,6 +910,9 @@ static void wiz_tweak_item(object_type *o_ptr)
 	if (!get_string(tmp_val, 6, "Enter new 'a_idx' setting: ")) return;
 	o_ptr->a_idx = atoi(tmp_val);
 	wiz_display_item(o_ptr);
+
+	/* Apply trigger */
+	apply_object_trigger(TRIGGER_ALTER, o_ptr, "");
 }
 
 

@@ -822,6 +822,9 @@ bool apply_disenchant(void)
 	if (o_ptr->to_a > 0) o_ptr->to_a--;
 	if ((o_ptr->to_a > 10) && (randint0(100) < 20)) o_ptr->to_a--;
 
+	/* Trigger scripts */
+	apply_object_trigger(TRIGGER_ALTER, o_ptr, "");
+
 
 	chg_virtue(V_HARMONY, 1);
 	chg_virtue(V_ENCHANT, -2);
@@ -1780,6 +1783,9 @@ bool enchant(object_type *o_ptr, int n, int eflag)
 
 	/* Failure */
 	if (!res) return (FALSE);
+
+	/* Apply trigger */
+	apply_object_trigger(TRIGGER_ALTER, o_ptr, "");
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
