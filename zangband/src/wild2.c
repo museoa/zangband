@@ -1354,8 +1354,7 @@ static bool blank_spot(int x, int y, int xsize, int ysize, int town_num, bool to
 			if (w_ptr->place) return (FALSE);
 
 			/* No water or lava or acid */
-			if (w_ptr->
-				info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
+			if (w_ptr->info & (WILD_INFO_WATER | WILD_INFO_LAVA | WILD_INFO_ACID))
 				return (FALSE);
 
 			/* No Ocean */
@@ -2861,6 +2860,9 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 
 	cave_type *c_ptr;
 
+	bool bridge = FALSE, need_bridge = FALSE;
+
+
 	/* Only draw if road is on the square */
 	if (!(wild[y][x].done.info & (WILD_INFO_TRACK | WILD_INFO_ROAD)))
 	{
@@ -2892,6 +2894,12 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 					/* Flag is set */
 					grad1[i] = ROAD_LEVEL;
 					any = TRUE;
+					
+					/* Bridges are narrow */
+					if (wild[y1][x1].done.info & WILD_INFO_WATER)
+					{
+						grad1[i] = TRACK_LEVEL;
+					}
 				}
 			}
 		}
@@ -2967,10 +2975,38 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 				{
 					/* Flag is set */
 					grad2[i] = ROAD_LEVEL;
+					
+					/* Bridges are narrow */
+					if (wild[y1][x1].done.info & WILD_INFO_WATER)
+					{
+						grad2[i] = TRACK_LEVEL;
+					}
 				}
 			}
 		}
 	}
+
+	/* Scan sides for ground */
+	for (i = 1; i < 10; i++)
+	{
+		/* Get direction */
+		x1 = x + ddx[i];
+		y1 = y + ddy[i];
+		
+		if (wild[y1][x1].done.info & WILD_INFO_WATER)
+		{
+			/* We are over water - so we need a bridge */
+			need_bridge = TRUE;
+		}
+		else
+		{
+			/* We are adjacent to solid ground */
+			bridge = TRUE;
+		}
+	}
+	
+	/* Only use wood terrain if we need a bridge */
+	if (!need_bridge) bridge = FALSE;
 
 	/* Clear temporary block */
 	clear_temp_block();
@@ -2998,7 +3034,20 @@ static void make_wild_road(blk_ptr block_ptr, int x, int y)
 				/* Point to square */
 				c_ptr = &block_ptr[j][i];
 
-				if ((c_ptr->feat == FEAT_SHAL_WATER) ||
+				/* Bad liquid terrain? */
+				if ((c_ptr->feat == FEAT_SHAL_LAVA) ||
+					(c_ptr->feat == FEAT_DEEP_LAVA) ||
+					(c_ptr->feat == FEAT_SHAL_ACID) ||
+					(c_ptr->feat == FEAT_DEEP_ACID))
+				{
+					c_ptr->feat = FEAT_PEBBLES;
+				}
+				else if (bridge)
+				{
+						c_ptr->feat = FEAT_FLOOR_WOOD;
+				}
+				
+				else if ((c_ptr->feat == FEAT_SHAL_WATER) ||
 					(c_ptr->feat == FEAT_DEEP_WATER))
 				{
 					c_ptr->feat = FEAT_PEBBLES;
@@ -3745,7 +3794,7 @@ static void gen_block(int x, int y)
 		}
 
 		/* Add lava boundary effects. */
-		if (wild_info_bounds(x, y, WILD_INFO_LAVA))
+		else if (wild_info_bounds(x, y, WILD_INFO_LAVA))
 		{
 			/* Hack, above function sets bounds */
 
@@ -3757,7 +3806,7 @@ static void gen_block(int x, int y)
 		}
 
 		/* Add acid boundary effects. */
-		if (wild_info_bounds(x, y, WILD_INFO_ACID))
+		else if (wild_info_bounds(x, y, WILD_INFO_ACID))
 		{
 			/* Hack, above function sets bounds */
 
