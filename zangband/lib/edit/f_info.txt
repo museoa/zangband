@@ -240,39 +240,39 @@ F:USE_TRANS | OBJECT
 
 N:65:Pattern startpoint
 G:*:w
-F:PERM | OBJECT
+F:PERM | OBJECT | PATTERN
 
 N:66:section of the Pattern
 G:*:B
-F:PERM | OBJECT
+F:PERM | OBJECT | PATTERN
 
 N:67:section of the Pattern
 G:*:b
-F:PERM | OBJECT
+F:PERM | OBJECT | PATTERN
 
 N:68:section of the Pattern
 G:*:B
-F:PERM | OBJECT
+F:PERM | OBJECT | PATTERN
 
 N:69:section of the Pattern
 G:*:b
-F:PERM | OBJECT
+F:PERM | OBJECT | PATTERN
 
 N:70:section of the Pattern
 G:*:W
-F:PERM | OBJECT
+F:PERM | OBJECT | PATTERN
 
 N:71:section of the Pattern (discharged)
 G:*:W
-F:PERM | OBJECT
+F:PERM | OBJECT | PATTERN
 
 N:72:Pattern exit
 G:*:w
-F:PERM | OBJECT
+F:PERM | OBJECT | PATTERN
 
 N:73:corrupted section of the Pattern
 G:*:D
-F:PERM | OBJECT
+F:PERM | OBJECT | PATTERN
 
 # 0x53 --> terrain -- deep water
 
