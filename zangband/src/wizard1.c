@@ -716,7 +716,7 @@ static cptr *spoiler_flag_aux(const u32b flags, const flag_desc *flag_ptr,
 /*
  * Acquire a "basic" description "The Cloak of Death [1,+10]"
  */
-static void analyze_general(const object_type *o_ptr, char *desc_ptr)
+static void analyze_general(object_type *o_ptr, char *desc_ptr)
 {
 	/* Get a "useful" description of the object */
 	object_desc_store(desc_ptr, o_ptr, TRUE, 1, 256);
@@ -950,7 +950,7 @@ static void analyze_misc(const object_type *o_ptr, char *misc_desc)
 /*
  * Fill in an object description structure for a given object
  */
-static void object_analyze(const object_type *o_ptr, obj_desc_list *desc_ptr)
+static void object_analyze(object_type *o_ptr, obj_desc_list *desc_ptr)
 {
 	analyze_general(o_ptr, desc_ptr->description);
 

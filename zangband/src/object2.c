@@ -2032,7 +2032,7 @@ static s16b w_bonus(int max, int lev_dif)
 /*
  * Cheat -- describe a created object for the user
  */
-static void object_mention(const object_type *o_ptr)
+static void object_mention(object_type *o_ptr)
 {
 	char o_name[256];
 
