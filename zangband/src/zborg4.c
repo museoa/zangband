@@ -113,6 +113,8 @@ int num_boots;
 /* The shop that corresponds to the current home */
 int home_shop = -1;
 
+/* Include shop items in power calculation */
+int use_shop;
 
 /*
  * Hack - save old hook for object lists.

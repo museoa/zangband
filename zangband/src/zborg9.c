@@ -305,66 +305,38 @@ static void borg_hidden(void)
 	int i;
 
 	/* Clear the stat modifiers */
-	for (i = 0; i < 6; i++) my_stat_add[i] = 0;
+	for (i = 0; i < A_MAX; i++) my_stat_add[i] = 0;
 
 	/* Scan the usable inventory */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (i = 0; i < equip_num; i++)
 	{
-		borg_item *item = &borg_items[i];
+		list_item *l_ptr = &equipment[i];
 
 		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* if we have on unidentified stuff we may have misguessed our */
-		/* stats. */
-		if (!item->able)
-		{
-			my_need_stat_check[0] = TRUE;
-			my_need_stat_check[1] = TRUE;
-			my_need_stat_check[2] = TRUE;
-			my_need_stat_check[3] = TRUE;
-			my_need_stat_check[4] = TRUE;
-			my_need_stat_check[5] = TRUE;
-			break;
-		}
+		if (!l_ptr->k_idx) continue;
 
 		/* Affect stats */
-		if (item->flags1 & TR1_STR) my_stat_add[A_STR] += item->pval;
-		if (item->flags1 & TR1_INT) my_stat_add[A_INT] += item->pval;
-		if (item->flags1 & TR1_WIS) my_stat_add[A_WIS] += item->pval;
-		if (item->flags1 & TR1_DEX) my_stat_add[A_DEX] += item->pval;
-		if (item->flags1 & TR1_CON) my_stat_add[A_CON] += item->pval;
-		if (item->flags1 & TR1_CHR) my_stat_add[A_CHR] += item->pval;
+		if (l_ptr->kn_flags1 & TR1_STR) my_stat_add[A_STR] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_INT) my_stat_add[A_INT] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_WIS) my_stat_add[A_WIS] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_DEX) my_stat_add[A_DEX] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_CON) my_stat_add[A_CON] += l_ptr->pval;
+		if (l_ptr->kn_flags1 & TR1_CHR) my_stat_add[A_CHR] += l_ptr->pval;
 	}
 
 	/* Mega-Hack -- Guess at "my_stat_cur[]" */
-	for (i = 0; i < 6; i++)
+	for (i = 0; i < A_MAX; i++)
 	{
-		int value;
-
 		if (!my_need_stat_check[i]) continue;
 
-		/* Reverse known bonuses to get the base stat value */
-		value = modify_stat_value(borg_stat[i], -my_stat_add[i]);
-
-		/* If the displayed stat is 18/220 this was just a guess.  */
-		/* The player still needs to take off some stuff to get the */
-		/* real value. */
-		if (borg_stat[i] < 238)
-		{
-			my_need_stat_check[i] = FALSE;
-		}
-
-		/* Hack -- save the maximum/current stats */
-#if 0
-		my_stat_cur[i] = value;
-#endif
+		/* Hack - get current internal stat value */
 		my_stat_cur[i] = p_ptr->stat_cur[i];
 
 		/* Max stat is the max that the cur stat ever is. */
 		if (my_stat_cur[i] > my_stat_max[i])
+		{
 			my_stat_max[i] = my_stat_cur[i];
-
+		}
 	}
 }
 
@@ -432,16 +404,16 @@ static bool borg_think(void)
 			if (ii != borg_skill[BI_REALM1] &&
 				ii != borg_skill[BI_REALM2]) continue;
 
-			for (i = 0; i < INVEN_PACK; i++)
+			for (i = 0; i < inven_num; i++)
 			{
-				borg_item *item = &borg_items[i];
+				list_item *l_ptr = &inventory[i];
 
 				/* Skip wrong-realm books */
-				if (item->tval != REALM1_BOOK &&
-					item->tval != REALM2_BOOK) continue;
+				if (l_ptr->tval != REALM1_BOOK &&
+					l_ptr->tval != REALM2_BOOK) continue;
 
 				/* Note book locations */
-				borg_book[item->tval - TV_LIFE_BOOK + 1][item->sval] = i;
+				borg_book[l_ptr->tval - TV_LIFE_BOOK + 1][k_info[l_ptr->k_idx].sval] = i;
 			}
 		}
 	}
@@ -1094,98 +1066,6 @@ static void borg_parse_aux(cptr msg, int len)
 		my_stat_max[4] = 0;
 		my_stat_max[5] = 0;
 
-	}
-
-	/* amnesia attacks, re-id wands, staves, equipment. */
-	if (prefix(msg, "Your memories fade"))
-	{
-		int i;
-
-		/* I was hit by amnesia, forget things */
-		/* forget equipment */
-		/* Look for an item to forget (equipment) */
-		for (i = INVEN_WIELD; i <= INVEN_FEET; i++)
-		{
-			borg_item *item = &borg_items[i];
-
-			/* Skip empty items */
-			if (!item->iqty) continue;
-
-			/* Skip known items */
-			if (item->fully_identified) continue;
-
-			/* skip certain easy know items */
-			if ((item->tval == TV_RING) &&
-				((item->sval == SV_RING_FREE_ACTION) ||
-				 (item->sval == SV_RING_SEE_INVIS) ||
-				 (item->sval <= SV_RING_SUSTAIN_CHR))) continue;
-
-			/* skip already forgotten or non id'd items */
-			if (!item->able) continue;
-
-			/* forget it */
-			item->able = FALSE;
-
-			/* note the forgeting */
-			borg_note(format("Borg 'forgetting' qualities of %s", item->desc));
-
-		}
-
-		/* Look for an item to forget (inventory) */
-		for (i = 0; i <= INVEN_PACK; i++)
-		{
-			borg_item *item = &borg_items[i];
-
-			/* Skip empty items */
-			if (!item->iqty) continue;
-
-			/* skip certain easy know items */
-			if ((item->tval == TV_RING) &&
-				(item->flags3 & TR3_EASY_KNOW)) continue;
-
-			if (item->fully_identified) continue;
-
-			switch (item->tval)
-			{
-				case TV_WAND:
-				case TV_STAFF:
-				case TV_ROD:
-				case TV_RING:
-				case TV_AMULET:
-				case TV_LITE:
-				case TV_SHOT:
-				case TV_ARROW:
-				case TV_BOLT:
-				case TV_BOW:
-				case TV_DIGGING:
-				case TV_HAFTED:
-				case TV_POLEARM:
-				case TV_SWORD:
-				case TV_BOOTS:
-				case TV_GLOVES:
-				case TV_HELM:
-				case TV_CROWN:
-				case TV_SHIELD:
-				case TV_CLOAK:
-				case TV_SOFT_ARMOR:
-				case TV_HARD_ARMOR:
-				case TV_DRAG_ARMOR:
-				{
-					/* forget wands, staffs, weapons, armour */
-					break;
-				}
-
-				default:
-				{
-					continue;
-				}
-			}
-			/* forget it */
-			item->able = FALSE;
-
-			/* note the forgetting */
-			borg_note(format("Borg 'forgetting' qualities of %s", item->desc));
-		}
 	}
 
 	if (streq(msg, "You have been knocked out."))
@@ -1841,37 +1721,6 @@ static void borg_parse_aux(cptr msg, int len)
 		return;
 	}
 
-	/* Hack to protect against clock overflows and errors */
-	if (prefix(msg, "You have nothing to identify"))
-	{
-		/* Hack -- Oops */
-		borg_keypress(ESCAPE);
-		borg_keypress(ESCAPE);
-
-		/* ID all items (equipment) */
-		for (i = INVEN_WIELD; i <= INVEN_FEET; i++)
-		{
-			borg_item *item = &borg_items[i];
-
-			/* Skip empty items */
-			if (!item->iqty) continue;
-
-			item->able = TRUE;
-		}
-
-		/* ID all items  (inventory) */
-		for (i = 0; i <= INVEN_PACK; i++)
-		{
-			borg_item *item = &borg_items[i];
-
-			/* Skip empty items */
-			if (!item->iqty) continue;
-
-			item->able = TRUE;
-		}
-		return;
-	}
-
 	/* resist acid */
 	if (prefix(msg, "You feel resistant to acid!"))
 	{
@@ -2403,10 +2252,12 @@ static char borg_inkey_hack(int flush_first)
 	/* Assume no prompt/message is available */
 	borg_prompt = FALSE;
 
-	/* Mega-Hack -- check for possible prompts/messages */
-	/* If the first four characters on the message line all */
-	/* have the same attribute (or are all spaces), and they */
-	/* are not all spaces (ascii value 0x20)... */
+	/*
+	 * Mega-Hack -- check for possible prompts/messages
+	 * If the first four characters on the message line all
+	 * have the same attribute (or are all spaces), and they
+	 * are not all spaces (ascii value 0x20)...
+	 */
 	if ((0 == borg_what_text(0, 0, 4, &t_a, buf)) &&
 		(t_a != TERM_DARK) && (*((u32b *)(buf)) != 0x20202020))
 	{
@@ -2415,12 +2266,14 @@ static char borg_inkey_hack(int flush_first)
 	}
 
 
-	/* Mega-Hack -- Catch "Die? [y/n]" messages */
-	/* If there is text on the first line... */
-	/* And the game does not want a command... */
-	/* And the cursor is on the top line... */
-	/* And the text acquired above is "Die?" */
-	if (borg_prompt && !p_tpr->inkey_flag &&
+	/*
+	 * Mega-Hack -- Catch "Die? [y/n]" messages
+	 * If there is text on the first line...
+	 * And the game does not want a command...
+	 * And the cursor is on the top line...
+	 * And the text acquired above is "Die?" 
+	 */
+	if (borg_prompt && !p_ptr->inkey_flag &&
 		(y == 0) && (x >= 4) && streq(buf, "Die?") && borg_cheat_death)
 	{
 		/* Flush messages */
@@ -2623,41 +2476,29 @@ static void borg_prt_binary(u32b flags, int row, int col)
  * item has.  Select the item by inven # prior to hitting
  * the ^zo.
  */
-static void borg_display_item(object_type *item2)
+static void borg_display_item(list_item *l_ptr)
 {
 	int i, j = 13;
-	u32b f1, f2, f3;
-
-	borg_item *item;
-
-	item = &borg_items[p_ptr->command_arg];
-
-
-	/* Extract the flags */
-	object_flags(item2, &f1, &f2, &f3);
 
 	/* Clear the screen */
 	for (i = 1; i <= 23; i++) prt("", j - 2, i);
 
 	/* Describe fully */
-	prt(item->desc, j, 2);
+	prt(l_ptr->o_name, j, 2);
 
-	prt(format("kind = %-5d  level = %-4d  tval = %-5d  sval = %-5d",
-			   item->kind, item->level, item->tval, item->sval), j, 4);
+	prt(format("k_idx = %-5d    tval = %-5d ",
+			   l_ptr->k_idx,  l_ptr->tval), j, 4);
 
 	prt(format("number = %-3d  wgt = %-6d  ac = %-5d    damage = %dd%d",
-			   item->iqty, item->weight, item->ac, item->dd, item->ds), j, 5);
+			   l_ptr->number, l_ptr->weight, l_ptr->ac, l_ptr->dd, l_ptr->ds), j, 5);
 
 	prt(format("pval = %-5d  toac = %-5d  tohit = %-4d  todam = %-4d",
-			   item->pval, item->to_a, item->to_h, item->to_d), j, 6);
+			   l_ptr->pval, l_ptr->to_a, l_ptr->to_h, l_ptr->to_d), j, 6);
 
-	prt(format("xtra_name = %s", item->xtra_name), j, 7);
+	prt(format("xtra_name = %s", l_ptr->xtra_name), j, 7);
 
-	prt(format("able = %d      fully_id = %d  timeout = %-d",
-			   item->able, item->fully_identified, item->timeout), j, 8);
-
-	/* maybe print the inscription */
-	prt(format("Inscription: %s", item->note), j, 9);
+	prt(format("info = %d  timeout = %-d",
+			   l_ptr->info, l_ptr->timeout), j, 8);
 
 
 	prt("+------------FLAGS1------------+", j, 10);
@@ -2666,7 +2507,7 @@ static void borg_display_item(object_type *item2)
 	prt("siwdcc  ssidsahanvudotgddhuoclio", j, 13);
 	prt("tnieoh  trnipttmiinmrrnrrraiierl", j, 14);
 	prt("rtsxna..lcfgdkcpmldncltggpksdced", j, 15);
-	borg_prt_binary(f1, j, 16);
+	borg_prt_binary(l_ptr->kn_flags1, j, 16);
 
 	prt("+------------FLAGS2------------+", j, 17);
 	prt("SUST...IMMUN..RESIST............", j, 18);
@@ -2674,7 +2515,7 @@ static void borg_display_item(object_type *item2)
 	prt("siwdcc  clioheatcliooeialoshtncd", j, 20);
 	prt("tnieoh  ierlrfraierliatrnnnrhehi", j, 21);
 	prt("rtsxna..dcedwlatdcedsrekdfddrxss", j, 22);
-	borg_prt_binary(f2, j, 23);
+	borg_prt_binary(l_ptr->kn_flags2, j, 23);
 
 	prt("+------------FLAGS3------------+", j + 32, 10);
 	prt("fe      ehsi  st    iiiiadta  hp", j + 32, 11);
@@ -2685,9 +2526,7 @@ static void borg_display_item(object_type *item2)
 	prt("uu  egirnyoahivaeggoclioaeoasrrr", j + 32, 16);
 	prt("rr  litsopdretitsehtierltxrtesss", j + 32, 17);
 	prt("aa  echewestreshtntsdcedeptedeee", j + 32, 18);
-	borg_prt_binary(f3, j + 32, 19);
-
-	return;
+	borg_prt_binary(l_ptr->kn_flags3, j + 32, 19);
 }
 
 
@@ -3423,48 +3262,6 @@ void borg_status(void)
 			Term_putstr(56, 8, -1, attr,
 						format("%d    ", borg_skill[BI_MAXDEPTH]));
 
-			/* Important endgame information */
-			if (borg_skill[BI_MAXDEPTH] >= 98)
-			{
-				Term_putstr(5, 15, -1, TERM_WHITE, "Important Home Inven:");
-
-				attr = TERM_SLATE;
-				Term_putstr(1, 16, -1, attr, "EZ_Heal:        ");
-				attr = TERM_WHITE;
-				Term_putstr(10, 16, -1, attr, format("%d   ", num_ez_heal));
-
-				attr = TERM_SLATE;
-				Term_putstr(1, 17, -1, attr, "Num_Heal:        ");
-				attr = TERM_WHITE;
-				Term_putstr(11, 17, -1, attr, format("%d   ", num_heal));
-
-				attr = TERM_SLATE;
-				Term_putstr(1, 18, -1, attr, "Res_Mana:        ");
-				attr = TERM_WHITE;
-				Term_putstr(11, 18, -1, attr, format("%d   ", num_mana));
-			}
-			else
-			{
-				Term_putstr(5, 15, -1, TERM_WHITE, "                     ");
-
-				attr = TERM_SLATE;
-				Term_putstr(1, 16, -1, attr, "       :        ");
-				attr = TERM_WHITE;
-				Term_putstr(10, 16, -1, attr, format("     ", num_ez_heal));
-
-				attr = TERM_SLATE;
-				Term_putstr(1, 17, -1, attr, "                 ");
-				attr = TERM_WHITE;
-				Term_putstr(11, 17, -1, attr, format("     ", num_heal));
-
-				attr = TERM_SLATE;
-				Term_putstr(1, 18, -1, attr, "                 ");
-				attr = TERM_WHITE;
-				Term_putstr(11, 18, -1, attr, format("     ", num_mana));
-			}
-
-
-
 			/* Fresh */
 			Term_fresh();
 
@@ -4182,7 +3979,7 @@ void do_cmd_borg(void)
 			for (i = 0; i < track_shop_num; i++)
 			{
 				/* Print */
-				print_rel('*', TERM_RED, track_shop_x[i], track_shop_y[i]);
+				print_rel('*', TERM_RED, borg_shops[i].x, borg_shops[i].y);
 
 				/* Count */
 				n++;
@@ -4355,7 +4152,7 @@ void do_cmd_borg(void)
 			/* Evaluate */
 			p = borg_power();
 
-			borg_notice_home(NULL, FALSE);
+			borg_notice_home();
 
 			/* Report it */
 			msg_format("Current Borg Power %ld", p);
@@ -4419,7 +4216,7 @@ void do_cmd_borg(void)
 
 			/* Examine the inventory */
 			borg_notice();
-			borg_notice_home(NULL, FALSE);
+			borg_notice_home();
 
 			/* Dump prep codes */
 			for (i = 1; i <= 127; i++)
@@ -4440,39 +4237,11 @@ void do_cmd_borg(void)
 			break;
 		}
 
-		case 'w':
-		case 'W':
-		{
-			/* Command: List the swap weapon and armour */
-
-			borg_item *item;
-
-
-			/* Examine the screen */
-			borg_update();
-
-			/* Extract some "hidden" variables */
-			borg_hidden();
-
-			/* Examine the inventory */
-			borg_notice();
-			borg_notice_home(NULL, FALSE);
-
-			/* Check the power */
-			borg_power();
-
-			/* Examine the screen */
-			borg_update_frame();
-			break;
-		}
-
 		case 'o':
 		case 'O':
 		{
 			/* Command: Display all known info on item */
 			int n = 0;
-
-			object_type *item2;
 
 			/* use this item */
 			n = (p_ptr->command_arg ? p_ptr->command_arg : 1);
@@ -4485,7 +4254,7 @@ void do_cmd_borg(void)
 
 			/* Examine the inventory */
 			borg_notice();
-			borg_notice_home(NULL, FALSE);
+			borg_notice_home();
 
 			/* Check the power */
 			borg_power();
@@ -4496,11 +4265,8 @@ void do_cmd_borg(void)
 			/* Save the screen */
 			Term_save();
 
-			/* get the item */
-			item2 = &inventory[n];
-
 			/* Display the special screen */
-			borg_display_item(item2);
+			borg_display_item(&inventory[n]);
 
 			/* pause for study */
 			msg_format("Borg believes: ");
@@ -4619,7 +4385,7 @@ void do_cmd_borg(void)
 
 			/* Examine the inventory */
 			borg_notice();
-			borg_notice_home(NULL, FALSE);
+			borg_notice_home();
 
 			for (; item < to; item++)
 			{
