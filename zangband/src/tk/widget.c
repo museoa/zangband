@@ -1536,9 +1536,6 @@ Tk_ClassProcs widgetProcs = {
 /* List of existing widgets let us iterate over them */
 DoubleLinker WidgetList;
 
-/* List of mapped widgets */
-DoubleLinker WidgetListMap;
-
 
 /*
  * Table specifying legal configuration options for a Widget.
@@ -1723,8 +1720,6 @@ int init_widget(Tcl_Interp *interp)
 	/* Linked lists of Widgets */
 	DoubleLink_Init(&WidgetList, NULL, NULL);
 	WidgetList.what = "widget";
-	DoubleLink_Init(&WidgetListMap, NULL, NULL);
-	WidgetListMap.what = "widgetMap";
 
 	/* Initialize Widget item colors */
 	if (WidgetColor_Init(interp) != TCL_OK)
@@ -1766,217 +1761,6 @@ void angtk_widget_lock(bool lock)
 }
 
 /*
- * Now for spell and missile effects in a Widget. The basic idea is to
- * prepare for drawing, perform the drawing (offscreen), display
- * the changed grids onscreen, then repair the affected grids offscreen.
- *
- * Specifically, we call angtk_effect_prep(), then another routine to
- * draw any number of spell/missile grids offscreen, and finally
- * angtk_effect_fresh() to display the changes onscreen. This allows us
- * to draw each radius of a spell explosion in turn.
- *
- * Because a Widget may display an arbitrary area of the cave, and because
- * a particular Widget may not be mapped (ie, visible onscreen), we keep
- * track of which Widgets were really drawn into and require redisplaying.
- */
-
-/*
- * Return EFFECT_SPELL_XXX constant for given GF_XXX constant. For each
- * EFFECT_SPELL_XXX we have a bolt icon assignment and a ball icon assignment.
- * The bolt assignment is assumed to be the first of four icons.
- */
-static byte effect_index(int type)
-{
-	/* Analyze */
-	switch (type)
-	{
-		case GF_MISSILE:	return (EFFECT_SPELL_MISSILE);
-		case GF_ACID:		return (EFFECT_SPELL_ACID);
-		case GF_ELEC:		return (EFFECT_SPELL_ELEC);
-		case GF_FIRE:		return (EFFECT_SPELL_FIRE);
-		case GF_COLD:		return (EFFECT_SPELL_COLD);
-		case GF_POIS:		return (EFFECT_SPELL_POIS);
-		case GF_HOLY_FIRE:	return (EFFECT_SPELL_HOLY_FIRE);
-		case GF_HELL_FIRE:	return (EFFECT_SPELL_HELL_FIRE);
-		case GF_MANA:		return (EFFECT_SPELL_MANA);
-		case GF_ARROW:		return (EFFECT_SPELL_ARROW);
-		case GF_WATER:		return (EFFECT_SPELL_WATER);
-		case GF_NETHER:		return (EFFECT_SPELL_NETHER);
-		case GF_CHAOS:		return (EFFECT_SPELL_CHAOS);
-		case GF_DISENCHANT:	return (EFFECT_SPELL_DISENCHANT);
-		case GF_NEXUS:		return (EFFECT_SPELL_NEXUS);
-		case GF_CONFUSION:	return (EFFECT_SPELL_CONFUSION);
-		case GF_SOUND:		return (EFFECT_SPELL_SOUND);
-		case GF_SHARDS:		return (EFFECT_SPELL_SHARD);
-		case GF_FORCE:		return (EFFECT_SPELL_FORCE);
-		case GF_INERTIA:	return (EFFECT_SPELL_INERTIA);
-		case GF_GRAVITY:	return (EFFECT_SPELL_GRAVITY);
-		case GF_TIME:		return (EFFECT_SPELL_TIME);
-		case GF_LITE_WEAK:	return (EFFECT_SPELL_LITE_WEAK);
-		case GF_LITE:		return (EFFECT_SPELL_LITE);
-		case GF_DARK_WEAK:	return (EFFECT_SPELL_DARK_WEAK);
-		case GF_DARK:		return (EFFECT_SPELL_DARK);
-		case GF_PLASMA:		return (EFFECT_SPELL_PLASMA);
-		case GF_METEOR:		return (EFFECT_SPELL_METEOR);
-		case GF_ICE:		return (EFFECT_SPELL_ICE);
-		case GF_ROCKET:		return (EFFECT_SPELL_ROCKET);
-		case GF_DEATH_RAY:	return (EFFECT_SPELL_DEATH_RAY);
-		case GF_NUKE:		return (EFFECT_SPELL_NUKE);
-		case GF_DISINTEGRATE:	return (EFFECT_SPELL_DISINTEGRATE);
-		case GF_PSI:
-		case GF_PSI_DRAIN:
-		case GF_TELEKINESIS:
-		case GF_DOMINATION:		return (EFFECT_SPELL_PSI);
-	}
-
-	/* Standard "color" */
-	return (EFFECT_SPELL_FORCE);
-}
-
-static bool angtk_effect_aux(int y, int x, IconSpec *iconSpecPtr)
-{
-	Widget *widgetPtr;
-	ExWidget *exPtr;
-	DoubleLink *link;
-	int row, col;
-	bool drawn = FALSE;
-
-	/* Check each Widget */
-	for (link = WidgetListMap.head; link; link = link->next)
-	{
-		widgetPtr = DoubleLink_Data(link, Widget);
-		exPtr = (ExWidget *) widgetPtr;
-
-		/* Drawing is disabled */
-		if (widgetPtr->flags & WIDGET_NO_UPDATE) continue;
-
-		/* Don't draw out of bounds */
-		if (!Widget_CaveToView(widgetPtr, y, x, &row, &col))
-			continue;
-			
-		/* Set effect icon */
-		exPtr->effect[col + row * widgetPtr->cc] = *iconSpecPtr;
-
-		/* Mark the grid as invalid */
-		Widget_Invalidate(widgetPtr, row, col);
-
-		/* Redraw later */
-		widgetPtr->flags |= WIDGET_DRAW_INVALID;
-		Widget_EventuallyRedraw(widgetPtr);
-
-		/* Something was drawn */
-		drawn = TRUE;
-	}
-
-	return drawn;
-}
-
-void angtk_effect_clear(int y, int x)
-{
-	Widget *widgetPtr;
-	ExWidget *exPtr;
-	DoubleLink *link;
-	int row, col;
-
-	/* Check each Widget */
-	for (link = WidgetListMap.head; link; link = link->next)
-	{
-		widgetPtr = DoubleLink_Data(link, Widget);
-		exPtr = (ExWidget *) widgetPtr;
-
-		/* Drawing is disabled */
-		if (widgetPtr->flags & WIDGET_NO_UPDATE) continue;
-
-		/* Don't draw out of bounds */
-		if (!Widget_CaveToView(widgetPtr, y, x, &row, &col))
-			continue;
-
-		/* No effect was drawn here */
-		if (exPtr->effect[col + row * widgetPtr->cc].type == ICON_TYPE_NONE)
-			continue;
-
-		/* Clear effect icon */
-		exPtr->effect[col + row * widgetPtr->cc].type = ICON_TYPE_NONE;
-
-		/* Mark the grid as invalid */
-		Widget_Invalidate(widgetPtr, row, col);
-
-		widgetPtr->flags |= WIDGET_DRAW_INVALID;
-		Widget_EventuallyRedraw(widgetPtr);
-	}
-}
-
-/*
- * Draws the icon assigned to a particular spell type (GF_XXX constant).
- */
-bool angtk_effect_spell(int y, int x, int typ, int bolt)
-{
-	int effect = effect_index(typ);
-	IconSpec iconSpec;
-
-	if (bolt)
-	{
-		iconSpec = g_effect[EFFECT_SPELL_BOLT].icon[effect];
-
-		iconSpec.index += bolt - 1;
-	}
-	else
-	{
-		iconSpec = g_effect[EFFECT_SPELL_BALL].icon[effect];
-	}
-
-	return angtk_effect_aux(y, x, &iconSpec);
-}
-
-/*
- * Draws the icon assigned to a fired ammunition
- */
-bool angtk_effect_ammo(int y, int x, object_type *o_ptr, int dir)
-{
-	IconSpec iconSpec;
-
-	/* Eliminate '5' */
-	if (dir >= 5) dir -= 1;
-
-	switch (k_info[o_ptr->k_idx].tval)
-	{
-		case TV_ARROW:
-			iconSpec = g_effect[EFFECT_AMMO].icon[EFFECT_AMMO_ARROW];
-			iconSpec.index += dir - 1;
-			break;
-
-		case TV_BOLT:
-			iconSpec = g_effect[EFFECT_AMMO].icon[EFFECT_AMMO_BOLT];
-			iconSpec.index += dir - 1;
-			break;
-
-		/* Sling ammo */
-		default:
-			return angtk_effect_object(y, x, o_ptr);
-	}
-
-	/* Nothing is assigned */
-	if (iconSpec.type == ICON_TYPE_DEFAULT)
-	{
-		return angtk_effect_object(y, x, o_ptr);
-	}
-
-	return angtk_effect_aux(y, x, &iconSpec);
-}
-
-/*
- * Draws the icon assigned to thrown object
- */
-bool angtk_effect_object(int y, int x, object_type *o_ptr)
-{
-	t_assign assign = g_assign[ASSIGN_OBJECT].assign[o_ptr->k_idx];
-	IconSpec iconSpec;
-
-	FinalIcon(&iconSpec, &assign, 0, o_ptr);
-	return angtk_effect_aux(y, x, &iconSpec);
-}
-
-/*
  * This is a dummy lite_spot() routine that may get called before
  * the icons have been initialized.
  */
@@ -1996,36 +1780,9 @@ void (*angtk_lite_spot)(int y, int x) = angtk_lite_spot_dummy;
  */
 void angtk_lite_spot_real(int y, int x)
 {
-	DoubleLink *link;
-	int row, col;
-
 	/* Get knowledge about location */
 	get_grid_info(y, x, &g_grid[y][x]);
 
-	/* Check each Widget */
-	for (link = WidgetListMap.head; link; link = link->next)
-	{
-		Widget *widgetPtr = DoubleLink_Data(link, Widget);
-
-		/* Drawing is disabled */
-		if (widgetPtr->flags & WIDGET_NO_UPDATE)
-			continue;
-
-		/* A full redraw is already pending */
-		if (widgetPtr->flags & WIDGET_WIPE)
-			continue;
-
-		/* Cave location isn't visible */
-		if (!Widget_CaveToView(widgetPtr, y, x, &row, &col))
-			continue;
-
-		/* */
-		Widget_Invalidate(widgetPtr, row, col);
-
-		/* Redraw invalid grids later */
-		widgetPtr->flags |= WIDGET_DRAW_INVALID;
-		Widget_EventuallyRedraw(widgetPtr);
-	}
 }
 
 

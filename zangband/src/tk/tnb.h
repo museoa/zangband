@@ -140,10 +140,6 @@ extern void init_palette(void);
 
 /* widget.c */
 extern void angtk_widget_lock(bool lock);
-extern void angtk_effect_clear(int y, int x);
-extern bool angtk_effect_spell(int y, int x, int typ, int bolt);
-extern bool angtk_effect_ammo(int y, int x, object_type *o_ptr, int dir);
-extern bool angtk_effect_object(int y, int x, object_type *o_ptr);
 extern void (*angtk_lite_spot)(int y, int x);
 extern void angtk_lite_spot_real(int y, int x);
 extern void angtk_wipe_spot(int y, int x);
