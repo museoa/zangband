@@ -152,26 +152,26 @@
 /*
  * The "type" of the "user defined print routine" pointer
  */
-typedef uint (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, vptr arg);
+typedef uint (*vstrnfmt_aux_func) (char *buf, uint max, cptr fmt, va_list *vp);
 
 /*
  * The "default" user defined print routine.  Ignore the "fmt" string.
  */
-static uint vstrnfmt_aux_dflt(char *buf, uint max, cptr fmt, vptr arg)
+static uint vstrnfmt_aux_dflt(char *buf, uint max, cptr fmt, va_list *vp)
 {
 	uint len;
-	char tmp[32];
-
 
 	/* Unused parameter */
 	(void)fmt;
+    vptr arg;
+    
+    /* Get the argument */
+	arg = va_arg(*vp, vptr);
 
 	/* Pointer display */
-	sprintf(tmp, "<<%p>>", arg);
-	len = strlen(tmp);
+	len = sprintf(buf, "<<%p>>", arg);
 	if (len >= max) len = max - 1;
-	tmp[len] = '\0';
-	strcpy(buf, tmp);
+	buf[len] = '\0';
 	return (len);
 }
 
@@ -569,14 +569,8 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 			case 'V':
 			case 'v':
 			{
-				/* User defined data */
-				vptr arg;
-
-				/* Get the next argument */
-				arg = va_arg(vp, vptr);
-
 				/* Format the "user data" */
-				(void)vstrnfmt_aux(tmp, 1000, aux, arg);
+				(void)vstrnfmt_aux(tmp, 1000, aux, &vp);
 
 				/* Done */
 				break;

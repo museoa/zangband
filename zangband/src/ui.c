@@ -6,6 +6,55 @@
 
 
 /*
+ * Function used to print a flag in coloured binary.
+ */
+uint binary_fmt(char *buf, uint max, cptr fmt, va_list *vp)
+{
+	uint i, len;
+	u32b mask = 1;
+
+	char tmp[256];
+	
+    u32b arg;
+	
+	/* Unused parameter */
+	(void)fmt;
+	
+	tmp[0] = '\0';
+    
+    /* Get the argument */
+	arg = va_arg(*vp, u32b);
+
+	/* Scan the flags */
+	for (i = 1; ((i <= 32) && (i < max)); i++)
+	{
+		/* Dump set bits */
+		if (arg & mask)
+		{
+			(void)strncat(tmp, CLR_BLUE "*", 255);
+		}
+
+		/* Dump unset bits */
+		else
+		{
+			(void)strncat(tmp, CLR_WHITE "-", 255);
+		}
+		
+		mask *= 2;
+	}
+	
+	len = strlen(tmp) + 1;
+	
+	if (len >= max) len = max - 1;
+	tmp[len] = '\0';
+
+	strcpy(buf, tmp);
+
+	return (len);
+}
+
+
+/*
  * Generic "get choice from menu" function
  */
 int get_player_choice(cptr *choices, int num, int col, int wid,
@@ -434,6 +483,7 @@ static void put_cstr(int col, int row, cptr str, bool clear)
 			/* Reset to the 'start' of the next row. */
 			row++;
 			x = col;
+			c++;
 			
 			/* Clear line, position cursor */
 			if (clear) Term_erase(col, row, 255);

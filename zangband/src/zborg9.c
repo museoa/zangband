@@ -2311,30 +2311,6 @@ static char borg_inkey_hack(int flush_first)
 	return (ESCAPE);
 }
 
-/*
- * Output a long int in binary format.
- */
-static void borg_prt_binary(u32b flags, int col, int row)
-{
-	int i;
-	u32b bitmask;
-
-	/* Scan the flags */
-	for (i = bitmask = 1; i <= 32; i++, bitmask *= 2)
-	{
-		/* Dump set bits */
-		if (flags & bitmask)
-		{
-			Term_putch(col++, row, TERM_BLUE, '*');
-		}
-
-		/* Dump unset bits */
-		else
-		{
-			Term_putch(col++, row, TERM_WHITE, '-');
-		}
-	}
-}
 
 /* this will display the values which the borg believes an
  * item has.  Select the item by inven # prior to hitting
@@ -2372,16 +2348,16 @@ static void borg_display_item(list_item *l_ptr)
 				"              cvae      xsqpaefc\n"
 				"siwdcc  ssidsahanvudotgddhuoclio\n"
 				"tnieoh  trnipttmiinmrrnrrraiierl\n"
-				"rtsxna..lcfgdkcpmldncltggpksdced");
-	borg_prt_binary(l_ptr->kn_flags1, j, 16);
+				"rtsxna..lcfgdkcpmldncltggpksdced\n"
+                "%r%v", binary_fmt, l_ptr->kn_flags1);
 
 	prtf(j, 17, "+------------FLAGS2------------+\n"
 				"SUST...IMMUN..RESIST............\n"
 			    "        aefctrpsaefcpfldbc sn   \n"
 	    		"siwdcc  clioheatcliooeialoshtncd\n"
 			    "tnieoh  ierlrfraierliatrnnnrhehi\n"
-			    "rtsxna..dcedwlatdcedsrekdfddrxss");
-	borg_prt_binary(l_ptr->kn_flags2, j, 23);
+			    "rtsxna..dcedwlatdcedsrekdfddrxss\n"
+                "%r%v", binary_fmt, l_ptr->kn_flags2);
 
 	prtf(j + 32, 10,"+------------FLAGS3------------+\n"
 					"fe      ehsi  st    iiiiadta  hp\n"
@@ -2391,8 +2367,8 @@ static void borg_display_item(list_item *l_ptr)
 				    "aa  taauktmatlnpgeihaefcvnpvsuuu\n"
 				    "uu  egirnyoahivaeggoclioaeoasrrr\n"
 				    "rr  litsopdretitsehtierltxrtesss\n"
-	    			"aa  echewestreshtntsdcedeptedeee");
-	borg_prt_binary(l_ptr->kn_flags3, j + 32, 19);
+	    			"aa  echewestreshtntsdcedeptedeee\n"
+                    "%r%v", binary_fmt, l_ptr->kn_flags3);
 }
 
 

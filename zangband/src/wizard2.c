@@ -136,31 +136,6 @@ static void do_cmd_summon_horde(void)
 #endif /* MONSTER_HORDES */
 
 
-/*
- * Output a long int in binary format.
- */
-static void prt_binary(u32b flags, int col, int row)
-{
-	int i;
-	u32b bitmask;
-
-	/* Scan the flags */
-	for (i = bitmask = 1; i <= 32; i++, bitmask *= 2)
-	{
-		/* Dump set bits */
-		if (flags & bitmask)
-		{
-			Term_putch(col++, row, TERM_BLUE, '*');
-		}
-
-		/* Dump unset bits */
-		else
-		{
-			Term_putch(col++, row, TERM_WHITE, '-');
-		}
-	}
-}
-
 #if USE_64B
 typedef u64b ufix40_24;	/* Fixed point: 40 bits integer 24 bits fractional */
 
@@ -647,16 +622,16 @@ static void wiz_display_item(const object_type *o_ptr)
 	    		"              cvae      xsqpaefc\n"
 	    		"siwdcc  ssidsahanvudotgddhuoclio\n"
 	    		"tnieoh  trnipttmiinmrrnrrraiierl\n"
-	    		"rtsxna..lcfgdkcpmldncltggpksdced");
-	prt_binary(f1, j, 16);
+	    		"rtsxna..lcfgdkcpmldncltggpksdced\n"
+                "%r%v", binary_fmt, f1);
 
 	prtf(j, 17, "+------------FLAGS2------------+\n"
 				"SUST...IMMUN..RESIST............\n"
 	    		"        aefctrpsaefcpfldbc sn   \n"
 	    		"siwdcc  clioheatcliooeialoshtncd\n"
 	    		"tnieoh  ierlrfraierliatrnnnrhehi\n"
-	    		"rtsxna..dcedwlatdcedsrekdfddrxss");
-	prt_binary(f2, j, 23);
+	    		"rtsxna..dcedwlatdcedsrekdfddrxss\n"
+                "%r%v", binary_fmt, f2);
 
 	prtf(j + 32, 10,"+------------FLAGS3------------+\n"
 					"fe      ehsi  st    iiiiadta  hp\n"
@@ -666,8 +641,8 @@ static void wiz_display_item(const object_type *o_ptr)
 				    "aa  ta uktmatlnpgeihaefcvnpvsuuu\n"
 				    "uu  eg rnyoahivaeggoclioaeoasrrr\n"
 				    "rr  li sopdretitsehtierltxrtesss\n"
-				    "aa  ec ewestreshtntsdcedeptedeee");
-	prt_binary(f3, j + 32, 19);
+				    "aa  ec ewestreshtntsdcedeptedeee\n"
+                    "%r%v", binary_fmt, f3);
 }
 
 
