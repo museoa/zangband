@@ -19,10 +19,6 @@
 #include "icon.h"
 #include "widget.h"
 
-extern int iso_hittest(Widget *widgetPtr, int x, int y, int col, int row, int *xc, int *yc);
-extern void iso_wtd(Widget *widgetPtr, int y, int x, t_display *wtd);
-extern void iso_draw_all(Widget *widgetPtr);
-extern void iso_draw_invalid(Widget *widgetPtr);
 extern void map_draw_all(Widget *widgetPtr);
 extern void map_draw_invalid(Widget *widgetPtr);
 extern int map_symbol_proc(Widget *widgetPtr, int y, int x);
