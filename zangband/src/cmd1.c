@@ -2386,11 +2386,11 @@ void move_player(int dir, int do_pickup)
 			disturb(FALSE);
 
 			/* Notice things in the dark */
-			if ((!(c_ptr->info & CAVE_MARK)) &&
-				(p_ptr->blind || !(c_ptr->info & CAVE_LITE)))
+			if ((!(c_ptr->player & GRID_MARK)) &&
+				(p_ptr->blind || !(c_ptr->player & GRID_LITE)))
 			{
 				msg_print("You feel a closed door blocking your way.");
-				c_ptr->info |= (CAVE_MARK);
+				c_ptr->player |= (GRID_MARK);
 				lite_spot(y, x);
 			}
 
@@ -2431,11 +2431,11 @@ void move_player(int dir, int do_pickup)
 		disturb(FALSE);
 
 		/* Notice things in the dark */
-		if ((!(c_ptr->info & (CAVE_MARK))) &&
-		    (p_ptr->blind || !(c_ptr->info & (CAVE_LITE))))
+		if ((!(c_ptr->player & (GRID_MARK))) &&
+		    (p_ptr->blind || !(c_ptr->player & (GRID_LITE))))
 		{
 			message(MSG_HITWALL, 0, "You feel something blocking your way.");
-			c_ptr->info |= (CAVE_MARK);
+			c_ptr->player |= (GRID_MARK);
 			lite_spot(y, x);
 		}
 		/* Notice things */
@@ -2659,7 +2659,7 @@ static int see_wall(int dir, int y, int x)
 	    (c_ptr->feat <= FEAT_SNOW)) return (FALSE);
 
 	/* Must be known to the player */
-	if (!(c_ptr->info & (CAVE_MARK))) return (FALSE);
+	if (!(c_ptr->player & (GRID_MARK))) return (FALSE);
 
 	/* Default */
 	return (TRUE);
@@ -2683,7 +2683,7 @@ static int see_nothing(int dir, int y, int x)
 	c_ptr = area(y, x);
 
 	/* Memorized grids are always known */
-	if (c_ptr->info & (CAVE_MARK)) return (FALSE);
+	if (c_ptr->player & (GRID_MARK)) return (FALSE);
 
 	/* Non-floor grids are unknown */
 	if (!cave_floor_grid(c_ptr)) return (TRUE);
@@ -3037,7 +3037,7 @@ static bool run_test(void)
 		inv = TRUE;
 
 		/* Check memorized grids */
-		if (c_ptr->info & (CAVE_MARK))
+		if (c_ptr->player & (GRID_MARK))
 		{
 			bool notice = TRUE;
 

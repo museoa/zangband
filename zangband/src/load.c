@@ -1599,7 +1599,17 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 			c_ptr = area(y,x);
 
 			/* Extract "info" (without the CAVE_ROOM flag set)*/
-			c_ptr->info = (tmp8u & ~(CAVE_MNLT | CAVE_VIEW));
+			c_ptr->info = (tmp8u & (CAVE_GLOW | CAVE_ICKY));
+			
+			/* Extract the player data */
+			if (sf_version < 27)
+			{
+				/*
+				 * Set old CAVE_MARK and CAVE_LITE flags
+				 * (Ignore the CAVE_VIEW flag)
+				 */
+				c_ptr->player = tmp8u & (GRID_MARK | GRID_LITE);
+			}
 
 			/* Advance/Wrap */
 			if (++x >= xmax)
@@ -1613,6 +1623,38 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 		}
 	}
 
+	if (sf_version > 26)
+	{
+		/*** Run length decoding ***/
+	
+		/* Load the dungeon data */
+		for (x = xmin, y = ymin; y < ymax; )
+		{
+			/* Grab RLE info */
+			rd_byte(&count);
+			rd_byte(&tmp8u);
+
+			/* Apply the RLE info */
+			for (i = count; i > 0; i--)
+			{
+				/* Access the cave */
+				c_ptr = area(y,x);
+
+				/* Extract "player" */
+				c_ptr->player = tmp8u;
+
+				/* Advance/Wrap */
+				if (++x >= xmax)
+				{
+					/* Wrap */
+					x = xmin;
+
+					/* Advance/Wrap */
+					if (++y >= ymax) break;
+				}
+			}
+		}
+	}
 
 	/*** Run length decoding ***/
 

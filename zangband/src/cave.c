@@ -800,8 +800,8 @@ void scatter(int *yp, int *xp, int y, int x, int d)
  *
  * He must have vision, illumination, and line of sight.
  *
- * Note -- "CAVE_LITE" is only set if the "torch" has "los()".
- * So, given "CAVE_LITE", we know that the grid is "fully visible".
+ * Note -- "GRID_LITE" is only set if the "torch" has "los()".
+ * So, given "GRID_LITE", we know that the grid is "fully visible".
  *
  * Note that "CAVE_GLOW" makes little sense for a wall, since it would mean
  * that a wall is visible from any direction.  That would be odd.  Except
@@ -833,10 +833,10 @@ bool player_can_see_bold(int y, int x)
 	c_ptr = area(y, x);
 
 	/* Note that "torch-lite" yields "illumination" */
-	if (c_ptr->info & (CAVE_LITE)) return (TRUE);
+	if (c_ptr->player & (GRID_LITE)) return (TRUE);
 
 	/* Require line of sight to the grid */
-	if (!(c_ptr->info & (CAVE_VIEW))) return (FALSE);
+	if (!player_has_los_grid(c_ptr)) return (FALSE);
 
 	/* Require "perma-lite" of the grid or monster lit grid */
 	if (!(c_ptr->info & (CAVE_GLOW | CAVE_MNLT))) return (FALSE);
@@ -849,7 +849,7 @@ bool player_can_see_bold(int y, int x)
 	xx = (x < px) ? (x + 1) : (x > px) ? (x - 1) : x;
 
 	/* Check for "local" illumination */
-	if (area(yy,xx)->info & (CAVE_GLOW | CAVE_MNLT))
+	if (area(yy, xx)->info & (CAVE_GLOW | CAVE_MNLT))
 	{
 		/* Assume the wall is really illuminated */
 		return (TRUE);
@@ -1540,6 +1540,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 	byte feat;
 	byte info;
+	byte player;
 
 	byte a;
 	char c;
@@ -1552,16 +1553,17 @@ void map_info(int y, int x, byte *ap, char *cp)
 
 	/* Info flags */
 	info = c_ptr->info;
+	player = c_ptr->player;
 
 	/*
 	 * Is this feature memorized?
 	 * 
 	 * If the player is blind - there are now CAVE_MNLT squares.
-	 * Also there are no CAVE_LITE squares.
+	 * Also there are no GRID_LITE squares.
 	 *
-	 * This means that blind players only see CAVE_MARK squares.
+	 * This means that blind players only see GRID_MARK squares.
 	 */
-	if (info & (CAVE_MARK | CAVE_LITE | CAVE_MNLT))
+	if ((info & (CAVE_MNLT)) || (player & (GRID_MARK | GRID_LITE)))
 	{
 		feat = c_ptr->feat;
 
@@ -1586,8 +1588,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 			 && (!(feat & 0x20) || (view_granite_lite && !view_torch_grids)))
 		{
 			/* It's not in view or no lighting effects? */
-			if (((!(info & (CAVE_VIEW))) && view_special_lite) ||
-				(!(info & (CAVE_GLOW | CAVE_LITE | CAVE_MNLT))))
+			if (((!(player & (GRID_VIEW))) && view_special_lite) ||
+				!((info & (CAVE_GLOW | CAVE_MNLT)) || (player & (GRID_LITE))))
 			{
 				/* If is ascii graphics */
 				if (a < 16)
@@ -1601,7 +1603,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 					c++;
 				}
 			}
-			else if ((info & (CAVE_LITE | CAVE_MNLT)) && view_yellow_lite)
+			else if (((info & (CAVE_MNLT)) || (player & (GRID_LITE)))
+						 && view_yellow_lite)
 			{
 				/* Use the torch effect */
 				if (a < 16)
@@ -1628,7 +1631,7 @@ void map_info(int y, int x, byte *ap, char *cp)
 	{
 		/*
 		 * Hack - when blind the players light radius is 0
-		 * This means that the CAVE_LITE flag does not affect
+		 * This means that the GRID_LITE flag does not affect
 		 * the result of the comparison in that case.
 		 *
 		 * This gives a very quick test for the FEAT_NONE case.
@@ -1972,8 +1975,9 @@ void note_spot(int y, int x)
 
 
 	/* Is it lit + in view + player is not blind? */
-	if ((c_ptr->info & (CAVE_GLOW | CAVE_MNLT | CAVE_LITE))
-		 && (c_ptr->info & CAVE_VIEW) && !p_ptr->blind)
+	if (((c_ptr->info & (CAVE_GLOW | CAVE_MNLT))
+		 || (c_ptr->player & (GRID_LITE)))
+		 && player_has_los_grid(c_ptr) && !p_ptr->blind)
 	{
 
 		/* Hack -- memorize objects */
@@ -2002,31 +2006,31 @@ void note_spot(int y, int x)
 
 
 		/* Hack -- memorize grids */
-		if (!(c_ptr->info & (CAVE_MARK)))
+		if (!(c_ptr->player & (GRID_MARK)))
 		{
 			/* Handle floor grids first */
 			if (cave_floor_grid(c_ptr))
 			{
 				/* Option -- memorize all torch-lit floors */
-				if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
+				if (view_torch_grids && (c_ptr->player & (GRID_LITE)))
 				{
 					/* Memorize */
-					c_ptr->info |= (CAVE_MARK);
+					c_ptr->player |= (GRID_MARK);
 				}
 
 				/* Option -- memorize all perma-lit floors */
 				else if (view_perma_grids && (c_ptr->info & (CAVE_GLOW)))
 				{
 					/* Memorize */
-					c_ptr->info |= (CAVE_MARK);
+					c_ptr->player |= (GRID_MARK);
 				}
 			}
 
 			/* Memorize torch-lit walls */
-			else if (c_ptr->info & (CAVE_LITE))
+			else if (c_ptr->player & (GRID_LITE))
 			{
 				/* Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				c_ptr->player |= (GRID_MARK);
 			}
 
 			/* Memorize certain non-torch-lit wall grids */
@@ -2042,7 +2046,7 @@ void note_spot(int y, int x)
 				if (area(yy,xx)->info & (CAVE_GLOW))
 				{
 					/* Memorize */
-					c_ptr->info |= (CAVE_MARK);
+					c_ptr->player |= (GRID_MARK);
 				}
 			}
 		}
@@ -2072,10 +2076,10 @@ void note_wild_spot(cave_type *c_ptr)
 	if (p_ptr->blind) return;
 
 	/* Analyze non-torch-lit grids */
-	if (!(c_ptr->info & (CAVE_LITE)))
+	if (!(c_ptr->player & (GRID_LITE)))
 	{
 		/* Require line of sight to the grid */
-		if (!(c_ptr->info & (CAVE_VIEW))) return;
+		if (!(c_ptr->player & (GRID_VIEW))) return;
 
 		/* Require "perma-lite" of the grid or monster lit grid. */
 		if (!(c_ptr->info & (CAVE_GLOW | CAVE_MNLT))) return;
@@ -2108,30 +2112,30 @@ void note_wild_spot(cave_type *c_ptr)
 
 
 	/* Hack -- memorize grids */
-	if (!(c_ptr->info & (CAVE_MARK)))
+	if (!(c_ptr->player & (GRID_MARK)))
 	{
 		/* Handle floor grids first */
 		if (c_ptr->feat == FEAT_FLOOR)
 		{
 			/* Option -- memorize all torch-lit floors */
-			if (view_torch_grids && (c_ptr->info & (CAVE_LITE)))
+			if (view_torch_grids && (c_ptr->player & (GRID_LITE)))
 			{
 				/* Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				c_ptr->player |= (GRID_MARK);
 			}
 
 			/* Option -- memorize all perma-lit floors */
 			else if (view_perma_grids && (c_ptr->info & (CAVE_GLOW)))
 			{
 				/* Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				c_ptr->player |= (GRID_MARK);
 			}
 		}
 		/* Memorize torch-lit squares */
-		else if (c_ptr->info & (CAVE_LITE))
+		else if (c_ptr->player & (GRID_LITE))
 		{
 			/* Memorize */
-			c_ptr->info |= (CAVE_MARK);
+			c_ptr->player |= (GRID_MARK);
 		}
 	}
 }
@@ -2968,10 +2972,10 @@ void do_cmd_view_map(void)
  * calculation of "line of sight from the player", and to calculate
  * the "field of torch lite", which, again, once calculated, provides
  * extremely fast calculation of "which grids are lit by the player's
- * lite source".  In addition to marking grids as "CAVE_VIEW" and/or
- * "CAVE_LITE", as appropriate, these functions maintain an array
+ * lite source".  In addition to marking grids as "GRID_VIEW" and/or
+ * "GRID_LITE", as appropriate, these functions maintain an array
  * containing the locations of all of the grids marked with the
- * CAVE_VIEW flag, which can be used to very quickly scan through all
+ * GRID_VIEW flag, which can be used to very quickly scan through all
  * of those grids.
  *
  * To allow more "semantically valid" field of view semantics, whenever
@@ -2997,13 +3001,13 @@ void do_cmd_view_map(void)
  * regards to the view/lite code.  This results in a huge speed increase.
  *
  *
- * Note that every "CAVE_LITE" grid is also a "CAVE_VIEW" grid, and in
+ * Note that every "GRID_LITE" grid is also a "GRID_VIEW" grid, and in
  * fact, the player can always "see" all grids which are marked as
- * "CAVE_LITE", unless they are "off screen".
+ * "GRID_LITE", unless they are "off screen".
  *
- * The "update_view()" function maintains the "CAVE_VIEW" flag for each
- * grid and maintains an array of all "CAVE_VIEW" grids.  It also looks
- * after the "CAVE_LITE" flag, and the memorization of new map sqaures.
+ * The "update_view()" function maintains the "GRID_VIEW" flag for each
+ * grid and maintains an array of all "GRID_VIEW" grids.  It also looks
+ * after the "GRID_LITE" flag, and the memorization of new map sqaures.
  *
  *
  * The current "update_view()" algorithm uses the "CAVE_XTRA" flag as a
@@ -3014,7 +3018,7 @@ void do_cmd_view_map(void)
  *
  * The current "update_view()" algorithm uses the
  * "CAVE_TEMP" flag, and the array of grids which are marked as "CAVE_TEMP",
- * to keep track of which grids were previously marked as "CAVE_VIEW", which
+ * to keep track of which grids were previously marked as "GRID_VIEW", which
  * allows us to optimize the "screen updates".
  *
  * The "CAVE_TEMP" flag, and the array of "CAVE_TEMP" grids, is also used
@@ -3026,12 +3030,12 @@ void do_cmd_view_map(void)
  * Any grid can be marked as "CAVE_GLOW" which means that the grid itself is
  * in some way permanently lit.  However, for the player to "see" anything
  * in the grid, as determined by "player_can_see()", the player must not be
- * blind, the grid must be marked as "CAVE_VIEW", and, in addition, "wall"
+ * blind, the grid must be marked as "GRID_VIEW", and, in addition, "wall"
  * grids, even if marked as "perma lit", are only illuminated if they touch
- * a grid which is not a wall and is marked both "CAVE_GLOW" and "CAVE_VIEW".
+ * a grid which is not a wall and is marked both "CAVE_GLOW" and "GRID_VIEW".
  *
  *
- * To simplify various things, a grid may be marked as "CAVE_MARK", meaning
+ * To simplify various things, a grid may be marked as "GRID_MARK", meaning
  * that even if the player cannot "see" the grid, he "knows" the terrain in
  * that grid.  This is used to "remember" walls/doors/stairs/floors when they
  * are "seen" or "detected", and also to "memorize" floors, after "wiz_lite()",
@@ -3166,7 +3170,7 @@ void forget_view(void)
 		c_ptr = area(y,x);
 
 		/* Forget that the grid is viewable or lit */
-		c_ptr->info &= ~(CAVE_VIEW | CAVE_LITE);
+		c_ptr->player &= ~(GRID_LITE | GRID_VIEW);
 
 		/* Only lite the spot if is on the panel (can change due to resizing */
 		if (!panel_contains(y, x)) continue;
@@ -3707,22 +3711,22 @@ errr vinfo_init(void)
  * the lines of sight near the major axes first.
  *
  * We use the "temp_x/y" arrays (and the "CAVE_TEMP" flag) to keep track of
- * which grids were previously marked "CAVE_VIEW", since only those grids
- * whose "CAVE_VIEW" value changes during this routine must be redrawn.
+ * which grids were previously marked "GRID_VIEW", since only those grids
+ * whose "GRID_VIEW" value changes during this routine must be redrawn.
  *
- * This function is now responsible for maintaining the "CAVE_LITE"
- * flags as well as the "CAVE_VIEW" flags, which is good, because
+ * This function is now responsible for maintaining the "GRID_LITE"
+ * flags as well as the "GRID_VIEW" flags, which is good, because
  * the only grids which normally need to be memorized and/or redrawn
- * are the ones whose "CAVE_VIEW" flag changes during this routine.
+ * are the ones whose "GRID_VIEW" flag changes during this routine.
  *
  * Basically, this function divides the "octagon of view" into octants of
  * grids (where grids on the main axes and diagonal axes are "shared" by
  * two octants), and processes each octant one at a time, processing each
  * octant one grid at a time, processing only those grids which "might" be
- * viewable, and setting the "CAVE_VIEW" flag for each grid for which there
+ * viewable, and setting the "GRID_VIEW" flag for each grid for which there
  * is an (unobstructed) line of sight from the center of the player grid to
- * any internal point in the grid (and collecting these "CAVE_VIEW" grids
- * into the "view_g" array), and setting the "CAVE_LITE" flag for the grid
+ * any internal point in the grid (and collecting these "GRID_VIEW" grids
+ * into the "view_g" array), and setting the "GRID_LITE" flag for the grid
  * if, in addition, the grid is "illuminated" in some way (by a torch).
  *
  * This function relies on a theorem (suggested and proven by Mat Hostetter)
@@ -3789,7 +3793,7 @@ void update_view(void)
 
 	cave_type *c_ptr;
 
-	byte info;
+	byte info, player;
 
 	int x, y, i, o2;
 
@@ -3811,13 +3815,12 @@ void update_view(void)
 		if (!in_bounds2(y, x)) continue;
 
 		c_ptr = area(y, x);
-		info = c_ptr->info;
-
-		/* Save "CAVE_VIEW" grids */
-		if (info & (CAVE_VIEW))
+		
+		/* Save "GRID_VIEW" grids */
+		if (c_ptr->player & (GRID_VIEW))
 		{
 			/* Set "CAVE_TEMP" flag */
-			info |= (CAVE_TEMP);
+			c_ptr->info |= (CAVE_TEMP);
 
 			/* Save grid for later */
 			temp_x[temp_n] = x;
@@ -3825,11 +3828,8 @@ void update_view(void)
 			temp_n++;
 		}
 
-		/* Clear "CAVE_VIEW" flag */
-		info &= ~(CAVE_VIEW);
-
-		/* Save cave info */
-		c_ptr->info = info;
+		/* Clear "GRID_VIEW" flag */
+		c_ptr->player &= ~(GRID_VIEW);
 	}
 
 	/* empty the viewable list */
@@ -3840,33 +3840,29 @@ void update_view(void)
 	/* Player grid */
 
 	/* Get grid info */
-	info = area(py, px)->info;
+	c_ptr = area(py, px);
+	info = c_ptr->info;
+	player = c_ptr->player;
 
 	/* Assume viewable */
-	info |= (CAVE_VIEW);
+	player |= (GRID_VIEW);
 
 	/* Torch-lit grid */
 	if (0 < radius)
 	{
-		/* Mark as "CAVE_LITE" and "CAVE_VIEW" */
-		info |= (CAVE_LITE | CAVE_VIEW);
-	}
-
-	/* Perma-lit grid */
-	else if (info & (CAVE_GLOW | CAVE_MNLT))
-	{
-		/* Mark as "CAVE_VIEW" */
-		info |= (CAVE_VIEW);
+		/* Mark as "GRID_LITE" */
+		player |= (GRID_LITE);
 	}
 
 	/* Save mark flag */
-	if (info & CAVE_MARK)
+	if (player & GRID_MARK)
 	{
 		info |= CAVE_XTRA;
 	}
 
 	/* Save cave info */
-	area(py, px)->info = info;
+	c_ptr->info = info;
+	c_ptr->player = player;
 
 	/* Redraw player*/
 	/*lite_spot(py, px);*/
@@ -3941,9 +3937,10 @@ void update_view(void)
 
 				/* Get current info flags for the square */
 				info = c_ptr->info;
+				player = c_ptr->player;
 
 				/* Save mark flag */
-				if (info & CAVE_MARK)
+				if (player & GRID_MARK)
 				{
 					info |= CAVE_XTRA;
 				}
@@ -3964,34 +3961,35 @@ void update_view(void)
 						queue[queue_tail++] = last = p->next_1;
 					}
 
-					if (info & CAVE_VIEW) continue;
+					if (player & GRID_VIEW) continue;
 
 					/* Mark as "viewable" */
-					info |= (CAVE_VIEW);
+					player |= (GRID_VIEW);
 
 					/* Torch-lit grids */
 					if (p->d <= radius)
 					{
-						if (!(info & CAVE_LITE))
+						if (!(player & GRID_LITE))
 						{
-							/* Mark as "CAVE_LITE" */
-							info |= (CAVE_LITE);
+							/* Mark as "GRID_LITE" */
+							player |= (GRID_LITE);
 							
 							/* Clear the 'do not update flag' */
 							info &= ~(CAVE_TEMP);
 						}
 					}
-					else if (info & CAVE_LITE)
+					else if (player & GRID_LITE)
 					{
 						/* Clear the flag, and then redraw */
-						info &= ~(CAVE_LITE | CAVE_TEMP);
+						info &= ~(CAVE_TEMP);
+						player &= ~(GRID_LITE);
 					}
 
 					/* Memorize? */
 					if (c_ptr->feat == FEAT_FLOOR)
 					{
 						/* Why should floor be different? */
-						if (((info & (CAVE_LITE)) && view_torch_grids) ||
+						if (((player & (GRID_LITE)) && view_torch_grids) ||
 							info & (CAVE_GLOW))
 						{
 							/*
@@ -4006,20 +4004,21 @@ void update_view(void)
 							 */
 
 							/* Memorize */
-							info |= (CAVE_MARK);
+							player |= (GRID_MARK);
 						}
 					}
 					else
 					{
-						if (info & (CAVE_LITE | CAVE_GLOW))
+						if ((info & (CAVE_GLOW)) || (player & (GRID_LITE)))
 						{
 							/* Memorize */
-							info |= (CAVE_MARK);
+							player |= (GRID_MARK);
 						}
 					}
 
 					/* Save cave info */
 					c_ptr->info = info;
+					c_ptr->player = player;
 
 					/* Save in array */
 					view_y[view_n] = y;
@@ -4037,34 +4036,33 @@ void update_view(void)
 					bits4 &= ~(p->bits[4]);
 
 					/* All ready seen.  Next... */
-					if (info & CAVE_VIEW) continue;
+					if (player & GRID_VIEW) continue;
 
 					/* Mark as viewable */
-					info |= (CAVE_VIEW);
+					player |= (GRID_VIEW);
 
 					/* Torch-lit grids */
 					if (p->d <= radius)
 					{
-						if (!(info & CAVE_LITE))
+						if (!(player & GRID_LITE))
 						{
-							/* Mark as "CAVE_LITE" */
-							info |= (CAVE_LITE | CAVE_MARK);
+							/* Mark as "GRID_LITE" */
+							player |= (GRID_LITE);
 														
 							/* Clear the 'do not update flag' */
 							info &= ~(CAVE_TEMP);
 						}
-						else
-						{
-							/* Mark as "CAVE_MARK" */
-							info |= (CAVE_MARK);
-						}
+						
+						/* Mark as "GRID_MARK" */
+						player |= (GRID_MARK);
 					}
 					else 
 					{
-						if (info & CAVE_LITE)
+						if (player & GRID_LITE)
 						{
 							/* Clear the flag, and then redraw */
-							info &= ~(CAVE_LITE | CAVE_TEMP);
+							info &= ~(CAVE_TEMP);
+							player &= ~(GRID_LITE);
 						}
 
 						/* Perma-lit grids */
@@ -4080,13 +4078,14 @@ void update_view(void)
 							if (area(yy, xx)->info & (CAVE_GLOW))
 							{
 								/* Memorize */
-								info |= (CAVE_MARK);
+								player |= (GRID_MARK);
 							}
 						}
 					}
 
 					/* Save cave info */
 					c_ptr->info = info;
+					c_ptr->player = player;
 
 					/* Save in array */
 					view_y[view_n] = y;
@@ -4114,8 +4113,8 @@ void update_view(void)
 		/* Handle blindness */
 		if ((p_ptr->blind) && !(info & CAVE_XTRA))
 		{
-			/* Grid cannot be "CAVE_MARK" (wasn't before) */
-			c_ptr->info &= ~(CAVE_MARK);
+			/* Grid cannot be "GRID_MARK" (wasn't before) */
+			c_ptr->player &= ~(GRID_MARK);
 
 			/* Don't do anything else */
 			continue;
@@ -4124,7 +4123,7 @@ void update_view(void)
 		/*
 		 * We know we have LOS, but is it visible?
 		 */
-		if (info & (CAVE_LITE | CAVE_GLOW | CAVE_MNLT))
+		if ((info & (CAVE_GLOW | CAVE_MNLT)) || (c_ptr->player & (GRID_LITE)))
 		{
 			/* Show the objects */
 			for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
@@ -4170,25 +4169,27 @@ void update_view(void)
 
 		/* Get grid info */
 		info = c_ptr->info;
+		player = c_ptr->player;
 
 		/* Clear "CAVE_TEMP" and "CAVE_XTRA" flags */
 		info &= ~(CAVE_TEMP | CAVE_XTRA);
 
-		/* Was "CAVE_VIEW", is now not "CAVE_VIEW" */
-		if (!(info & (CAVE_VIEW)))
+		/* Was "GRID_VIEW", is now not "GRID_VIEW" */
+		if (!(player & (GRID_VIEW)))
 		{
 			/* Forget memorized floor grids from view_torch_grids */
 			if ((info & (CAVE_GLOW) && !view_perma_grids)
 				 && cave_floor_grid(c_ptr))
 			{
-				info &= ~(CAVE_MARK);
+				player &= ~(GRID_MARK);
 			}
 
 			/* Clear the cave-lite flag */
-			info &= ~(CAVE_LITE);
+			player &= ~(GRID_LITE);
 			
 			/* Save cave info */
 			c_ptr->info = info;
+			c_ptr->player = player;
 			
 			/* Redraw */
 			lite_spot(y, x);
@@ -4219,7 +4220,7 @@ static void mon_lite_hack(int y, int x)
 	c_ptr = area(y, x);
 
 	/* Want an unlit square in view of the player */
-	if ((c_ptr->info & (CAVE_MNLT | CAVE_VIEW)) != CAVE_VIEW) return;
+	if (!player_has_los_grid(c_ptr) || (c_ptr->info & (CAVE_MNLT))) return;
 
 	/* Hack XXX XXX - Is it a wall and monster not in LOS? */
 	if (!cave_los_grid(c_ptr) && mon_invis) return;
@@ -4236,7 +4237,7 @@ static void mon_lite_hack(int y, int x)
 	c_ptr->info |= CAVE_MNLT;
 	
 	/* Remember it if view_monster_grids is set. */
-	if (view_monster_grids) c_ptr->info |= CAVE_MARK;
+	if (view_monster_grids) c_ptr->player |= GRID_MARK;
 }
 
 
@@ -4328,7 +4329,7 @@ void update_mon_lite(void)
 		fy = m_ptr->fy;
 
 		/* Is the monster visible? */
-		mon_invis = !(area(fy, fx)->info & CAVE_VIEW);
+		mon_invis = !(area(fy, fx)->player & GRID_VIEW);
 
 		/* The square it is on */
 		mon_lite_hack(fy, fx);
@@ -4483,7 +4484,7 @@ void update_mon_lite(void)
 			/* Clear the temp flag for the old lit grids */
 			c_ptr->info &= ~(CAVE_TEMP);
 			
-			if (c_ptr->info & (CAVE_VIEW))
+			if (c_ptr->player & (GRID_VIEW))
 			{
 				/* Do we have a monster on this square? */
 				if (c_ptr->m_idx)
@@ -4519,7 +4520,7 @@ void update_mon_lite(void)
 		}
 		
 		/* Is the square newly lit and visible? */
-		else if (c_ptr->info & (CAVE_VIEW))
+		else if (c_ptr->player & (GRID_VIEW))
 		{
 			/* Do we have a monster on this square? */
 			if (c_ptr->m_idx)
@@ -4649,7 +4650,7 @@ void update_flow(void)
 	if (in_bounds2(flow_y, flow_x))
 	{
 		/* The way point is in sight - do not update.  (Speedup) */
-		if (area(flow_y, flow_x)->info & CAVE_VIEW) return;
+		if (area(flow_y, flow_x)->player & (GRID_VIEW)) return;
 	}
 
 	/* Save player position */
@@ -4789,8 +4790,8 @@ void map_area(void)
 				/* Memorize normal features */
 				if (c_ptr->feat >= FEAT_OPEN)
 				{
-					/* Memorize the object */
-					c_ptr->info |= (CAVE_MARK);
+					/* Memorize the grid */
+					c_ptr->player |= (GRID_MARK);
 				}
 
 				/* Memorize known walls */
@@ -4802,7 +4803,7 @@ void map_area(void)
 					if (c_ptr->feat >= FEAT_SECRET)
 					{
 						/* Memorize the walls */
-						c_ptr->info |= (CAVE_MARK);
+						c_ptr->player |= (GRID_MARK);
 					}
 				}
 			}
@@ -4885,7 +4886,7 @@ void wiz_lite(void)
 			if (c_ptr->feat >= FEAT_OPEN)
 			{
 				/* Memorize the grid */
-				c_ptr->info |= (CAVE_MARK);
+				c_ptr->player |= (GRID_MARK);
 			}
 		}
 	}
@@ -4917,7 +4918,7 @@ void wiz_dark(void)
 			cave_type *c_ptr = area(y, x);
 
 			/* Process the grid */
-			c_ptr->info &= ~(CAVE_MARK);
+			c_ptr->player &= ~(GRID_MARK);
 		}
 	}
 

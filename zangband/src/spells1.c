@@ -276,7 +276,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				c_ptr->feat = FEAT_FLOOR;
 						
 				/* Forget the door */
-				c_ptr->info &= ~(CAVE_MARK);
+				c_ptr->player &= ~(GRID_MARK);
 				
 				/* Note + Lite the spot */
 				note_spot(y, x);
@@ -339,14 +339,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->feat >= FEAT_TREES)
 			{
 				/* Message */
-				if (known && (c_ptr->info & (CAVE_MARK)))
+				if (known && (c_ptr->player & (GRID_MARK)))
 				{
 					msg_print("It disappears!");
 					obvious = TRUE;
 				}
 
 				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
+				c_ptr->player &= ~(GRID_MARK);
 
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_DIRT);
@@ -356,14 +356,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
 				/* Message */
-				if (known && (c_ptr->info & (CAVE_MARK)))
+				if (known && (c_ptr->player & (GRID_MARK)))
 				{
 					msg_print("The wall turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
+				c_ptr->player &= ~(GRID_MARK);
 
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -373,7 +373,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat >= FEAT_MAGMA_H)
 			{
 				/* Message */
-				if (known && (c_ptr->info & (CAVE_MARK)))
+				if (known && (c_ptr->player & (GRID_MARK)))
 				{
 					msg_print("The vein turns into mud!");
 					msg_print("You have found something!");
@@ -381,7 +381,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 				}
 
 				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
+				c_ptr->player &= ~(GRID_MARK);
 
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -394,14 +394,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat >= FEAT_MAGMA)
 			{
 				/* Message */
-				if (known && (c_ptr->info & (CAVE_MARK)))
+				if (known && (c_ptr->player & (GRID_MARK)))
 				{
 					msg_print("The vein turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
+				c_ptr->player &= ~(GRID_MARK);
 
 				/* Destroy the wall */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -411,14 +411,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				/* Message */
-				if (known && (c_ptr->info & (CAVE_MARK)))
+				if (known && (c_ptr->player & (GRID_MARK)))
 				{
 					msg_print("The rubble turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
+				c_ptr->player &= ~(GRID_MARK);
 
 				/* Destroy the rubble */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -442,14 +442,14 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if ((c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_SECRET))
 			{
 				/* Hack -- special message */
-				if (known && (c_ptr->info & (CAVE_MARK)))
+				if (known && (c_ptr->player & (GRID_MARK)))
 				{
 					msg_print("The door turns into mud!");
 					obvious = TRUE;
 				}
 
 				/* Forget the wall */
-				c_ptr->info &= ~(CAVE_MARK);
+				c_ptr->player &= ~(GRID_MARK);
 				
 				/* Destroy the feature */
 				cave_set_feat(y, x, FEAT_FLOOR);
@@ -474,7 +474,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			cave_set_feat(y, x, FEAT_CLOSED);
 
 			/* Observe */
-			if (c_ptr->info & (CAVE_MARK)) obvious = TRUE;
+			if (c_ptr->player & (GRID_MARK)) obvious = TRUE;
 
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
@@ -556,7 +556,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->feat == FEAT_FLOOR)
 			{
 				/* Forget */
-				c_ptr->info &= ~(CAVE_MARK);
+				c_ptr->player &= ~(GRID_MARK);
 
 				/* Notice + Redraw */
 				note_spot(y, x);
@@ -1458,7 +1458,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (seen) obvious = TRUE;
 
 			/* PSI only works if the monster can see you! -- RG */
-			if (!(c_ptr->info & CAVE_VIEW))
+			if (!player_has_los_grid(c_ptr))
 			{
 				dam = 0;
 				note = " can't see you, and isn't affected!";

@@ -2486,7 +2486,7 @@ static void process_monster(int m_idx)
 			}
 
 			/* Forget the wall */
-			c_ptr->info &= ~(CAVE_MARK);
+			c_ptr->player &= ~(GRID_MARK);
 
 			/* Notice */
 			cave_set_feat(ny, nx, FEAT_FLOOR);

@@ -737,7 +737,7 @@ static int count_doors(int *y, int *x, bool (*test)(int feat), bool under)
 		if (!in_bounds2(yy, xx)) continue;
 
 		/* Must have knowledge */
-		if (!(area(yy, xx)->info & (CAVE_MARK))) continue;
+		if (!(area(yy, xx)->player & (GRID_MARK))) continue;
 
 		/* Not looking for this feature */
 		if (!((*test)(area(yy, xx)->feat))) continue;
@@ -1161,7 +1161,7 @@ static bool twall(int y, int x, byte feat)
 	if (cave_floor_grid(c_ptr)) return (FALSE);
 
 	/* Forget the wall */
-	c_ptr->info &= ~(CAVE_MARK);
+	c_ptr->player &= ~(GRID_MARK);
 
 	/* Remove the feature */
 	cave_set_feat(y, x, feat);
@@ -1204,7 +1204,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	sound(SOUND_DIG);
 
 	/* Must have knowledge */
-	if (!(c_ptr->info & (CAVE_MARK)))
+	if (!(c_ptr->player & (GRID_MARK)))
 	{
 		/* Message */
 		msg_print("You see nothing there.");

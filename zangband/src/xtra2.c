@@ -2059,7 +2059,7 @@ static bool target_set_accept(int y, int x)
 	}
 
 	/* Interesting memorized features */
-	if (c_ptr->info & (CAVE_MARK))
+	if (c_ptr->player & (GRID_MARK))
 	{
 		/* Notice the Pattern */
 		if ((c_ptr->feat <= FEAT_PATTERN_XTRA2) &&
@@ -2610,7 +2610,7 @@ static int target_set_aux(int y, int x, int mode, cptr info)
 		feat = c_ptr->feat;
 
 		/* Require knowledge about grid, or ability to see grid */
-		if (!(c_ptr->info & CAVE_MARK) && !player_can_see_bold(y, x))
+		if (!(c_ptr->player & GRID_MARK) && !player_can_see_bold(y, x))
 		{
 			/* Forget feature */
 			feat = FEAT_NONE;

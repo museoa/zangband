@@ -2694,33 +2694,6 @@ static int i = 0;
 #endif	/* ALLOW_TEMPLATES */
 
 
-
-/* Random dungeon grid effects */
-#define RANDOM_NONE         0x00
-#define RANDOM_FEATURE      0x01
-#define RANDOM_MONSTER      0x02
-#define RANDOM_OBJECT       0x04
-#define RANDOM_EGO          0x08
-#define RANDOM_ARTIFACT     0x10
-#define RANDOM_TRAP         0x20
-
-
-typedef struct dungeon_grid dungeon_grid;
-
-struct dungeon_grid
-{
-	int		feature;		/* Terrain feature */
-	int		monster;		/* Monster */
-	int		object;			/* Object */
-	int		ego;			/* Ego-Item */
-	int		artifact;		/* Artifact */
-	int		trap;			/* Trap */
-	int		cave_info;		/* Flags for CAVE_MARK, CAVE_GLOW, CAVE_ICKY, CAVE_ROOM */
-	int		special;		/* Reserved for special terrain info */
-	int		random;			/* Number of the random effect */
-};
-
-
 /*
  * Parse a sub-file of the "extra info"
  */

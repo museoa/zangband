@@ -893,7 +893,7 @@ bool detect_doors(void)
 			     (c_ptr->feat == FEAT_BROKEN))
 			{
 				/* Hack -- Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				c_ptr->player |= (GRID_MARK);
 
 				/* Redraw */
 				lite_spot(y, x);
@@ -945,7 +945,7 @@ bool detect_stairs(void)
 			    (c_ptr->feat == FEAT_MORE))
 			{
 				/* Hack -- Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				c_ptr->player |= (GRID_MARK);
 
 				/* Redraw */
 				lite_spot(y, x);
@@ -1008,7 +1008,7 @@ bool detect_treasure(void)
 			    (c_ptr->feat == FEAT_QUARTZ_K))
 			{
 				/* Hack -- Memorize */
-				c_ptr->info |= (CAVE_MARK);
+				c_ptr->player |= (GRID_MARK);
 
 				/* Redraw */
 				lite_spot(y, x);
@@ -2237,7 +2237,8 @@ bool destroy_area(int y1, int x1, int r)
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
 			/* Lose light and knowledge */
-			c_ptr->info &= ~(CAVE_MARK | CAVE_GLOW);
+			c_ptr->info &= ~(CAVE_GLOW);
+			c_ptr->player &= ~(GRID_MARK);
 
 			/* Hack -- Notice player affect */
 			if ((x == p_ptr->px) && (y == p_ptr->py))
@@ -2419,7 +2420,8 @@ bool earthquake(int cy, int cx, int r)
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
 			/* Lose light and knowledge */
-			c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
+			c_ptr->info &= ~(CAVE_GLOW);
+			c_ptr->player &= ~(GRID_MARK);
 
 			/* Skip the epicenter */
 			if (!dx && !dy) continue;
@@ -2961,7 +2963,7 @@ static void cave_temp_room_unlite(void)
 			if (c_ptr->feat == FEAT_FLOOR)
 			{
 				/* Forget the grid */
-				c_ptr->info &= ~(CAVE_MARK);
+				c_ptr->player &= ~(GRID_MARK);
 
 				/* Notice + Redraw */
 				note_spot(y, x);

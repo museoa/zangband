@@ -471,6 +471,9 @@ struct cave_type
 
 	byte cost;		/* Hack -- cost of flowing */
 	byte when;		/* Hack -- when cost was computed */
+	
+	/* Hack -- this contains the player-specific data (temporary) */
+	byte player;
 };
 
 

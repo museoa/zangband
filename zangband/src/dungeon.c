@@ -3209,7 +3209,7 @@ static void dungeon(void)
 			}
 
 			/* Mark the stairs as known */
-			c_ptr->info |= (CAVE_MARK);
+			c_ptr->player |= (GRID_MARK);
 		}
 
 		/* Cancel the stair request */

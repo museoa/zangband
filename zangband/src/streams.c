@@ -422,8 +422,8 @@ void destroy_level(void)
 					/* No longer part of a room or vault */
 					c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
-					/* No longer illuminated or known */
-					c_ptr->info &= ~(CAVE_MARK | CAVE_GLOW);
+					/* No longer illuminated */
+					c_ptr->info &= ~(CAVE_GLOW);
 				}
 			}
 		}

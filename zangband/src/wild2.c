@@ -60,7 +60,7 @@ void light_dark_block(blk_ptr block_ptr, int x, int y)
 				c_ptr->info |= (CAVE_GLOW);
 
 				/* Hack -- Memorize lit grids if allowed */
-				if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
+				if (view_perma_grids) c_ptr->player |= (GRID_MARK);
 			}
 			else
 			{
@@ -71,7 +71,8 @@ void light_dark_block(blk_ptr block_ptr, int x, int y)
 					(c_ptr->feat <= FEAT_PERM_SOLID))))
 				{
 					/* Forget the grid */
-					c_ptr->info &= ~(CAVE_GLOW | CAVE_MARK);
+					c_ptr->info &= ~(CAVE_GLOW);
+					c_ptr->player &= ~(GRID_MARK);
 				}
 				else
 				{
@@ -79,7 +80,7 @@ void light_dark_block(blk_ptr block_ptr, int x, int y)
 					c_ptr->info |= (CAVE_GLOW);
 
 					/* Hack -- Memorize lit grids if allowed */
-					if (view_perma_grids) c_ptr->info |= (CAVE_MARK);
+					if (view_perma_grids) c_ptr->player |= (GRID_MARK);
 				}
 			}
 		}

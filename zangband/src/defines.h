@@ -45,7 +45,7 @@
 #define VERSION_MINOR   8
 #define VERSION_PATCH   1
 
-#define SAVEFILE_VERSION 26
+#define SAVEFILE_VERSION 27
 
 /* Added for ZAngband */
 /* Why do we need a fake version number? */
@@ -2310,17 +2310,30 @@
 /*
  * Special cave grid flags
  */
-#define CAVE_MARK       0x01    /* memorized feature */
+#define CAVE_DUM1       0x01
 #define CAVE_GLOW       0x02    /* self-illuminating */
 #define CAVE_ICKY       0x04    /* part of a vault */
 #define CAVE_ROOM       0x08    /* part of a room */
-#define CAVE_LITE       0x10    /* lite flag */
-#define CAVE_VIEW       0x20    /* view flag */
+#define CAVE_DUM2       0x10
+#define CAVE_MNLT       0x20	/* Illuminated by monster */
 #define CAVE_TEMP       0x40    /* temp flag */
 #define CAVE_XTRA       0x80    /* misc flag */
 
-/* Hack - reuse CAVE_ROOM */
-#define CAVE_MNLT		0x08	/* Illuminated by monster */
+
+/*
+ * Cave grid flags that are player-specific
+ *
+ * This data structure will eventually be moved into the players struct.
+ */
+#define GRID_MARK		0x01	/* Known */
+#define GRID_VIEW		0x02	/* In LOS */
+#define GRID_DUM1		0x04
+#define GRID_DUM2		0x08
+#define GRID_LITE		0x10	/* Lit by torchlight */
+#define GRID_DUM3		0x20
+#define GRID_DUM4		0x40
+#define GRID_DUM5		0x80
+
 
 /*
  * Bit flags for the "project()" function
@@ -3982,7 +3995,7 @@
  * Note the use of comparison to zero to force a "boolean" result
  */
 #define player_has_los_grid(C) \
-    (((C)->info & (CAVE_VIEW)) != 0)
+    (((C)->player & (GRID_VIEW)) != 0)
 
 
 /*

@@ -340,7 +340,8 @@ static bool summon_possible(int y1, int x1)
 			if (!mon_enter_test.do_move) return (FALSE);
 
 			/* Require empty floor grid in line of sight of player */
-			if (cave_empty_grid(c_ptr) && (c_ptr->info & CAVE_VIEW)) return (TRUE);
+			if (cave_empty_grid(c_ptr)
+				 && (player_has_los_grid(c_ptr))) return (TRUE);
 		}
 	}
 
