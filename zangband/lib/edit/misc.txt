@@ -52,6 +52,9 @@ M:W:T:300
 # Maximum number of "places" in the wilderness
 M:W:P:20
 
+# Maximum number of active "regions" in dungeon / wilderness
+M:G:10
+
 # Maximum number of objects
 M:O:512
 
