@@ -2245,7 +2245,7 @@ bool raise_dead(int y, int x, bool pet)
 	int ix, iy;
 	
 	bool    obvious = FALSE;
-
+	monster_type *m_ptr;
 
 	/* Check all (nearby) objects */
 	for (i = 1; i < o_max; i++)
@@ -2265,9 +2265,21 @@ bool raise_dead(int y, int x, bool pet)
 		if (player_has_los_grid(area(iy, ix))) obvious = TRUE;
 		
 		/* Make a monster nearby if possible */
-		summon_named_creature(o_ptr->iy, o_ptr->ix,
-			o_ptr->pval, FALSE, FALSE, pet);
-
+		if (summon_named_creature(o_ptr->iy, o_ptr->ix,
+			o_ptr->pval, FALSE, FALSE, pet))
+		{
+			/* Get pointer monster if successful */ 
+			m_ptr = &m_list[hack_m_idx_ii];
+						
+			if (player_can_see_bold(m_ptr->fy, m_ptr->fx))
+			{
+				msg_format("The %s rises.");
+			}
+						
+			/* Set the cloned flag, so no treasure is dropped */
+			m_ptr->smart |= SM_CLONED;
+		}
+		
 		/* The corpse/skeleton is destroyed */			
 		floor_item_increase(i, -1);
 		floor_item_optimize(i);
