@@ -799,6 +799,8 @@ cptr item_activation(const object_type *o_ptr)
  */
 bool identify_fully_aux(const object_type *o_ptr)
 {
+	object_kind *k_ptr;
+	
 	int i = 0, j, k;
 
 	u32b f1, f2, f3, f4;
@@ -808,8 +810,16 @@ bool identify_fully_aux(const object_type *o_ptr)
 	
 	int wid, hgt;
 
+	k_ptr = &k_info[o_ptr->k_idx];
+
 	/* Extract the flags */
 	object_flags_known(o_ptr, &f1, &f2, &f3, &f4);
+
+	/* Add the 'description' if any */
+	if (object_known_p(o_ptr) && k_ptr->text)
+	{
+		info[i++] = k_text + k_ptr->text;
+	}
 
 	/* Indicate if fully known */
 	if (object_known_full(o_ptr))
