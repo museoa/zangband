@@ -13174,7 +13174,7 @@ F:DROP_60 | DROP_GOOD | POWERFUL | AURA_ELEC | AURA_FIRE | AURA_COLD |
 F:BASH_DOOR | IM_ELEC | IM_FIRE | RES_NEXU
 F:IM_POIS | IM_ACID | RES_PLAS | RES_DISE | COLD_BLOOD | NONLIVING | RAND_50
 S:1_IN_5 |
-S:BR_CHAO
+S:BR_CHAO 
 D:Summoned from the Courts of Chaos, it is a mass of sentient Logrus, 
 D:spreading uncontrollably and destroying everything in its path.
 
