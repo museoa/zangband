@@ -1944,31 +1944,31 @@ static void build_vault(int yval, int xval, int ymax, int xmax, cptr data,
 				}
 
 				case 'p':
-					cave_set_feat(y, x, FEAT_PATTERN_START);
+					cave_set_feat(x, y, FEAT_PATTERN_START);
 					break;
 
 				case 'a':
-					cave_set_feat(y, x, FEAT_PATTERN_1);
+					cave_set_feat(x, y, FEAT_PATTERN_1);
 					break;
 
 				case 'b':
-					cave_set_feat(y, x, FEAT_PATTERN_2);
+					cave_set_feat(x, y, FEAT_PATTERN_2);
 					break;
 
 				case 'c':
-					cave_set_feat(y, x, FEAT_PATTERN_3);
+					cave_set_feat(x, y, FEAT_PATTERN_3);
 					break;
 
 				case 'd':
-					cave_set_feat(y, x, FEAT_PATTERN_4);
+					cave_set_feat(x, y, FEAT_PATTERN_4);
 					break;
 
 				case 'P':
-					cave_set_feat(y, x, FEAT_PATTERN_END);
+					cave_set_feat(x, y, FEAT_PATTERN_END);
 					break;
 
 				case 'B':
-					cave_set_feat(y, x, FEAT_PATTERN_XTRA1);
+					cave_set_feat(x, y, FEAT_PATTERN_XTRA1);
 					break;
 
 				case 'A':
@@ -2737,7 +2737,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 
 	x = 2 * (node % m) + x1;
 	y = 2 * (node / m) + y1;
-	cave_set_feat(y, x, FEAT_FLOOR);
+	cave_set_feat(x, y, FEAT_FLOOR);
 
 	/* setup order of adjacent node visits */
 	if (one_in_(3))
@@ -2789,7 +2789,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 				/* (0,+) - check for bottom boundary */
 				if ((node / m < n - 1) && (visited[node + m] == 0))
 				{
-					cave_set_feat(y + 1, x, FEAT_FLOOR);
+					cave_set_feat(x, y + 1, FEAT_FLOOR);
 					r_visit(y1, x1, y2, x2, node + m, dir, visited);
 				}
 				break;
@@ -2800,7 +2800,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 				/* (0,-) - check for top boundary */
 				if ((node / m > 0) && (visited[node - m] == 0))
 				{
-					cave_set_feat(y - 1, x, FEAT_FLOOR);
+					cave_set_feat(x, y - 1, FEAT_FLOOR);
 					r_visit(y1, x1, y2, x2, node - m, dir, visited);
 				}
 				break;
@@ -2811,7 +2811,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 				/* (+,0) - check for right boundary */
 				if ((node % m < m - 1) && (visited[node + 1] == 0))
 				{
-					cave_set_feat(y, x + 1, FEAT_FLOOR);
+					cave_set_feat(x + 1, y, FEAT_FLOOR);
 					r_visit(y1, x1, y2, x2, node + 1, dir, visited);
 				}
 				break;
@@ -2822,7 +2822,7 @@ static void r_visit(int y1, int x1, int y2, int x2,
 				/* (-,0) - check for left boundary */
 				if ((node % m > 0) && (visited[node - 1] == 0))
 				{
-					cave_set_feat(y, x - 1, FEAT_FLOOR);
+					cave_set_feat(x - 1, y, FEAT_FLOOR);
 					r_visit(y1, x1, y2, x2, node - 1, dir, visited);
 				}
 			}

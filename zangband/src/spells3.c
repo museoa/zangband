@@ -1590,20 +1590,20 @@ void stair_creation(void)
 	if (!p_ptr->depth || ironman_downward)
 	{
 		/* Town/wilderness or Ironman */
-		cave_set_feat(py, px, FEAT_MORE);
+		cave_set_feat(px, py, FEAT_MORE);
 	}
 	else if (quest_number() || (p_ptr->depth >= MAX_DEPTH - 1))
 	{
 		/* Quest level */
-		cave_set_feat(py, px, FEAT_LESS);
+		cave_set_feat(px, py, FEAT_LESS);
 	}
 	else if (one_in_(2))
 	{
-		cave_set_feat(py, px, FEAT_MORE);
+		cave_set_feat(px, py, FEAT_MORE);
 	}
 	else
 	{
-		cave_set_feat(py, px, FEAT_LESS);
+		cave_set_feat(px, py, FEAT_LESS);
 	}
 	
 	/* Notice */

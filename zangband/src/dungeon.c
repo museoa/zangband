@@ -486,14 +486,14 @@ static void wreck_the_pattern(void)
 		if ((area(r_y, r_x)->feat >= FEAT_PATTERN_START) &&
 		    (area(r_y, r_x)->feat < FEAT_PATTERN_XTRA2))
 		{
-			cave_set_feat(r_y, r_x, FEAT_PATTERN_XTRA2);
+			cave_set_feat(r_x, r_y, FEAT_PATTERN_XTRA2);
 			
 			/* Hack - notice the change */
 			note_spot(r_x, r_y);
 		}
 	}
 
-	cave_set_feat(py, px, FEAT_PATTERN_XTRA2);
+	cave_set_feat(px, py, FEAT_PATTERN_XTRA2);
 	
 	/* Hack - notice the change */
 	note_spot(px, py);
@@ -3053,11 +3053,11 @@ static void dungeon(void)
 			/* Make stairs */
 			if (p_ptr->create_down_stair)
 			{
-				cave_set_feat(p_ptr->py, p_ptr->px, FEAT_MORE);
+				cave_set_feat(p_ptr->px, p_ptr->py, FEAT_MORE);
 			}
 			else
 			{
-				cave_set_feat(p_ptr->py, p_ptr->px, FEAT_LESS);
+				cave_set_feat(p_ptr->px, p_ptr->py, FEAT_LESS);
 			}
 
 			/* Mark the stairs as known */

@@ -589,7 +589,7 @@ static void create_stairs(int y, int x)
 	msg_print("A magical staircase appears...");
 
 	/* Create stairs down */
-	cave_set_feat(y, x, FEAT_MORE);
+	cave_set_feat(x, y, FEAT_MORE);
 	
 	/* Notice the change */
 	note_spot(x, y);

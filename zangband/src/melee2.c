@@ -2495,7 +2495,7 @@ static void process_monster(int m_idx)
 			}
 
 			/* Notice */
-			cave_set_feat(ny, nx, FEAT_FLOOR);
+			cave_set_feat(nx, ny, FEAT_FLOOR);
 
 			/* Note changes to viewable region */
 			if (player_can_see_bold(nx, ny))
@@ -2556,7 +2556,7 @@ static void process_monster(int m_idx)
 			 (!is_pet(m_ptr) || p_ptr->pet_open_doors))
 		{
 			/* Open the door */
-			cave_set_feat(ny, nx, FEAT_OPEN);
+			cave_set_feat(nx, ny, FEAT_OPEN);
 
 			/* Handle viewable doors */
 			if (player_can_see_bold(nx, ny)) do_view = TRUE;

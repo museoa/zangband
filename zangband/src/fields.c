@@ -3212,7 +3212,7 @@ bool field_action_door_unlock(field_type *f_ptr, vptr input)
 		msg_print("The door is unlocked.");
 		
 		/* Open the door */
-		cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
+		cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
 		
 		/* Notice the change */
 		note_spot(f_ptr->fx, f_ptr->fy);
@@ -3252,7 +3252,7 @@ bool field_action_door_bash(field_type *f_ptr, vptr input)
 		/* Break down the door */
 		if (randint0(100) < 50)
 		{
-			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_BROKEN);
+			cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_BROKEN);
 			
 			/* Notice the change */
 			note_spot(f_ptr->fx, f_ptr->fy);
@@ -3261,7 +3261,7 @@ bool field_action_door_bash(field_type *f_ptr, vptr input)
 		/* Open the door */
 		else
 		{
-			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
+			cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
 			
 			/* Notice the change */
 			note_spot(f_ptr->fx, f_ptr->fy);
@@ -3317,7 +3317,7 @@ bool field_action_door_lock_monster(field_type *f_ptr, vptr input)
 		if (randint0(m_ptr->hp) > f_ptr->counter * f_ptr->counter)
 		{
 			/* Open the door */
-			cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
+			cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
 				
 			/* Update view */
 			if (player_can_see_bold(f_ptr->fx, f_ptr->fy))
@@ -3390,13 +3390,13 @@ bool field_action_door_jam_monster(field_type *f_ptr, vptr input)
 			/* Break down the door */
 			if (randint0(100) < 50)
 			{
-				cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_BROKEN);
+				cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_BROKEN);
 			}
 
 			/* Open the door */
 			else
 			{
-				cave_set_feat(f_ptr->fy, f_ptr->fx, FEAT_OPEN);
+				cave_set_feat(f_ptr->fx, f_ptr->fy, FEAT_OPEN);
 			}
 				
 			/* Update view */

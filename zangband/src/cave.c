@@ -4258,7 +4258,7 @@ void update_mon_lite(void)
 					if ((rad == 3) && cave_floor_grid(c_ptr))
 					{
 						mon_lite_hack(fx + 1, fy - 3);
-						mon_lite_hack(fx, fy - 3, fx);
+						mon_lite_hack(fx, fy - 3);
 						mon_lite_hack(fx - 1, fy - 3);
 					}
 				}
@@ -4859,7 +4859,7 @@ void wiz_dark(void)
 /*
  * Change the "feat" flag for a grid, and notice/redraw the grid
  */
-void cave_set_feat(int y, int x, int feat)
+void cave_set_feat(int x, int y, int feat)
 {
 	cave_type *c_ptr = area(y,x);
 

@@ -791,7 +791,7 @@ bool do_cmd_open_aux(int y, int x)
 	else
 	{
 		/* Open the door */
-		cave_set_feat(y, x, FEAT_OPEN);
+		cave_set_feat(x, y, FEAT_OPEN);
 		
 		/* Notice the change */
 		note_spot(x, y);
@@ -955,7 +955,7 @@ static bool do_cmd_close_aux(int y, int x)
 	else
 	{
 		/* Close the door */
-		cave_set_feat(y, x, FEAT_CLOSED);
+		cave_set_feat(x, y, FEAT_CLOSED);
 		
 		/* Notice the chance */
 		note_spot(x, y);
@@ -1072,7 +1072,7 @@ static bool twall(int y, int x, byte feat)
 	if (cave_floor_grid(c_ptr)) return (FALSE);
 
 	/* Remove the feature */
-	cave_set_feat(y, x, feat);
+	cave_set_feat(x, y, feat);
 	
 	/* Notice the chance */
 	note_spot(x, y);

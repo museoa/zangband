@@ -426,7 +426,7 @@ static void do_cmd_wiz_feature(int feat)
 	delete_monster_idx(c_ptr->m_idx);
 
 	/* Place the feature */
-	cave_set_feat(y, x, feat);
+	cave_set_feat(x, y, feat);
 	
 	/* Change knowledge of grid */
 	parea(y, x)->feat = feat;

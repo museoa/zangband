@@ -339,7 +339,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->feat >= FEAT_TREES)
 			{
 				/* Destroy the wall */
-				cave_set_feat(y, x, FEAT_DIRT);
+				cave_set_feat(x, y, FEAT_DIRT);
 				
 				/* Message */
 				if (known)
@@ -355,7 +355,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
 				/* Destroy the wall */
-				cave_set_feat(y, x, FEAT_FLOOR);
+				cave_set_feat(x, y, FEAT_FLOOR);
 				
 				/* Message */
 				if (known)
@@ -371,7 +371,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat >= FEAT_MAGMA_H)
 			{
 				/* Destroy the wall */
-				cave_set_feat(y, x, FEAT_FLOOR);
+				cave_set_feat(x, y, FEAT_FLOOR);
 				
 				/* Place some gold */
 				place_gold(y, x);
@@ -391,7 +391,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat >= FEAT_MAGMA)
 			{
 				/* Destroy the wall */
-				cave_set_feat(y, x, FEAT_FLOOR);
+				cave_set_feat(x, y, FEAT_FLOOR);
 				
 				/* Message */
 				if (known)
@@ -407,7 +407,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				/* Destroy the rubble */
-				cave_set_feat(y, x, FEAT_FLOOR);
+				cave_set_feat(x, y, FEAT_FLOOR);
 				
 				/* Message */
 				if (known)
@@ -439,7 +439,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			else if ((c_ptr->feat == FEAT_OPEN) || (c_ptr->feat == FEAT_SECRET))
 			{
 				/* Destroy the feature */
-				cave_set_feat(y, x, FEAT_FLOOR);
+				cave_set_feat(x, y, FEAT_FLOOR);
 				
 				/* Hack -- special message */
 				if (known)
@@ -467,7 +467,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if ((x == p_ptr->px) && (y == p_ptr->py)) break;
 
 			/* Create a closed door */
-			cave_set_feat(y, x, FEAT_CLOSED);
+			cave_set_feat(x, y, FEAT_CLOSED);
 
 			/* Observe */
 			if (known)
@@ -522,7 +522,7 @@ static bool project_f(int who, int r, int y, int x, int dam, int typ)
 			if ((c_ptr->o_idx != 0) || (c_ptr->m_idx != 0)) break;
 
 			/* Place a wall */
-			cave_set_feat(y, x, FEAT_WALL_EXTRA);
+			cave_set_feat(x, y, FEAT_WALL_EXTRA);
 			
 			/* Notice */
 			note_spot(x, y);
@@ -4434,9 +4434,9 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 								if ((c_ptr->feat == FEAT_TREES) ||
 									(c_ptr->feat == FEAT_PINE_TREE) ||
 									(c_ptr->feat == FEAT_SNOW_TREE))
-									cave_set_feat(y, x, FEAT_DIRT);
+									cave_set_feat(x, y, FEAT_DIRT);
 								else
-									cave_set_feat(y, x, FEAT_FLOOR);
+									cave_set_feat(x, y, FEAT_FLOOR);
 							}
 							
 							/* Notice */

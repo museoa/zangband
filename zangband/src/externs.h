@@ -326,7 +326,7 @@ extern void update_flow(void);
 extern void map_area(void);
 extern void wiz_lite(void);
 extern void wiz_dark(void);
-extern void cave_set_feat(int y, int x, int feat);
+extern void cave_set_feat(int x, int y, int feat);
 extern void health_track(int m_idx);
 extern void monster_race_track(int r_idx);
 extern void object_kind_track(int k_idx);
