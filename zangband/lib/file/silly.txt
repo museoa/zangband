@@ -1,5 +1,5 @@
 N:*:Default
-323
+327
 Borg
 Dalek
 Destructor
@@ -323,3 +323,7 @@ Medic
 Tank
 Tank Commander
 Man-in-Black
+Spawn
+Neon knight
+Defender of the Faith
+Eternal idol
