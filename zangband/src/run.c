@@ -285,38 +285,6 @@ static const struct
 {TEST_WALL, -1,  0, 0,        RUN_W},
 
 /*
- * Ensure that the player will take unknown corners by
- * preventing orthagonal moves to unknown squares when
- * a diagonal move exists.
- *
- * Example:
- *
- *  ##
- *  .@
- *  .#
- *
- * In this situation we remove all the 'west' moves, because
- * they are to unknown squares, and it's possible to move
- * southwest instead.
- *
- * Note that this can miss a branch if the unknown square
- * is actually a floor square and cutting corners is
- * enabled.
- */
-{TEST_UNSEEN, -1, -2, RUN_NE | RUN_NW, RUN_N_NW},
-{TEST_UNSEEN,  0, -2, RUN_NE | RUN_NW, RUN_N_N},
-{TEST_UNSEEN,  1, -2, RUN_NE | RUN_NW, RUN_N_NE},
-{TEST_UNSEEN,  2, -1, RUN_NE | RUN_SE, RUN_E_NE},
-{TEST_UNSEEN,  2,  0, RUN_NE | RUN_SE, RUN_E_E},
-{TEST_UNSEEN,  2,  1, RUN_NE | RUN_SE, RUN_E_SE},
-{TEST_UNSEEN,  1,  2, RUN_SE | RUN_SW, RUN_S_SE},
-{TEST_UNSEEN,  0,  2, RUN_SE | RUN_SW, RUN_S_S},
-{TEST_UNSEEN, -1,  2, RUN_SE | RUN_SW, RUN_S_SW},
-{TEST_UNSEEN, -2,  1, RUN_NW | RUN_SW, RUN_W_SW},
-{TEST_UNSEEN, -2,  0, RUN_NW | RUN_SW, RUN_W_W},
-{TEST_UNSEEN, -2, -1, RUN_NW | RUN_SW, RUN_W_NW},
-
-/*
  * Allow the player to run in a pillared corridor with
  * a radius-2 light source, by removing some diagonal
  * moves into unknown squares. Example:
@@ -351,6 +319,53 @@ static const struct
 {TEST_NONE,  0,  0, RUN_SE_S, RUN_S_SE},
 {TEST_NONE,  0,  0, RUN_SW_S, RUN_S_SW},
 {TEST_NONE,  0,  0, RUN_SW_W, RUN_W_SW},
+
+#if 0
+/*
+ * Ensure that the player will take unknown corners by
+ * preventing orthagonal moves to unknown squares when
+ * a diagonal move exists.
+ *
+ * Example:
+ *
+ *  ##
+ *  .@
+ *  .#
+ *
+ * In this situation we remove all the 'west' moves, because
+ * they are to unknown squares, and it's possible to move
+ * southwest instead.
+ *
+ * Note that this can miss a branch if the unknown square
+ * is actually a floor square and cutting corners is
+ * enabled.
+ *
+ * XXX This code is disabled because we can't tell the
+ * difference between these with just a torch:
+ *
+ * ###       ##
+ *  .@  vs   .@
+ * #.#       .#
+ *
+ * The first we should NOT turn because there is obviously
+ * a real branch.
+ *
+ * This problem would go away if we actually memorized
+ * floor grids.
+ */
+{TEST_UNSEEN, -1, -2, RUN_NE | RUN_NW, RUN_N_NW},
+{TEST_UNSEEN,  0, -2, RUN_NE | RUN_NW, RUN_N_N},
+{TEST_UNSEEN,  1, -2, RUN_NE | RUN_NW, RUN_N_NE},
+{TEST_UNSEEN,  2, -1, RUN_NE | RUN_SE, RUN_E_NE},
+{TEST_UNSEEN,  2,  0, RUN_NE | RUN_SE, RUN_E_E},
+{TEST_UNSEEN,  2,  1, RUN_NE | RUN_SE, RUN_E_SE},
+{TEST_UNSEEN,  1,  2, RUN_SE | RUN_SW, RUN_S_SE},
+{TEST_UNSEEN,  0,  2, RUN_SE | RUN_SW, RUN_S_S},
+{TEST_UNSEEN, -1,  2, RUN_SE | RUN_SW, RUN_S_SW},
+{TEST_UNSEEN, -2,  1, RUN_NW | RUN_SW, RUN_W_SW},
+{TEST_UNSEEN, -2,  0, RUN_NW | RUN_SW, RUN_W_W},
+{TEST_UNSEEN, -2, -1, RUN_NW | RUN_SW, RUN_W_NW},
+#endif
 };
 
 static const u32b valid_dir_mask[10] = {
