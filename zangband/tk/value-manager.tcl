@@ -611,34 +611,6 @@ proc Config::Setting::One {keyword value} {
 	return
 }
 
-# ExpandSetting --
-#
-#	When a setting is changed in Angband (possibly by the "setting" command,
-#	or by reading a preference file) a <Setting> quasi-event is generated.
-#	Since some of our settings are unknown to Angband (they exist in Tcl code
-#	only, such as show_icons) we use qeinstall for those settings so that
-#	scripts can use qebind in a consistent manner to know when any setting
-#	changes.
-#
-#	ExpandSetting is called to perform %-substitution in a qebind script.
-
-proc ExpandSetting {which object event detail} {
-
-	switch -- $which {
-		c {
-			return [Setting $detail]
-		}
-		d {
-			return $detail
-		}
-		W {
-			return $object
-		}
-		default {
-			return $which
-		}
-	}
-}
 
 # Setting --
 #
@@ -680,11 +652,7 @@ proc Setting {keyword args} {
 
 proc SettingDesc {keyword} {
 
-	switch -- $keyword {
-		default {
-			return [angband setting desc $keyword]
-		}
-	}
+	return [angband setting desc $keyword]
 }
 
 set data {}

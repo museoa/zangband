@@ -776,13 +776,6 @@ proc NSStore::Win98MenuCmd_Options {oop button} {
 	set keywordList {}
 	set descList {}
 
-	Info $oop setting,show_weights [Setting show_weights]
-	$menu add checkbutton -label [mc "Show Weights"] \
-		-command {Setting show_weights [StoreObj Info setting,show_weights]} \
-		-variable NSStore($oop,setting,show_weights)
-	lappend keywordList show_weights
-	lappend descList [SettingDesc show_weights]
-
 	$menu add separator
 	lappend keywordList ""
 	lappend descList ""
@@ -1155,9 +1148,6 @@ proc NSStore::SetList {oop} {
 	NSCanvist::Info $canvistId rowHgt $rowHgt
 	$canvas configure -yscrollincrement $rowHgt
 
-	# Option: Show weights
-	set show_weights [Setting show_weights]
-
 	set Priv(width,char) 0
 	set Priv(width,desc) 0
 	set Priv(width,weight) 0
@@ -1174,9 +1164,6 @@ proc NSStore::SetList {oop} {
 
 		# Get the (optional) weight
 		set weight $attrib(weight)
-		if {!$show_weights} {
-			set weight ""
-		}
 
 		# No price in the Home
 		if {[angband store ishome]} {
@@ -1614,13 +1601,11 @@ proc NSStore::NewItemCmd {oop canvistId y char number text weight tval icon pric
 		1 [expr {$y + $lineHeight}] -fill $listBG -outline $listBG \
 		-tags truncate]
 
-	# Weight ("show_weights" option)
-	if {[string length $weight]} {
-		set weight [format "%d.%d lb" [expr {$weight / 10}] [expr {$weight % 10}]]
-		lappend itemIdList [$canvas create text 0 \
-			[expr {$y + $diff}] -text $weight -anchor ne -justify right \
-			-font $font -fill White -tags weight]
-	}
+	# Weight
+	set weight [format "%d.%d lb" [expr {$weight / 10}] [expr {$weight % 10}]]
+	lappend itemIdList [$canvas create text 0 \
+		[expr {$y + $diff}] -text $weight -anchor ne -justify right \
+		-font $font -fill White -tags weight]
 
 	# Price (except in Home)
 	if {![angband store ishome]} {

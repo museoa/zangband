@@ -1035,7 +1035,6 @@ proc NSInventory::SetList {oop invOrEquip tval {both 0}} {
 
 	# Options: Show weights, Show labels (in equipment)
 	set show_labels [Setting show_labels]
-	set show_weights [Setting show_weights]
 
 	set Priv(width,char) 0
 	set Priv(width,label) 0
@@ -1068,7 +1067,6 @@ proc NSInventory::SetList {oop invOrEquip tval {both 0}} {
 
 		# Get the (optional) weight
 		set weight [expr {$attrib(weight) * $attrib(number)}]
-		if {!$show_weights} {set weight ""}
 
 		lappend itemList [list $attrib(char) \
 			$attrib(number) $desc $weight $label \
