@@ -1305,10 +1305,9 @@ errr check_load_init(void)
 /*
  * Print number with header at given row, column
  */
-static void prt_num(cptr header, s32b num, int col, int row, cptr color,
-					int wid)
+static void prt_num(int col, int row, cptr header, s32b num, int wid)
 {
-	put_fstr(col, row, "%s   %s%*ld", header, color, wid, (long)num);
+	put_fstr(col, row, "%s   %*ld", header, wid, (long)num);
 }
 
 
@@ -2317,10 +2316,10 @@ static void display_player_top(void)
 	}
 
 	/* Age, Height, Weight, Social */
-	prt_num("Age         ", (int)p_ptr->age, COL_AGE, 2, CLR_L_BLUE, 3);
-	prt_num("Height      ", (int)p_ptr->ht, COL_AGE, 3, CLR_L_BLUE, 3);
-	prt_num("Weight      ", (int)p_ptr->wt, COL_AGE, 4, CLR_L_BLUE, 3);
-	prt_num("Social Class", (int)p_ptr->sc, COL_AGE, 5, CLR_L_BLUE, 3);
+	prt_num(COL_AGE, 2, "Age         " CLR_L_BLUE, (int)p_ptr->age, 3);
+	prt_num(COL_AGE, 3, "Height      " CLR_L_BLUE, (int)p_ptr->ht, 3);
+	prt_num(COL_AGE, 4, "Weight      " CLR_L_BLUE, (int)p_ptr->wt, 3);
+	prt_num(COL_AGE, 5, "Social Class" CLR_L_BLUE, (int)p_ptr->sc, 3);
 
 	/* Display the stats */
 	for (i = 0; i < A_MAX; i++)
@@ -2356,7 +2355,7 @@ static void display_player_top(void)
 
 #define COL_BONUS			0
 #define COL_VALUE			23
-#define COL_LIFE     	51
+#define COL_LIFE     		51
 
 
 /*
@@ -2367,7 +2366,6 @@ static void display_player_middle(void)
 	int percentdam;
 	int show_tohit = p_ptr->dis_to_h;
 	int show_todam = p_ptr->dis_to_d;
-	cptr attr;
 
 	object_type *o_ptr = &p_ptr->equipment[EQUIP_WIELD];
 
@@ -2380,79 +2378,80 @@ static void display_player_middle(void)
 
 	/*** Bonuses ***/
 
-	prt_num("+ Skill     ", show_tohit, COL_BONUS, 9, CLR_L_BLUE, 3);
-	prt_num("% Deadliness", percentdam, COL_BONUS, 10, CLR_L_BLUE, 3);
-	prt_num("+ To AC     ", p_ptr->dis_to_a, COL_BONUS, 11, CLR_L_BLUE, 3);
-	prt_num("  Base AC   ", p_ptr->dis_ac, COL_BONUS, 12, CLR_L_BLUE, 3);
+	prt_num(COL_BONUS, 9, "+ Skill     " CLR_L_BLUE, show_tohit, 3);
+	prt_num(COL_BONUS, 10, "% Deadliness" CLR_L_BLUE, percentdam, 3);
+	prt_num(COL_BONUS, 11, "+ To AC     " CLR_L_BLUE, p_ptr->dis_to_a, 3);
+	prt_num(COL_BONUS, 12, "  Base AC   " CLR_L_BLUE, p_ptr->dis_ac, 3);
 
 
 	/*** Level, experience, gold ***/
 
-	prt_num("Level      ", (int)p_ptr->lev, COL_VALUE, 9, CLR_L_GREEN, 9);
+	prt_num(COL_VALUE, 9, "Level      " CLR_L_GREEN, (int)p_ptr->lev, 9);
 
-	prt_num("Experience ", p_ptr->exp, COL_VALUE, 10,
-    	(p_ptr->exp >= p_ptr->max_exp) ? CLR_L_GREEN : CLR_YELLOW, 9);
-	prt_num("Max Exp    ", p_ptr->max_exp, COL_VALUE, 11, CLR_L_GREEN, 9);
+	if (p_ptr->exp >= p_ptr->max_exp)
+	{
+		prt_num(COL_VALUE, 10, "Experience " CLR_L_GREEN, p_ptr->exp, 9);
+	}
+	else
+	{
+		prt_num(COL_VALUE, 10, "Experience " CLR_YELLOW, p_ptr->exp, 9);
+	}
+
+	prt_num(COL_VALUE, 11, "Max Exp    " CLR_L_GREEN, p_ptr->max_exp, 9);
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 	{
-		put_fstr(COL_VALUE, 12, "Exp to Adv.");
-		put_fstr(COL_VALUE + 11, 12, CLR_L_GREEN "       *****");
+		put_fstr(COL_VALUE, 12, "Exp to Adv." CLR_L_GREEN "       *****");
 	}
 	else if (toggle_xp)
 	{
 		/* Print the amount of xp until next level */
-		prt_num("Exp to Adv.",
+		prt_num(COL_VALUE, 12, "Exp to Adv." CLR_L_GREEN,
 				(long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L
-					   - (long)p_ptr->exp), COL_VALUE, 12, CLR_L_GREEN, 9);
+					   - (long)p_ptr->exp), 9);
 	}
 	else
 	{
 		/* Print the total xp required for next level */
-		prt_num("Exp to Adv.",
-				(long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L),
-				COL_VALUE, 12, CLR_L_GREEN, 9);
+		prt_num(COL_VALUE, 12, "Exp to Adv." CLR_L_GREEN,
+				(long)(player_exp[p_ptr->lev - 1] * p_ptr->expfact / 100L), 9);
 	}
 
 
-	prt_num("Gold       ", p_ptr->au, COL_VALUE, 13, CLR_L_GREEN, 9);
+	prt_num(COL_VALUE, 13, "Gold       " CLR_L_GREEN, p_ptr->au, 9);
 
 
 	/*** Hitpoints/spellpoints ***/
 
-	prt_num("Max Hit Points", p_ptr->mhp, COL_LIFE, 9, CLR_L_GREEN, 5);
+	prt_num(COL_LIFE, 9, "Max Hit Points" CLR_L_GREEN, p_ptr->mhp, 5);
 
 	if (p_ptr->chp >= p_ptr->mhp)
 	{
-		attr = CLR_L_GREEN;
+		prt_num(COL_LIFE, 10, "Cur Hit Points" CLR_L_GREEN, p_ptr->chp, 5);
 	}
 	else if (p_ptr->chp > (p_ptr->mhp * hitpoint_warn) / 10)
 	{
-		attr = CLR_YELLOW;
+		prt_num(COL_LIFE, 10, "Cur Hit Points" CLR_YELLOW, p_ptr->chp, 5);
 	}
 	else
 	{
-		attr = CLR_RED;
+		prt_num(COL_LIFE, 10, "Cur Hit Points" CLR_RED, p_ptr->chp, 5);
 	}
 
-	prt_num("Cur Hit Points", p_ptr->chp, COL_LIFE, 10, attr, 5);
-
-	prt_num("Max SP (Mana) ", p_ptr->msp, COL_LIFE, 11, CLR_L_GREEN, 5);
+	prt_num(COL_LIFE, 11, "Max SP (Mana) " CLR_L_GREEN, p_ptr->msp, 5);
 
 	if (p_ptr->csp >= p_ptr->msp)
 	{
-		attr = CLR_L_GREEN;
+		prt_num(COL_LIFE, 12, "Cur SP (Mana) " CLR_L_GREEN, p_ptr->csp, 5);
 	}
 	else if (p_ptr->csp > (p_ptr->msp * hitpoint_warn) / 10)
 	{
-		attr = CLR_YELLOW;
+		prt_num(COL_LIFE, 12, "Cur SP (Mana) " CLR_YELLOW, p_ptr->csp, 5);
 	}
 	else
 	{
-		attr = CLR_RED;
+		prt_num(COL_LIFE, 12, "Cur SP (Mana) " CLR_RED, p_ptr->csp, 5);
 	}
-
-	prt_num("Cur SP (Mana) ", p_ptr->csp, COL_LIFE, 12, attr, 5);
 }
 
 
