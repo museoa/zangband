@@ -3544,7 +3544,6 @@ static void a_m_aux_4(object_type *o_ptr)
 		case TV_FIGURINE:
 		{
 			int i = 1;
-			int check;
 
 			monster_race *r_ptr;
 
@@ -3554,17 +3553,16 @@ static void a_m_aux_4(object_type *o_ptr)
 				i = randint1(max_r_idx - 1);
 
 				r_ptr = &r_info[i];
-
-				check = (p_ptr->depth < r_ptr->level) ? (r_ptr->level - p_ptr->depth) : 0;
+				
+				/* Prefer less out-of-depth monsters */
+				if ((object_level < r_ptr->level) && 
+					!one_in_(r_ptr->level - object_level)) continue;
 
 				/* Ignore dead monsters */
 				if (!r_ptr->rarity) continue;
 
 				/* No uniques */
 				if (r_ptr->flags1 & RF1_UNIQUE) continue;
-
-				/* Prefer less out-of-depth monsters */
-				if (randint0(check)) continue;
 
 				break;
 			}
@@ -3576,8 +3574,8 @@ static void a_m_aux_4(object_type *o_ptr)
 
 			if (cheat_peek)
 			{
-				msg_format("Figurine of %s, depth +%d%s",
-							  r_name + r_ptr->name, check - 1,
+				msg_format("Figurine of %s, %s",
+							  r_name + r_ptr->name,
 							  !(o_ptr->ident & IDENT_CURSED) ? "" : " {cursed}");
 			}
 
