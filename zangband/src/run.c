@@ -337,6 +337,18 @@ static int check_interesting(void)
 	return (FALSE);
 }
 
+static int valid_dir_mask[10] = {
+/* 0 */ 0,
+/* 1 */ RUN_NW | RUN_W | RUN_SW | RUN_S | RUN_SE,
+/* 2 */ RUN_SW | RUN_S | RUN_SE,
+/* 3 */ RUN_SW | RUN_S | RUN_SE | RUN_E | RUN_NE,
+/* 4 */ RUN_NW | RUN_W | RUN_SW,
+/* 5 */ 0,
+/* 6 */ RUN_SE | RUN_E | RUN_NE,
+/* 7 */ RUN_NE | RUN_N | RUN_NW | RUN_W | RUN_SW,
+/* 8 */ RUN_NE | RUN_N | RUN_NW,
+/* 9 */ RUN_SE | RUN_E | RUN_NE | RUN_N | RUN_NW
+};
 
 /*
  * The corridor running algorithm.
@@ -367,33 +379,7 @@ static void run_follow(void)
 	}
 
 	/* Add all possibly-legal dirs depending on previous direction */
-	switch (p_ptr->run.old_dir)
-	{
-	case 1:
-		valid_dirs = RUN_NW | RUN_W | RUN_SW | RUN_S | RUN_SE;
-		break;
-	case 2:
-		valid_dirs = RUN_SW | RUN_S | RUN_SE;
-		break;
-	case 3:
-		valid_dirs = RUN_SW | RUN_S | RUN_SE | RUN_E | RUN_NE;
-		break;
-	case 4:
-		valid_dirs = RUN_NW | RUN_W | RUN_SW;
-		break;
-	case 6:
-		valid_dirs = RUN_SE | RUN_E | RUN_NE;
-		break;
-	case 7:
-		valid_dirs = RUN_NE | RUN_N | RUN_NW | RUN_W | RUN_SW;
-		break;
-	case 8:
-		valid_dirs = RUN_NE | RUN_N | RUN_NW;
-		break;
-	case 9:
-		valid_dirs = RUN_SE | RUN_E | RUN_NE | RUN_N | RUN_NW;
-		break;
-	}
+	valid_dirs = valid_dir_mask[p_ptr->run.old_dir];
 
 	/* Do magic */
 	for (i = 0; i < NUM_ELEMENTS(run_checks); i++)
@@ -479,7 +465,9 @@ static void run_open(void)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
-	int dir;
+	int dir = p_ptr->run.old_dir;
+	int dx = ddx[dir];
+	int dy = ddy[dir];
 
 	if (check_interesting())
 	{
@@ -487,9 +475,9 @@ static void run_open(void)
 		return;
 	}
 
-	dir = p_ptr->run.cur_dir = p_ptr->run.old_dir;
+	p_ptr->run.cur_dir = dir;
 
-	if (see_wall(px + ddx[dir], py + ddy[dir]))
+	if (see_wall(px + dx, py + dy))
 	{
 		p_ptr->run.mode = RUN_MODE_FINISH;
 		return;
