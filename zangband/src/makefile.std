@@ -249,7 +249,8 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib $(PYLIB)
 #         -D"USE_TRANSPARENCY" -D"USE_XPJ" -D"USE_X11" -D"USE_XAW" -D"USE_LSL"
 #
 #		 
-#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl -lvga $(PYLIB)
+#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl -lvga $(PYLIB) \
+#       -lXaw -lXext -lSM -lICE -lXmu -lXt
 
 ##
 ## Variation -- OpenBSD 
@@ -490,10 +491,10 @@ z-virt.o: z-virt.c $(HDRS) z-virt.h z-util.h
 
 ifdef PYTHON
 
-$(POBJS): %.o: %.c $(INCS)
+$(POBJS): %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $< $(PYFLAGS)
 
-$(PSRCS): %_wrap.c: %.i
+$(PSRCS): %_wrap.c: %.i $(INCS)
 	$(SWIG) $(SFLAGS) $<
 
 endif
