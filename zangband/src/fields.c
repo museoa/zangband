@@ -4170,11 +4170,7 @@ bool field_action_magetower2(field_type *f_ptr, vptr input)
 	{
 		cost = f_ptr->data[1] * *factor;
 
-		if (test_gold(&cost) && building_magetower(*factor, FALSE))
-		{
-			/* Subtract off cost */
-            p_ptr->au -= cost;
-        }
+		building_magetower(*factor, FALSE);
 
         /* Hack, use factor as a return value */
         *factor = TRUE;
