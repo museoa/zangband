@@ -1,0 +1,34 @@
+$#include "angband.h"
+$#include "script.h"
+
+typedef char* cptr;
+typedef int errr;
+typedef int sint;
+
+/*
+ * The field structure.
+ *
+ * Fields will be used to create a variety of effects from
+ * the ability to place traps on _all_ terrains (not just 
+ * dungeon floor), to the nightmare mode automatic corpse raising.
+ *
+ * The new building / store code will use this structure.
+ *
+ */
+struct field_type
+{
+	byte f_attr;	/* attribute */
+	char f_char;	/* character */
+
+	s16b t_idx;	/* field type index */
+
+	s16b fy;	/* Y location on map */
+	s16b fx;	/* X location on map */
+
+	u16b info;	/* quick access flags */
+
+	/* Storage space for the actions to interact with. */
+	byte data[8];
+
+	s16b counter;	/* Counter for timed effects */
+};
