@@ -17,7 +17,7 @@ function restore_mana()
 	if player.csp < player.msp then
 		player.csp = player.msp
 		player.csp_frac = 0
-		msgf("Your feel your head clear.")
+		msgf("You feel your head clear.")
 		player.redraw = bOr(player.redraw, PR_MANA)
 		player.window = bOr(player.window, PW_PLAYER)
 		player.window = bOr(player.window, PW_SPELL)
