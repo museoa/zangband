@@ -2495,11 +2495,6 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 
 			chance2 = chance - cur_dis;
 
-			/* Drop (or break) near that location */
-			drop_near(i_ptr, breakage_chance(i_ptr), x, y);
-
-			make_noise(3);
-
 			/* Sleeping, visible monsters are easier to hit. -LM- */
 			if ((m_ptr->csleep) && (m_ptr->ml))
 				sleeping_bonus = 5 + p_ptr->lev / 5;
@@ -2631,6 +2626,11 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 
 				/* Modify the damage */
 				tdam = mon_damage_mod(m_ptr, tdam, 0);
+					
+				/* Drop (or break) near that location (i_ptr is now invalid) */
+				drop_near(i_ptr, breakage_chance(i_ptr), x, y);
+
+				make_noise(3);
 
 				/* Complex message */
 				if (p_ptr->wizard)
@@ -2672,7 +2672,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 		}
 	}
 
-	/* Drop (or break) near that location */
+	/* Drop (or break) near that location (i_ptr is now invalid) */
 	drop_near(i_ptr, 0, x, y);
 
 	make_noise(3);
@@ -2821,6 +2821,8 @@ void do_cmd_throw_aux(int mult)
 
 	u32b f1, f2, f3;
 	cptr q, s;
+	
+	bool potion;
 
 	cave_type *c_ptr;
 
@@ -2996,9 +2998,6 @@ void do_cmd_throw_aux(int mult)
 				terrain_bonus -= r_ptr->ac / 4;
 			}
 
-			/* The item hits the monster */
-			throw_item_effect(q_ptr, TRUE, FALSE, x, y);
-
 			/* Look to see if we've spotted a mimic */
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
@@ -3120,6 +3119,12 @@ void do_cmd_throw_aux(int mult)
 							   tdam, m_ptr->hp);
 				}
 
+				/* Remember if the object is a potion or not */
+				potion = object_is_potion(q_ptr);
+				
+				/* The item hits the monster (q_ptr is now invalid) */
+				throw_item_effect(q_ptr, TRUE, FALSE, x, y);
+
 				/* Hit the monster, check for death */
 				if (mon_take_hit(c_ptr->m_idx, tdam, &fear, note_dies))
 				{
@@ -3133,8 +3138,7 @@ void do_cmd_throw_aux(int mult)
 					message_pain(c_ptr->m_idx, tdam);
 
 					/* Anger the monster */
-					if ((tdam > 0) && !object_is_potion(q_ptr))
-						anger_monster(m_ptr);
+					if ((tdam > 0) && !potion) anger_monster(m_ptr);
 
 					/* Take note */
 					if (fear && m_ptr->ml)
@@ -3148,13 +3152,18 @@ void do_cmd_throw_aux(int mult)
 					}
 				}
 			}
+			else
+			{
+				/* The item hits the monster (q_ptr is now invalid) */
+				throw_item_effect(q_ptr, TRUE, FALSE, x, y);
+			}
 
 			/* Stop looking */
 			return;
 		}
 	}
 
-	/* The item hits the ground */
+	/* The item hits the ground (q_ptr is now invalid) */
 	throw_item_effect(q_ptr, FALSE, hit_wall, x, y);
 }
 
