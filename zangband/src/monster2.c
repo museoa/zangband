@@ -2267,7 +2267,7 @@ bool alloc_horde(int x, int y)
  *
  * Use "slp" to choose the initial "sleep" status
  */
-bool alloc_monster(int dis, bool slp)
+bool alloc_monster(int dis, bool slp, int delta_level)
 {
 	int py = p_ptr->py;
 	int px = p_ptr->px;
@@ -2319,7 +2319,7 @@ bool alloc_monster(int dis, bool slp)
 #endif /* MONSTER_HORDES */
 
 		/* Attempt to place the monster, allow groups */
-		if (place_monster(x, y, slp, TRUE, 0)) return (TRUE);
+		if (place_monster(x, y, slp, TRUE, delta_level)) return (TRUE);
 
 #ifdef MONSTER_HORDES
 	}

@@ -996,7 +996,7 @@ static void process_world(void)
 	if (one_in_(MAX_M_ALLOC_CHANCE))
 	{
 		/* Make a new monster */
-		(void)alloc_monster(MAX_SIGHT + 5, FALSE);
+		(void)alloc_monster(MAX_SIGHT + 5, FALSE, 0);
 	}
 
 	/* Hack -- Check for creature regeneration */

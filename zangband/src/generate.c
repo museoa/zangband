@@ -407,6 +407,8 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 	bool empty_level = FALSE;
 	bool cavern = FALSE;
 
+	int delta_level;
+
 	int lq_count;
 
 	dun_data dun_body;
@@ -538,7 +540,6 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 
 	/* No "crowded" rooms yet */
 	dun->crowded = 0;
-
 
 	/* No rooms yet */
 	dun->cent_n = 0;
@@ -735,10 +736,7 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 	/* Place quest monsters in the dungeon */
 	trigger_quest_create(QC_DUN_MONST, NULL);
 
-	/* Basic "amount" */
-	k = (p_ptr->depth / 3);
-	if (k > 10) k = 10;
-	if (k < 2) k = 2;
+	
 
 	/* Pick a base number of monsters */
 	i = MIN_M_ALLOC_LEVEL;
@@ -760,11 +758,23 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 	}
 
 	i += randint1(8);
+	
+	/* Basic "amount" */
+	k = (p_ptr->depth / 3);
+	if (k > 10) k = 10;
+	if (k < 2) k = 2;
 
 	/* Put some monsters in the dungeon */
 	for (i = i + k; i > 0; i--)
 	{
-		(void)alloc_monster(0, TRUE);
+		/*
+		 * The more boring the dungeon is right now,
+		 * the more out of depth to pick monsters.
+		 */
+		delta_level = (dun_ptr->rating - 100) / 10;
+		if (delta_level < 0) delta_level = 0;
+		
+		(void)alloc_monster(0, TRUE, delta_level);
 	}
 
 	/* Place some traps in the dungeon */
@@ -802,8 +812,7 @@ static bool cave_gen(const dun_gen_type *d_type_ptr)
 	}
 
 	/* Determine the character location */
-	if (!new_player_spot())
-		return FALSE;
+	if (!new_player_spot()) return FALSE;
 
 	return TRUE;
 }

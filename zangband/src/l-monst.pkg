@@ -561,7 +561,6 @@ extern void update_mon(int m_idx, bool full);
 extern void update_monsters(bool full);
 extern bool place_monster(int x, int y, bool slp, bool grp, int deltalevel);
 extern bool alloc_horde(int x, int y);
-extern bool alloc_monster(int dis, bool slp);
 extern bool summon_specific(int who, int x1, int y1, int lev, int type, bool group, bool friendly, bool pet);
 extern bool summon_named_creature(int x1, int y1, int r_idx, bool slp, bool group_ok, bool pet);
 extern bool multiply_monster(int m_idx, bool clone, bool friendly, bool pet);

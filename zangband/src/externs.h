@@ -513,7 +513,7 @@ extern bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
 							  bool friendly, bool pet, bool summon);
 extern bool place_monster(int x, int y, bool slp, bool grp, int deltalevel);
 extern bool alloc_horde(int x, int y);
-extern bool alloc_monster(int dis, bool slp);
+extern bool alloc_monster(int dis, bool slp, int delta_level);
 extern bool summon_specific(int who, int x1, int y1, int lev, int type,
 							bool group, bool friendly, bool pet);
 extern bool summon_named_creature(int x1, int y1, int r_idx, bool slp,
