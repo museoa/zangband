@@ -2337,6 +2337,9 @@ static bool player_birth_aux_1(void)
 			r_idx = get_mon_num(level);
 			r_ptr = &r_info[r_idx];
 
+			/* Look at the monster - only "hard" monsters for quests */
+			if (r_ptr->flags1 & (RF1_NEVER_MOVE | RF1_FRIENDS)) continue;
+
 			/* Save the index if the monster is deeper than current monster */
 			if (!q_ptr->r_idx || (r_info[r_idx].level > r_info[q_ptr->r_idx].level))
 			{
