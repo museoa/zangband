@@ -750,6 +750,24 @@ proc NSInitStartup::InitStartup {} {
 	}
 		
 	Source term.tcl
+	
+	# Get term colours
+	Global term_attr {"TERM_DARK" \
+					"TERM_WHITE" \
+					"TERM_SLATE" \
+					"TERM_ORANGE" \
+					"TERM_RED" \
+					"TERM_GREEN" \
+					"TERM_BLUE" \
+					"TERM_UMBER" \
+					"TERM_L_DARK" \
+					"TERM_L_WHITE" \
+					"TERM_VIOLET" \
+					"TERM_YELLOW" \
+					"TERM_L_RED" \
+					"TERM_L_GREEN" \
+					"TERM_L_BLUE" \
+					"TERM_L_UMBER"}
 
 	# If a new character is created, this is set to 1
 	Global isNewGame 0
@@ -759,9 +777,6 @@ proc NSInitStartup::InitStartup {} {
 	
 	NSValueManager::InitModule
 	
-	# Turn on keyboard	
-#	Source keyboard.tcl
-
 	InitStartupScreen
 	
 	return

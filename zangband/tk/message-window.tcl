@@ -206,7 +206,7 @@ proc NSMessageWindow::InitWindow {oop} {
 	}	
 
 	# Support for colored messages
-	foreach attr [angband info term_attr] {
+	foreach attr [Global term_attr] {
 		$text tag configure $attr -foreground [Value $attr]
 	}
 
