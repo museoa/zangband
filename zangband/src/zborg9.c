@@ -1627,7 +1627,10 @@ static void borg_parse_aux(cptr msg, int len)
 	if ((prefix(msg, "The jungle is impassable.") && !bp_ptr->status.confused))
 	{
 		my_need_alter = TRUE;
-		goal = 0;
+
+		/* pick a new flow */
+		borg_flow_goal_wild();
+
 		return;
 	}
 

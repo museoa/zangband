@@ -27,14 +27,15 @@
 #define GOAL_NONE   0			/* No goal */
 #define GOAL_KILL   1			/* Monsters */
 #define GOAL_TAKE   2			/* Objects */
-#define GOAL_MISC   3			/* Stores */
-#define GOAL_DARK   4			/* Exploring */
-#define GOAL_XTRA   5			/* Searching */
-#define GOAL_BORE   6			/* Leaving */
-#define GOAL_FLEE   7			/* Fleeing */
+#define GOAL_FLEE   3			/* Fleeing */
+#define GOAL_SHOP   4			/* Stores */
+#define GOAL_DARK   5			/* Exploring */
+#define GOAL_XTRA   6			/* Searching */
+#define GOAL_BORE   7			/* Leaving */
 #define GOAL_TOWN	8			/* Town Special Grid */
 #define GOAL_FEAT	9			/* Getting of painful feat */
 #define GOAL_CAVE	10			/* Reach a dungeon */
+#define GOAL_MAX	11
 
 /*
  * Flags for the "info" field of grids

@@ -3691,8 +3691,12 @@ static s32b borg_power_aux3(void)
 			borg_race != RACE_HALF_GIANT &&
 			borg_race != RACE_SKELETON) multibonus += 1;
 
-		/* Half Ogres get resist Dark  */
+		/*
+		 * Hack.  Not Light and Dark because shadow cloaks or rings of light
+		 * and dark get too much of a boost
+		 */
 		if (KN_FLAG(l_ptr, TR_RES_DARK) &&
+			!KN_FLAG(l_ptr, TR_RES_LITE) &&
 			borg_race != RACE_HALF_OGRE &&
 			borg_race != RACE_NIBELUNG &&
 			borg_race != RACE_VAMPIRE &&
@@ -3701,6 +3705,7 @@ static s32b borg_power_aux3(void)
 
 		/* Elves get resist Lite  */
 		if (KN_FLAG(l_ptr, TR_RES_LITE) &&
+			!KN_FLAG(l_ptr, TR_RES_DARK) &&
 			borg_race != RACE_ELF &&
 			borg_race != RACE_SPRITE &&
 			borg_race != RACE_HIGH_ELF) multibonus += 1;

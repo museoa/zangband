@@ -1571,7 +1571,7 @@ bool borg_think_store(void)
 	borg_gold = p_ptr->au;
 
 	/* Clear goal */
-	goal = 0;
+	goal = GOAL_NONE;
 
 	/* Retrieve the correct place */
 	for (i = 0; i < borg_shop_num; i++)
@@ -1781,7 +1781,7 @@ static bool borg_think_dungeon_brave(void)
 	/*** Exploration ***/
 
 	/* Continue flowing (see below) */
-	if (borg_flow_old(GOAL_MISC)) return (TRUE);
+	if (borg_flow_old(GOAL_SHOP)) return (TRUE);
 
 	/* Continue flowing (see below) */
 	if (borg_flow_old(GOAL_DARK)) return (TRUE);
@@ -2190,20 +2190,10 @@ bool borg_think_dungeon(void)
 
 	/*** Exploration ***/
 
-	/* Continue flowing (see below) */
-	if (borg_flow_old(GOAL_MISC)) return (TRUE);
-
-	/* Continue flowing (see below) */
-	if (borg_flow_old(GOAL_DARK)) return (TRUE);
-
-	/* Continue flowing (see below) */
-	if (borg_flow_old(GOAL_XTRA)) return (TRUE);
-
-	/* Continue flowing (see below) */
-	if (borg_flow_old(GOAL_BORE)) return (TRUE);
-
-	/* Continue flowing (see below) */
-	if (borg_flow_old(GOAL_TOWN)) return (TRUE);
+	/* Continue flowing for low importance stuff */
+	if (goal >= GOAL_SHOP &&
+		goal < GOAL_MAX &&
+		borg_flow_old(goal)) return (TRUE);
 
 	/*** Explore the dungeon ***/
 

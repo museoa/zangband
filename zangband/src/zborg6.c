@@ -1314,7 +1314,7 @@ bool borg_flow_old(int why)
 		}
 
 		/* Cancel goal */
-		goal = 0;
+		goal = GOAL_NONE;
 	}
 
 	/* Nothing to do */
@@ -1355,18 +1355,7 @@ static bool borg_flow_block(int x, int y, cptr reason, int aim)
 		y = c_y;
 
 	/* No need to go where you already are */
-	if (x == c_x && y == c_y)
-	{
-		/* Unflag */
-		goal = GOAL_NONE;
-		goal_town = -1;
-		goal_shop = -1;
-		goal_dungeon = -1;
-		goal_explore_x = -1;
-		goal_explore_y = -1;
-
-		return (FALSE);
-	}
+	if (x == c_x && y == c_y) return (FALSE);
 
 	/* Clear the flow codes */
 	borg_flow_clear();
@@ -1402,6 +1391,9 @@ bool borg_find_town(void)
 
 	/* Buying doesn't really help you now, unless you have loads */
 	if (borg_prepared_depth() > 20 && borg_gold < 100000) return (FALSE);
+
+	/* Leave if there is a goal already */
+	if (goal && goal != GOAL_TOWN) return (FALSE);
 
 	/* Remember previous effort */
 	if (goal == GOAL_TOWN)
@@ -1458,6 +1450,9 @@ bool borg_find_town(void)
 		return (TRUE);
 	}
 
+	goal = GOAL_NONE;
+	goal_town = -1;
+
 	/* The borg is in that town */
 	return (FALSE);
 }
@@ -1478,7 +1473,7 @@ bool borg_find_dungeon(void)
 		(bp_ptr->hour < 6 || bp_ptr->hour > 17)) return (FALSE);
 
 	/* Not when the borg is exploring the wilderness */
-	if (goal && goal == GOAL_DARK) return (FALSE);
+	if (goal && goal != GOAL_CAVE) return (FALSE);
 
 	/* Find the target depth */
 	p = borg_prepared_depth();
@@ -1561,6 +1556,9 @@ bool borg_find_dungeon(void)
 		/* Happy */
 		return (TRUE);
 	}
+
+	goal_dungeon = -1;
+	goal = GOAL_NONE;
 
 	return (FALSE);
 }
@@ -1862,10 +1860,10 @@ bool borg_flow_shop_entry(int i)
 	borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
 
 	/* Attempt to Commit the flow */
-	if (!borg_flow_commit("shop", GOAL_MISC)) return (FALSE);
+	if (!borg_flow_commit("shop", GOAL_SHOP)) return (FALSE);
 
 	/* Take one step */
-	if (!borg_flow_old(GOAL_MISC)) return (FALSE);
+	if (!borg_flow_old(GOAL_SHOP)) return (FALSE);
 
 	/* Success */
 	return (TRUE);
@@ -3327,7 +3325,7 @@ static bool borg_flow_dark_2(void)
 	if (!borg_flow_old(GOAL_DARK)) return (FALSE);
 
 	/* Forget goal */
-	goal = 0;
+	goal = GOAL_NONE;
 
 	/* Success */
 	return (TRUE);
@@ -3801,9 +3799,67 @@ bool borg_flow_dark_wild(void)
 		return (TRUE);
 	}
 
+	goal = GOAL_NONE;
+	goal_explore_x = -1;
+	goal_explore_y = -1;
+
 	/* This flow is not possible */
 	return (FALSE);
 }
+
+
+/* Reset the flow in the wilderness, based on a goal */
+void borg_flow_goal_wild(void)
+{
+	int x, y;
+	cptr reason;
+
+	if (bp_ptr->depth) return;
+
+	switch(goal)
+	{
+		case GOAL_SHOP:
+		{
+			x = borg_shops[goal_shop].x;
+			y = borg_shops[goal_shop].y;
+
+			reason = "reflowing to a shop";
+
+			break;
+		}
+		case GOAL_DARK:
+		{
+			x = goal_explore_x;
+			y = goal_explore_y;
+
+			reason = "reflowing the dark";
+
+			break;
+		}
+		case GOAL_TOWN:
+		{
+			x = borg_towns[goal_town].x;
+			y = borg_towns[goal_town].y;
+
+			reason = "reflowing to a town";
+
+			break;
+		}
+		case GOAL_CAVE:
+		{
+			x = borg_dungeons[goal_dungeon].x;
+			y = borg_dungeons[goal_dungeon].y;
+
+			reason = "reflowing to a dungeon";
+
+			break;
+		}
+		default: return;
+	}
+
+	(void)borg_flow_block(x, y, reason, goal);
+}
+
 
 /*
  * Prepare to "flow" towards "interesting" grids
