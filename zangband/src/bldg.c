@@ -1548,7 +1548,8 @@ bool building_healer(void)
 }
 
 
-static int collect_magetower_links(int n, int *link_p, int *link_w, s32b *cost)
+static int collect_magetower_links(int n, int *link_p, int *link_w, s32b *cost,
+                                  int factor)
 {
 	place_type *pl_ptr = &place[p_ptr->place_num];
 	
@@ -1581,7 +1582,8 @@ static int collect_magetower_links(int n, int *link_p, int *link_w, s32b *cost)
             {
                 link_p[max_link] = i;
                 link_w[max_link] = j;
-				cost[max_link] = distance(x, y, pl_ptr->x, pl_ptr->y) * 250;
+                cost[max_link] = distance(x, y, pl_ptr->x, pl_ptr->y) *
+                    factor * 2;
                 max_link++;
 
                 /* Only collect 1 link per city */
@@ -1593,7 +1595,7 @@ static int collect_magetower_links(int n, int *link_p, int *link_w, s32b *cost)
     return max_link;
 }
 
-bool building_magetower(bool display)
+bool building_magetower(int factor, bool display)
 {
 	store_type *st_ptr;
    
@@ -1613,7 +1615,7 @@ bool building_magetower(bool display)
 	if (!st_ptr) return (FALSE);
 
     /* Collect links */
-    max_link = collect_magetower_links(24, link_p, link_w, cost);
+    max_link = collect_magetower_links(24, link_p, link_w, cost, factor);
 
     if (display)
     {

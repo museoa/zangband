@@ -863,7 +863,7 @@ extern bool compare_weapons(void);
 extern bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac);
 extern void building_recharge(s32b cost);
 extern bool building_healer(void);
-extern bool building_magetower(bool display);
+extern bool building_magetower(int factor, bool display);
 extern void gamble_help(void);
 extern void gamble_in_between(void);
 extern void gamble_craps(void);

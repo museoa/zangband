@@ -4108,7 +4108,7 @@ bool field_action_magetower1(field_type *f_ptr, vptr input)
 	store_type *st_ptr;
 
     /* Display options */
-    building_magetower(TRUE);
+    building_magetower(factor, TRUE);
 	
 	st_ptr = get_current_store();
 	
@@ -4170,7 +4170,7 @@ bool field_action_magetower2(field_type *f_ptr, vptr input)
 	{
 		cost = f_ptr->data[1] * *factor;
 
-		if (test_gold(&cost) && building_magetower(FALSE))
+		if (test_gold(&cost) && building_magetower(*factor, FALSE))
 		{
 			/* Subtract off cost */
             p_ptr->au -= cost;
