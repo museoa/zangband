@@ -4649,7 +4649,73 @@ static void build_type20(int bx0, int by0)
 }
 
 
-#define ROOM_TYPES	20
+/*
+ * Type 21 -- Crypt Mk II.
+ */
+static void build_type21(int bx0, int by0)
+{
+	int y1, x1;
+	int y2, x2, yval, xval;
+	bool light;
+		
+	int i;
+	
+	/* Try to allocate space for room. */
+	if (!room_alloc(25, 11, FALSE, bx0, by0, &xval, &yval)) return;
+
+	/* Choose lite or dark */
+	light = (p_ptr->depth <= randint1(25));
+
+	/* Large room */
+	y1 = yval - 4;
+	y2 = yval + 4;
+	x1 = xval - 11;
+	x2 = xval + 11;
+	
+	
+	/* Generate new room */
+	generate_room(x1 - 1, y1 - 1, x1 + 21, y2 + 1, light);
+	
+	/* Draw the chambers */
+	for (i = 0; i < 3; i++)
+	{
+		/* Top room */
+	
+		/* Generate outer walls */
+		generate_draw(x1 - 1 + i * 8, y1 - 1, x1 + 5 + i * 8, y1 + 3, FEAT_WALL_OUTER);
+		
+		/* Generate inner floors */
+		generate_fill(x1 + i * 8, y1, x1 + 4 + i * 8, y1 + 2, FEAT_FLOOR);
+		
+		
+		/* Bottom room */
+
+		/* Generate outer walls */
+		generate_draw(x1 - 1 + i * 8, y2 - 3, x1 + 5 + i * 8, y2 + 1, FEAT_WALL_OUTER);
+		
+		/* Generate inner floors */
+		generate_fill(x1 + i * 8, y2 - 2, x1 + 4 + i * 8, y2, FEAT_FLOOR);
+	}
+	
+	/*
+	 * Hack - fill middle area with FEAT_WALL_INNER
+	 * so it doesn't get disturbed.
+	 */
+	generate_draw(x1, yval - 1, x1 + 20, yval + 1, FEAT_WALL_INNER);
+	
+	/* Draw the connecting tunnels */
+	for (i = 0; i < 3; i++)
+	{
+		generate_line(x1 + i * 8 + 2, y1 + 3, x1 + i * 8 + 2, y2 - 3, FEAT_FLOOR);
+	}
+
+	
+	/* Finally - connect the chambers */
+	generate_line(x1 - 1, yval, x1 + 21, yval, FEAT_FLOOR);
+}
+
+
+#define ROOM_TYPES	21
 
 typedef void (*room_build_type)(int, int);
 
@@ -4674,7 +4740,8 @@ room_build_type room_list[ROOM_TYPES] =
 	build_type17,
 	build_type18,
 	build_type19,
-	build_type20
+	build_type20,
+	build_type21
 };
 
 
