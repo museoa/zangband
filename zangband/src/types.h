@@ -460,7 +460,7 @@ struct cave_type
 
 	s16b m_idx;		/* Monster in this grid */
 
-	s16b f_idx;		/* Field in this grid */
+	s16b fld_idx;		/* Field in this grid */
 
 	byte mimic;		/* Feature to mimic */
 
@@ -752,8 +752,6 @@ struct object_type
 
 	s16b held_m_idx;	/* Monster holding us (if any) */
 	
-	s16b att_f_idx;		/* Field affect attached (if any) */
-
 #ifdef USE_SCRIPT
 	PyObject *python;
 #endif /* USE_SCRIPT */
@@ -820,8 +818,6 @@ struct monster_type
 	bool ml;			/* Monster is "visible" */
 
 	s16b hold_o_idx;	/* Object being held (if any) */
-	
-	s16b att_f_idx;	/* Magic affect attached to monster */
 
 #ifdef WDT_TRACK_OPTIONS
 
@@ -841,6 +837,19 @@ struct monster_type
 #endif /* DRS_SMART_OPTIONS */
 
 };
+
+/* Forward declare */
+typedef struct field_type field_type;
+
+/*
+ * A function pointer to an action.  The function takes two values:
+ * 1) the field that is undergoing the action.
+ * 2) a pointer to a structure cast to void that contains the
+ *	information the action needs to complete its job.
+ */
+typedef void (*field_action_type)(field_type *f_ptr, void*);
+
+
 
 /*
  * The thaumaturgical list of fields.
@@ -865,7 +874,7 @@ struct field_thaum
 	
 	s16b count_init;		/* Counter for timed effects */
 
-	s16b action[FIELD_ACTION_MAX]; /* Function indexs for the actions */
+	field_action_type action[FIELD_ACTION_MAX]; /* Function indexs for the actions */
 	
 	/* Storage space for the actions to interact with. */
 	byte data_init[8];
@@ -874,17 +883,6 @@ struct field_thaum
 	
 	char *name;			/* The name of the field */
 };
-
-
-typedef struct field_type field_type;
-
-/*
- * A function pointer to an action.  The function takes two values:
- * 1) the field that is undergoing the action.
- * 2) a pointer to a structure cast to void that contains the
- *	information the action needs to complete its job.
- */
-typedef void (*field_action_type)(field_type *f_ptr, void*);
 
 
 /*
@@ -915,10 +913,6 @@ struct field_type
 
 	s16b fy;			/* Y location on map */
 	s16b fx;			/* X location on map */
-	
-	s16b att_o_idx;			/* Attached to an object */
-
-	s16b att_m_idx;			/* Attached to a monster */
 
 	s16b next_f_idx;		/* Pointer to next field in list */
 	
@@ -936,6 +930,20 @@ struct field_type
 	byte priority;			/* LOS priority higher = more visible */
 };
 
+/*
+ * This is the type of the array that is used to parse t_info.txt
+ * It contains the functions fields call + the names of those functions.
+ * This means that an index to the array can be used to save what
+ * fields do (in field_thaum_type).
+ */
+
+typedef struct field_action field_action;
+
+struct field_action
+{
+field_action_type action;	/* The function to call */
+char *func;			/* The name of the function */
+};
 
 
 

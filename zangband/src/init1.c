@@ -2759,7 +2759,7 @@ static errr grab_one_action_flag(field_thaum *t_ptr, char *what)
 	{
 		if (streq(t, f_action[i].func))
 		{
-			t_ptr->action[location] = i;
+			t_ptr->action[location] = f_action[i].action;
 			return (0);
 		}
 	}

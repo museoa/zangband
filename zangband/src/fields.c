@@ -655,7 +655,7 @@ void field_prep(field_type *f_ptr, int t_idx)
 	for (i = 0; i < FIELD_ACTION_MAX; i++)
 	{
 		/* copy function pointers */
-		f_ptr->action[i] = f_action[t_ptr->action[i]].action;
+		f_ptr->action[i] = t_ptr->action[i];
 	}
 }
 
