@@ -103,6 +103,9 @@ struct term_map
 	
 	/* Monster flags */
 	byte m_flags;
+	
+	/* Rough measure of monster hp */
+	byte m_hp;
 };
 
 typedef struct map_block map_block;
@@ -127,10 +130,10 @@ struct map_block
 	
 	/* Monster flags */
 	byte m_flags;
+	
+	/* Monster hp (scaled) */
+	byte m_hp;
 #endif /* TERM_CAVE_MAP */
-
-	/* We need to save the flags to get the refcounting right. */
-	byte flags;
 
 	/* Borg-specific stuff */
 #ifdef ALLOW_BORG
@@ -148,6 +151,9 @@ struct map_block
 	byte detect;	/* Detection flags */
 	byte xtra;	/* search count */
 #endif /* ALLOW_BORG */
+
+	/* We need to save the flags to get the refcounting right. */
+	byte flags;
 };
 
 typedef map_block *map_blk_ptr;
