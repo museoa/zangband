@@ -18,7 +18,7 @@
 #include "rooms.h"
 
 
-int template_race;
+static int template_race;
 
 /*
  * Array of minimum room depths
@@ -2334,6 +2334,9 @@ static void build_type7(int by0, int bx0)
 		if (v_ptr->typ == 7) break;
 	}
 
+	/* No lesser vault found */
+	if (!v_ptr) return;
+
 	/* pick type of transformation (0-7) */
 	transno = rand_int(8);
 
@@ -2420,6 +2423,9 @@ static void build_type8(int by0, int bx0)
 		/* Accept the first greater vault */
 		if (v_ptr->typ == 8) break;
 	}
+
+	/* No greater vault found */
+	if (!v_ptr) return;
 
 	/* pick type of transformation (0-7) */
 	transno = rand_int(8);
@@ -4063,24 +4069,23 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 				cave[y2][x].feat = FEAT_FLOOR;
 			}
 
-			/* Select size of keep*/
+			/* Select size of keep */
 			t1 = randint(ysize / 3) + y1;
 			t2 = y2 - randint(ysize / 3);
 			t3 = randint(xsize / 3) + x1;
 			t4 = x2 - randint(xsize / 3);
 
-			/* Do outside areas*/
+			/* Do outside areas */
 
-			/* Above and below keep*/
+			/* Above and below keep */
 			build_recursive_room(x1 + 1, y1 + 1, x2 - 1, t1, power + 1);
 			build_recursive_room(x1 + 1, t2, x2 - 1, y2, power + 1);
 
-			/* Left and right of keep*/
+			/* Left and right of keep */
 			build_recursive_room(x1 + 1, t1 + 1, t3, t2 - 1, power + 3);
 			build_recursive_room(t4, t1 + 1, x2 - 1, t2 - 1, power + 3);
 
-			/* Make the keep itself:*/
-
+			/* Make the keep itself: */
 			x1 = t3;
 			x2 = t4;
 			y1 = t1;
@@ -4088,7 +4093,8 @@ static void build_recursive_room(int x1, int y1, int x2, int y2, int power)
 			xsize = x2 - x1;
 			ysize = y2 - y1;
 			power += 2;
-			/* Deliberate lack of a "break;" */
+
+			/* Fall through */
 		}
 		case 4:
 		{
