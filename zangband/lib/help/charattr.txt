@@ -973,7 +973,7 @@ High Mage     30+7  36+13 30+9   2    15/20       10+15  10+10
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: March 20, 2000
+Last update: February 19, 2001
 
 ***** Begin Hyperlinks
 ***** [1] birth.txt

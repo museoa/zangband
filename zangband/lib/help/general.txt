@@ -156,7 +156,7 @@ likely to contain bugs of varying significance.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: January 8, 2001
+Last update: February 19, 2001
 
 
 ***** Begin Hyperlinks
