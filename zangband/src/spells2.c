@@ -3654,8 +3654,8 @@ bool fire_ball(int typ, int dir, int dam, int rad)
 	if ((dir == 5) && target_okay())
 	{
 		flg &= ~(PROJECT_STOP);
-		tx = target_col;
-		ty = target_row;
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
 	}
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
@@ -3680,8 +3680,8 @@ bool teleport_swap(int dir)
 
 	if ((dir == 5) && target_okay())
 	{
-		tx = target_col;
-		ty = target_row;
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
 	}
 	else
 	{
@@ -3820,8 +3820,8 @@ bool project_hook(int typ, int dir, int dam, u16b flg)
 	/* Hack -- Use an actual "target" */
 	if ((dir == 5) && target_okay())
 	{
-		tx = target_col;
-		ty = target_row;
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
 	}
 
 	/* Analyze the "dir" and the "target", do NOT explode */

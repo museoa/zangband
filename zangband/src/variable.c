@@ -374,14 +374,6 @@ char *mp_tc = NULL;
 
 
 /*
- * Targeting variables
- */
-s16b target_who;
-s16b target_col;
-s16b target_row;
-
-
-/*
  * User info
  */
 int player_uid;

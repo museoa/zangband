@@ -2795,8 +2795,8 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	/* Check for "target request" */
 	if ((dir == 5) && target_okay())
 	{
-		tx = target_col;
-		ty = target_row;
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
 	}
 
 
@@ -3218,8 +3218,8 @@ void do_cmd_throw_aux(int mult)
 	/* Check for "target request" */
 	if ((dir == 5) && target_okay())
 	{
-		tx = target_col;
-		ty = target_row;
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
 	}
 
 

@@ -1723,19 +1723,19 @@ bool target_able(int m_idx)
 bool target_okay(void)
 {
 	/* Accept stationary targets */
-	if (target_who < 0) return (TRUE);
+	if (p_ptr->target_who < 0) return (TRUE);
 
 	/* Check moving targets */
-	if (target_who > 0)
+	if (p_ptr->target_who > 0)
 	{
 		/* Accept reasonable targets */
-		if (target_able(target_who))
+		if (target_able(p_ptr->target_who))
 		{
-			monster_type *m_ptr = &m_list[target_who];
+			monster_type *m_ptr = &m_list[p_ptr->target_who];
 
 			/* Acquire monster location */
-			target_row = m_ptr->fy;
-			target_col = m_ptr->fx;
+			p_ptr->target_row = m_ptr->fy;
+			p_ptr->target_col = m_ptr->fx;
 
 			/* Good target */
 			return (TRUE);
@@ -2619,7 +2619,7 @@ bool target_set(int mode)
 	Term_get_size(&wid, &hgt);
 
 	/* Cancel target */
-	target_who = 0;
+	p_ptr->target_who = 0;
 
 
 	/* Cancel tracking */
@@ -2683,9 +2683,9 @@ bool target_set(int mode)
 					if (target_able(c_ptr->m_idx))
 					{
 						health_track(c_ptr->m_idx);
-						target_who = c_ptr->m_idx;
-						target_row = y;
-						target_col = x;
+						p_ptr->target_who = c_ptr->m_idx;
+						p_ptr->target_row = y;
+						p_ptr->target_col = x;
 						done = TRUE;
 					}
 					else
@@ -2893,9 +2893,9 @@ bool target_set(int mode)
 				case '5':
 				case '0':
 				{
-					target_who = -1;
-					target_row = y;
-					target_col = x;
+					p_ptr->target_who = -1;
+					p_ptr->target_row = y;
+					p_ptr->target_col = x;
 					done = TRUE;
 					break;
 				}
@@ -3037,7 +3037,7 @@ bool target_set(int mode)
 	handle_stuff();
 
 	/* Failure to set target */
-	if (!target_who) return (FALSE);
+	if (!p_ptr->target_who) return (FALSE);
 
 	/* Success */
 	return (TRUE);

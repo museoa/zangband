@@ -283,10 +283,10 @@ static void prt_alloc(object_type *o_ptr, int row, int col, u32b monte)
 static void do_cmd_wiz_bamf(void)
 {
 	/* Must have a target */
-	if (!target_who) return;
+	if (!p_ptr->target_who) return;
 
 	/* Teleport to the target */
-	teleport_player_to(target_row, target_col);
+	teleport_player_to(p_ptr->target_row, p_ptr->target_col);
 }
 
 

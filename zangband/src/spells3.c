@@ -1091,8 +1091,8 @@ void fetch(int dir, int wgt, bool require_los)
 	/* Use a target */
 	if ((dir == 5) && target_okay())
 	{
-		tx = target_col;
-		ty = target_row;
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
 
 		/* Paranoia */
 		if ((distance(py, px, ty, tx) > MAX_RANGE)

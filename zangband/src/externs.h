@@ -260,9 +260,6 @@ extern char *mp_c;
 extern byte *mp_ta;
 extern char *mp_tc;
 #endif /* USE_TRANSPARENCY */
-extern s16b target_who;
-extern s16b target_col;
-extern s16b target_row;
 extern int player_uid;
 extern int player_euid;
 extern int player_egid;

@@ -3742,7 +3742,7 @@ static void dungeon(void)
 
 
 	/* Cancel the target */
-	target_who = 0;
+	p_ptr->target_who = 0;
 
 	/* Cancel the health bar */
 	health_track(0);
@@ -4383,7 +4383,7 @@ void play_game(bool new_game)
 
 
 		/* Cancel the target */
-		target_who = 0;
+		p_ptr->target_who = 0;
 
 		/* Cancel the health bar */
 		health_track(0);
