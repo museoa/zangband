@@ -276,7 +276,8 @@
 #define ST_REST_GOOD		0x02	/* Good items only */
 #define ST_REST_GREAT		0x04	/* Great items only */
 #define ST_HALF_INVEN		0x08	/* One page of inventory */
-#define ST_ULTRA_GREED		0x10	/* Double prices */
+#define ST_GREED			0x10	/* Double prices */
+#define ST_ULTRA_GREED		0x20	/* Quadruple prices */
 
 
 
