@@ -4522,9 +4522,6 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 	FILE    *fp;
 	char    buf[1024];
 	int     line, counter, test, numentries;
-	int     line_num = 0;
-	bool    found = FALSE;
-
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_FILE, file_name);
@@ -4541,34 +4538,23 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 		/* Get a line from the file */
 		if (my_fgets(fp, buf, 1024) == 0)
 		{
-			/* Count the lines */
-			line_num++;
-
 			/* Look for lines starting with 'N:' */
 			if ((buf[0] == 'N') && (buf[1] == ':'))
 			{
 				/* Allow default lines */
-				if (buf[2] == '*')
-				{
-					/* Default lines */
-					found = TRUE;
-					break;
-				}
+				if (buf[2] == '*') break;
+
 				/* Get the monster number */
 				else if (sscanf(&(buf[2]), "%d", &test) != EOF)
 				{
 					/* Is it the right monster? */
-					if (test == entry)
-					{
-						found = TRUE;
-						break;
-					}
+					if (test == entry) break;
 				}
 				else
 				{
 					/* Error while converting the monster number */
-					msg_format("Error in line %d of %s!",
-					          line_num, file_name);
+					msg_print("Error - end of file.");
+					
 					my_fclose(fp);
 					return (-1);
 				}
@@ -4589,9 +4575,6 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 		/* Get the line */
 		if (my_fgets(fp, buf, 1024) == 0)
 		{
-			/* Count the lines */
-			line_num++;
-
 			/* Look for the number of entries */
 			if (isdigit(buf[0]))
 			{
@@ -4602,12 +4585,8 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 		}
 		else
 		{
-			/* Count the lines */
-			line_num++;
-
 			/* Reached end of file without finding the number */
-			msg_format("Error in line %d of %s!",
-			          line_num, file_name);
+			msg_print("Error - end of file.");
 
 			my_fclose(fp);
 			return (-1);
@@ -4620,22 +4599,13 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 		line = randint0(numentries);
 
 		/* Get the random line */
-		for (counter = 0; counter <= line; counter++)
+		for (counter = 0; counter < line; counter++)
 		{
-			/* Count the lines */
-			line_num++;
-
 			/* Try to read the line */
-			if (my_fgets(fp, buf, 1024) == 0)
-			{
-				/* Found the line */
-				if (counter == line) break;
-			}
-			else
+			if (my_fgets(fp, buf, 1024) != 0)
 			{
 				/* Error - End of file */
-				msg_format("Error in line %d of %s!",
-				          line_num, file_name);
+				msg_format("Error - end of file.");
 
 				my_fclose(fp);
 				return (-1);
@@ -4647,6 +4617,9 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 	}
 	else
 	{
+		/* Close the file */
+		my_fclose(fp);
+		
 		return (-1);
 	}
 
