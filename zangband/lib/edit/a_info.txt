@@ -1790,3 +1790,14 @@ F:VORPAL | LUCK_10 | BLESSED | FREE_ACT | LITE | INSTA_ART
 L:BONUS:	player.skills[SKILL_SAV] = player.skills[SKILL_SAV] + (object.to_h + object.to_d) / 2
 L:MAKE:	add_ego_power(EGO_XTRA_HI_RESIST, object)
 D:A sword said to grant incredible luck to its wielder.
+
+
+N:130:'Stormbringer'
+I:23:30:2
+W:95:0:180:10000
+P:0:6d6:16:16:0
+F:VAMPIRIC | STR | CON | FREE_ACT | HOLD_LIFE | RES_NEXUS
+F:RES_CHAOS | RES_NETHER | RES_CONF | INSTA_ART | CURSED
+F:HEAVY_CURSE | NO_TELE | QUESTITEM
+L:MAKE:	if (one_in_(2) ~= 0) set_flag(object, TR2_DRAIN_EXP) else set_flag(TR2_AGGRAVATE) end
+D:The Stormbringer is now under your control.  It still thrists for souls.
