@@ -710,8 +710,6 @@ bool borg_check_lite_only(void)
 	int i, x, y;
 	int corners, floors;
 
-	int q_x, q_y;
-
 	map_block *mb_ptr;
 
 
@@ -731,11 +729,6 @@ bool borg_check_lite_only(void)
 		return (FALSE);
 
 	/* XXX XXX XXX Dark */
-
-
-	/* Extract the panel */
-	q_x = w_x / 33;
-	q_y = w_y / 11;
 
 	/* Start */
 	do_lite = FALSE;

@@ -215,9 +215,6 @@ int borg_food_onsale = -1;	/* Are shops selling food? */
  * Location variables
  */
 
-int w_x;	/* Current panel offset (X) */
-int w_y;	/* Current panel offset (Y) */
-
 int c_x;	/* Current location (X) */
 int c_y;	/* Current location (Y) */
 
@@ -618,8 +615,6 @@ bool borg_do_update_view = FALSE;	/* Recalculate view */
 /*
  * Strategy flags -- examine the world
  */
-bool borg_do_panel = TRUE;	/* Acquire "panel" info */
-
 bool borg_do_frame = TRUE;	/* Acquire "frame" info */
 
 bool borg_do_spell = TRUE;	/* Acquire "spell" info */
@@ -1326,8 +1321,6 @@ void borg_update_frame(void)
  */
 void borg_init_1(void)
 {
-	int i;
-
 	/* Allocate the "keypress queue" */
 	C_MAKE(borg_key_queue, KEY_SIZE, char);
 

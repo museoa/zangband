@@ -670,44 +670,6 @@ static bool borg_think(void)
 		return (borg_think_store());
 	}
 
-
-	/*** Determine panel ***/
-
-	/* Hack -- cheat */
-	w_y = panel_row_min;
-	w_x = panel_col_min;
-
-	/* Done */
-	borg_do_panel = FALSE;
-
-	/* Hack -- Check for "sector" mode */
-	if ((0 == borg_what_text(0, 0, 16, &t_a, buf)) &&
-		(prefix(buf, "Map sector ")))
-	{
-#if 0
-		/* Hack -- get the panel info */
-		w_y = (buf[12] - '0') * (SCREEN_HGT / 2);
-		w_x = (buf[14] - '0') * (SCREEN_WID / 2);
-#endif /* 0 */
-		/* Leave panel mode */
-		borg_keypress(ESCAPE);
-
-		/* Done */
-		return (TRUE);
-	}
-	/* Check equipment */
-	if (borg_do_panel)
-	{
-		/* Only do it once */
-		borg_do_panel = FALSE;
-
-		/* Enter "panel" mode */
-		borg_keypress('L');
-
-		/* Done */
-		return (TRUE);
-	}
-
 	/*** Analyze the Frame ***/
 
 	/* Analyze the frame */
@@ -721,9 +683,6 @@ static bool borg_think(void)
 	}
 
 	/*** Re-activate Tests ***/
-
-	/* Check panel again later */
-	borg_do_panel = TRUE;
 
 	/* Check frame again later */
 	borg_do_frame = TRUE;

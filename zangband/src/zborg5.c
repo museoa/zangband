@@ -41,10 +41,6 @@
 /*
  * Old values
  */
-
-static int o_w_x = -1;	/* Old panel */
-static int o_w_y = -1;	/* Old panel */
-
 static int o_c_x = -1;	/* Old location */
 static int o_c_y = -1;	/* Old location */
 
@@ -2457,8 +2453,6 @@ static void borg_update_map(void)
 /*
  * Look at the screen and update the borg
  *
- * Uses the "panel" info (w_x, w_y) obtained earlier
- *
  * Note that all the "important" messages that occured after our last
  * action have been "queued" in a usable form.  We must attempt to use
  * these messages to update our knowledge about the world, keeping in
@@ -2928,7 +2922,6 @@ void borg_update(void)
 
 		/* Examine the world */
 		borg_do_spell = TRUE;
-		borg_do_panel = TRUE;
 		borg_do_frame = TRUE;
 
 		/* Enable some functions */
@@ -3083,10 +3076,6 @@ void borg_update(void)
 	/* Reset */
 	if (reset)
 	{
-		/* Fake old panel */
-		o_w_x = w_x;
-		o_w_y = w_y;
-
 		/* Fake old location */
 		o_c_x = c_x;
 		o_c_y = c_y;
@@ -3326,11 +3315,6 @@ void borg_update(void)
 	/* Save the old "location" */
 	o_c_x = c_x;
 	o_c_y = c_y;
-
-	/* Save the old "panel" */
-	o_w_x = w_x;
-	o_w_y = w_y;
-
 
 	/*** Defaults ***/
 

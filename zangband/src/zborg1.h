@@ -933,8 +933,6 @@ extern bool borg_do_update_view;	/* Recalculate view */
 /*
  * Strategy flags -- examine the world
  */
-extern bool borg_do_panel;	/* Acquire "panel" info */
-
 extern bool borg_do_frame;	/* Acquire "frame" info */
 
 extern bool borg_do_spell;	/* Acquire "spell" info */
