@@ -734,34 +734,244 @@ map_block *map_loc(int x, int y)
 			[y & 15][x & 15]);
 }
 
-/*
- * Display info about one town -- used with the map function
- *
- * Basically a rip of do_cmd_knowledge_wild from cmd4.c -MT
- */
-static void single_town_info(int place)
+
+/* put the banners on the screen */
+static void display_banner(place_type *pl_ptr, int wid, int hgt)
+{
+	cptr banner;
+	cptr place_dir;
+	int i, banner_len;
+
+	bool home_in_town = FALSE;
+	bool castle_in_town = FALSE;
+
+	/* Is it a town */
+	if (pl_ptr->numstores)
+	{
+		/* Upper banner */
+		banner = pl_ptr->name;
+		banner_len = strlen(banner);
+
+		/* Display town name */
+		put_fstr(1 + (wid - banner_len) / 2, 0, banner);
+
+		/* Find out if there are homes or castles here */
+		for (i = 0; i < pl_ptr->numstores; i++)
+		{
+			/* Is there a home? */
+			if (pl_ptr->store[i].type == BUILD_STORE_HOME) home_in_town = TRUE;
+
+			/* Is there a castle? */
+			if (pl_ptr->store[i].type == BUILD_CASTLE0) castle_in_town = TRUE;
+			if (pl_ptr->store[i].type == BUILD_CASTLE1) castle_in_town = TRUE;
+		}
+
+		/* Find out the lower banner */
+		if (home_in_town)
+		{
+			if (castle_in_town)
+			{
+				/* Town with home and castle */
+				banner = "Move around, press * for town, h for home, c for castle or any key to exit.";
+			}
+			else
+			{
+				/* Town with home and no castle */
+				banner = "Move around, press * for town, h for home or any key to exit.";
+			}
+		}
+		/* Town with no home */
+		else
+		{
+			if (castle_in_town)
+			{
+				/* Town with castle and no home */
+				banner = "Move around, press * for town, c for castle or any key to exit.";
+			}
+			else
+			{
+				/* Town with no castle and no home */
+				banner = "Move around, press * for town or any key to exit.";
+			}
+		}
+
+		/* Display lower banner */
+		put_fstr(1 + (wid - strlen(banner)) / 2, hgt - 1, banner);
+	}
+	else
+	{
+		/* Display standard prompt */
+		put_fstr(wid / 2 - 23, hgt - 1,
+				"Move around or hit any other key to continue.");
+
+		if (pl_ptr->dungeon)
+		{
+			/* Fetch closest known town and direction */
+			banner = describe_quest_location(&place_dir,
+							pl_ptr->x, pl_ptr->y, TRUE);
+			banner_len = strlen(banner) +
+							 strlen(place_dir) + 19;
+
+			/* Is this dungeon guarded? */
+			if (pl_ptr->dungeon->recall_depth == 0)
+			{
+				/* Show where the dungeon is */
+				put_fstr((wid - banner_len) / 2, 0,
+					"Guarded dungeon %s of %s.", place_dir, banner);
+			}
+			else
+			{
+				/* Show where the dungeon is */
+				put_fstr((wid - banner_len - 2) / 2, 0,
+					"Unguarded dungeon %s of %s.", place_dir, banner);
+			}
+		}
+		else
+		{
+			if (quest_status_taken(pl_ptr->quest_num))
+			{
+				/* Fetch wilderness quest name */
+				banner = quest[pl_ptr->quest_num].name;
+				banner_len = strlen(banner);
+
+				/* Display wilderness quest name */
+				put_fstr(1 + (wid - banner_len) / 2, 0, banner);
+			}
+		}
+	}
+}
+
+
+/* Display info about the home in one town */
+static bool dump_home_info(FILE *fff, int town)
+{
+	int i, k;
+	bool home_in_town = FALSE;
+
+	store_type *st_ptr;
+	object_type *o_ptr;
+
+	for (i = 0; i < place[town].numstores; i++)
+	{
+		st_ptr = &place[town].store[i];
+
+		if (st_ptr->type == BUILD_STORE_HOME)
+		{
+			/* Remember that a home was found */
+			home_in_town = TRUE;
+
+			/* Header with name of the town */
+			froff(fff, "  [Home Inventory - %s]\n\n", place[i].name);
+
+			/* Home -- if anything there */
+			if (st_ptr->stock)
+			{
+				char o_name[256];
+			
+				/* Initialise counter */
+				k = 0;
+
+				/* Dump all available items */
+				OBJ_ITT_START (st_ptr->stock, o_ptr)
+				{
+					/* Describe object */
+					object_desc(o_name, o_ptr, TRUE, 3, 256);
+					
+					/* Clean formatting escape sequences */
+					fmt_clean(o_name);
+				
+					froff(fff, "%c) %s\n", I2A(k), o_name);
+
+					/* Increment counter */
+					k++;
+				}
+				OBJ_ITT_END;
+
+				/* Add an empty line */
+				froff(fff, "\n\n");
+			}
+			/* The home is empty */
+			else
+			{
+				froff(fff, "  [Empty]\n\n");
+			}
+		}
+	}
+
+	/* No home, no show */
+	return (home_in_town);
+	
+}
+
+
+/* Show the knowledge the player has about a town */
+static bool do_cmd_view_map_aux(char c, int town)
 {
 	FILE *fff;
 
 	char file_name[1024];
 
-	/* Opet temporary file */
+	bool success = FALSE;
+	cptr title = NULL;
+
+	/* Call this proc with a place that is a town */
+	if (place[town].numstores == 0) return (FALSE);
+
+	/* Open temporary file */
 	fff = my_fopen_temp(file_name, 1024);
 
 	/* Failure */
-	if (!fff) return;
-	
-	dump_town_info(fff, place);
+	if (!fff) return (FALSE);
+
+	/* Show what? */
+	switch (c)
+	{
+		case '*':
+		{
+			/* Display the list of shops */
+			dump_town_info(fff, town);
+
+			success = TRUE;
+			title = "Town info";
+
+			break;
+		}
+
+		case 'h':
+		{
+			/* Display the items in the home */
+			success = dump_home_info(fff, town);
+			title = "Home info";
+
+			break;
+		}
+
+		case 'c':
+		{
+			/* Display the quests taken */
+			success = dump_castle_info(fff, town);
+			title = "Castle info";
+
+			break;
+		}
+	}
 
 	/* Close the file */
 	my_fclose(fff);
+
+	/* If there is no success don't show anything */
+	if (!success) return (FALSE);
 	
 	/* Display the file contents */
-	(void)show_file(file_name, "Town Info", 0, 0);
+	(void)show_file(file_name, title, 0, 0);
 
 	/* Remove the file */
 	(void)fd_kill(file_name);
+
+	/* And curtain */
+	return (TRUE);
 }
+
 
 /*
  * Display a "small-scale" map of the dungeon for the player
@@ -823,13 +1033,12 @@ void do_cmd_view_map(void)
 
 		/* Direction */
 		int d;
+
+		/* Input character */
+		char c;
 		
 		wild_done_type *w_ptr;
 		
-		cptr place_name;
-		cptr place_dir;
-		int place_name_len;
-
 		/* No offset yet */
 		x = 0;
 		y = 0;
@@ -853,59 +1062,8 @@ void do_cmd_view_map(void)
 			/* Show the town name, if it exists */
 			if (pl_ptr && (w_ptr->info & WILD_INFO_SEEN))
 			{
-				if (pl_ptr->numstores)
-				{
-					place_name = pl_ptr->name;
-					place_name_len = strlen(place_name);
-				
-					/* Display town name */
-					put_fstr(1 + (wid - place_name_len) / 2, 0, place_name);
-
-					/* Display town prompt */
-					put_fstr(wid / 2 - 34, hgt - 1,
-							"Move around, press * for town info or hit any other key to continue.");
-				}
-				else
-				{
-					/* Display standard prompt */
-					put_fstr(wid / 2 - 23, hgt - 1,
-							"Move around or hit any other key to continue.");
-
-					if (pl_ptr->dungeon)
-					{
-						/* Fetch closest known town and direction */
-						place_name = describe_quest_location(&place_dir,
-										pl_ptr->x, pl_ptr->y, TRUE);
-						place_name_len = strlen(place_name) +
-										 strlen(place_dir) + 19;
-
-						/* Is this dungeon guarded? */
-						if (pl_ptr->dungeon->recall_depth == 0)
-						{
-							/* Show where the dungeon is */
-							put_fstr((wid - place_name_len) / 2, 0,
-								"Guarded dungeon %s of %s.", place_dir, place_name);
-						}
-						else
-						{
-							/* Show where the dungeon is */
-							put_fstr((wid - place_name_len - 2) / 2, 0,
-								"Unguarded dungeon %s of %s.", place_dir, place_name);
-						}
-					}
-					else
-					{
-						if (quest_status_taken(pl_ptr->quest_num))
-						{
-							/* Fetch wilderness quest name */
-							place_name = quest[pl_ptr->quest_num].name;
-							place_name_len = strlen(place_name);
-
-							/* Display wilderness quest name */
-							put_fstr(1 + (wid - place_name_len) / 2, 0, place_name);
-						}
-					}
-				}
+				/* put various banners on the screen */
+				display_banner(pl_ptr, wid, hgt);
 			}
 			else
 			{
@@ -921,22 +1079,18 @@ void do_cmd_view_map(void)
 			Term_fresh();
 
 			/* Get a response */
-			d = inkey();
+			c = inkey();
 
 			/* On a town?  -- MT */
 			if (w_ptr->place)
 			{
-				/* Accept '*' or a direction -- MT */
-				if (d == '*')
-				{
-					/* Display info for this town -- MT */
-					single_town_info(w_ptr->place);
-					continue;
-				}
+				/* Check if this is an info command */
+				if (do_cmd_view_map_aux(c, w_ptr->place)) continue;
 			}
 			
 			/* Done if not a direction */
-			d = get_keymap_dir(d);
+			d = get_keymap_dir(c);
+
 			if (!d) break;
 
 			x += ddx[d];

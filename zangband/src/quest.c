@@ -1066,7 +1066,7 @@ void trigger_quest_complete(byte x_type, vptr data)
 
 
 /*
- * Look up a quest that corresponds to the given building.
+ * Look up an open quest that corresponds to the given building.
  *
  * If there is none, return NULL.
  *
@@ -1087,6 +1087,9 @@ quest_type *lookup_quest_building(const store_type *b_ptr)
 		
 		/* Bounds checking */
 		if (q_ptr->shop >= pl_ptr->numstores) continue;
+
+		/* Disregard finished quests */
+		if (q_ptr->status == QUEST_STATUS_FINISHED) continue;
 		
 		/* A match? */
 		if (&pl_ptr->store[q_ptr->shop] == b_ptr)
@@ -1111,10 +1114,6 @@ void reward_quest(quest_type *q_ptr)
 			{
 				msgf("You can keep it if you like.");
 				
-				/* Allow another quest to be selected */
-				q_ptr->place = 0;
-				q_ptr->shop = 0;
-				
 				/* Allow this quest to be deleted if needed */
 				q_ptr->status = QUEST_STATUS_FINISHED;
 				
@@ -1137,17 +1136,12 @@ void reward_quest(quest_type *q_ptr)
 		{
 			if (q_ptr->status == QUEST_STATUS_COMPLETED)
 			{
-				/* Work out reward */
-				u16b reward = q_ptr->reward;
-				
 				/* Give to player */
-				p_ptr->au += reward;
+				p_ptr->au += q_ptr->reward;
 				
-				msgf("You are given %d gold pieces for your efforts.", reward);
-				
-				/* Allow another quest to be selected */
-				q_ptr->place = 0;
-				q_ptr->shop = 0;
+				/* And tell him */
+				msgf("You are given %d gold pieces for your efforts.",
+					q_ptr->reward);
 				
 				/* Allow this quest to be deleted if needed */
 				q_ptr->status = QUEST_STATUS_FINISHED;
@@ -1160,6 +1154,7 @@ void reward_quest(quest_type *q_ptr)
 			}
 			else
 			{
+				/* Remind what the quest is */
 				msgf("%s", q_ptr->name);
 
 				/* If you have killed all but one monster */
@@ -1197,17 +1192,11 @@ void reward_quest(quest_type *q_ptr)
 		{
 			if (q_ptr->status == QUEST_STATUS_COMPLETED)
 			{
-				/* Work out reward */
-				u16b reward = q_ptr->reward;
-				
 				/* Give to player */
-				p_ptr->au += reward;
+				p_ptr->au += q_ptr->reward;
 				
-				msgf("You are given %d gold pieces for your efforts.", reward);
-				
-				/* Allow another quest to be selected */
-				q_ptr->place = 0;
-				q_ptr->shop = 0;
+				msgf("You are given %d gold pieces for your efforts.",
+					q_ptr->reward);
 				
 				/* Allow this quest to be deleted if needed */
 				q_ptr->status = QUEST_STATUS_FINISHED;
@@ -1220,8 +1209,9 @@ void reward_quest(quest_type *q_ptr)
 			}
 			else
 			{
+				/* Tell the player what he was trying */
 				msgf("%s", q_ptr->name);
-				msgf("Please deliver it as soon as possible!");
+				msgf("Please deliver the message as soon as possible!");
 			}
 			
 			break;
@@ -1231,17 +1221,11 @@ void reward_quest(quest_type *q_ptr)
 		{
 			if (q_ptr->status == QUEST_STATUS_COMPLETED)
 			{
-				/* Work out reward */
-				u16b reward = q_ptr->reward;
-				
 				/* Give to player */
-				p_ptr->au += reward;
+				p_ptr->au += q_ptr->reward;
 				
-				msgf("You are given %d gold pieces for your efforts.", reward);
-				
-				/* Allow another quest to be selected */
-				q_ptr->place = 0;
-				q_ptr->shop = 0;
+				msgf("You are given %d gold pieces for your efforts.",
+					q_ptr->reward);
 				
 				/* Break the link between place and quest */
 				place[q_ptr->data.fpl.place].quest_num = z_info->q_max;
@@ -1257,8 +1241,9 @@ void reward_quest(quest_type *q_ptr)
 			}
 			else
 			{
+				/* Remind the player what he was doing */
 				msgf("%s", q_ptr->name);
-				msgf("Please find it as soon as possible!");
+				msgf("Please find the ruin as soon as possible!");
 			}
 			
 			break;
@@ -1867,6 +1852,74 @@ void request_quest(const store_type *b_ptr, int scale)
 	display_menu(quest_menu, -1, FALSE, NULL, "What type of quest would you like?");
 }
 
+/* Show the quest status as a string */
+cptr quest_status_string(quest_type *q_ptr)
+{
+	int monst_num = 0;
+	int max_num = 0;
+
+	/* Just checking */
+	if (!q_ptr) return (NULL);
+
+	/* Surely you jest? */
+	if (q_ptr->type == QUEST_TYPE_NONE) return (NULL);
+
+	/* Check the various statuses */
+	switch (q_ptr->status)
+	{
+		/* Unknown quest */
+		case QUEST_STATUS_UNTAKEN: return (NULL);
+
+		/* Underway */
+		case QUEST_STATUS_TAKEN:
+		{
+			/* Count the bounty monsters */
+			if (q_ptr->type == QUEST_TYPE_BOUNTY)
+			{
+				monst_num = q_ptr->data.bnt.cur_num;
+				max_num = q_ptr->data.bnt.max_num;
+			}
+
+			/* Count the dungeon monsters */
+			if (q_ptr->type == QUEST_TYPE_DUNGEON)
+			{
+				monst_num = q_ptr->data.dun.cur_num;
+				max_num = q_ptr->data.dun.max_num;
+			}
+
+			/* Don't show the count for zero or one monsters */
+			if (max_num <= 1) return ("\n\n");
+
+			/* Tell the world */
+			return (format("You have killed %d.\n\n", monst_num));
+		}
+
+		/* Report back to quest_giver */
+		case QUEST_STATUS_COMPLETED:
+		{
+			/* All done killing */
+			if (q_ptr->type == QUEST_TYPE_BOUNTY) return ("(Killed)\n\n");
+
+			/* All done killing */
+			if (q_ptr->type == QUEST_TYPE_DUNGEON) return ("(Killed)\n\n");
+
+			/* All done defeating */
+			if (q_ptr->type == QUEST_TYPE_WILD) return ("(Completed)\n");
+
+			/* All done delivering */
+			if (q_ptr->type == QUEST_TYPE_MESSAGE) return ("(Delivered)\n\n");
+
+			/* All done finding */
+			if (q_ptr->type == QUEST_TYPE_FIND_ITEM) return ("(Found)\n\n");
+
+			/* All done finding */
+			if (q_ptr->type == QUEST_TYPE_FIND_PLACE) return ("(Found)\n\n");
+		}
+
+		/* Finnished */
+		case QUEST_STATUS_FINISHED: return ("(Completed)\n");
+	}
+}
 
 
 /*
@@ -1876,14 +1929,10 @@ bool do_cmd_knowledge_quests(int dummy)
 {
 	FILE *fff;
 	char file_name[1024];
-	char name[80];
 	char tmp_str[256];
 
 	quest_type *q_ptr;
 	int i;
-	
-	bool taken;
-	bool finished;
 	
 	/* Hack - ignore parameter */
 	(void) dummy;
@@ -1901,9 +1950,6 @@ bool do_cmd_knowledge_quests(int dummy)
 		/* Do we know about it? */
 		if (!(q_ptr->flags & QUEST_FLAG_KNOWN)) continue;
 		
-		taken = (q_ptr->status == QUEST_STATUS_TAKEN);
-		finished = (q_ptr->status == QUEST_STATUS_FINISHED);
-
 		/* See what type of quest it is */
 		switch (q_ptr->type)
 		{
@@ -1913,44 +1959,9 @@ bool do_cmd_knowledge_quests(int dummy)
 				continue;
 			}
 
-			case QUEST_TYPE_BOUNTY:
-			{
-				if (taken)
-				{
-					/* Kill just one monster? */
-					if (q_ptr->data.bnt.max_num == 1)
-					{
-						/* Don't show the count */
-						strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
-					}
-					else
-					{
-						/* Show the count */
-						strnfmt(tmp_str, 256, "%s  You have killed %d.\n\n",
-								q_ptr->name, quest[i].data.bnt.cur_num);
-					}
-				}
-				else if (finished)
-				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s (Completed)\n", q_ptr->name);
-				}
-				else
-				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s (Killed)\n", q_ptr->name);
-				}
-
-				break;
-			}
-
 			case QUEST_TYPE_DUNGEON:
 			{
-				monster_race *r_ptr = &r_info[q_ptr->data.dun.r_idx];
-
 				char level[20];
-
-				strncpy(name, mon_race_name(r_ptr), 79);
 
 				/* In feet, or in levels */
 				if (depth_in_feet)
@@ -1963,90 +1974,25 @@ bool do_cmd_knowledge_quests(int dummy)
 					strnfmt(level, 20, "%3d", (int)q_ptr->data.dun.level);
 				}
 
-				if (taken)
-				{
-					/* Hack - assume kill n monsters of type m */
-					if (q_ptr->data.dun.max_num > 1)
-					{
-						plural_aux(name);
-
-						strnfmt(tmp_str, 256,
-								"%s (Dungeon level: %s)\n\n  Kill %d %s, have killed %d.\n\n",
-								q_ptr->name, level,
-								(int)q_ptr->data.dun.max_num, name,
-								(int)q_ptr->data.dun.cur_num);
-					}
-					else
-					{
-						strnfmt(tmp_str, 256, "%s (Dungeon level: %s)\n\n",
-								q_ptr->name, level);
-					}
-				}
-				else
-				{
-					/* Assume we've completed it for now */
-					strnfmt(tmp_str, 256,
-							"%s (Completed on dungeon level %s). \n",
-							q_ptr->name, level);
-				}
+				/* Hack - assume kill n monsters of type m */
+				strnfmt(tmp_str, 256,
+						"%s (Dungeon level: %s)  %s",
+						q_ptr->name, level,
+						quest_status_string(q_ptr));
 
 				break;
 			}
 			
+			case QUEST_TYPE_BOUNTY:
+			case QUEST_TYPE_MESSAGE:
 			case QUEST_TYPE_FIND_ITEM:
 			case QUEST_TYPE_FIND_PLACE:
-			{
-				if (taken)
-				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
-				}
-				else if (finished)
-				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s (Completed)\n", q_ptr->name);
-				}
-				else
-				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s (Found)\n", q_ptr->name);
-				}
-				break;
-			}
-
 			case QUEST_TYPE_WILD:
 			{
-				if (taken)
-				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
-				}
-				else
-				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s (Completed)\n", q_ptr->name);
-				}
+				/* Hack - this is simple */
+				strnfmt(tmp_str, 256, "%s  %s",
+					q_ptr->name, quest_status_string(q_ptr));
 
-				break;
-			}
-
-			case QUEST_TYPE_MESSAGE:
-			{
-				if (taken)
-				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s\n\n", q_ptr->name);
-				}
-				else if (finished)
-				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s (Completed)\n", q_ptr->name);
-				}
-				else
-				{
-					/* Hack - this is simple */
-					strnfmt(tmp_str, 256, "%s (Delivered)\n", q_ptr->name);
-				}
 				break;
 			}
 
@@ -2073,6 +2019,54 @@ bool do_cmd_knowledge_quests(int dummy)
 	return (FALSE);
 }
 
+bool dump_castle_info(FILE *fff, int town)
+{
+	int i;
+	bool quest_in_town = FALSE;
+
+	quest_type *q_ptr;
+
+	/* Check if there is a castle */
+	for (i = 0; i < place[town].numstores; i++)
+	{
+		if (place[town].store[i].type == BUILD_CASTLE0 ||
+			place[town].store[i].type == BUILD_CASTLE1)
+		{
+			quest_in_town = TRUE;
+		}
+	}
+
+	/* Give up */
+	if (!quest_in_town) return (FALSE);
+
+	/* So there is a castle, but did it issue any quests? */
+	quest_in_town = FALSE;
+
+	/* Loop through the quests */
+	for (i = 0; i < z_info->q_max; i++)
+	{
+		/* Find a quest */
+		q_ptr = &quest[i];
+
+		/* Is it from this town? */
+		if (town != q_ptr->place) continue;
+
+		/* There is a quest */
+		quest_in_town = TRUE;
+
+		/* Show it */
+		froff(fff, "%s  %s\n", q_ptr->name, quest_status_string(q_ptr));
+	}
+
+	/* If no quest was issued  */
+	if (!quest_in_town)
+	{
+		/* Say so */
+		froff(fff, "No quest was issued in this town.\n");
+	}
+
+	return (TRUE);
+}
 
 /*
  * The following functions are used to determine if the given monster
