@@ -238,6 +238,15 @@ LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 #LIBS = -lcurses -ltermcap
 
 
+##
+## Variation -- compile for AIX 4.2.1 systems
+## (Tested on an IBM SP2)
+##
+#
+#CC = cc
+#CFLAGS = -bnoquiet -O2  -D"USE_X11" -D"SYS_V"
+#LIBS = -lX11 -ltermcap -lcurses -lbsd -lXm -lXmu -lXaw -lXt
+
 
 #
 # Hack -- "install" as the base target
