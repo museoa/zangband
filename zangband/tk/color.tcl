@@ -37,7 +37,6 @@ proc NSColorPreferences::InitModule {} {
 	NSModule::LoadIfNeeded NSColorPicker
 
 	set Hook {}
-#	lappend Hook color_hook_map "Micro Map"
 	lappend Hook color_hook_monster_bar "Monster Bar"
 	lappend Hook color_hook_status Status
 	lappend Hook hook_target Target
@@ -941,70 +940,6 @@ proc NSColorPreferences::Colorize {canvas item index} {
 		text {set option -fill}
 	}
 	$canvas itemconfigure $item $option [palette set $index]
-
-	return
-}
-
-proc NSColorPreferences::color_hook_map {oop message args} {
-
-	set canvas [Info $oop canvas]
-
-	switch -- $message {
-
-		init {
-			set size 28
-			set width 8
-			set symbols [symbol names]
-			set count [llength $symbols]
-			set rows [expr {($count + 1) / 2}]
-			for {set i 0} {$i < $count} {incr i} {
-				set col [expr {$i / $rows}]
-				set row [expr {$i % $rows}]
-				set left [expr {$col * 130}]
-				set top [expr {$row * ($size + 4)}]
-				set mapSymbol [lindex $symbols $i]
-				set inner [symbol cget $mapSymbol -inner]
-				set outer [symbol cget $mapSymbol -outer]
-
-				set x1 [expr {$left + $width / 2}]
-				set y1 [expr {$top + $width / 2}]
-				set x2 [expr {$left + $size - $width / 2}]
-				set y2 [expr {$top + $size - $width / 2}]
-
-				set rectId [Add_RectFilled $canvas $x1 $y1 $x2 $y2 $inner]
-				$canvas itemconfigure $rectId \
-					-tags "MIDDLE enabled usepart:$mapSymbol"
-
-				set itemList [Add_RectOutline $canvas $x1 $y1 $x2 $y2 \
-					$outer $width]
-				Add_Tags $canvas $itemList $mapSymbol $outer -1
-
-				# Label
-				set textId [Add_Text $canvas [expr {$left + $size + 2}] \
-					[expr {$top + $size / 2}] w $mapSymbol "Courier 9" 255]
-				$canvas itemconfigure $textId -tags "enabled usepart:$mapSymbol"
-			}
-		}
-
-		set_color {
-			set item [lindex $args 0]
-			set part [lindex $args 1]
-			set index [lindex $args 2]
-
-			if {[string equal $part MIDDLE]} {
-				$canvas itemconfigure MIDDLE -fill [palette set $index]
-			}
-	
-			# See NSMap::InitModule
-			Value map,$part $index
-
-			# Hack -- Redraw the Micro Map.
-			[Global micromap,widget] wipe
-		}
-
-		set_opacity {
-		}
-	}
 
 	return
 }
