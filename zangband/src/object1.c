@@ -1144,6 +1144,14 @@ cptr describe_use(int i)
 	return (p);
 }
 
+/*
+ * Hook to specify "tval"
+ */
+bool item_tester_hook_tval(const object_type *o_ptr, byte tval)
+{
+	return (o_ptr->tval == tval);
+}
+
 
 /*
  * Hook to specify "weapon"
@@ -1414,19 +1422,6 @@ bool item_tester_hook_jewel(const object_type *o_ptr)
 	/* Nope */
 	return (FALSE);
 }
-
-
-
-/* Hack - match item_tester_tval */
-bool item_tester_hook_tval(const object_type *o_ptr)
-{
-	/* A match? */
-	if (o_ptr->tval == item_tester_tval) return (TRUE);
-
-	/* Nope */
-	return (FALSE);
-}
-
 
 bool item_tester_hook_is_blessed(const object_type *o_ptr)
 {

@@ -2544,19 +2544,10 @@ bool field_action_ispotion_tester(field_type *f_ptr, va_list vp)
 	object_type *o_ptr = va_arg(vp, object_type *);
     bool *result = va_arg(vp, bool *);
 
-	/* Save old tval */
-	byte tval_save = item_tester_tval;
-
 	/* Hack - ignore field_ptr */
 	(void)f_ptr;
 
-	/* Pick potions */
-	item_tester_tval = TV_POTION;
-
-	*result = item_tester_hook_tval(o_ptr);
-
-	/* Restore tval */
-	item_tester_tval = tval_save;
+	*result = item_tester_hook_tval(o_ptr, TV_POTION);
 
 	/* Done */
 	return (FALSE);
@@ -2570,19 +2561,10 @@ bool field_action_isscroll_tester(field_type *f_ptr, va_list vp)
 	object_type *o_ptr = va_arg(vp, object_type *);
     bool *result = va_arg(vp, bool *);
 
-	/* Save old tval */
-	byte tval_save = item_tester_tval;
-
 	/* Hack - ignore field_ptr */
 	(void)f_ptr;
 
-	/* Pick scrolls */
-	item_tester_tval = TV_SCROLL;
-
-	*result = item_tester_hook_tval(o_ptr);
-
-	/* Restore tval */
-	item_tester_tval = tval_save;
+	*result = item_tester_hook_tval(o_ptr, TV_SCROLL);
 
 	/* Done */
 	return (FALSE);
@@ -2597,19 +2579,10 @@ bool field_action_isstatue_tester(field_type *f_ptr, va_list vp)
 	object_type *o_ptr = va_arg(vp, object_type *);
     bool *result = va_arg(vp, bool *);
 
-	/* Save old tval */
-	byte tval_save = item_tester_tval;
-
 	/* Hack - ignore f_ptr */
 	(void)f_ptr;
 
-	/* Pick statues */
-	item_tester_tval = TV_STATUE;
-
-	*result = item_tester_hook_tval(o_ptr);
-
-	/* Restore tval */
-	item_tester_tval = tval_save;
+	*result = item_tester_hook_tval(o_ptr, TV_STATUE);
 
 	/* Done */
 	return (FALSE);
@@ -2623,19 +2596,10 @@ bool field_action_isfigurine_tester(field_type *f_ptr, va_list vp)
 	object_type *o_ptr = va_arg(vp, object_type *);
     bool *result = va_arg(vp, bool *);
 
-	/* Save old tval */
-	byte tval_save = item_tester_tval;
-
 	/* Hack - ignore f_ptr */
 	(void)f_ptr;
 
-	/* Pick figurines */
-	item_tester_tval = TV_FIGURINE;
-
-	*result = item_tester_hook_tval(o_ptr);
-
-	/* Restore tval */
-	item_tester_tval = tval_save;
+	*result = item_tester_hook_tval(o_ptr, TV_FIGURINE);
 
 	/* Done */
 	return (FALSE);
@@ -2649,19 +2613,10 @@ bool field_action_isfood_tester(field_type *f_ptr, va_list vp)
 	object_type *o_ptr = va_arg(vp, object_type *);
     bool *result = va_arg(vp, bool *);
 
-	/* Save old tval */
-	byte tval_save = item_tester_tval;
-
 	/* Hack - ignore f_ptr */
 	(void)f_ptr;
 
-	/* Pick figurines */
-	item_tester_tval = TV_FOOD;
-
-	*result = item_tester_hook_tval(o_ptr);
-
-	/* Restore tval */
-	item_tester_tval = tval_save;
+	*result = item_tester_hook_tval(o_ptr, TV_FOOD);
 
 	/* Done */
 	return (FALSE);
@@ -2746,19 +2701,10 @@ bool field_action_issword_tester(field_type *f_ptr, va_list vp)
 	object_type *o_ptr = va_arg(vp, object_type *);
     bool *result = va_arg(vp, bool *);
 
-	/* Save old tval */
-	byte tval_save = item_tester_tval;
-
 	/* Hack - ignore f_ptr */
 	(void)f_ptr;
 
-	/* Pick swords */
-	item_tester_tval = TV_SWORD;
-
-	*result = item_tester_hook_tval(o_ptr);
-
-	/* Restore tval */
-	item_tester_tval = tval_save;
+	*result = item_tester_hook_tval(o_ptr, TV_SWORD);
 
 	/* Done */
 	return (FALSE);
@@ -2789,19 +2735,10 @@ bool field_action_isshield_tester(field_type *f_ptr, va_list vp)
 	object_type *o_ptr = va_arg(vp, object_type *);
     bool *result = va_arg(vp, bool *);
 
-	/* Save old tval */
-	byte tval_save = item_tester_tval;
-
 	/* Hack - ignore f_ptr */
 	(void)f_ptr;
 
-	/* Pick swords */
-	item_tester_tval = TV_SHIELD;
-
-	*result = item_tester_hook_tval(o_ptr);
-
-	/* Restore tval */
-	item_tester_tval = tval_save;
+	*result = item_tester_hook_tval(o_ptr, TV_SHIELD);
 
 	/* Done */
 	return (FALSE);
@@ -2884,19 +2821,10 @@ bool field_action_issupplies_tester(field_type *f_ptr, va_list vp)
 	object_type *o_ptr = va_arg(vp, object_type *);
     bool *result = va_arg(vp, bool *);
 
-	/* Save old tval */
-	byte tval_save = item_tester_tval;
-
 	/* Hack - ignore f_ptr */
 	(void)f_ptr;
 
-	/* Pick potions */
-	item_tester_tval = TV_POTION;
-
-	*result = item_tester_hook_tval(o_ptr);
-
-	/* Restore tval */
-	item_tester_tval = tval_save;
+	*result = item_tester_hook_tval(o_ptr, TV_POTION);
 
 	/* Check for weapons / armour */
 	*result = *result || item_tester_hook_weapon_armour(o_ptr);

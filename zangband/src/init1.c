@@ -728,7 +728,6 @@ static cptr t_info_triggers[] =
 	"MENTT",
 	"STORE1",
 	"STORE2",
-	"MPLACE",
 	NULL
 };
 

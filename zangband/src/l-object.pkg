@@ -284,7 +284,7 @@ extern bool item_tester_hook_weapon_armour(const object_type *o_ptr);
 extern bool item_tester_hook_wear(const object_type *o_ptr);
 extern bool item_tester_hook_recharge(const object_type *o_ptr);
 extern bool item_tester_hook_jewel(const object_type *o_ptr);
-extern bool item_tester_hook_tval(const object_type *o_ptr);
+extern bool item_tester_hook_tval(const object_type *o_ptr, byte tval);
 extern bool item_tester_hook_is_blessed(const object_type *o_ptr);
 extern bool item_tester_hook_is_good(const object_type *o_ptr);
 extern bool item_tester_hook_is_great(const object_type *o_ptr);
