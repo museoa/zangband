@@ -1593,6 +1593,7 @@ byte res_pois_lvl(void)
 {
 	byte level = 9;
 	
+	if (FLAG(p_ptr, TR_IM_POIS)) return (0);
 	if (FLAG(p_ptr, TR_RES_POIS)) level /= 3;
 	if (p_ptr->tim.oppose_pois) level /= 3;
 

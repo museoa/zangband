@@ -2893,7 +2893,7 @@
 #define TR1_SUST_CON            0x00000010L
 #define TR1_SUST_CHR            0x00000020L
 #define TR1_XXX1                0x00000040L	/* Later */
-#define TR1_XXX2                0x00000080L	/* Later */
+#define TR1_IM_POIS             0x00000080L
 #define TR1_IM_ACID             0x00000100L
 #define TR1_IM_ELEC             0x00000200L
 #define TR1_IM_FIRE             0x00000400L
@@ -3056,7 +3056,7 @@
 #define TR_SUST_CON 	 	1,  TR1_SUST_CON	 
 #define TR_SUST_CHR 	 	1,  TR1_SUST_CHR	 
 #define TR_XXX2 		 	1,  TR1_XXX2	   
-#define TR_XXX3 		 	1,  TR1_XXX3	   
+#define TR_IM_POIS 		 	1,  TR1_IM_POIS	   
 #define TR_IM_ACID  	 	1,  TR1_IM_ACID    
 #define TR_IM_ELEC  	 	1,  TR1_IM_ELEC    
 #define TR_IM_FIRE  	 	1,  TR1_IM_FIRE    

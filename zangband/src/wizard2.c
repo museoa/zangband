@@ -621,10 +621,10 @@ static void wiz_display_item(const object_type *o_ptr)
 
 	prtf(j, 17, "+------------FLAGS2------------+\n"
 	    		"SUST...IMMUN..RESIST............\n"
-	    		"        aefctrpsaefcpfldbc sn   \n"
-	    		"siwdcc  clioheatcliooeialoshtncd\n"
-	    		"tnieoh  ierlrfraierliatrnnnrhehi\n"
-	    		"rtsxna..dcedwlatdcedsrekdfddrxss\n"
+	    		"       paefctrpsaefcpfldbc sn   \n"
+	    		"siwdcc oclioheatcliooeialoshtncd\n"
+	    		"tnieoh iierlrfraierliatrnnnrhehi\n"
+	    		"rtsxna.sdcedwlatdcedsrekdfddrxss\n"
                 "%v", binary_fmt, o_ptr->flags[1]);
 
 	prtf(j + 32, 10,"+------------FLAGS3------------+\n"

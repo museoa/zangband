@@ -3120,7 +3120,8 @@ static bool run_test(void)
 				case FEAT_SHAL_SWAMP:
 				{
 					/* Ignore */
-					if (p_ptr->tim.invuln) notice = FALSE;
+					if (p_ptr->tim.invuln || (FLAG(p_ptr, TR_IM_POIS)))
+						notice = FALSE;
 
 					/* Done */
 					break;

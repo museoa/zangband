@@ -174,7 +174,7 @@ typedef int sint;
 #define TR1_SUST_CON            0x00000010L
 #define TR1_SUST_CHR            0x00000020L
 #define TR1_XXX1                0x00000040L     /* Later */
-#define TR1_XXX2                0x00000080L     /* Later */
+#define TR1_IM_POIS             0x00000080L
 #define TR1_IM_ACID             0x00000100L
 #define TR1_IM_ELEC             0x00000200L
 #define TR1_IM_FIRE             0x00000400L

@@ -1017,7 +1017,7 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 	if (FLAG(o_ptr, TR_SUST_CON)) total += 200;
 	if (FLAG(o_ptr, TR_SUST_CHR)) total += 100;
 	if (FLAG(o_ptr, TR_XXX1)) total += 0;
-	if (FLAG(o_ptr, TR_XXX2)) total += 0;
+	if (FLAG(o_ptr, TR_IM_POIS)) total += 10000;
 	if (FLAG(o_ptr, TR_IM_ACID)) total += 10000;
 	if (FLAG(o_ptr, TR_IM_ELEC)) total += 10000;
 	if (FLAG(o_ptr, TR_IM_FIRE)) total += 10000;

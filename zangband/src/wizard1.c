@@ -523,6 +523,7 @@ static const flag_desc resist_flags_desc[] =
 
 static const flag_desc immune_flags_desc[] =
 {
+	{TR1_IM_POIS, "Poison"},
 	{TR1_IM_ACID, "Acid"},
 	{TR1_IM_ELEC, "Lightning"},
 	{TR1_IM_FIRE, "Fire"},

@@ -1735,9 +1735,10 @@ void player_flags(object_flags *of_ptr)
 		case RACE_GOLEM:
 			SET_FLAG(of_ptr, TR_SEE_INVIS);
 			SET_FLAG(of_ptr, TR_FREE_ACT);
-			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_IM_POIS);
 			SET_FLAG(of_ptr, TR_SLOW_DIGEST);
 			SET_FLAG(of_ptr, TR_CANT_EAT);
+			SET_FLAG(of_ptr, TR_HURT_COLD);
 			if (p_ptr->lev > 34)
 				SET_FLAG(of_ptr, TR_HOLD_LIFE);
 			break;
@@ -1745,8 +1746,9 @@ void player_flags(object_flags *of_ptr)
 			SET_FLAG(of_ptr, TR_SEE_INVIS);
 			SET_FLAG(of_ptr, TR_RES_SHARDS);
 			SET_FLAG(of_ptr, TR_HOLD_LIFE);
-			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_IM_POIS);
 			SET_FLAG(of_ptr, TR_CANT_EAT);
+			SET_FLAG(of_ptr, TR_HURT_ACID);
 			if (p_ptr->lev > 9)
 				SET_FLAG(of_ptr, TR_RES_COLD);
 			break;
@@ -1754,9 +1756,10 @@ void player_flags(object_flags *of_ptr)
 			SET_FLAG(of_ptr, TR_SEE_INVIS);
 			SET_FLAG(of_ptr, TR_HOLD_LIFE);
 			SET_FLAG(of_ptr, TR_RES_NETHER);
-			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_IM_POIS);
 			SET_FLAG(of_ptr, TR_SLOW_DIGEST);
 			SET_FLAG(of_ptr, TR_CANT_EAT);
+			SET_FLAG(of_ptr, TR_HURT_FIRE);
 			if (p_ptr->lev > 4)
 				SET_FLAG(of_ptr, TR_RES_COLD);
 			break;
@@ -1775,11 +1778,11 @@ void player_flags(object_flags *of_ptr)
 			SET_FLAG(of_ptr, TR_SEE_INVIS);
 			SET_FLAG(of_ptr, TR_HOLD_LIFE);
 			SET_FLAG(of_ptr, TR_RES_NETHER);
-			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_IM_POIS);
 			SET_FLAG(of_ptr, TR_SLOW_DIGEST);
 			SET_FLAG(of_ptr, TR_CANT_EAT);
 			SET_FLAG(of_ptr, TR_PASS_WALL);
-			/* XXX pass_wall */
+			SET_FLAG(of_ptr, TR_HURT_ELEC);
 			if (p_ptr->lev > 34)
 				SET_FLAG(of_ptr, TR_TELEPATHY);
 			break;
@@ -1799,9 +1802,10 @@ void player_flags(object_flags *of_ptr)
 			SET_FLAG(of_ptr, TR_CANT_EAT);
 			if (p_ptr->lev > 9) SET_FLAG(of_ptr, TR_RES_DARK);
 			if (p_ptr->lev > 19) SET_FLAG(of_ptr, TR_RES_NETHER);
-			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_IM_POIS);
 			SET_FLAG(of_ptr, TR_RES_COLD);
 			SET_FLAG(of_ptr, TR_GHOUL_TOUCH);
+			SET_FLAG(of_ptr, TR_HURT_FIRE);
 			break;
 		default:
 			;					/* Do nothing */

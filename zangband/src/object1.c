@@ -483,6 +483,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	if (FLAG(of_ptr, TR_IM_ELEC)) vp[vn++] = "electricity";
 	if (FLAG(of_ptr, TR_IM_FIRE)) vp[vn++] = "fire";
 	if (FLAG(of_ptr, TR_IM_COLD)) vp[vn++] = "cold";
+	if (FLAG(of_ptr, TR_IM_POIS)) vp[vn++] = "poison";
 	if (FLAG(of_ptr, TR_IM_LITE)) vp[vn++] = "light";
 	if (FLAG(of_ptr, TR_IM_DARK)) vp[vn++] = "darkness";
 	if (FLAG(of_ptr, TR_FREE_ACT)) vp[vn++] = "paralysis";
