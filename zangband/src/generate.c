@@ -442,7 +442,7 @@ static bool cave_gen(void)
 	}
 
 	/* Make a lake some of the time */
-	if ((rand_int(LAKE_LEVEL) == 0) && !empty_level && !destroyed)
+	if ((rand_int(LAKE_LEVEL) == 0) && !empty_level && !destroyed && terrain_streams)
 	{
 		/* Lake of Water */
 		if (dun_level > 52) laketype = 2;
@@ -596,19 +596,19 @@ static bool cave_gen(void)
 	}
 
 	/* Make a hole in the dungeon roof sometimes at level 1 */
-	if (dun_level == 1)
+	if ((dun_level == 1) && terrain_streams)
 	{
 		while (randint(DUN_MOS_DEN) == 1)
 		{
 			place_trees(randint(cur_wid - 2), randint(cur_hgt - 2));
-	}
+		}
 	}
 
 	/* Destroy the level if necessary */
 	if (destroyed) destroy_level();
 
 	/* Hack -- Add some rivers */
-	if ((randint(3) == 1) && (randint(dun_level) > 5))
+	if ((randint(3) == 1) && (randint(dun_level) > 5) && terrain_streams)
 	{
 	 	/* Choose water or lava */
 		if (randint(MAX_DEPTH * 2) - 1 > dun_level)
