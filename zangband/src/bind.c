@@ -532,10 +532,6 @@ static void ExpandTarget(char which, ClientData object, QE_Event *eventPtr,
 		case 'x': /* x */
 			QE_ExpandNumber(p_ptr_target_col, result);
 			break;
-
-		case 'v': /* visibility */
-			QE_ExpandNumber(target_vis, result);
-			break;
 		
 		default:
 			ExpandGeneric(which, object, eventPtr, result);

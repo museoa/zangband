@@ -38,12 +38,6 @@ extern int objcmd_photo_copy(ClientData clientData, Tcl_Interp *interp,
 /* d_attr characters */
 char *g_attr_str = "dwsorgbuDWvyRGBU";
 
-/* Last known target state */
-int target_state = 0;
-
-/* Visibility of target */
-bool target_vis = FALSE;
-
 /* TRUE if current command is repeated */
 bool command_repeating = FALSE;
 

@@ -266,12 +266,6 @@ extern char *player_status(int status, int *value);
 extern void blows_per_round(int *_blows, int *_muta_att);
 extern void shots_per_round(int *shots, int *shots_frac);
 
-#define TARGET_STATE_SET 0x0001 /* Target is set */
-#define TARGET_STATE_VIS 0x0002 /* Target is visible */
-#define TARGET_STATE_CHANGE 0x0004 /* Target changed */
-extern int target_state;
-extern bool target_vis;
-
 
 /*
  * XXXXX Important!
