@@ -1,4 +1,4 @@
-/* File: borg8.c */
+/* File: zborg8.c */
 /* Purpose: High level functions for the Borg -BEN- */
 
 #include "angband.h"
@@ -234,21 +234,20 @@ static bool borg_object_similar(list_item *l_ptr, list_item *q_ptr)
 static void borg_think_shop_sell(int item, list_item *l_ptr)
 {
 	/* Log */
-	borg_note_fmt("# Selling %s", l_ptr->o_name);
+	borg_note_fmt("# Selling %s (%c)", l_ptr->o_name, I2A(item));
 
 	/* One item */
-	borg_note_fmt("# Sending key 0");
 	borg_keypress('0');
-	borg_note_fmt("# Sending key 1");
 	borg_keypress('1');
 
 	/* Sell an item */
-	borg_note_fmt("# Sending key s");
 	borg_keypress('s');
 
 	/* Sell the desired item */
-	borg_note_fmt("# Sending key %c", I2A(item));
 	borg_keypress(I2A(item));
+
+	/* If the user likes this option */
+	if (check_transaction) borg_keypress('y');
 
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
@@ -295,6 +294,9 @@ static void borg_think_shop_buy(int item)
 
 	/* Buy the desired item */
 	borg_keypress(I2A(item % (STORE_INVEN_MAX / 2)));
+
+	/* If the user likes this option */
+	if (check_transaction) borg_keypress('y');
 
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;

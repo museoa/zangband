@@ -2411,29 +2411,9 @@ static void borg_cheat_temp_bools(void)
 	borg_wearing_cursed = borg_wears_cursed(FALSE);
 }
 
-/*
- * Initialize the Borg
- */
-void borg_init_9(void)
+/* Turn on the right options */
+static void borg_cheat_options(void)
 {
-	/*** Hack -- initialize borg.ini options ***/
-
-	/* Message */
-	prtf(0, 0, "Initializing the Borg... (zborg.txt)");
-
-	/* Hack -- flush it */
-	Term_fresh();
-
-	init_borg_txt_file();
-
-	/*** Hack -- initialize game options ***/
-
-	/* Message */
-	prtf(0, 0, "Initializing the Borg... (options)");
-
-	/* Hack -- flush it */
-	Term_fresh();
-
 	/* We use the original keypress codes */
 	rogue_like_commands = FALSE;
 
@@ -2445,9 +2425,6 @@ void borg_init_9(void)
 
 	/* We must pick items up without verification */
 	carry_query_flag = FALSE;
-
-	/* No need to confirm in the shop */
-	check_transaction = FALSE;
 
 	/* We need space */
 	show_labels = FALSE;
@@ -2475,27 +2452,30 @@ void borg_init_9(void)
 	/* Hack -- notice "command" mode */
 	hilite_player = FALSE;
 
-	/*** Various ***/
-
-	/* Message */
-	prtf(0, 0, "Initializing the Borg... (various)");
-
-	/* Hack -- flush it */
-	Term_fresh();
-
-
-	/*** Cheat / Panic ***/
-
 	/* more cheating */
 	borg_cheat_death = FALSE;
 
 	/* set the continous play mode if the game cheat death is on */
 	if (cheat_live) borg_cheat_death = TRUE;
+}
+
+/*
+ * Initialize the Borg
+ */
+void borg_init_9(void)
+{
+	/*** Hack -- initialize borg.ini options ***/
+
+	/* Message */
+	prtf(0, 0, "Initializing the Borg.");
+
+	/* Hack -- flush it */
+	Term_fresh();
+
+	init_borg_txt_file();
 
 	/* Initialise player position */
 	map_get_player(&c_x, &c_y);
-
-	/*** Initialize ***/
 
 	/* Initialize */
 	borg_init_1();
@@ -3152,8 +3132,11 @@ void do_cmd_borg(void)
 			my_need_stat_check[4] = TRUE;
 			my_need_stat_check[5] = TRUE;
 			
-			/* Fill the borg_bools for temporary states*/
+			/* Fill the borg_bools for temporary states */
 			borg_cheat_temp_bools();
+
+			/* Make sure the right options are set */
+			borg_cheat_options();
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3180,6 +3163,9 @@ void do_cmd_borg(void)
 			
 			/* Fill the borg_bools for temporary states*/
 			borg_cheat_temp_bools();
+
+			/* Make sure the right options are set */
+			borg_cheat_options();
 
 			/* Message */
 			borg_note("# Installing keypress hook");
@@ -3225,6 +3211,9 @@ void do_cmd_borg(void)
 			
 			/* Fill the borg_bools for temporary states*/
 			borg_cheat_temp_bools();
+
+			/* Make sure the right options are set */
+			borg_cheat_options();
 
 			/* Message */
 			borg_note("# Installing keypress hook");
