@@ -584,10 +584,11 @@ bool borg_check_lite(void)
 	if (do_evil && (!when_detect_evil || (borg_t - when_detect_evil >= 9)))
 	{
 		/* Check for traps */
-		if (borg_spell_fail(REALM_LIFE, 0, 0, 20) ||
+		if (borg_spell_fail(REALM_NATURE, 0, 0, 20) ||
 			borg_spell_fail(REALM_ARCANE, 0, 3, 20) ||
-			borg_spell_fail(REALM_NATURE, 0, 0, 20) ||
 			borg_spell_fail(REALM_SORCERY, 0, 0, 20) ||
+			borg_spell_fail(REALM_DEATH, 0, 3, 20) ||
+			borg_spell_fail(REALM_LIFE, 0, 0, 20) ||
 			borg_spell_fail(REALM_DEATH, 0, 0, 20))
 		{
 			borg_note("# Checking for monsters.");

@@ -9134,6 +9134,9 @@ static void borg_temp_fill(bool all_monsters)
 		x1 = x;
 		y1 = y;
 
+		/* Is the monster next to the borg? */
+		if (distance(c_x, c_y, x, y) == 1) borg_add_temp_next(x, y);
+
 		for (dx = -1; dx <= 1; dx++)
 		{
 			for (dy = -1; dy <= 1; dy++)
@@ -9147,9 +9150,6 @@ static void borg_temp_fill(bool all_monsters)
 
 				/* How far is this grid */
 				dist = distance(c_x, c_y, x, y);
-
-				/* Is the monster next to the borg? */
-				if (dist == 1) borg_add_temp_next(x1, y1);
 
 				/* Is this grid out of range? */
 				if (dist > MAX_RANGE) continue;
