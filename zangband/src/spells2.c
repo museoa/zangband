@@ -1534,7 +1534,7 @@ bool detect_monsters_string(cptr match)
 /* Generic monster tester */
 static bool flag_mon_tester(const monster_type *m_ptr, vptr data)
 {
-	const u32b flag;
+	u32b flag;
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	
