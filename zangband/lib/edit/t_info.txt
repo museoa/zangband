@@ -467,7 +467,7 @@ F:2,field_action_door_store
 
 # Book Store
 N:42:Book Store
-G:5:y
+:y
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:8:17:35:0:0:100:0:0
@@ -1007,7 +1007,7 @@ F:19,field_action_ishelm_tester
 
 # Jeweler
 N:102:Jeweler
-G:5:g
+G:5:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:1:30:100:0:0:0:8
@@ -1016,7 +1016,7 @@ F:19,field_action_isjewel_tester
 
 # Jeweler
 N:103:Copper Jewler
-G:5:g
+G:5:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:20:50:100:0:0:0:8
@@ -1025,7 +1025,7 @@ F:19,field_action_isjewel_tester
 
 # Jeweler
 N:104:Silver Jeweler
-G:5:g
+G:5:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:40:70:100:0:0:0:24
@@ -1034,7 +1034,7 @@ F:19,field_action_isjewel_tester
 
 # Jeweler
 N:105:Gold Jeweler
-G:5:G
+G:5:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:60:90:100:0:0:0:40
@@ -1043,7 +1043,7 @@ F:19,field_action_isjewel_tester
 
 # Jeweler
 N:106:Rare Jeweler
-G:5:G
+G:5:R
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:3:80:120:100:0:0:0:56
@@ -1070,7 +1070,7 @@ F:19,field_action_isstatue_tester
 
 # Figurine Store
 N:109:Figurine Store
-G:5:b
+G:5:g
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:26:26:100:0:0:0:8
@@ -1079,7 +1079,7 @@ F:19,field_action_isfigurine_tester
 
 # Figurine Store
 N:110:Expensive Figurine Store
-G:5:B
+G:5:G
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:5:50:90:100:0:0:0:24
@@ -1088,7 +1088,7 @@ F:19,field_action_isfigurine_tester
 
 # Potion Store
 N:111:Potion Store
-G:5:r
+G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:1:30:0:0:100:0:8
@@ -1097,7 +1097,7 @@ F:19,field_action_ispotion_tester
 
 # Potion Store
 N:112:Cultured Potion Store
-G:5:r
+G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:20:50:0:0:100:0:8
@@ -1106,7 +1106,7 @@ F:19,field_action_ispotion_tester
 
 # Potion Store
 N:113:Expensive Potion Store
-G:5:r
+G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:40:70:0:0:100:0:24
@@ -1115,7 +1115,7 @@ F:19,field_action_ispotion_tester
 
 # Potion Store
 N:114:Obscure Potion Store
-G:5:R
+G:5:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:60:90:0:0:100:0:40
@@ -1124,7 +1124,7 @@ F:19,field_action_ispotion_tester
 
 # Potion Store
 N:115:Rare Potion Store
-G:5:R
+G:5:B
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:80:120:0:0:100:0:56
