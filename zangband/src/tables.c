@@ -6355,7 +6355,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  6, "terrain_streams",		"Create terrain 'streamers' in the dungeon" },
 	{TRUE, 0, NULL,						"Number 202" },
 	{FALSE, 6, "munchkin_death",		"Ask for saving death" },
-	{FALSE, 6, "ironman_rooms",			"Always generate very unusual rooms" },
+	{TRUE,  0, NULL,					"Number 204" },
 	{TRUE,  0, NULL,					"Number 205" },
 	{TRUE,  6, "preserve_mode",			"Preserve artifacts" },
 	{TRUE,  6, "autoroller",			"Specify stat weightings" },

@@ -3830,7 +3830,7 @@
 #define terrain_streams			p_ptr->birth[9]
 /* {TRUE,  0, NULL,					"Number 202" }, p_ptr->birth[10] */
 #define munchkin_death			p_ptr->birth[11]
-#define ironman_rooms			p_ptr->birth[12]
+/* {TRUE,  0, NULL,					"Number 204" }, p_ptr->birth[12] */
 /* {TRUE,  0, NULL,					"Number 205" }, p_ptr->birth[13] */
 #define preserve_mode			p_ptr->birth[14]
 #define autoroller				p_ptr->birth[15]

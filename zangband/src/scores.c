@@ -180,7 +180,6 @@ static long total_points(void)
 	/* More ironman options */
 	if (ironman_empty_levels) mult += 10;
 	if (ironman_nightmare) mult += 20;
-	if (ironman_rooms) mult += 10;
 
 	if (mult < 5) mult = 5;		/* At least 5% of the original score */
 

@@ -5184,7 +5184,7 @@ bool room_build(void)
 	while (!(dun->room_types & room_list[type].flags));
 	
 	/* Restrict level */
-	if ((p_ptr->depth < room_list[type].depth) && !ironman_rooms) return (FALSE);
+	if (p_ptr->depth < room_list[type].depth) return (FALSE);
 
 	/* Restrict "crowded" rooms */
 	if ((dun->crowded >= 2) && (room_list[type].flags & RT_CROWDED)) return (FALSE);
