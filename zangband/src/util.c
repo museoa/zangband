@@ -3740,7 +3740,6 @@ void build_gamma_table(int gamma)
 			value += diff;
 			n++;
 
-
 			/*
 			 * Use the following identiy to calculate the gamma table.
 			 * exp(x) = 1 + x + x^2/2 + x^3/(2*3) + x^4/(2*3*4) +...
