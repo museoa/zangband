@@ -86,7 +86,7 @@
 #define BORG_GLOW   0x02    /* probably perma-lit */
 #define BORG_DARK   0x04    /* probably not perma-lit */
 #define BORG_OKAY   0x08    /* on the current panel */
-#define BORG_LITE   0x10    /* lit by the torch */
+/* #define BORG_LITE   0x10 */   /* lit by the torch */
 #define BORG_VIEW   0x20    /* in line of sight */
 #define BORG_TEMP   0x40    /* temporary flag */
 #define BORG_XTRA   0x80    /* extra flag */
@@ -1117,7 +1117,7 @@ extern int borg_class;      /* Current class */
 
 extern player_race *rb_ptr; /* Player race info */
 extern player_class *cb_ptr;    /* Player class info */
-extern player_magic *mb_ptr;    /* Player magic info */
+extern player_magic *pmb_ptr;    /* Player magic info */
 
 
 /*
@@ -1352,8 +1352,6 @@ extern borg_data *borg_data_icky;   /* Current "icky" flags */
 extern bool borg_danger_wipe;       /* Recalculate danger */
 
 extern bool borg_do_update_view;       /* Recalculate view */
-
-extern bool borg_do_update_lite;       /* Recalculate lite */
 
 
 /*

@@ -388,6 +388,7 @@ bool borg_check_lite(void)
     int q_x, q_y;
 
     borg_grid *ag;
+	map_block *mb_ptr;
 
 
     bool do_lite;
@@ -656,15 +657,16 @@ bool borg_check_lite(void)
             {
                 /* Get grid */
                 ag = &borg_grids[y][x];
+				mb_ptr = map_loc(x, y);
 
                 /* Location must be a lit floor */
-                if (ag->info & BORG_LITE) floors ++;
+                if (mb_ptr->info & MAP_SEEN) floors++;
 
                 /* Location must not be glowing */
-                if (ag->info & BORG_GLOW) floors --;
+                if (mb_ptr->info & MAP_GLOW) floors--;
 
                 /* Location must not be a wall/door */
-                if (!borg_cave_floor_grid(ag)) floors --;
+                if (!borg_cave_floor_grid(ag)) floors--;
 
             }
         }
@@ -734,6 +736,7 @@ bool borg_check_lite_only(void)
     int q_x, q_y;
 
     borg_grid *ag;
+	map_block *mb_ptr;
 
 
     bool do_lite;
@@ -803,15 +806,16 @@ bool borg_check_lite_only(void)
             {
                 /* Get grid */
                 ag = &borg_grids[y][x];
+				mb_ptr = map_loc(x, y);
 
                 /* Location must be a lit floor */
-                if (ag->info & BORG_LITE) floors ++;
+                if (mb_ptr->info & MAP_SEEN) floors++;
 
                 /* Location must not be glowing */
-                if (ag->info & BORG_GLOW) floors --;
+                if (mb_ptr->info & MAP_GLOW) floors--;
 
                 /* Location must not be a wall/door */
-                if (!borg_cave_floor_grid(ag)) floors --;
+                if (!borg_cave_floor_grid(ag)) floors--;
 
             }
         }

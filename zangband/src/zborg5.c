@@ -1212,6 +1212,7 @@ static bool borg_follow_kill_aux(int i, int y, int x)
     int d;
 
     borg_grid *ag;
+	map_block *mb_ptr;
 
     borg_kill *kill = &borg_kills[i];
 
@@ -1227,6 +1228,7 @@ static bool borg_follow_kill_aux(int i, int y, int x)
 
     /* Access the grid */
     ag = &borg_grids[y][x];
+	mb_ptr = map_loc(x, y);
 
     /* Not on-screen */
     if (!(ag->info & BORG_OKAY)) return (FALSE);
@@ -1236,7 +1238,7 @@ static bool borg_follow_kill_aux(int i, int y, int x)
     if (ag->info & BORG_VIEW)
     {
         /* Use "illumination" */
-        if (ag->info & (BORG_LITE | BORG_GLOW))
+        if (mb_ptr->info & (MAP_SEEN))
         {
             /* We can see invisible */
             if (borg_skill[BI_SINV] || borg_see_inv) return (TRUE);
@@ -2589,23 +2591,6 @@ static bool borg_handle_self(cptr str)
         /* Message */
         borg_note(format("# Called lite at (%d,%d)",
                          o_c_y, o_c_x));
-
-        /* Hack -- convert torch-lit grids to perma-lit grids */
-        for (i = 0; i < borg_lite_n; i++)
-        {
-            int x = borg_lite_x[i];
-            int y = borg_lite_y[i];
-
-            /* Get the grid */
-            borg_grid *ag = &borg_grids[y][x];
-
-            /* Mark as perma-lit */
-            ag->info |= BORG_GLOW;
-
-            /* Mark as not dark */
-            ag->info &= ~BORG_DARK;
-
-        }
     }
 
 
@@ -3598,13 +3583,11 @@ static void borg_update_map(void)
 
                 /* Recalculate the view (if needed) */
                 if (ag->info & BORG_VIEW) borg_do_update_view = TRUE;
-
-                /* Recalculate the lite (if needed) */
-                if (ag->info & BORG_LITE) borg_do_update_lite = TRUE;
             }
         }
     }
 }
+
 /* Cheat the feature codes into memory.  Used on Wilderness
  * Levels mostly.
  */
@@ -4221,7 +4204,6 @@ void borg_update(void)
 
         /* Update some stuff */
         borg_do_update_view = TRUE;
-        borg_do_update_lite = TRUE;
 
         /* Examine the world */
         borg_do_inven = TRUE;
@@ -4486,9 +4468,6 @@ void borg_update(void)
         /* Update view */
         borg_do_update_view = TRUE;
 
-        /* Update lite */
-        borg_do_update_lite = TRUE;
-
         /* Assume I can shoot here */
         successful_target = 0;
     }
@@ -4501,36 +4480,6 @@ void borg_update(void)
 
         /* Take note */
         borg_do_update_view = FALSE;
-    }
-
-    /* Update the lite */
-    if (borg_do_update_lite)
-    {
-        /* Update the lite */
-        borg_update_lite();
-
-        /* Take note */
-        borg_do_update_lite = FALSE;
-    }
-
-    /* Examine "lit" grids */
-    for (i = 0; i < borg_temp_n; i++)
-    {
-        /* Get location */
-        x = borg_temp_x[i];
-        y = borg_temp_y[i];
-
-        /* Get the borg_grid */
-        ag = &borg_grids[y][x];
-
-        /* Skip torch-lit grids */
-        if (ag->info & BORG_LITE) continue;
-
-        /* Assume not dark */
-        ag->info &= ~BORG_DARK;
-
-        /* Assume perma-lit */
-        if (y !=c_y && x != c_x) ag->info |= BORG_GLOW;
     }
 
     /*** Track objects and monsters ***/

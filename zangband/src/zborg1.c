@@ -829,7 +829,7 @@ int borg_class;     /* Player class */
 player_race *rb_ptr;    /* Player race info */
 player_class *cb_ptr;   /* Player class info */
 
-player_magic *mb_ptr;   /* Player magic info */
+player_magic *pmb_ptr;   /* Player magic info */
 
 
 
@@ -1073,8 +1073,6 @@ borg_data *borg_data_icky;  /* Current "icky" flags */
 bool borg_danger_wipe = FALSE;  /* Recalculate danger */
 
 bool borg_do_update_view = FALSE;  /* Recalculate view */
-
-bool borg_do_update_lite = FALSE;  /* Recalculate lite */
 
 
 /*

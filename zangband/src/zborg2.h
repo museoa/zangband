@@ -70,17 +70,6 @@ extern bool borg_offset_projectable(int y1, int x1, int y2, int x2);
  */
 extern bool borg_projectable_pure(int y1, int x1, int y2, int x2);
 
-
-/*
- * Forget the "lite"
- */
-extern void borg_forget_lite(void);
-
-/*
- * Update the "lite"
- */
-extern void borg_update_lite(void);
-
 /*
  * Forget the "view"
  */

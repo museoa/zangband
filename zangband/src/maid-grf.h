@@ -64,6 +64,12 @@ struct map_block
 	byte terrain;
 #endif /* TERM_CAVE_MAP */
 
+	/* Borg-specific stuff */
+#ifdef ALLOW_BORG
+	byte info;		/* info flags */
+	byte xtra;		/* search count */
+#endif /* ALLOW_BORG */
+
 	/* We need to save the flags to get the refcounting right. */
 	byte flags;
 };

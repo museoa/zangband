@@ -3436,7 +3436,7 @@ static void prepare_book_info(int realm, int book)
     {
         borg_magic *as = &borg_magics[realm][book][what];
 
-        magic_type *s_ptr = &mb_ptr->info[realm][spell[what]];
+        magic_type *s_ptr = &pmb_ptr->info[realm][spell[what]];
 
         /* Skip "illegible" spells */
         if (s_ptr->slevel == 99) continue;

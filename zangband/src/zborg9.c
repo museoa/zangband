@@ -4317,7 +4317,7 @@ void borg_init_9(void)
     cb_ptr = &class_info[borg_class];
 
     /* Extract the magic pointer */
-    mb_ptr = &magic_info[borg_class];
+    pmb_ptr = &magic_info[borg_class];
 
 
     /*** Hack -- react to race and class ***/
@@ -5850,6 +5850,7 @@ void do_cmd_borg(void)
         case 'i':
         case 'I':
         {
+#if 0
             int x, y;
 
             u16b mask;
@@ -5903,7 +5904,7 @@ void do_cmd_borg(void)
                     print_rel('*', a, y, x);
                 }
             }
-
+#endif /* 0 */
             /* Get keypress */
             msg_print("Press any key.");
             msg_print(NULL);
