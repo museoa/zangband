@@ -383,7 +383,8 @@ void do_cmd_read_scroll(void)
 static void do_cmd_use_staff_aux(object_type *o_ptr)
 {
 	int chance, lev;
-	bool ident, use_charge;
+    bool ident, use_charge;
+    object_type temp_object;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if (floor_item(o_ptr) && (o_ptr->number > 1))
@@ -480,7 +481,7 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 		object_type *q_ptr;
 
 		/* Split object */
-		q_ptr = item_split(o_ptr, 1);
+		q_ptr = item_split(o_ptr, 1, &temp_object);
 
 		/* Unstack the used item */
 		o_ptr = inven_carry(q_ptr);

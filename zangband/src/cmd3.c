@@ -131,7 +131,9 @@ void do_cmd_wield(void)
 
 	object_type *q_ptr;
 
-	object_type *o_ptr;
+    object_type *o_ptr;
+
+    object_type temp_object;
 
 	cptr act;
 
@@ -186,7 +188,7 @@ void do_cmd_wield(void)
 	p_ptr->energy_use = 100;
 
 	/* Split object */
-	q_ptr = item_split(o_ptr, 1);
+	q_ptr = item_split(o_ptr, 1, &temp_object);
 
 	/* Access the wield slot */
 	o_ptr = &p_ptr->equipment[slot];

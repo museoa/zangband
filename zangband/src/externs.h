@@ -663,7 +663,7 @@ extern int get_list_length(s16b list_start);
 extern bool floor_item(object_type *o_ptr);
 extern void item_charges(object_type *o_ptr);
 extern void item_describe(object_type *o_ptr);
-extern object_type *item_split(object_type *o_ptr, int num);
+extern object_type *item_split(object_type *o_ptr, int num, object_type *q_ptr);
 extern void item_increase(object_type *o_ptr, int num);
 extern void item_optimize(object_type *o_ptr);
 extern bool inven_carry_okay(const object_type *o_ptr);
