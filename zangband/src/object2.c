@@ -5530,6 +5530,20 @@ object_type *inven_takeoff(object_type *o_ptr)
 
 	/* Wipe the old object */
 	object_wipe(o_ptr);
+	
+	/* Recalculate bonuses and weight */
+	p_ptr->update |= (PU_BONUS | PU_WEIGHT);
+
+	/* Recalculate torch */
+	p_ptr->update |= (PU_TORCH);
+
+	/* Recalculate mana */
+	p_ptr->update |= (PU_MANA);
+
+	p_ptr->redraw |= (PR_EQUIPPY);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	/* Return the item */
 	return (q_ptr);
