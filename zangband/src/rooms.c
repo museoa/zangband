@@ -4524,7 +4524,71 @@ static void build_type18(int bx0, int by0)
 }
 
 
-#define ROOM_TYPES	18
+/*
+ * Type 19 -- Channel or reservoir.
+ */
+static void build_type19(int bx0, int by0)
+{
+	int y1, x1;
+	int y2, x2, yval, xval;
+	bool light;
+	
+	/* Choose lite or dark */
+	light = (p_ptr->depth <= randint1(25));
+	
+	/* Vertical */
+	if (one_in_(2))
+	{
+		/* Try to allocate space for room. */
+		if (!room_alloc(41, 11, FALSE, bx0, by0, &xval, &yval)) return;
+		
+		/* Large, long room */
+		y1 = yval - 4;
+		y2 = yval + 4;
+		x1 = xval - 19;
+		x2 = xval + 19;
+		
+		/* Generate new room */
+		generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, light);
+		
+		/* Generate outer walls */
+		generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
+		
+		/* Generate floor */
+		generate_draw(x1, y1, x2, y2, FEAT_FLOOR);
+		
+		/* Generate liquid */
+		generate_draw(x1, y1 + 1, x2, y2 - 1, FEAT_SHAL_WATER);
+		generate_fill(x1, y1 + 2, x2, y2 - 2, FEAT_DEEP_WATER);
+	}
+	else
+	{
+		/* Try to allocate space for room. */
+		if (!room_alloc(11, 33, FALSE, bx0, by0, &xval, &yval)) return;
+		
+		/* Large, long room */
+		y1 = yval - 15;
+		y2 = yval + 15;
+		x1 = xval - 4;
+		x2 = xval + 4;
+		
+		/* Generate new room */
+		generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, light);
+		
+		/* Generate outer walls */
+		generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
+		
+		/* Generate floor */
+		generate_draw(x1, y1, x2, y2, FEAT_FLOOR);
+		
+		/* Generate liquid */
+		generate_draw(x1 + 1, y1, x2 - 1, y2, FEAT_SHAL_WATER);
+		generate_fill(x1 + 2, y1, x2 - 2, y2, FEAT_DEEP_WATER);
+	}
+}
+
+
+#define ROOM_TYPES	19
 
 typedef void (*room_build_type)(int, int);
 
@@ -4547,7 +4611,8 @@ room_build_type room_list[ROOM_TYPES] =
 	build_type15,
 	build_type16,
 	build_type17,
-	build_type18
+	build_type18,
+	build_type19
 };
 
 
@@ -4570,7 +4635,9 @@ bool room_build(int bx0, int by0, int typ)
 	
 	/* Build a room */
 	/* room_list[typ - 1](bx0, by0); */
-	room_list[17](bx0, by0);
+	
+	/* DELETE ME */
+	room_list[ROOM_TYPES - 1](bx0, by0);
 
 	return (TRUE);
 }
