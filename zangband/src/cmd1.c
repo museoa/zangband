@@ -1196,7 +1196,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 	/* Test for hit */
-	if ((!(r_ptr->flags2 & RF2_QUANTUM) || !randint0(2)) &&
+	if ((!(r_ptr->flags2 & RF2_QUANTUM) || one_in_(2)) &&
 	    test_hit_combat(chance, r_ptr->ac, m_ptr->ml))
 	{
 		/* Sound */
@@ -1441,7 +1441,7 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 	{
 		if (ma_ptr->effect)
 		{
-			stun_effect = (ma_ptr->effect / 2) + randint1(ma_ptr->effect / 2);
+			stun_effect = rand_range(ma_ptr->effect / 2, ma_ptr->effect);
 		}
 
 		msg_format(ma_ptr->desc, m_name);
@@ -1452,7 +1452,7 @@ static void monk_attack(monster_type *m_ptr, long *k, char *m_name)
 	if ((special_effect == MA_KNEE) && ((*k + p_ptr->to_d) < m_ptr->hp))
 	{
 		msg_format("%^s moans in agony!", m_name);
-		stun_effect = 7 + randint1(13);
+		stun_effect = rand_range(13, 20);
 		resist_stun /= 3;
 	}
 
@@ -1795,7 +1795,7 @@ void py_attack(int y, int x)
 
 					int inc_chance = (o_ptr->activate + 128 == ART_VORPAL_BLADE) ? 2 : 4;
 
-					if ((o_ptr->activate + 128 == ART_CHAINSWORD) && (randint1(2) != 1))
+					if ((o_ptr->activate + 128 == ART_CHAINSWORD) && one_in_(2))
 					{
 						char chainsword_noise[1024];
 						if (!get_rnd_line("chainswd.txt", 0, chainsword_noise))
@@ -2643,8 +2643,7 @@ void move_player(int dir, int do_pickup)
 		}
 
 		/* Spontaneous Searching */
-		if ((p_ptr->skill_fos >= 50) ||
-		    (0 == randint0(50 - p_ptr->skill_fos)))
+		if ((p_ptr->skill_fos >= 50) || one_in_(50 - p_ptr->skill_fos))
 		{
 			search();
 		}

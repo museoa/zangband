@@ -994,11 +994,11 @@ static int adjust_stat(int value, int amount, int auto_roll)
 			}
 			else if (value < 18+70)
 			{
-				value += ((auto_roll ? 15 : randint1(15)) + 5);
+				value += (auto_roll ? 15 : rand_range(15, 20));
 			}
 			else if (value < 18+90)
 			{
-				value += ((auto_roll ? 6 : randint1(6)) + 2);
+				value += (auto_roll ? 6 : rand_range(6, 8));
 			}
 			else if (value < 18+100)
 			{
@@ -1452,7 +1452,7 @@ static void get_money(void)
 	int i, gold;
 
 	/* Social Class determines starting gold */
-	gold = (p_ptr->sc * 6) + randint1(100) + 300;
+	gold = (p_ptr->sc * 6) + rand_range(100, 400);
 
 	/* Process the stats */
 	for (i = 0; i < A_MAX; i++)

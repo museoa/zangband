@@ -98,11 +98,11 @@ void have_nightmare(int r_idx)
 	{
 		if (!p_ptr->resist_confu)
 		{
-			(void)set_confused(p_ptr->confused + randint0(4) + 4);
+			(void)set_confused(p_ptr->confused + rand_range(4, 8));
 		}
 		if (!p_ptr->resist_chaos && one_in_(3))
 		{
-			(void)set_image(p_ptr->image + randint0(250) + 150);
+			(void)set_image(p_ptr->image + rand_range(250, 400));
 		}
 		return;
 	}
@@ -120,11 +120,11 @@ void have_nightmare(int r_idx)
 	{
 		if (!p_ptr->resist_confu)
 		{
-			(void)set_confused(p_ptr->confused + randint0(4) + 4);
+			(void)set_confused(p_ptr->confused + rand_range(4, 8));
 		}
 		if (!p_ptr->free_act)
 		{
-			(void)set_paralyzed(p_ptr->paralyzed + randint0(4) + 4);
+			(void)set_paralyzed(p_ptr->paralyzed + rand_range(4, 8));
 		}
 		while (!saving_throw(p_ptr->skill_sav))
 		{
@@ -136,7 +136,7 @@ void have_nightmare(int r_idx)
 		}
 		if (!p_ptr->resist_chaos)
 		{
-			(void)set_image(p_ptr->image + randint0(250) + 150);
+			(void)set_image(p_ptr->image + rand_range(250, 400));
 		}
 		return;
 	}
@@ -1017,14 +1017,14 @@ static void castle_quest(void)
 			if (q_ptr->r_idx == 0)
 			{
 				/* Random monster at least 5 - 10 levels out of deep */
-				q_ptr->r_idx = get_mon_num(q_ptr->level + 4 + randint1(6));
+				q_ptr->r_idx = get_mon_num(q_ptr->level + rand_range(5, 10));
 			}
 
 			r_ptr = &r_info[q_ptr->r_idx];
 
 			while ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->rarity != 1))
 			{
-				q_ptr->r_idx = get_mon_num(q_ptr->level) + 4 + randint1(6);
+				q_ptr->r_idx = get_mon_num(q_ptr->level) + rand_range(5, 10);
 				r_ptr = &r_info[q_ptr->r_idx];
 			}
 
@@ -1034,7 +1034,7 @@ static void castle_quest(void)
 				if (randint1(10) > 7)
 					q_ptr->max_num = 1;
 				else
-					q_ptr->max_num = randint1(3) + 1;
+					q_ptr->max_num = rand_range(2, 5);
 			}
 
 			q_ptr->cur_num = 0;

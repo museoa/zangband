@@ -465,7 +465,7 @@ static void chest_death(int y, int x, s16b o_idx)
 		object_wipe(q_ptr);
 
 		/* Small chests often drop gold */
-		if (small && (randint0(100) < 25))
+		if (small && one_in_(4))
 		{
 			/* Make some gold */
 			if (!make_gold(q_ptr, 0)) continue;
@@ -544,7 +544,7 @@ static void chest_trap(int y, int x, s16b o_idx)
 		msg_print("A puff of green gas surrounds you!");
 		if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 		{
-			(void)set_poisoned(p_ptr->poisoned + 10 + randint1(20));
+			(void)set_poisoned(p_ptr->poisoned + rand_range(20, 30));
 		}
 	}
 
@@ -555,14 +555,14 @@ static void chest_trap(int y, int x, s16b o_idx)
 
 		if (!p_ptr->free_act)
 		{
-			(void)set_paralyzed(p_ptr->paralyzed + 10 + randint1(20));
+			(void)set_paralyzed(p_ptr->paralyzed + rand_range(20, 30));
 		}
 	}
 
 	/* Summon monsters */
 	if (trap & (CHEST_SUMMON))
 	{
-		int num = 2 + randint1(3);
+		int num = rand_range(3, 5);
 		msg_print("You are enveloped in a cloud of smoke!");
 
 		for (i = 0; i < num; i++)
@@ -1272,7 +1272,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			more = TRUE;
 
 			/* Occasional Search XXX XXX */
-			if (randint0(100) < 25) search();
+			if (one_in_(4)) search();
 		}
 	}
 
@@ -1295,7 +1295,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			more = TRUE;
 
 			/* Occasional Search XXX XXX */
-			if (randint0(100) < 25) search();
+			if (one_in_(4)) search();
 		}
 	}
 
@@ -1319,7 +1319,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			more = TRUE;
 
 			/* Occasional Search XXX XXX */
-			if (randint0(100) < 25) search();
+			if (one_in_(4)) search();
 		}
 	}
 
@@ -1425,7 +1425,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			msg_print("You have removed the rubble.");
 
 			/* Hack -- place an object */
-			if (randint0(100) < 10)
+			if (one_in_(10))
 			{
 				/* Create a simple object */
 				place_object(y, x, FALSE, FALSE);
@@ -1463,7 +1463,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 			more = TRUE;
 
 			/* Occasional Search XXX XXX */
-			if (randint0(100) < 25) search();
+			if (one_in_(4)) search();
 		}
 	}
 
@@ -2202,7 +2202,7 @@ void do_cmd_stay(int pickup)
 
 
 	/* Spontaneous Searching */
-	if ((p_ptr->skill_fos >= 50) || (0 == randint0(50 - p_ptr->skill_fos)))
+	if ((p_ptr->skill_fos >= 50) || one_in_(50 - p_ptr->skill_fos))
 	{
 		search();
 	}
