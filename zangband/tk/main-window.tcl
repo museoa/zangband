@@ -263,14 +263,6 @@ proc NSMainWindow::InitWindow {oop} {
 	bind $widget <Control-ButtonPress-1> "NSMainWindow::MouseCommand $oop %x %y +"
 	bind $widget <Shift-ButtonPress-1> "NSMainWindow::MouseCommand $oop %x %y ."
 
-	bind $win <Control-KeyPress-Shift_L> \
-		"$widget configure -cursor fleur"
-	bind $win <Control-KeyRelease-Shift_L> \
-		"$widget configure -cursor {}"
-	bind $win <Shift-KeyPress-Control_L> \
-		"$widget configure -cursor fleur"
-	bind $win <Shift-KeyRelease-Control_L> \
-		"$widget configure -cursor {}"
 	bind $widget <Control-Shift-ButtonPress-1> "
 		NSWidget::Info $widgetId track,x %x
 		NSWidget::Info $widgetId track,y %y
@@ -371,9 +363,6 @@ proc NSMainWindow::InitWindow {oop} {
 	#
 
 	Term_KeyPress_Bind $win
-
-	# Hack -- Visual feedback of whether the target is set or not.
-	#TargetSetup $oop
 
 	return
 }
