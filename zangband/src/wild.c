@@ -25,6 +25,9 @@
 /* Maximum distance a road can connect */
 #define ROAD_DIST		30
 
+/* Minimum fractional distance a road can approach a non-connecting town */
+#define ROAD_MIN		3
+
 /*
  * Helper functions that can be called recursively.  (Need function prototypes.)
  * See make_wild_03() for an instance of this.
@@ -3888,9 +3891,9 @@ static void create_roads(void)
 {
 	u16b i, j, towns = 0, links = 0;
 
-	u16b x1, x2, y1, y2;
+	u16b x1, x2, x3, y1, y2, y3;
 
-	s16b town1, town2, town3;
+	s16b town1, town2, town3, town4;
 
 	u16b dist, dist2, max_dist;
 	
@@ -4090,6 +4093,10 @@ static void create_roads(void)
 		}
 		else
 		{
+			
+			dist = link_list[town1][town2];
+			max_dist = (dist / 2) + 1;
+			
 			/* Mark the towns as connected to each other */
 			link_list[town1][town2] = ROAD_DIST * 2 + 1;
 			link_list[town2][town1] = ROAD_DIST * 2 + 1;
@@ -4097,23 +4104,69 @@ static void create_roads(void)
 			/* Decrement link total */
 			links -= 2;
 			
+			/* Hack - save the town number in link_list */
+			town3 = town1;
+			town4 = town2;
+
+			/* Hack - set j to be zero */
+			j = 0;
+			
 			town1 = town_number[town1];
 			town2 = town_number[town2];
 			
+			/* Get first point */
 			x1 = town[town2].x;
 			y1 = town[town2].y;
 			
-			/* Get connection square for town1 */
-			road_connect(&x1, &y1, town1);
+			/* Get second point */
+			x2 = town[town1].x;
+			y2 = town[town2].y;
 			
-			x2 = x1;
-			y2 = y1;
+			/* 
+			 * In some cases, the road will "run into" other towns.
+			 * The following code hopefully checks for that.
+			 */
+			for (i = 0; i < towns; i++)
+			{
+				/* Ignore the towns we want to connect */
+				if ((i == town3) || (i == town4)) continue;
+				
+				/* Get location of the current town */
+				x3 = town[town_number[i]].x;
+				y3 = town[town_number[i]].y;
+				
+				/* See if is close */
+				if ((distance(x1, y1, x3, y3) > max_dist) &&
+					(distance(x2, y2, x3, y3) > max_dist)) continue;
+				
+				/* See if the town is "in the way" */
+				if (dist_to_line(y3, x3, y1, x1, y2, x2) > dist / ROAD_MIN)
+				{
+					continue;
+				}
+				
+				/* We have a problem - set j to be 1 (a flag) */
+				j = 1;
+				
+				/* Exit */
+				break;
+			}
 			
-			/* Get connection square for town2 */
-			road_connect(&x2, &y2, town2);
+			/* If there are no problems - link the two towns */
+			if (j == 0)
+			{
+				/* Get connection square for town1 */
+				road_connect(&x1, &y1, town1);
 			
-			/* Link the two towns */
-			road_link(x1, y1, x2, y2);
+				x2 = x1;
+				y2 = y1;
+			
+				/* Get connection square for town2 */
+				road_connect(&x2, &y2, town2);
+			
+				/* Link the two towns */
+				road_link(x1, y1, x2, y2);
+			}
 		}
 	}
 
