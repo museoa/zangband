@@ -2973,7 +2973,7 @@ static bool player_birth_aux_3(void)
 		}
 
 		/* Are we done? */
-		if (ch == ESCAPE) break;
+		if ((ch == '\r') || (ch == '\n')) break;
 
 		/* Save this for the "previous" character */
 		save_prev_data();
