@@ -7346,20 +7346,18 @@ D:deathly cold.
 
 N:555:Revenant
 G:W:u
-I:110:111d2:20:50:10
-W:36:1:0:725
-B:GAZE:PARALYZE
-B:CLAW:LOSE_CON:1d10
-B:CLAW:LOSE_CON:1d10
-B:GAZE:EXP_40
+I:125:111d2:30:70:5
+W:36:1:0:800
+B:HIT:HURT:2d10
+B:HIT:HURT:2d10
 F:FORCE_SLEEP | FORCE_MAXHP | REGENERATE |
 F:DROP_60 | DROP_90 | 
 F:COLD_BLOOD | OPEN_DOOR | BASH_DOOR | MOVE_BODY |
 F:EVIL | UNDEAD | HURT_LITE | IM_COLD | IM_POIS | NO_CONF | NO_SLEEP
-S:1_IN_7 |
-S:CONF | SCARE | CAUSE_3 | DARKNESS
-D:Back from the grave, to wreak vengeance upon the living. A skeletal figure 
-D:wearing a black robe, with eyes that burn with undying hatred.
+S:1_IN_4|
+S:BO_FIRE
+D:Back from the grave, to wreak vengeance upon the living. A gaunt, tall, 
+D:skeletal figure wearing a ruined plate mail.
 
 N:556:Young multi-hued dragon
 G:d:v
@@ -9283,7 +9281,7 @@ F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | DROP_GREAT | UNIQUE |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | SMART | POWERFUL |
 S:1_IN_3
 S:BLIND | HEAL | BA_DARK | HASTE | CONF |
-D:Deriving his strength from the shadows, this king of thieves
+D:Deriving his strength from the shadows, this king of thieves 
 D:steals only for the challenge.
 
 N:671:Zephyr Lord
@@ -10672,13 +10670,13 @@ S:SCARE | BRAIN_SMASH | DRAIN_MANA |
 S:BR_CONF | S_DEMON | S_UNDEAD | TPORT | HEAL |
 S:TELE_AWAY
 D:This demonic keeper of forbidden secrets looks like a hairless 
-D:minotaur with extra arms, decorated with tattoos and nose rings.
+D:minotaur with extra arms, decorated with tattoos and nose rings. 
 D:It is the embodiment of Slaanesh's perverted magic.
 
 N:747:Shudde M'ell
 G:w:s
 I:125:100d40:20:90:20
-W:39:2:0:23000
+W:54:2:0:23000
 B:CRUSH:SHATTER:55d2
 B:CRUSH:SHATTER:55d2
 B:TOUCH:LOSE_CON:1d2
