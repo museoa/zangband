@@ -871,6 +871,10 @@ static void process_world(void)
 	int temp;
 	object_kind *k_ptr;
 
+	/* Announce the level feeling */
+	if ((turn-old_turn==1000) && (dun_level)) do_cmd_feeling();
+		
+
 	/* Every 10 game turns */
 	if (turn % 10) return;
 
@@ -3719,11 +3723,6 @@ static void dungeon(void)
 
 	/* Refresh */
 	Term_fresh();
-
-
-	/* Announce (or repeat) the feeling */
-	if (dun_level) do_cmd_feeling();
-
 
 	/* Hack -- notice death or departure */
 	if (!alive || death) return;

@@ -2560,9 +2560,17 @@ void do_cmd_feeling(void)
 		msg_print("Looks like a typical wilderness.");
 		return;
 	}
-
+	
 	/* Display the feeling */
-	msg_print(do_cmd_feeling_text[feeling]);
+	if (turn-old_turn>=1000)
+	{
+		msg_print(do_cmd_feeling_text[feeling]);
+	}
+	else
+	{	
+		msg_print(do_cmd_feeling_text[0]);
+	}
+	
 }
 
 

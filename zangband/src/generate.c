@@ -1118,9 +1118,6 @@ static bool level_gen(cptr *why)
 
 static byte extract_feeling(void)
 {
-	/* It takes 1000 game turns for "feelings" to recharge */
-	if ((turn - old_turn) < 1000) return 0;
-
 	/* Hack -- no feeling in the town */
 	if (!dun_level) return 0;
 
