@@ -3353,7 +3353,7 @@ static void do_cmd_knowledge_objects(void)
 /*
  * List virtues & status
  */
-void do_cmd_knowledge_virtues(void)
+static void do_cmd_knowledge_virtues(void)
 {
 	
 	FILE *fff;

@@ -46,7 +46,7 @@ cptr virtue[MAX_VIRTUE] =
 
 
 /* Aux function */
-bool exist_virtue(int type)
+static bool exist_virtue(int type)
 {
 	int i;
 
@@ -62,7 +62,7 @@ bool exist_virtue(int type)
 
 
 /* Aux function */
-void get_random_virtue(int which)
+static void get_random_virtue(int which)
 {
 	int type = 0;
 
