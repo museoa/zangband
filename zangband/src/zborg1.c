@@ -51,7 +51,6 @@
  */
 
 /* dynamic borg stuff */
-bool borg_uses_swaps;
 bool borg_plays_risky;
 bool borg_slow_optimizehome;
 bool borg_scums_uniques;
@@ -252,114 +251,7 @@ s16b my_stat_add[6];	/* additions to stats  This will allow upgrading of */
 
 s16b home_stat_add[6];
 
-int weapon_swap;	/* location of my swap weapon */
-int armour_swap;	/* my swap of armour */
-
-/* a 3 state boolean */
-/*-1 = not cursed, no help needed for it */
-/* 0 = light curse, needs light remove curse spell */
-/* 1 = heavy curse, needs heavy remove curse spell */
-int decurse_weapon_swap;	/* my swap is great, except its cursed */
-int enchant_weapon_swap_to_h;	/* my swap is great, except its cursed */
-int enchant_weapon_swap_to_d;	/* my swap is great, except its cursed */
-int decurse_armour_swap;	/* my swap is great, except its cursed */
-int enchant_armour_swap_to_a;	/* my swap is great, except its cursed */
 bool borg_wearing_cursed;
-
-s32b weapon_swap_value;
-s32b armour_swap_value;
-
-s16b weapon_swap_digger;
-int weapon_swap_slay_animal;
-int weapon_swap_slay_evil;
-int weapon_swap_slay_undead;
-int weapon_swap_slay_demon;
-int weapon_swap_slay_orc;
-int weapon_swap_slay_troll;
-int weapon_swap_slay_giant;
-int weapon_swap_slay_dragon;
-int weapon_swap_kill_dragon;
-int weapon_swap_impact;
-int weapon_swap_brand_acid;
-int weapon_swap_brand_elec;
-int weapon_swap_brand_fire;
-int weapon_swap_brand_cold;
-int weapon_swap_see_infra;
-int weapon_swap_slow_digest;
-int weapon_swap_aggravate;
-int weapon_swap_teleport;
-int weapon_swap_regenerate;
-int weapon_swap_telepathy;
-int weapon_swap_lite;
-int weapon_swap_see_invis;
-int weapon_swap_ffall;
-int weapon_swap_free_act;
-int weapon_swap_hold_life;
-int weapon_swap_immune_fire;
-int weapon_swap_immune_acid;
-int weapon_swap_immune_cold;
-int weapon_swap_immune_elec;
-int weapon_swap_resist_acid;
-int weapon_swap_resist_elec;
-int weapon_swap_resist_fire;
-int weapon_swap_resist_cold;
-int weapon_swap_resist_pois;
-int weapon_swap_resist_conf;
-int weapon_swap_resist_sound;
-int weapon_swap_resist_lite;
-int weapon_swap_resist_dark;
-int weapon_swap_resist_chaos;
-int weapon_swap_resist_disen;
-int weapon_swap_resist_shard;
-int weapon_swap_resist_nexus;
-int weapon_swap_resist_blind;
-int weapon_swap_resist_neth;
-int weapon_swap_resist_fear;
-int armour_swap_slay_animal;
-int armour_swap_slay_evil;
-int armour_swap_slay_undead;
-int armour_swap_slay_demon;
-int armour_swap_slay_orc;
-int armour_swap_slay_troll;
-int armour_swap_slay_giant;
-int armour_swap_slay_dragon;
-int armour_swap_kill_dragon;
-int armour_swap_impact;
-int armour_swap_brand_acid;
-int armour_swap_brand_elec;
-int armour_swap_brand_fire;
-int armour_swap_brand_cold;
-int armour_swap_see_infra;
-int armour_swap_slow_digest;
-int armour_swap_aggravate;
-int armour_swap_teleport;
-int armour_swap_regenerate;
-int armour_swap_telepathy;
-int armour_swap_lite;
-int armour_swap_see_invis;
-int armour_swap_ffall;
-int armour_swap_free_act;
-int armour_swap_hold_life;
-int armour_swap_immune_fire;
-int armour_swap_immune_acid;
-int armour_swap_immune_cold;
-int armour_swap_immune_elec;
-int armour_swap_resist_acid;
-int armour_swap_resist_elec;
-int armour_swap_resist_fire;
-int armour_swap_resist_cold;
-int armour_swap_resist_pois;
-int armour_swap_resist_conf;
-int armour_swap_resist_sound;
-int armour_swap_resist_lite;
-int armour_swap_resist_dark;
-int armour_swap_resist_chaos;
-int armour_swap_resist_disen;
-int armour_swap_resist_shard;
-int armour_swap_resist_nexus;
-int armour_swap_resist_blind;
-int armour_swap_resist_neth;
-int armour_swap_resist_fear;
 
 int my_ammo_tval;	/* Ammo -- "tval" */
 int my_ammo_sides;	/* Ammo -- "sides" */

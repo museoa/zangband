@@ -84,7 +84,6 @@ extern bool borg_flow_town_exit(int why);
 extern bool borg_flow_glyph(int why);
 extern bool borg_flow_light(int why);
 extern bool borg_check_lite_only(void);
-extern bool borg_backup_swap(int p);
 
 /*
  * Flow to shops

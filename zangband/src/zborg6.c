@@ -2959,17 +2959,6 @@ bool borg_caution(void)
 			return TRUE;
 	}
 
-
-	if (borg_uses_swaps)
-	{
-		/* do some swapping before running away! */
-		if (p > (avoidance / 3) || borg_goi)
-		{
-			if (borg_backup_swap(p))
-				return TRUE;
-		}
-	}
-
 	/* If I am waiting for recall,  & safe, then stay put. */
 	if (goal_recalling && borg_check_rest() && borg_skill[BI_CDEPTH])
 	{
@@ -12971,17 +12960,6 @@ static bool borg_play_step(int y2, int x2)
 			borg_skill[BI_CURHP] / 4) return (FALSE);
 
 		/* Tunnel */
-		/* If I have a shovel then use it */
-		if (equipment[weapon_swap].tval == TV_DIGGING &&
-			!(equipment[EQUIP_WIELD].kn_flags3 & TR3_CURSED))
-		{
-			borg_note("# Swapping Digger");
-			borg_keypress(ESCAPE);
-			borg_keypress('w');
-			borg_keypress(I2A(weapon_swap));
-			borg_keypress(' ');
-			borg_keypress(' ');
-		}
 		borg_note("# Digging through wall/etc");
 		borg_keypress('0');
 		borg_keypress('9');

@@ -16,15 +16,6 @@
 
 
 /*
- * Hack -- location of the "Lv Mana Fail" prompt
- */
-#define ROW_SPELL   1
-#define COL_SPELL   20+35
-
-
-
-
-/*
  * Forward declare
  */
 typedef struct borg_item borg_item;

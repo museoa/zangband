@@ -964,13 +964,12 @@ static bool borg_enchant_to_a(void)
 static bool borg_enchant_to_h(void)
 {
 	int i, b_i = -1;
-	int a, s_a, b_a = 99;
+	int a, b_a = 99;
 
 	bool inven = FALSE;
 
-
 	/* Nothing to enchant */
-	if (!my_need_enchant_to_h && !enchant_weapon_swap_to_h) return (FALSE);
+	if (!my_need_enchant_to_h) return (FALSE);
 
 	/* Need "enchantment" ability */
 	if ((!amt_enchant_to_h) && (!amt_enchant_weapon)) return (FALSE);
@@ -1007,29 +1006,6 @@ static bool borg_enchant_to_h(void)
 		/* Save the info */
 		b_i = i;
 		b_a = a;
-	}
-
-	if (weapon_swap > 1)
-	{
-		list_item *l_ptr = &inventory[weapon_swap];
-
-		/* Only identified items */
-		if (l_ptr->info & OB_KNOWN)
-		{
-			/* Obtain the bonus */
-			s_a = l_ptr->to_h;
-
-			/* Find the least enchanted item */
-			if (((b_i < 0) || (b_a > s_a)) && (s_a >= 8))
-			{
-				/* Save the info */
-				b_i = weapon_swap;
-				b_a = s_a;
-
-				/* Item is in inventory */
-				inven = TRUE;
-			}
-		}
 	}
 
 	/* Nothing, check ammo */
@@ -1113,13 +1089,12 @@ static bool borg_enchant_to_h(void)
 static bool borg_enchant_to_d(void)
 {
 	int i, b_i = -1;
-	int a, s_a, b_a = 99;
+	int a, b_a = 99;
 
 	bool inven = FALSE;
 
-
 	/* Nothing to enchant */
-	if (!my_need_enchant_to_d && !enchant_weapon_swap_to_d) return (FALSE);
+	if (!my_need_enchant_to_d) return (FALSE);
 
 	/* Need "enchantment" ability */
 	if ((!amt_enchant_to_d) && (!amt_enchant_weapon)) return (FALSE);
@@ -1156,29 +1131,6 @@ static bool borg_enchant_to_d(void)
 		/* Save the info */
 		b_i = i;
 		b_a = a;
-	}
-
-	if (weapon_swap > 1)
-	{
-		list_item *l_ptr = &inventory[weapon_swap];
-
-		/* Only identified items */
-		if (l_ptr->info & OB_KNOWN)
-		{
-			/* Obtain the bonus */
-			s_a = l_ptr->to_d;
-
-			/* Find the least enchanted item */
-			if (((b_i < 0) || (b_a > s_a)) && (s_a >= 8))
-			{
-				/* Save the info */
-				b_i = weapon_swap;
-				b_a = s_a;
-
-				/* Item is in inventory */
-				inven = TRUE;
-			}
-		}
 	}
 
 	/* Nothing, check ammo */
@@ -1321,44 +1273,13 @@ static bool borg_brand_weapon(void)
 /*
  * Remove Curse
  */
-static bool borg_decurse_armour(void)
+static bool borg_decurse(void)
 {
 	/* Nothing to decurse */
-	if (decurse_armour_swap == -1 && !borg_wearing_cursed) return (FALSE);
-
-	/* Ability for heavy curse */
-	if (decurse_armour_swap == 1)
-	{
-		if (!borg_slot(TV_SCROLL, SV_SCROLL_STAR_REMOVE_CURSE) &&
-			!borg_spell_okay_fail(REALM_LIFE, 2, 1, 40))
-		{
-			return (FALSE);
-		}
-
-		else if (decurse_armour_swap == 1)
-		{
-
-			/* First wear the item */
-			borg_keypress('w');
-			borg_keypress(I2A(armour_swap));
-
-			/* ooops it feels deathly cold */
-			borg_keypress(' ');
-		}
-
-		/* remove the curse */
-		if (borg_read_scroll(SV_SCROLL_STAR_REMOVE_CURSE) ||
-			borg_spell(REALM_LIFE, 2, 1))
-		{
-			/* Shekockazol! */
-			borg_wearing_cursed = FALSE;
-			return (TRUE);
-		}
-
-	}
+	if (!borg_wearing_cursed) return (FALSE);
 
 	/* Ability for light curse */
-	if (decurse_armour_swap == 0 || borg_wearing_cursed)
+	if (borg_wearing_cursed)
 	{
 		if (!borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
 			(!borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
@@ -1368,19 +1289,6 @@ static bool borg_decurse_armour(void)
 			return (FALSE);
 		}
 
-		if (borg_wearing_cursed)
-		{
-			/* no need to wear it first */
-		}
-		else
-		{
-			/* First wear the item */
-			borg_keypress('w');
-			borg_keypress(I2A(armour_swap));
-
-			/* ooops it feels deathly cold */
-			borg_keypress(' ');
-		}
 		/* remove the curse */
 		if (borg_read_scroll(SV_SCROLL_REMOVE_CURSE) ||
 			borg_use_staff(SV_STAFF_REMOVE_CURSE) ||
@@ -1388,72 +1296,6 @@ static bool borg_decurse_armour(void)
 		{
 			/* Shekockazol! */
 			borg_wearing_cursed = FALSE;
-			return (TRUE);
-		}
-	}
-
-	/* Nothing to do */
-	return (FALSE);
-}
-
-/*
- * Remove Curse
- * apw
- */
-static bool borg_decurse_weapon(void)
-{
-	/* Nothing to decurse */
-	if (decurse_weapon_swap == -1) return (FALSE);
-
-	/* Ability for heavy curse */
-	if (decurse_weapon_swap == 1)
-	{
-		if (!borg_slot(TV_SCROLL, SV_SCROLL_STAR_REMOVE_CURSE) &&
-			!borg_spell_okay_fail(REALM_LIFE, 2, 1, 40))
-		{
-			return (FALSE);
-		}
-
-		/* First wear the item */
-		borg_keypress('w');
-		borg_keypress(I2A(weapon_swap));
-
-		/* ooops it feels deathly cold */
-		borg_keypress(' ');
-
-		/* remove the curse */
-		if (borg_read_scroll(SV_SCROLL_STAR_REMOVE_CURSE) ||
-			borg_spell(REALM_LIFE, 2, 1))
-		{
-			/* Shekockazol! */
-			return (TRUE);
-		}
-	}
-
-	/* Ability for light curse */
-	if (decurse_weapon_swap == 0)
-	{
-		if (!borg_slot(TV_SCROLL, SV_SCROLL_REMOVE_CURSE) &&
-			(!borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE) &&
-			 !borg_slot(TV_STAFF, SV_STAFF_REMOVE_CURSE)->pval)
-			&& !borg_spell_okay_fail(REALM_LIFE, 2, 1, 40))
-		{
-			return (FALSE);
-		}
-
-		/* First wear the item */
-		borg_keypress('w');
-		borg_keypress(I2A(weapon_swap));
-
-		/* ooops it feels deathly cold */
-		borg_keypress(' ');
-
-		/* remove the curse */
-		if (borg_read_scroll(SV_SCROLL_REMOVE_CURSE) ||
-			borg_use_staff(SV_STAFF_REMOVE_CURSE) ||
-			borg_spell(REALM_LIFE, 2, 1))
-		{
-			/* Shekockazol! */
 			return (TRUE);
 		}
 	}
@@ -1476,8 +1318,7 @@ bool borg_enchanting(void)
 		(borg_t - borg_began > 350 && !borg_skill[BI_CDEPTH])) return (FALSE);
 
 	/* Remove Curses */
-	if (borg_decurse_armour()) return (TRUE);
-	if (borg_decurse_weapon()) return (TRUE);
+	if (borg_decurse()) return (TRUE);
 
 	/* Enchant things */
 	if (borg_enchant_to_d()) return (TRUE);
@@ -1724,10 +1565,6 @@ bool borg_crush_junk(void)
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
 
-		/* dont crush the swap weapon */
-		if (i == weapon_swap) continue;
-		if (i == armour_swap) continue;
-
 		/* dont crush our spell books */
 		if (l_ptr->tval == mp_ptr->spell_book) continue;
 
@@ -1803,7 +1640,7 @@ bool borg_crush_junk(void)
 			fix = TRUE;
 
 			/* Examine the inventory */
-			borg_notice(FALSE);
+			borg_notice();
 
 			/* Evaluate the inventory */
 			p = borg_power();
@@ -1844,7 +1681,7 @@ bool borg_crush_junk(void)
 		}
 
 		/* re-examine the inventory */
-		if (fix) borg_notice(TRUE);
+		if (fix) borg_notice();
 
 		/* Hack -- skip good un-id'd "artifacts" */
 		if (strstr(l_ptr->o_name, "{special")) continue;
@@ -1898,7 +1735,7 @@ bool borg_crush_junk(void)
 	}
 
 	/* re-examine the inventory */
-	if (fix) borg_notice(TRUE);
+	if (fix) borg_notice();
 
 	/* Hack -- no need */
 	borg_do_crush_junk = FALSE;
@@ -1949,10 +1786,6 @@ bool borg_crush_hole(void)
 		/* Hack -- skip "artifacts" */
 		if (l_ptr->kn_flags3 & TR3_INSTA_ART) continue;
 
-		/* dont crush the swap weapon */
-		if (i == weapon_swap) continue;
-		if (i == armour_swap) continue;
-
 		/* dont crush our spell books */
 		if (l_ptr->tval == mp_ptr->spell_book) continue;
 
@@ -1990,7 +1823,7 @@ bool borg_crush_hole(void)
 		fix = TRUE;
 
 		/* Examine the inventory */
-		borg_notice(FALSE);
+		borg_notice();
 
 		/* Evaluate the inventory */
 		p = borg_power();
@@ -2007,7 +1840,7 @@ bool borg_crush_hole(void)
 	}
 
 	/* Examine the inventory */
-	if (fix) borg_notice(TRUE);
+	if (fix) borg_notice();
 
 	/* Attempt to destroy it */
 	if (b_i >= 0)
@@ -2075,10 +1908,6 @@ bool borg_crush_slow(void)
 		/* Skip empty / unaware items */
 		if (!l_ptr->k_idx) continue;
 
-		/* dont crush the swap weapon */
-		if (i == weapon_swap && l_ptr->number == 1) continue;
-		if (i == armour_swap) continue;
-
 		/* Skip "good" unknown items (unless "icky") */
 		if (!(l_ptr->info & OB_KNOWN) && !borg_item_icky(l_ptr)) continue;
 
@@ -2102,7 +1931,7 @@ bool borg_crush_slow(void)
 		fix = TRUE;
 
 		/* Examine the inventory */
-		borg_notice(FALSE);
+		borg_notice();
 
 		/* Evaluate the inventory */
 		p = borg_power();
@@ -2122,7 +1951,7 @@ bool borg_crush_slow(void)
 	}
 
 	/* Examine the inventory */
-	if (fix) borg_notice(TRUE);
+	if (fix) borg_notice();
 
 	/* Destroy "useless" things */
 	if ((b_i >= 0) && (b_p >= (my_power)))
@@ -2569,7 +2398,7 @@ bool borg_swap_rings(void)
 	fix = TRUE;
 
 	/* Examine the inventory */
-	borg_notice(FALSE);
+	borg_notice();
 
 	/* Evaluate the inventory */
 	v1 = borg_power();
@@ -2584,7 +2413,7 @@ bool borg_swap_rings(void)
 	fix = TRUE;
 
 	/* Examine the inventory */
-	borg_notice(FALSE);
+	borg_notice();
 
 	/* Evaluate the inventory */
 	v2 = borg_power();
@@ -2595,7 +2424,7 @@ bool borg_swap_rings(void)
 	/*** Swap rings if necessary ***/
 
 	/* Examine the inventory */
-	if (fix) borg_notice(TRUE);
+	if (fix) borg_notice();
 
 	/* Remove "useless" ring */
 	if (v2 > v1)
@@ -2699,7 +2528,7 @@ bool borg_wear_rings(void)
 		fix = TRUE;
 
 		/* Examine the inventory */
-		borg_notice(FALSE);
+		borg_notice();
 
 		/* Evaluate the inventory */
 		p = borg_power();
@@ -2719,7 +2548,7 @@ bool borg_wear_rings(void)
 	}
 
 	/* Restore bonuses */
-	if (fix) borg_notice(TRUE);
+	if (fix) borg_notice();
 
 	/* No item */
 	if ((b_i >= 0) && (b_p > my_power))
@@ -2739,256 +2568,6 @@ bool borg_wear_rings(void)
 
 		/* Did something */
 		time_this_panel++;
-		return (TRUE);
-	}
-
-	/* Nope */
-	return (FALSE);
-}
-
-/*
- * Place our "swap" if needed.   We check both the armour and the weapon
- * then wear the one that give the best result (lowest danger).
- * This function is adopted from "borg_wear_stuff()" and borg_wear_rings
- *
- * Basically, we evaluate the world in which the swap is added
- * to the current set of equipment, and we use weapon,
- * that gives the largest drop in danger---based mostly on resists.
- *
- */
-bool borg_backup_swap(int p)
-{
-	int slot;
-	int swap;
-	int damage1 = 0;
-	int damage2 = 0;
-
-	s32b b_p = 0L;
-	s32b b_p1 = 0L;
-	s32b b_p2 = 0L;
-
-	int i;
-
-	borg_item *item;
-
-	bool fix = FALSE;
-
-	/* hack prevent the swap till you drop loop */
-	if (borg_skill[BI_ISHUNGRY] || borg_skill[BI_ISWEAK]) return (FALSE);
-
-	/*apw Forbid if been sitting on level forever */
-	/*    Just come back and work through the loop later */
-	if (time_this_panel > 300) return (FALSE);
-
-
-	/* make sure we have an appropriate swap */
-	if (armour_swap < 1 && weapon_swap < 1) return (FALSE);
-
-	/* Check the items, first armour then weapon */
-	i = armour_swap;
-
-	/* make sure it is not a -1 */
-	if (i == -1) i = 0;
-
-	/* get the item */
-	item = &borg_items[i];
-
-	/* Where does it go */
-	slot = borg_wield_slot(l_ptr);
-
-	/* Save the old item (empty) */
-	COPY(&safe_items[slot], &borg_items[slot], borg_item);
-
-	/* Save the new item */
-	COPY(&safe_items[i], &borg_items[i], borg_item);
-
-	/* Wear new item */
-	COPY(&borg_items[slot], &safe_items[i], borg_item);
-
-	/* Only a single item */
-	borg_items[slot].iqty = 1;
-
-	/* Reduce the inventory quantity by one */
-	borg_items[i].iqty--;
-
-	/* Fix later */
-	fix = TRUE;
-
-	/* Examine the benefits of the swap item */
-	borg_notice(FALSE);
-
-	/* Evaluate the power with the new item worn */
-	b_p1 = borg_danger(c_x, c_y, 1, TRUE);
-
-	/* Note the considerations if fighting a unique */
-	if (borg_fighting_unique)
-	{
-		/* dump list and power...  for debugging */
-		borg_note(format
-				  ("Swap: Trying Item %s (best power %ld)",
-				   borg_items[slot].desc, b_p1));
-		borg_note(format
-				  ("Swap: Against Item  %s  (borg_power %ld)",
-				   safe_items[slot].desc, p));
-	}
-
-	/* Restore the old item (empty) */
-	COPY(&borg_items[slot], &safe_items[slot], borg_item);
-
-	/* Restore the new item */
-	COPY(&borg_items[i], &safe_items[i], borg_item);
-
-	/* Restore bonuses */
-	if (fix) borg_notice(TRUE);
-
-
-	/* apw skip random artifact not star id'd  */
-	if (!item->fully_identified && item->xtra_name) b_p1 = 9999;
-
-	/* skip it if it has not been decursed */
-	if ((item->cursed) || (item->flags3 & TR3_HEAVY_CURSE)) b_p1 = 9999;
-
-	/* Mages with GOI should not be swapping for better protection */
-	if (borg_goi)
-	{
-		b_p1 = 9999;
-	}
-
-
-	/* Now we check the weapon */
-	/* First, obtain some damage info */
-	if (borg_goi)
-	{
-		/* we will borrow the attack routines */
-		borg_simulate = TRUE;
-		damage1 = borg_attack_aux_thrust();
-		borg_simulate = FALSE;
-	}
-
-	/* get the item */
-	i = weapon_swap;
-
-	/* make sure it is not a -1 */
-	if (i == -1) i = 0;
-
-	item = &borg_items[i];
-
-	/* Where does it go */
-	slot = borg_wield_slot(l_ptr);
-
-	/* Save the old item (empty) */
-	COPY(&safe_items[slot], &borg_items[slot], borg_item);
-
-	/* Save the new item */
-	COPY(&safe_items[i], &borg_items[i], borg_item);
-
-	/* Wear new item */
-	COPY(&borg_items[slot], &safe_items[i], borg_item);
-
-	/* Only a single item */
-	borg_items[slot].iqty = 1;
-
-	/* Reduce the inventory quantity by one */
-	borg_items[i].iqty--;
-
-	/* Fix later */
-	fix = TRUE;
-
-	/* Examine the inventory */
-	borg_notice(FALSE);
-
-
-	/* Evaluate the power with the new item worn */
-	b_p2 = borg_danger(c_x, c_y, 1, TRUE);
-
-	/* Note the considerations if fighting a unique */
-	if (borg_fighting_unique)
-	{
-		/* dump list and power...  for debugging */
-		borg_note(format
-				  ("Swap: Trying Item %s (best power %ld)",
-				   borg_items[slot].desc, b_p2));
-		borg_note(format
-				  ("Swap: Against Item  %s  (borg_power %ld)",
-				   safe_items[slot].desc, p));
-	}
-
-	/* Obtain some damage info with swap weapon */
-	if (borg_goi)
-	{
-
-		/* we will borrow the attack routines */
-		borg_simulate = TRUE;
-		damage2 = borg_attack_aux_thrust();
-		borg_simulate = FALSE;
-	}
-
-	/* Restore the old item (empty) */
-	COPY(&borg_items[slot], &safe_items[slot], borg_item);
-
-	/* Restore the new item */
-	COPY(&borg_items[i], &safe_items[i], borg_item);
-
-	/* Restore bonuses */
-	if (fix) borg_notice(TRUE);
-
-	/* apw skip random artifact not star id'd  */
-	if (!item->fully_identified && item->xtra_name) b_p2 = 9999;
-
-	/* skip it if it has not been decursed */
-	if ((item->cursed) || (item->flags3 & TR3_HEAVY_CURSE)) b_p2 = 9999;
-
-	/* Mages with GOI should not be swapping for better protection */
-	if (borg_goi)
-	{
-		b_p2 = 9999;
-	}
-
-
-	/* Pass on the swap which yields the best result */
-	if (b_p1 <= b_p2)
-	{
-		b_p = b_p1;
-		swap = armour_swap;
-	}
-	else
-	{
-		b_p = b_p2;
-		swap = weapon_swap;
-	}
-
-	/* Consider the weapon swap for GOI to maximize damage */
-	if (borg_goi && damage2 > damage1)
-	{
-		swap = weapon_swap;
-
-		/* log it */
-		borg_note(format
-				  ("# Swapping backup for more damage.  (%d > %d).", damage2,
-				   damage1));
-
-		/* Wear it */
-		borg_keypress('w');
-		borg_keypress(I2A(swap));
-
-		/* Did something */
-		return (TRUE);
-	}
-
-
-	/* good swap.  Make sure it helps a significant amount */
-	if (p > b_p &&
-		b_p <= (borg_fighting_unique ? ((avoidance * 2) / 3) : (avoidance / 2)))
-
-	{
-		/* Log */
-		borg_note(format("# Swapping backup.  (%d < %d).", b_p, p));
-
-		/* Wear it */
-		borg_keypress('w');
-		borg_keypress(I2A(swap));
-
-		/* Did something */
 		return (TRUE);
 	}
 
@@ -3073,7 +2652,7 @@ bool borg_remove_stuff(void)
 		fix = TRUE;
 
 		/* Examine the inventory */
-		borg_notice(FALSE);
+		borg_notice();
 
 		/* Evaluate the inventory */
 		p = borg_power();
@@ -3101,7 +2680,7 @@ bool borg_remove_stuff(void)
 	}
 
 	/* Restore bonuses */
-	if (fix) borg_notice(TRUE);
+	if (fix) borg_notice();
 
 	/* No item */
 	if (b_i >= 0)
@@ -3256,7 +2835,7 @@ bool borg_wear_stuff(void)
 			fix = TRUE;
 
 			/* Examine the inventory */
-			borg_notice(FALSE);
+			borg_notice();
 
 			/* Evaluate the inventory */
 			p = borg_power();
@@ -3332,7 +2911,7 @@ bool borg_wear_stuff(void)
 				fix = TRUE;
 
 				/* Examine the inventory */
-				borg_notice(FALSE);
+				borg_notice();
 
 				/* Evaluate the inventory */
 				p = borg_power();
@@ -3375,7 +2954,7 @@ bool borg_wear_stuff(void)
 	}							/* end scanning inventory */
 
 	/* Restore bonuses */
-	if (fix) borg_notice(TRUE);
+	if (fix) borg_notice();
 
 	/* No item */
 	if ((b_i >= 0) && (b_p > my_power))
@@ -3469,7 +3048,7 @@ static void borg_best_stuff_aux(int n, byte *test, byte *best, s32b *vp)
 		s32b p;
 
 		/* Examine */
-		borg_notice(FALSE);
+		borg_notice();
 
 		/* Evaluate */
 		p = borg_power();
@@ -3627,7 +3206,7 @@ bool borg_best_stuff(void)
 	(void)borg_best_stuff_aux(0, test, best, &value);
 
 	/* Restore bonuses */
-	borg_notice(TRUE);
+	borg_notice();
 
 	/* Make first change. */
 	for (k = 0; k < 12; k++)
@@ -3911,10 +3490,6 @@ static int borg_count_sell(void)
 
 		/* Skip "crappy" items */
 		if (item->value <= 0) continue;
-
-		/* skip our swap weapon */
-		if (i == weapon_swap) continue;
-		if (i == armour_swap) continue;
 
 		/* Obtain the base price */
 		price = ((item->value < 30000L) ? item->value : 30000L);

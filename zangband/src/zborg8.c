@@ -380,9 +380,6 @@ static void borg_think_home_sell_aux2_slow(int n, int start_i)
 		/* Hack -- ignore "worthless" items */
 		if (!item->value) continue;
 
-		if (i == weapon_swap && weapon_swap != 0) continue;
-		if (i == armour_swap && armour_swap != 0) continue;
-
 		/* stacking? */
 		if (borg_object_similar(item2, item))
 		{
@@ -472,8 +469,6 @@ static void borg_think_home_sell_aux2_fast(int n, int start_i)
 
 			if (!item->iqty || !item->kind || !item->able)
 				continue;
-			if (i == weapon_swap && weapon_swap != 0) continue;
-			if (i == armour_swap && armour_swap != 0) continue;
 
 			/* Do not dump stuff at home that is not fully id'd and should be  */
 			/* this is good with random artifacts. */
@@ -575,7 +570,7 @@ static void borg_think_home_sell_aux3()
 	s32b power;
 
 	/* get the starting power */
-	borg_notice(TRUE);
+	borg_notice();
 	power = borg_power();
 
 	/* get what an empty home would have for power */
@@ -615,7 +610,7 @@ static void borg_think_home_sell_aux3()
 			borg_items[i].iqty--;
 
 			/* Examine borg */
-			borg_notice(FALSE);
+			borg_notice();
 
 			/* done if this reduces the borgs power */
 			if (borg_power() < power)
@@ -679,9 +674,6 @@ static bool borg_think_home_sell_aux(bool save_best)
 	/* Hack -- Copy all the slots */
 	for (i = 0; i < INVEN_PACK; i++)
 	{
-		/* Save the item */
-		if (i == weapon_swap && weapon_swap != 0) continue;
-		if (i == armour_swap && armour_swap != 0) continue;
 		COPY(&safe_items[i], &borg_items[i], borg_item);
 	}
 
@@ -690,14 +682,12 @@ static bool borg_think_home_sell_aux(bool save_best)
 
 	/* Examine the borg once more with full inventory then swap in the */
 	/* safe_items for the home optimization */
-	borg_notice(FALSE);
+	borg_notice();
 
 	/* swap quantities (this should be all that is different) */
 	for (i = 0; i < INVEN_PACK; i++)
 	{
 		byte save_qty;
-		if (i == weapon_swap && weapon_swap != 0) continue;
-		if (i == armour_swap && armour_swap != 0) continue;
 
 		save_qty = safe_items[i].iqty;
 		safe_items[i].iqty = borg_items[i].iqty;
@@ -724,12 +714,10 @@ static bool borg_think_home_sell_aux(bool save_best)
 
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
-		if (i == weapon_swap && weapon_swap != 0) continue;
-		if (i == armour_swap && armour_swap != 0) continue;
 		COPY(&borg_items[i], &safe_items[i], borg_item);
 	}
 
-	borg_notice(FALSE);
+	borg_notice();
 	borg_notice_home(NULL, FALSE);
 
 	/* Drop stuff that will stack in the home */
@@ -970,10 +958,6 @@ static bool borg_think_shop_sell_aux(void)
 			if (item->tval == TV_STAFF && item->sval == SV_STAFF_DESTRUCTION &&
 				borg_skill[BI_ASTFDEST] < 2) continue;
 
-			/* dont sell our swap items */
-			if (i == weapon_swap && weapon_swap != 0) continue;
-			if (i == armour_swap && armour_swap != 0) continue;
-
 			/* Skip "bad" sales */
 			if (!borg_good_sell(item, k)) continue;
 
@@ -996,7 +980,7 @@ static bool borg_think_shop_sell_aux(void)
 			fix = TRUE;
 
 			/* Examine the inventory */
-			borg_notice(FALSE);
+			borg_notice();
 
 			/* Evaluate the inventory with this item gone */
 			p = borg_power();
@@ -1026,7 +1010,7 @@ static bool borg_think_shop_sell_aux(void)
 	}
 
 	/* Examine the inventory */
-	if (fix) borg_notice(TRUE);
+	if (fix) borg_notice();
 
 	/* Sell something (if useless) */
 	if ((b_k >= 0) && (b_i >= 0))
@@ -1283,7 +1267,7 @@ static bool borg_think_shop_buy_aux(void)
 				fix = TRUE;
 
 				/* Examine the inventory */
-				borg_notice(FALSE);
+				borg_notice();
 
 				/* Evaluate the inventory */
 				p = borg_power();
@@ -1305,7 +1289,7 @@ static bool borg_think_shop_buy_aux(void)
 				fix = TRUE;
 
 				/* Examine the inventory */
-				borg_notice(FALSE);
+				borg_notice();
 
 				/* Evaluate the equipment */
 				p = borg_power();
@@ -1338,7 +1322,7 @@ static bool borg_think_shop_buy_aux(void)
 	}
 
 	/* Examine the inventory */
-	if (fix) borg_notice(TRUE);
+	if (fix) borg_notice();
 
 	/* Buy something */
 	if ((b_k >= 0) && (b_n >= 0))
@@ -1451,7 +1435,7 @@ static bool borg_think_home_buy_aux(void)
 					fix = TRUE;
 
 					/* Examine the inventory */
-					borg_notice(FALSE);
+					borg_notice();
 
 					/* Evaluate the inventory */
 					p_left = borg_power();
@@ -1492,7 +1476,7 @@ static bool borg_think_home_buy_aux(void)
 					fix = TRUE;
 
 					/* Examine the inventory */
-					borg_notice(FALSE);
+					borg_notice();
 
 					/* Evaluate the inventory */
 					p_right = borg_power();
@@ -1539,7 +1523,7 @@ static bool borg_think_home_buy_aux(void)
 				fix = TRUE;
 
 				/* Examine the inventory */
-				borg_notice(FALSE);
+				borg_notice();
 
 				/* Evaluate the inventory */
 				p = borg_power();
@@ -1570,7 +1554,7 @@ static bool borg_think_home_buy_aux(void)
 			fix = TRUE;
 
 			/* Examine the inventory */
-			borg_notice(FALSE);
+			borg_notice();
 
 			/* Evaluate the equipment */
 			p = borg_power();
@@ -1592,7 +1576,7 @@ static bool borg_think_home_buy_aux(void)
 	}
 
 	/* Examine the inventory */
-	if (fix) borg_notice(TRUE);
+	if (fix) borg_notice();
 
 	/* Buy something */
 	if ((b_n >= 0) && (b_p > my_power))
@@ -1833,260 +1817,6 @@ static bool borg_think_home_grab_aux(void)
 }
 #endif /* 0 */
 
-#if 0
-/*
- * Step 7A -- buy "useful" weapons from the home (to be used as a swap)
- */
-static bool borg_think_home_buy_swap_weapon(void)
-{
-	int hole;
-
-	int slot;
-	int old_weapon_swap;
-	s32b old_weapon_swap_value;
-	int old_armour_swap;
-	s32b old_armour_swap_value;
-	int n, b_n = -1;
-	s32b p, b_p = 0L;
-
-	bool fix = FALSE;
-
-
-	/* save the current values */
-	old_weapon_swap = weapon_swap;
-	old_weapon_swap_value = weapon_swap_value;
-	old_armour_swap = armour_swap;
-	old_armour_swap_value = armour_swap_value;
-
-	if (weapon_swap <= 0 || weapon_swap_value <= 0)
-	{
-		hole = INVEN_PACK - 1;
-		weapon_swap_value = -1L;
-	}
-	else
-	{
-		hole = weapon_swap;
-	}
-
-	/* Extract the "power" */
-	b_p = weapon_swap_value;
-
-	/* Scan the home */
-	for (n = 0; n < STORE_INVEN_MAX; n++)
-	{
-		borg_item *item = &borg_shops[BORG_HOME].ware[n];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* Obtain "slot" make sure its a weapon */
-		slot = borg_wield_slot(l_ptr);
-		if (slot != INVEN_WIELD) continue;
-
-		/* Save shop item */
-		COPY(&safe_shops[BORG_HOME].ware[n], &borg_shops[BORG_HOME].ware[n],
-			 borg_item);
-
-		/* Save hole */
-		COPY(&safe_items[hole], &borg_items[hole], borg_item);
-
-		/* Remove one item from shop */
-		borg_shops[BORG_HOME].ware[n].iqty--;
-
-
-		/* Consider new equipment */
-		if (slot == INVEN_WIELD)
-		{
-			/* Move new item into inventory */
-			COPY(&borg_items[hole], &safe_shops[BORG_HOME].ware[n], borg_item);
-
-			/* Only a single item */
-			borg_items[hole].iqty = 1;
-
-			/* Fix later */
-			fix = TRUE;
-
-			/* Examine the iventory and swap value */
-			borg_notice(TRUE);
-
-			/* Evaluate the new equipment */
-			p = weapon_swap_value;
-		}
-
-		/* Restore hole */
-		COPY(&borg_items[hole], &safe_items[hole], borg_item);
-
-		/* Restore shop item */
-		COPY(&borg_shops[BORG_HOME].ware[n], &safe_shops[BORG_HOME].ware[n],
-			 borg_item);
-
-		/* Ignore "silly" purchases */
-		if (p <= b_p) continue;
-
-		/* Save the item and value */
-		b_n = n;
-		b_p = p;
-	}
-
-	/* Examine the inventory */
-	if (fix) borg_notice(TRUE);
-
-	/* Buy something */
-	if ((b_n >= 0) && (b_p > weapon_swap_value))
-	{
-		/* Go to the home */
-		goal_shop = BORG_HOME;
-
-		/* Buy that item */
-		goal_ware = b_n;
-
-		/* Restore the values */
-		weapon_swap = old_weapon_swap;
-		weapon_swap_value = old_weapon_swap_value;
-		armour_swap = old_armour_swap;
-		armour_swap_value = old_armour_swap_value;
-
-		/* Success */
-		return (TRUE);
-	}
-
-	/* Restore the values */
-	weapon_swap = old_weapon_swap;
-	weapon_swap_value = old_weapon_swap_value;
-	armour_swap = old_armour_swap;
-	armour_swap_value = old_armour_swap_value;
-
-	/* Nope */
-	return (FALSE);
-}
-#endif /* 0 */
-
-#if 0
-/*
- * Step 7B -- buy "useful" armour from the home (to be used as a swap)
- */
-static bool borg_think_home_buy_swap_armour(void)
-{
-	int hole;
-
-	int slot;
-
-	int n, b_n = -1;
-	s32b p, b_p = 0L;
-	bool fix = FALSE;
-	int old_weapon_swap;
-	s32b old_weapon_swap_value;
-	int old_armour_swap;
-	s32b old_armour_swap_value;
-
-
-
-	/* save the current values */
-	old_weapon_swap = weapon_swap;
-	old_weapon_swap_value = weapon_swap_value;
-	old_armour_swap = armour_swap;
-	old_armour_swap_value = armour_swap_value;
-
-	if (armour_swap <= 1 || armour_swap_value <= 0)
-	{
-		hole = INVEN_PACK - 1;
-		armour_swap_value = -1L;
-	}
-	else
-	{
-		hole = armour_swap;
-	}
-
-
-	/* Extract the "power" */
-	b_p = armour_swap_value;
-
-
-	/* Scan the home */
-	for (n = 0; n < STORE_INVEN_MAX; n++)
-	{
-		borg_item *item = &borg_shops[BORG_HOME].ware[n];
-
-		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* Obtain "slot".  Elimination of non armours in borg4.c */
-		slot = borg_wield_slot(l_ptr);
-
-
-		/* Save shop item */
-		COPY(&safe_shops[BORG_HOME].ware[n], &borg_shops[BORG_HOME].ware[n],
-			 borg_item);
-
-		/* Save hole */
-		COPY(&safe_items[hole], &borg_items[hole], borg_item);
-
-		/* Remove one item from shop */
-		borg_shops[BORG_HOME].ware[n].iqty--;
-
-		/* Move new item into inventory */
-		COPY(&borg_items[hole], &safe_shops[BORG_HOME].ware[n], borg_item);
-
-		/* Only a single item */
-		borg_items[hole].iqty = 1;
-
-		/* Fix later */
-		fix = TRUE;
-
-		/* Examine the inventory (false) */
-		borg_notice(TRUE);
-
-		/* Evaluate the new equipment */
-		p = armour_swap_value;
-
-		/* Restore hole */
-		COPY(&borg_items[hole], &safe_items[hole], borg_item);
-
-		/* Restore shop item */
-		COPY(&borg_shops[BORG_HOME].ware[n], &safe_shops[BORG_HOME].ware[n],
-			 borg_item);
-
-		/* Ignore "silly" purchases */
-		if (p <= b_p) continue;
-
-		/* Save the item and value */
-		b_n = n;
-		b_p = p;
-	}
-
-	/* Examine the inventory */
-	if (fix) borg_notice(TRUE);
-
-	/* Buy something */
-	if ((b_n >= 0) && (b_p > armour_swap_value))
-	{
-		/* Go to the home */
-		goal_shop = BORG_HOME;
-
-		/* Buy that item */
-		goal_ware = b_n;
-
-		/* Restore the values */
-		weapon_swap = old_weapon_swap;
-		weapon_swap_value = old_weapon_swap_value;
-		armour_swap = old_armour_swap;
-		armour_swap_value = old_armour_swap_value;
-
-		/* Success */
-		return (TRUE);
-	}
-	/* Restore the values */
-	weapon_swap = old_weapon_swap;
-	weapon_swap_value = old_weapon_swap_value;
-	armour_swap = old_armour_swap;
-	armour_swap_value = old_armour_swap_value;
-
-	/* Nope */
-	return (FALSE);
-}
-#endif /* 0 */
-
-
 
 /*
  * Choose a shop to visit (see above)
@@ -2246,32 +1976,6 @@ static bool borg_choose_shop(void)
 		/* borg_note(format("# Grabbing (for home) '%s' at '%s'",
 		   borg_shops[goal_shop].ware[goal_ware].desc,
 		   (f_name + f_info[FEAT_SHOP_HEAD+goal_shop].name))); */
-
-		/* Success */
-		return (TRUE);
-	}
-#endif /* 0 */
-
-#if 0
-	/* Step 7A -- Buy weapons from the home (as a backup item) */
-	if (borg_uses_swaps && borg_think_home_buy_swap_weapon())
-	{
-		/* Message */
-		borg_note(format("# Buying '%s' from the home as a backup",
-						 borg_shops[goal_shop].ware[goal_ware].desc));
-
-		/* Success */
-		return (TRUE);
-	}
-#endif /* 0 */
-
-#if 0
-	/* Step 7B -- Buy armour from the home (as a backup item) */
-	if (borg_uses_swaps && borg_think_home_buy_swap_armour())
-	{
-		/* Message */
-		borg_note(format("# Buying '%s' from the home as a backup",
-						 borg_shops[goal_shop].ware[goal_ware].desc));
 
 		/* Success */
 		return (TRUE);
@@ -2464,7 +2168,7 @@ bool borg_think_store(void)
 	}
 
 	/* update all my equipment and swap items */
-	borg_notice(TRUE);
+	borg_notice();
 
 	/* Stamp the shop with a time stamp */
 	borg_shops[shop_num].when = borg_t;
@@ -2960,7 +2664,7 @@ bool borg_think_dungeon(void)
 	/*** crucial goals ***/
 
 	/* examine equipment and swaps */
-	borg_notice(TRUE);
+	borg_notice();
 
 	/* require light-- */
 	if (borg_skill[BI_CUR_LITE] <= 0 && borg_skill[BI_CDEPTH] >= 1)

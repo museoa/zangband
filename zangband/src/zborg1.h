@@ -19,6 +19,8 @@
  * index locations.  ie: borgs_has[242] is looking for a Potion of Healing.
  * The borg is concerned over several items, broken swords, and several
  * monster locations (Tarresque, Sauron, Morgoth).
+ *
+ * This is a massive hack and must be fixed -SF-
  */
 
 /*
@@ -190,7 +192,6 @@ extern int sold_item_pval;
 extern int sold_item_store;
 
 extern bool borg_plays_risky;
-extern bool borg_uses_swaps;
 extern bool borg_slow_optimizehome;
 extern bool borg_scums_uniques;
 
@@ -567,113 +568,9 @@ extern s16b my_stat_add[6];	/* aditions to stats */
 
 extern s16b home_stat_add[6];
 
-extern int weapon_swap;	/* location of my swap weapon   */
-extern s32b weapon_swap_value;	/* value of my swap weapon   */
-extern int armour_swap;	/* location of my swap weapon   */
-extern s32b armour_swap_value;	/* value of my swap weapon   */
-
-/* a 3 state boolean */
-/*-1 = not cursed, no help needed for it */
-/* 0 = light curse, needs light remove curse spell */
-/* 1 = heavy curse, needs heavy remove curse spell */
-extern int decurse_weapon_swap;	/* my swap is great, except its cursed */
-extern int enchant_weapon_swap_to_h;	/* my swap is great, except its cursed */
-extern int enchant_weapon_swap_to_d;	/* my swap is great, except its cursed */
-extern int decurse_armour_swap;	/* my swap is great, except its cursed */
-extern int enchant_armour_swap_to_a;	/* my swap is great, except its cursed */
 extern bool borg_wearing_cursed;
 
 extern s16b weapon_swap_digger;
-extern int weapon_swap_slay_animal;
-extern int weapon_swap_slay_evil;
-extern int weapon_swap_slay_undead;
-extern int weapon_swap_slay_demon;
-extern int weapon_swap_slay_orc;
-extern int weapon_swap_slay_troll;
-extern int weapon_swap_slay_giant;
-extern int weapon_swap_slay_dragon;
-extern int weapon_swap_kill_dragon;
-extern int weapon_swap_impact;
-extern int weapon_swap_brand_acid;
-extern int weapon_swap_brand_elec;
-extern int weapon_swap_brand_fire;
-extern int weapon_swap_brand_cold;
-extern int weapon_swap_see_infra;
-extern int weapon_swap_slow_digest;
-extern int weapon_swap_aggravate;
-extern int weapon_swap_teleport;
-extern int weapon_swap_regenerate;
-extern int weapon_swap_telepathy;
-extern int weapon_swap_lite;
-extern int weapon_swap_see_invis;
-extern int weapon_swap_ffall;
-extern int weapon_swap_free_act;
-extern int weapon_swap_hold_life;
-extern int weapon_swap_immune_fire;
-extern int weapon_swap_immune_acid;
-extern int weapon_swap_immune_cold;
-extern int weapon_swap_immune_elec;
-extern int weapon_swap_resist_acid;
-extern int weapon_swap_resist_elec;
-extern int weapon_swap_resist_fire;
-extern int weapon_swap_resist_cold;
-extern int weapon_swap_resist_pois;
-extern int weapon_swap_resist_conf;
-extern int weapon_swap_resist_sound;
-extern int weapon_swap_resist_lite;
-extern int weapon_swap_resist_dark;
-extern int weapon_swap_resist_chaos;
-extern int weapon_swap_resist_disen;
-extern int weapon_swap_resist_shard;
-extern int weapon_swap_resist_nexus;
-extern int weapon_swap_resist_blind;
-extern int weapon_swap_resist_neth;
-extern int weapon_swap_resist_fear;
-extern int armour_swap_slay_animal;
-extern int armour_swap_slay_evil;
-extern int armour_swap_slay_undead;
-extern int armour_swap_slay_demon;
-extern int armour_swap_slay_orc;
-extern int armour_swap_slay_troll;
-extern int armour_swap_slay_giant;
-extern int armour_swap_slay_dragon;
-extern int armour_swap_kill_dragon;
-extern int armour_swap_impact;
-extern int armour_swap_brand_acid;
-extern int armour_swap_brand_elec;
-extern int armour_swap_brand_fire;
-extern int armour_swap_brand_cold;
-extern int armour_swap_see_infra;
-extern int armour_swap_slow_digest;
-extern int armour_swap_aggravate;
-extern int armour_swap_teleport;
-extern int armour_swap_regenerate;
-extern int armour_swap_telepathy;
-extern int armour_swap_lite;
-extern int armour_swap_see_invis;
-extern int armour_swap_ffall;
-extern int armour_swap_free_act;
-extern int armour_swap_hold_life;
-extern int armour_swap_immune_fire;
-extern int armour_swap_immune_acid;
-extern int armour_swap_immune_cold;
-extern int armour_swap_immune_elec;
-extern int armour_swap_resist_acid;
-extern int armour_swap_resist_elec;
-extern int armour_swap_resist_fire;
-extern int armour_swap_resist_cold;
-extern int armour_swap_resist_pois;
-extern int armour_swap_resist_conf;
-extern int armour_swap_resist_sound;
-extern int armour_swap_resist_lite;
-extern int armour_swap_resist_dark;
-extern int armour_swap_resist_chaos;
-extern int armour_swap_resist_disen;
-extern int armour_swap_resist_shard;
-extern int armour_swap_resist_nexus;
-extern int armour_swap_resist_blind;
-extern int armour_swap_resist_neth;
-extern int armour_swap_resist_fear;
 
 extern int my_ammo_tval;	/* Ammo -- "tval"   */
 extern int my_ammo_sides;	/* Ammo -- "sides"  */

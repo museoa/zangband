@@ -658,7 +658,7 @@ static bool borg_think(void)
 		borg_do_browse = TRUE;
 
 		/* Examine the inventory */
-		borg_notice(TRUE);
+		borg_notice();
 
 		/* Evaluate the current world */
 		my_power = borg_power();
@@ -2485,7 +2485,6 @@ static void init_borg_txt_file(void)
 	/* use default values */
 	borg_plays_risky = FALSE;
 	borg_scums_uniques = TRUE;
-	borg_uses_swaps = TRUE;
 	borg_slow_optimizehome = FALSE;
 	borg_stop_dlevel = 128;
 	borg_stop_clevel = 55;
@@ -4623,7 +4622,7 @@ void do_cmd_borg(void)
 			borg_hidden();
 
 			/* Examine the inventory */
-			borg_notice(TRUE);
+			borg_notice();
 
 			/* Evaluate */
 			p = borg_power();
@@ -4702,7 +4701,7 @@ void do_cmd_borg(void)
 			borg_hidden();
 
 			/* Examine the inventory */
-			borg_notice(TRUE);
+			borg_notice();
 			borg_notice_home(NULL, FALSE);
 
 			/* Dump prep codes */
@@ -4739,7 +4738,7 @@ void do_cmd_borg(void)
 			borg_hidden();
 
 			/* Examine the inventory */
-			borg_notice(TRUE);
+			borg_notice();
 			borg_notice_home(NULL, FALSE);
 
 			/* Check the power */
@@ -4747,14 +4746,6 @@ void do_cmd_borg(void)
 
 			/* Examine the screen */
 			borg_update_frame();
-
-			/* note the swap items */
-			item = &borg_items[weapon_swap];
-			msg_format("Swap Weapon:  %s, value= %d", item->desc,
-					   weapon_swap_value);
-			item = &borg_items[armour_swap];
-			msg_format("Swap Armour:  %s, value= %d", item->desc,
-					   armour_swap_value);
 			break;
 		}
 
@@ -4776,7 +4767,7 @@ void do_cmd_borg(void)
 			borg_hidden();
 
 			/* Examine the inventory */
-			borg_notice(TRUE);
+			borg_notice();
 			borg_notice_home(NULL, FALSE);
 
 			/* Check the power */
@@ -4910,7 +4901,7 @@ void do_cmd_borg(void)
 			borg_hidden();
 
 			/* Examine the inventory */
-			borg_notice(TRUE);
+			borg_notice();
 			borg_notice_home(NULL, FALSE);
 
 			for (; item < to; item++)
