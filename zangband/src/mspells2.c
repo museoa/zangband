@@ -104,7 +104,12 @@ bool monst_spell_monst(int m_idx)
 	if (!chance) return (FALSE);
 
 	if (rand_int(100) >= chance) return (FALSE);
+		
+	/* Stop if player is dead or gone */
+	if (!alive || death) return (FALSE);
 
+	/* Handle "leaving" */
+	if (p_ptr->leaving) return (FALSE);
 
 	/* Scan thru all monsters */
 	for (i = 1; i < m_max; i++)
@@ -211,12 +216,6 @@ bool monst_spell_monst(int m_idx)
 
 		/* No spells left */
 		if (!num) return (FALSE);
-
-		/* Stop if player is dead or gone */
-		if (!alive || death) return (FALSE);
-
-		/* Handle "leaving" */
-		if (p_ptr->leaving) return (FALSE);
 
 		/* Get the monster name (or "it") */
 		monster_desc(m_name, m_ptr, 0x00);
