@@ -461,7 +461,7 @@ int borg_extract_dir(int x1, int y1, int x2, int y2)
  */
 static bool borg_play_step(int y2, int x2)
 {
-	map_block *mb_ptr;
+	map_block *mb_ptr = NULL;
 
 	int dir, x, y, ox, oy, i;
 
