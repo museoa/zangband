@@ -2275,16 +2275,6 @@ void prt_map(void)
 
 	/* Hide the cursor */
 	(void)Term_set_cursor(0);
-
-#if 0
-	/* Get bounds */
-	xmin = (p_ptr->min_wid < p_ptr->panel_x1) ? p_ptr->panel_x1 : p_ptr->min_wid;
-	xmax = (p_ptr->max_wid > p_ptr->panel_x2) ?
-		p_ptr->panel_x2 - 1: p_ptr->max_wid - 1;
-	ymin = (p_ptr->min_hgt < p_ptr->panel_y1) ? p_ptr->panel_y1 : p_ptr->min_hgt;
-	ymax = (p_ptr->max_hgt > p_ptr->panel_y2) ?
-		p_ptr->panel_y2 - 1 : p_ptr->max_hgt - 1;
-#endif /* 0 */
 	
 	/* Get bounds */
 	xmin = p_ptr->panel_x1;
@@ -2294,7 +2284,7 @@ void prt_map(void)
 		
 		
 	/* Clear screen */
-    clear_region(COL_MAP, ROW_MAP, ROW_MAP + hgt);
+    clear_region(COL_MAP, ROW_MAP, ROW_MAP + hgt - 1);
 
 	/* Pointers to current position in the string */
 	pa = mp_a;
@@ -2321,9 +2311,8 @@ void prt_map(void)
 		ptc = mp_tc;
 
 		/* Efficiency -- Redraw that row of the map */
-		Term_queue_line(xmin - p_ptr->panel_x1 + COL_MAP,
-						y - p_ptr->panel_y1 + ROW_MAP,
-						xmax - xmin + 1, pa, pc, pta, ptc);
+		Term_queue_line(COL_MAP, y - p_ptr->panel_y1 + ROW_MAP,
+						wid, pa, pc, pta, ptc);
 	}
 
 	/* Restore the cursor */
