@@ -400,7 +400,7 @@ N:34:General Store
 G:1:o
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:0:0:10:0:50:0:50:8
+D:0:0:10:0:50:0:50:0
 F:2,field_action_door_store
 F:18,field_action_isweaparmour_tester
 
@@ -445,7 +445,7 @@ N:39:Magic Wares
 G:6:r
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
-D:5:5:30:0:0:100:0:8
+D:5:5:30:0:0:100:0:0
 F:2,field_action_door_store
 F:18,field_action_isbook_tester
 
