@@ -1309,6 +1309,72 @@ static const vault_aux_type nest_types[] =
 	{NULL, NULL, NULL, 0, 0},
 };
 
+/*
+ * Draw the outside of a pit / nest
+ *
+ * Add pillars on inner or outer wall
+ */
+static void draw_pit(int x1, int y1, int x2, int y2, int xh, int yh)
+{
+	int x, y;
+
+	/* Decide what type of hall pattern to use */
+	int wx, wy, width;
+	int side = randint0(2);
+	
+	/* Generate new room */
+	generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FALSE);
+
+	/* Generate outer walls */
+	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
+
+	/* Generate inner floors */
+	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
+	
+	/* No pillars? */
+	if (!xh || !yh) return;
+	
+	wx = randint1(xh);
+	wy = randint1(yh);
+	width = MIN(wx, wy);
+	
+	/* Draw pillars */
+	for (x = x1; x <= x2; x++)
+	{
+		for (y = y1; y <= y2; y++)
+		{
+			/* Only on checkerboard squares */
+			if ((x + y) & 1) continue;
+			
+			/* Not in middle room area */
+			if ((x > x1 + xh) && (x < x2 - xh)
+				&& (y > y1 + yh) && (y < y2 - yh))
+			{
+				continue;
+			}
+		
+			if (side)
+			{
+				/* Outer wall */
+				if ((x <= x1 + width) || (x >= x2 - width)
+					|| (y <= y1 + width) || (y >= y2 - width))
+				{
+					set_feat_bold(x, y, FEAT_PILLAR);
+				}
+			}
+			else
+			{
+				/* Inner wall */
+				if ((x >= x1 + xh - width) && (x <= x2 - xh + width)
+					&& (y >= y1 + yh - width) && (y <= y2 - yh + width))
+				{
+					set_feat_bold(x, y, FEAT_PILLAR);
+				}
+			}
+		}
+	}
+}
+
 
 /*
  * Type 5 -- Monster nests
@@ -1335,47 +1401,60 @@ static void build_type5(int bx0, int by0)
 	int i;
 	int what[64];
 
+	int x_var, y_var, x_hall, y_hall;
+	
+
 	int align = 0;
 
 	const vault_aux_type *n_ptr = pick_vault_type(nest_types);
-
-	/* Try to allocate space for room. */
-	if (!room_alloc(25, 11, TRUE, by0, bx0, &xval, &yval)) return;
-
+	
 	/* No type available */
 	if (!n_ptr) return;
 
+	/* Determine the size of the room */
+	y_var = rand_range(3, 5);
+	
+	/* Try to discourage excessively long and thin rooms */
+	x_var = rand_range(5, 2 * y_var);
+	
+	/* Get size of hall */
+	x_hall = randint0(4);
+	y_hall = randint0(3);
+	
+	/* Don't want the halls too big. */
+	if (x_hall > (x_var + 1) / 2) x_hall = 1;
+	if (y_hall > (y_var + 1) / 2) y_hall = 1;
+	
+	/* Try to allocate space for room. */
+	if (!room_alloc(2 * (x_hall + x_var + 2) + 1, 2 * (y_hall + y_var + 2) + 1,
+		 TRUE, by0, bx0, &xval, &yval))
+	{
+		return;
+	}
+	
+	/* Large room */
+	y1 = yval - (y_var + y_hall);
+	y2 = yval + (y_var + y_hall);
+	x1 = xval - (x_var + x_hall);
+	x2 = xval + (x_var + x_hall);
+	
 	/* Process a preparation function if necessary */
 	if (n_ptr->prep_func) (*(n_ptr->prep_func)) ();
 
-	/* Large room */
-	y1 = yval - 4;
-	y2 = yval + 4;
-	x1 = xval - 11;
-	x2 = xval + 11;
-
-	/* Generate new room */
-	generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FALSE);
-
-	/* Generate outer walls */
-	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
-
-	/* Generate inner floors */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
-
-
+	/* Draw the room */	
+	draw_pit(x1, y1, x2, y2, x_hall, y_hall);
+	
 	/* Advance to the center room */
-	y1 = y1 + 2;
-	y2 = y2 - 2;
-	x1 = x1 + 2;
-	x2 = x2 - 2;
+	y1 = y1 + y_hall + 1;
+	y2 = y2 - y_hall - 1;
+	x1 = x1 + x_hall + 1;
+	x2 = x2 - x_hall - 1;
 
 	/* Generate inner walls */
-	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_INNER);
-
+	generate_draw(x1, y1, x2, y2, FEAT_WALL_INNER);
 
 	/* Open the inner room with a secret door */
-	generate_door(x1 - 1, y1 - 1, x2 + 1, y2 + 1, TRUE);
+	generate_door(x1, y1, x2, y2, TRUE);
 
 	/* Prepare allocation table */
 	get_mon_num_prep(n_ptr->hook_func, NULL);
@@ -1429,9 +1508,9 @@ static void build_type5(int bx0, int by0)
 	}
 
 	/* Place some monsters */
-	for (y = yval - 2; y <= yval + 2; y++)
+	for (y = y1 + 1; y <= y2 - 1; y++)
 	{
-		for (x = xval - 9; x <= xval + 9; x++)
+		for (x = x1 + 1; x <= x2 - 1; x++)
 		{
 			int r_idx = what[randint0(64)];
 
@@ -1498,46 +1577,62 @@ static void build_type6(int bx0, int by0)
 	int i, j;
 
 	int what[16];
+	
+	int x_var, y_var, x_hall, y_hall, xc, yc;
 
 	int align = 0;
 
+	int dist, dist_max, power;
+	
 	const vault_aux_type *n_ptr = pick_vault_type(pit_types);
-
-	/* Try to allocate space for room. */
-	if (!room_alloc(25, 11, TRUE, by0, bx0, &xval, &yval)) return;
-
+	
 	/* No type available */
 	if (!n_ptr) return;
 
+	/* Determine the size of the room */
+	y_var = rand_range(3, 5);
+	
+	/* Try to discourage excessively long and thin rooms */
+	x_var = rand_range(5, 2 * y_var);
+	
+	/* Get size of hall */
+	x_hall = randint0(4);
+	y_hall = randint0(3);
+	
+	/* Don't want the halls too big. */
+	if (x_hall > (x_var + 1) / 2) x_hall = 1;
+	if (y_hall > (y_var + 1) / 2) y_hall = 1;
+	
+	/* Try to allocate space for room. */
+	if (!room_alloc(2 * (x_hall + x_var + 2) + 1, 2 * (y_hall + y_var + 2) + 1,
+		 TRUE, by0, bx0, &xval, &yval))
+	{
+		return;
+	}
+	
+	/* Large room */
+	y1 = yval - (y_var + y_hall);
+	y2 = yval + (y_var + y_hall);
+	x1 = xval - (x_var + x_hall);
+	x2 = xval + (x_var + x_hall);
+	
 	/* Process a preparation function if necessary */
 	if (n_ptr->prep_func) (*(n_ptr->prep_func)) ();
-
-	/* Large room */
-	y1 = yval - 4;
-	y2 = yval + 4;
-	x1 = xval - 11;
-	x2 = xval + 11;
-
-	/* Generate new room */
-	generate_room(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FALSE);
-
-	/* Generate outer walls */
-	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_OUTER);
-
-	/* Generate inner floors */
-	generate_fill(x1, y1, x2, y2, FEAT_FLOOR);
-
+	
+	/* Draw the room */	
+	draw_pit(x1, y1, x2, y2, x_hall, y_hall);
+	
 	/* Advance to the center room */
-	y1 = y1 + 2;
-	y2 = y2 - 2;
-	x1 = x1 + 2;
-	x2 = x2 - 2;
+	y1 = y1 + y_hall + 1;
+	y2 = y2 - y_hall - 1;
+	x1 = x1 + x_hall + 1;
+	x2 = x2 - x_hall - 1;
 
 	/* Generate inner walls */
-	generate_draw(x1 - 1, y1 - 1, x2 + 1, y2 + 1, FEAT_WALL_INNER);
+	generate_draw(x1, y1, x2, y2, FEAT_WALL_INNER);
 
 	/* Open the inner room with a secret door */
-	generate_door(x1 - 1, y1 - 1, x2 + 1, y2 + 1, TRUE);
+	generate_door(x1, y1, x2, y2, TRUE);
 
 	/* Prepare allocation table */
 	get_mon_num_prep(n_ptr->hook_func, NULL);
@@ -1624,77 +1719,32 @@ static void build_type6(int bx0, int by0)
 	{
 		dun_ptr->good_item_flag = TRUE;
 	}
+	
+	/* Get pit centre */
+	xc = (x1 + x2) / 2;
+	yc = (y1 + y2) / 2;
+	
+	/* Get maximum "distance" */
+	dist_max = ABS(x1 - xc) + 3 * ABS(y1 - yc);
 
-	/* Top and bottom rows */
-	for (x = xval - 9; x <= xval + 9; x++)
+	/* Place the monsters */
+	for (x = x1 + 1; x <= x2 - 1; x++)
 	{
-		(void)place_monster_aux(x, yval - 2, what[0],
+		for (y = y1 + 1; y <= y2 - 1; y++)
+		{
+			/* Get a rough "distance" to the centre of the pit */
+			dist = ABS(x - xc) + 3 * ABS(y - yc);
+			
+			/* Get monster power */
+			power = dist * 7 / dist_max;
+			
+			/* Paranoia */
+			if (power > 7) power = 7;
+		
+			(void)place_monster_aux(x, y, what[power],
 								FALSE, FALSE, FALSE, FALSE);
-		(void)place_monster_aux(x, yval + 2, what[0],
-								FALSE, FALSE, FALSE, FALSE);
+		}
 	}
-
-	/* Middle columns */
-	for (y = yval - 1; y <= yval + 1; y++)
-	{
-		(void)place_monster_aux(xval - 9, y, what[0],
-								FALSE, FALSE, FALSE, FALSE);
-		(void)place_monster_aux(xval + 9, y, what[0],
-								FALSE, FALSE, FALSE, FALSE);
-
-		(void)place_monster_aux(xval - 8, y, what[1],
-								FALSE, FALSE, FALSE, FALSE);
-		(void)place_monster_aux(xval + 8, y, what[1],
-								FALSE, FALSE, FALSE, FALSE);
-
-		(void)place_monster_aux(xval - 7, y, what[1],
-								FALSE, FALSE, FALSE, FALSE);
-		(void)place_monster_aux(xval + 7, y, what[1],
-								FALSE, FALSE, FALSE, FALSE);
-
-		(void)place_monster_aux(xval - 6, y, what[2],
-								FALSE, FALSE, FALSE, FALSE);
-		(void)place_monster_aux(xval + 6, y, what[2],
-								FALSE, FALSE, FALSE, FALSE);
-
-		(void)place_monster_aux(xval - 5, y, what[2],
-								FALSE, FALSE, FALSE, FALSE);
-		(void)place_monster_aux(xval + 5, y, what[2],
-								FALSE, FALSE, FALSE, FALSE);
-
-		(void)place_monster_aux(xval - 4, y, what[3],
-								FALSE, FALSE, FALSE, FALSE);
-		(void)place_monster_aux(xval + 4, y, what[3],
-								FALSE, FALSE, FALSE, FALSE);
-
-		(void)place_monster_aux(xval - 3, y, what[3],
-								FALSE, FALSE, FALSE, FALSE);
-		(void)place_monster_aux(xval + 3, y, what[3],
-								FALSE, FALSE, FALSE, FALSE);
-
-		(void)place_monster_aux(xval - 2, y, what[4],
-								FALSE, FALSE, FALSE, FALSE);
-		(void)place_monster_aux(xval + 2, y, what[4],
-								FALSE, FALSE, FALSE, FALSE);
-	}
-
-	/* Above/Below the center monster */
-	for (x = xval - 1; x <= xval + 1; x++)
-	{
-		(void)place_monster_aux(x, yval + 1, what[5],
-								FALSE, FALSE, FALSE, FALSE);
-		(void)place_monster_aux(x, yval - 1, what[5],
-								FALSE, FALSE, FALSE, FALSE);
-	}
-
-	/* Next to the center monster */
-	(void)place_monster_aux(xval + 1, yval, what[6],
-							FALSE, FALSE, FALSE, FALSE);
-	(void)place_monster_aux(xval - 1, yval, what[6],
-							FALSE, FALSE, FALSE, FALSE);
-
-	/* Center monster */
-	(void)place_monster_aux(xval, yval, what[7], FALSE, FALSE, FALSE, FALSE);
 }
 
 
