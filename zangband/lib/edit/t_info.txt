@@ -1433,8 +1433,8 @@ G:5:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:1:50:100:0:0:0:8
-F:19,field_action_isstatue_tester
 L:PENTER:do_cmd_store(field)
+L:STORE2:result = item_tester_hook_tval(object, TV_STATUE)
 
 # Statue Store
 N:108:Unusual Statue Store
@@ -1469,7 +1469,6 @@ G:5:b
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:4:1:30:0:0:100:0:0
-F:19,field_action_ispotion_tester
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_POTION)
 
@@ -1711,7 +1710,6 @@ G:0:U
 W:100:3:0
 I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
 D:0:0:25:0:0:0:100:8
-F:19,field_action_isfood_tester
 L:PENTER:do_cmd_store(field)
 L:STORE2:result = item_tester_hook_tval(object, TV_FOOD)
 
