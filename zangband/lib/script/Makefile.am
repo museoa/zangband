@@ -1,7 +1,7 @@
 ## Makefile.am -- Process this file with automake to process Makefile.in
 
 angband_files = \
-  delete.me
+  init.lua object.lua
 
 EXTRA_DIST = \
   $(angband_files)
