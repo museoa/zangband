@@ -21,13 +21,12 @@ cptr notes_file(void)
 {
 	char fname[15];
 	static char buf[1024];
-	char base_name[9];
 
-	/* Hack -- extract first 8 characters of name */
-	(void)strnfmt(base_name, 9, "%s", player_base);
-
-	/* Create the file name from the character's name plus .txt */
-	(void)strnfmt(fname, 15, "%s.txt", base_name);
+	/*
+	 * Hack -- extract first 8 characters of name and
+	 * Create the file name from the character's name plus .txt
+	 */
+	(void)strnfmt(fname, 15, "%8s.txt", player_base);
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, fname);
 
@@ -138,6 +137,8 @@ void add_note_type(int note_number)
 {
 	char long_day[30];
 	time_t ct = time((time_t *) 0);
+	
+	int len;
 
 	/* Get the date */
 	(void)strftime(long_day, 30, "%Y-%m-%d at %H:%M:%S", localtime(&ct));
@@ -150,18 +151,18 @@ void add_note_type(int note_number)
 			char player[100];
 
 			/* Build the string containing the player information */
-			(void)strnfmt(player, 100, "the %s %s",
+			len = strnfmt(player, 100, "the %s %s",
 						  race_info[p_ptr->prace].title,
 						  class_info[p_ptr->pclass].title);
 
 			if (p_ptr->realm1 != REALM_NONE)
 			{
-				(void)strnfmt(player, 100, "%s of %s", player, realm_names[p_ptr->realm1]);
+				strnfcat(player, 100, &len, " of %s", realm_names[p_ptr->realm1]);
 			}
 
 			if (p_ptr->realm2 != REALM_NONE)
 			{
-				(void)strnfmt(player, 100, "%s and %s", player, realm_names[p_ptr->realm2]);
+				strnfcat(player, 100, &len, " and %s", realm_names[p_ptr->realm2]);
 			}
 
 			/* Add in "character start" information */

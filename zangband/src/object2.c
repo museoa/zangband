@@ -598,7 +598,7 @@ void swap_objects(object_type *o1_ptr, object_type *o2_ptr)
 {
 	object_type temp;
 
-	/* Copy the objcet */
+	/* Copy the object */
 	object_copy(&temp, o2_ptr);
 
 	/* Copy the object */

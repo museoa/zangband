@@ -938,7 +938,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode, int max)
 			/* XXX Check for trailing "s" */
 
 			/* Simply append "apostrophe" and "s" */
-			strnfmt(desc + n, max - n, "'s");
+			strnfcat(desc, max, &n, "'s");
 		}
 	}
 }

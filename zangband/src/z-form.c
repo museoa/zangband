@@ -552,6 +552,32 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list *vp)
 }
 
 
+/*
+ * Add a formatted string to the end of a string
+ */
+void strnfcat(char *str, int max, int *end, cptr fmt, ...)
+{
+	int len;
+
+	va_list vp;
+	
+	/* Paranoia */
+	if (*end >= max) return;
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Do a virtual fprintf to stderr */
+	len = vstrnfmt(&str[*end], max - *end, fmt, &vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+	
+	/* Change the end value */
+	*end += len;
+}
+
+
 static char *format_buf = NULL;
 static huge format_len = 0;
 
