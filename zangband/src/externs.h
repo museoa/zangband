@@ -577,7 +577,7 @@ extern errr check_time_init(void);
 extern errr check_load_init(void);
 extern errr check_time(void);
 extern errr check_load(void);
-extern bool show_file(cptr name, cptr what, int line, int tag);
+extern bool show_file(cptr name, cptr what, int line, int mode);
 extern void do_cmd_help(void);
 extern void process_player_name(bool sf);
 extern void get_name(void);

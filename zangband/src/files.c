@@ -3021,12 +3021,6 @@ errr file_character(cptr name, bool full)
 }
 
 
-typedef struct link
-{
-	char filename[32];
-	int line_tag;
-} link;
-
 /*
  * Recursive file perusal.
  *
@@ -3039,9 +3033,9 @@ typedef struct link
  *
  * XXX XXX XXX Allow the user to "save" the current file.
  */
-bool show_file(cptr name, cptr what, int line, int tag)
+bool show_file(cptr name, cptr what, int line, int mode)
 {
-	int i, k;
+	int i, n, k;
 
 	/* Number of "real" lines passed by */
 	int next = 0;
@@ -3064,11 +3058,17 @@ bool show_file(cptr name, cptr what, int line, int tag)
 	/* Find this string (if any) */
 	cptr find = NULL;
 
+	/* Jump to this tag */
+	cptr tag = NULL;
+
 	/* Hold a string to find */
 	char finder[81];
 
 	/* Hold a string to show */
 	char shower[81];
+
+	/* Filename */
+	char filename[1024];
 
 	/* Describe this thing */
 	char caption[128];
@@ -3086,7 +3086,7 @@ bool show_file(cptr name, cptr what, int line, int tag)
 	cptr lc_buf_ptr;
 
 	/* Sub-menu information */
-	link hook[62];
+	char hook[62][32];
 
 	/* Tags for in-file references */
 	int tags[62];
@@ -3103,10 +3103,26 @@ bool show_file(cptr name, cptr what, int line, int tag)
 	/* Wipe the hooks */
 	for (i = 0; i < 62; i++)
 	{
-		hook[i].filename[0] = '\0';
-		hook[i].line_tag = -1;
+		hook[i][0] = '\0';
 	}
 
+	/* Copy the filename */
+	strcpy(filename, name);
+
+	n = strlen(filename);
+
+	/* Extract the tag from the filename */
+	for (i = 0; i < n; i++)
+	{
+		if (filename[i] == '#')
+		{
+			filename[i] = '\0';
+			tag = filename + i + 1;
+		}
+	}
+
+	/* Redirect the name */
+	name = filename;
 
 	/* Hack XXX XXX XXX */
 	if (what)
@@ -3171,26 +3187,16 @@ bool show_file(cptr name, cptr what, int line, int tag)
 			/* Notice "menu" requests */
 			if ((buf[6] == '[') && (isdigit(buf[7]) || isalpha(buf[7])))
 			{
-				cptr buf_ptr = buf;
-				
 				/* This is a menu file */
 				menu = TRUE;
 
 				/* Extract the menu item */
 				k = isdigit(buf[7]) ? D2I(buf[7]) : A2I(buf[7]) + 10;
 
-				if ((buf[8] == ':') && (isdigit(buf[9]) || isalpha(buf[9])))
-				{
-					/* Extract the tag */
-					hook[k].line_tag = isdigit(buf[9]) ? D2I(buf[9]) : A2I(buf[9]) + 10;
-
-					buf_ptr = buf + 2;
-				}
-				
-				if ((buf_ptr[8] == ']') && (buf_ptr[9] == ' '))
+				if ((buf[8] == ']') && (buf[9] == ' '))
 				{
 					/* Extract the menu item */
-					strcpy(hook[k].filename, buf_ptr + 10);
+					strcpy(hook[k], buf + 10);
 				}
 			}
 			/* Notice "tag" requests */
@@ -3222,7 +3228,8 @@ bool show_file(cptr name, cptr what, int line, int tag)
 		/* Clear screen */
 		Term_clear();
 
-		if (tag) line = tags[tag];
+		if (tag)
+			line = tags[isdigit(tag[0]) ? D2I(tag[0]) : A2I(tag[0]) + 10];
 
 		/* Restart when necessary */
 		if (line >= size) line = 0;
@@ -3402,7 +3409,7 @@ bool show_file(cptr name, cptr what, int line, int tag)
 
 			if (askfor_aux(tmp, 80))
 			{
-				if (!show_file(tmp, NULL, 0, tag)) k = ESCAPE;
+				if (!show_file(tmp, NULL, 0, mode)) k = ESCAPE;
 			}
 		}
 
@@ -3433,11 +3440,10 @@ bool show_file(cptr name, cptr what, int line, int tag)
 			if (isdigit(k)) key = D2I(k);
 			else if isalpha(k) key = A2I(k) + 10;
 
-			if (key && hook[key].filename[0])
+			if (key && hook[key][0])
 			{
 				/* Recurse on that file */
-				if (!show_file(hook[key].filename, NULL,
-				               0, hook[key].line_tag))
+				if (!show_file(hook[key], NULL, 0, mode))
 					k = ESCAPE;
 			}
 		}
