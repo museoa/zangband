@@ -77,16 +77,11 @@ static int racial_chance(s16b min_level, int use_stat, int difficulty)
  */
 static void eat_corpse(void)
 {
-	s16b fld_idx;
 	field_type *f_ptr;
 
-	fld_idx = area(p_ptr->px, p_ptr->py)->fld_idx;
-
 	/* While there are fields in the linked list */
-	while (fld_idx)
+	FLD_ITT_START (area(p_ptr->px, p_ptr->py)->fld_idx, f_ptr)
 	{
-		f_ptr = &fld_list[fld_idx];
-
 		/* Want a corpse / skeleton */
 		if ((f_ptr->t_idx == FT_CORPSE || f_ptr->t_idx == FT_SKELETON))
 		{
@@ -104,15 +99,13 @@ static void eat_corpse(void)
 			/* Sound */
 			sound(SOUND_EAT);
 
-			delete_field_idx(fld_idx);
+			delete_field_ptr(f_ptr);
 
 			/* Done */
 			return;
 		}
-
-		/* Get next field in list */
-		fld_idx = f_ptr->next_f_idx;
 	}
+	FLD_ITT_END;
 
 	/* Nothing to eat */
 	msgf("There is no fresh skeleton or corpse here!");

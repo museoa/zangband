@@ -13,41 +13,6 @@
 #include "angband.h"
 
 /*
- * Find the connection to the cave array for the field.
- *
- * This is used so that an arbitrary field can found.
- * This routine is fairly fast if there are not too many fields
- * on a square at one time.  However - it should only be used
- * by routines in this file.
- */
-static s16b *field_find(field_type *f_ptr)
-{
-	cave_type *c_ptr = area(f_ptr->fx, f_ptr->fy);
-
-	field_type *q_ptr;
-
-	/* pointer to a field index in a list. */
-	s16b *location;
-
-	/* Paranoia */
-	if (f_ptr->region != cur_region) quit("Trying to find unregioned field");
-
-	location = &(c_ptr->fld_idx);
-	q_ptr = &fld_list[*location];
-
-	while (q_ptr != f_ptr)
-	{
-		/* Get the next field in the chain */
-		location = &(q_ptr->next_f_idx);
-		q_ptr = &fld_list[*location];
-	}
-
-	/* Found a pointer to our field */
-	return (location);
-}
-
-
-/*
  * Excise a field from a stack
  */
 void excise_field_idx(int fld_idx)
@@ -119,37 +84,37 @@ static void notice_field(field_type *f_ptr)
 
 
 /*
- * Delete a dungeon field
+ * Find the connection to the cave array for the field.
  *
- * Handle "lists" of fields correctly.
+ * This is used so that an arbitrary field can found.
+ * This routine is fairly fast if there are not too many fields
+ * on a square at one time.  However - it should only be used
+ * by routines in this file.
  */
-void delete_field_idx(int fld_idx)
+static s16b *field_find(field_type *f_ptr)
 {
-	/* Field */
-	field_type *j_ptr = &fld_list[fld_idx];
+	cave_type *c_ptr = area(f_ptr->fx, f_ptr->fy);
 
-	/* Dungeon floor */
-	int y, x;
+	field_type *q_ptr;
 
-	/* Location */
-	y = j_ptr->fy;
-	x = j_ptr->fx;
+	/* pointer to a field index in a list. */
+	s16b *location;
 
-	/* Excise */
-	excise_field_idx(fld_idx);
+	/* Paranoia */
+	if (f_ptr->region != cur_region) quit("Trying to find unregioned field");
 
-	/* Refuse "illegal" locations */
-	if (in_boundsp(x, y))
+	location = &(c_ptr->fld_idx);
+	q_ptr = &fld_list[*location];
+
+	while (q_ptr != f_ptr)
 	{
-		/* Note + Lite the spot */
-		note_spot(x, y);
+		/* Get the next field in the chain */
+		location = &(q_ptr->next_f_idx);
+		q_ptr = &fld_list[*location];
 	}
 
-	/* Wipe the field */
-	field_wipe(j_ptr);
-
-	/* Count fields */
-	fld_cnt--;
+	/* Found a pointer to our field */
+	return (location);
 }
 
 
@@ -160,10 +125,10 @@ void delete_field_idx(int fld_idx)
  *
  * Given a pointer to a s16b that points to this fld_idx.
  */
-void delete_field_ptr(s16b *fld_idx)
+void delete_field_ptr(field_type *f_ptr)
 {
-	/* Field */
-	field_type *f_ptr = &fld_list[*fld_idx];
+	/* Field  index */
+	s16b *fld_idx = field_find(f_ptr);
 
 	/* Dungeon floor */
 	int y, x;
@@ -338,9 +303,7 @@ void compact_fields(int size)
 	int cur_lev, cur_dis, chance;
 	s16b i;
 
-	s16b *fld_ptr;
 	field_thaum *t_ptr;
-
 
 	/* Compact */
 	if (size)
@@ -465,13 +428,11 @@ void compact_fields(int size)
 			/* Apply the saving throw */
 			if (randint0(100) < chance) continue;
 
-			fld_ptr = field_find(f_ptr);
-
 			/* Call completion routine */
 			if (field_hook_single(f_ptr, FIELD_ACT_EXIT))
 			{
 				/* It didn't delete itself, so we do it now */
-				delete_field_ptr(fld_ptr);
+				delete_field_ptr(f_ptr);
 			}
 
 			/* Count it */
@@ -947,7 +908,6 @@ bool field_detect_type(s16b fld_idx, byte typ)
 void field_destroy_type(s16b fld_idx, byte typ)
 {
 	field_type *f_ptr;
-	s16b *fld_ptr;
 
 	/* While the field exists */
 	FLD_ITT_START (fld_idx, f_ptr)
@@ -955,13 +915,11 @@ void field_destroy_type(s16b fld_idx, byte typ)
 		/* Is it the correct type? */
 		if (t_info[f_ptr->t_idx].type == typ)
 		{
-			fld_ptr = field_find(f_ptr);
-
 			/* Call completion routine */
 			if (field_hook_single(f_ptr, FIELD_ACT_EXIT))
 			{
 				/* It didn't delete itself, so we do it now */
-				delete_field_ptr(fld_ptr);
+				delete_field_ptr(f_ptr);
 			}
 		}
 	}
@@ -1061,7 +1019,7 @@ bool field_hook_single(field_type *f_ptr, int action, ...)
 		if (t_ptr->action[action] (f_ptr, vp))
 		{
 			/* The field wants to be deleted */
-			delete_field_ptr(field_find(f_ptr));
+			delete_field_ptr(f_ptr);
             
             /* End the Varargs Stuff */
 			va_end(vp);
@@ -1130,7 +1088,7 @@ void field_hook(cave_type *c_ptr, int action, ...)
 			if (t_ptr->action[action] (f_ptr, vp))
 			{
 				/* The field wants to be deleted */
-				delete_field_ptr(field_find(f_ptr));
+				delete_field_ptr(f_ptr);
 			}
 			
 			/* End the Varargs Stuff */
@@ -1170,7 +1128,7 @@ bool field_hook_special(cave_type *c_ptr, u16b ftype, ...)
 			if (t_ptr->action[FIELD_ACT_SPECIAL] (f_ptr, vp))
 			{
 				/* The field wants to be deleted */
-				delete_field_ptr(field_find(f_ptr));
+				delete_field_ptr(f_ptr);
 
 				deleted = TRUE;
 			}
@@ -1212,7 +1170,7 @@ field_type *field_hook_find(cave_type *c_ptr, int action, ...)
 			if (t_ptr->action[action] (f_ptr, vp))
 			{
 				/* The field wants to be deleted */
-				delete_field_ptr(field_find(f_ptr));
+				delete_field_ptr(f_ptr);
 			}
 			
 			/* End the Varargs Stuff */
@@ -1236,8 +1194,6 @@ void process_fields(void)
 	s16b fld_idx;
 	field_type *f_ptr;
 
-	s16b *fld_ptr;
-
 	for (fld_idx = 0; fld_idx < fld_max; fld_idx++)
 	{
 		/* Point to field */
@@ -1245,9 +1201,6 @@ void process_fields(void)
 
 		/* No dead fields */
 		if (!f_ptr->t_idx) continue;
-
-		/* Get pointer to field index */
-		fld_ptr = field_find(f_ptr);
 
 		/* If it is a temporary field, count down every 10 turns */
 		if ((f_ptr->info & FIELD_INFO_TEMP) && !(turn % 10))
@@ -1262,7 +1215,7 @@ void process_fields(void)
 				if (field_hook_single(f_ptr, FIELD_ACT_EXIT))
 				{
 					/* It didn't delete itself - do it now */
-					delete_field_ptr(fld_ptr);
+					delete_field_ptr(f_ptr);
 				}
 
 				/* Nothing else to do now */
@@ -3141,7 +3094,7 @@ void make_lockjam_door(int x, int y, int power, bool jam)
 		old_power = f_ptr->counter;
 
 		/* Get rid of old field */
-		delete_field_ptr(field_find(f_ptr));
+		delete_field_ptr(f_ptr);
 	}
 
 	/* Make a new field */

@@ -1084,8 +1084,7 @@ extern void add_note_type(int note_number);
 
 /* fields.c */
 extern void excise_field_idx(int fld_idx);
-extern void delete_field_idx(int fld_idx);
-extern void delete_field_ptr(s16b *fld_id);
+extern void delete_field_ptr(field_type *f_ptr);
 extern void delete_field_aux(s16b *fld_idx_ptr);
 extern void delete_field(int x, int y);
 extern void delete_field_location(cave_type *c_ptr);
