@@ -1873,7 +1873,7 @@ void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 			/* Hack -- fake monochrome */
 			if (fake_monochrome)
 			{
-				if (p_ptr->invuln || !use_color || ironman_moria)
+				if (p_ptr->invuln || !use_color)
 				{
 					a = TERM_WHITE;
 				}
@@ -1979,7 +1979,7 @@ void map_info(const cave_type *c_ptr, const pcave_type *pc_ptr,
 	/* Hack -- fake monochrome */
 	if (fake_monochrome)
 	{
-		if (p_ptr->invuln || !use_color || ironman_moria) a = TERM_WHITE;
+		if (p_ptr->invuln || !use_color) a = TERM_WHITE;
 		else if (p_ptr->wraith_form) a = TERM_L_DARK;
 	}
 
@@ -2016,7 +2016,7 @@ void print_rel(char c, byte a, int x, int y)
 		/* Hack -- fake monochrome */
 		if (fake_monochrome)
 		{
-			if (p_ptr->invuln || !use_color || ironman_moria) a = TERM_WHITE;
+			if (p_ptr->invuln || !use_color) a = TERM_WHITE;
 			else if (p_ptr->wraith_form) a = TERM_L_DARK;
 		}
 

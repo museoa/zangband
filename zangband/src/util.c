@@ -2448,7 +2448,7 @@ static void msg_print_aux(u16b type, cptr msg)
 
 
 	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria) type = MSG_GENERIC;
+	if (!use_color) type = MSG_GENERIC;
 
 	/* Hack -- Reset */
 	if (!msg_flag) message_column = 0;

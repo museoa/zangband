@@ -104,7 +104,7 @@ static byte spell_color(int type)
 		}
 	}
 	/* Normal tiles or ASCII */
-	else if (use_color && !ironman_moria)
+	else if (use_color)
 	{
 		byte a;
 		char c;

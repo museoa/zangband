@@ -1847,14 +1847,6 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			(*f2) |= TR2_FREE_ACT;
 		}
 	}
-
-	/* Remove flags that were not in Moria */
-	if (ironman_moria)
-	{
-		(*f1) &= TR1_MORIA_MASK;
-		(*f2) &= TR2_MORIA_MASK;
-		(*f3) &= TR3_MORIA_MASK;
-	}
 }
 
 
@@ -1881,7 +1873,7 @@ static void display_player_equippy(int x, int y)
 		c = object_char(o_ptr);
 
 		/* No color */
-		if (!use_color || ironman_moria) a = TERM_WHITE;
+		if (!use_color) a = TERM_WHITE;
 
 		/* Clear the part of the screen */
 		if (!o_ptr->k_idx)
@@ -2235,7 +2227,7 @@ static void display_player_stat_info(void)
 			}
 
 			/* Handle monochrome */
-			if (!use_color || ironman_moria) a = TERM_WHITE;
+			if (!use_color) a = TERM_WHITE;
 
 			/* Dump proper character */
 			Term_putch(col, row + stat, a, c);
@@ -2332,7 +2324,7 @@ static void display_player_stat_info(void)
 
 
 		/* No color */
-		if (!use_color || ironman_moria) a = TERM_WHITE;
+		if (!use_color) a = TERM_WHITE;
 
 		/* Dump */
 		Term_putch(col, row + stat, a, c);
@@ -2834,9 +2826,6 @@ errr file_character(cptr name, bool full)
 	fprintf(fff, "\n Number of Quests: %d", number_of_quests());
 
 	if (ironman_nightmare) fprintf(fff, "\n Nightmare Mode:     ON");
-
-	if (ironman_moria) fprintf(fff, "\n Moria Mode:         ON");
-
 
 	fprintf(fff, "\n Recall Depth:       Level %d (%d')\n", p_ptr->max_depth,
 			50 * p_ptr->max_depth);

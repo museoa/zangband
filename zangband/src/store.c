@@ -963,7 +963,7 @@ static void display_entry(int pos)
 	c = object_char(o_ptr);
 
 	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria)
+	if (!use_color)
     {
     	a = TERM_WHITE;
     	c = ' ';

@@ -110,15 +110,6 @@ void object_flags(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *
 	(*f2) = k_ptr->flags2 | o_ptr->flags2;
 	(*f3) = k_ptr->flags3 | o_ptr->flags3;
 	(*f4) = k_ptr->flags4 | o_ptr->flags4;
-
-	/* Remove the Moria flags */
-	if (ironman_moria)
-	{
-		(*f1) &= TR1_MORIA_MASK;
-		(*f2) &= TR2_MORIA_MASK;
-		(*f3) &= TR3_MORIA_MASK;
-		(*f4) = 0;
-	}
 }
 
 
@@ -165,15 +156,6 @@ void object_flags_known(const object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, 
 	if (o_ptr->flags3 & TR3_INSTA_ART)
 	{
 		(*f3) |= TR3_INSTA_ART;
-	}
-
-	/* Remove the Moria flags */
-	if (ironman_moria)
-	{
-		(*f1) &= TR1_MORIA_MASK;
-		(*f2) &= TR2_MORIA_MASK;
-		(*f3) &= TR3_MORIA_MASK;
-		(*f4) = 0;
 	}
 }
 
@@ -2614,7 +2596,7 @@ void show_list(s16b o_list_ptr)
 		c = object_char(o_ptr);
 
 		/* Fake monochrome */
-		if (!use_color || ironman_moria)
+		if (!use_color)
 		{
 			/* Hack - no equippy char */
 			a = TERM_WHITE;
@@ -2756,7 +2738,7 @@ void show_equip(void)
 		if (!o_ptr->number) c = ' ';
 
 		/* Fake monochrome */
-		if (!use_color || ironman_moria)
+		if (!use_color)
 		{
 			/* Hack - no equippy char */
 			a = TERM_WHITE;

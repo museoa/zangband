@@ -1477,7 +1477,7 @@ void roff_top(int r_idx)
 	a2 = r_ptr->x_attr;
 
 	/* Hack -- fake monochrome */
-	if (!use_color || ironman_moria)
+	if (!use_color)
 	{
 		a1 = TERM_WHITE;
 		a2 = TERM_WHITE;
@@ -1604,7 +1604,7 @@ void display_visible(void)
 		a2 = r_ptr->x_attr;
 
 		/* Hack -- fake monochrome */
-		if (!use_color || ironman_moria)
+		if (!use_color)
 		{
 			a1 = TERM_WHITE;
 			a2 = TERM_WHITE;

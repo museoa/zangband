@@ -177,9 +177,6 @@ static long total_points(void)
 	/* Not too much of a reward since some people like playing with this. */
 	if (ironman_small_levels) mult += 5;
 
-	/* Moria mode is very hard */
-	if (ironman_moria) mult += 20;
-
 	/* More ironman options */
 	if (ironman_empty_levels) mult += 10;
 	if (ironman_nightmare) mult += 20;

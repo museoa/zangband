@@ -1385,9 +1385,6 @@ bool create_artifact(object_type *o_ptr, bool a_scroll)
 	int warrior_artifact_bias = 0;
 	int artifact_bias = 0;
 
-	/* Moria had no artifacts */
-	if (ironman_moria) return (FALSE);
-
 	/* No activation yet */
 	o_ptr->activate = 0;
 

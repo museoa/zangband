@@ -923,7 +923,7 @@ static bool do_cmd_options_win(int dummy)
 				a = TERM_WHITE;
 
 				/* Use color */
-				if (use_color && (i == y) && (j == x) && !ironman_moria)
+				if (use_color && (i == y) && (j == x))
 				{
 					a = TERM_L_BLUE;
 				}
@@ -3168,7 +3168,7 @@ void do_cmd_load_screen(void)
 			}
 
 			/* Hack -- fake monochrome */
-			if (!use_color || ironman_moria) a = TERM_WHITE;
+			if (!use_color) a = TERM_WHITE;
 
 			/* Put the attr/char */
 			Term_draw(x, y, a, c);

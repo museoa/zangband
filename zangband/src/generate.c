@@ -413,9 +413,6 @@ static bool cave_gen(void)
 	if (p_ptr->max_hgt - p_ptr->min_hgt < 23) max_vault_ok--;
 	if (p_ptr->max_wid - p_ptr->min_wid < 34) max_vault_ok--;
 
-	/* Hack - no vaults in moria mode */
-	if (ironman_moria) max_vault_ok = 0;
-
 	/* Randomize the dungeon creation values */
 	dun_rooms = rand_range(DUN_ROOMS_MIN, DUN_ROOMS_MAX);
 	dun_tun_rnd = rand_range(DUN_TUN_RND_MIN, DUN_TUN_RND_MAX);

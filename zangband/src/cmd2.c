@@ -2423,7 +2423,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 	tx = px + 99 * ddx[dir];
 
 	/* Check for "target request" */
-	if (!ironman_moria && (dir == 5) && target_okay())
+	if ((dir == 5) && target_okay())
 	{
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
@@ -2891,7 +2891,7 @@ void do_cmd_throw_aux(int mult)
 	ty = py + 99 * ddy[dir];
 
 	/* Check for "target request" */
-	if (!ironman_moria && (dir == 5) && target_okay())
+	if ((dir == 5) && target_okay())
 	{
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;

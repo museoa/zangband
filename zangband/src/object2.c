@@ -2268,9 +2268,6 @@ static object_type *make_artifact(void)
 
 	object_type *o_ptr;
 
-	/* Moria had no artifacts */
-	if (ironman_moria) return (NULL);
-
 	/* Check the artifact list */
 	for (i = 1; i < z_info->a_max; i++)
 	{
