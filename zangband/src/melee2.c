@@ -102,7 +102,7 @@ static void convert_target_dir(monster_type *m_ptr, int *mm)
  * Is the monster worth targetting?
  */
 static bool nice_target(monster_type *m_ptr, monster_race *r_ptr,
-						monster_type *t_ptr)
+                        monster_type *t_ptr)
 {
 	/* The monster itself isn't a target */
 	if (t_ptr == m_ptr) return (FALSE);

@@ -449,7 +449,7 @@ static void display_parse_error(cptr filename, errr err, cptr buf)
  * even if the string happens to be empty (everyone has a unique '\0').
  */
 static errr init_info(cptr filename, header *head,
-					  void **info, char **name, char **text)
+                      void **info, char **name, char **text)
 {
 	int fd;
 

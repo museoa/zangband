@@ -643,7 +643,7 @@ static cptr t_info_flags[] =
  * Initialize an "*_info" array, by parsing an ascii "template" file
  */
 errr init_info_txt(FILE *fp, char *buf, header *head,
-				   parse_info_txt_func parse_info_txt_line)
+                   parse_info_txt_func parse_info_txt_line)
 {
 	errr err;
 

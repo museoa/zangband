@@ -151,7 +151,7 @@ static void check_room_boundary(int x1, int y1, int x2, int y2)
  * cave.feat and cave.info etc.
  */
 static bool room_alloc(int x, int y, bool crowded, int by0, int bx0, int *xx,
-					   int *yy)
+                       int *yy)
 {
 	int temp, bx1, bx2, by1, by2, by, bx;
 
@@ -1737,7 +1737,7 @@ static void coord_trans(int *x, int *y, int xoffset, int yoffset, int transno)
  * Hack -- fill in "vault" rooms
  */
 static void build_vault(int xval, int yval, int xmax, int ymax, cptr data,
-						int xoffset, int yoffset, int transno)
+                        int xoffset, int yoffset, int transno)
 {
 	int dx, dy, x, y, i, j;
 
@@ -2738,7 +2738,7 @@ static void build_cave_vault(int x0, int y0, int xsiz, int ysiz)
  * twists and turns in the labyrinth: smaller number, more twists.
  */
 static void r_visit(int x1, int y1, int x2, int y2,
-					int node, int dir, int *visited)
+                    int node, int dir, int *visited)
 {
 	int i, j, m, n, temp, x, y, adj[4];
 
@@ -3191,7 +3191,7 @@ static void build_castle_vault(int x0, int y0, int xsize, int ysize)
  * This routine also stomps on doors
  */
 static void add_outer_wall(int x, int y, int light,
-						   int x1, int y1, int x2, int y2)
+                           int x1, int y1, int x2, int y2)
 {
 	int i, j;
 	cave_type *c_ptr;

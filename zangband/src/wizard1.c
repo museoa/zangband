@@ -129,7 +129,7 @@ static const grouper group_item[] =
  * Describe the kind
  */
 static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
-					  int k)
+                      int k)
 {
 	object_type forge;
 	object_type *q_ptr;
@@ -702,7 +702,7 @@ static void spoiler_underline(cptr str)
  * The possibly updated description pointer is returned.
  */
 static cptr *spoiler_flag_aux(const u32b flags, const flag_desc *flag_ptr,
-							  cptr *desc_ptr, const int n_elmnts)
+                              cptr *desc_ptr, const int n_elmnts)
 {
 	int i;
 

@@ -260,7 +260,7 @@ void select_town_name(char *name, int pop)
 
 /* Select a store or building "appropriate" for a given position */
 static u16b select_building(byte pop, byte magic, byte law, u16b *build,
-							int build_num)
+                            int build_num)
 {
 	int i;
 
@@ -2235,7 +2235,7 @@ static void smooth_block(void)
  * so that choices can be made with less than 4 features.
  */
 static byte pick_feat(byte feat1, byte feat2, byte feat3, byte feat4,
-					  byte prob1, byte prob2, byte prob3, byte prob4, byte prob)
+                      byte prob1, byte prob2, byte prob3, byte prob4, byte prob)
 {
 	/* Chance factors */
 	u32b c1, c2, c3, c4, choice;

@@ -504,7 +504,7 @@ static errr Term_text_hack(int x, int y, int n, byte a, const char *cp)
  */
 #ifdef USE_TRANSPARENCY
 static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp,
-						   const byte *tap, const char *tcp)
+                           const byte *tap, const char *tcp)
 #else  /* USE_TRANSPARENCY */
 static errr Term_pict_hack(int x, int y, int n, const byte *ap, const char *cp)
 #endif /* USE_TRANSPARENCY */

@@ -1567,8 +1567,8 @@ static void variable_player_graph(byte *a, char *c)
  * to be "scrambled" in various ways.
  */
 #ifdef USE_TRANSPARENCY
-static void map_info(cave_type *c_ptr, pcave_type *pc_ptr,
-					 byte *ap, char *cp, byte *tap, char *tcp)
+static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp,
+                     byte *tap, char *tcp)
 #else  /* USE_TRANSPARENCY */
 
 static void map_info(cave_type *c_ptr, pcave_type *pc_ptr, byte *ap, char *cp)

@@ -1634,7 +1634,7 @@ static void clear_question(void)
  * Generic "get choice from menu" function
  */
 static int get_player_choice(cptr *choices, int num, int col, int wid,
-							 cptr helpfile, void (*hook) (cptr))
+                             cptr helpfile, void (*hook) (cptr))
 {
 	int top = 0, cur = 0;
 	/* int bot = 13; */
@@ -1864,7 +1864,7 @@ static void ang_sort_swap_hook_string(const vptr u, const vptr v, int a, int b)
  * Present a sorted list to the player, and get a selection
  */
 static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
-								  cptr helpfile, void (*hook) (cptr))
+                                  cptr helpfile, void (*hook) (cptr))
 {
 	int i;
 	int choice;

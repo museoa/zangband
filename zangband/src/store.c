@@ -1904,7 +1904,7 @@ static int get_haggle(cptr pmt, s32b *poffer, s32b price, int final)
  * Return TRUE if offer is NOT okay
  */
 static bool receive_offer(cptr pmt, s32b *poffer, s32b last_offer, int factor,
-						  s32b price, int final)
+                          s32b price, int final)
 {
 	/* Haggle till done */
 	while (TRUE)

@@ -23,7 +23,7 @@
  * Recursive fractal algorithm to place water through the dungeon.
  */
 static void recursive_river(int x1, int y1, int x2, int y2, int feat1,
-							int feat2, int width)
+                            int feat2, int width)
 {
 	int dx, dy, length, l, x, y;
 	int changex, changey;

@@ -475,7 +475,7 @@ s16b m_pop(void)
  * Apply a "monster restriction function" to the "monster allocation table"
  */
 void get_mon_num_prep(monster_hook_type monster_hook,
-					  monster_hook_type monster_hook2)
+                      monster_hook_type monster_hook2)
 {
 	int i;
 
@@ -498,9 +498,9 @@ void get_mon_num_prep(monster_hook_type monster_hook,
 		 * This makes more sense then adding the test to every
 		 * hook function.
 		 */
-		if ((!get_mon_num_hook || (*get_mon_num_hook) (entry->index)) &&
-			(!get_mon_num2_hook || (*get_mon_num2_hook) (entry->index)) &&
-			(silly_monsters || !(r_info[entry->index].flags7 & RF7_SILLY)))
+		if ((!get_mon_num_hook || (*get_mon_num_hook) (entry->index))
+			&& (!get_mon_num2_hook || (*get_mon_num2_hook) (entry->index))
+			&& (silly_monsters || !(r_info[entry->index].flags7 & RF7_SILLY)))
 		{
 			/* Accept this monster */
 			entry->prob2 = entry->prob1;
@@ -602,9 +602,8 @@ s16b get_mon_num(int level)
 		r_ptr = &r_info[r_idx];
 
 		/* Hack -- "unique" monsters must be "unique" */
-		if (((r_ptr->flags1 & (RF1_UNIQUE)) ||
-			 (r_ptr->flags3 & (RF3_UNIQUE_7))) &&
-			(r_ptr->cur_num >= r_ptr->max_num))
+		if (((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags3 & (RF3_UNIQUE_7)))
+			&& (r_ptr->cur_num >= r_ptr->max_num))
 		{
 			continue;
 		}
@@ -1281,8 +1280,8 @@ void update_mon(int m_idx, bool full)
 				}
 
 				/* Use "illumination" */
-				if ((player_can_see_grid(pc_ptr)) ||
-					(r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2)))
+				if ((player_can_see_grid(pc_ptr))
+					|| (r_ptr->flags7 & (RF7_LITE_1 | RF7_LITE_2)))
 				{
 					/* Handle "invisible" monsters */
 					if (r_ptr->flags2 & (RF2_INVISIBLE))
@@ -1462,7 +1461,7 @@ void update_monsters(bool full)
  * except for the savefile loading code.
  */
 bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
-					   bool pet)
+                       bool pet)
 {
 	int i;
 
@@ -1493,12 +1492,13 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	if (cave_perma_grid(c_ptr)) return (FALSE);
 
 	/* Walls also stops generation if we aren't ghostly */
-	if (!(cave_floor_grid(c_ptr) || ((c_ptr->feat & 0x60) == 0x60)
-		  || (r_ptr->flags2 & RF2_PASS_WALL))) return (FALSE);
+	if (!
+		(cave_floor_grid(c_ptr) || ((c_ptr->feat & 0x60) == 0x60)
+		 || (r_ptr->flags2 & RF2_PASS_WALL))) return (FALSE);
 
 	/* Nor on the Pattern */
-	if ((c_ptr->feat >= FEAT_PATTERN_START) &&
-		(c_ptr->feat <= FEAT_PATTERN_XTRA2))
+	if ((c_ptr->feat >= FEAT_PATTERN_START)
+		&& (c_ptr->feat <= FEAT_PATTERN_XTRA2))
 		return (FALSE);
 
 	/* Paranoia */
@@ -1507,23 +1507,23 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
 	/* Paranoia */
 	if (!r_ptr->name) return (FALSE);
 
-	if (monster_terrain_sensitive &&
-		!monster_can_cross_terrain(c_ptr->feat, r_ptr))
+	if (monster_terrain_sensitive
+		&& !monster_can_cross_terrain(c_ptr->feat, r_ptr))
 	{
 		return FALSE;
 	}
 
 	/* Hack -- "unique" monsters must be "unique" */
-	if (((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags3 & (RF3_UNIQUE_7))) &&
-		(r_ptr->cur_num >= r_ptr->max_num))
+	if (((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags3 & (RF3_UNIQUE_7)))
+		&& (r_ptr->cur_num >= r_ptr->max_num))
 	{
 		/* Cannot create */
 		return (FALSE);
 	}
 
 	/* Depth monsters may NOT be created out of depth, unless in Nightmare mode */
-	if ((r_ptr->flags1 & (RF1_FORCE_DEPTH)) && (p_ptr->depth < r_ptr->level) &&
-		(!ironman_nightmare || (r_ptr->flags1 & (RF1_QUESTOR))))
+	if ((r_ptr->flags1 & (RF1_FORCE_DEPTH)) && (p_ptr->depth < r_ptr->level)
+		&& (!ironman_nightmare || (r_ptr->flags1 & (RF1_QUESTOR))))
 	{
 		/* Cannot create */
 		return (FALSE);
@@ -1737,7 +1737,7 @@ bool place_monster_one(int x, int y, int r_idx, bool slp, bool friendly,
  * Attempt to place a "group" of monsters around the given location
  */
 static bool place_monster_group(int x, int y, int r_idx, bool slp,
-								bool friendly, bool pet)
+                                bool friendly, bool pet)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -1864,9 +1864,8 @@ static bool place_monster_okay(int r_idx)
 	if (place_monster_idx == r_idx) return (FALSE);
 
 	/* Good vs. evil */
-	if (((r_ptr->flags3 & RF3_EVIL) &&
-		 (z_ptr->flags3 & RF3_GOOD)) ||
-		((r_ptr->flags3 & RF3_GOOD) && (z_ptr->flags3 & RF3_EVIL)))
+	if (((r_ptr->flags3 & RF3_EVIL) && (z_ptr->flags3 & RF3_GOOD))
+		|| ((r_ptr->flags3 & RF3_GOOD) && (z_ptr->flags3 & RF3_EVIL)))
 	{
 		return FALSE;
 	}
@@ -1899,7 +1898,7 @@ static bool place_monster_okay(int r_idx)
  * the "get_mon_num()" function to "legal" escort types.
  */
 bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
-					   bool friendly, bool pet)
+                       bool friendly, bool pet)
 {
 	int i;
 	monster_race *r_ptr = &r_info[r_idx];
@@ -1960,8 +1959,8 @@ bool place_monster_aux(int x, int y, int r_idx, bool slp, bool grp,
 			(void)place_monster_one(nx, ny, z, slp, friendly, pet);
 
 			/* Place a "group" of escorts if needed */
-			if ((r_info[z].flags1 & RF1_FRIENDS) ||
-				(r_ptr->flags1 & RF1_ESCORTS))
+			if ((r_info[z].flags1 & RF1_FRIENDS)
+				|| (r_ptr->flags1 & RF1_ESCORTS))
 			{
 				/* Place a group of monsters */
 				(void)place_monster_group(nx, ny, z, slp, friendly, pet);
@@ -2049,8 +2048,8 @@ bool alloc_horde(int x, int y)
 	{
 		scatter(&cx, &cy, x, y, 5);
 
-		(void)summon_specific(m_idx, cx, cy, p_ptr->depth + 5, SUMMON_KIN,
-							  TRUE, FALSE, FALSE);
+		(void)summon_specific(m_idx, cx, cy, p_ptr->depth + 5, SUMMON_KIN, TRUE,
+							  FALSE, FALSE);
 
 		y = cy;
 		x = cx;
@@ -2177,9 +2176,8 @@ static bool summon_specific_okay(int r_idx)
 		/* Do not summon enemies */
 
 		/* Good vs. evil */
-		if (((r_ptr->flags3 & RF3_EVIL) &&
-			 (s_ptr->flags3 & RF3_GOOD)) ||
-			((r_ptr->flags3 & RF3_GOOD) && (s_ptr->flags3 & RF3_EVIL)))
+		if (((r_ptr->flags3 & RF3_EVIL) && (s_ptr->flags3 & RF3_GOOD))
+			|| ((r_ptr->flags3 & RF3_GOOD) && (s_ptr->flags3 & RF3_EVIL)))
 		{
 			return FALSE;
 		}
@@ -2194,8 +2192,8 @@ static bool summon_specific_okay(int r_idx)
 	else if (summon_specific_who < 0)
 	{
 		/* Do not summon enemies of the pets */
-		if (((p_ptr->align < 0) && (r_ptr->flags3 & RF3_GOOD)) ||
-			((p_ptr->align > 0) && (r_ptr->flags3 & RF3_EVIL)))
+		if (((p_ptr->align < 0) && (r_ptr->flags3 & RF3_GOOD))
+			|| ((p_ptr->align > 0) && (r_ptr->flags3 & RF3_EVIL)))
 		{
 			return FALSE;
 		}
@@ -2221,8 +2219,8 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_HOUND:
 		{
-			okay = (((r_ptr->d_char == 'C') ||
-					 (r_ptr->d_char == 'Z')) && !(r_ptr->flags1 & RF1_UNIQUE));
+			okay = (((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z'))
+					&& !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		}
 
@@ -2240,29 +2238,29 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_DEMON:
 		{
-			okay = ((r_ptr->flags3 & RF3_DEMON) &&
-					!(r_ptr->flags1 & RF1_UNIQUE));
+			okay = ((r_ptr->flags3 & RF3_DEMON)
+					&& !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		}
 
 		case SUMMON_UNDEAD:
 		{
-			okay = ((r_ptr->flags3 & RF3_UNDEAD) &&
-					!(r_ptr->flags1 & RF1_UNIQUE));
+			okay = ((r_ptr->flags3 & RF3_UNDEAD)
+					&& !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		}
 
 		case SUMMON_DRAGON:
 		{
-			okay = ((r_ptr->flags3 & RF3_DRAGON) &&
-					!(r_ptr->flags1 & RF1_UNIQUE));
+			okay = ((r_ptr->flags3 & RF3_DRAGON)
+					&& !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		}
 
 		case SUMMON_HI_UNDEAD:
 		{
-			okay = ((r_ptr->d_char == 'L') ||
-					(r_ptr->d_char == 'V') || (r_ptr->d_char == 'W'));
+			okay = ((r_ptr->d_char == 'L') || (r_ptr->d_char == 'V')
+					|| (r_ptr->d_char == 'W'));
 			break;
 		}
 
@@ -2314,63 +2312,62 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_BIZARRE6:
 		{
-			okay = (((r_ptr->d_char == '!') ||
-					 (r_ptr->d_char == '?') ||
-					 (r_ptr->d_char == '=') ||
-					 (r_ptr->d_char == '$') ||
-					 (r_ptr->d_char == '|')) && !(r_ptr->flags1 & RF1_UNIQUE));
+			okay =
+				(((r_ptr->d_char == '!') || (r_ptr->d_char == '?')
+				  || (r_ptr->d_char == '=') || (r_ptr->d_char == '$')
+				  || (r_ptr->d_char == '|')) && !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		}
 
 		case SUMMON_CYBER:
 		{
-			okay = ((r_ptr->d_char == 'U') &&
-					(r_ptr->flags4 & RF4_ROCKET) &&
-					!(r_ptr->flags1 & RF1_UNIQUE));
+			okay = ((r_ptr->d_char == 'U') && (r_ptr->flags4 & RF4_ROCKET)
+					&& !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		}
 
 
 		case SUMMON_KIN:
 		{
-			okay = ((r_ptr->d_char == summon_kin_type) &&
-					!(r_ptr->flags1 & RF1_UNIQUE));
+			okay = ((r_ptr->d_char == summon_kin_type)
+					&& !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		}
 
 		case SUMMON_DAWN:
 		{
-			okay = ((strstr((r_name + r_ptr->name), "the Dawn")) &&
-					!(r_ptr->flags1 & (RF1_UNIQUE)));
+			okay = ((strstr((r_name + r_ptr->name), "the Dawn"))
+					&& !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
 
 		case SUMMON_ANIMAL:
 		{
-			okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
-					!(r_ptr->flags1 & (RF1_UNIQUE)));
+			okay = ((r_ptr->flags3 & (RF3_ANIMAL))
+					&& !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
 
 		case SUMMON_ANIMAL_RANGER:
 		{
-			okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
-					(strchr("abcflqrwBCIJKMRS", r_ptr->d_char)) &&
-					!(r_ptr->flags3 & (RF3_DRAGON)) &&
-					!(r_ptr->flags3 & (RF3_EVIL)) &&
-					!(r_ptr->flags3 & (RF3_UNDEAD)) &&
-					!(r_ptr->flags3 & (RF3_DEMON)) &&
-					!(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6) &&
-					!(r_ptr->flags1 & (RF1_UNIQUE)));
+			okay = ((r_ptr->flags3 & (RF3_ANIMAL))
+					&& (strchr("abcflqrwBCIJKMRS", r_ptr->d_char))
+					&& !(r_ptr->flags3 & (RF3_DRAGON))
+					&& !(r_ptr->flags3 & (RF3_EVIL))
+					&& !(r_ptr->flags3 & (RF3_UNDEAD))
+					&& !(r_ptr->flags3 & (RF3_DEMON)) && !(r_ptr->flags4
+														   || r_ptr->flags5
+														   || r_ptr->flags6)
+					&& !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
 
 		case SUMMON_HI_UNDEAD_NO_UNIQUES:
 		{
-			okay = (((r_ptr->d_char == 'L') ||
-					 (r_ptr->d_char == 'V') ||
-					 (r_ptr->d_char == 'W')) &&
-					!(r_ptr->flags1 & (RF1_UNIQUE)));
+			okay =
+				(((r_ptr->d_char == 'L') || (r_ptr->d_char == 'V')
+				  || (r_ptr->d_char == 'W'))
+				 && !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
 
@@ -2388,22 +2385,22 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_PHANTOM:
 		{
-			okay = ((strstr((r_name + r_ptr->name), "Phantom")) &&
-					!(r_ptr->flags1 & (RF1_UNIQUE)));
+			okay = ((strstr((r_name + r_ptr->name), "Phantom"))
+					&& !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
 
 		case SUMMON_ELEMENTAL:
 		{
-			okay = ((strstr((r_name + r_ptr->name), "lemental")) &&
-					!(r_ptr->flags1 & (RF1_UNIQUE)));
+			okay = ((strstr((r_name + r_ptr->name), "lemental"))
+					&& !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
 
 		case SUMMON_BLUE_HORROR:
 		{
-			okay = ((strstr((r_name + r_ptr->name), "lue horror")) &&
-					!(r_ptr->flags1 & (RF1_UNIQUE)));
+			okay = ((strstr((r_name + r_ptr->name), "lue horror"))
+					&& !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
 	}
@@ -2437,8 +2434,8 @@ static bool summon_specific_okay(int r_idx)
  *
  * Note that this function may not succeed, though this is very rare.
  */
-bool summon_specific(int who, int x1, int y1, int lev, int type,
-					 bool group, bool friendly, bool pet)
+bool summon_specific(int who, int x1, int y1, int lev, int type, bool group,
+                     bool friendly, bool pet)
 {
 	int i, x, y, r_idx;
 	cave_type *c_ptr;
@@ -2464,8 +2461,8 @@ bool summon_specific(int who, int x1, int y1, int lev, int type,
 		if (!cave_empty_grid(c_ptr)) continue;
 
 		/* ... nor on the Pattern */
-		if ((c_ptr->feat >= FEAT_PATTERN_START) &&
-			(c_ptr->feat <= FEAT_PATTERN_XTRA2))
+		if ((c_ptr->feat >= FEAT_PATTERN_START)
+			&& (c_ptr->feat <= FEAT_PATTERN_XTRA2))
 			continue;
 
 		/* Check for a field that blocks movement */
@@ -2524,8 +2521,8 @@ bool summon_specific(int who, int x1, int y1, int lev, int type,
 /*
  * A "dangerous" function, creates a pet of the specified type
  */
-bool summon_named_creature(int x1, int y1, int r_idx, bool slp,
-						   bool group_ok, bool pet)
+bool summon_named_creature(int x1, int y1, int r_idx, bool slp, bool group_ok,
+                           bool pet)
 {
 	int i, x, y;
 	bool success = FALSE;

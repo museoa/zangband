@@ -1294,7 +1294,7 @@ errr check_load_init(void)
  * Print number with header at given row, column
  */
 static void prt_num(cptr header, s32b num, int col, int row, byte color,
-					int wid)
+                    int wid)
 {
 	int len = strlen(header);
 	char out_val[32];
@@ -1923,7 +1923,7 @@ void print_equippy(void)
  * Helper function, see below
  */
 static void display_player_flag_aux(int col, int row,
-									char *header, int n, u32b flag1, u32b flag2)
+                                    char *header, int n, u32b flag1, u32b flag2)
 {
 	int i;
 	u32b f[3];

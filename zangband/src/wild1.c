@@ -608,7 +608,7 @@ static u16b copy_branch(u16b node1, bool branch1, u16b node2, bool branch2)
  */
 
 static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
-							u16b type2, wild_bound_box_type *bound2)
+                            u16b type2, wild_bound_box_type *bound2)
 {
 	/* The node inserted into the decision tree */
 	u16b new_node;
@@ -856,7 +856,7 @@ static u16b add_node_inside(u16b node, u16b type1, wild_bound_box_type *bound1,
  * and returns true if they are the same.
  */
 static bool compare_bounds(wild_bound_box_type *bound1,
-						   wild_bound_box_type *bound2)
+                           wild_bound_box_type *bound2)
 {
 	return ((bound2->hgtmin == bound1->hgtmin) &&
 			(bound2->hgtmax == bound1->hgtmax) &&
@@ -876,7 +876,7 @@ static bool compare_bounds(wild_bound_box_type *bound1,
  * function.)
  */
 static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
-						wild_bound_box_type *bound2, bool branch)
+                        wild_bound_box_type *bound2, bool branch)
 {
 	/* The node inserted into the decision tree */
 	u16b new_node;
@@ -1100,7 +1100,7 @@ static u16b inside_leaf(u16b node, u16b type, wild_bound_box_type *bound1,
  * This function copies the parameter bounds from one variable to another.
  */
 static void copy_bounds(wild_bound_box_type *bound1,
-						wild_bound_box_type *bound2)
+                        wild_bound_box_type *bound2)
 {
 	bound2->hgtmin = bound1->hgtmin;
 	bound2->hgtmax = bound1->hgtmax;
@@ -1129,7 +1129,7 @@ static void copy_bounds(wild_bound_box_type *bound1,
  * current "reach" of the tree.
  */
 static u16b add_node(wild_bound_box_type *bound,
-					 wild_bound_box_type *cur_bound, u16b type, u16b node)
+                     wild_bound_box_type *cur_bound, u16b type, u16b node)
 {
 	/*
 	 * Temp storage of the current bounds and current type bounds

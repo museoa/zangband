@@ -1078,7 +1078,7 @@ static void create_cata_tunnel(int x, int y)
  * the surface.
  */
 static void short_seg_hack(int x1, int y1, int x2, int y2, int type, int count,
-						   bool *fail)
+                           bool *fail)
 {
 	int i, x, y;
 	int length;
@@ -1445,7 +1445,7 @@ static void store_height(int x, int y, int val)
  *  size=length of the side of the square cave system.
  */
 void generate_hmap(int x0, int y0, int xsiz, int ysiz, int grd, int roug,
-				   int cutoff)
+                   int cutoff)
 {
 	int xhsize, yhsize, xsize, ysize, maxsize;
 
@@ -1660,7 +1660,7 @@ void generate_hmap(int x0, int y0, int xsiz, int ysiz, int grd, int roug,
 
 
 static bool hack_isnt_wall(int x, int y, int c1, int c2, int c3,
-						   int feat1, int feat2, int feat3)
+                           int feat1, int feat2, int feat3)
 {
 	cave_type *c_ptr = cave_p(x, y);
 	/*
@@ -1807,7 +1807,7 @@ static void cave_fill(int x, int y)
 
 
 bool generate_fracave(int x0, int y0, int xsize, int ysize, int cutoff,
-					  bool light)
+                      bool light)
 {
 	int x, y, i, xhsize, yhsize;
 	cave_type *c_ptr;
@@ -1973,7 +1973,7 @@ bool generate_fracave(int x0, int y0, int xsize, int ysize, int cutoff,
 
 
 bool generate_lake(int x0, int y0, int xsize, int ysize,
-				   int c1, int c2, int c3, int type)
+                   int c1, int c2, int c3, int type)
 {
 	int x, y, xhsize, yhsize;
 	int feat1, feat2, feat3;

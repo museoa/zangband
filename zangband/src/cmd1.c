@@ -98,7 +98,7 @@ bool test_hit_fire(int chance, int ac, int vis)
  * Calculation of critical hits by the player in hand-to-hand combat. -LM-
  */
 static int critical_melee(int chance, int sleeping_bonus, char *m_name,
-						  object_type *o_ptr)
+                          object_type *o_ptr)
 {
 	int power = (chance + sleeping_bonus);
 	int mult_m_crit;
@@ -1194,7 +1194,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 
 
 static bool monster_bash(int *blows, int sleeping_bonus, cave_type *c_ptr,
-						 bool *fear, char *m_name)
+                         bool *fear, char *m_name)
 {
 	int bash_chance, bash_quality, bash_dam;
 

@@ -19,7 +19,7 @@
  * Affect grids, objects, monsters, and the player
  */
 static void monst_breath_monst(int m_idx, int x, int y, int typ, int dam_hp,
-							   int rad, bool breath)
+                               int rad, bool breath)
 {
 	u16b flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 

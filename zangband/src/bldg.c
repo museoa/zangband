@@ -906,7 +906,7 @@ static void town_history(void)
  * the current +dam of the player.
  */
 static void compare_weapon_aux2(const object_type *o_ptr, int numblows,
-								int r, cptr attr, byte color, byte slay)
+                                int r, cptr attr, byte color, byte slay)
 {
 	char tmp_str[80];
 	long maxdam, mindam;

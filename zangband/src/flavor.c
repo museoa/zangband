@@ -780,7 +780,7 @@ static char *object_desc_int(char *t, sint v)
  *   3 -- The Cloak of Death [1,+3] (+2 to Stealth) {nifty}
  */
 void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
-				 int size)
+                 int size)
 {
 	cptr basenm, modstr;
 	int power, indexx;
@@ -1825,7 +1825,7 @@ void object_desc(char *buf, const object_type *o_ptr, int pref, int mode,
  * This allows an item to *look* like the player is "aware" of it
  */
 void object_desc_store(char *buf, const object_type *o_ptr, int pref,
-					   int mode, int size)
+                       int mode, int size)
 {
 	object_type *i_ptr;
 	object_type object_type_body;

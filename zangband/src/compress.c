@@ -626,7 +626,7 @@ static u32b run_bits;
 
 /* Encode a symbol into the block stream */
 static void arth_symbol_encode(block_handle *h_ptr, u16b *prob_table,
-							   byte symbol)
+                               byte symbol)
 {
 	/*
 	 * How large is the current range of possibilities?
