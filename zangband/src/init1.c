@@ -2765,7 +2765,7 @@ static errr grab_one_action_flag(field_thaum *t_ptr, char *what)
 	}
 
 	/* Oops */
-	msg_format("Unknown field info-flag '%s'.", what);
+	msg_format("Unknown field info-flag '%s'.", t);
 
 	/* Error */
 	return (1);
