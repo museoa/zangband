@@ -691,7 +691,6 @@ extern bool monster_ocean(int r_idx);
 extern bool monster_shore(int r_idx);
 extern bool monster_town(int r_idx);
 extern bool monster_wood(int r_idx);
-extern bool monster_volcano(int r_idx);
 extern bool monster_mountain(int r_idx);
 extern bool monster_grass(int r_idx);
 extern bool monster_deep_water(int r_idx);

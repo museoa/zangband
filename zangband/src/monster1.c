@@ -1548,7 +1548,8 @@ bool monster_waste(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_WASTE)
+	if ((r_ptr->flags8 & RF8_WILD_WASTE1) ||
+		(r_ptr->flags8 & RF8_WILD_WASTE2))
 		return TRUE;
 	else
 		return FALSE;
@@ -1570,18 +1571,8 @@ bool monster_wood(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_WOOD)
-		return TRUE;
-	else
-		return FALSE;
-}
-
-
-bool monster_volcano(int r_idx)
-{
-	monster_race *r_ptr = &r_info[r_idx];
-
-	if (r_ptr->flags8 & RF8_WILD_VOLCANO)
+	if ((r_ptr->flags8 & RF8_WILD_FOREST1) ||
+		(r_ptr->flags8 & RF8_WILD_FOREST2))
 		return TRUE;
 	else
 		return FALSE;
@@ -1592,7 +1583,8 @@ bool monster_mountain(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
-	if (r_ptr->flags8 & RF8_WILD_MOUNTAIN)
+	if ((r_ptr->flags8 & RF8_WILD_MOUNT1) ||
+		(r_ptr->flags8 & RF8_WILD_MOUNT2))
 		return TRUE;
 	else
 		return FALSE;

@@ -2886,20 +2886,49 @@
 
 
 /*
- * Monster race flags
+ * Monster race wilderness flags
  */
-#define RF8_DUNGEON             0x00000001
-#define RF8_WILD_TOWN           0x00000002
-#define RF8_XXX8X02             0x00000004
-#define RF8_WILD_SHORE          0x00000008
-#define RF8_WILD_OCEAN          0x00000010
-#define RF8_WILD_WASTE          0x00000020
-#define RF8_WILD_WOOD           0x00000040
-#define RF8_WILD_VOLCANO        0x00000080
-#define RF8_XXX8X08             0x00000100
-#define RF8_WILD_MOUNTAIN       0x00000200
-#define RF8_WILD_GRASS          0x00000400
-#define RF8_WILD_TOO            0x80000000
+#define RF8_WILD_FOREST1        0x00000001
+#define RF8_WILD_FOREST2        0x00000002
+#define RF8_WILD_MOUNT1         0x00000004
+#define RF8_WILD_MOUNT2         0x00000008
+#define RF8_WILD_WASTE1         0x00000010
+#define RF8_WILD_WASTE2         0x00000020
+#define RF8_WILD_SWAMP1         0x00000040
+#define RF8_WILD_SWAMP2         0x00000080
+#define RF8_NOT_FOREST1         0x00000100
+#define RF8_NOT_FOREST2         0x00000200
+#define RF8_NOT_MOUNT1          0x00000400
+#define RF8_NOT_MOUNT2          0x00000800
+#define RF8_NOT_WASTE1          0x00001000
+#define RF8_NOT_WASTE2          0x00002000
+#define RF8_NOT_SWAMP1          0x00004000
+#define RF8_NOT_SWAMP2          0x00008000
+#define RF8_WILD_SHORE          0x00010000
+#define RF8_WILD_OCEAN          0x00020000
+#define RF8_WILD_GRASS          0x00040000
+#define RF8_WILD_TOWN		0x00080000
+#define RF8_DUNGEON_01          0x00100000
+#define RF8_DUNGEON_02          0x00200000
+#define RF8_DUNGEON_03          0x00400000
+#define RF8_DUNGEON_04          0x00800000
+#define RF8_DUNGEON_05          0x01000000
+#define RF8_DUNGEON_06          0x02000000
+#define RF8_DUNGEON_07          0x04000000
+#define RF8_DUNGEON_08          0x08000000
+#define RF8_DUNGEON_09          0x10000000
+#define RF8_DUNGEON_10          0x20000000
+#define RF8_DUNGEON_11          0x40000000
+#define RF8_DUNGEON_12          0x80000000
+
+/*
+ * Useful flag combinations
+ */
+
+#define RF8_DUNGEON             0xFFF00000
+#define RF8_WILD                0x000700FF
+
+
 
 /*
  * Monster drop info

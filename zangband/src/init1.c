@@ -395,38 +395,38 @@ static cptr r_info_flags7[] =
  */
 static cptr r_info_flags8[] =
 {
-	"WILD_ONLY",
-	"WILD_TOWN",
-	"XXX8X02",
+	"WILD_FOREST1",
+	"WILD_FOREST2",
+	"WILD_MOUNT1",
+	"WILD_MOUNT2",
+	"WILD_WASTE1",
+	"WILD_WASTE2",
+	"WILD_SWAMP1",
+	"WILD_SWAMP2",
+	"NOT_FOREST1",
+	"NOT_FOREST2",
+	"NOT_MOUNT1",
+	"NOT_MOUNT1",
+	"NOT_WASTE1",
+	"NOT_WASTE2",
+	"NOT_SWAMP1",
+	"NOT_SWAMP2",
 	"WILD_SHORE",
 	"WILD_OCEAN",
-	"WILD_WASTE",
-	"WILD_WOOD",
-	"WILD_VOLCANO",
-	"XXX8X08",
-	"WILD_MOUNTAIN",
 	"WILD_GRASS",
-	"XXX8X11",
-	"XXX8X12",
-	"XXX8X13",
-	"XXX8X14",
-	"XXX8X15",
-	"XXX8X16",
-	"XXX8X17",
-	"XXX8X18",
-	"XXX8X19",
-	"XXX8X20",
-	"XXX8X21",
-	"XXX8X22",
-	"XXX8X23",
-	"XXX8X24",
-	"XXX8X25",
-	"XXX8X26",
-	"XXX8X27",
-	"XXX8X28",
-	"XXX8X29",
-	"WILD_SWAMP",	/* ToDo: Implement Swamp */
-	"WILD_TOO",
+	"WILD_TOWN",
+	"WILD_DUNGEON_01",
+	"WILD_DUNGEON_02",
+	"WILD_DUNGEON_03",
+	"WILD_DUNGEON_04",
+	"WILD_DUNGEON_05",
+	"WILD_DUNGEON_06",
+	"WILD_DUNGEON_07",
+	"WILD_DUNGEON_08",
+	"WILD_DUNGEON_09",
+	"WILD_DUNGEON_10",
+	"WILD_DUNGEON_11",
+	"WILD_DUNGEON_12",
 };
 
 
@@ -2426,17 +2426,6 @@ errr init_r_info_txt(FILE *fp, char *buf)
 	/* Complete the "name" and "text" sizes */
 	++r_head->name_size;
 	++r_head->text_size;
-
-
-	for (i = 1; i < max_r_idx; i++)
-	{
-		/* Invert flag WILD_ONLY <-> RF8_DUNGEON */
-		r_info[i].flags8 ^= 1L;
-
-		/* WILD_TOO without any other wilderness flags enables all flags */
-		if ((r_info[i].flags8 & RF8_WILD_TOO) && !(r_info[i].flags8 & 0x7FFFFFFE))
-			r_info[i].flags8 = 0x0463;
-	}
 
 	/* No version yet */
 	if (!okay) return (2);
