@@ -1333,7 +1333,7 @@ static bool borg_build_inn(void)
 
 	/* Is it light outside */
 	rest &= (bp_ptr->hour < 6 || bp_ptr->hour > 17);
-
+	 
 	/* This is a respectable place */
 	rest &= !bp_ptr->status.cut && !bp_ptr->status.poisoned;
 
@@ -1350,14 +1350,14 @@ static bool borg_build_inn(void)
 	}
 
 	/* If the borg wants a rest */
-	if (rest)
+	if (rest && borg_gold > 25)
 	{
 		/* Wait for daybreak */
 		borg_keypress('R');
 	}
 
 	/* Can the borg use more food? */
-	if (!bp_ptr->status.full)
+	if (!bp_ptr->status.full && borg_gold > 25)
 	{
 		/* Have dinner */
 		borg_keypress('E');
