@@ -1051,6 +1051,9 @@ static bool store_will_buy(object_type *o_ptr)
 			break;
 		}
 	}
+	
+	/* Ignore "worthless" items XXX XXX XXX */
+	if (object_value(o_ptr) <= 0) return (FALSE);
 
 	/* Assume okay */
 	return (TRUE);
