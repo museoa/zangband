@@ -333,7 +333,7 @@ extern void object_kind_track(int k_idx);
 extern void disturb(bool stop_search);
 
 /* cmd1.c */
-extern int deadliness_calc(int attack_power, int dice);
+extern int deadliness_calc(int attack_power);
 extern long avg_dam(int attack_power, int dice_num, int dice_sides);
 extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_norm(int chance, int ac, int vis);

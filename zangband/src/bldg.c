@@ -875,7 +875,7 @@ static void compare_weapon_aux2(const object_type *o_ptr, int numblows,
 	/* Include effects of slaying bonus */
 	mindam = o_ptr->dd * slay * 10;
 
-	maxdam = (o_ptr->dd * o_ptr->ds * deadliness_calc(dambonus, o_ptr->ds) * slay) / 10;
+	maxdam = (o_ptr->dd * o_ptr->ds * deadliness_calc(dambonus) * slay) / 10;
 
 	/* Include effects of slaying bonus */
 	mindam += (slay - 10) * 100;
@@ -1114,7 +1114,7 @@ static void list_weapon(const object_type *o_ptr)
 
 	/* Calculate max and min damage */
 	intmindam = o_ptr->dd;
-	intmaxdam = (o_ptr->dd * o_ptr->ds * deadliness_calc(dambonus, o_ptr->ds)) / 100;
+	intmaxdam = (o_ptr->dd * o_ptr->ds * deadliness_calc(dambonus)) / 100;
 
 
 	/* Damage for one blow (if it hits) */

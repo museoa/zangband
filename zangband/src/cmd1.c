@@ -22,13 +22,10 @@
  * This number is 'inflated' by 100 from the eventual
  * multiplier to the damage dealt.
  */
-int deadliness_calc(int attack_power, int dice)
+int deadliness_calc(int attack_power)
 {
-	int index = dice > 10 ? 10 : dice;
-	int scale = dice_to_deadliness[index];
-	
 	/* Calculate effect of deadliness - linearly */
-	int result = (attack_power * scale / 2) + 100;
+	int result = (attack_power * 5) + 100;
 
 	/* Really powerful minus yields zero damage */
 	if (result < 0) result = 0;
@@ -40,7 +37,7 @@ int deadliness_calc(int attack_power, int dice)
 long avg_dam(int attack_power, int dice_num, int dice_sides)
 {
 	/* Calculate damage per dice x 100 */
-	long temp = dice_sides * deadliness_calc(attack_power, dice_sides);
+	long temp = dice_sides * deadliness_calc(attack_power);
 
 	/* Add one to take into account dice formula, and return avg*200 */
 	return (dice_num * (temp + 100));
@@ -1679,7 +1676,7 @@ void py_attack(int x, int y)
 				 * Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
 				 */
-				k *= deadliness_calc(total_deadliness, o_ptr->ds);
+				k *= deadliness_calc(total_deadliness);
 
 				/*
 				 * Get the whole number of dice sides by deflating,

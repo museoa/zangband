@@ -2594,7 +2594,7 @@ void do_cmd_fire_aux(object_type *o_ptr, const object_type *j_ptr)
 				 * Convert total Deadliness into a percentage, and apply
 				 * it as a bonus or penalty. (100x inflation)
 				 */
-				tdam *= deadliness_calc(total_deadliness, i_ptr->ds);
+				tdam *= deadliness_calc(total_deadliness);
 
 
 				/*
@@ -3069,11 +3069,11 @@ void do_cmd_throw_aux(int mult)
 				 */
 				if (q_ptr->flags2 & (TR2_THROW))
 				{
-					tdam *= deadliness_calc(total_deadliness, q_ptr->ds);
+					tdam *= deadliness_calc(total_deadliness);
 				}
 				else
 				{
-					tdam *= deadliness_calc(q_ptr->to_d, q_ptr->ds);
+					tdam *= deadliness_calc(q_ptr->to_d);
 				}
 
 				/*
