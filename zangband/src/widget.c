@@ -10,115 +10,14 @@
  * included in all such copies.
  */
 
-#include <tcl.h>
 #include "angband.h"
 #include "tnb.h"
+#include <tcl.h>
 #include "interp.h"
 #include "util-dll.h"
 #include "plat-dll.h"
 #include "icon.h"
 #include "widget.h"
-
-/*
- * Invert a grid in the bitmap of a Widget
- */
-void Widget_InvertSpot(Widget *widgetPtr, int row, int col, t_display *wtd)
-{
-	BitmapPtr bitmapPtr = &widgetPtr->bitmap;
-	int bypp = bitmapPtr->pixelSize;
-	int pitch = bitmapPtr->pitch;
-	IconPtr dstPtr;
-	t_icon_data *iconDataPtr;
-	int xp, yp, x, y;
-
-	if (widgetPtr->style == WIDGET_STYLE_ICON)
-	{
-		yp = row * widgetPtr->gheight;
-		xp = col * widgetPtr->gwidth;
-	}
-	else
-	{
-		yp = widgetPtr->yp[row * widgetPtr->cc + col];
-		xp = widgetPtr->xp[row * widgetPtr->cc + col] + 10;
-	}
-
-	/* The icon is transparent */
-	if (!wtd->blank && (wtd->fg.type != ICON_TYPE_NONE) &&
-		g_icon_data[wtd->fg.type].rle_data)
-	{
-		IconPtr rlePtr;
-		int col = 0;
-		int h, w;
-		unsigned char *bounds;
-
-		/* Access the icon info */
-		iconDataPtr = &g_icon_data[wtd->fg.type];
-
-		rlePtr = iconDataPtr->rle_data + iconDataPtr->rle_offset[wtd->fg.index];
-		bounds = iconDataPtr->rle_bounds + wtd->fg.index * 4;
-		w = bounds[2];
-		h = bounds[3];
-		if (widgetPtr->style == WIDGET_STYLE_ICON)
-		{
-			xp += bounds[0];
-			yp += bounds[1];
-		}
-
-		dstPtr = bitmapPtr->pixelPtr + xp * bypp + yp * pitch;
-
-		while (1)
-		{
-			unsigned int trans, opaq;
-		
-			trans = rlePtr[0];
-			opaq = rlePtr[1];
-			rlePtr += 2;
-			col += trans;
-			
-			if (opaq)
-			{
-				for (x = 0; x < opaq * bypp; x++)
-					*(dstPtr + col * bypp + x) = ~*(dstPtr + col * bypp + x);
-				rlePtr += opaq * bypp;
-				col += opaq;
-			}
-			else if (!col)
-				break;
-		
-			if (col == w)
-			{
-				if (!--h)
-					break;
-				col = 0;
-				dstPtr += pitch;
-			}
-		}
-	}
-	else
-	{
-		/* Get the address of the top-left corner */
-		dstPtr = bitmapPtr->pixelPtr + xp * bypp + yp * pitch;
-
-		for (y = 0; y < g_icon_size; y++)
-		{
-			for (x = 0; x < g_icon_size * bypp; x++)
-			{
-				*(dstPtr + x) = ~*(dstPtr + x);
-			}
-			dstPtr += pitch;
-		}
-	}
-
-	XCopyArea(widgetPtr->display,
-		widgetPtr->bitmap.pixmap, /* source drawable */
-		Tk_WindowId(widgetPtr->tkwin), /* dest drawable */
-		widgetPtr->copyGC, /* graphics context */
-		xp, yp, /* source top-left */
-		(unsigned int) widgetPtr->gwidth, /* width */
-		(unsigned int) widgetPtr->gheight, /* height */
-		xp - widgetPtr->bx, yp - widgetPtr->by /* dest top-left */
-	);
-}
 
 static void DrawIconSpec(int y, int x, IconSpec iconSpec, BitmapPtr bitmapPtr)
 {
@@ -320,10 +219,13 @@ else
 }
 
 /* Widget.whatToDrawProc() */
-void widget_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
+static void widget_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 {
+	/* Hack - ignore parameter */
+	(void) widgetPtr;
+
 	/* If this is a valid cave location, get the display info. */
-	if (in_bounds2(y, x))
+	if (in_bounds2(x, y))
 		get_display_info(y, x, wtd);
 
 	/* This isn't a valid cave location, so draw a "blank" icon */
@@ -334,7 +236,7 @@ void widget_wtd(Widget *widgetPtr, int y, int x, t_display *wtd)
 /*
  * Redraw everything.
  */
-void widget_draw_all(Widget *widgetPtr)
+static void widget_draw_all(Widget *widgetPtr)
 {
 	ExWidget *exPtr = (ExWidget *) widgetPtr;
 	int tile, layer;
@@ -436,7 +338,7 @@ void widget_draw_all(Widget *widgetPtr)
  * Redraws only those grids that were specifically marked as invalid
  * Any affected widget items are also redrawn.
  */
-void widget_draw_invalid(Widget *widgetPtr)
+static void widget_draw_invalid(Widget *widgetPtr)
 {
 	ExWidget *exPtr = (ExWidget *) widgetPtr;
 	int i, layer;
@@ -560,9 +462,12 @@ void widget_draw_invalid(Widget *widgetPtr)
 	widgetPtr->dh = db - dt + 1;
 }
 
-int widget_configure(Tcl_Interp *interp, Widget *widgetPtr)
+static int widget_configure(Tcl_Interp *interp, Widget *widgetPtr)
 {
 	ExWidget *exPtr = (ExWidget *) widgetPtr;
+
+	/* Hack - ignore unused parameter */
+	(void) interp;
 
 	/* Valid micro-map sizes: 4, 6, 8 */
 	if (widgetPtr->style == WIDGET_STYLE_MAP)
@@ -587,7 +492,7 @@ int widget_configure(Tcl_Interp *interp, Widget *widgetPtr)
 	return TCL_OK;
 }
 
-void widget_changed(Widget *widgetPtr)
+static void widget_changed(Widget *widgetPtr)
 {
 	ExWidget *exPtr = (ExWidget *) widgetPtr;
 	int i;
@@ -614,7 +519,7 @@ void widget_changed(Widget *widgetPtr)
 	}
 }
 
-void widget_destroy(Widget *widgetPtr)
+static void widget_destroy(Widget *widgetPtr)
 {
 	ExWidget *exPtr = (ExWidget *) widgetPtr;
 
@@ -625,10 +530,13 @@ void widget_destroy(Widget *widgetPtr)
 /*
  * Allocate storage for a new Widget.
  */
-int widget_create(Tcl_Interp *interp, Widget **ptr)
+static int widget_create(Tcl_Interp *interp, Widget **ptr)
 {
 	ExWidget *exPtr = (ExWidget *) Tcl_AllocDebug(sizeof(ExWidget));
 	Widget *widgetPtr = (Widget *) exPtr;
+
+	/* Hack - ignore unused parameter */
+	(void) interp;
 
 	widgetPtr->centerProc = NULL;
 	widgetPtr->configureProc = widget_configure;
@@ -752,7 +660,7 @@ static byte effect_index(int type)
 	return (EFFECT_SPELL_FORCE);
 }
 
-bool angtk_effect_aux(int y, int x, IconSpec *iconSpecPtr)
+static bool angtk_effect_aux(int y, int x, IconSpec *iconSpecPtr)
 {
 	Widget *widgetPtr;
 	ExWidget *exPtr;
@@ -958,9 +866,11 @@ void angtk_idle(void)
  * This is a dummy lite_spot() routine that may get called before
  * the icons have been initialized.
  */
-void angtk_lite_spot_dummy(int y, int x)
+static void angtk_lite_spot_dummy(int y, int x)
 {
-	/* Nothing */
+	/* Ignore parameters and do nothing */
+	(void) x;
+	(void) y;
 }
 
 void (*angtk_lite_spot)(int y, int x) = angtk_lite_spot_dummy;
