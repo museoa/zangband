@@ -310,16 +310,16 @@ cptr describe_quest_location(cptr * dirn, int x, int y, bool known)
 	int i;
 	int dx, dy;
 	
-	bool visit = FALSE;
-	wild_done_type *w_ptr;
-
 	/* Find the nearest town */
 	int best_dist = 99999;
 	int best_town = 0;
-	
+
 	for (i = 0; i < place_count; i++)
 	{
+		bool visit = FALSE;
 		int d;
+
+		wild_done_type *w_ptr;
 
 		/* Only real towns */
 		if (place[i].type != TOWN_FRACT) continue;
@@ -327,22 +327,18 @@ cptr describe_quest_location(cptr * dirn, int x, int y, bool known)
 		/* Should this be a known town? */
 		if (known)
 		{
-			for (dx = 0; dx < 8; dx++)
+			for (dx = 0; dx < 8 && !visit; dx++)
 			{
-				for (dy = 0; dy < 8; dy++)
+				for (dy = 0; dy < 8 && !visit; dy++)
 				{
-					/* Get wilderness square in the middle of the town */
-					 w_ptr = &wild[place[i].y + dy][place[i].x + dx].done;
+					/* Get wilderness square where the town could be */
+					w_ptr = &wild[place[i].y + dy][place[i].x + dx].done;
 
-					 /* Is this inside the town? */
-					 if (w_ptr->place != i) continue;
-	
+					/* Is this a town square */
+					if (w_ptr->place != i) continue;
+
 					/* Has the player visited this square? */
-					if (!(w_ptr->info & WILD_INFO_SEEN))
-					{
-						visit = TRUE;
-						break;
-					}
+					visit |= (w_ptr->info & WILD_INFO_SEEN);
 				}
 			}
 
