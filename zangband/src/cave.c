@@ -2342,7 +2342,7 @@ void update_view(void)
 		{
 			/* Forget memorized floor grids from view_torch_grids */
 			if (!(info & (CAVE_GLOW)) && !view_torch_grids
-				&& cave_floor_grid(c_ptr))
+				&& cave_nice_grid(c_ptr))
 			{
 				forget_grid(pc_ptr);
 			}
