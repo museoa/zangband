@@ -9,8 +9,7 @@ ZAngband 2.5.1:
 -CHECK_MODIFICATION_TIME should now work correctly for Macs.
 -Added a SILLY flag to r_info.txt.  This will allow people to turn
  off 'silly' monsters via a birth option.
--Sanity blasts have been switched back on but toned down until the
- special buildings return.
+-Sanity blasts have been switched back on but toned down.
 -The 'wasting disease' permanent stat drain has been removed.
 -Displaying the character history is now possible by pressing 'h'
  when rolling the character (not yet in point-based mode).
@@ -30,7 +29,7 @@ ZAngband 2.5.1:
 -Fixed a bug that messed up objects on the floor when rerolling them
  in debug mode.
 -Fixed the vanilla town bug where the stores / home were not saved.
--Fixed a problem withthe 'Cheat Death' option.
+-Fixed a problem with the 'Cheat Death' option.
 -Fixed a buffer-overrun with long notes.
 -Fixed rounding error with fractional monster experience points shown in
  monster memory.
@@ -39,7 +38,7 @@ ZAngband 2.5.1:
 -Fixed a problem with generating full monster spoilers.
 -Fixed some problems with the monster fleeing code.
 -Added some monster AI optimizations from standard Angband.
--Corrected some silly messages when failing trump summonng spells.
+-Corrected some silly messages when failing trump summoning spells.
 -Mindcrafters can no longer get the 'viscous blow' effect when failing
  to use their powers.
 -Reduced the multiplier for the throwing mutation it was way too
