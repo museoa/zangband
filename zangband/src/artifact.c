@@ -332,7 +332,7 @@ static void random_misc(object_type *o_ptr)
 
 static void random_curse(object_type *o_ptr, bool evil)
 {
-	switch (randint1(evil ? 26 : 16))
+	switch (randint1(evil ? 30 : 16))
 	{
 		case 1:
 		case 17:
@@ -389,6 +389,14 @@ static void random_curse(object_type *o_ptr, bool evil)
 		case 25:
 		case 26:
 			o_ptr->flags3 |= TR3_TY_CURSE;
+			break;
+		case 27:
+		case 28:
+		case 29:
+			o_ptr->flags3 |= TR3_CURSED | TR3_HEAVY_CURSE;
+			break;
+		case 30:
+			o_ptr->flags3 |= TR3_NO_MAGIC;
 			break;
 	}
 }
@@ -2137,13 +2145,10 @@ static void curse_artifact(object_type *o_ptr)
 	if (o_ptr->to_h) o_ptr->to_h = 0 - (o_ptr->to_h + randint1(4));
 	if (o_ptr->to_d) o_ptr->to_d = 0 - (o_ptr->to_d + randint1(4));
 
-	o_ptr->flags3 |= (TR3_HEAVY_CURSE | TR3_CURSED);
+	o_ptr->flags3 |= (TR3_CURSED);
 
 	for (i = rand_range(2, 5); i > 0; --i)
 		random_curse(o_ptr, TRUE);
-
-	if ((p_ptr->rp.pclass != CLASS_WARRIOR) && one_in_(3))
-		o_ptr->flags3 |= TR3_NO_MAGIC;
 }
 
 
@@ -2339,7 +2344,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		if (total_flags >= target_flags * 3 && total_flags >= 10000 &&
 				!one_in_(WEIRD_LUCK))
 		{
-			random_curse(o_ptr, (one_in_(3) ? TRUE : FALSE));
+			random_curse(o_ptr, TRUE);
 			total_flags = flag_cost(o_ptr, o_ptr->pval);
 		}
 	}
