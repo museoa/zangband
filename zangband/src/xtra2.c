@@ -963,7 +963,29 @@ int mon_damage_mod(monster_type *m_ptr, int dam, int type)
 		return (dam);
 }
 
+/* This function calculates the experience gained for killing a monster.
+ * The formula now is "m_exp * m_lev * 4 / n_killed"
+ * instead of simply "(m_exp * m_lev) / (p_lev)".  This makes the first
+ * monster worth more than subsequent monsters.  (It is equivalent to
+ * the old formula when p_lev monsters are killed.)
+ */
+void exp_for_kill(monster_race *r_ptr, s32b *new_exp, s32b *new_exp_frac)
+{
+	s32b div;
+	
+	/* Maximum player level */
+	div = r_ptr->r_pkills;
+	
+	/* Paranoia */
+	if (!div) div = 1;
 
+	/* Give some experience for the kill */
+	*new_exp = ((long)r_ptr->mexp * r_ptr->level) / div;
+
+	/* Handle fractional experience */
+	*new_exp_frac = ((((long)r_ptr->mexp * r_ptr->level) % div)
+		                * 0x10000L / div);
+}
 
 /*
  * Decreases monsters hit points, handling monster death.
@@ -987,18 +1009,12 @@ int mon_damage_mod(monster_type *m_ptr, int dam, int type)
  * As always, the "ghost" processing is a total hack.
  *
  * Hack -- we "delay" fear messages by passing around a "fear" flag.
- *
- * XXX XXX XXX Consider decreasing monster experience over time, say,
- * by using "(m_exp * m_lev * (m_lev)) / (p_lev * (m_lev + n_killed))"
- * instead of simply "(m_exp * m_lev) / (p_lev)", to make the first
- * monster worth more than subsequent monsters.  This would also need
- * to induce changes in the monster recall code.
  */
 bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 {
 	monster_type    *m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = &r_info[m_ptr->r_idx];
-	s32b            div, new_exp, new_exp_frac;
+	s32b            new_exp, new_exp_frac;
 
 	/* Innocent until proven otherwise */
 	bool        innocent = TRUE, thief = FALSE;
@@ -1195,15 +1211,11 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 			msg_format("You have slain %s.", m_name);
 		}
 
-		/* Maximum player level */
-		div = p_ptr->max_plv;
-
-		/* Give some experience for the kill */
-		new_exp = ((long)r_ptr->mexp * r_ptr->level) / div;
+		/* Get how much the kill was worth */
+		exp_for_kill(r_ptr, &new_exp, &new_exp_frac);
 
 		/* Handle fractional experience */
-		new_exp_frac = ((((long)r_ptr->mexp * r_ptr->level) % div)
-		                * 0x10000L / div) + p_ptr->exp_frac;
+		new_exp_frac += p_ptr->exp_frac;
 
 		/* Keep track of experience */
 		if (new_exp_frac >= 0x10000L)
