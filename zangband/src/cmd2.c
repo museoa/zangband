@@ -2584,8 +2584,12 @@ static sint critical_shot(int chance, int sleeping_bonus, bool thrown_weapon,
 	/* If the shot is not a critical hit, then the default message is shown. */
 	else
 	{
+		if (visible)
+		{
+			msg_format("The %s hits %s.", o_name, m_name);
+		}
+
 		mult_a_crit = 10;
-		msg_format("The %s hits %s.", o_name, m_name);
 	}
 
 	return (mult_a_crit);
