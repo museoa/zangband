@@ -614,7 +614,7 @@ static void save_map_location(int x, int y, term_map *map)
 			map_cache_refcount[block_num]++;
 		}
 	}
-	else if (!(mb_ptr->flags & MAP_ONCE))
+	else
 	{
 		/* Was seen, and now is not */
 		if (mb_ptr->flags & MAP_ONCE)

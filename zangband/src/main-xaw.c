@@ -974,13 +974,13 @@ char *termNames[MAX_TERM_DATA] =
  */
 Arg specialArgs[TERM_FALLBACKS] =
 {
-	{ XtNstartRows,    24},
-	{ XtNstartColumns, 80},
-	{ XtNminRows,      24},
-	{ XtNminColumns,   80},
-	{ XtNmaxRows,      255},
-	{ XtNmaxColumns,   255},
-	{ XtNinternalBorder, 2}
+	{ (String) XtNstartRows,    24},
+	{ (String) XtNstartColumns, 80},
+	{ (String) XtNminRows,      24},
+	{ (String) XtNminColumns,   80},
+	{ (String) XtNmaxRows,      255},
+	{ (String) XtNmaxColumns,   255},
+	{ (String) XtNinternalBorder, 2}
 };
 
 

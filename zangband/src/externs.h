@@ -846,7 +846,7 @@ extern void sanity_blast(const monster_type *m_ptr);
 /* store.c */
 extern bool allocate_store(store_type *st_ptr);
 extern store_type *get_current_store(void);
-extern void do_cmd_store(field_type *f_ptr);
+extern void do_cmd_store(const field_type *f_ptr);
 extern void store_init(int town_num, int store_num, byte store_type);
 
 /* bldg.c */

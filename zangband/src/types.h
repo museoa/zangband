@@ -1768,7 +1768,7 @@ struct dun_type
 typedef bool (*monster_hook_type) (int r_idx);
 typedef int (*inven_func) (object_type *);
 typedef bool (*cave_hook_type) (cave_type *c_ptr);
-typedef bool (*object_comp) (object_type *, object_type *);
+typedef bool (*object_comp) (const object_type *, const object_type *);
 
 
 

@@ -294,17 +294,20 @@ static void vault_trap_aux(int x, int y, int xd, int yd)
 			{
 				msg_print("Warning! Could not place vault trap!");
 			}
+			
+			return;
 		}
 
 		/* Require "naked" floor grids */
 		c_ptr = cave_p(x1, y1);
-		if (!cave_naked_grid(c_ptr)) continue;
-
-		/* Place the trap */
-		place_trap(x1, y1);
-
-		/* Done */
-		return;
+		if (cave_naked_grid(c_ptr))
+		{
+			/* Place the trap */
+			place_trap(x1, y1);
+			
+			/* Done ('return' seems to give a warning.) */
+			count = 6;
+		}
 	}
 }
 

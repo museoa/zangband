@@ -4421,11 +4421,13 @@ void place_specific_object(int x, int y, int level, int k_idx)
 
 			if ((a_ptr->tval == k_ptr->tval) && (a_ptr->sval == k_ptr->sval))
 			{
-				/* found it */
+				/* Found it */
 				create_named_art(i, x, y);
-				return;
 			}
 		}
+		
+		/* Exit */
+		return;
 	}
 	else
 	{
@@ -5309,7 +5311,7 @@ bool inven_carry_okay(const object_type *o_ptr)
 /*
  * Compare two items to see if they are in pack-order.
  */
-static bool reorder_pack_comp(object_type *o1_ptr, object_type *o2_ptr)
+static bool reorder_pack_comp(const object_type *o1_ptr, const object_type *o2_ptr)
 {
 	/* Hack -- readable books always come first */
 	if ((o1_ptr->tval == REALM1_BOOK) &&

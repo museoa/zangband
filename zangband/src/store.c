@@ -155,7 +155,7 @@ static store_type *st_ptr = NULL;
 /*
  * We store the current field here so that it can be accessed everywhere
  */
-static field_type *f_ptr = NULL;
+static const field_type *f_ptr = NULL;
 
 /* Save info flags for store */
 static byte info_flags;
@@ -403,7 +403,7 @@ static void mass_produce(object_type *o_ptr)
  *
  * See "object_similar()" for the same function for the "player"
  */
-static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
+static bool store_object_similar(const object_type *o_ptr, const object_type *j_ptr)
 {
 	/* Hack -- Identical items cannot be stacked */
 	if (o_ptr == j_ptr) return (FALSE);
@@ -450,7 +450,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 /*
  * Allow a store item to absorb another item
  */
-static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
+static void store_object_absorb(object_type *o_ptr, const object_type *j_ptr)
 {
 	int total = o_ptr->number + j_ptr->number;
 
@@ -482,7 +482,7 @@ static void store_object_absorb(object_type *o_ptr, object_type *j_ptr)
  * Note that the shop, just like a player, will not accept things
  * it cannot hold.	Before, one could "nuke" potions this way.
  */
-static bool store_check_num(object_type *o_ptr)
+static bool store_check_num(const object_type *o_ptr)
 {
 	object_type *j_ptr;
 
@@ -614,7 +614,7 @@ static bool store_will_stock(const object_type *o_ptr)
 /*
  * Compare two items to see if they are in store-order.
  */
-static bool reorder_store_comp(object_type *o1_ptr, object_type *o2_ptr)
+static bool reorder_store_comp(const object_type *o1_ptr, const object_type *o2_ptr)
 {
 	/* Hack -- readable books always come first */
 	if ((o1_ptr->tval == mp_ptr->spell_book) &&
@@ -658,7 +658,6 @@ static bool reorder_store_comp(object_type *o1_ptr, object_type *o2_ptr)
 static object_type *home_carry(object_type *o_ptr)
 {
 	object_type *j_ptr;
-
 
 	/* Check each existing item (try to combine) */
 	OBJ_ITT_START (st_ptr->stock, j_ptr)
@@ -1325,7 +1324,7 @@ static int get_stock(int *com_val, cptr pmt, int maxobj)
 	return (TRUE);
 }
 
-static bool store_access_item(object_type *o_ptr, s32b price, bool buy)
+static bool store_access_item(const object_type *o_ptr, s32b price, bool buy)
 {
 	char out_val[160];
 	char o_name[256];
@@ -2447,7 +2446,7 @@ store_type *get_current_store(void)
  * into other commands, normally, we convert "p" (pray) and "m"
  * (cast magic) into "g" (get), and "s" (search) into "d" (drop).
  */
-void do_cmd_store(field_type *f1_ptr)
+void do_cmd_store(const field_type *f1_ptr)
 {
 	int maintain_num;
 	int tmp_chr;

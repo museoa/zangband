@@ -606,7 +606,7 @@ static void learn_map(void)
  * Originally by David Reeve Sward <sward+@CMU.EDU>
  * Verbose item flags by -Bernd-
  */
-static void wiz_display_item(object_type *o_ptr)
+static void wiz_display_item(const object_type *o_ptr)
 {
 	int i, j = 13;
 	u32b f1, f2, f3;

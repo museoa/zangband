@@ -2028,8 +2028,6 @@ static void summon_pattern_vortex(int x, int y)
 			{
 				msg_print("You hear a bell chime.");
 			}
-
-			return;
 		}
 	}
 }

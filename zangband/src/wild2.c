@@ -1108,7 +1108,7 @@ static void draw_general(int x0, int y0, store_type *st_ptr, int x, int y)
 
 			/* No doors */
 
-			break;
+			/* break; Restore this when we do something for BUILD_BLANK */
 		}
 
 		case BUILD_BLANK:
@@ -2909,7 +2909,7 @@ static void blend_helper(cave_type *c_ptr, byte *data, int g_type)
 			/* Use the other terrain's blend function */
 			blend_helper(c_ptr, wild_gen_data[data[0]].data,
 						 wild_gen_data[data[0]].gen_routine);
-			break;
+			/* break;  Restore this when we do something for case 4 */
 		}
 		case 4:
 		{
