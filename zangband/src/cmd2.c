@@ -614,23 +614,34 @@ static bool is_open(int feat)
 }
 
 /*
+ * Return TRUE if the given feature is a closed door
+ */
+static bool is_closed(int feat)
+{
+	return ((feat >= FEAT_DOOR_HEAD)&&(feat <= FEAT_DOOR_TAIL));
+}
+
+/*
  * Return the number of features around (or under) the character.
  * Usually look for doors and floor traps.
  */
-static int count_dt(int *y, int *x, bool (*test)(int feat))
+static int count_dt(int *y, int *x, bool (*test)(int feat), bool under)
 {
 	int d, count;
-
+	int xx, yy;
 	/* Count how many matches */
 	count = 0;
 
 	/* Check around (and under) the character */
 	for (d = 0; d < 9; d++)
 	{
+		/* if not searching under player continue */
+		if ((d==8)&& (!under)) continue;
+		
 		/* Extract adjacent (legal) location */
-		int yy = py + ddy_ddd[d];
-		int xx = px + ddx_ddd[d];
-
+		yy = py + ddy_ddd[d];
+		xx = px + ddx_ddd[d];
+		
 		/* Must have knowledge */
 		if (!(cave[yy][xx].info & (CAVE_MARK))) continue;
 
@@ -840,18 +851,16 @@ void do_cmd_open(void)
 	{
 		int num_doors, num_chests;
 
-		/* Count closed doors (locked or jammed) */
-		num_doors = count_dt(&y, &x, is_trap);
+		/* Count closed doors*/
+		num_doors = count_dt(&y, &x, is_closed, FALSE);
 
 		/* Count chests (locked) */
 		num_chests = count_chests(&y, &x, FALSE);
 
 		/* See if only one target */
-		if (num_doors || num_chests)
+		if ((num_doors + num_chests)==1)
 		{
-			bool too_many = (num_doors && num_chests) || (num_doors > 1) ||
-			    (num_chests > 1);
-			if (!too_many) command_dir = coords_to_dir(y, x);
+			command_dir = coords_to_dir(y, x);
 		}
 	}
 
@@ -999,7 +1008,7 @@ void do_cmd_close(void)
 	if (easy_open)
 	{
 		/* Count open doors */
-		if (count_dt(&y, &x, is_open) == 1)
+		if (count_dt(&y, &x, is_open, FALSE) == 1)
 		{
 			command_dir = coords_to_dir(y, x);
 		}
@@ -1768,7 +1777,7 @@ void do_cmd_disarm(void)
 		int num_traps, num_chests;
 
 		/* Count visible traps */
-		num_traps = count_dt(&y, &x, is_trap);
+		num_traps = count_dt(&y, &x, is_trap, TRUE);
 
 		/* Count chests (trapped) */
 		num_chests = count_chests(&y, &x, TRUE);
