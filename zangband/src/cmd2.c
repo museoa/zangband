@@ -2741,7 +2741,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			 * except from rangers.
 			 */
 			else if ((c_ptr->feat == FEAT_TREES) &&
-					 (p_ptr->pclass == CLASS_RANGER))
+					 (p_ptr->pclass != CLASS_RANGER))
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
 			}
@@ -3175,7 +3175,7 @@ void do_cmd_throw_aux(int mult)
 			 * except from rangers.
 			 */
 			else if ((c_ptr->feat == FEAT_TREES) &&
-			         (p_ptr->pclass == CLASS_RANGER))
+			         (p_ptr->pclass != CLASS_RANGER))
 			{
 				terrain_bonus = r_ptr->ac / 5 + 5;
 			}
