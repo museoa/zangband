@@ -10,6 +10,28 @@
  * included in all such copies.
  */
 
+#ifdef TERM_USE_CALLBACKS
+
+/*
+ * List of callback types
+ */
+#define CALL_MAP_INFO		1
+#define CALL_MAP_ERASE		2
+#define CALL_PLAYER_MOVE	3
+#define CALL_OBJECT_LIST	4
+
+#define CALL_MAX			5
+
+/*
+ * Callback type (Ignoring parameters)
+ */
+typedef void (*callback_type) (void);
+
+extern callback_type set_callback(callback_type call_func, int number);
+
+#endif /* TERM_USE_CALLBACKS */
+
+
 /*
  * Number of blocks in the overhead map cache.
  * 
@@ -161,6 +183,7 @@ typedef map_block **map_blk_ptr_ptr;
 
 typedef void (*map_info_hook_type) (map_block *mb_ptr, term_map *map);
 typedef void (*map_erase_hook_type) (void);
+typedef void (*player_move_hook_type) (int x, int y);
 
 #endif /* TERM_USE_MAP */
 
@@ -280,8 +303,6 @@ extern cptr get_default_font(int term_num);
 extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);
 
 #ifdef TERM_USE_MAP
-extern map_info_hook_type set_map_hook(map_info_hook_type hook_func);
-extern map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func);
 extern void map_get_player(int *x, int *y);
 extern void init_overhead_map(void);
 extern void del_overhead_map(void);
@@ -289,7 +310,3 @@ extern bool map_in_bounds(int x, int y);
 extern map_block *map_loc(int dx, int dy);
 #endif /* TERM_USE_MAP */
 
-#ifdef TERM_USE_LIST
-extern list_notice_hook_type set_list_notice_hook(list_notice_hook_type
-												  hook_func);
-#endif /* TERM_USE_LIST */

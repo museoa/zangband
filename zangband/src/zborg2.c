@@ -2455,7 +2455,7 @@ static bool borg_handle_self(cptr str)
  * (This is so multiple sub-systems can hook into
  * map changes.)
  */
-map_info_hook_type old_info_hook = NULL;
+callback_type old_info_hook = NULL;
 
 /*
  * Save the borg information into the overhead map
@@ -2474,7 +2474,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	if (!borg_active)
 	{
 		/* Chain into the old hook, if it exists */
-		if (old_info_hook) old_info_hook(mb_ptr, map);
+		if (old_info_hook) ((map_info_hook_type) old_info_hook)(mb_ptr, map);
 
 		/* Done */
 		return;
@@ -2772,7 +2772,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	}
 
 	/* Finally - chain into the old hook, if it exists */
-	if (old_info_hook) old_info_hook(mb_ptr, map);
+	if (old_info_hook) ((map_info_hook_type) old_info_hook)(mb_ptr, map);
 }
 
 /*
@@ -2782,7 +2782,7 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
  * (This is so multiple sub-systems can hook into
  * map changes.)
  */
-map_erase_hook_type old_erase_hook = NULL;
+callback_type old_erase_hook = NULL;
 
 /*
  * Save the borg information into the overhead map
@@ -2801,6 +2801,9 @@ void borg_map_erase(void)
 
 	/* Forget old monsters */
 	(void) C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
+	
+	/* Call the next one in the chain */
+	if (old_erase_hook) ((map_erase_hook_type) old_erase_hook)();
 }
 
 
@@ -2872,10 +2875,7 @@ static void borg_update_map(void)
 {
 	int i;
 
-	/* Memorize player location */
-	map_get_player(&c_x, &c_y);
-
-	/* Mark this grid as having been stepped on */
+	/* Mark the player grid as having been stepped on */
 	track_step_x[track_step_num] = c_x;
 	track_step_y[track_step_num] = c_y;
 	track_step_num++;
@@ -4529,6 +4529,27 @@ void borg_react(cptr msg, cptr buf)
 
 	/* Advance the pos */
 	borg_msg_num++;
+}
+
+/*
+ * Old player movement hook that we chain
+ * into after noting the new position.
+ */
+callback_type old_move_hook = NULL;
+
+/*
+ * Notice that the player has moved
+ */
+void borg_player_move(int x, int y)
+{
+	c_x = x;
+	c_y = y;
+	
+	/* Call the next function in the chain if it exists */
+	if (old_move_hook)
+	{
+		((player_move_hook_type) old_move_hook)(x, y);
+	}
 }
 
 

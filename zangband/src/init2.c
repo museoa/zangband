@@ -1394,6 +1394,9 @@ void init_angband(void)
 
 
 	/*** Initialize some arrays ***/
+	
+	/* Init the interface callbacks */
+	init_term_callbacks();
 
 	/* Initialize size info */
 	note("[Initializing array sizes...]");
@@ -1593,6 +1596,9 @@ void cleanup_angband(void)
 
 	/* Free the format() buffer */
 	vformat_kill();
+	
+	/* Free the interface callbacks */
+	free_term_callbacks();
 
 	/* Free the directories */
 	string_free(ANGBAND_DIR);

@@ -129,7 +129,7 @@ int use_shop;
  * (This is so multiple sub-systems can hook into
  * object changes.)
  */
-list_notice_hook_type old_list_hook = NULL;
+callback_type old_list_hook = NULL;
 
 void borg_list_info(byte list_type)
 {
@@ -139,7 +139,7 @@ void borg_list_info(byte list_type)
 	if (!borg_active)
 	{
 		/* Chain into the old hook, if it exists */
-		if (old_list_hook) old_list_hook(list_type);
+		if (old_list_hook) ((list_notice_hook_type) old_list_hook) (list_type);
 
 		/* Done */
 		return;
@@ -183,9 +183,6 @@ void borg_list_info(byte list_type)
 		{
 			/* Notice store inventory changes */
 
-			/* Hack - Memorize player location */
-			map_get_player(&c_x, &c_y);
-
 			/* Silly value */
 			shop_num = -1;
 
@@ -211,9 +208,6 @@ void borg_list_info(byte list_type)
 		case LIST_HOME:
 		{
 			/* Notice home inventory changes */
-
-			/* Hack - Memorize player location */
-			map_get_player(&c_x, &c_y);
 
 			/* Silly value */
 			shop_num = -1;
@@ -253,7 +247,7 @@ void borg_list_info(byte list_type)
 	}
 
 	/* Finally - chain into the old hook, if it exists */
-	if (old_list_hook) old_list_hook(list_type);
+	if (old_list_hook) ((list_notice_hook_type) old_list_hook) (list_type);
 }
 
 

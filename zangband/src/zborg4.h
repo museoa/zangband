@@ -19,7 +19,7 @@
 #include "zborg3.h"
 
 /* Object list interface */
-extern list_notice_hook_type old_list_hook;
+extern callback_type old_list_hook;
 extern void borg_list_info(byte list_type);
 
 /* Treat items differently depending on flags */

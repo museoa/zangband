@@ -574,3 +574,11 @@
  * Optional use of 64bit type
  */
 /* #define USE_64B */
+
+/*
+ * Defining parts of the new term interface requires
+ * the callbacks api
+ */
+#if defined TERM_USE_MAP || defined TERM_USE_LIST
+#define TERM_USE_CALLBACKS
+#endif /* TERM_USE_MAP || TERM_USE_LIST */

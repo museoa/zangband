@@ -57,8 +57,9 @@
 typedef bool (*map_hook_type) (map_block *mb_ptr);
 
 /* Map hooks */
-extern map_info_hook_type old_info_hook;
-extern map_erase_hook_type old_erase_hook;
+extern callback_type old_info_hook;
+extern callback_type old_erase_hook;
+extern callback_type old_move_hook;
 
 /* Recalculate danger */
 extern bool borg_danger_wipe;
@@ -76,6 +77,7 @@ extern void borg_map_info(map_block *mb_ptr, term_map *map);
 extern void borg_map_erase(void);
 extern void borg_update(void);
 extern void borg_react(cptr msg, cptr buf);
+extern void borg_player_move(int x, int y);   
 
 /*
  * Initialize this file

@@ -283,6 +283,68 @@ bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename)
 }
 #endif /* USE_GRAPHICS */
 
+#ifdef TERM_USE_CALLBACKS
+
+/*
+ * The callbacks
+ */
+static callback_type *callbacks;
+
+/*
+ * Initialise the callbacks
+ */
+void init_term_callbacks(void)
+{
+	/* Create and wipe the array */
+	C_MAKE(callbacks, CALL_MAX, callback_type);
+}
+
+/*
+ * Free the callbacks
+ */
+void free_term_callbacks(void)
+{
+	/* Deallocate the array */
+	FREE(callbacks);
+} 
+
+/*
+ * Register a callback
+ */
+callback_type set_callback(callback_type call_func, int number)
+{
+	/* Save the old callback */
+	callback_type temp = callbacks[number];
+	
+	/* Register the new callback */
+	callbacks[number] = call_func;
+	
+	/* Return the old callback to chain into */
+	return (temp);
+}
+
+#else /* TERM_USE_CALLBACKS */
+
+/*
+ * Initialise the callbacks
+ */
+void init_term_callbacks(void)
+{
+	/* Do nothing */
+}
+
+/*
+ * Free the callbacks
+ */
+void free_term_callbacks(void)
+{
+	/* Do nothing */
+} 
+
+
+#endif /* TERM_USE_CALLBACKS */
+
+
 #ifdef TERM_USE_MAP
 
 static bool map_init = FALSE;
@@ -303,48 +365,6 @@ int **map_grid;
 /* Player location */
 static int player_x = 0;
 static int player_y = 0;
-
-/* Hooks to access overhead map */
-static map_info_hook_type map_info_hook = NULL;
-static map_erase_hook_type map_erase_hook = NULL;
-
-/*
- * Set the map hook - returning the old hook
- *
- * You need to keep a copy of the old hook
- * to chain in on because multiple places
- * use the overhead map.
- */
-map_info_hook_type set_map_hook(map_info_hook_type hook_func)
-{
-	/* Save the original hook */
-	map_info_hook_type temp = map_info_hook;
-
-	/* Set the hook */
-	map_info_hook = hook_func;
-
-	/* Return the old hook for chaining */
-	return (temp);
-}
-
-/*
- * Set the erase hook - returning the old hook
- *
- * You need to keep a copy of the old hook
- * to chain in on because multiple places
- * use the overhead map.
- */
-map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func)
-{
-	/* Save the original hook */
-	map_erase_hook_type temp = map_erase_hook;
-
-	/* Set the hook */
-	map_erase_hook = hook_func;
-
-	/* Return the old hook for chaining */
-	return (temp);
-}
 
 /*
  * Access the player location
@@ -630,9 +650,10 @@ static void save_map_location(int x, int y, term_map *map)
 	}
 
 	/* Remember info by calling hook */
-	if (map_info_hook)
+	if (callbacks[CALL_MAP_INFO])
 	{
-		map_info_hook(mb_ptr, map);
+		/* Execute the callback */
+		((map_info_hook_type) callbacks[CALL_MAP_INFO])(mb_ptr, map);
 	}
 
 	/* Save the flags */
@@ -661,6 +682,14 @@ static void set_player_location(int x, int y)
 {
 	player_x = x;
 	player_y = y;
+	
+	/* Tell the port that the player has moved */
+	/* Remember info by calling hook */
+	if (callbacks[CALL_PLAYER_MOVE])
+	{
+		/* Execute the callback */
+		((player_move_hook_type) callbacks[CALL_PLAYER_MOVE])(x, y);
+	}
 }
 
 
@@ -833,8 +862,12 @@ void Term_erase_map(void)
 	if (!map_init) return;
 
 	/* Notify erasure of the map */
-	if (map_erase_hook) map_erase_hook();
-
+	if (callbacks[CALL_MAP_ERASE])
+	{
+		/* Execute the callback */
+		((map_erase_hook_type) callbacks[CALL_MAP_ERASE])();
+	}
+	
 	/* Actually clear the map */
 	clear_map();
 }
@@ -889,28 +922,6 @@ int inven_num;
 /* Current list (Usually used for stores) */
 list_item *cur_list;
 int cur_num;
-
-/* Hook to notice list changes */
-static list_notice_hook_type list_notice_hook = NULL;
-
-/*
- * Set the list notice hook - returning the old hook
- *
- * You need to keep a copy of the old hook
- * to chain in on because multiple places
- * use the overhead map.
- */
-list_notice_hook_type set_list_notice_hook(list_notice_hook_type hook_func)
-{
-	/* Save the original hook */
-	list_notice_hook_type temp = list_notice_hook;
-
-	/* Set the hook */
-	list_notice_hook = hook_func;
-
-	/* Return the old hook for chaining */
-	return (temp);
-}
 
 
 /*
@@ -1046,9 +1057,10 @@ static void save_object_list(term_list *l_ptr, int num, byte list_type)
 	}
 
 	/* Notify port */
-	if (list_notice_hook)
+	if (callbacks[CALL_OBJECT_LIST])
 	{
-		list_notice_hook(list_type);
+		/* Execute the callback */
+		((list_notice_hook_type) callbacks[CALL_OBJECT_LIST])(list_type);
 	}
 }
 
@@ -1300,3 +1312,4 @@ void Term_write_list(s16b o_idx, byte list_type)
 }
 
 #endif /* TERM_USE_LIST */
+

@@ -1247,6 +1247,8 @@ extern void trigger_quest_complete(byte x_type, vptr data);
 extern void do_cmd_knowledge_quests(void);
 
 /* maid-grf.c */
+extern void init_term_callbacks(void);
+extern void free_term_callbacks(void);
 extern void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr);
 extern void Term_erase_map(void);
 extern void Term_move_player(void);
