@@ -2980,20 +2980,15 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 /*
  * Apply magic to an item known to be a "ring" or "amulet"
- *
- * Hack -- note special rating boost for ring of speed
- * Hack -- note special rating boost for amulet of the magi
- * Hack -- note special "pval boost" code for ring of speed
- * Hack -- note that some items must be cursed (or blessed)
  */
 static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 {
 	bool allow_curse = FALSE;
 	int rating_boost = 0;
 
-	if (!(flags & OC_FORCE_GOOD) && one_in_(2))
+	if (!(flags & OC_FORCE_GOOD) && one_in_(3))
 	{
-		/* Half the time, the stuff can be bad */
+		/* Sometimes, the stuff can be bad */
 
 		flags |= OC_FORCE_BAD;
 	}
