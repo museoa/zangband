@@ -3044,6 +3044,7 @@ static bool run_test(void)
 				case FEAT_TREE_GEN:
 				case FEAT_TREE_SNOW:
 				case FEAT_SNOW:
+				case FEAT_JUNGLE:
 				{
 					/* Ignore */
 					notice = FALSE;
