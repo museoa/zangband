@@ -418,7 +418,7 @@ static void prt_gold(void)
  */
 static void prt_ac(void)
 {
-	put_fstr(COL_AC + 7, ROW_AC, "Cur AC " CLR_L_GREEN "%5d",
+	put_fstr(COL_AC, ROW_AC, "Cur AC " CLR_L_GREEN "%5d",
 				p_ptr->dis_ac + p_ptr->dis_to_a);
 }
 
