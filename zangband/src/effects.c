@@ -522,7 +522,7 @@ bool inc_fast(int v)
 	/* Haste */
 	if ((!p_ptr->tim.fast) || (v < 0))
 	{
-		 return (set_fast(v));
+		 return (set_fast(p_ptr->tim.fast + v));
 	}
 	else
 	{
