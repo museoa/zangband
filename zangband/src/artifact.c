@@ -751,6 +751,12 @@ static int random_misc(object_type *o_ptr, int artifact_bias)
 
 			break;
 		case 15:
+			if (o_ptr->tval == TV_GLOVES)
+				o_ptr->flags4 |= TR4_GHOUL_TOUCH;
+			else
+				o_ptr->flags3 |= TR3_SEE_INVIS;
+
+			break;
 		case 16:
 		case 17:
 			o_ptr->flags3 |= TR3_SEE_INVIS;

@@ -630,11 +630,11 @@ static void wiz_display_item(const object_type *o_ptr)
                     "%v", binary_fmt, o_ptr->flags3);
 
 	prtf(j + 32, 17,"+------------FLAGS4-------------\n"
-			"PROT....IMSH  xppp  HURT..  adns\n"
-			"ae      ldac plwas  aefcld  urol\n"
-			"nvudotgdiacomtuati  clioia  tnew\n"
-			"iinmrrnrtrilurclcc  ierltr  osah\n"
-			"mldncltgekddtnklhr  dcedek  cttl\n"
+			"PROT....IMSH p pt   HURT..  adns\n"
+			"ae      ldac alao   aefcld  urol\n"
+			"nvudotgdiacomtusup  clioia  tnew\n"
+			"iinmrrnrtrilurcscs  ierltr  osah\n"
+			"mldncltgekddtnkwhi  dcedek  cttl\n"
 		    "%v", binary_fmt, o_ptr->flags4);
 
 }

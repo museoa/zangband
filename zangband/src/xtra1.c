@@ -2694,6 +2694,7 @@ static void calc_bonuses(void)
 			if (p_ptr->lev > 19) p_ptr->flags2 |= (TR2_RES_NETHER);
 			p_ptr->flags2 |= (TR2_RES_COLD);
 			p_ptr->flags2 |= (TR2_RES_POIS);
+			p_ptr->flags4 |= (TR4_GHOUL_TOUCH);
 			break;
 		}
 	}

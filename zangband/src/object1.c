@@ -1142,9 +1142,9 @@ bool identify_fully_aux(const object_type *o_ptr)
 	{
 		info[i++] = "It is especially deadly against natural creatures.";
 	}
-	if (f4 & (TR4_PARA_TOUCH))
+	if (f4 & (TR4_GHOUL_TOUCH))
 	{
-		info[i++] = "It paralyzes your foes.";
+		info[i++] = "It gives you a paralyzing touch.";
 	}
 	if (f4 & (TR4_PSI_CRIT))
 	{

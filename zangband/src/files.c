@@ -1788,8 +1788,7 @@ void player_flags(u32b *f1, u32b *f2, u32b *f3, u32b *f4)
 			if (p_ptr->lev > 19) (*f2) |= (TR2_RES_NETHER);
 			(*f2) |= (TR2_RES_POIS);
 			(*f2) |= (TR2_RES_COLD);
-			if (!p_ptr->equipment[EQUIP_WIELD].k_idx)
-				(*f4) |= (TR4_PARA_TOUCH);
+			(*f4) |= (TR4_GHOUL_TOUCH);
 			break;
 		default:
 			;					/* Do nothing */

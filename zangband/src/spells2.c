@@ -560,6 +560,11 @@ void self_knowledge(void)
 		info[i++] = "Your charisma is sustained.";
 	}
 
+	if (p_ptr->flags4 & (TR4_GHOUL_TOUCH))
+	{
+		info[i++] = "Your touch paralyzes your foes.";
+	}
+
 	if (f1 & (TR1_STR))
 	{
 		info[i++] = "Your strength is affected by your equipment.";
@@ -709,11 +714,6 @@ void self_knowledge(void)
 		if (f2 & (TR2_THROW))
 		{
 			info[i++] = "Your weapon can be thrown well.";
-		}
-
-		if (f4 & (TR4_PARA_TOUCH))
-		{
-			info[i++] = "Your weapon paralyzes your foes.";
 		}
 
 		if (f4 & (TR4_PSI_CRIT))

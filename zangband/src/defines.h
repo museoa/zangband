@@ -2964,7 +2964,7 @@
 #define TR4_PATRON              0x00002000L
 #define TR4_STRANGE_LUCK        0x00004000L
 #define TR4_PASS_WALL           0x00008000L
-#define TR4_PARA_TOUCH          0x00010000L
+#define TR4_GHOUL_TOUCH         0x00010000L
 #define TR4_PSI_CRIT            0x00020000L
 #define TR4_XXX19               0x00040000L
 #define TR4_XXX20               0x00080000L

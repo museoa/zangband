@@ -1435,7 +1435,7 @@ void py_attack(int x, int y)
 	blows = p_ptr->num_blow;
 
 	/* Prepare for ghoul paralysis? */
-	if (!(o_ptr->k_idx) && (p_ptr->rp.prace == RACE_GHOUL))
+	if (!(o_ptr->k_idx) && (p_ptr->flags4 & (TR4_GHOUL_TOUCH)))
 	{
 		ghoul_paral = 0;
 
