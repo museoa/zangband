@@ -582,6 +582,57 @@ static bool borg_think_shop_sell_aux(int shop)
 	return (FALSE);
 }
 
+/*
+ * What is the power after wielding the item
+ *  into the requested slot?
+ */
+static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
+{
+	list_item *q_ptr = &equipment[slot];
+	
+	s32b p;
+	
+	/* Paranoia */
+	if ((q_ptr->kn_flags3 & TR3_CURSED) ||
+		(q_ptr->kn_flags3 & TR3_HEAVY_CURSE) ||
+		(q_ptr->kn_flags3 & TR3_PERMA_CURSE))
+	{
+		/* Hack, trying to wield into cursed slot - avoid this */
+		p = borg_power();
+		
+		/* Hack - get 'bad' value */
+		if (p > 0) p = 0;
+		if (p < 0) p *= 2;
+		
+		/* Return 'bad' value */
+		return (p);
+	}
+	
+	/* Swap items */
+	q_ptr->treat_as = TREAT_AS_SWAP;
+	l_ptr->treat_as = TREAT_AS_SWAP;
+
+	/* Examine the inventory */
+	borg_notice();
+	
+	/* Examine the home */
+	if (home) borg_notice_home();
+
+	/* Evaluate the inventory */
+	p = borg_power();
+	
+	/* Examine the home */
+	if (home) p += borg_power_home();
+
+	/* Fix items */
+	equipment[slot].treat_as = TREAT_AS_NORM;
+	l_ptr->treat_as = TREAT_AS_NORM;
+	
+	/* Return power */
+	return (p);
+}
+
+
 
 /*
  * Step 3 -- buy "useful" things from a shop (to be used)
@@ -625,38 +676,14 @@ static bool borg_think_shop_buy_aux(int shop)
 		 */
 		if (l_ptr->tval == TV_DIGGING) slot = -1;
 
-		/*
-		 * If our current equip is cursed, then I can't
-		 * buy a new replacement.
-		 * XXX  Perhaps he should not buy anything but save
-		 * money for the Remove Curse Scroll.
-		 */
-		if (slot >= 0)
-		{
-			if (equipment[slot].kn_flags3 & TR3_CURSED) continue;
-			if (equipment[slot].kn_flags3 & TR3_HEAVY_CURSE) continue;
-			if (equipment[slot].kn_flags3 & TR3_PERMA_CURSE) continue;
-		}
-
 		/* Consider new equipment */
 		if (slot >= 0)
 		{
-			/* Swap items */
-			equipment[slot].treat_as = TREAT_AS_SWAP;
-			l_ptr->treat_as = TREAT_AS_SWAP;
+			/* Get power for doing swap */
+			p = borg_think_buy_slot(l_ptr, slot, FALSE);
 
 			/* Fix later */
 			fix = TRUE;
-
-			/* Examine the inventory */
-			borg_notice();
-
-			/* Evaluate the inventory */
-			p = borg_power();
-
-			/* Fix items */
-			equipment[slot].treat_as = TREAT_AS_NORM;
-			l_ptr->treat_as = TREAT_AS_NORM;
 		}
 
 		/* Consider new inventory */
@@ -720,16 +747,12 @@ static bool borg_think_shop_buy_aux(int shop)
 }
 
 
-#if 0
 /*
  * Step 4 -- buy "useful" things from the home (to be used)
  */
 static bool borg_think_home_buy_aux(void)
 {
-	int hole = INVEN_PACK - 1;
-
 	int slot;
-	int qty = 1;
 	int n, b_n = -1;
 	s32b p, b_p = 0L;
 	s32b p_left = 0;
@@ -739,174 +762,68 @@ static bool borg_think_home_buy_aux(void)
 
 
 	/* Require one empty slot */
-	if (borg_items[hole].iqty) return (FALSE);
-
+	if (inven_num >= INVEN_PACK - 1) return (FALSE);
 
 	/* Extract the "power" */
-	b_p = borg_power();
+	b_p = borg_power() + borg_power_home();
 
 	/* Scan the home */
-	for (n = 0; n < STORE_INVEN_MAX; n++)
+	for (n = 0; n < home_num; n++)
 	{
-		borg_item *item = &borg_shops[BORG_HOME].ware[n];
+		list_item *l_ptr = &borg_home[n];
 
 		/* Skip empty items */
-		if (!item->iqty) continue;
-
-		/* second check on empty */
-		if (!item->kind) continue;
-
-		/* Save shop item */
-		COPY(&safe_shops[BORG_HOME].ware[n], &borg_shops[BORG_HOME].ware[n],
-			 borg_item);
-
-		/* Save hole */
-		COPY(&safe_items[hole], &borg_items[hole], borg_item);
-
-		/* Save the number */
-		qty = 1;
-
-		/* Remove one item from shop (sometimes) */
-		borg_shops[BORG_HOME].ware[n].iqty -= qty;
+		if (!l_ptr->number) continue;
 
 		/* Obtain "slot" */
 		slot = borg_wield_slot(l_ptr);
 
-		/* Consider new equipment-- Must check both ring slots */
+		/* Consider new equipment */
 		if (slot >= 0)
 		{
-
-			/* Check Rings */
-			if (slot == INVEN_LEFT)
+			/* Rings can be put into two slots */
+			if (slot == EQUIP_LEFT)
 			{
 				/** First Check Left Hand **/
-
-				/* special curse check for left ring */
-				if (!borg_items[INVEN_LEFT].cursed)
-				{
-					/* Save old item */
-					COPY(&safe_items[slot], &borg_items[slot], borg_item);
-
-					/* Move equipment into inventory */
-					COPY(&borg_items[hole], &safe_items[slot], borg_item);
-
-					/* Move new item into equipment */
-					COPY(&borg_items[slot], &safe_shops[BORG_HOME].ware[n],
-						 borg_item);
-
-					/* Only a single item */
-					borg_items[slot].iqty = qty;
-
-					/* Fix later */
-					fix = TRUE;
-
-					/* Examine the inventory */
-					borg_notice();
-
-					/* Evaluate the inventory */
-					p_left = borg_power();
-
-					/* Restore old item */
-					COPY(&borg_items[slot], &safe_items[slot], borg_item);
-				}
-
-
-				/** Second Check Right Hand **/
-				/* special curse check for right ring */
-				if (!borg_items[INVEN_RIGHT].cursed)
-				{
-					/* Save old item */
-					COPY(&safe_items[INVEN_RIGHT], &borg_items[INVEN_RIGHT],
-						 borg_item);
-
-					/* Move equipment into inventory */
-					COPY(&borg_items[hole], &safe_items[INVEN_RIGHT],
-						 borg_item);
-
-					/* Move new item into equipment */
-					COPY(&borg_items[INVEN_RIGHT],
-						 &safe_shops[BORG_HOME].ware[n], borg_item);
-
-					/* Only a single item */
-					borg_items[INVEN_RIGHT].iqty = qty;
-
-					/* Fix later */
-					fix = TRUE;
-
-					/* Examine the inventory */
-					borg_notice();
-
-					/* Evaluate the inventory */
-					p_right = borg_power();
-
-					/* Restore old item */
-					COPY(&borg_items[INVEN_RIGHT], &safe_items[INVEN_RIGHT],
-						 borg_item);
-				}
+				
+				/* Get power for doing swaps */
+				p_left = borg_think_buy_slot(l_ptr, EQUIP_LEFT, TRUE);
+				p_right = borg_think_buy_slot(l_ptr, EQUIP_RIGHT, TRUE);
 
 				/* Is this ring better than one of mine? */
 				p = MAX(p_right, p_left);
-
 			}
-
 			else
 			{
-
-				/* do not consider if my current item is cursed */
-				if (slot != -1 && borg_items[slot].cursed) continue;
-
-				/* Save old item */
-				COPY(&safe_items[slot], &borg_items[slot], borg_item);
-
-				/* Move equipment into inventory */
-				COPY(&borg_items[hole], &safe_items[slot], borg_item);
-
-				/* Move new item into equipment */
-				COPY(&borg_items[slot], &safe_shops[BORG_HOME].ware[n],
-					 borg_item);
-
-				/* Only a single item */
-				borg_items[slot].iqty = qty;
-
-				/* Fix later */
-				fix = TRUE;
-
-				/* Examine the inventory */
-				borg_notice();
-
-				/* Evaluate the inventory */
-				p = borg_power();
-
-				/* Restore old item */
-				COPY(&borg_items[slot], &safe_items[slot], borg_item);
+				/* Get power for doing swap */
+				p = borg_think_buy_slot(l_ptr, slot, TRUE);
 			}
+			
+			/* Fix later */
+			fix = TRUE;
 		}
 
 		/* Consider new inventory */
 		else
 		{
-			/* Move new item into inventory */
-			COPY(&borg_items[hole], &safe_shops[BORG_HOME].ware[n], borg_item);
-
-			/* Only a single item */
-			borg_items[hole].iqty = qty;
+			/* Try to get item */
+			l_ptr->treat_as = TREAT_AS_LESS;
 
 			/* Fix later */
 			fix = TRUE;
 
 			/* Examine the inventory */
 			borg_notice();
+			
+			/* Examine the home */
+			borg_notice_home();
 
 			/* Evaluate the equipment */
-			p = borg_power();
+			p = borg_power() + borg_power_home();
+			
+			/* Restore item */
+			l_ptr->treat_as = TREAT_AS_NORM;
 		}
-
-		/* Restore hole */
-		COPY(&borg_items[hole], &safe_items[hole], borg_item);
-
-		/* Restore shop item */
-		COPY(&borg_shops[BORG_HOME].ware[n], &safe_shops[BORG_HOME].ware[n],
-			 borg_item);
 
 		/* Ignore "silly" purchases */
 		if (p <= b_p) continue;
@@ -923,7 +840,7 @@ static bool borg_think_home_buy_aux(void)
 	if ((b_n >= 0) && (b_p > borg_power()))
 	{
 		/* Go to the home */
-		goal_shop = BORG_HOME;
+		goal_shop = home_shop;
 
 		/* Buy that item */
 		goal_ware = b_n;
@@ -935,7 +852,7 @@ static bool borg_think_home_buy_aux(void)
 	/* Nope */
 	return (FALSE);
 }
-#endif /* 0 */
+
 
 #if 0
 /*
