@@ -1325,16 +1325,24 @@ static int get_stock(int *com_val, cptr pmt, int maxobj)
 static bool store_buy_item(object_type *o_ptr, s32b *price)
 {
 	char out_val[160];
+	char o_name[256];
 
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Extract the starting offer and the final offer */
 	s32b ask = price_item(o_ptr, ot_ptr->min_inflate, FALSE);
+	
+	/* Describe the object (fully) */
+	object_desc_store(o_name, o_ptr, TRUE, 3, 256);
 
 	*price = 0;
 
 	/* Haggle for the whole pile */
 	ask *= o_ptr->number;
+	
+	/* Message */
+	msg_format("Buying %s.", o_name);
+	message_flush();
 
 	(void)sprintf(out_val, "Offer :  %ld", (long)ask);
 	put_str(out_val, 0, 1);
@@ -1352,16 +1360,25 @@ static bool store_buy_item(object_type *o_ptr, s32b *price)
 static bool store_sell_item(object_type *o_ptr, s32b *price)
 {
 	char out_val[160];
+	char o_name[256];
 
 	const owner_type *ot_ptr = &owners[f_ptr->data[0]][st_ptr->owner];
 
 	/* Obtain the starting offer and the final offer */
 	s32b ask = price_item(o_ptr, ot_ptr->min_inflate, TRUE);
+	
+	/* Get a full description */
+	object_desc(o_name, o_ptr, TRUE, 3, 256);
 
 	*price = 0;
 
 	/* Haggle for the whole pile */
 	ask *= o_ptr->number;
+	
+	/* Describe the transaction */
+	msg_format("Selling %s.", o_name);
+	message_flush();
+
 
 	(void)sprintf(out_val, "Offer :  %ld", (long)ask);
 	put_str(out_val, 0, 1);
@@ -1495,10 +1512,6 @@ static void store_purchase(int *store_top)
 	{
 		/* Describe the object (fully) */
 		object_desc_store(o_name, j_ptr, TRUE, 3, 256);
-
-		/* Message */
-		msg_format("Buying %s (%c).", o_name, I2A(item));
-		message_flush();
 
 		/* Player wants it */
 		if (store_buy_item(j_ptr, &price))
@@ -1690,7 +1703,7 @@ static void store_purchase(int *store_top)
  */
 static void store_sell(int *store_top)
 {
-	int item, item_pos;
+	int item_pos;
 	int amt;
 
 	s32b price, value, dummy;
@@ -1811,24 +1824,6 @@ static void store_sell(int *store_top)
 	/* Real store */
 	if (!(st_ptr->type == BUILD_STORE_HOME))
 	{
-		s16b *list = look_up_list(o_ptr);
-
-		/* Get slot */
-		if (!list)
-		{
-			/* Item is in the equipment */
-			item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
-		}
-		else
-		{
-			/* Get number of item in inventory */
-			item = get_item_position(p_ptr->inventory, o_ptr);
-		}
-
-		/* Describe the transaction */
-		msg_format("Selling %s (%c).", o_name, I2A(item));
-		message_flush();
-
 		/* Sold... */
 		if (store_sell_item(q_ptr, &price))
 		{
@@ -1919,25 +1914,11 @@ static void store_sell(int *store_top)
 	/* Player is at home */
 	else
 	{
-		s16b *list = look_up_list(o_ptr);
-
-		/* Get slot */
-		if (!list)
-		{
-			/* Item is in the equipment */
-			item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
-		}
-		else
-		{
-			/* Get number of item in inventory */
-			item = get_item_position(p_ptr->inventory, o_ptr);
-		}
-
 		/* Distribute charges of wands/rods */
 		distribute_charges(o_ptr, q_ptr, amt);
 
 		/* Describe */
-		msg_format("You drop %s (%c).", o_name, I2A(item));
+		msg_format("You drop %s.", o_name);
 
 		/* Take it from the players inventory */
 		item_increase(o_ptr, -amt);
