@@ -905,7 +905,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if ((f1 & TR1_SPEED) && (plusses > 0))
 		total += (500 * plusses * plusses);
 	if ((f1 & TR1_BLOWS) && (plusses > 0))
-		total += (300 * plusses * plusses);
+		total += (500 * plusses * plusses);
 	if (f1 & TR1_XXX1) total += 0;
 	if (f1 & TR1_XXX2) total += 0;
 	if (f1 & TR1_SLAY_ANIMAL) total += 750;
@@ -1200,7 +1200,7 @@ s32b object_value_real(object_type *o_ptr)
 			if (f1 & (TR1_BLOWS)) value += (o_ptr->pval * o_ptr->pval * 500L);
 
 			/* Give credit for speed bonus */
-			if (f1 & (TR1_SPEED)) value += (o_ptr->pval * o_ptr->pval * 300L);
+			if (f1 & (TR1_SPEED)) value += (o_ptr->pval * o_ptr->pval * 500L);
 
 			break;
 		}
