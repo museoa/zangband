@@ -1799,5 +1799,5 @@ P:0:6d6:16:16:0
 F:VAMPIRIC | STR | CON | FREE_ACT | HOLD_LIFE | RES_NEXUS
 F:RES_CHAOS | RES_NETHER | RES_CONF | INSTA_ART | CURSED
 F:HEAVY_CURSE | NO_TELE | QUESTITEM
-L:MAKE:	if (one_in_(2) ~= 0) set_flag(object, TR2_DRAIN_EXP) else set_flag(TR2_AGGRAVATE) end
+L:MAKE:	if (one_in_(2) ~= 0) then set_flag(object, TR2_DRAIN_EXP) else set_flag(TR2_AGGRAVATE) end
 D:The Stormbringer is now under your control.  It still thrists for souls.
