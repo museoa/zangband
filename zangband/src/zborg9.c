@@ -3638,6 +3638,9 @@ void borg_init_9(void)
 
 	/* Ignore inscriptions */
 	stack_force_notes = TRUE;
+	
+	/* The borg doesn't understand this */
+	easy_floor = FALSE;
 
 	/* Efficiency */
 	avoid_abort = TRUE;
