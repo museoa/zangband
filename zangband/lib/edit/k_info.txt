@@ -233,7 +233,7 @@ I:80:17:500
 W:25:0:1:350
 A:25/1
 F:EASY_KNOW
-L:USE:	ident = do_res_stat(A_CON);
+L:USE:	ident = do_res_stat(A_STR);
 
 N:19:Disease
 G:,:d
