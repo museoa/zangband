@@ -39,7 +39,7 @@ proc NSTerm::InitModule {} {
 # Results:
 #	What happened.
 
-proc NSTerm::NSTerm {oop parent width height gwidth gheight font} {
+proc NSTerm::NSTerm {oop parent width height gwidth gheight} {
 
 	variable win
 
@@ -48,8 +48,8 @@ proc NSTerm::NSTerm {oop parent width height gwidth gheight font} {
 	#update idletasks
 	
 
-	term $widget -width $width -height $height \
-		-gwidth $gwidth -gheight $gheight -font $font
+	widget $widget -width $width -height $height \
+		-gwidth $gwidth -gheight $gheight -term 1
 	
 
 	# Shift-drag does nothing
