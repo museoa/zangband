@@ -2649,11 +2649,6 @@ void borg_map_info(map_block *mb_ptr, term_map *map)
 	mb_ptr->field = map->field;
 	mb_ptr->terrain = map->terrain;
 
-	/* Clear flow and cost */
-	if (!mb_ptr->flow) mb_ptr->flow = 255;
-	if (!mb_ptr->cost) mb_ptr->cost = 255;
-
-
 	/*
 	 * Examine monsters
 	 */
