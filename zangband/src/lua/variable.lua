@@ -59,17 +59,10 @@ function classVariable:supcode ()
  -- declare self, if the case
  local _,_,static = strfind(self.mod,'^%s*(static)')
  if class and static==nil then
-  output(' ',class,'*','self = ')
-  output('(',class,'*) ')
-  output('tolua_getusertype(tolua_S,1,0);')
+-- get and check self value  
+  output('  TOLUA_GET_SELF(',class,');');
  elseif static then
   _,_,self.mod = strfind(self.mod,'^%s*static%s%s*(.*)')
- end
-
-
- -- check self value
- if class and static==nil then
-  output('  TOLUA_TEST_ERR_SELF;');
  end
 
  -- return value
@@ -101,11 +94,8 @@ function classVariable:supcode ()
   -- declare self, if the case
   local narg=1
   if class and static==nil then
-   output(' ',class,'*','self = ')
-   output('(',class,'*) ')
-   output('tolua_getusertype(tolua_S,1,0);')
-   -- check self value
-   output('  TOLUA_TEST_ERR_SELF;');
+   -- set and check self value
+   output('  TOLUA_GET_SELF(',class,');');
    narg = narg+1
   elseif static then
    _,_,self.mod = strfind(self.mod,'^%s*static%s%s*(.*)')
