@@ -3684,7 +3684,34 @@ static void borg_notice_home_aux(void)
 		/* Hack - assume only one swap at a time */
 		break;
 	}
+	
+	/* Scan for virtual home items from stores */
+	if (use_shop)
+	{
+		for (i = 0; i < cur_num; i++)
+		{
+			l_ptr = &cur_list[i];
 
+			/* Ignore normal items */
+			if (l_ptr->treat_as == TREAT_AS_NORM) continue;
+		
+			/* Save number of items */
+			num = l_ptr->number;
+		
+			/* Hack - simulate change in number of items */
+			if (l_ptr->treat_as == TREAT_AS_LESS) l_ptr->number = 1;
+			if (l_ptr->treat_as == TREAT_AS_MORE) l_ptr->number++;
+		
+			/* Notice item flags */
+			borg_notice_home_flags(l_ptr);
+
+			/* Notice the item itself */
+			borg_notice_home_item(l_ptr, home_num + EQUIP_MAX - 1);
+		
+			/* Hack - revert change in number of items */
+			l_ptr->number = num;
+		}
+	}
 
 	/*** Process the Spells and Prayers ***/
 	borg_notice_home_spells();

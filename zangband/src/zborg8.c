@@ -600,12 +600,8 @@ static s32b borg_think_buy_slot(list_item *l_ptr, int slot, bool home)
 		/* Hack, trying to wield into cursed slot - avoid this */
 		p = borg_power();
 		
-		/* Hack - get 'bad' value */
-		if (p > 0) p = 0;
-		if (p < 0) p *= 2;
-		
 		/* Return 'bad' value */
-		return (p);
+		return (p - 1);
 	}
 	
 	/* Swap items */
@@ -854,108 +850,74 @@ static bool borg_think_home_buy_aux(void)
 }
 
 
-#if 0
 /*
  * Step 5 -- buy "interesting" things from a shop (to be used later)
  */
-static bool borg_think_shop_grab_aux(void)
+static bool borg_think_shop_grab_aux(int shop)
 {
-
-	int k, b_k = -1;
 	int n, b_n = -1;
-	int qty = 1;
 
 	s32b s, b_s = 0L;
 	s32b c, b_c = 0L;
-	s32b borg_empty_home_power;
 
 	/* Require two empty slots */
-	if (borg_items[INVEN_PACK - 1].iqty) return (FALSE);
-	if (borg_items[INVEN_PACK - 2].iqty) return (FALSE);
+	if (inven_num >= INVEN_PACK - 1) return (FALSE);
 
 	/* Examine the home */
 	borg_notice_home();
 
 	/* Evaluate the home */
 	b_s = borg_power_home();
+	
+	/* Use shops */
+	use_shop = TRUE;
 
-	/* Check the shops */
-	for (k = 0; k < (track_shop_num); k++)
+	/* Scan the wares */
+	for (n = 0; n < cur_num; n++)
 	{
-		/* Scan the wares */
-		for (n = 0; n < STORE_INVEN_MAX; n++)
-		{
-			borg_item *item = &borg_shops[k].ware[n];
+		list_item *l_ptr = &cur_list[n];
 
-			/* Skip empty items */
-			if (!item->iqty) continue;
+		/* Get a single item */
+		l_ptr->treat_as = TREAT_AS_LESS;
+		
+		/* Notice home changes */
+		borg_notice_home();
+		
+		/* Evaluate the home */
+		s = borg_power_home();
+		
+		/* Restore the item */
+		l_ptr->treat_as = TREAT_AS_NORM;
+			
+		/* Obtain the "cost" of the item */
+		c = l_ptr->cost;
 
-#if 0
-			/* skip home */
-			if (k == BORG_HOME) continue;
-#endif
+		/* Penalize expensive items */
+		if (c > borg_gold / 10) s -= c;
 
-			/* dont buy weapons or armour, I'll get those in dungeon apw */
-			if (item->tval <= TV_ROD && item->tval >= TV_BOW) continue;
+		/* Ignore "bad" sales */
+		if (s < b_s) continue;
 
-			/* Dont buy easy spell books late in the game */
-			/* Hack -- Require some "extra" cash */
-			if (borg_gold < 1000L + item->cost * 5) continue;
+		/* Ignore "expensive" purchases */
+		if ((s == b_s) && (c >= b_c)) continue;
 
-			/* make this the next to last item that the player has */
-			/* (can't make it the last or it thinks that both player and */
-			/*  home are full) */
-			COPY(&borg_items[INVEN_PACK - 2], &borg_shops[k].ware[n],
-				 borg_item);
-
-			/* Save the number */
-			qty = 1;
-
-			/* Give a single item */
-			borg_items[INVEN_PACK - 2].iqty = qty;
-
-			/* optimize the home inventory */
-			if (!borg_think_home_sell_aux()) continue;
-
-			/* Obtain the "cost" of the item */
-			c = item->cost * qty;
-
-			/* Penalize expensive items */
-			if (c > borg_gold / 10) s -= c;
-
-			/* Ignore "bad" sales */
-			if (s < b_s) continue;
-
-			/* Ignore "expensive" purchases */
-			if ((s == b_s) && (c >= b_c)) continue;
-
-			/* Save the item and cost */
-			b_k = k;
-			b_n = n;
-			b_s = s;
-			b_c = c;
-		}
+		/* Save the item and cost */
+		b_n = n;
+		b_s = s;
+		b_c = c;
 	}
-
-	/* restore inventory hole (just make sure the last slot goes back to */
-	/* empty) */
-	borg_items[INVEN_PACK - 2].iqty = 0;
-
-	/* Examine the real home */
+	
+	/* Restore home */
 	borg_notice_home();
-
-	/* Evaluate the home */
-	s = borg_power_home();
-
-	/* remove the target that optimizing the home gave */
-	goal_shop = goal_ware = goal_item = -1;
-
+	
+	/* Normal power calculation */
+	use_shop = FALSE;
 
 	/* Buy something */
-	if ((b_k >= 0) && (b_n >= 0))
+	if (b_n >= 0)
 	{
 		/* Visit that shop */
-		goal_shop = b_k;
+		goal_shop = shop;
 
 		/* Buy that item */
 		goal_ware = b_n;
@@ -967,7 +929,7 @@ static bool borg_think_shop_grab_aux(void)
 	/* Nope */
 	return (FALSE);
 }
-#endif /* 0 */
+
 
 #if 0
 /*
