@@ -856,4 +856,256 @@ static arth_blocks_decode(block_handle *h1_ptr)
 	}
 }
 
+/* Macro for finding character in string at specified location */
+#define GET_LOCATE (X)	((X)) < string_len) ? ((X)) : ((X) - string_len)
+
+static int string_len = 0;
+
+/*
+ * Sorting hook -- comp function -- by "string"
+ *
+ * We use "u" to point to an array of indexes into a
+ * string.
+ * "v" is the location of the string.
+ */
+static bool ang_sort_comp_string(vptr u, vptr v, int a, int b)
+{
+	int *x = (int*)(u);
+	char *s = (char*) v;
+
+	int size, p1 = x[a], p2 = x[b];
+	bool result;
+	
+	/* Work out how far we can scan before going off of the end */
+	size = string_len - MAX(p1, p2);
+	
+	/* Compare the first length of string */
+	result = memcmp(&s[p1], &s[p2], size);
+
+	if (result) return (result);
+
+	p1 = GET_LOCATE(p1 + size);
+	p2 = GET_LOCATE(p2 + size);
+	
+	/* Work out how far we can scan before going off of the end */
+	size = string_len - MAX(p1, p2);
+	
+	/* Compare the first length of string */
+	result = memcmp(&s[p1], &s[p2], size);
+
+	if (result) return (result);
+	
+	p1 = GET_LOCATE(p1 + size);
+	p2 = GET_LOCATE(p2 + size);
+	
+	/* Scan the remaining region */
+	size = x[a] - p1;
+	
+	/* Compare the first length of string */
+	return (memcmp(&s[p1], &s[p2], size));
+}
+
+
+/*
+ * Sorting hook -- swap function -- by "wilderness height"
+ *
+ * We use "u" to point to an array of indexes into a
+ * string
+ */
+static void ang_sort_swap_string(vptr u, vptr v, int a, int b)
+{
+	int *x = (int*)(u);
+
+	int temp;
+
+	/* Swap "x" */
+	temp = x[a];
+	x[a] = x[b];
+	x[b] = temp;
+}
+
+
+/*
+ * Sort a string, using the simple angband sorting algorithm
+ *
+ * This has a worst-case time of O(n^2log(n))
+ * We avoid that by doing a RLE before calling this routine.
+ */
+void sort_string(int *s_ptr, char *string, int len)
+{
+	byte symbol;
+	int i;
+	
+	int counts[256];
+	int positions[256];
+
+	string_len = len;
+	
+	/* Do one level of radix sort to speed everything up */
+	
+	C_WIPE(counts, 256, int);
+	
+	/* Get the sub-totals of the buckets */
+	for (i = 0; i < len; i++)
+	{
+		counts[string[i]]++;
+	}
+	
+	/* Work out the partial regions */
+	positions[0] = 0;
+	for (i = 0; i < 255; i++)
+	{
+		positions[i + 1] = positions[i] + counts[i];
+	}
+	
+	/* Output the semi-sorted pointers */
+	for (i = 0; i < len; i++)
+	{
+		symbol = string[i];
+		
+		s_ptr[position[symbol]++] = i;
+	}
+	
+
+	/* Set the sort hooks */
+	ang_sort_comp = ang_sort_comp_height;
+	ang_sort_swap = ang_sort_swap_height;
+
+	/* Sort positions by height of wilderness */
+	ang_sort(s_ptr, string, len);
+}
+
+/*
+ * Do the Block Wheeler transform on the data.
+ *
+ * Reading h1_ptr, writing to h2_ptr;
+ */
+static bw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
+{
+	int *offsets;
+	block_type b_ptr = h1_ptr->b_ptr;
+	char *data = b_ptr->block_data;
+	
+	int size = h1_ptr->b_ptr->size, transform;
+	int i, j;
+	
+	
+	/* Create the offset array */
+	C_MAKE(offsets, BLOCK_DATA_SIZE, int);
+
+	/* Sort the block, filling the offset array */
+	sort_string(offsets, data, size)	
+
+	/* Record location of original string in sorted list */
+	for (i = 0; i < size; i++)
+	{
+		if (!offset[i])
+		{
+			transform = i;
+			break;
+		}
+	}
+	
+	/* Write the size to the file */
+	write_block_byte(h2_ptr, size & 0xFF);
+	write_block_byte(h2_ptr, (size >> 8) & 0xFF);
+	write_block_byte(h2_ptr, (size >> 16) & 0xFF);
+	write_block_byte(h2_ptr, &j, (size >> 24) & 0xFF);
+	
+	/* Write the transformation number to the file */
+	write_block_byte(h2_ptr, transform & 0xFF);
+	write_block_byte(h2_ptr, (transform >> 8) & 0xFF);
+	write_block_byte(h2_ptr, (transform >> 16) & 0xFF);
+	write_block_byte(h2_ptr, &j, (transform >> 24) & 0xFF);
+	
+	/* Write the transformed block */
+	for (i = 0; i < size; i++)
+	{
+		j = offset[i] - 1;
+		if (j == -1) j = size - 1;
+		
+		write_block_byte(h2_ptr, data[j]);
+	}
+
+	/* Cleanup */
+	C_KILL(offsets, BLOCK_DATA_SIZE, int);
+}
+
+/*
+ * Do the Inverse Block Wheeler transform on the data.
+ *
+ * Reading h1_ptr, writing to h2_ptr
+ */
+static ibw_block_trans(block_handle *h1_ptr, block_handel *h2_ptr)
+{
+	int size, transform;
+	int i;
+	int counts[256];
+
+	u32b *temp, t;
+	
+	/* Get the data size, and transformation number */
+	size = rerase_block_byte(h2_ptr);
+	size |= (rerase_block_byte(h2_ptr) << 8);
+	size |= (rerase_block_byte(h2_ptr) << 16);
+	size |= (rerase_block_byte(h2_ptr) << 24);
+	
+	transform = rerase_block_byte(h2_ptr);
+	transform |= (rerase_block_byte(h2_ptr) << 8);
+	transform |= (rerase_block_byte(h2_ptr) << 16);
+	transform |= (rerase_block_byte(h2_ptr) << 24);
+
+	C_MAKE(temp, size, u32b);
+	C_WIPE(counts, 256, int);
+
+	/*
+	 * Get the transformation vector, and put it in temp
+	 * Note that we store the symbol there as well.
+	 * This works so long as the maximum block size is
+	 * less than 2^24 bytes.
+	 *
+	 * Doing this saves on cache misses, and makes the
+	 * inverse transformation much quicker with large
+	 * block sizes. */
+	 */
+	for (i = 0; i < size; i++)
+	{
+		symbol = rerase_block_byte(h2_ptr);
+		
+		/* Paranoia */
+		if (symbol == -1) return;
+	
+		/* Store the symbol + relative offset in temp */
+		temp[i] = symbol + counts[symbol] * 256;
+		
+		/* Increment the count */
+		counts[symbol]++;
+	}
+	
+	/* Get cumulative counts */
+	total = 0;
+	for (i = 0; i < 256; i++)
+	{
+		/* Replace with cumulative counts */
+		symbol = count[i];
+		count[i] = total;
+		total += symbol;
+	}
+	
+	for (i = 0; i < size; i++)
+	{
+		/* Get the information */
+		t = temp[transform];
+		
+		/* Get the symbol */
+		symbol = t & 0xFF;
+		write_block_byte(h1_ptr, symbol);
+		
+		/* Get the new point in the temp array */
+		transform  = t / 256 + counts[symbol];
+	}
+
+	/* Cleanup */
+	C_KILL(temp, size, u32b);
+}
 
