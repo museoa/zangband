@@ -51,9 +51,10 @@ SRCS = \
 	generate.c dungeon.c init1.c init2.c \
 	effects.c racial.c \
 	artifact.c mutation.c flavor.c spells3.c \
-	mspells1.c mspells2.c scores.c mind.c \
+	mspells1.c mspells2.c scores.c mind.c maid-x11.c\
 	bldg.c obj_kind.c wild1.c wild2.c avatar.c notes.c\
-	main-cap.c main-gcu.c main-x11.c main-xaw.c main-xpj.c main.c
+	main-cap.c main-gcu.c main-x11.c main-xaw.c main-xpj.c\
+	main-lsl.c main.c
 
 OBJS = \
 	z-util.o z-virt.o z-form.o z-rand.o z-term.o \
@@ -67,9 +68,10 @@ OBJS = \
 	generate.o dungeon.o init1.o init2.o \
 	effects.o racial.o \
 	artifact.o mutation.o flavor.o spells3.o \
-	mspells1.o mspells2.o scores.o mind.o \
+	mspells1.o mspells2.o scores.o mind.o maid-x11.o\
 	bldg.o obj_kind.o wild1.o wild2.o avatar.o notes.o\
-	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o main.o
+	main-cap.o main-gcu.o main-x11.o main-xaw.o main-xpj.o\
+	main-lsl.o main.o
 
 
 
@@ -122,34 +124,51 @@ CC = gcc
 
 ##
 ## Graphics under X11 in linux.  (Run with the -g option)
-## Note: Get the 16x16.bmp file, and put in Zdirectory/lib/xtra/graf
+## Note: Get the 16x16.bmp file, and put in [Z]directory/lib/xtra/graf
 ##       to get 256 colours.
 ##
 CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
          -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
 LIBS = -lX11 -lcurses -ltermcap -L/usr/X11R6/lib
 
+## Option: Use XAW instead of pure X11
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
 #          -D"USE_XAW" -D"USE_GCU" -D"USE_TRANSPARENCY"
 #LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt -lX11 -lcurses
 
 
 ##
-## Variation -- Compile for Linux
-##
-#CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g -D"USE_XAW" -D"USE_GCU"
-#LIBS = -L/usr/X11R6/lib -lXaw -lXext -lSM -lICE -lXmu -lXt \
-#	-lX11 -lcurses
-
-
 ## Variation - Debian 
+##
 #
-#CFLAGS = -Wall -W -O2 -fno-strength-reduce -m486 -pipe -g \
+#CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
 #         -D"USE_GCU" -D"USE_TRANSPARENCY" -D"USE_XPJ" -D"USE_X11"
 #LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib
 
 
-## Variation - OpenBSD 
+##
+## Variation - 3D Projected View
+## (This requires the 16x16.bmp file to exist for it to work)
+#
+#CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g \
+#         -D"USE_GCU" -D"USE_TRANSPARENCY" -D"USE_XPJ"
+#		 
+#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib
+
+
+##
+## Variation -- All the ports that work in Linux at once.
+## (Use the -m option to start the one you want.)
+##
+#CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g  -D"USE_GCU" \
+#         -D"USE_TRANSPARENCY" -D"USE_XPJ" -D"USE_X11" -D"USE_XAW" -D"USE_LSL"
+#
+#		 
+#LIBS = -lX11 -lcurses -lncurses -L/usr/X11R6/lib -lz -lvgagl -lvga
+
+##
+## Variation -- OpenBSD 
+##
 #
 #CFLAGS = -Wall -O2 -fno-strength-reduce -pipe -g -I/usr/x11r6/include \
 #         -D"USE_X11" -D"USE_GCU" -D"USE_TRANSPARENCY"
@@ -291,7 +310,7 @@ testing: $(OBJS)
 #
 
 clean:
-	rm -f *.bak *.o
+	-rm *.bak *.o
 
 
 #
@@ -339,11 +358,13 @@ streams.o: streams.c $(INCS) grid.h generate.h
 init1.o: init1.c $(INCS)
 init2.o: init2.c $(INCS)
 load.o: load.c $(INCS)
+maid-x11.o: maid-x11.c $(INCS)
 main-cap.o: main-cap.c $(INCS)
 main-gcu.o: main-gcu.c $(INCS)
-main-x11.o: main-x11.c $(INCS) maid-x11.c
-main-xaw.o: main-xaw.c $(INCS) maid-x11.c
-main-xpj.o: main-xpj.c $(INCS) maid-x11.c
+main-lsl.o: main-lsl.c $(INCS)
+main-x11.o: main-x11.c $(INCS) maid-x11.h
+main-xaw.o: main-xaw.c $(INCS) maid-x11.h
+main-xpj.o: main-xpj.c $(INCS) maid-x11.h
 main.o: main.c $(INCS)
 melee1.o: melee1.c $(INCS)
 melee2.o: melee2.c $(INCS)
