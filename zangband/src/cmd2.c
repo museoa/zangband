@@ -2705,16 +2705,11 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	/* Sound */
 	sound(SOUND_SHOOT);
 
-
 	/* Describe the object */
 	object_desc(o_name, q_ptr, FALSE, 3);
 
-
 	/* Use the proper number of shots */
 	thits = p_ptr->num_fire;
-
-	/* Base damage from thrown object plus launcher bonus */
-	tdam = damroll(q_ptr->dd, q_ptr->ds) + q_ptr->to_d + j_ptr->to_d;
 
 	/* Actually "fire" the object */
 	bonus = (p_ptr->to_h + q_ptr->to_h + j_ptr->to_h);
@@ -2734,6 +2729,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		case SV_SLING:
 		{
 			tmul = 2;
+			energy_use=50;
 			break;
 		}
 
@@ -2741,27 +2737,47 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 		case SV_SHORT_BOW:
 		{
 			tmul = 2;
+			energy_use=100;
 			break;
 		}
 
 		/* Long Bow and Arrow */
 		case SV_LONG_BOW:
 		{
-			tmul = 3;
+			if (p_ptr->stat_use[A_STR] >= 16)
+			{
+				tmul = 3;
+			}
+			else
+			{
+				/* weak players cannot use a longbow well */
+				tmul = 2;
+			}
+			energy_use=100;
 			break;
 		}
 
 		/* Light Crossbow and Bolt */
 		case SV_LIGHT_XBOW:
 		{
-			tmul = 3;
+			tmul = 4;
+			energy_use=120;
 			break;
 		}
 
 		/* Heavy Crossbow and Bolt */
 		case SV_HEAVY_XBOW:
 		{
-			tmul = 4;
+			tmul = 5;
+			if (p_ptr->stat_use[A_DEX] >= 16)
+			{
+				energy_use = 150;
+			}
+			else
+			{
+				/* players with low dex will take longer to load */
+				energy_use = 200;
+			}
 			break;
 		}
 	}
@@ -2769,15 +2785,11 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 	/* Get extra "power" from "extra might" */
 	if (p_ptr->xtra_might) tmul++;
 
-	/* Boost the damage */
-	tdam *= tmul;
-
 	/* Base range */
-	tdis = 10 + 5 * tmul;
-
+	tdis =  5 * tmul;
 
 	/* Take a (partial) turn */
-	energy_use = (100 / thits);
+	energy_use = (energy_use / thits);
 
 
 	/* Start at the player */
@@ -2856,7 +2868,7 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 			/* Check the visibility */
 			visible = m_ptr->ml;
 
-			chance2 = chance - distance(py, px, y, x);
+			chance2 = chance - cur_dis;
 
 			/* Note the collision */
 			hit_body = TRUE;

@@ -1478,8 +1478,41 @@ void object_desc(char *buf, object_type *o_ptr, int pref, int mode)
 		/* Bows get a special "damage string" */
 		case TV_BOW:
 
-		/* Mega-Hack -- Extract the "base power" */
-		power = (o_ptr->sval % 10);
+		/* Extract the "base power" */
+		switch (o_ptr->sval)
+		{
+			case SV_SLING:
+			power = 2;
+			break;
+			
+			case SV_SHORT_BOW:
+			power = 2;
+			break;
+			
+			case SV_LONG_BOW:
+			if (p_ptr->stat_use[A_STR] >= 16)
+			{
+				power = 3;
+			}
+			else
+			{
+				/* hack- weak players cannot use a longbow well */
+				power = 2;
+			}
+			break;
+			
+			case SV_LIGHT_XBOW:
+			power = 4;
+			break;
+			
+			case SV_HEAVY_XBOW:
+			power = 5;
+			break;
+			
+			default:
+			msg_print("Unknown firing multiplier.");
+			power = 0;
+		}
 
 		/* Apply the "Extra Might" flag */
 		if (f3 & (TR3_XTRA_MIGHT)) power++;
