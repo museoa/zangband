@@ -4042,13 +4042,7 @@ static void init_stuff(void)
 	/* Validate the "graf" directory */
 	validate_dir(ANGBAND_DIR_XTRA_GRAF, TRUE);
 
-	/* Build the filename */
-	path_build(path, 1024, ANGBAND_DIR_XTRA_GRAF, "8X8.BMP");
-
-	/* Hack -- Validate the basic graf */
-	validate_file(path);
-
-#endif
+#endif /* USE_GRAPHICS */
 
 
 #ifdef USE_SOUND
