@@ -4780,6 +4780,9 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 		{
 			/* Combine the items */
 			object_absorb(o_ptr, j_ptr);
+			
+			/* Get the pointer to the stack */
+			o_idx = this_o_idx;
 
 			/* Success */
 			done = TRUE;
@@ -4790,7 +4793,7 @@ s16b drop_near(object_type *j_ptr, int chance, int y, int x)
 	}
 
 	/* Get new object */
-	o_idx = o_pop();
+	if (!done) o_idx = o_pop();
 
 	/* Failure */
 	if (!done && !o_idx)
