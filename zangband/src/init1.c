@@ -1688,7 +1688,7 @@ errr parse_a_info(char *buf, header *head)
 			return (PARSE_ERROR_OUT_OF_MEMORY);
 
 		/* Ignore everything */
-		SET_FLAG(a_ptr->flags, 2, TR2_IGNORE_MASK);
+		SET_FLAG(a_ptr, TR_IGNORE_MASK);
 	}
 
 	/* Process 'I' for "Info" (one line only) */

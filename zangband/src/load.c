@@ -417,7 +417,7 @@ static void rd_item(object_type *o_ptr)
 		else
 		{
 			/* Other lites are everburning. */
-			SET_FLAG(o_ptr->flags, 2, TR2_LITE);
+			SET_FLAG(o_ptr, TR_LITE);
 		}
 	}
 
@@ -722,7 +722,7 @@ static void rd_item(object_type *o_ptr)
 			}
 
 			/* Make the object an artifact */
-			SET_FLAG(o_ptr->flags, 2, TR2_INSTA_ART);
+			SET_FLAG(o_ptr, TR_INSTA_ART);
 
 			/* Set the cost */
 			o_ptr->cost = k_info[o_ptr->k_idx].cost +
@@ -2800,7 +2800,7 @@ static void rd_quests(int max_quests)
 				rd_u16b(&q_ptr->data.fit.place);
 				
 				/* The artifact is a quest item */
-				SET_FLAG(a_info[q_ptr->data.fit.a_idx].flags, 2, TR2_QUESTITEM);
+				SET_FLAG(&a_info[q_ptr->data.fit.a_idx], TR_QUESTITEM);
 				break;
 			}
 			

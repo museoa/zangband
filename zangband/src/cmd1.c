@@ -1550,7 +1550,7 @@ void py_attack(int x, int y)
 			!(FLAG(o_ptr, TR_CURSED)) && (randint(100) < 10))
 	{
 		msgf("Your weapon glows black.");
-		SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+		SET_FLAG(o_ptr, TR_CURSED);
 		o_ptr->feeling = FEEL_NONE;
 	}
 

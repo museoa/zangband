@@ -30,49 +30,49 @@ static void random_plus(object_type *o_ptr)
 	switch (randint1(o_ptr->tval < TV_BOOTS ? 24 : 20))
 	{
 		case 1:  case 2:
-			SET_FLAG(o_ptr->flags, 0, TR0_STR);
+			SET_FLAG(o_ptr, TR_STR);
 			break;
 		case 3:  case 4:
-			SET_FLAG(o_ptr->flags, 0, TR0_INT);
+			SET_FLAG(o_ptr, TR_INT);
 			break;
 		case 5:  case 6:
-			SET_FLAG(o_ptr->flags, 0, TR0_WIS);
+			SET_FLAG(o_ptr, TR_WIS);
 			break;
 		case 7:  case 8:
-			SET_FLAG(o_ptr->flags, 0, TR0_DEX);
+			SET_FLAG(o_ptr, TR_DEX);
 			break;
 		case 9:  case 10:
-			SET_FLAG(o_ptr->flags, 0, TR0_CON);
+			SET_FLAG(o_ptr, TR_CON);
 			break;
 		case 11:  case 12:
-			SET_FLAG(o_ptr->flags, 0, TR0_CHR);
+			SET_FLAG(o_ptr, TR_CHR);
 			break;
 		case 13:  case 14:
-			SET_FLAG(o_ptr->flags, 0, TR0_STEALTH);
+			SET_FLAG(o_ptr, TR_STEALTH);
 			break;
 		case 15:  case 16:
-			SET_FLAG(o_ptr->flags, 0, TR0_SEARCH);
+			SET_FLAG(o_ptr, TR_SEARCH);
 			break;
 		case 17:  case 18:
-			SET_FLAG(o_ptr->flags, 0, TR0_INFRA);
+			SET_FLAG(o_ptr, TR_INFRA);
 			break;
 		case 19:
-			SET_FLAG(o_ptr->flags, 0, TR0_SPEED);
+			SET_FLAG(o_ptr, TR_SPEED);
 			break;
 		case 20:
-			SET_FLAG(o_ptr->flags, 0, TR0_SP);
+			SET_FLAG(o_ptr, TR_SP);
 			break;
 		case 21:  case 22:
-			SET_FLAG(o_ptr->flags, 0, TR0_TUNNEL);
+			SET_FLAG(o_ptr, TR_TUNNEL);
 			break;
 		case 23:  case 24:
 			if (o_ptr->tval == TV_BOW)
 			{
-				SET_FLAG(o_ptr->flags, 0, TR0_DEX);
+				SET_FLAG(o_ptr, TR_DEX);
 			}
 			else
 			{
-				SET_FLAG(o_ptr->flags, 0, TR0_BLOWS);
+				SET_FLAG(o_ptr, TR_BLOWS);
 			}
 			break;
 	}
@@ -85,125 +85,125 @@ static void random_resistance(object_type *o_ptr, int specific)
 	{
 		case 1:
 			if (!one_in_(WEIRD_LUCK))
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_ACID);
+				SET_FLAG(o_ptr, TR_RES_ACID);
 			else
-				SET_FLAG(o_ptr->flags, 1, TR1_IM_ACID);
+				SET_FLAG(o_ptr, TR_IM_ACID);
 			break;
 		case 2:
 			if (!one_in_(WEIRD_LUCK))
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_ELEC);
+				SET_FLAG(o_ptr, TR_RES_ELEC);
 			else
-				SET_FLAG(o_ptr->flags, 1, TR1_IM_ELEC);
+				SET_FLAG(o_ptr, TR_IM_ELEC);
 			break;
 		case 3:
 			if (!one_in_(WEIRD_LUCK))
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_COLD);
+				SET_FLAG(o_ptr, TR_RES_COLD);
 			else
-				SET_FLAG(o_ptr->flags, 1, TR1_IM_COLD);
+				SET_FLAG(o_ptr, TR_IM_COLD);
 			break;
 		case 4:
 			if (!one_in_(WEIRD_LUCK))
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_FIRE);
+				SET_FLAG(o_ptr, TR_RES_FIRE);
 			else
-				SET_FLAG(o_ptr->flags, 1, TR1_IM_FIRE);
+				SET_FLAG(o_ptr, TR_IM_FIRE);
 			break;
 		case 5:
 		case 6:
 		case 13:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_ACID);
+			SET_FLAG(o_ptr, TR_RES_ACID);
 			break;
 		case 7:
 		case 8:
 		case 14:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_ELEC);
+			SET_FLAG(o_ptr, TR_RES_ELEC);
 			break;
 		case 9:
 		case 10:
 		case 15:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_FIRE);
+			SET_FLAG(o_ptr, TR_RES_FIRE);
 			break;
 		case 11:
 		case 12:
 		case 16:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_COLD);
+			SET_FLAG(o_ptr, TR_RES_COLD);
 			break;
 		case 17:
 		case 18:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_POIS);
+			SET_FLAG(o_ptr, TR_RES_POIS);
 			break;
 		case 19:
 		case 20:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_FEAR);
+			SET_FLAG(o_ptr, TR_RES_FEAR);
 			break;
 		case 21:
 			if (!one_in_(WEIRD_LUCK))
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_LITE);
+				SET_FLAG(o_ptr, TR_RES_LITE);
 			else
-				SET_FLAG(o_ptr->flags, 3, TR3_IM_LITE);
+				SET_FLAG(o_ptr, TR_IM_LITE);
 			break;
 		case 22:
 			if (!one_in_(WEIRD_LUCK))
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_DARK);
+				SET_FLAG(o_ptr, TR_RES_DARK);
 			else
-				SET_FLAG(o_ptr->flags, 3, TR3_IM_DARK);
+				SET_FLAG(o_ptr, TR_IM_DARK);
 			break;
 		case 23:
 		case 24:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_BLIND);
+			SET_FLAG(o_ptr, TR_RES_BLIND);
 			break;
 		case 25:
 		case 26:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_CONF);
+			SET_FLAG(o_ptr, TR_RES_CONF);
 			break;
 		case 27:
 		case 28:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_SOUND);
+			SET_FLAG(o_ptr, TR_RES_SOUND);
 			break;
 		case 29:
 		case 30:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_SHARDS);
+			SET_FLAG(o_ptr, TR_RES_SHARDS);
 			break;
 		case 31:
 		case 32:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_NETHER);
+			SET_FLAG(o_ptr, TR_RES_NETHER);
 			break;
 		case 33:
 		case 34:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_NEXUS);
+			SET_FLAG(o_ptr, TR_RES_NEXUS);
 			break;
 		case 35:
 		case 36:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_CHAOS);
+			SET_FLAG(o_ptr, TR_RES_CHAOS);
 			break;
 		case 37:
 		case 38:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_DISEN);
+			SET_FLAG(o_ptr, TR_RES_DISEN);
 			break;
 		case 39:
 			if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
-				SET_FLAG(o_ptr->flags, 2, TR2_SH_ELEC);
+				SET_FLAG(o_ptr, TR_SH_ELEC);
 			else
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_ELEC);
+				SET_FLAG(o_ptr, TR_RES_ELEC);
 			break;
 		case 40:
 			if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
-				SET_FLAG(o_ptr->flags, 2, TR2_SH_FIRE);
+				SET_FLAG(o_ptr, TR_SH_FIRE);
 			else
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_FIRE);
+				SET_FLAG(o_ptr, TR_RES_FIRE);
 			break;
 		case 41:
 			if (o_ptr->tval >= TV_CLOAK && o_ptr->tval <= TV_HARD_ARMOR)
-				SET_FLAG(o_ptr->flags, 3, TR3_SH_COLD);
+				SET_FLAG(o_ptr, TR_SH_COLD);
 			else
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_COLD);
+				SET_FLAG(o_ptr, TR_RES_COLD);
 			break;
 		/* Note: SH_ACID is deliberately omitted here */
 		case 42:
 			if (o_ptr->tval == TV_SHIELD || o_ptr->tval == TV_CLOAK ||
 				o_ptr->tval == TV_HELM || o_ptr->tval == TV_HARD_ARMOR)
-				SET_FLAG(o_ptr->flags, 1, TR1_REFLECT);
+				SET_FLAG(o_ptr, TR_REFLECT);
 			else
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_FEAR);
+				SET_FLAG(o_ptr, TR_RES_FEAR);
 			break;
 	}
 }
@@ -215,89 +215,89 @@ static void random_misc(object_type *o_ptr)
 	switch (randint1(38))
 	{
 		case 1:
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_STR);
+			SET_FLAG(o_ptr, TR_SUST_STR);
 			break;
 		case 2:
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_INT);
+			SET_FLAG(o_ptr, TR_SUST_INT);
 			break;
 		case 3:
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_WIS);
+			SET_FLAG(o_ptr, TR_SUST_WIS);
 			break;
 		case 4:
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_DEX);
+			SET_FLAG(o_ptr, TR_SUST_DEX);
 			break;
 		case 5:
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_CON);
+			SET_FLAG(o_ptr, TR_SUST_CON);
 			break;
 		case 6:
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_CHR);
+			SET_FLAG(o_ptr, TR_SUST_CHR);
 			break;
 		case 7:
 		case 8:
 		case 14:
-			SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
+			SET_FLAG(o_ptr, TR_FREE_ACT);
 			break;
 		case 9:
-			SET_FLAG(o_ptr->flags, 1, TR1_HOLD_LIFE);
+			SET_FLAG(o_ptr, TR_HOLD_LIFE);
 			break;
 		case 10:
 		case 11:
-			SET_FLAG(o_ptr->flags, 2, TR2_LITE);
+			SET_FLAG(o_ptr, TR_LITE);
 			break;
 		case 12:
 		case 13:
-			SET_FLAG(o_ptr->flags, 2, TR2_FEATHER);
+			SET_FLAG(o_ptr, TR_FEATHER);
 			break;
 		case 15:
 			if (o_ptr->tval == TV_GLOVES)
-				SET_FLAG(o_ptr->flags, 3, TR3_GHOUL_TOUCH);
+				SET_FLAG(o_ptr, TR_GHOUL_TOUCH);
 			else
-				SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
+				SET_FLAG(o_ptr, TR_SEE_INVIS);
 
 			break;
 		case 16:
 		case 17:
-			SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
+			SET_FLAG(o_ptr, TR_SEE_INVIS);
 			break;
 		case 18:
-			SET_FLAG(o_ptr->flags, 2, TR2_TELEPATHY);
+			SET_FLAG(o_ptr, TR_TELEPATHY);
 			break;
 		case 19:
 		case 20:
-			SET_FLAG(o_ptr->flags, 2, TR2_SLOW_DIGEST);
+			SET_FLAG(o_ptr, TR_SLOW_DIGEST);
 			break;
 		case 21:
 		case 22:
-			SET_FLAG(o_ptr->flags, 2, TR2_REGEN);
+			SET_FLAG(o_ptr, TR_REGEN);
 			break;
 		case 23:
-			SET_FLAG(o_ptr->flags, 2, TR2_TELEPORT);
+			SET_FLAG(o_ptr, TR_TELEPORT);
 			break;
 		case 24:
 		case 25:
 		case 26:
 			if (o_ptr->tval >= TV_BOOTS && o_ptr->tval < TV_LITE)
 			{
-				SET_FLAG(o_ptr->flags, 2, TR2_SLOW_DIGEST);
+				SET_FLAG(o_ptr, TR_SLOW_DIGEST);
 			}
 			else
 			{
-				SET_FLAG(o_ptr->flags, 2, TR2_SHOW_MODS);
+				SET_FLAG(o_ptr, TR_SHOW_MODS);
 				o_ptr->to_a = (s16b)rand_range(5, 15);
 			}
 			break;
 		case 27:
 		case 28:
 		case 29:
-			SET_FLAG(o_ptr->flags, 2, TR2_SHOW_MODS);
+			SET_FLAG(o_ptr, TR_SHOW_MODS);
 			o_ptr->to_h += (s16b)rand_range(5, 15);
 			o_ptr->to_d += (s16b)rand_range(5, 15);
 			break;
 		case 30:
-			SET_FLAG(o_ptr->flags, 2, TR2_NO_MAGIC);
+			SET_FLAG(o_ptr, TR_NO_MAGIC);
 			break;
 		case 31:
-			SET_FLAG(o_ptr->flags, 2, TR2_NO_TELE);
+			SET_FLAG(o_ptr, TR_NO_TELE);
 			break;
 		case 32:
 		case 33:
@@ -305,27 +305,27 @@ static void random_misc(object_type *o_ptr)
 			/* A slay on a non-weapon gives protection */
 			switch (randint1(8))
 			{
-				case 1: SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ANIMAL); break;
-				case 2: SET_FLAG(o_ptr->flags, 0, TR0_SLAY_EVIL);   break;
-				case 3: SET_FLAG(o_ptr->flags, 0, TR0_SLAY_UNDEAD); break;
-				case 4: SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DEMON);  break;
-				case 5: SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ORC);    break;
-				case 6: SET_FLAG(o_ptr->flags, 0, TR0_SLAY_TROLL);  break;
-				case 7: SET_FLAG(o_ptr->flags, 0, TR0_SLAY_GIANT);  break;
-				case 8: SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DRAGON); break;
+				case 1: SET_FLAG(o_ptr, TR_SLAY_ANIMAL); break;
+				case 2: SET_FLAG(o_ptr, TR_SLAY_EVIL);   break;
+				case 3: SET_FLAG(o_ptr, TR_SLAY_UNDEAD); break;
+				case 4: SET_FLAG(o_ptr, TR_SLAY_DEMON);  break;
+				case 5: SET_FLAG(o_ptr, TR_SLAY_ORC);	 break;
+				case 6: SET_FLAG(o_ptr, TR_SLAY_TROLL);  break;
+				case 7: SET_FLAG(o_ptr, TR_SLAY_GIANT);  break;
+				case 8: SET_FLAG(o_ptr, TR_SLAY_DRAGON); break;
 			}
 			break;
 		case 35:
-			SET_FLAG(o_ptr->flags, 3, TR3_MUTATE);
+			SET_FLAG(o_ptr, TR_MUTATE);
 			break;
 		case 36:
-			SET_FLAG(o_ptr->flags, 3, TR3_PATRON);
+			SET_FLAG(o_ptr, TR_PATRON);
 			break;
 		case 37:
-			SET_FLAG(o_ptr->flags, 3, TR3_STRANGE_LUCK);
+			SET_FLAG(o_ptr, TR_STRANGE_LUCK);
 			break;
 		case 38:
-			SET_FLAG(o_ptr->flags, 3, TR3_LUCK_10);
+			SET_FLAG(o_ptr, TR_LUCK_10);
 			break;
 	}
 }
@@ -336,48 +336,48 @@ static void random_curse(object_type *o_ptr, bool evil)
 	{
 		case 1:
 		case 19:
-			SET_FLAG(o_ptr->flags, 3, TR3_HURT_ACID);
+			SET_FLAG(o_ptr, TR_HURT_ACID);
 			break;
 		case 2:
 		case 20:
-			SET_FLAG(o_ptr->flags, 3, TR3_HURT_ELEC);
+			SET_FLAG(o_ptr, TR_HURT_ELEC);
 			break;
 		case 3:
 		case 21:
-			SET_FLAG(o_ptr->flags, 3, TR3_HURT_FIRE);
+			SET_FLAG(o_ptr, TR_HURT_FIRE);
 			break;
 		case 4:
 		case 22:
-			SET_FLAG(o_ptr->flags, 3, TR3_HURT_COLD);
+			SET_FLAG(o_ptr, TR_HURT_COLD);
 			break;
 		case 5:
-			SET_FLAG(o_ptr->flags, 3, TR3_HURT_LITE);
+			SET_FLAG(o_ptr, TR_HURT_LITE);
 			break;
 		case 6:
-			SET_FLAG(o_ptr->flags, 3, TR3_HURT_DARK);
+			SET_FLAG(o_ptr, TR_HURT_DARK);
 			break;
 		case 7:
 		case 8:
-			SET_FLAG(o_ptr->flags, 2, TR2_AGGRAVATE);
+			SET_FLAG(o_ptr, TR_AGGRAVATE);
 			break;
 		case 9:
-			SET_FLAG(o_ptr->flags, 3, TR3_SLOW_HEAL);
+			SET_FLAG(o_ptr, TR_SLOW_HEAL);
 			break;
 		case 10:
 		case 23:
-			SET_FLAG(o_ptr->flags, 3, TR3_DRAIN_STATS);
+			SET_FLAG(o_ptr, TR_DRAIN_STATS);
 			break;
 		case 11:
 		case 12:
-			SET_FLAG(o_ptr->flags, 3, TR3_AUTO_CURSE);
+			SET_FLAG(o_ptr, TR_AUTO_CURSE);
 			break;
 		case 13:
 		case 14:
-			SET_FLAG(o_ptr->flags, 3, TR3_CANT_EAT);
+			SET_FLAG(o_ptr, TR_CANT_EAT);
 			break;
 		case 15:
 		case 16:
-			SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+			SET_FLAG(o_ptr, TR_CURSED);
 			break;
 		case 17:
 			o_ptr->to_a -= rand_range(5, 15);
@@ -388,22 +388,23 @@ static void random_curse(object_type *o_ptr, bool evil)
 			break;
 		case 24:
 		case 25:
-			SET_FLAG(o_ptr->flags, 2, TR2_TELEPORT);
+			SET_FLAG(o_ptr, TR_TELEPORT);
 			break;
 		case 26:
-			SET_FLAG(o_ptr->flags, 2, TR2_DRAIN_EXP);
+			SET_FLAG(o_ptr, TR_DRAIN_EXP);
 			break;
 		case 27:
 		case 28:
-			SET_FLAG(o_ptr->flags, 2, TR2_TY_CURSE);
+			SET_FLAG(o_ptr, TR_TY_CURSE);
 			break;
 		case 29:
 		case 30:
 		case 31:
-			SET_FLAG(o_ptr->flags, 2, TR2_CURSED | TR2_HEAVY_CURSE);
+			SET_FLAG(o_ptr, TR_CURSED);
+			SET_FLAG(o_ptr, TR_HEAVY_CURSE);
 			break;
 		case 32:
-			SET_FLAG(o_ptr->flags, 2, TR2_NO_MAGIC);
+			SET_FLAG(o_ptr, TR_NO_MAGIC);
 			break;
 	}
 }
@@ -418,10 +419,10 @@ static void random_slay(object_type *o_ptr)
 			case 1:
 			case 2:
 			case 3:
-				SET_FLAG(o_ptr->flags, 2, TR2_XTRA_MIGHT);
+				SET_FLAG(o_ptr, TR_XTRA_MIGHT);
 				break;
 			default:
-				SET_FLAG(o_ptr->flags, 2, TR2_XTRA_SHOTS);
+				SET_FLAG(o_ptr, TR_XTRA_SHOTS);
 				break;
 		}
 	}
@@ -430,81 +431,81 @@ static void random_slay(object_type *o_ptr)
 	{
 		case 1:
 		case 2:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ANIMAL);
+			SET_FLAG(o_ptr, TR_SLAY_ANIMAL);
 			break;
 		case 3:
 		case 4:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_EVIL);
+			SET_FLAG(o_ptr, TR_SLAY_EVIL);
 			break;
 		case 5:
 		case 6:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_UNDEAD);
+			SET_FLAG(o_ptr, TR_SLAY_UNDEAD);
 			break;
 		case 7:
 		case 8:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DEMON);
+			SET_FLAG(o_ptr, TR_SLAY_DEMON);
 			break;
 		case 9:
 		case 10:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ORC);
+			SET_FLAG(o_ptr, TR_SLAY_ORC);
 			break;
 		case 11:
 		case 12:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_TROLL);
+			SET_FLAG(o_ptr, TR_SLAY_TROLL);
 			break;
 		case 13:
 		case 14:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_GIANT);
+			SET_FLAG(o_ptr, TR_SLAY_GIANT);
 			break;
 		case 15:
 		case 16:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DRAGON);
+			SET_FLAG(o_ptr, TR_SLAY_DRAGON);
 			break;
 		case 17:
-			SET_FLAG(o_ptr->flags, 0, TR0_KILL_DRAGON);
+			SET_FLAG(o_ptr, TR_KILL_DRAGON);
 			break;
 		case 18:
 		case 19:
 			if (o_ptr->tval == TV_SWORD)
 			{
-				SET_FLAG(o_ptr->flags, 0, TR0_VORPAL);
+				SET_FLAG(o_ptr, TR_VORPAL);
 			}
 			else
 			{
-				SET_FLAG(o_ptr->flags, 0, TR0_IMPACT);
+				SET_FLAG(o_ptr, TR_IMPACT);
 			}
 			break;
 		case 20:
 		case 21:
 		case 22:
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_FIRE);
+			SET_FLAG(o_ptr, TR_BRAND_FIRE);
 			break;
 		case 23:
 		case 24:
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_COLD);
+			SET_FLAG(o_ptr, TR_BRAND_COLD);
 			break;
 		case 25:
 		case 26:
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_ELEC);
+			SET_FLAG(o_ptr, TR_BRAND_ELEC);
 			break;
 		case 27:
 		case 28:
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_ACID);
+			SET_FLAG(o_ptr, TR_BRAND_ACID);
 			break;
 		case 29:
 		case 30:
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_POIS);
+			SET_FLAG(o_ptr, TR_BRAND_POIS);
 			break;
 		case 31:
 		case 32:
-			SET_FLAG(o_ptr->flags, 0, TR0_VAMPIRIC);
+			SET_FLAG(o_ptr, TR_VAMPIRIC);
 			break;
 		case 33:
 		case 34:
-			SET_FLAG(o_ptr->flags, 3, TR3_PSI_CRIT);
+			SET_FLAG(o_ptr, TR_PSI_CRIT);
 			break;
 		default:
-			SET_FLAG(o_ptr->flags, 0, TR0_CHAOTIC);
+			SET_FLAG(o_ptr, TR_CHAOTIC);
 			break;
 	}
 }
@@ -1263,7 +1264,7 @@ static void apply_activation_power(object_type *o_ptr, cptr text, cptr desc, cpt
 	len = strnfmt(buf, 1024, "return \"%s every %i-%i turns\"", desc, charge_min, charge_min * 2);
 	o_ptr->trigger[TRIGGER_DESC] = quark_fmt(buf);
 
-	SET_FLAG(o_ptr->flags, 2, TR2_ACTIVATE);
+	SET_FLAG(o_ptr, TR_ACTIVATE);
 	o_ptr->timeout = 0;
 }
 
@@ -1512,17 +1513,17 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 		case 1:
 		case 2:
 		case 3:
-			SET_FLAG(o_ptr->flags, 0, TR0_WIS);
-			SET_FLAG(o_ptr->flags, 2, TR2_BLESSED);
+			SET_FLAG(o_ptr, TR_WIS);
+			SET_FLAG(o_ptr, TR_BLESSED);
 
 			break;
 
 		case 4:
 		case 5:
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_ACID);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_ACID);
+			SET_FLAG(o_ptr, TR_BRAND_ACID);
+			SET_FLAG(o_ptr, TR_RES_ACID);
 			if (o_ptr->tval == TV_SWORD && one_in_(3))
-				SET_FLAG(o_ptr->flags, 0, TR0_TUNNEL);
+				SET_FLAG(o_ptr, TR_TUNNEL);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				attack_activation_power(o_ptr, level, "GF_ACID");
@@ -1531,8 +1532,8 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 
 		case 6:
 		case 7:
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_ELEC);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_ELEC);
+			SET_FLAG(o_ptr, TR_BRAND_ELEC);
+			SET_FLAG(o_ptr, TR_RES_ELEC);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				attack_activation_power(o_ptr, level, "GF_ELEC");
@@ -1542,9 +1543,9 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 		case 8:
 		case 9:
 		case 10:
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_FIRE);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_FIRE);
-			SET_FLAG(o_ptr->flags, 2, TR2_LITE);
+			SET_FLAG(o_ptr, TR_BRAND_FIRE);
+			SET_FLAG(o_ptr, TR_RES_FIRE);
+			SET_FLAG(o_ptr, TR_LITE);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				attack_activation_power(o_ptr, level, "GF_FIRE");
@@ -1554,8 +1555,8 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 		case 11:
 		case 12:
 		case 13:
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_COLD);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_COLD);
+			SET_FLAG(o_ptr, TR_BRAND_COLD);
+			SET_FLAG(o_ptr, TR_RES_COLD);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				attack_activation_power(o_ptr, level, "GF_COLD");
@@ -1564,8 +1565,8 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 
 		case 14:
 		case 15:	
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_POIS);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_POIS);
+			SET_FLAG(o_ptr, TR_BRAND_POIS);
+			SET_FLAG(o_ptr, TR_RES_POIS);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				attack_activation_power(o_ptr, level, "GF_POIS");
@@ -1574,10 +1575,10 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 
 		case 16:
 		case 17:
-			SET_FLAG(o_ptr->flags, 0, TR0_CHAOTIC);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_CHAOS);
+			SET_FLAG(o_ptr, TR_CHAOTIC);
+			SET_FLAG(o_ptr, TR_RES_CHAOS);
 			if (one_in_(3))
-				SET_FLAG(o_ptr->flags, 3, TR3_PATRON);
+				SET_FLAG(o_ptr, TR_PATRON);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				attack_activation_power(o_ptr, level, "GF_CHAOS");
@@ -1587,84 +1588,84 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 		case 18:
 			if (o_ptr->tval == TV_SWORD)
 			{
-				SET_FLAG(o_ptr->flags, 0, TR0_VORPAL);
-				SET_FLAG(o_ptr->flags, 0, TR0_TUNNEL);
+				SET_FLAG(o_ptr, TR_VORPAL);
+				SET_FLAG(o_ptr, TR_TUNNEL);
 			}
 			else
 			{
-				SET_FLAG(o_ptr->flags, 0, TR0_BLOWS);
+				SET_FLAG(o_ptr, TR_BLOWS);
 			}
 
 			break;
 
 		case 19:
 		case 20:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ANIMAL);
+			SET_FLAG(o_ptr, TR_SLAY_ANIMAL);
 			if (one_in_(2))
-				SET_FLAG(o_ptr->flags, 0, TR0_INT);
+				SET_FLAG(o_ptr, TR_INT);
 			if (one_in_(2))
-				SET_FLAG(o_ptr->flags, 2, TR2_REGEN);
+				SET_FLAG(o_ptr, TR_REGEN);
 
 			break;
 
 		case 21:
 		case 22:
 		case 23:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_EVIL);
-			SET_FLAG(o_ptr->flags, 2, TR2_BLESSED);
+			SET_FLAG(o_ptr, TR_SLAY_EVIL);
+			SET_FLAG(o_ptr, TR_BLESSED);
 			if (one_in_(2))
-				SET_FLAG(o_ptr->flags, 0, TR0_WIS);
+				SET_FLAG(o_ptr, TR_WIS);
 			if (one_in_(2))
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_FEAR);
+				SET_FLAG(o_ptr, TR_RES_FEAR);
 
 			break;
 
 		case 24:
 		case 25:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_UNDEAD);
+			SET_FLAG(o_ptr, TR_SLAY_UNDEAD);
 			if (one_in_(2))
-				SET_FLAG(o_ptr->flags, 0, TR0_INT);
+				SET_FLAG(o_ptr, TR_INT);
 			if (one_in_(2))
-				SET_FLAG(o_ptr->flags, 1, TR1_HOLD_LIFE);
+				SET_FLAG(o_ptr, TR_HOLD_LIFE);
 			if (one_in_(2))
-				SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
+				SET_FLAG(o_ptr, TR_SEE_INVIS);
 
 			break;
 
 		case 26:
 		case 27:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DEMON);
-			SET_FLAG(o_ptr->flags, 0, TR0_INT);
+			SET_FLAG(o_ptr, TR_SLAY_DEMON);
+			SET_FLAG(o_ptr, TR_INT);
 			
 			break;
 
 		case 28:
 		case 29:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ORC);
-			SET_FLAG(o_ptr->flags, 0, TR0_DEX);
+			SET_FLAG(o_ptr, TR_SLAY_ORC);
+			SET_FLAG(o_ptr, TR_DEX);
 
 			break;
 
 		case 30:
 		case 31:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_GIANT);
-			SET_FLAG(o_ptr->flags, 0, TR0_STR);
+			SET_FLAG(o_ptr, TR_SLAY_GIANT);
+			SET_FLAG(o_ptr, TR_STR);
 
 			break;
 
 		case 32:
 		case 33:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DRAGON);
+			SET_FLAG(o_ptr, TR_SLAY_DRAGON);
 			if (one_in_(3))
-				SET_FLAG(o_ptr->flags, 0, TR0_KILL_DRAGON);
-			SET_FLAG(o_ptr->flags, 0, TR0_CON);
+				SET_FLAG(o_ptr, TR_KILL_DRAGON);
+			SET_FLAG(o_ptr, TR_CON);
 
 			break;
 
 		case 34:
 		case 35:
-			SET_FLAG(o_ptr->flags, 0, TR0_VAMPIRIC);
-			SET_FLAG(o_ptr->flags, 1, TR1_HOLD_LIFE);
+			SET_FLAG(o_ptr, TR_VAMPIRIC);
+			SET_FLAG(o_ptr, TR_HOLD_LIFE);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "vampiric drain (%s)");
@@ -1672,7 +1673,7 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 			break;
 
 		case 36:
-			SET_FLAG(o_ptr->flags, 1, TR1_HOLD_LIFE);
+			SET_FLAG(o_ptr, TR_HOLD_LIFE);
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "drain life (%s)");
 
@@ -1688,7 +1689,7 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 			break;
 
 		case 38:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ANIMAL);
+			SET_FLAG(o_ptr, TR_SLAY_ANIMAL);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "charm animal");
@@ -1696,7 +1697,7 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 			break;
 
 		case 39:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_UNDEAD);
+			SET_FLAG(o_ptr, TR_SLAY_UNDEAD);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "enslave undead");
@@ -1705,7 +1706,7 @@ static int random_minor_theme_weapon(object_type *o_ptr, int level)
 
 		case 40:
 			if (o_ptr->tval == TV_SWORD)
-				SET_FLAG(o_ptr->flags, 0, TR0_TUNNEL);
+				SET_FLAG(o_ptr, TR_TUNNEL);
 
 #if 0
 			activate = ACT_STONE_MUD;
@@ -1725,11 +1726,11 @@ static int random_major_theme_weapon(object_type *o_ptr, int level)
 	{
 	case 1:
 		/* Holy Avenger */
-		SET_FLAG(o_ptr->flags, 0, TR0_SLAY_EVIL);
-		SET_FLAG(o_ptr->flags, 0, TR0_SLAY_UNDEAD);
-		SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DEMON);
-		SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
-		SET_FLAG(o_ptr->flags, 2, TR2_BLESSED);
+		SET_FLAG(o_ptr, TR_SLAY_EVIL);
+		SET_FLAG(o_ptr, TR_SLAY_UNDEAD);
+		SET_FLAG(o_ptr, TR_SLAY_DEMON);
+		SET_FLAG(o_ptr, TR_SEE_INVIS);
+		SET_FLAG(o_ptr, TR_BLESSED);
 
 		if (one_in_(ACTIVATION_CHANCE))
 			misc_activation_power(o_ptr, level, "dispel evil (%s)");
@@ -1738,18 +1739,18 @@ static int random_major_theme_weapon(object_type *o_ptr, int level)
 
 	case 2:
 		/* Defender */
-		SET_FLAG(o_ptr->flags, 1, TR1_RES_ACID);
-		SET_FLAG(o_ptr->flags, 1, TR1_RES_ELEC);
-		SET_FLAG(o_ptr->flags, 1, TR1_RES_FIRE);
-		SET_FLAG(o_ptr->flags, 1, TR1_RES_COLD);
+		SET_FLAG(o_ptr, TR_RES_ACID);
+		SET_FLAG(o_ptr, TR_RES_ELEC);
+		SET_FLAG(o_ptr, TR_RES_FIRE);
+		SET_FLAG(o_ptr, TR_RES_COLD);
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
+			SET_FLAG(o_ptr, TR_FREE_ACT);
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
+			SET_FLAG(o_ptr, TR_SEE_INVIS);
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 2, TR2_FEATHER);
+			SET_FLAG(o_ptr, TR_FEATHER);
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 2, TR2_REGEN);
+			SET_FLAG(o_ptr, TR_REGEN);
 		if (one_in_(2))
 			o_ptr->to_a += randint1(5);
 
@@ -1762,26 +1763,26 @@ static int random_major_theme_weapon(object_type *o_ptr, int level)
 
 	case 3:
 		/* Westernesse */
-		SET_FLAG(o_ptr->flags, 0, TR0_STR);
-		SET_FLAG(o_ptr->flags, 0, TR0_DEX);
-		SET_FLAG(o_ptr->flags, 0, TR0_CON);
-		SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ORC);
-		SET_FLAG(o_ptr->flags, 0, TR0_SLAY_TROLL);
-		SET_FLAG(o_ptr->flags, 0, TR0_SLAY_GIANT);
+		SET_FLAG(o_ptr, TR_STR);
+		SET_FLAG(o_ptr, TR_DEX);
+		SET_FLAG(o_ptr, TR_CON);
+		SET_FLAG(o_ptr, TR_SLAY_ORC);
+		SET_FLAG(o_ptr, TR_SLAY_TROLL);
+		SET_FLAG(o_ptr, TR_SLAY_GIANT);
 
 		break;
 
 	case 4:
 		/* Trump Weapon */
-		SET_FLAG(o_ptr->flags, 0, TR0_SLAY_EVIL);
-		SET_FLAG(o_ptr->flags, 2, TR2_TELEPORT);
-		SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
+		SET_FLAG(o_ptr, TR_SLAY_EVIL);
+		SET_FLAG(o_ptr, TR_TELEPORT);
+		SET_FLAG(o_ptr, TR_FREE_ACT);
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 0, TR0_SEARCH);
+			SET_FLAG(o_ptr, TR_SEARCH);
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 2, TR2_REGEN);
+			SET_FLAG(o_ptr, TR_REGEN);
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 2, TR2_SLOW_DIGEST);
+			SET_FLAG(o_ptr, TR_SLOW_DIGEST);
 
 		if (one_in_(ACTIVATION_CHANCE))
 			misc_activation_power(o_ptr, level, "teleport (100)");
@@ -1790,53 +1791,53 @@ static int random_major_theme_weapon(object_type *o_ptr, int level)
 
 	case 5:
 		/* Pattern Weapon */
-		SET_FLAG(o_ptr->flags, 0, TR0_STR);
-		SET_FLAG(o_ptr->flags, 0, TR0_CON);
-		SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
-		SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
+		SET_FLAG(o_ptr, TR_STR);
+		SET_FLAG(o_ptr, TR_CON);
+		SET_FLAG(o_ptr, TR_FREE_ACT);
+		SET_FLAG(o_ptr, TR_SEE_INVIS);
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_EVIL);
+			SET_FLAG(o_ptr, TR_SLAY_EVIL);
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DEMON);
+			SET_FLAG(o_ptr, TR_SLAY_DEMON);
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_UNDEAD);
+			SET_FLAG(o_ptr, TR_SLAY_UNDEAD);
 
 		break;
 
 	case 6:
 		/* Mixed slays */
 		if (one_in_(3))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ANIMAL);
+			SET_FLAG(o_ptr, TR_SLAY_ANIMAL);
 		if (one_in_(3))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_EVIL);
+			SET_FLAG(o_ptr, TR_SLAY_EVIL);
 		if (one_in_(3))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_UNDEAD);
+			SET_FLAG(o_ptr, TR_SLAY_UNDEAD);
 		if (one_in_(3))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DEMON);
+			SET_FLAG(o_ptr, TR_SLAY_DEMON);
 		if (one_in_(3))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ORC);
+			SET_FLAG(o_ptr, TR_SLAY_ORC);
 		if (one_in_(3))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_TROLL);
+			SET_FLAG(o_ptr, TR_SLAY_TROLL);
 		if (one_in_(3))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_GIANT);
+			SET_FLAG(o_ptr, TR_SLAY_GIANT);
 		if (one_in_(3))
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DRAGON);
+			SET_FLAG(o_ptr, TR_SLAY_DRAGON);
 
 		break;
 
 	case 7:
 		/* Assassin blade */
-		SET_FLAG(o_ptr->flags, 0, TR0_STEALTH);
-		SET_FLAG(o_ptr->flags, 0, TR0_BLOWS);
-		SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
+		SET_FLAG(o_ptr, TR_STEALTH);
+		SET_FLAG(o_ptr, TR_BLOWS);
+		SET_FLAG(o_ptr, TR_FREE_ACT);
 		
 		if (one_in_(2))
-			SET_FLAG(o_ptr->flags, 0, TR0_BRAND_POIS);
+			SET_FLAG(o_ptr, TR_BRAND_POIS);
 		else
-			SET_FLAG(o_ptr->flags, 0, TR0_VAMPIRIC);
+			SET_FLAG(o_ptr, TR_VAMPIRIC);
 		
 		if (o_ptr->tval == TV_SWORD)
-			SET_FLAG(o_ptr->flags, 1, TR1_THROW);
+			SET_FLAG(o_ptr, TR_THROW);
 
 		break;
 	}
@@ -1853,68 +1854,68 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 		case 1:
 		case 2:
 		case 3:
-			SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
-			SET_FLAG(o_ptr->flags, 0, TR0_SEARCH);
+			SET_FLAG(o_ptr, TR_SEE_INVIS);
+			SET_FLAG(o_ptr, TR_SEARCH);
 
 			break;
 
 		case 4:
 		case 5:
-			SET_FLAG(o_ptr->flags, 0, TR0_STR);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_STR);
+			SET_FLAG(o_ptr, TR_STR);
+			SET_FLAG(o_ptr, TR_SUST_STR);
 			if (one_in_(3))
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_FEAR);
+				SET_FLAG(o_ptr, TR_RES_FEAR);
 
 			break;
 
 		case 6:
 		case 7:
-			SET_FLAG(o_ptr->flags, 0, TR0_INT);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_INT);
+			SET_FLAG(o_ptr, TR_INT);
+			SET_FLAG(o_ptr, TR_SUST_INT);
 			if (one_in_(3))
-				SET_FLAG(o_ptr->flags, 2, TR2_FEATHER);
+				SET_FLAG(o_ptr, TR_FEATHER);
 
 			break;
 
 		case 8:
 		case 9:
-			SET_FLAG(o_ptr->flags, 0, TR0_WIS);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_WIS);
+			SET_FLAG(o_ptr, TR_WIS);
+			SET_FLAG(o_ptr, TR_SUST_WIS);
 			if (one_in_(3))
-				SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
+				SET_FLAG(o_ptr, TR_SEE_INVIS);
 
 			break;
 
 		case 10:
 		case 11:
-			SET_FLAG(o_ptr->flags, 0, TR0_DEX);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_DEX);
+			SET_FLAG(o_ptr, TR_DEX);
+			SET_FLAG(o_ptr, TR_SUST_DEX);
 			if (one_in_(3))
-				SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
+				SET_FLAG(o_ptr, TR_FREE_ACT);
 
 			break;
 
 		case 12:
 		case 13:
-			SET_FLAG(o_ptr->flags, 0, TR0_CON);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_CON);
+			SET_FLAG(o_ptr, TR_CON);
+			SET_FLAG(o_ptr, TR_SUST_CON);
 			if (one_in_(3))
-				SET_FLAG(o_ptr->flags, 2, TR2_REGEN);
+				SET_FLAG(o_ptr, TR_REGEN);
 
 			break;
 
 		case 14:
 		case 15:
-			SET_FLAG(o_ptr->flags, 0, TR0_CHR);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_CHR);
+			SET_FLAG(o_ptr, TR_CHR);
+			SET_FLAG(o_ptr, TR_SUST_CHR);
 			if (one_in_(3))
-				SET_FLAG(o_ptr->flags, 2, TR2_LITE);
+				SET_FLAG(o_ptr, TR_LITE);
 
 			break;
 
 		case 16:
-			SET_FLAG(o_ptr->flags, 2, TR2_LITE);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_LITE);
+			SET_FLAG(o_ptr, TR_LITE);
+			SET_FLAG(o_ptr, TR_RES_LITE);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "light area (2d20)");
@@ -1923,39 +1924,39 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 
 		case 17:
 		case 18:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_FIRE);
-			SET_FLAG(o_ptr->flags, 2, TR2_SH_FIRE);
+			SET_FLAG(o_ptr, TR_RES_FIRE);
+			SET_FLAG(o_ptr, TR_SH_FIRE);
 
 			break;
 
 		case 19:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_ELEC);
-			SET_FLAG(o_ptr->flags, 2, TR2_SH_ELEC);
+			SET_FLAG(o_ptr, TR_RES_ELEC);
+			SET_FLAG(o_ptr, TR_SH_ELEC);
 
 			break;
 
 		case 20:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_COLD);
-			SET_FLAG(o_ptr->flags, 3, TR3_SH_COLD);
+			SET_FLAG(o_ptr, TR_RES_COLD);
+			SET_FLAG(o_ptr, TR_SH_COLD);
 
 			break;
 
 		case 21:
-			SET_FLAG(o_ptr->flags, 0, TR0_INT);
-			SET_FLAG(o_ptr->flags, 0, TR0_WIS);
+			SET_FLAG(o_ptr, TR_INT);
+			SET_FLAG(o_ptr, TR_WIS);
 
 			break;
 
 		case 22:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_LITE);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_DARK);
+			SET_FLAG(o_ptr, TR_RES_LITE);
+			SET_FLAG(o_ptr, TR_RES_DARK);
 			if (one_in_(2))
-				SET_FLAG(o_ptr->flags, 2, TR2_LITE);
+				SET_FLAG(o_ptr, TR_LITE);
 
 			break;
 
 		case 23:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_EVIL);
+			SET_FLAG(o_ptr, TR_SLAY_EVIL);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "banish evil");
@@ -1965,7 +1966,7 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 			break;
 
 		case 24:
-			SET_FLAG(o_ptr->flags, 0, TR0_STEALTH);
+			SET_FLAG(o_ptr, TR_STEALTH);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "sleep nearby monsters");
@@ -1973,7 +1974,7 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 			break;
 
 		case 25:
-			SET_FLAG(o_ptr->flags, 0, TR0_WIS);
+			SET_FLAG(o_ptr, TR_WIS);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "telepathy (%s+ turns)");
@@ -1981,7 +1982,7 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 			break;
 
 		case 26:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_DARK);
+			SET_FLAG(o_ptr, TR_RES_DARK);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "beam of sunlight");
@@ -1991,14 +1992,14 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 			break;
 
 		case 27:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_CHAOS);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_CONF);
+			SET_FLAG(o_ptr, TR_RES_CHAOS);
+			SET_FLAG(o_ptr, TR_RES_CONF);
 
 			break;
 
 		case 28:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_NETHER);
-			SET_FLAG(o_ptr->flags, 1, TR1_HOLD_LIFE);
+			SET_FLAG(o_ptr, TR_RES_NETHER);
+			SET_FLAG(o_ptr, TR_HOLD_LIFE);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "restore life levels");
@@ -2006,13 +2007,13 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 			break;
 
 		case 29:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_SOUND);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_SHARDS);
+			SET_FLAG(o_ptr, TR_RES_SOUND);
+			SET_FLAG(o_ptr, TR_RES_SHARDS);
 
 			break;
 
 		case 30:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_FEAR);
+			SET_FLAG(o_ptr, TR_RES_FEAR);
 
 			if (one_in_(ACTIVATION_CHANCE))
 				misc_activation_power(o_ptr, level, "terror");
@@ -2022,7 +2023,7 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 			break;
 
 		case 31:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_ANIMAL);
+			SET_FLAG(o_ptr, TR_SLAY_ANIMAL);
 
 #if 0
 			if (one_in_(3))
@@ -2036,7 +2037,7 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 			break;
 
 		case 32:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_UNDEAD);
+			SET_FLAG(o_ptr, TR_SLAY_UNDEAD);
 
 #if 0
 			if (one_in_(2))
@@ -2048,7 +2049,7 @@ static int random_minor_theme_armor(object_type *o_ptr, int level)
 			break;
 
 		case 33:
-			SET_FLAG(o_ptr->flags, 0, TR0_SLAY_DEMON);
+			SET_FLAG(o_ptr, TR_SLAY_DEMON);
 
 #if 0
 			activate = ACT_SUMMON_DEMON;
@@ -2069,54 +2070,54 @@ static int random_major_theme_armor(object_type *o_ptr, int level)
 	switch (randint1(10))
 	{
 		case 1:
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_ACID);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_ELEC);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_FIRE);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_COLD);
+			SET_FLAG(o_ptr, TR_RES_ACID);
+			SET_FLAG(o_ptr, TR_RES_ELEC);
+			SET_FLAG(o_ptr, TR_RES_FIRE);
+			SET_FLAG(o_ptr, TR_RES_COLD);
 
 			if (one_in_(3))
-				SET_FLAG(o_ptr->flags, 1, TR1_RES_POIS);
+				SET_FLAG(o_ptr, TR_RES_POIS);
 
 			break;
 
 		case 2:
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_STR);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_INT);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_WIS);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_DEX);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_CON);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_CHR);
+			SET_FLAG(o_ptr, TR_SUST_STR);
+			SET_FLAG(o_ptr, TR_SUST_INT);
+			SET_FLAG(o_ptr, TR_SUST_WIS);
+			SET_FLAG(o_ptr, TR_SUST_DEX);
+			SET_FLAG(o_ptr, TR_SUST_CON);
+			SET_FLAG(o_ptr, TR_SUST_CHR);
 
 			break;
 
 		case 3:
 			/* Might */
-			SET_FLAG(o_ptr->flags, 0, TR0_STR);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_STR);
-			SET_FLAG(o_ptr->flags, 0, TR0_DEX);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_DEX);
-			SET_FLAG(o_ptr->flags, 0, TR0_CON);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_CON);
+			SET_FLAG(o_ptr, TR_STR);
+			SET_FLAG(o_ptr, TR_SUST_STR);
+			SET_FLAG(o_ptr, TR_DEX);
+			SET_FLAG(o_ptr, TR_SUST_DEX);
+			SET_FLAG(o_ptr, TR_CON);
+			SET_FLAG(o_ptr, TR_SUST_CON);
 
 			break;
 
 		case 4:
 			/* Mental */
-			SET_FLAG(o_ptr->flags, 0, TR0_INT);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_INT);
-			SET_FLAG(o_ptr->flags, 0, TR0_WIS);
-			SET_FLAG(o_ptr->flags, 1, TR1_SUST_WIS);
+			SET_FLAG(o_ptr, TR_INT);
+			SET_FLAG(o_ptr, TR_SUST_INT);
+			SET_FLAG(o_ptr, TR_WIS);
+			SET_FLAG(o_ptr, TR_SUST_WIS);
 			if (one_in_(3))
-				SET_FLAG(o_ptr->flags, 0, TR0_SP);
+				SET_FLAG(o_ptr, TR_SP);
 			
 			break;
 
 		case 5:
 			/* Lohengrin */
-			SET_FLAG(o_ptr->flags, 0, TR0_STEALTH);
-			SET_FLAG(o_ptr->flags, 0, TR0_INT);
-			SET_FLAG(o_ptr->flags, 0, TR0_WIS);
-			SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
+			SET_FLAG(o_ptr, TR_STEALTH);
+			SET_FLAG(o_ptr, TR_INT);
+			SET_FLAG(o_ptr, TR_WIS);
+			SET_FLAG(o_ptr, TR_SEE_INVIS);
 
 			break;
 
@@ -2135,12 +2136,12 @@ static int random_major_theme_armor(object_type *o_ptr, int level)
 			{
 				switch (randint1(6))
 				{
-					case 1: SET_FLAG(o_ptr->flags, 0, TR0_STR); break;
-					case 2: SET_FLAG(o_ptr->flags, 0, TR0_INT); break;
-					case 3: SET_FLAG(o_ptr->flags, 0, TR0_WIS); break;
-					case 4: SET_FLAG(o_ptr->flags, 0, TR0_DEX); break;
-					case 5: SET_FLAG(o_ptr->flags, 0, TR0_CON); break;
-					case 6: SET_FLAG(o_ptr->flags, 0, TR0_CHR); break;
+					case 1: SET_FLAG(o_ptr, TR_STR); break;
+					case 2: SET_FLAG(o_ptr, TR_INT); break;
+					case 3: SET_FLAG(o_ptr, TR_WIS); break;
+					case 4: SET_FLAG(o_ptr, TR_DEX); break;
+					case 5: SET_FLAG(o_ptr, TR_CON); break;
+					case 6: SET_FLAG(o_ptr, TR_CHR); break;
 				}
 			}
 
@@ -2148,11 +2149,11 @@ static int random_major_theme_armor(object_type *o_ptr, int level)
 
 		case 10:
 			/* Thranduil */
-			SET_FLAG(o_ptr->flags, 0, TR0_INT);
-			SET_FLAG(o_ptr->flags, 0, TR0_WIS);
-			SET_FLAG(o_ptr->flags, 1, TR1_RES_BLIND);
+			SET_FLAG(o_ptr, TR_INT);
+			SET_FLAG(o_ptr, TR_WIS);
+			SET_FLAG(o_ptr, TR_RES_BLIND);
 			if (o_ptr->tval == TV_HELM || o_ptr->tval == TV_CROWN)
-				SET_FLAG(o_ptr->flags, 2, TR2_TELEPATHY);
+				SET_FLAG(o_ptr, TR_TELEPATHY);
 
 			break;
 	}
@@ -2169,7 +2170,7 @@ static void curse_artifact(object_type *o_ptr)
 	if (o_ptr->to_h > 0) o_ptr->to_h = 0 - (o_ptr->to_h + randint1(4));
 	if (o_ptr->to_d > 0) o_ptr->to_d = 0 - (o_ptr->to_d + randint1(4));
 
-	SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+	SET_FLAG(o_ptr, TR_CURSED);
 
 	for (i = rand_range(2, 6); i > 0; --i)
 		random_curse(o_ptr, TRUE);
@@ -2234,11 +2235,11 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		{
 			case TV_BOOTS:
 				if (one_in_(WEIRD_LUCK))
-					SET_FLAG(o_ptr->flags, 0, TR0_SPEED);
+					SET_FLAG(o_ptr, TR_SPEED);
 				else if (one_in_(2))
-					SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
+					SET_FLAG(o_ptr, TR_FREE_ACT);
 				else
-					SET_FLAG(o_ptr->flags, 2, TR2_FEATHER);
+					SET_FLAG(o_ptr, TR_FEATHER);
 				given++;
 				break;
 
@@ -2246,13 +2247,13 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				switch (randint1(3))
 				{
 				case 1:
-					SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
+					SET_FLAG(o_ptr, TR_FREE_ACT);
 					break;
 				case 2:
-					SET_FLAG(o_ptr->flags, 0, TR0_DEX);
+					SET_FLAG(o_ptr, TR_DEX);
 					break;
 				case 3:
-					SET_FLAG(o_ptr->flags, 0, TR0_STR);
+					SET_FLAG(o_ptr, TR_STR);
 					break;
 				}
 				given++;
@@ -2263,19 +2264,19 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				switch (randint1(5))
 				{
 				case 1:
-					SET_FLAG(o_ptr->flags, 2, TR2_TELEPATHY);
+					SET_FLAG(o_ptr, TR_TELEPATHY);
 					break;
 				case 2:
-					SET_FLAG(o_ptr->flags, 2, TR2_SEE_INVIS);
+					SET_FLAG(o_ptr, TR_SEE_INVIS);
 					break;
 				case 3:
-					SET_FLAG(o_ptr->flags, 0, TR0_INFRA);
+					SET_FLAG(o_ptr, TR_INFRA);
 					break;
 				case 4:
-					SET_FLAG(o_ptr->flags, 0, TR0_INT);
+					SET_FLAG(o_ptr, TR_INT);
 					break;
 				case 5:
-					SET_FLAG(o_ptr->flags, 0, TR0_WIS);
+					SET_FLAG(o_ptr, TR_WIS);
 					break;
 				}
 				given++;
@@ -2283,9 +2284,9 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 
 			case TV_CLOAK:
 				if (one_in_(2))
-					SET_FLAG(o_ptr->flags, 3, TR3_LUCK_10);
+					SET_FLAG(o_ptr, TR_LUCK_10);
 				else
-					SET_FLAG(o_ptr->flags, 0, TR0_STEALTH);
+					SET_FLAG(o_ptr, TR_STEALTH);
 				given++;
 				break;
 
@@ -2293,13 +2294,13 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				switch (randint1(3))
 				{
 				case 1:
-					SET_FLAG(o_ptr->flags, 0, TR0_DEX);
+					SET_FLAG(o_ptr, TR_DEX);
 					break;
 				case 2:
-					SET_FLAG(o_ptr->flags, 0, TR0_CON);
+					SET_FLAG(o_ptr, TR_CON);
 					break;
 				case 3:
-					SET_FLAG(o_ptr->flags, 0, TR0_STEALTH);
+					SET_FLAG(o_ptr, TR_STEALTH);
 					break;
 				}
 				given++;
@@ -2309,13 +2310,13 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				switch (randint1(3))
 				{
 				case 1:
-					SET_FLAG(o_ptr->flags, 1, TR1_HOLD_LIFE);
+					SET_FLAG(o_ptr, TR_HOLD_LIFE);
 					break;
 				case 2:
-					SET_FLAG(o_ptr->flags, 0, TR0_CON);
+					SET_FLAG(o_ptr, TR_CON);
 					break;
 				case 3:
-					SET_FLAG(o_ptr->flags, 2, TR2_REGEN);
+					SET_FLAG(o_ptr, TR_REGEN);
 					break;
 				}
 				given++;
@@ -2325,13 +2326,13 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 				switch (randint1(3))
 				{
 				case 1:
-					SET_FLAG(o_ptr->flags, 1, TR1_REFLECT);
+					SET_FLAG(o_ptr, TR_REFLECT);
 					break;
 				case 2:
-					SET_FLAG(o_ptr->flags, 2, TR2_LITE);
+					SET_FLAG(o_ptr, TR_LITE);
 					break;
 				case 3:
-					SET_FLAG(o_ptr->flags, 1, TR1_FREE_ACT);
+					SET_FLAG(o_ptr, TR_FREE_ACT);
 					break;
 				}
 				given++;
@@ -2535,7 +2536,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 	/* Make the object an artifact */
-	SET_FLAG(o_ptr->flags, 2, TR2_INSTA_ART);
+	SET_FLAG(o_ptr, TR_INSTA_ART);
 
 	/* Set the cost */
 	o_ptr->cost = k_info[o_ptr->k_idx].cost + flag_cost(o_ptr, o_ptr->pval);

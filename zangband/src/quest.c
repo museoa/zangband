@@ -559,7 +559,7 @@ void activate_quests(int level)
 				q_ptr->flags |= QUEST_FLAG_ACTIVE;
 
 				/* Hack - toggle QUESTOR flag */
-				SET_FLAG(r_info[q_ptr->data.dun.r_idx].flags, 0, RF0_QUESTOR);
+				SET_FLAG(&r_info[q_ptr->data.dun.r_idx], RF_QUESTOR);
 				
 				break;
 			}
@@ -1124,7 +1124,7 @@ static quest_type *insert_artifact_quest(u16b a_idx)
 	q_ptr->data.fit.place = find_good_dungeon(a_ptr->level);
 	
 	/* Artifact is now a quest item */
-	SET_FLAG(a_ptr->flags, 2, TR2_QUESTITEM);
+	SET_FLAG(a_ptr, TR_QUESTITEM);
 	
 	/* Done */
 	return (q_ptr);

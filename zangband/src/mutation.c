@@ -1981,14 +1981,14 @@ void mutation_effect(void)
 	if (p_ptr->muta3 & MUT3_ELEC_TOUC)
 	{
 		p_ptr->stat[A_CON].add -= 1;
-		/* SET_FLAG(p_ptr->flags, 2, TR2_SH_ELEC) */;
+		/* SET_FLAG(p_ptr, TR_SH_ELEC) */;
 	}
 
 	if (p_ptr->muta3 & MUT3_FIRE_BODY)
 	{
 		p_ptr->stat[A_DEX].add -= 1;
-		/* SET_FLAG(p_ptr->flags, 2, TR2_SH_FIRE) */;
-		/* SET_FLAG(p_ptr->flags, 2, TR2_LITE) */;
+		/* SET_FLAG(p_ptr, TR_SH_FIRE) */;
+		/* SET_FLAG(p_ptr, TR_LITE) */;
 	}
 
 	if (p_ptr->muta3 & MUT3_WART_SKIN)
@@ -2016,23 +2016,23 @@ void mutation_effect(void)
 	{
 		p_ptr->stat[A_CON].add -= 1;
 		p_ptr->stat[A_CHR].add += 3;
-		/* SET_FLAG(p_ptr->flags, 2, TR2_FEATHER) */;
+		/* SET_FLAG(p_ptr, TR_FEATHER) */;
 	}
 
 	if (p_ptr->muta3 & MUT3_FEARLESS)
 	{
-		/* SET_FLAG(p_ptr->flags, 1, TR1_RES_FEAR) */;
+		/* SET_FLAG(p_ptr, TR_RES_FEAR) */;
 	}
 
 	if (p_ptr->muta3 & MUT3_REGEN)
 	{
-		/* SET_FLAG(p_ptr->flags, 2, TR2_REGEN) */;
+		/* SET_FLAG(p_ptr, TR_REGEN) */;
 	}
 
 	if (p_ptr->muta3 & MUT3_ESP)
 	{
 		p_ptr->stat[A_CON].add -= 1;
-		/* SET_FLAG(p_ptr->flags, 2, TR2_TELEPATHY) */;
+		/* SET_FLAG(p_ptr, TR_TELEPATHY) */;
 	}
 
 	if (p_ptr->muta3 & MUT3_LIMBER)
@@ -2048,7 +2048,7 @@ void mutation_effect(void)
 
 	if (p_ptr->muta3 & MUT3_MOTION)
 	{
-		/* SET_FLAG(p_ptr->flags, 1, TR1_FREE_ACT) */;
+		/* SET_FLAG(p_ptr, TR_FREE_ACT) */;
 		p_ptr->skills[SKILL_STL] += 1;
 	}
 

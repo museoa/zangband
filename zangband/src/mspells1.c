@@ -471,8 +471,8 @@ void curse_equipment(int chance, int heavy_chance)
 		{
 			changed = TRUE;
 		}
-		SET_FLAG(o_ptr->flags, 2, TR2_HEAVY_CURSE);
-		SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+		SET_FLAG(o_ptr, TR_HEAVY_CURSE);
+		SET_FLAG(o_ptr, TR_CURSED);
 	}
 	else
 	{
@@ -480,7 +480,7 @@ void curse_equipment(int chance, int heavy_chance)
 		{
 			changed = TRUE;
 		}
-		SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+		SET_FLAG(o_ptr, TR_CURSED);
 	}
 
 	if (changed)

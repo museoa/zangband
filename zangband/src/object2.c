@@ -2551,7 +2551,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 					/* Extra powers */
 					if (ego == EGO_MORGUL)
 					{
-						SET_FLAG(o_ptr->flags, 2, TR2_TY_CURSE);
+						SET_FLAG(o_ptr, TR_TY_CURSE);
 					}
 				}
 			}
@@ -2629,7 +2629,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 	/* Cursed some of the time (only wearable items) */
 	if ((randint0(100) < 15) && (flags & OC_NORMAL))
 	{
-		SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+		SET_FLAG(o_ptr, TR_CURSED);
 	}
 
 	/* Run any special scripts */
@@ -2963,7 +2963,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int lev_dif, byte flags)
 	/* Cursed some of the time */
 	if ((randint0(100) < 15) && (flags & OC_NORMAL))
 	{
-		SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+		SET_FLAG(o_ptr, TR_CURSED);
 	}
 
 	/* Run any special scripts */
@@ -2997,7 +2997,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, byte flags)
 		o_ptr->cost = 0;
 
 		/* Cursed */
-		SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+		SET_FLAG(o_ptr, TR_CURSED);
 
 		/* Reverse bonuses */
 		o_ptr->pval = 0 - o_ptr->pval;

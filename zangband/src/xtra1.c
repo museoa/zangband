@@ -2568,7 +2568,7 @@ static void calc_bonuses(void)
 	}
 
 	/* Hack -- aura of fire also provides light */
-	if (FLAG(p_ptr, TR_SH_FIRE)) SET_FLAG(p_ptr->flags, 2, TR2_LITE);
+	if (FLAG(p_ptr, TR_SH_FIRE)) SET_FLAG(p_ptr, TR_LITE);
 
 	/* Golems also get an intrinsic AC bonus */
 	if (p_ptr->rp.prace == RACE_GOLEM)
@@ -2700,7 +2700,7 @@ static void calc_bonuses(void)
 	{
 		p_ptr->to_a += 100;
 		p_ptr->dis_to_a += 100;
-		SET_FLAG(p_ptr->flags, 1, TR1_REFLECT);
+		SET_FLAG(p_ptr, TR_REFLECT);
 	}
 
 	/* Temporary blessing */
@@ -2750,13 +2750,13 @@ static void calc_bonuses(void)
 	/* Temporary "telepathy" */
 	if (p_ptr->tim.esp)
 	{
-		SET_FLAG(p_ptr->flags, 2, TR2_TELEPATHY);
+		SET_FLAG(p_ptr, TR_TELEPATHY);
 	}
 
 	/* Temporary see invisible */
 	if (p_ptr->tim.invis)
 	{
-		SET_FLAG(p_ptr->flags, 2, TR2_SEE_INVIS);
+		SET_FLAG(p_ptr, TR_SEE_INVIS);
 	}
 
 	/* Temporary infravision boost */
@@ -2769,12 +2769,11 @@ static void calc_bonuses(void)
 	/* Hack -- Hero/Shero -> Res fear */
 	if (p_ptr->tim.hero || p_ptr->tim.shero)
 	{
-		SET_FLAG(p_ptr->flags, 1, TR1_RES_FEAR);
+		SET_FLAG(p_ptr, TR_RES_FEAR);
 	}
 
-
 	/* Hack -- Telepathy Change */
-	if (((FLAG(p_ptr, TR_TELEPATHY)) ? TRUE : FALSE) != old_telepathy)
+	if (FLAG(p_ptr, TR_TELEPATHY) != old_telepathy)
 	{
 		p_ptr->update |= (PU_MONSTERS);
 	}

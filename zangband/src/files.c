@@ -1585,38 +1585,38 @@ void player_flags(object_flags *of_ptr)
 	{
 		case CLASS_WARRIOR:
 			if (p_ptr->lev > 29)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_FEAR);
+				SET_FLAG(of_ptr, TR_RES_FEAR);
 			break;
 		case CLASS_PALADIN:
 			if (p_ptr->lev > 39)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_FEAR);
+				SET_FLAG(of_ptr, TR_RES_FEAR);
 			break;
 		case CLASS_CHAOS_WARRIOR:
-			SET_FLAG(of_ptr->flags, 3, TR3_PATRON);
+			SET_FLAG(of_ptr, TR_PATRON);
 			if (p_ptr->lev > 29)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_CHAOS);
+				SET_FLAG(of_ptr, TR_RES_CHAOS);
 			if (p_ptr->lev > 39)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_FEAR);
+				SET_FLAG(of_ptr, TR_RES_FEAR);
 			break;
 		case CLASS_MONK:
 			/* Monks get extra abilities if unencumbered */
 			if (!p_ptr->monk_armour_stat)
 			{
 				if (p_ptr->lev > 9)
-					SET_FLAG(of_ptr->flags, 0, TR0_SPEED);
+					SET_FLAG(of_ptr, TR_SPEED);
 				if (p_ptr->lev > 24)
-					SET_FLAG(of_ptr->flags, 1, TR1_FREE_ACT);
+					SET_FLAG(of_ptr, TR_FREE_ACT);
 			}
 			break;
 		case CLASS_MINDCRAFTER:
 			if (p_ptr->lev > 9)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_FEAR);
+				SET_FLAG(of_ptr, TR_RES_FEAR);
 			if (p_ptr->lev > 19)
-				SET_FLAG(of_ptr->flags, 1, TR1_SUST_WIS);
+				SET_FLAG(of_ptr, TR_SUST_WIS);
 			if (p_ptr->lev > 29)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_CONF);
+				SET_FLAG(of_ptr, TR_RES_CONF);
 			if (p_ptr->lev > 39)
-				SET_FLAG(of_ptr->flags, 2, TR2_TELEPATHY);
+				SET_FLAG(of_ptr, TR_TELEPATHY);
 			break;
 		default:
 			;					/* Do nothing */
@@ -1626,28 +1626,28 @@ void player_flags(object_flags *of_ptr)
 	switch (p_ptr->rp.prace)
 	{
 		case RACE_ELF:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_LITE);
+			SET_FLAG(of_ptr, TR_RES_LITE);
 			break;
 		case RACE_HOBBIT:
-			SET_FLAG(of_ptr->flags, 1, TR1_SUST_DEX);
+			SET_FLAG(of_ptr, TR_SUST_DEX);
 			break;
 		case RACE_GNOME:
-			SET_FLAG(of_ptr->flags, 1, TR1_FREE_ACT);
+			SET_FLAG(of_ptr, TR_FREE_ACT);
 			break;
 		case RACE_DWARF:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_BLIND);
+			SET_FLAG(of_ptr, TR_RES_BLIND);
 			break;
 		case RACE_HALF_ORC:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_DARK);
+			SET_FLAG(of_ptr, TR_RES_DARK);
 			break;
 		case RACE_HALF_TROLL:
-			SET_FLAG(of_ptr->flags, 1, TR1_SUST_STR);
+			SET_FLAG(of_ptr, TR_SUST_STR);
 			if (p_ptr->lev > 14)
 			{
-				SET_FLAG(of_ptr->flags, 2, TR2_REGEN);
+				SET_FLAG(of_ptr, TR_REGEN);
 				if (p_ptr->rp.pclass == CLASS_WARRIOR)
 				{
-					SET_FLAG(of_ptr->flags, 2, TR2_SLOW_DIGEST);
+					SET_FLAG(of_ptr, TR_SLOW_DIGEST);
 					/*
 					 * Let's not make Regeneration a disadvantage
 					 * for the poor warriors who can never learn
@@ -1659,149 +1659,149 @@ void player_flags(object_flags *of_ptr)
 			}
 			break;
 		case RACE_AMBERITE:
-			SET_FLAG(of_ptr->flags, 1, TR1_SUST_CON);
-			SET_FLAG(of_ptr->flags, 2, TR2_REGEN)	/* Amberites heal fast */;
+			SET_FLAG(of_ptr, TR_SUST_CON);
+			SET_FLAG(of_ptr, TR_REGEN)	/* Amberites heal fast */;
 			break;
 		case RACE_HIGH_ELF:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_LITE);
-			SET_FLAG(of_ptr->flags, 2, TR2_SEE_INVIS);
+			SET_FLAG(of_ptr, TR_RES_LITE);
+			SET_FLAG(of_ptr, TR_SEE_INVIS);
 			break;
 		case RACE_BARBARIAN:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_FEAR);
+			SET_FLAG(of_ptr, TR_RES_FEAR);
 			break;
 		case RACE_HALF_OGRE:
-			SET_FLAG(of_ptr->flags, 1, TR1_SUST_STR);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_DARK);
+			SET_FLAG(of_ptr, TR_SUST_STR);
+			SET_FLAG(of_ptr, TR_RES_DARK);
 			break;
 		case RACE_HALF_GIANT:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_SHARDS);
-			SET_FLAG(of_ptr->flags, 1, TR1_SUST_STR);
+			SET_FLAG(of_ptr, TR_RES_SHARDS);
+			SET_FLAG(of_ptr, TR_SUST_STR);
 			break;
 		case RACE_HALF_TITAN:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_CHAOS);
+			SET_FLAG(of_ptr, TR_RES_CHAOS);
 			break;
 		case RACE_CYCLOPS:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_SOUND);
+			SET_FLAG(of_ptr, TR_RES_SOUND);
 			break;
 		case RACE_YEEK:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_ACID);
+			SET_FLAG(of_ptr, TR_RES_ACID);
 			if (p_ptr->lev > 19)
-				SET_FLAG(of_ptr->flags, 1, TR1_IM_ACID);
+				SET_FLAG(of_ptr, TR_IM_ACID);
 			break;
 		case RACE_KLACKON:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_CONF);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_ACID);
+			SET_FLAG(of_ptr, TR_RES_CONF);
+			SET_FLAG(of_ptr, TR_RES_ACID);
 			if (p_ptr->lev > 9)
-				SET_FLAG(of_ptr->flags, 0, TR0_SPEED);
+				SET_FLAG(of_ptr, TR_SPEED);
 			break;
 		case RACE_KOBOLD:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_POIS);
+			SET_FLAG(of_ptr, TR_RES_POIS);
 			break;
 		case RACE_NIBELUNG:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_DISEN);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_DARK);
+			SET_FLAG(of_ptr, TR_RES_DISEN);
+			SET_FLAG(of_ptr, TR_RES_DARK);
 			break;
 		case RACE_DARK_ELF:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_DARK);
+			SET_FLAG(of_ptr, TR_RES_DARK);
 			if (p_ptr->lev > 19)
-				SET_FLAG(of_ptr->flags, 2, TR2_SEE_INVIS);
+				SET_FLAG(of_ptr, TR_SEE_INVIS);
 			break;
 		case RACE_DRACONIAN:
-			SET_FLAG(of_ptr->flags, 2, TR2_FEATHER);
+			SET_FLAG(of_ptr, TR_FEATHER);
 			if (p_ptr->lev > 4)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_FIRE);
+				SET_FLAG(of_ptr, TR_RES_FIRE);
 			if (p_ptr->lev > 9)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_COLD);
+				SET_FLAG(of_ptr, TR_RES_COLD);
 			if (p_ptr->lev > 14)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_ACID);
+				SET_FLAG(of_ptr, TR_RES_ACID);
 			if (p_ptr->lev > 19)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_ELEC);
+				SET_FLAG(of_ptr, TR_RES_ELEC);
 			if (p_ptr->lev > 34)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_POIS);
+				SET_FLAG(of_ptr, TR_RES_POIS);
 			break;
 		case RACE_MIND_FLAYER:
-			SET_FLAG(of_ptr->flags, 1, TR1_SUST_INT);
-			SET_FLAG(of_ptr->flags, 1, TR1_SUST_WIS);
+			SET_FLAG(of_ptr, TR_SUST_INT);
+			SET_FLAG(of_ptr, TR_SUST_WIS);
 			if (p_ptr->lev > 14)
-				SET_FLAG(of_ptr->flags, 2, TR2_SEE_INVIS);
+				SET_FLAG(of_ptr, TR_SEE_INVIS);
 			if (p_ptr->lev > 29)
-				SET_FLAG(of_ptr->flags, 2, TR2_TELEPATHY);
+				SET_FLAG(of_ptr, TR_TELEPATHY);
 			break;
 		case RACE_IMP:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_FIRE);
+			SET_FLAG(of_ptr, TR_RES_FIRE);
 			if (p_ptr->lev > 9)
-				SET_FLAG(of_ptr->flags, 2, TR2_SEE_INVIS);
+				SET_FLAG(of_ptr, TR_SEE_INVIS);
 			break;
 		case RACE_GOLEM:
-			SET_FLAG(of_ptr->flags, 2, TR2_SEE_INVIS);
-			SET_FLAG(of_ptr->flags, 1, TR1_FREE_ACT);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_POIS);
-			SET_FLAG(of_ptr->flags, 2, TR2_SLOW_DIGEST);
-			SET_FLAG(of_ptr->flags, 3, TR3_CANT_EAT);
+			SET_FLAG(of_ptr, TR_SEE_INVIS);
+			SET_FLAG(of_ptr, TR_FREE_ACT);
+			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_SLOW_DIGEST);
+			SET_FLAG(of_ptr, TR_CANT_EAT);
 			if (p_ptr->lev > 34)
-				SET_FLAG(of_ptr->flags, 1, TR1_HOLD_LIFE);
+				SET_FLAG(of_ptr, TR_HOLD_LIFE);
 			break;
 		case RACE_SKELETON:
-			SET_FLAG(of_ptr->flags, 2, TR2_SEE_INVIS);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_SHARDS);
-			SET_FLAG(of_ptr->flags, 1, TR1_HOLD_LIFE);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_POIS);
-			SET_FLAG(of_ptr->flags, 3, TR3_CANT_EAT);
+			SET_FLAG(of_ptr, TR_SEE_INVIS);
+			SET_FLAG(of_ptr, TR_RES_SHARDS);
+			SET_FLAG(of_ptr, TR_HOLD_LIFE);
+			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_CANT_EAT);
 			if (p_ptr->lev > 9)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_COLD);
+				SET_FLAG(of_ptr, TR_RES_COLD);
 			break;
 		case RACE_ZOMBIE:
-			SET_FLAG(of_ptr->flags, 2, TR2_SEE_INVIS);
-			SET_FLAG(of_ptr->flags, 1, TR1_HOLD_LIFE);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_NETHER);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_POIS);
-			SET_FLAG(of_ptr->flags, 2, TR2_SLOW_DIGEST);
-			SET_FLAG(of_ptr->flags, 3, TR3_CANT_EAT);
+			SET_FLAG(of_ptr, TR_SEE_INVIS);
+			SET_FLAG(of_ptr, TR_HOLD_LIFE);
+			SET_FLAG(of_ptr, TR_RES_NETHER);
+			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_SLOW_DIGEST);
+			SET_FLAG(of_ptr, TR_CANT_EAT);
 			if (p_ptr->lev > 4)
-				SET_FLAG(of_ptr->flags, 1, TR1_RES_COLD);
+				SET_FLAG(of_ptr, TR_RES_COLD);
 			break;
 		case RACE_VAMPIRE:
-			SET_FLAG(of_ptr->flags, 1, TR1_HOLD_LIFE);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_DARK);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_NETHER);
-			SET_FLAG(of_ptr->flags, 2, TR2_LITE);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_POIS);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_COLD);
-			SET_FLAG(of_ptr->flags, 3, TR3_IM_DARK);
-			SET_FLAG(of_ptr->flags, 3, TR3_HURT_LITE);
+			SET_FLAG(of_ptr, TR_HOLD_LIFE);
+			SET_FLAG(of_ptr, TR_RES_DARK);
+			SET_FLAG(of_ptr, TR_RES_NETHER);
+			SET_FLAG(of_ptr, TR_LITE);
+			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_RES_COLD);
+			SET_FLAG(of_ptr, TR_IM_DARK);
+			SET_FLAG(of_ptr, TR_HURT_LITE);
 			break;
 		case RACE_SPECTRE:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_COLD);
-			SET_FLAG(of_ptr->flags, 2, TR2_SEE_INVIS);
-			SET_FLAG(of_ptr->flags, 1, TR1_HOLD_LIFE);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_NETHER);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_POIS);
-			SET_FLAG(of_ptr->flags, 2, TR2_SLOW_DIGEST);
-			SET_FLAG(of_ptr->flags, 3, TR3_CANT_EAT);
-			SET_FLAG(of_ptr->flags, 3, TR3_PASS_WALL);
+			SET_FLAG(of_ptr, TR_RES_COLD);
+			SET_FLAG(of_ptr, TR_SEE_INVIS);
+			SET_FLAG(of_ptr, TR_HOLD_LIFE);
+			SET_FLAG(of_ptr, TR_RES_NETHER);
+			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_SLOW_DIGEST);
+			SET_FLAG(of_ptr, TR_CANT_EAT);
+			SET_FLAG(of_ptr, TR_PASS_WALL);
 			/* XXX pass_wall */
 			if (p_ptr->lev > 34)
-				SET_FLAG(of_ptr->flags, 2, TR2_TELEPATHY);
+				SET_FLAG(of_ptr, TR_TELEPATHY);
 			break;
 		case RACE_SPRITE:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_LITE);
-			SET_FLAG(of_ptr->flags, 2, TR2_FEATHER);
+			SET_FLAG(of_ptr, TR_RES_LITE);
+			SET_FLAG(of_ptr, TR_FEATHER);
 			if (p_ptr->lev > 9)
-				SET_FLAG(of_ptr->flags, 0, TR0_SPEED);
+				SET_FLAG(of_ptr, TR_SPEED);
 			break;
 		case RACE_BEASTMAN:
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_SOUND);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_CONF);
-			SET_FLAG(of_ptr->flags, 3, TR3_MUTATE);
+			SET_FLAG(of_ptr, TR_RES_SOUND);
+			SET_FLAG(of_ptr, TR_RES_CONF);
+			SET_FLAG(of_ptr, TR_MUTATE);
 			break;
 		case RACE_GHOUL:
-			SET_FLAG(of_ptr->flags, 1, TR1_HOLD_LIFE);
-			SET_FLAG(of_ptr->flags, 3, TR3_CANT_EAT);
-			if (p_ptr->lev > 9) SET_FLAG(of_ptr->flags, 1, TR1_RES_DARK);
-			if (p_ptr->lev > 19) SET_FLAG(of_ptr->flags, 1, TR1_RES_NETHER);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_POIS);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_COLD);
-			SET_FLAG(of_ptr->flags, 3, TR3_GHOUL_TOUCH);
+			SET_FLAG(of_ptr, TR_HOLD_LIFE);
+			SET_FLAG(of_ptr, TR_CANT_EAT);
+			if (p_ptr->lev > 9) SET_FLAG(of_ptr, TR_RES_DARK);
+			if (p_ptr->lev > 19) SET_FLAG(of_ptr, TR_RES_NETHER);
+			SET_FLAG(of_ptr, TR_RES_POIS);
+			SET_FLAG(of_ptr, TR_RES_COLD);
+			SET_FLAG(of_ptr, TR_GHOUL_TOUCH);
 			break;
 		default:
 			;					/* Do nothing */
@@ -1810,7 +1810,7 @@ void player_flags(object_flags *of_ptr)
 	/* Hack - chaos patron */
 	if (p_ptr->muta2 & MUT2_CHAOS_GIFT)
 	{
-		SET_FLAG(of_ptr->flags, 3, TR3_PATRON);
+		SET_FLAG(of_ptr, TR_PATRON);
 	}
 
 	/* Mutations */
@@ -1819,12 +1819,12 @@ void player_flags(object_flags *of_ptr)
 		if (p_ptr->muta1 & MUT1_VAMPIRISM)
 		{
 			/* HURT_LITE would be too cruel */
-			SET_FLAG(of_ptr->flags, 3, TR3_CANT_EAT);
+			SET_FLAG(of_ptr, TR_CANT_EAT);
 		}
 
 		if (p_ptr->muta1 & MUT1_POLYMORPH)
 		{
-			SET_FLAG(of_ptr->flags, 3, TR3_MUTATE);
+			SET_FLAG(of_ptr, TR_MUTATE);
 		}
 
 		if (p_ptr->muta1 & MUT1_PANIC_HIT)
@@ -1834,7 +1834,7 @@ void player_flags(object_flags *of_ptr)
 
 		if (p_ptr->muta1 & MUT1_EAT_ROCK)
 		{
-			SET_FLAG(of_ptr->flags, 3, TR3_CANT_EAT);
+			SET_FLAG(of_ptr, TR_CANT_EAT);
 		}
 	}
 	
@@ -1842,7 +1842,7 @@ void player_flags(object_flags *of_ptr)
 	{
 		if (p_ptr->muta2 & MUT2_BEAK)
 		{
-			SET_FLAG(of_ptr->flags, 3, TR3_CANT_EAT);
+			SET_FLAG(of_ptr, TR_CANT_EAT);
 		}
 
 		if (p_ptr->muta2 & MUT2_WARNING)
@@ -1855,79 +1855,81 @@ void player_flags(object_flags *of_ptr)
 	{
 		if (p_ptr->muta3 & MUT3_HYPER_INT)
 		{
-			SET_FLAG(of_ptr->flags, 3, TR3_HURT_ELEC);
+			SET_FLAG(of_ptr, TR_HURT_ELEC);
 		}
 
 		if (p_ptr->muta3 & MUT3_MORONIC)
 		{
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_FEAR);
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_CONF);
+			SET_FLAG(of_ptr, TR_RES_FEAR);
+			SET_FLAG(of_ptr, TR_RES_CONF);
 		}
 
 		if (p_ptr->muta3 & MUT3_ALBINO)
 		{
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_DARK);
+			SET_FLAG(of_ptr, TR_RES_DARK);
 		}
 
 		if (p_ptr->muta3 & MUT3_FLESH_ROT)
 		{
 			of_ptr->flags[2] &= ~(TR2_REGEN);
-			SET_FLAG(of_ptr->flags, 1, TR1_HOLD_LIFE);
+			SET_FLAG(of_ptr, TR_HOLD_LIFE);
 		}
 
 		if (p_ptr->muta3 & MUT3_BLANK_FAC)
 		{
-			SET_FLAG(of_ptr->flags, 2, TR2_SEE_INVIS);
+			SET_FLAG(of_ptr, TR_SEE_INVIS);
 		}
 
 #if 0
 		if ((p_ptr->muta3 & MUT3_XTRA_FAT) ||
 			(p_ptr->muta3 & MUT3_XTRA_LEGS) || (p_ptr->muta3 & MUT3_SHORT_LEG))
 		{
-			SET_FLAG(of_ptr->flags, 0, TR0_SPEED);
+			SET_FLAG(of_ptr, TR_SPEED);
 		}
 #endif
 
 		if (p_ptr->muta3 & MUT3_ELEC_TOUC)
 		{
-			SET_FLAG(of_ptr->flags, 2, TR2_SH_ELEC);
+			SET_FLAG(of_ptr, TR_SH_ELEC);
 		}
 
 		if (p_ptr->muta3 & MUT3_FIRE_BODY)
 		{
-			SET_FLAG(of_ptr->flags, 2, TR2_SH_FIRE);
-			SET_FLAG(of_ptr->flags, 2, TR2_LITE);
+			SET_FLAG(of_ptr, TR_SH_FIRE);
+			SET_FLAG(of_ptr, TR_LITE);
 		}
 
 		if (p_ptr->muta3 & MUT3_WINGS)
 		{
-			SET_FLAG(of_ptr->flags, 2, TR2_FEATHER);
+			SET_FLAG(of_ptr, TR_FEATHER);
 		}
 
 		if (p_ptr->muta3 & MUT3_FEARLESS)
 		{
-			SET_FLAG(of_ptr->flags, 1, TR1_RES_FEAR);
+			SET_FLAG(of_ptr, TR_RES_FEAR);
 		}
 
 		if (p_ptr->muta3 & MUT3_REGEN)
 		{
-			SET_FLAG(of_ptr->flags, 2, TR2_REGEN);
+			SET_FLAG(of_ptr, TR_REGEN);
 		}
 
 		if (p_ptr->muta3 & MUT3_ESP)
 		{
-			SET_FLAG(of_ptr->flags, 2, TR2_TELEPATHY);
+			SET_FLAG(of_ptr, TR_TELEPATHY);
 		}
 
 		if (p_ptr->muta3 & MUT3_MOTION)
 		{
-			SET_FLAG(of_ptr->flags, 1, TR1_FREE_ACT);
+			SET_FLAG(of_ptr, TR_FREE_ACT);
 		}
 		
 		if (p_ptr->muta3 & MUT3_VULN_ELEM)
 		{
-			SET_FLAG(of_ptr->flags, 3, TR3_HURT_ACID | TR3_HURT_ELEC |
-					 TR3_HURT_FIRE | TR3_HURT_COLD);
+			SET_FLAG(of_ptr, TR_HURT_ACID);
+			SET_FLAG(of_ptr, TR_HURT_ELEC);
+			SET_FLAG(of_ptr, TR_HURT_FIRE);
+			SET_FLAG(of_ptr, TR_HURT_COLD);
 		}
 	}
 }

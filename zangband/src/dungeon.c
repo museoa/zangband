@@ -1606,7 +1606,7 @@ static void process_world(void)
 				!(FLAG(o_ptr, TR_CURSED)) && one_in_(1000))
 		{
 			msgf("There is a malignant black aura surrounding you...");
-			SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+			SET_FLAG(o_ptr, TR_CURSED);
 			o_ptr->feeling = FEEL_NONE;
 		}
 

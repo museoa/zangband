@@ -3977,17 +3977,16 @@
 
 #define MASK(TYPE, NUM, F) (TYPE ## NUM ## _ ## F)
 
-#define SET_FLAG_AUX(ff, i, mask) ((ff)[i] |= (mask))
-
 #define FLAG_AUX(P, TYPE, NUM, F) (((P)->flags[NUM] & MASK(TYPE, NUM, F)) != 0)
 #define FLAG(P, F) FLAG_AUX(P, F)
+
+#define SET_FLAG_AUX(P, TYPE, NUM, F) ((P)->flags[NUM] |= MASK(TYPE, NUM, F))
+#define SET_FLAG(P, F) SET_FLAG_AUX(P, F)
 
 #define COPY_FLAG_AUX(P1, P2, TYPE, NUM, F) \
 	((P2)->flags[NUM] |= ((P1)->flags[NUM] & MASK(TYPE, NUM, F)))
 #define COPY_FLAG(P1, P2, F) COPY_FLAG_AUX(P1, P2, F)
 
-
-#define SET_FLAG(ff, i, mask) SET_FLAG_AUX(ff, i, mask)
 
 /* Skills */
 #define MAX_SKILL	10

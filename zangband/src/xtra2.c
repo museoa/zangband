@@ -503,22 +503,19 @@ bool monster_death(int m_idx, bool explode)
 		q_ptr->dd = 6;
 		q_ptr->pval = 2;
 
-		SET_FLAG(q_ptr->flags, 0, TR0_VAMPIRIC | TR0_STR | TR0_CON);
-		SET_FLAG(q_ptr->flags, 1, TR1_FREE_ACT | TR1_HOLD_LIFE | TR1_RES_NEXUS | TR1_RES_CHAOS | TR1_RES_NETHER | TR1_RES_CONF)	/* No longer resist_disen */;
+		q_ptr->flags[0] |= (TR0_VAMPIRIC | TR0_STR | TR0_CON);
+		q_ptr->flags[1] |= (TR1_FREE_ACT | TR1_HOLD_LIFE | TR1_RES_NEXUS | TR1_RES_CHAOS | TR1_RES_NETHER | TR1_RES_CONF)	/* No longer resist_disen */;
 		q_ptr->flags[2] |= (TR2_IGNORE_ACID | TR2_IGNORE_ELEC |
 						  TR2_IGNORE_FIRE | TR2_IGNORE_COLD |
-						  TR2_INSTA_ART);
+						  TR2_INSTA_ART | TR2_CURSED | TR2_HEAVY_CURSE);
 
 		/* Just to be sure */
-		SET_FLAG(q_ptr->flags, 2, TR2_NO_TELE)	/* How's that for a downside? */;
-
-		/* For game balance... */
-		SET_FLAG(q_ptr->flags, 2, TR2_CURSED | TR2_HEAVY_CURSE);
+		SET_FLAG(q_ptr, TR_NO_TELE)	/* How's that for a downside? */;
 
 		if (one_in_(2))
-			SET_FLAG(q_ptr->flags, 2, TR2_DRAIN_EXP);
+			SET_FLAG(q_ptr, TR_DRAIN_EXP);
 		else
-			SET_FLAG(q_ptr->flags, 2, TR2_AGGRAVATE);
+			SET_FLAG(q_ptr, TR_AGGRAVATE);
 
 		/* Drop it in the dungeon */
 		drop_near(q_ptr, -1, x, y);

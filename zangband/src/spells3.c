@@ -1987,7 +1987,7 @@ static void bad_luck(object_type *o_ptr)
 		/* Non-artifacts get rerolled */
 		if (!is_art)
 		{
-			SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+			SET_FLAG(o_ptr, TR_CURSED);
 
 			/* Prepare it */
 			q_ptr = object_prep(o_ptr->k_idx);
@@ -2003,7 +2003,7 @@ static void bad_luck(object_type *o_ptr)
 		}
 
 		/* Now curse it */
-		SET_FLAG(o_ptr->flags, 2, TR2_CURSED);
+		SET_FLAG(o_ptr, TR_CURSED);
 	}
 
 	/* Objects are blasted sometimes */
@@ -2642,7 +2642,7 @@ bool bless_weapon(void)
 	{
 		/* Describe */
 		msgf("The %s shine%s!", o_name, ((o_ptr->number > 1) ? "" : "s"));
-		SET_FLAG(o_ptr->flags, 2, TR2_BLESSED);
+		SET_FLAG(o_ptr, TR_BLESSED);
 		o_ptr->kn_flags[2] |= TR2_BLESSED;
 	}
 	else
@@ -4080,7 +4080,7 @@ bool rustproof(void)
 	/* Description */
 	object_desc(o_name, o_ptr, FALSE, 0, 256);
 
-	SET_FLAG(o_ptr->flags, 2, TR2_IGNORE_ACID);
+	SET_FLAG(o_ptr, TR_IGNORE_ACID);
 
 	if ((o_ptr->to_a < 0) && !(cursed_p(o_ptr)))
 	{

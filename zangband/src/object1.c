@@ -119,7 +119,7 @@ void object_flags_known(const object_type *o_ptr, object_flags *of_ptr)
 	
 	if (cursed_p(o_ptr) && (known || (o_ptr->info & (OB_SENSE))))
 	{
-		SET_FLAG(of_ptr->flags, 2, TR2_CURSED);
+		SET_FLAG(of_ptr, TR_CURSED);
 	}
 
 	/* Must be identified */
@@ -144,10 +144,7 @@ void object_flags_known(const object_type *o_ptr, object_flags *of_ptr)
 	of_ptr->flags[3] |= o_ptr->kn_flags[3];
 
 	/* We now now whether or not it is an artifact */
-	if (FLAG(o_ptr, TR_INSTA_ART))
-	{
-		SET_FLAG(of_ptr->flags, 2, TR2_INSTA_ART);
-	}
+	COPY_FLAG(o_ptr, of_ptr, TR_INSTA_ART);
 }
 
 
