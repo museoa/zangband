@@ -349,6 +349,38 @@ map_erase_hook_type set_erase_hook(map_erase_hook_type hook_func)
 
 
 /*
+ * Clear the map when changing a level.
+ */
+static void clear_map(void)
+{
+	int i, j;
+
+	/* Erase the map */
+	for (i = 0; i < WILD_SIZE; i++)
+	{
+		for (j = 0; j < WILD_SIZE; j++)
+		{
+			/* Set unused */
+			map_grid[i][j] = -1;
+		}
+	}
+
+	/* Erase the cache */
+	for (i = 0; i < MAP_CACHE; i++)
+	{
+		map_cache_refcount[i] = 0;
+		
+		/* Flag that the block isn't used */
+		map_cache_x[i] = -1;
+	}
+
+	/* Player doesn't have a position */
+	player_x = 0;
+	player_y = 0;
+}
+
+
+/*
  * Create the map information
  */
 void init_overhead_map(void)
@@ -391,7 +423,10 @@ void init_overhead_map(void)
 	}
 
 	/* The map exists */
-	map_init = TRUE;
+    map_init = TRUE;
+
+    /* Initialize */
+    clear_map();
 }
 
 /*
@@ -438,38 +473,6 @@ void del_overhead_map(void)
 
 	/* The map no longer exists */
 	map_init = FALSE;
-}
-
-
-/*
- * Clear the map when changing a level.
- */
-static void clear_map(void)
-{
-	int i, j;
-
-	/* Erase the map */
-	for (i = 0; i < WILD_SIZE; i++)
-	{
-		for (j = 0; j < WILD_SIZE; j++)
-		{
-			/* Set unused */
-			map_grid[i][j] = -1;
-		}
-	}
-
-	/* Erase the cache */
-	for (i = 0; i < MAP_CACHE; i++)
-	{
-		map_cache_refcount[i] = 0;
-		
-		/* Flag that the block isn't used */
-		map_cache_x[i] = -1;
-	}
-
-	/* Player doesn't have a position */
-	player_x = 0;
-	player_y = 0;
 }
 
 
@@ -677,7 +680,7 @@ void Term_write_map(int x, int y, cave_type *c_ptr, pcave_type *pc_ptr)
 	(void)WIPE(&map, term_map);
 	
 	/* Save known data */
-	if (pc_ptr->feat) map.terrain = pc_ptr->feat;
+	map.terrain = pc_ptr->feat;
 
 	/* Visible, and not hallucinating */
 	if (visible && !p_ptr->image)
