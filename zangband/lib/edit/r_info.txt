@@ -14679,3 +14679,14 @@ S:1_IN_10
 S:HEAL
 D:A feline surrounded by a strange energy.
 
+N:887:Iridescent worm mass
+G:w:v
+I:100:5d8:7:5:10
+W:48:3:0:2300
+O:0:0:0
+B:CRAWL:UN_POWER:1d3
+F:WILD_DUNGEON_01
+F:RAND_50 | ATTR_MULTI | CAN_SWIM |
+F:STUPID | WEIRD_MIND | MULTIPLY | BASH_DOOR | LITE_1
+F:ANIMAL | NO_FEAR
+D:This mass of worms seems to shimmer with strange power.
