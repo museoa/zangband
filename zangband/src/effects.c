@@ -222,9 +222,6 @@ bool set_afraid(int v)
 	/* Use the value */
 	p_ptr->afraid = v;
 
-	/* Redraw status bar*/
-	p_ptr->redraw |= (PR_STATUS);
-
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
 

@@ -270,14 +270,6 @@ static void prt_status(void)
 		num++;
 	}
 
-	/* Afraid */
-	if (p_ptr->afraid)
-	{
-		letter[num] = 'A';
-		colour[num] = TERM_YELLOW;
-		num++;
-	}
-
 	/* Fast */
 	if (p_ptr->fast)
 	{
