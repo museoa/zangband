@@ -46,7 +46,7 @@
  * removed from the "format sequence", and replaced by the textual form
  * of the next argument in the argument list.  See examples below.
  *
- * Legal format characters: %,n,p,c,s,d,i,o,u,X,x,E,e,F,f,G,g,r,v.
+ * Legal format characters: %,n,p,c,s,d,i,o,u,X,x,r,v.
  *
  * Format("%%")
  *   Append the literal "%".
@@ -55,15 +55,6 @@
  * Format("%p", vptr v)
  *   Append the pointer "v" (implementation varies).
  *   No legal modifiers.
- *
- * This set is compiled out by default:
- * Format("%E", double r)
- * Format("%F", double r)
- * Format("%G", double r)
- * Format("%e", double r)
- * Format("%f", double r)
- * Format("%g", double r)
- *   Append the double "r", in various formats.
  *
  * Format("%ld", long int i)
  *   Append the long integer "i".
