@@ -526,7 +526,7 @@ static cptr k_info_flags2[] =
 	"IM_ELEC",
 	"IM_FIRE",
 	"IM_COLD",
-	"XXX3",
+	"THROW",
 	"REFLECT",
 	"FREE_ACT",
 	"HOLD_LIFE",

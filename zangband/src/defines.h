@@ -2470,7 +2470,7 @@
 #define TR2_IM_ELEC             0x00000200L
 #define TR2_IM_FIRE             0x00000400L
 #define TR2_IM_COLD             0x00000800L
-#define TR2_XXX3                0x00001000L     /* Later */
+#define TR2_THROW               0x00001000L     /* Throwing items */
 #define TR2_REFLECT             0x00002000L     /* Reflect 'bolts' */
 #define TR2_FREE_ACT            0x00004000L     /* Free Action */
 #define TR2_HOLD_LIFE           0x00008000L     /* Hold Life */

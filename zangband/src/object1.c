@@ -1235,6 +1235,11 @@ bool identify_fully_aux(object_type *o_ptr)
 		info[i++] = "It provides immunity to cold.";
 	}
 
+	if (f2 & (TR2_THROW))
+	{
+		info[i++] = "It is perfectly balanced for throwing.";
+	}
+
 	if (f2 & (TR2_FREE_ACT))
 	{
 		info[i++] = "It provides immunity to paralysis.";

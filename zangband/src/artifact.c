@@ -805,7 +805,15 @@ static void random_slay(object_type *o_ptr, bool is_scroll)
 		if (!(o_ptr->art_flags1 & TR1_BRAND_POIS))
 		{
 			o_ptr->art_flags1 |= TR1_BRAND_POIS;
-			if (randint(2) == 1) return;
+			if (randint(3) == 1) return;
+		}
+		
+		if ((((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DAGGER))
+		 || ((o_ptr->tval == TV_POLEARM) &&(o_ptr->sval == SV_SPEAR)))
+		  && !(o_ptr->art_flags2 & TR2_THROW))
+		{
+			/* Free power for rogues... */
+			o_ptr->art_flags2 |= TR2_THROW;
 		}
 	}
 

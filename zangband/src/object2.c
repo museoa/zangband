@@ -897,7 +897,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f2 & TR2_IM_ELEC) total += 10000;
 	if (f2 & TR2_IM_FIRE) total += 10000;
 	if (f2 & TR2_IM_COLD) total += 10000;
-	if (f2 & TR2_XXX3) total += 0;
+	if (f2 & TR2_THROW) total += 5000;
 	if (f2 & TR2_REFLECT) total += 10000;
 	if (f2 & TR2_FREE_ACT) total += 4500;
 	if (f2 & TR2_HOLD_LIFE) total += 8500;
