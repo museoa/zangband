@@ -2969,68 +2969,74 @@ bool earthquake(int cy, int cx, int r)
  */
 static void cave_temp_room_lite(void)
 {
-	int i;
+	int i,j;
 
 	/* Clear them all */
 	for (i = 0; i < temp_n; i++)
 	{
-		int y = temp_y[i];
-		int x = temp_x[i];
-
-		cave_type *c_ptr = &cave[y][x];
-
-		/* No longer in the array */
-		c_ptr->info &= ~(CAVE_TEMP);
-
-		/* Update only non-CAVE_GLOW grids */
-		/* if (c_ptr->info & (CAVE_GLOW)) continue; */
-
-		/* Perma-Lite */
-		c_ptr->info |= (CAVE_GLOW);
-
-		/* Process affected monsters */
-		if (c_ptr->m_idx)
+		for (j = 0; j < 9; j++)
 		{
-			int chance = 25;
+			int y = temp_y[i]+ ddy_cdd[j];
+			int x = temp_x[i]+ ddx_cdd[j];
+			
+			cave_type *c_ptr = &cave[y][x];
 
-			monster_type    *m_ptr = &m_list[c_ptr->m_idx];
+			/* Verify */
+			if (!in_bounds(y, x)) continue;
 
-			monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+			/* No longer in the array */
+			c_ptr->info &= ~(CAVE_TEMP);
 
-			/* Update the monster */
-			update_mon(c_ptr->m_idx, FALSE);
+			/* Update only non-CAVE_GLOW grids */
+			if (c_ptr->info & (CAVE_GLOW)) continue;
 
-			/* Stupid monsters rarely wake up */
-			if (r_ptr->flags2 & (RF2_STUPID)) chance = 10;
+			/* Perma-Lite */
+			c_ptr->info |= (CAVE_GLOW);
 
-			/* Smart monsters always wake up */
-			if (r_ptr->flags2 & (RF2_SMART)) chance = 100;
-
-			/* Sometimes monsters wake up */
-			if (m_ptr->csleep && (rand_int(100) < chance))
+			/* Process affected monsters */
+			if (c_ptr->m_idx)
 			{
-				/* Wake up! */
-				m_ptr->csleep = 0;
+				int chance = 25;
 
-				/* Notice the "waking up" */
-				if (m_ptr->ml)
+				monster_type    *m_ptr = &m_list[c_ptr->m_idx];
+
+				monster_race    *r_ptr = &r_info[m_ptr->r_idx];
+
+				/* Update the monster */
+				update_mon(c_ptr->m_idx, FALSE);
+
+				/* Stupid monsters rarely wake up */
+				if (r_ptr->flags2 & (RF2_STUPID)) chance = 10;
+	
+				/* Smart monsters always wake up */
+				if (r_ptr->flags2 & (RF2_SMART)) chance = 100;
+
+				/* Sometimes monsters wake up */
+				if (m_ptr->csleep && (rand_int(100) < chance))
 				{
-					char m_name[80];
+					/* Wake up! */
+					m_ptr->csleep = 0;
 
-					/* Acquire the monster name */
-					monster_desc(m_name, m_ptr, 0);
+					/* Notice the "waking up" */
+					if (m_ptr->ml)
+					{
+						char m_name[80];
 
-					/* Dump a message */
-					msg_format("%^s wakes up.", m_name);
+						/* Acquire the monster name */
+						monster_desc(m_name, m_ptr, 0);
+
+						/* Dump a message */
+						msg_format("%^s wakes up.", m_name);
+					}
 				}
 			}
+
+			/* Note */
+			note_spot(y, x);
+
+			/* Redraw */
+			lite_spot(y, x);
 		}
-
-		/* Note */
-		note_spot(y, x);
-
-		/* Redraw */
-		lite_spot(y, x);
 	}
 
 	/* None left */
@@ -3052,43 +3058,49 @@ static void cave_temp_room_lite(void)
  */
 static void cave_temp_room_unlite(void)
 {
-	int i;
+	int i,j;
 
 	/* Clear them all */
 	for (i = 0; i < temp_n; i++)
 	{
-		int y = temp_y[i];
-		int x = temp_x[i];
-
-		cave_type *c_ptr = &cave[y][x];
-
-		/* No longer in the array */
-		c_ptr->info &= ~(CAVE_TEMP);
-
-		/* Darken the grid */
-		c_ptr->info &= ~(CAVE_GLOW);
-
-		/* Hack -- Forget "boring" grids */
-		if (c_ptr->feat <= FEAT_INVIS)
+		for (j = 0; j < 9; j++)
 		{
-			/* Forget the grid */
-			c_ptr->info &= ~(CAVE_MARK);
+			int y = temp_y[i]+ ddy_cdd[j];
+			int x = temp_x[i]+ ddx_cdd[j];
+			
+			cave_type *c_ptr = &cave[y][x];
 
-			/* Notice */
-			note_spot(y, x);
+			/* Verify */
+			if (!in_bounds(y, x)) continue;
+			
+			/* No longer in the array */
+			c_ptr->info &= ~(CAVE_TEMP);
+
+			/* Darken the grid */
+			c_ptr->info &= ~(CAVE_GLOW);
+
+			/* Hack -- Forget "boring" grids */
+			if (c_ptr->feat <= FEAT_INVIS)
+			{
+				/* Forget the grid */
+				c_ptr->info &= ~(CAVE_MARK);
+
+				/* Notice */
+				note_spot(y, x);
+			}
+
+			/* Process affected monsters */
+			if (c_ptr->m_idx)
+			{
+				/* Update the monster */
+				update_mon(c_ptr->m_idx, FALSE);
+			}
+
+			/* Redraw */
+			lite_spot(y, x);
 		}
-
-		/* Process affected monsters */
-		if (c_ptr->m_idx)
-		{
-			/* Update the monster */
-			update_mon(c_ptr->m_idx, FALSE);
-		}
-
-		/* Redraw */
-		lite_spot(y, x);
 	}
-
+	
 	/* None left */
 	temp_n = 0;
 }
@@ -3164,18 +3176,17 @@ static void cave_temp_room_aux(int y, int x)
 
 	/* Do not exceed the maximum spell range */
 	if (distance(py, px, y, x) > MAX_RANGE) return;
+	
+	/* Verify */
+	if (!in_bounds(y, x)) return;
 
 #if 0
 	/* Do not "leave" the current room */
 	if (!(c_ptr->info & (CAVE_ROOM))) return;
 #endif
 	
-	/* Verify in bounds before checking.*/
-	if (in_bounds(y, x))
-	{
-		/* Verify this grid */
-		if ((next_to_walls_adj(y, x) > 5) && (next_to_open(y, x) <= 1)) return;
-	}
+	/* Verify this grid */
+	if ((next_to_walls_adj(y, x) > 5) && (next_to_open(y, x) <= 1)) return;
 
 	/* Paranoia -- verify space */
 	if (temp_n == TEMP_MAX) return;
@@ -3205,9 +3216,6 @@ void lite_room(int y1, int x1)
 	for (i = 0; i < temp_n; i++)
 	{
 		x = temp_x[i], y = temp_y[i];
-		
-		/* Verify */
-		if (!in_bounds(y, x)) continue;
 
 		/* Walls get lit, but stop light */
 		if (!cave_floor_bold(y, x)) continue;
@@ -3244,9 +3252,6 @@ void unlite_room(int y1, int x1)
 	for (i = 0; i < temp_n; i++)
 	{
 		x = temp_x[i], y = temp_y[i];
-				
-		/* Verify */
-		if (!in_bounds(y, x)) return;
 
 		/* Walls get dark, but stop darkness */
 		if (!cave_floor_bold(y, x)) continue;
