@@ -61,20 +61,17 @@ void reset_visuals(void)
 		r_ptr->x_attr = r_ptr->d_attr;
 		r_ptr->x_char = r_ptr->d_char;
 	}
-
-#if 0
-
-	/* Extract attr/chars for equippy items (by tval) */
-	for (i = 0; i < 128; i++)
+	
+	/* Extract default attr/char code for fields */
+	for (i = 0; i < max_t_idx; i++)
 	{
-		/* Extract a default attr */
-		tval_to_attr[i] = default_tval_to_attr(i);
+		field_thaum *t_ptr = &t_info[i];
 
-		/* Extract a default char */
-		tval_to_char[i] = default_tval_to_char(i);
+		/* Default attr/char */
+		t_ptr->f_attr = t_ptr->d_attr;
+		t_ptr->f_char = t_ptr->d_char;
 	}
 
-#endif
 
 	if (use_graphics)
 	{

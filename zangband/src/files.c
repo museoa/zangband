@@ -302,6 +302,9 @@ static named_num gf_desc[] =
  * Specify the attr/char values for "features" by feature index
  *   F:<num>:<a>:<c>
  *
+ * Specify the attr/char values for "fields" by field index
+ *   T:<num>:<a>:<c>
+ *
  * Specify the attr/char values for unaware "objects" by kind tval
  *   U:<tv>:<a>:<c>
  *
@@ -390,6 +393,23 @@ errr process_pref_file_aux(char *buf)
 			k_ptr = &k_info[i];
 			if (n1) k_ptr->x_attr = n1;
 			if (n2) k_ptr->x_char = n2;
+			return (0);
+		}
+	}
+	
+	/* Process "T:<num>:<a>/<c>" -- attr/char for fields */
+	else if (buf[0] == 'T')
+	{
+		if (tokenize(buf+2, 3, zz, TOKENIZE_CHECKQUOTE) == 3)
+		{
+			field_thaum *t_ptr;
+			i = (huge)strtol(zz[0], NULL, 0);
+			n1 = strtol(zz[1], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0);
+			if (i >= max_t_idx) return (1);
+			t_ptr = &t_info[i];
+			if (n1) t_ptr->f_attr = n1;
+			if (n2) t_ptr->f_char = n2;
 			return (0);
 		}
 	}

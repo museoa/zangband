@@ -851,6 +851,9 @@ struct field_thaum
 {
 	byte f_attr;			/* attribute */
 	char f_char;			/* character */
+	
+	byte d_attr;			/* Default attribute */
+	char d_char;			/* Default char */
 
 	byte priority;			/* LOS priority higher = more visible */
 

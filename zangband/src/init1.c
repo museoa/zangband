@@ -2868,9 +2868,9 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			/* Paranoia */
 			if (tmp < 0) return (1);
 
-			/* Save the values */
-			t_ptr->f_attr = tmp;
-			t_ptr->f_char = buf[2];
+			/* Save the default values */
+			t_ptr->d_attr = tmp;
+			t_ptr->d_char = buf[2];
 
 			/* Next... */
 			continue;
