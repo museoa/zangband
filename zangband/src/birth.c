@@ -1222,12 +1222,12 @@ static void get_history(void)
  * Computes character's age, height, and weight
  */
 static void get_ahw(void)
-{	
-	int h_percent; 
+{
+	int h_percent;
 
 	/* Calculate the age */
 	p_ptr->age = rp_ptr->b_age + randint1(rp_ptr->m_age);
-	
+
 	/* Calculate the height/weight for males */
 	if (p_ptr->psex == SEX_MALE)
 	{
@@ -1240,14 +1240,12 @@ static void get_ahw(void)
 	else if (p_ptr->psex == SEX_FEMALE)
 	{
 		p_ptr->ht = randnor(rp_ptr->f_b_ht, rp_ptr->f_m_ht);
-		
+
 		h_percent = (int)(p_ptr->ht) * 100 / (int)(rp_ptr->f_b_ht);
 		p_ptr->wt = randnor((int)(rp_ptr->f_b_wt) * h_percent / 100,
 			(int)(rp_ptr->f_m_wt) * h_percent / 300 );
 	}
 }
-
-
 
 
 /*
@@ -1284,7 +1282,7 @@ static void get_money(void)
 static void player_wipe(void)
 {
 	int i;
-	
+
 	bool options[OPT_PLAYER];
 	bool birth[OPT_BIRTH];
 
@@ -1294,7 +1292,7 @@ static void player_wipe(void)
 
 	/* Hack -- zero the struct */
 	(void)WIPE(p_ptr, player_type);
-	
+
 	/* Hack -- Restore the arrays */
 	C_COPY(p_ptr->options, options, OPT_PLAYER, bool);
 	C_COPY(p_ptr->birth, birth, OPT_BIRTH, bool);
@@ -1609,7 +1607,7 @@ static void player_outfit(void)
 			/* Barbarians do not need a ring of resist fear */
 			sv = SV_RING_SUSTAIN_STR;
 		}
-		
+
 		/* Get local object */
 		q_ptr = &forge;
 
@@ -1642,7 +1640,10 @@ static void player_outfit(void)
 #define RACE_COL		12
 #define CLASS_COL		27
 #define REALM1_COL		48
-#define REALM2_COL		58
+#define REALM2_COL		60
+
+#define INVALID_CHOICE 255
+
 
 /*
  * Clear the previous question
@@ -1650,90 +1651,12 @@ static void player_outfit(void)
 static void clear_question(void)
 {
 	int i;
-	
+
 	for (i = QUESTION_ROW; i < TABLE_ROW; i++)
 	{
 		/* Clear line, position cursor */
 		Term_erase(0, i, 255);
 	}
-}
-
-/*
- * Player sex
- */
-static bool get_player_sex(void)
-{
-	char p2 = ')';
-	char buf[80];
-	cptr str;
-	char ch;
-	int k, n;
-	
-	/* Extra info */
-	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
-		"Your 'sex' does not have any significant gameplay effects.");
-
-	sprintf(buf, "Choose a sex (%c-%c), * for random, or = for options: ",
-		        I2A(0), I2A(MAX_SEXES-1));
-	put_str(buf, QUESTION_ROW + 1, 5);
-
-	/* Prompt for "Sex" */
-	for (n = 0; n < MAX_SEXES; n++)
-	{
-		/* Analyze */
-		p_ptr->psex = n;
-		sp_ptr = &sex_info[p_ptr->psex];
-		str = sp_ptr->title;
-
-		/* Display */
-		sprintf(buf, "%c%c %s", I2A(n), p2, str);
-		put_str(buf, QUESTION_ROW + 2, 20 + 15 * (n%5));
-	}
-
-	/* Choose */
-	while (1)
-	{
-		ch = inkey();
-		if (ch == 'Q')
-		{
-			remove_loc();
-			quit(NULL);
-		}
-
-		if (ch == 'S') return (FALSE);
-
-		if (ch == ESCAPE) ch = '*';
-		if (ch == '*')
-		{
-			k = randint0(MAX_SEXES);
-			break;
-		}
-
-		k = (islower(ch) ? A2I(ch) : -1);
-		if ((k >= 0) && (k < n)) break;
-		if (ch == '?')
-		{
-			screen_save();
-			(void)show_file("charattr.txt#TheSexes", NULL, 0, 0);
-			screen_load();
-		}
-		else if (ch == '=')
-		{
-			screen_save();
-			do_cmd_options(OPT_FLAG_BIRTH | OPT_FLAG_SERVER | OPT_FLAG_PLAYER);
-			screen_load();
-		}
-		else bell();
-	}
-
-	/* Set sex */
-	p_ptr->psex = k;
-	sp_ptr = &sex_info[p_ptr->psex];
-
-	/* Sex */
-	c_put_str(TERM_BLUE, sp_ptr->title, TABLE_ROW, 0);
-
-	return (TRUE);
 }
 
 
@@ -1746,43 +1669,49 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 	int top = 0, bot = 14, cur = 0;
 	int i, dir;
 	char c;
-	
-	/* Paranoia */
-	if (!num) return (0);
-	
+	char buf[80];
+	bool done = FALSE;
+
+
 	/* Autoselect if able */
-	if (num == 1)
-	{
-		/* Show selection */
-		Term_putstr(col, TABLE_ROW, wid, TERM_BLUE, choices[0]);
-		
-		/* Done */
-		return (0);
-	}
-		
+	if (num == 1) done = TRUE;
+
 	/* Choose */
 	while (TRUE)
 	{
 		/* Redraw the list */
 		for (i = 0; ((i < num) && (i <= bot - top));  i++)
 		{
-			/* Clear */
-			Term_erase(col, i + TABLE_ROW, wid);
-			
-			/* Display */
-			if (i == (cur - top))
+			if (i + top < 26)
 			{
-				/* High light the current selection */
-				Term_putstr(col, i + TABLE_ROW, wid, TERM_L_BLUE,
-					 choices[i + top]);
+				sprintf(buf, "%c) %s", I2A(i + top), choices[i + top]);
 			}
 			else
 			{
-				Term_putstr(col, i + TABLE_ROW, wid, TERM_WHITE,
-					 choices[i + top]);
+				/* ToDo: Fix the ASCII dependency */
+				sprintf(buf, "%c) %s", 'A' + (i + top - 26), choices[i + top]);
+			}
+
+			/* Clear */
+			Term_erase(col, i + TABLE_ROW, wid);
+
+			/* Display */
+			if (i == (cur - top))
+			{
+				/* Highlight the current selection */
+				Term_putstr(col, i + TABLE_ROW, wid, TERM_L_BLUE, buf);
+			}
+			else
+			{
+				Term_putstr(col, i + TABLE_ROW, wid, TERM_WHITE, buf);
 			}
 		}
-		
+
+		/* Move the cursor */
+		put_str("", TABLE_ROW + cur - top, col);
+
+		if (done) return (cur);
+
 		c = inkey();
 		if (c == 'Q')
 		{
@@ -1792,48 +1721,28 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 		if ((c == 'S') || (c == ESCAPE))
 		{
 			/* Mega Hack - go back. */
-			return (255);
+			return (INVALID_CHOICE);
 		}
 		if (c == '*')
 		{
 			/* Select at random */
 			cur = randint0(num);
-			
+
 			/* Move it onto the screen */
 			if (cur < top)
 			{
 				bot -= top - cur;
 				top = cur;
 			}
-			
+
 			if (cur > bot)
 			{
 				top += cur - bot;
 				bot = cur;
 			}
-			
-			/* Redraw the list */
-			for (i = 0; ((i < num) && (i <= bot - top));  i++)
-			{
-				/* Clear */
-				Term_erase(col, i + TABLE_ROW, wid);
-			
-				/* Display */
-				if (i == (cur - top))
-				{
-					/* High light the current selection */
-					Term_putstr(col, i + TABLE_ROW, wid, TERM_BLUE,
-						 choices[i + top]);
-				}
-				else
-				{
-					Term_putstr(col, i + TABLE_ROW, wid, TERM_WHITE,
-						 choices[i + top]);
-				}
-			}
-			
+
 			/* Done */
-			return (cur);
+			done = TRUE;
 		}
 		else if (c == '?')
 		{
@@ -1849,17 +1758,14 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 		}
 		else if ((c == '\n') || (c == '\r'))
 		{
-			/* Highlight the selection */
-			Term_putstr(col, cur - top + TABLE_ROW, wid, TERM_BLUE, choices[cur]);
-			
-			/* Exit when the player makes a selection */
-			return(cur);
+			/* Done */
+			return (cur);
 		}
-		else
+		else if (isdigit(c))
 		{
 			/* Get a direction from the key */
 			dir = get_keymap_dir(c);
-		
+
 			/* Going up? */
 			if (dir == 8)
 			{
@@ -1868,15 +1774,15 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 					/* Move selection */
 					cur--;
 				}
-				
+
 				if ((top > 0) && ((cur - top) < 4))
 				{
 					/* Scroll up */
 					top--;
 					bot--;
-				} 
+				}
 			}
-			
+
 			/* Going down? */
 			if (dir == 2)
 			{
@@ -1885,7 +1791,7 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 					/* Move selection */
 					cur++;
 				}
-				
+
 				if ((bot < (num - 1)) && ((bot - cur) < 4))
 				{
 					/* Scroll down */
@@ -1894,12 +1800,51 @@ static int get_player_choice(cptr *choices, int num, int col, int wid,
 				}
 			}
 		}
-					
+		else if (isalpha(c))
+		{
+			int choice;
+
+			if (islower(c))
+			{
+				choice = A2I(c);
+			}
+			else
+			{
+				choice = c - 'A' + 26;
+			}
+
+			/* Validate input */
+			if ((choice > -1) && (choice < num))
+			{
+				cur = choice;
+
+				/* Move it onto the screen */
+				if (cur < top)
+				{
+					bot -= top - cur;
+					top = cur;
+				}
+
+				if (cur > bot)
+				{
+					top += cur - bot;
+					bot = cur;
+				}
+
+				/* Done */
+				done = TRUE;
+			}
+			else
+			{
+				bell();
+			}
+		}
+
 		/* Invalid input */
 		bell();
 	}
-	
-	return (255);
+
+	return (INVALID_CHOICE);
 }
 
 
@@ -1914,7 +1859,7 @@ static bool ang_sort_comp_hook_string(const vptr u, const vptr v, int a, int b)
 
 	/* Hack - ignore v */
 	(void)v;
-	
+
 	return (strcmp(x[a], x[b]) <= 0);
 }
 
@@ -1932,7 +1877,7 @@ static void ang_sort_swap_hook_string(const vptr u, const vptr v, int a, int b)
 
 	/* Hack - ignore v */
 	(void)v;
-	
+
 	/* Swap */
 	temp = x[a];
 	x[a] = x[b];
@@ -1949,7 +1894,7 @@ static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 	int i;
 	int choice;
 	cptr *strings;
-	
+
 	C_MAKE(strings, num, cptr);
 
 	/* Initialise the sorted string array */
@@ -1963,11 +1908,11 @@ static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 	ang_sort_swap = ang_sort_swap_hook_string;
 
 	/* Sort the (unique) slopes */
-	ang_sort(strings, NULL, num);	
-	
+	ang_sort(strings, NULL, num);
+
 	/* Get the choice */
 	choice = get_player_choice(strings, num, col, wid, helpfile);
-	
+
 	/* Invert the choice */
 	for (i = 0; i < num; i++)
 	{
@@ -1979,12 +1924,51 @@ static int get_player_sort_choice(cptr *choices, int num, int col, int wid,
 			break;
 		}
 	}
-	
+
 	/* Free the strings */
 	C_KILL(strings, num, cptr);
 
 	/* Return the value from the list */
 	return (choice);
+}
+
+
+/*
+ * Player sex
+ */
+static bool get_player_sex(void)
+{
+	int i;
+	cptr genders[MAX_SEXES];
+
+	/* Extra info */
+	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
+		"Your 'sex' does not have any significant gameplay effects.");
+	Term_putstr(5, QUESTION_ROW + 1, -1, TERM_WHITE,
+		"Use movement keys to scroll the menu.");
+	Term_putstr(5, QUESTION_ROW + 2, -1, TERM_WHITE,
+		"Use enter to select.  Other commands: (Q, S, Esc, *, ?, =)");
+
+	/* Tabulate genders */
+	for (i = 0; i < MAX_SEXES; i++)
+	{
+		genders[i] = sex_info[i].title;
+	}
+
+	p_ptr->psex = get_player_choice(genders, MAX_SEXES, SEX_COL, 15,
+		"charattr.txt#TheSexes");
+
+	/* No selection? */
+	if (p_ptr->psex == INVALID_CHOICE)
+	{
+		p_ptr->psex = 0;
+		return (FALSE);
+	}
+
+	/* Save the sex pointer */
+	sp_ptr = &sex_info[p_ptr->psex];
+
+	return (TRUE);
 }
 
 
@@ -2004,22 +1988,22 @@ static bool get_player_race(void)
 	Term_putstr(5, QUESTION_ROW + 2, -1, TERM_WHITE,
 		"Use enter to select.  Other commands: (Q, S, Esc, *, ?, =)");
 
-	/* Tablulate races */
+	/* Tabulate races */
 	for (i = 0; i < MAX_RACES; i++)
 	{
-		races[i] =  race_info[i].title;
+		races[i] = race_info[i].title;
 	}
 
 	p_ptr->prace = get_player_sort_choice(races, MAX_RACES, RACE_COL, 15,
 		"charattr.txt#TheRaces");
-	
+
 	/* No selection? */
-	if (p_ptr->prace == 255)
+	if (p_ptr->prace == INVALID_CHOICE)
 	{
 		p_ptr->prace = 0;
 		return (FALSE);
 	}
-	
+
 	/* Give beastman a mutation at character birth */
 	if (p_ptr->prace == RACE_BEASTMAN)
 	{
@@ -2030,9 +2014,9 @@ static bool get_player_race(void)
 		hack_mutation = FALSE;
 	}
 
-	/* Save the race pointer */	
+	/* Save the race pointer */
 	rp_ptr = &race_info[p_ptr->prace];
-	
+
 	/* Success */
 	return (TRUE);
 }
@@ -2046,7 +2030,7 @@ static bool get_player_class(void)
 	int     i;
 	char    buf[80];
 	cptr classes[MAX_CLASS];
-	
+
 
 	/* Extra info */
 	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
@@ -2054,7 +2038,7 @@ static bool get_player_class(void)
 	Term_putstr(5, QUESTION_ROW + 1, -1, TERM_WHITE,
 	    "Any entries in parentheses should only be used by advanced players.");
 
-	/* Tablulate races */
+	/* Tabulate races */
 	for (i = 0; i < MAX_CLASS; i++)
 	{
 		/* Analyze */
@@ -2066,25 +2050,25 @@ static bool get_player_class(void)
 		{
 			sprintf(buf, "%s", class_info[i].title);
 		}
-		
+
 		/* Save the string */
-		classes[i] =  string_make(buf);
+		classes[i] = string_make(buf);
 	}
 
 	p_ptr->pclass = get_player_choice(classes, MAX_CLASS, CLASS_COL, 20,
 		"charattr.txt#TheClasses");
-	
+
 	/* No selection? */
-	if (p_ptr->pclass == 255)
+	if (p_ptr->pclass == INVALID_CHOICE)
 	{
 		p_ptr->pclass = 0;
-		
+
 		for (i = 0; i < MAX_CLASS; i++)
 		{
 			/* Free the strings */
 			string_free(classes[i]);
 		}
-		
+
 		return (FALSE);
 	}
 
@@ -2096,7 +2080,7 @@ static bool get_player_class(void)
 	{
 		/* Free the strings */
 		string_free(classes[i]);
-	}	
+	}
 
 	return (TRUE);
 }
@@ -2125,12 +2109,14 @@ static bool get_player_realms(void)
 			/* Save the information */
 			select[count] = i;
 			realms[count] = realm_names[i];
-			
+
 			/* Count them */
 			count++;
 		}
 	}
 
+	/* No magic? */
+	if (!count) return (TRUE);
 
 	/* Extra info */
 	Term_putstr(5, QUESTION_ROW, -1, TERM_WHITE,
@@ -2140,18 +2126,18 @@ static bool get_player_realms(void)
 	Term_putstr(5, QUESTION_ROW + 2, -1, TERM_WHITE,
 		"Nature has both defensive and offensive spells.");
 
-	choose = get_player_choice(realms, count, REALM1_COL, 7,
+	choose = get_player_choice(realms, count, REALM1_COL, 10,
 		"magic.txt#MagicRealms");
 
 	/* No selection? */
-	if (choose == 255) return (FALSE);
-	
-	/* Save the choice */	
+	if (choose == INVALID_CHOICE) return (FALSE);
+
+	/* Save the choice */
 	p_ptr->realm1 = select[choose];
-	
+
 	/* Paranoia - No realms at all? */
 	select[0] = REALM_NONE;
-	
+
 	/* Reset counter */
 	count = 0;
 
@@ -2165,17 +2151,20 @@ static bool get_player_realms(void)
 			/* Save the information */
 			select[count] = i;
 			realms[count] = realm_names[i];
-			
+
 			/* Increment counter */
 			count++;
 		}
 	}
 
-	choose = get_player_choice(realms, count, REALM2_COL, 7,
+	/* No second realm? */
+	if (!count) return (TRUE);
+
+	choose = get_player_choice(realms, count, REALM2_COL, 10,
 		"magic.txt#MagicRealms");
 
 	/* No selection? */
-	if (choose == 255) return (FALSE);
+	if (choose == INVALID_CHOICE) return (FALSE);
 
 	/* Save the choice */
 	p_ptr->realm2 = select[choose];
@@ -2191,13 +2180,13 @@ static bool get_player_realms(void)
 static bool get_player_quests(void)
 {
 	char inp[80];
-	
+
 	monster_race *r_ptr, *quest_r_ptr;
 	quest_type *q_ptr;
-	
+
 	int	r_idx;
 	int	i, j, v, level;
-	
+
 	/*** User enters number of quests ***/
 	/* Heino Vander Sanden and Jimmy De Laet */
 
@@ -2384,10 +2373,10 @@ static bool player_birth_aux_1(void)
 
 	/* Choose the magic realms */
 	if (!get_player_realms()) return (FALSE);
-	
+
 	/* Clear */
 	Term_clear();
-	
+
 	/* Display the information so far. */
 	/* Name, Sex, Race, Class */
 	put_str("Name     :", 2, 0);
@@ -2409,13 +2398,13 @@ static bool player_birth_aux_1(void)
 	{
 		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm1], 6, 11);
 	}
-	
+
 	if (p_ptr->realm2)
 	{
 		c_put_str(TERM_L_BLUE, realm_names[p_ptr->realm2], 7, 11);
 	}
 
-	if(!get_player_quests()) return (FALSE);
+	if (!get_player_quests()) return (FALSE);
 
 #endif /* USE_SCRIPT */
 
@@ -2483,7 +2472,7 @@ static bool player_birth_aux_2(void)
 
 	/* Roll for social class */
 	get_history();
-	
+
 	/* Hack -- get a chaos patron even if you are not a chaos warrior */
 	p_ptr->chaos_patron = (s16b)randint0(MAX_PATRON);
 
