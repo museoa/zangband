@@ -136,6 +136,7 @@ int main (int argc, char* argv[])
                   };
   strcpy(path,argv[0]);
   p = strrchr(path,'/');
+  if (!p) p = strrchr(path,'\\');
   p = (p==NULL) ? path : p+1;
   for (i=0; files[i]; ++i)
   {
