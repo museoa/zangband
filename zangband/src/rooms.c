@@ -5135,7 +5135,7 @@ struct room_type
 
 room_type room_list[ROOM_TYPES] =
 {
-	{1,		build_type1, RT_ANIMAL | RT_BUILDING},	/* Simple Rectangle */
+	{1,		build_type1, RT_SIMPLE},	/* Simple Rectangle */
 	{1,		build_type2, RT_FANCY},	/* Overlapping */
 	{3,		build_type3, RT_FANCY},	/* Crossed */
 	{3,		build_type4, RT_BUILDING | RT_CRYPT},	/* Large nested */
