@@ -233,24 +233,15 @@ if {[$widget cget -style] == "iso"} {
 	set height [expr {$y_max - $y_min + 1}]
 	set width [expr {$x_max - $x_min + 1}]
 
-	if {[$widget cget -vaultnum]} {
-		set dunHgt [vault height [$widget cget -vaultnum]]
-		set dunWid [vault width [$widget cget -vaultnum]]
-	} else {
-		set dunHgt [angband cave height]
-		set dunWid [angband cave width]
-	}
+	set dunHgt [angband cave height]
+	set dunWid [angband cave width]
 
 	if {$dunHgt > $height} { incr dunHgt 2 }
 	if {$dunWid > $width} { incr dunWid 2 }
 
 	set ny [ConstrainCenter $y $dunHgt $height]
 	set nx [ConstrainCenter $x $dunWid $width]
-if 0 {
-	# Do nothing if position unchanged
-	scan [$widget center] "%d %d" oy ox
-	if {$oy == $ny && $ox == $nx} return
-}
+
 	# Center the widget at the given location
 	$widget center $ny $nx
 
@@ -309,13 +300,8 @@ if {[$widget cget -style] == "iso"} {
 	set height [expr {$y_max - $y_min + 1}]
 	set width [expr {$x_max - $x_min + 1}]
 
-	if {[$widget cget -vaultnum]} {
-		set dunHgt [vault height [$widget cget -vaultnum]]
-		set dunWid [vault width [$widget cget -vaultnum]]
-	} else {
-		set dunHgt [angband cave height]
-		set dunWid [angband cave width]
-	}
+	set dunHgt [angband cave height]
+	set dunWid [angband cave width]
 	
 	if {$dunHgt > $height} {
 		incr dunHgt 2

@@ -1001,12 +1001,7 @@ proc IsFileInPath {path} {
 proc InitModules {} {
 
 	NSModule::IndexLoad [CPathTk moduleIndex.tcl]
-
-	set path [CPathTk vault vault-editor.tcl]
-	if {[file exists $path]} {
-		NSModule::AddModule NSVaultEditor $path
-	}
-
+	
 	return
 }
 
@@ -1300,34 +1295,5 @@ proc InitBrightnessContrast {} {
 SetRadius 1
 InitBrightnessContrast
 
-}
-
-
-# Dump a list of vaults to a text window. I found a bug in a vault
-# by doing this (the height and width were reversed). We could
-# easily print out the vaults sorted by size, by type (lesser/greater) and
-# by rating!
-proc vaultHack {} {
-
-	toplevel .vault
-	set textBox [text .vault.text -font {Courier 9}]
-	pack $textBox
-	update
-	set max [debughook vault max]
-	for {set i 0} {$i < $max} {incr i} {
-		debughook vault info $i attrib
-		set height $attrib(height)
-		set width $attrib(width)
-		set text $attrib(text)
-		$textBox insert end "N:$i:$attrib(name)\n"
-		$textBox insert end "X:$attrib(type):$attrib(rating):$height:$width\n"
-		set offset 0
-		for {set y 0} {$y < $height} {incr y} {
-			$textBox insert end "D:[string range $text $offset \
-				[expr {$offset + $width - 1}]]\n"
-			incr offset $width
-		}
-		$textBox insert end \n
-	}
 }
 
