@@ -38,9 +38,9 @@ extern void place_random_stairs(int x, int y);
 extern void place_random_door(int x, int y);
 extern void place_closed_door(int x, int y);
 
-extern void vault_monsters(int y1, int x1, int num);
-extern void vault_objects(int y, int x, int num);
-extern void vault_traps(int y, int x, int yd, int xd, int num);
+extern void vault_objects(int x, int y, int num);
+extern void vault_traps(int x, int y, int xd, int yd, int num);
+extern void vault_monsters(int x1, int y1, int num);
 
 extern int next_to_walls(int y, int x);
 

@@ -555,10 +555,10 @@ static void build_type3(int by0, int bx0)
 			place_object(yval, xval, FALSE, FALSE);
 
 			/* Let's guard the treasure well */
-			vault_monsters(yval, xval, rand_range(3, 4));
+			vault_monsters(xval, yval, rand_range(3, 4));
 
 			/* Traps naturally */
-			vault_traps(yval, xval, 4, 4, rand_range(2, 4));
+			vault_traps(xval, yval, 4, 4, rand_range(2, 4));
 
 			break;
 		}
@@ -678,7 +678,7 @@ static void build_type4(int by0, int bx0)
 			generate_door(y1 - 1, x1 - 1, y2 + 1, x2 + 1, TRUE);
 
 			/* Place a monster in the room */
-			vault_monsters(yval, xval, 1);
+			vault_monsters(xval, yval, 1);
 
 			break;
 		}
@@ -696,7 +696,7 @@ static void build_type4(int by0, int bx0)
 			generate_door(yval - 1, xval - 1, yval + 1, xval + 1, FALSE);
 
 			/* Monsters to guard the "treasure" */
-			vault_monsters(yval, xval, rand_range(2, 4));
+			vault_monsters(xval, yval, rand_range(2, 4));
 
 			/* Object (80%) */
 			if (randint0(100) < 80)
@@ -711,7 +711,7 @@ static void build_type4(int by0, int bx0)
 			}
 
 			/* Traps to protect the treasure */
-			vault_traps(yval, xval, 4, 10, rand_range(3, 6));
+			vault_traps(xval, yval, 10, 4, rand_range(3, 6));
 
 			break;
 		}
@@ -750,8 +750,8 @@ static void build_type4(int by0, int bx0)
 				place_secret_door(yval - 3 + (randint1(2) * 2), xval + 3);
 
 				/* Monsters */
-				vault_monsters(yval, xval - 2, randint1(2));
-				vault_monsters(yval, xval + 2, randint1(2));
+				vault_monsters(xval - 2, yval, randint1(2));
+				vault_monsters(xval + 2, yval, randint1(2));
 
 				/* Objects */
 				if (one_in_(3)) place_object(yval, xval - 2, FALSE, FALSE);
@@ -781,15 +781,15 @@ static void build_type4(int by0, int bx0)
 			}
 
 			/* Monsters just love mazes. */
-			vault_monsters(yval, xval - 5, randint1(3));
-			vault_monsters(yval, xval + 5, randint1(3));
+			vault_monsters(xval - 5, yval, randint1(3));
+			vault_monsters(xval + 5, yval, randint1(3));
 
 			/* Traps make them entertaining. */
-			vault_traps(yval, xval - 3, 2, 8, randint1(3));
-			vault_traps(yval, xval + 3, 2, 8, randint1(3));
+			vault_traps(xval - 3, yval, 8, 2, randint1(3));
+			vault_traps(xval + 3, yval, 8, 2, randint1(3));
 
 			/* Mazes should have some treasure too. */
-			vault_objects(yval, xval, 3);
+			vault_objects(xval, yval, 3);
 
 			break;
 		}
@@ -819,13 +819,13 @@ static void build_type4(int by0, int bx0)
 			}
 
 			/* Treasure, centered at the center of the cross */
-			vault_objects(yval, xval, rand_range(3, 4));
+			vault_objects(xval, yval, rand_range(3, 4));
 
 			/* Gotta have some monsters. */
-			vault_monsters(yval + 1, xval - 4, randint1(4));
-			vault_monsters(yval + 1, xval + 4, randint1(4));
-			vault_monsters(yval - 1, xval - 4, randint1(4));
-			vault_monsters(yval - 1, xval + 4, randint1(4));
+			vault_monsters(xval - 4, yval + 1, randint1(4));
+			vault_monsters(xval + 4, yval + 1, randint1(4));
+			vault_monsters(xval - 4, yval - 1, randint1(4));
+			vault_monsters(xval + 4, yval - 1, randint1(4));
 
 			break;
 		}
@@ -3682,10 +3682,10 @@ static void build_type12(int by0, int bx0)
 		place_object(y0, x0, FALSE, FALSE);
 
 		/* Let's guard the treasure well */
-		vault_monsters(y0, x0, rand_range(2, 4));
+		vault_monsters(x0, y0, rand_range(2, 4));
 
 		/* Traps naturally */
-		vault_traps(y0, x0, 4, 4, rand_range(2, 4));
+		vault_traps(x0, y0, 4, 4, rand_range(2, 4));
 	}
 }
 

@@ -205,7 +205,7 @@ void place_closed_door(int x, int y)
  * Create up to "num" objects near the given coordinates
  * Only really called by some of the "vault" routines.
  */
-void vault_objects(int y, int x, int num)
+void vault_objects(int x, int y, int num)
 {
 	int dummy = 0;
 	int i = 0, j = y, k = x;
@@ -265,7 +265,7 @@ void vault_objects(int y, int x, int num)
 /*
  * Place a trap with a given displacement of point
  */
-static void vault_trap_aux(int y, int x, int yd, int xd)
+static void vault_trap_aux(int x, int y, int xd, int yd)
 {
 	int count = 0, y1 = y, x1 = x;
 	int dummy = 0;
@@ -309,13 +309,13 @@ static void vault_trap_aux(int y, int x, int yd, int xd)
 /*
  * Place some traps with a given displacement of given location
  */
-void vault_traps(int y, int x, int yd, int xd, int num)
+void vault_traps(int x, int y, int xd, int yd, int num)
 {
 	int i;
 
 	for (i = 0; i < num; i++)
 	{
-		vault_trap_aux(y, x, yd, xd);
+		vault_trap_aux(x, y, xd, yd);
 	}
 }
 
@@ -323,7 +323,7 @@ void vault_traps(int y, int x, int yd, int xd, int num)
 /*
  * Hack -- Place some sleeping monsters near the given location
  */
-void vault_monsters(int y1, int x1, int num)
+void vault_monsters(int x1, int y1, int num)
 {
 	int k, i, y, x;
 	cave_type *c_ptr;
