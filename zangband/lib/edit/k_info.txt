@@ -4293,14 +4293,14 @@ N:583:Resist Fire and Cold
 G:=:d
 I:45:51:0
 W:21:0:2:450
-A:21/8
+A:21/4
 F:RES_FIRE | RES_COLD | IGNORE_FIRE | IGNORE_COLD | EASY_KNOW
 
 N:584:the Cat
 G:=:d
 I:45:52:4
 W:13:0:2:150
-A:13/8
+A:13/2
 F:STEALTH | INFRA
 
 # 585-589 are unused
