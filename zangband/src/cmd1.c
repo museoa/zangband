@@ -1820,8 +1820,8 @@ void py_attack(int y, int x)
 			/* Bare hands and not a monk */
 			else
 			{
-			  
-				msg_format("You %s %s.", (p_ptr->prace == RACE_GHOUL?"claw":"punch"), m_name); break;			
+				msg_format("You %s %s.",
+					 (p_ptr->prace == RACE_GHOUL?"claw":"punch"), m_name);
 			}
 
 			/* No negative damage */
