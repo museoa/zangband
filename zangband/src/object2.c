@@ -160,7 +160,7 @@ void delete_object_list(s16b *o_idx_ptr)
 	OBJ_ITT_END;
 
 	/* Objects are gone */
-	o_idx_ptr = 0;
+	*o_idx_ptr = 0;
 }
 
 /*
