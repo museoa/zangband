@@ -34,39 +34,38 @@
 
 const cptr race_group_name[MAX_RACE_GROUPS]=
 {
-  "Human", "Elven", "Midget", "Giant", "Goblinoid", 
-  "Natural", "Magic", "Constructs", "Undead", "Extraplanar",
-
+	"Human", "Elven", "Midget", "Giant", "Goblinoid", 
+	"Natural", "Magic", "Constructs", "Undead", "Extraplanar",
 };
 
 const cptr race_group_desc[MAX_RACE_GROUPS]=
 {
-  "This group consists of human subtypes and human-looking races.",
-  "This group consists of elven subraces.",
-  "This group consists of races that are smaller than humans.",
-  "This group consists of races that are larger than humans.",
-  "This group consists of 'evil' races such as kobolds and half-orcs.",
-  "This group consists of sentient animal and plant races.",
-  "This group consists of races with a magical origin or background.",
-  "This group consists of artificial creatures.",
-  "This group consists of undead races.",
-  "This group consists of races from other planes of existence."
+	"This group consists of human subtypes and human-looking races.",
+	"This group consists of elven subraces.",
+	"This group consists of races that are smaller than humans.",
+	"This group consists of races that are larger than humans.",
+	"This group consists of 'evil' races such as kobolds and half-orcs.",
+	"This group consists of sentient animal and plant races.",
+	"This group consists of races with a magical origin or background.",
+	"This group consists of artificial creatures.",
+	"This group consists of undead races.",
+	"This group consists of races from other planes of existence."
 };
 
 #define MAX_GROUP_INT 6 /* Internal max amount of races per group. */
 
 const sint race_groups [MAX_RACE_GROUPS][MAX_GROUP_INT]=
 {
-  {RACE_HUMAN, RACE_BARBARIAN, RACE_AMBERITE, -1, -1, -1},
-  {RACE_HALF_ELF, RACE_ELF, RACE_HIGH_ELF, RACE_DARK_ELF, -1, -1},
-  {RACE_HOBBIT, RACE_GNOME, RACE_DWARF, RACE_NIBELUNG, RACE_YEEK, -1},
-  {RACE_CYCLOPS, RACE_HALF_OGRE, RACE_HALF_GIANT, RACE_HALF_TITAN, -1, -1},
-  {RACE_KOBOLD, RACE_HALF_ORC, RACE_HALF_TROLL, -1, -1, -1},
-  {RACE_KLACKON, -1, -1, -1, -1, -1},
-  {RACE_SPRITE, RACE_DRACONIAN, RACE_MIND_FLAYER, RACE_BEASTMAN, -1, -1},
-  {RACE_GOLEM, -1, -1, -1, -1, -1},
-  {RACE_SKELETON, RACE_ZOMBIE, RACE_GHOUL, RACE_VAMPIRE, RACE_SPECTRE, -1},
-  {RACE_IMP, -1, -1, -1, -1, -1}
+	{RACE_HUMAN, RACE_BARBARIAN, RACE_AMBERITE, -1, -1, -1},
+	{RACE_HALF_ELF, RACE_ELF, RACE_HIGH_ELF, RACE_DARK_ELF, -1, -1},
+	{RACE_HOBBIT, RACE_GNOME, RACE_DWARF, RACE_NIBELUNG, RACE_YEEK, -1},
+	{RACE_CYCLOPS, RACE_HALF_OGRE, RACE_HALF_GIANT, RACE_HALF_TITAN, -1, -1},
+	{RACE_KOBOLD, RACE_HALF_ORC, RACE_HALF_TROLL, -1, -1, -1},
+	{RACE_KLACKON, -1, -1, -1, -1, -1},
+	{RACE_SPRITE, RACE_DRACONIAN, RACE_MIND_FLAYER, RACE_BEASTMAN, -1, -1},
+	{RACE_GOLEM, -1, -1, -1, -1, -1},
+	{RACE_SKELETON, RACE_ZOMBIE, RACE_GHOUL, RACE_VAMPIRE, RACE_SPECTRE, -1},
+	{RACE_IMP, -1, -1, -1, -1, -1}
 };
 
 /*
@@ -1068,11 +1067,11 @@ static int adjust_stat(int value, int amount, int auto_roll)
  */
 static void get_stats(void)
 {
-	int		i, j;
+	int	i, j;
 
-	int		bonus;
+	int	bonus;
 
-	int		dice[18];
+	int	dice[18];
 
 
 	/* Roll and verify some stats */
@@ -1133,7 +1132,7 @@ static void get_stats(void)
  */
 static void get_extra(void)
 {
-	int		i, j, min_value, max_value;
+	int i, j, min_value, max_value;
 
 #ifdef SHOW_LIFE_RATE
 	int percent;
@@ -2015,48 +2014,48 @@ static bool get_player_race(void)
 		{
 			k = (islower(c) ? A2I(c) : -1);
 			if ((k >= 0) && (k < n)) 
-			  {
-			    sub_ret_val = get_sub_race(k);
-			    if (sub_ret_val == 1)
-			      { 
-				bell();
-				msg_print("There are no races in this group.");
-			      }
-			    else if(sub_ret_val == 2)
-			      {
-				return (FALSE);
-			      }
-			    else if (sub_ret_val == 3)
-			      {
-				/* Do nothing */
-			      }
-			    else if (sub_ret_val == 0)
-			      {
-				/* Success! */
-				selected = TRUE;
-				break;
-			      }
-			    else 
-			      {
-				sprintf(buf, "Unknown value: get_sub_race returned %d. Please submit a bug report.", sub_ret_val);
-				bell();
-				msg_print(buf);
-				msg_print(NULL);
-			      }
-			    if(!selected)
-			      {
-				/* No selection, refresh display */
-				clear_from(15);
-				Term_putstr(5, 15, -1, TERM_WHITE,
-					    "Your 'race' determines various intrinsic factors and bonuses.");
+			{
+				sub_ret_val = get_sub_race(k);
+				if (sub_ret_val == 1)
+				{ 
+					bell();
+					msg_print("There are no races in this group.");
+				}
+				else if(sub_ret_val == 2)
+				{
+					return (FALSE);
+				}
+				else if (sub_ret_val == 3)
+				{
+					/* Do nothing */
+				}
+				else if (sub_ret_val == 0)
+				{
+					/* Success! */
+					selected = TRUE;
+					break;
+				}
+				else 
+				{
+					sprintf(buf, "Unknown value: get_sub_race returned %d. Please submit a bug report.", sub_ret_val);
+					bell();
+					msg_print(buf);
+					msg_print(NULL);
+				}
+				if(!selected)
+				{
+					/* No selection, refresh display */
+					clear_from(15);
+					Term_putstr(5, 15, -1, TERM_WHITE,
+						"Your 'race' determines various intrinsic factors and bonuses.");
 
-				for (n = 0; n < MAX_RACE_GROUPS;  n++)
-				  {				    
-				    sprintf(buf, "%c%c %s", I2A(n), p2, race_group_name[n]);
-				    put_str(buf, 18 + (n/5), 2 + 15 * (n%5));
-				  }
-			      }
-			  }
+					for (n = 0; n < MAX_RACE_GROUPS;  n++)
+					{
+						sprintf(buf, "%c%c %s", I2A(n), p2, race_group_name[n]);
+						put_str(buf, 18 + (n/5), 2 + 15 * (n%5));
+					}
+				}
+			}
 			else if (c == '?')
 			{
 				screen_save();

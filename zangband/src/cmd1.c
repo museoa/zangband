@@ -1501,7 +1501,7 @@ void py_attack(int y, int x)
 	/* Prepare for ghoul paralysis? */
 	if (!(inventory[INVEN_WIELD].k_idx) && (p_ptr->prace == RACE_GHOUL))
 	{
-	        ghoul_paral = 0;
+		ghoul_paral = 0;
 
 		/* Prevent bogus falls asleep messages */
 		if (!(m_ptr->csleep)) ghoul_hack = TRUE;
@@ -1691,11 +1691,10 @@ void py_attack(int y, int x)
 			}
 
 			/* Ghoul paralysis */
-			if ((ghoul_paral > -1) 
-			    && !(r_ptr->flags3 & RF3_NO_SLEEP)
+			if ((ghoul_paral > -1) && !(r_ptr->flags3 & RF3_NO_SLEEP)
 			    && (r_ptr->level < randint0(1+((p_ptr->lev)*2))))
 			{
- 			  ghoul_paral += 25 +  randint1(p_ptr->lev/2);
+ 				ghoul_paral += 25 +  randint1(p_ptr->lev/2);
 			}
 
 			/* Monk attack? */
@@ -2024,19 +2023,18 @@ void py_attack(int y, int x)
 	 * Hack -- delay paralysis (otherwise, consecutive attacks would make
 	 * it counterproductive
 	 */
-        if (ghoul_paral > 0)
+	if (ghoul_paral > 0)
 	{
-
-	  /* Message */
-	  if (ghoul_hack && (m_ptr->ml))
-	    msg_format("%^s falls asleep!", m_name);
-
-	  /* Sleep */
-	  m_ptr->csleep += 5 * ghoul_paral;
-	  ghoul_paral = 0;
-
+		/* Message */
+		if (ghoul_hack && (m_ptr->ml))
+		{
+			msg_format("%^s falls asleep!", m_name);
+		}
+		
+		/* Sleep */
+		m_ptr->csleep += 5 * ghoul_paral;
+		ghoul_paral = 0;
 	}
-
 
 	/* Hack -- delay fear messages */
 	else if (fear && m_ptr->ml)
