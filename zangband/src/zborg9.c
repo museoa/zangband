@@ -1944,14 +1944,8 @@ static void init_borg_txt_file(void)
 	/*
 	 * Array of borg variables is stored as
 	 * 0 to k_max = items in inventory
-	 * k_max  to end of array = Other skills/possessions
 	 */
-	size_obj = z_info->k_max + BI_MAX;
-
-	C_MAKE(borg_has, size_obj, int);
-
-	/* Make a shortcut pointers into the array */
-	borg_skill = &borg_has[z_info->k_max];
+	C_MAKE(borg_has, z_info->k_max, int);
 
 	/* Make sure we know who and what we are */
 	borg_class = p_ptr->pclass;

@@ -41,6 +41,7 @@ extern int use_shop;
 
 /* Borg functions */
 extern list_item *look_up_equip_slot(int slot);
+extern void borg_update_frame(void);
 extern void borg_notice(void);
 extern void borg_notice_home(void);
 extern s32b borg_power_home(void);

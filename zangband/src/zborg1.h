@@ -202,9 +202,6 @@ extern bool borg_scums_uniques;
 
 /* Borg has is intrinsically broken */
 extern int *borg_has;
-extern int *borg_skill;
-extern int size_obj;
-
 
 /*
  * Borg-abilities
@@ -362,11 +359,6 @@ struct borg_player
 };
 
 extern borg_player *bp_ptr;
-
-
-
-
-#define BI_MAX		1
 
 
 /*
@@ -812,12 +804,6 @@ extern bool borg_dump_character(cptr str);
  * Save the game (but do not quit)
  */
 extern bool borg_save_game(void);
-
-
-/*
- * Update the "frame" info from the screen
- */
-extern void borg_update_frame(void);
 
 
 /*
