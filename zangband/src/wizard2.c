@@ -14,8 +14,6 @@
 
 #include "script.h"
 
-#include <math.h>
-
 
 /*
  * Hack -- Rerate Hitpoints
@@ -163,6 +161,12 @@ static void prt_binary(u32b flags, int col, int row)
 	}
 }
 
+static double pow4(double n)
+{
+    double pow2 = n * n;
+    return pow2 * pow2;
+}
+
 static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 {
 	int i;
@@ -213,8 +217,8 @@ static void get_obj_dist(int min_level, int obj_num, u32b rarity[MAX_DEPTH])
 
             if (table[i].index == obj_num)
             {
-                p += (pow(value1 + table[i].prob2, 4) - pow(value1, 4)) /
-                    pow(total, 4);
+                p += (pow4(value1 + table[i].prob2) - pow4(value1)) /
+                    pow4(total);
             }
 
             /* Increment */
