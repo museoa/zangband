@@ -1220,6 +1220,8 @@ extern bool do_cmd_knowledge_quests(int dummy);
 /* maid-grf.c */
 extern void init_term_callbacks(void);
 extern void free_term_callbacks(void);
+extern void init_overhead_map(void);
+extern void del_overhead_map(void);
 extern void display_dungeon(void);
 extern void lite_spot(int x, int y);
 extern void prt_map(void);

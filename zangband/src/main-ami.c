@@ -1154,9 +1154,6 @@ errr init_ami( void )
 		sound_name_desc = malloc(8000); /* Ugh :( */
 		init_sound();
 	}
-
-	/* Initialise the overhead map */
-    init_overhead_map();
     
     /* Save the ami hooks into the overhead map */
     set_callback((callback_type) ami_map_info, CALL_MAP_INFO, NULL);

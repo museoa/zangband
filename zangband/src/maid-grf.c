@@ -377,8 +377,6 @@ void del_callback(int number, vptr data)
  */
 
 
-static bool map_init = FALSE;
-
 /* List of 16x16 blocks for the overhead map */
 map_blk_ptr_ptr *map_cache;
 
@@ -439,9 +437,6 @@ void init_overhead_map(void)
 {
 	int i, j;
 
-	/* Do not initialize twice */
-	if (map_init) return;
-
 	/* Make the list of pointers to blocks */
 	C_MAKE(map_cache, MAP_CACHE, map_blk_ptr_ptr);
 
@@ -474,9 +469,6 @@ void init_overhead_map(void)
 		C_MAKE(map_grid[i], WILD_SIZE, int);
 	}
 
-	/* The map exists */
-	map_init = TRUE;
-
 	/* Initialize */
 	clear_map();
 }
@@ -487,9 +479,6 @@ void init_overhead_map(void)
 void del_overhead_map(void)
 {
 	int i, j;
-
-	/* Do not remove twice */
-	if (!map_init) return;
 
 	/* Free refcount for cache blocks */
 	FREE(map_cache_refcount);
@@ -522,9 +511,6 @@ void del_overhead_map(void)
 
 	/* Free the overhead map itself */
 	FREE(map_grid);
-
-	/* The map no longer exists */
-	map_init = FALSE;
 }
 
 
@@ -2524,12 +2510,8 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 	map.ta = (*tap);
 	map.tc = (*tcp);
 	
-	/* Save info into overhead map if required */
-	if (map_init)
-	{
-		/* Save information in map */
-		save_map_location(x, y, &map);
-	}
+	/* Save information in map */
+	save_map_location(x, y, &map);
 }
 
 
@@ -2539,9 +2521,6 @@ static void map_info(int x, int y, byte *ap, char *cp, byte *tap, char *tcp)
 void Term_erase_map(void)
 {
 	callback_list *callback;
-
-	/* Paranoia */
-	if (!map_init) return;
 
 	/* Notify erasure of the map */
 	for (callback = callbacks[CALL_MAP_ERASE]; callback; callback = callback->next)

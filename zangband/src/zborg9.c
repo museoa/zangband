@@ -2493,9 +2493,6 @@ void borg_init_9(void)
 
 	/* Hack - initialise the hooks into the overhead map code */
 
-	/* Initialise the overhead map code */
-	init_overhead_map();
-
 	/* Save the borg hooks into the overhead map */
 	set_callback((callback_type) borg_map_info, CALL_MAP_INFO, NULL);
 	set_callback((callback_type) borg_map_erase, CALL_MAP_ERASE, NULL);

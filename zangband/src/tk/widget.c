@@ -1473,9 +1473,6 @@ static int Widget_ObjCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	{
 		/* Hack - initialise the hooks into the overhead map code */
 	
-		/* Initialise the overhead map code */
-		init_overhead_map();
-
 		/* Save the tk hooks into the overhead map */
 		set_callback((callback_type) Widget_map_info, CALL_MAP_INFO, widgetPtr);
 		set_callback((callback_type) Widget_map_erase, CALL_MAP_ERASE, widgetPtr);

@@ -1434,7 +1434,10 @@ void init_angband(void)
 	/* Initialise the fake monochrome flag */
 	fake_monochrome = (!use_graphics
 					   || streq(ANGBAND_SYS, "ibm")) ? TRUE : FALSE;
-
+	
+	/* Initialise the overhead map */
+	init_overhead_map();
+	
 	/* Done */
 	note("[Initialization complete]");
 }
@@ -1490,6 +1493,9 @@ void cleanup_angband(void)
 	FREE(cave_cost);
 
 #endif /* MONSTER_FLOW */
+
+	/* Delete the overhead map */
+	del_overhead_map();
 
 /*
  * Note that this causes problems if Zangband exits due to an error
