@@ -321,7 +321,7 @@ a magical item although there is some variance from this.
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: March 20, 2000
+Last update: May 24, 2001
 
 ***** Begin Hyperlinks
 ***** [1] birth.txt#AutoRoller

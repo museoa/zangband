@@ -689,4 +689,4 @@ Angband Version 2.7   :  1/1/95  Ben Harrison
 Original   : (??)
 Updated    : (??)
 Updated    : Zangband DevTeam
-Last update: May 30, 1999
+Last update: May 25, 2001
