@@ -1427,9 +1427,9 @@ static void make_dun_buildings(int count, int x_max, int y_max)
 		ywid = rand_range(6, 10);
 		
 		/* Can we place it here? */
-		for (j = -1; j <= xwid; j++)
+		for (j = -1; j <= xwid + 1; j++)
 		{
-			for (k = -1; k <= ywid; k++)
+			for (k = -1; k <= ywid + 1; k++)
 			{
 				c_ptr = cave_p(x + j, y + k);
 				
@@ -1851,8 +1851,6 @@ static void draw_dun_grave(void)
 	set_feat_bold(x0, y0, FEAT_MORE);
 
 	count = (xsize / 4) * (ysize / 4);
-
-	make_dun_buildings(count, xsize, ysize);
 	
 	/* Draw a random number of graves */
 	for (i = 0; i < count; i++)
