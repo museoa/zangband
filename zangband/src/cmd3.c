@@ -882,6 +882,9 @@ static void do_cmd_refill_lamp(void)
 
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 }
 
 
