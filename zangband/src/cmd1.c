@@ -275,10 +275,10 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 {
 
 	/*
-	* mult is scaled to be *4 so that the fractional slays can be stored
+	* mult is scaled to be *10 so that the fractional slays can be stored
 	* in an integer. -SF-
 	*/
-	int mult = 4;
+	int mult = 10;
 
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -308,7 +308,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 					r_ptr->r_flags3 |= RF3_ANIMAL;
 				}
 
-				if (mult < 7) mult = 7;
+				if (mult < 17) mult = 17;
 			}
 
 			/* Slay Evil */
@@ -320,7 +320,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 					r_ptr->r_flags3 |= RF3_EVIL;
 				}
 
-				if (mult < 6) mult = 6;
+				if (mult < 15) mult = 15;
 			}
 
 			/* Slay Undead */
@@ -332,7 +332,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 					r_ptr->r_flags3 |= RF3_UNDEAD;
 				}
 
-				if (mult < 8) mult = 8;
+				if (mult < 20) mult = 20;
 			}
 
 			/* Slay Demon */
@@ -344,7 +344,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 					r_ptr->r_flags3 |= RF3_DEMON;
 				}
 
-				if (mult < 8) mult = 8;
+				if (mult < 20) mult = 20;
 			}
 
 			/* Slay Orc */
@@ -356,7 +356,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 					r_ptr->r_flags3 |= RF3_ORC;
 				}
 
-				if (mult < 8) mult = 8;
+				if (mult < 20) mult = 20;
 			}
 
 			/* Slay Troll */
@@ -368,7 +368,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 					r_ptr->r_flags3 |= RF3_TROLL;
 				}
 
-				if (mult < 8) mult = 8;
+				if (mult < 20) mult = 20;
 			}
 
 			/* Slay Giant */
@@ -380,7 +380,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 					r_ptr->r_flags3 |= RF3_GIANT;
 				}
 
-				if (mult < 8) mult = 8;
+				if (mult < 20) mult = 20;
 			}
 
 			/* Slay Dragon  */
@@ -392,7 +392,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 					r_ptr->r_flags3 |= RF3_DRAGON;
 				}
 
-				if (mult < 8) mult = 8;
+				if (mult < 20) mult = 20;
 			}
 
 			/* Execute Dragon */
@@ -404,7 +404,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 					r_ptr->r_flags3 |= RF3_DRAGON;
 				}
 
-				if (mult < 12) mult = 12;
+				if (mult < 30) mult = 30;
 
 				if ((o_ptr->name1 == ART_AEGLIN) &&
 				    strstr(r_name + r_ptr->name, "Fafner"))
@@ -426,7 +426,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 8) mult = 8;
+					if (mult < 20) mult = 20;
 				}
 			}
 
@@ -445,7 +445,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 8) mult = 8;
+					if (mult < 20) mult = 20;
 				}
 			}
 
@@ -464,7 +464,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 8) mult = 8;
+					if (mult < 20) mult = 20;
 				}
 			}
 
@@ -482,7 +482,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 8) mult = 8;
+					if (mult < 20) mult = 20;
 				}
 			}
 
@@ -501,7 +501,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 8) mult = 8;
+					if (mult < 20) mult = 20;
 				}
 			}
 			break;
@@ -510,7 +510,7 @@ s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr)
 
 
 	/* Return the total damage */
-	return (tdam * 10*mult/4);
+	return (tdam * mult);
 }
 
 
