@@ -3188,7 +3188,7 @@ static errr process_dungeon_file_aux(char *buf, int ymin, int xmin, int ymax, in
 			}
 
 			/* Terrain special */
-			c_ptr->special = letter[idx].special;
+			c_ptr->f_idx = letter[idx].special;
 		}
 
 		(*y)++;

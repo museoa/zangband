@@ -2623,7 +2623,7 @@ static void load_map(int ymax, int ymin, int xmax, int xmin)
 				c_ptr = area(y,x);
 
 				/* Extract "feat" */
-				c_ptr->special = tmp16s;
+				c_ptr->f_idx = tmp16s;
 
 				/* Advance/Wrap */
 				if (++x >= xmax)

@@ -3723,3 +3723,13 @@ extern int PlayerUID;
 
 #define FIELD_ACTION_MAX	15	/* The last action + 1 */
 
+
+/*
+ * Player displays
+ */
+#define DISPLAY_PLAYER_STANDARD		0	/* standard display */
+#define DISPLAY_PLAYER_HISTORY		1	/* standard display with history */
+#define DISPLAY_PLAYER_SUMMARY		2	/* summary of various things */
+
+#define DISPLAY_PLAYER_MAX			3
+

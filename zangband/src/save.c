@@ -1234,7 +1234,7 @@ static void save_map(int ymax, int ymin, int xmax, int xmin)
 			c_ptr = area(y,x);
 
 			/* Extract a byte */
-			tmp16s = c_ptr->special;
+			tmp16s = c_ptr->f_idx;
 
 			/* If the run is broken, or too full, flush it */
 			if ((tmp16s != prev_s16b) || (count == MAX_UCHAR))

@@ -2740,9 +2740,8 @@ static void display_player_summary(void)
 
 typedef void (*display_func)(void);
 
-#define MAX_DISPLAYS		3
 
-static display_func displays[MAX_DISPLAYS] =
+static display_func displays[DISPLAY_PLAYER_MAX] =
 {
 	/* Standard display with skills */
 	display_player_standard,
@@ -2762,7 +2761,7 @@ static display_func displays[MAX_DISPLAYS] =
  */
 void display_player(int mode)
 {
-	mode %= MAX_DISPLAYS;
+	mode %= DISPLAY_PLAYER_MAX;
 
 	/* Erase screen */
 	clear_from(0);
@@ -2779,7 +2778,7 @@ void do_cmd_character(void)
 {
 	char c;
 
-	int mode = 0;
+	int mode = DISPLAY_PLAYER_STANDARD;
 
 	char tmp[160];
 
@@ -2824,13 +2823,13 @@ void do_cmd_character(void)
 		/* Decrease mode */
 		else if (c == 'p')
 		{
-			mode = (mode + MAX_DISPLAYS - 1) % MAX_DISPLAYS;
+			mode = (mode + DISPLAY_PLAYER_MAX - 1) % DISPLAY_PLAYER_MAX;
 		}
 
 		/* Increase mode */
 		else if (c == 'n')
 		{
-			mode = (mode + 1) % MAX_DISPLAYS;
+			mode = (mode + 1) % DISPLAY_PLAYER_MAX;
 		}
 
 		/* Oops */
@@ -2930,7 +2929,7 @@ errr file_character(cptr name, bool full)
 #endif
 
 	/* Display player */
-	display_player(0);
+	display_player(DISPLAY_PLAYER_STANDARD);
 
 	/* Dump part of the screen */
 	for (y = 2; y < 22; y++)
@@ -2956,7 +2955,7 @@ errr file_character(cptr name, bool full)
 	}
 
 	/* Display history */
-	display_player(1);
+	display_player(DISPLAY_PLAYER_HISTORY);
 
 	/* Dump part of the screen */
 	for (y = 15; y < 20; y++)
@@ -3050,7 +3049,7 @@ errr file_character(cptr name, bool full)
 	if (full)
 	{
 		fprintf(fff, "\n\n");
-		display_player(2);
+		display_player(DISPLAY_PLAYER_SUMMARY);
 
 		/* Dump first column */
 		for (y = 6; y < 23; y++)
@@ -4449,7 +4448,7 @@ static void show_info(void)
 
 
 	/* Display player */
-	display_player(0);
+	display_player(DISPLAY_PLAYER_STANDARD);
 
 	/* Prompt for inventory */
 	prt("Hit any key to see more information (ESC to abort): ", 23, 0);

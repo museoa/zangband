@@ -1250,7 +1250,7 @@ static void fix_player(void)
 		Term_activate(angband_term[j]);
 
 		/* Display player */
-		display_player(0);
+		display_player(DISPLAY_PLAYER_STANDARD);
 
 		/* Fresh */
 		Term_fresh();

@@ -2436,6 +2436,8 @@ static bool player_birth_aux_2(void)
 
 	char buf[80];
 
+	int mode = DISPLAY_PLAYER_STANDARD;
+
 
 	/* Initialize stats */
 	for (i = 0; i < A_MAX; i++)
@@ -2516,7 +2518,7 @@ static bool player_birth_aux_2(void)
 		p_ptr->csp = p_ptr->msp;
 
 		/* Display the player */
-		display_player(0);
+		display_player(mode);
 
 		/* Display the costs header */
 		put_str("Cost", row - 2, col + 32);
@@ -2548,6 +2550,14 @@ static bool player_birth_aux_2(void)
 
 		/* Done */
 		if (ch == ESCAPE) break;
+
+#if 0
+		/* Increase mode */
+		if (ch == 'h')
+		{
+			mode = (mode + 1) % DISPLAY_PLAYER_MAX;
+		}
+#endif
 
 		/* Prev stat */
 		if (ch == '8')
@@ -2603,6 +2613,7 @@ static bool player_birth_aux_3(void)
 
 	char buf[80];
 
+	int mode = DISPLAY_PLAYER_STANDARD;
 
 #ifdef ALLOW_AUTOROLLER
 
@@ -2891,13 +2902,14 @@ static bool player_birth_aux_3(void)
 			p_ptr->csp = p_ptr->msp;
 
 			/* Display the player */
-			display_player(0);
+			display_player(mode);
 
 			/* Prepare a prompt (must squeeze everything in) */
 			Term_gotoxy(2, 23);
 			Term_addch(TERM_WHITE, b1);
 			Term_addstr(-1, TERM_WHITE, "'r' to reroll");
 			if (prev) Term_addstr(-1, TERM_WHITE, ", 'p' for prev");
+			Term_addstr(-1, TERM_WHITE, ", 'h' for history");
 			Term_addstr(-1, TERM_WHITE, ", or ESC to accept");
 			Term_addch(TERM_WHITE, b2);
 
@@ -2921,6 +2933,12 @@ static bool player_birth_aux_3(void)
 			{
 				load_prev_data();
 				continue;
+			}
+
+			/* Increase mode */
+			if (ch == 'h')
+			{
+				mode = (mode + 1) % DISPLAY_PLAYER_MAX;
 			}
 
 			/* Help */
@@ -2985,7 +3003,7 @@ static bool player_birth_aux(void)
 	get_virtues();
 
 	/* Display the player */
-	display_player(0);
+	display_player(DISPLAY_PLAYER_STANDARD);
 
 	/* Prompt for it */
 	prt("['Q' to suicide, 'S' to start over, or ESC to continue]", 23, 10);
