@@ -731,12 +731,12 @@ static void build_type4(int by0, int bx0)
 				tmp = randint1(2);
 				
 				/* Inner pillar */
-				generate_fill(yval - 1, xval - 7 - tmp,
-					 yval + 1, xval - 5 - tmp, FEAT_WALL_INNER);
+				generate_fill(yval - 1, xval - 6 - tmp,
+					 yval + 1, xval - 4 - tmp, FEAT_WALL_INNER);
 
 				/* Inner pillar */
-				generate_fill(yval - 1, xval + 5 + tmp,
-					 yval + 1, xval + 7 + tmp, FEAT_WALL_INNER);
+				generate_fill(yval - 1, xval + 4 + tmp,
+					 yval + 1, xval + 6 + tmp, FEAT_WALL_INNER);
 			}
 
 			/* Occasionally, some Inner rooms */
@@ -3712,7 +3712,7 @@ static void build_type13(int by0, int bx0)
 		case 2:
 		{
 			/* Rock */
-			type = FEAT_WALL_INNER;
+			type = LAKE_ROCK;
 			break;
 		}
 		
@@ -3741,10 +3741,10 @@ static void build_type13(int by0, int bx0)
 
 		/* Make up size of various componants */
 		/* Floor */
-		c3 = 2 * xsize / 3;
+		c3 = xsize;
 
 		/* Deep water/lava */
-		c1 = randint0(c3 / 2) + randint0(c3 / 2) - 5;
+		c1 = randint0(c3 / 2);
 
 		/* Shallow boundary */
 		c2 = (c1 + c3) / 2;

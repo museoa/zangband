@@ -2030,7 +2030,7 @@ bool generate_lake(int y0, int x0, int xsize, int ysize,
 			feat1 = FEAT_SAND;
 			feat2 = FEAT_SAND;
 			feat3 = FEAT_FLOOR;
-		
+			break;		
 		}
 		
 		case LAKE_ROCK:
@@ -2039,7 +2039,7 @@ bool generate_lake(int y0, int x0, int xsize, int ysize,
 			feat1 = FEAT_WALL_INNER;
 			feat2 = FEAT_WALL_INNER;
 			feat3 = FEAT_FLOOR;
-		
+			break;
 		}
 		
 		/* Paranoia */
@@ -2071,7 +2071,7 @@ bool generate_lake(int y0, int x0, int xsize, int ysize,
 	cave_fill(y0, x0);
 
 	/* if tally too small, try again */
-	if (fill_data.amount < 10)
+	if (fill_data.amount < 3)
 	{
 		/* too small -clear area and try again later */
 		
