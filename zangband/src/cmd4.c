@@ -3016,7 +3016,7 @@ static void do_cmd_knowledge_artifacts(void)
 		if (o_ptr->k_idx == 0) continue;
 
 		/* Exit if not in dungeon */
-		if ((o_ptr->ix == 0) && (o_ptr->iy == 0)) continue;
+		if (o_ptr->held_m_idx) continue;
 
 		/* Ignore non-artifacts */
 		if (!artifact_p(o_ptr)) continue;
