@@ -935,7 +935,7 @@ static void wiz_reroll_item(object_type *o_ptr)
 			{
 				delete_held_object(o_list_ptr, o_ptr);
 			}
-			
+
 			/* Add the new object to the list */
 			add_object_list(o_list_ptr, o_ptr);
 		}
@@ -1014,7 +1014,7 @@ static void wiz_quantity_item(object_type *o_ptr)
 		/* Hack -- rod pvals must change if the number in the stack does. -LM- */
 		if (o_ptr->tval == TV_ROD)
 			o_ptr->pval = o_ptr->pval * o_ptr->number / tmp_qnt;
-			
+
 		/* Notice weight changes */
 		p_ptr->update |= PU_WEIGHT;
 	}

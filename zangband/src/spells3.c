@@ -1941,7 +1941,7 @@ bool artifact_scroll(void)
 					   o_name, ((o_ptr->number > 2) ? "were" : "was"));
 
 			o_ptr->number = 1;
-			
+
 			/* Notice weight changes */
 			p_ptr->update |= PU_WEIGHT;
 		}

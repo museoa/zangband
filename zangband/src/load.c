@@ -319,8 +319,8 @@ static void rd_item(object_type *o_ptr)
 		rd_s16b(&o_ptr->iy);
 		rd_s16b(&o_ptr->ix);
 	}
-	
-	
+
+
 	if (sf_version < 37)
 	{
 		/* Mega - hack import player inventory properly */
@@ -329,7 +329,7 @@ static void rd_item(object_type *o_ptr)
 			o_ptr->held = TRUE;
 		}
 	}
-	
+
 	/* Type/Subtype */
 	rd_byte(&o_ptr->tval);
 	rd_byte(&o_ptr->sval);

@@ -487,11 +487,11 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 
 		/* Message */
 		msg_print("You unstack your staff.");
-		
+
 		/* Notice weight changes */
 		p_ptr->update |= PU_WEIGHT;
 	}
-	
+
 	/* Use a single charge */
 	o_ptr->pval--;
 

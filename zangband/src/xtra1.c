@@ -2177,13 +2177,13 @@ static void calc_torch(void)
 static void calc_weight(void)
 {
 	object_type *o_ptr;
-	
+
 	int i;
 
 	/* No weight yet */
 	p_ptr->total_weight = 0;
-	
-	OBJ_ITT_START(p_ptr->inventory, o_ptr)
+
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
 	{
 		/* Increase the weight */
 		p_ptr->total_weight += (o_ptr->number * o_ptr->weight);
@@ -2193,10 +2193,10 @@ static void calc_weight(void)
 	for (i = 0; i < EQUIP_MAX; i++)
 	{
 		o_ptr = &p_ptr->equipment[i];
-		
+
 		/* Need valid items */
 		if (!o_ptr->k_idx) continue;
-		
+
 		/* Increase the weight */
 		p_ptr->total_weight += o_ptr->weight;
 	}
@@ -3809,7 +3809,7 @@ void update_stuff(void)
 		p_ptr->update &= ~(PU_SPELLS);
 		calc_spells();
 	}
-	
+
 	if (p_ptr->update & (PU_WEIGHT))
 	{
 		p_ptr->update &= ~(PU_WEIGHT);

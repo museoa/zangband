@@ -184,18 +184,18 @@ void do_cmd_wield(void)
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
-	
+
 	/* Split object */
 	q_ptr = item_split(o_ptr, 1);
-	
+
 	/* Access the wield slot */
 	o_ptr = &p_ptr->equipment[slot];
-	
+
 	/* Take off existing item */
 	if (o_ptr->k_idx)
 	{
 		/* Take off existing item */
-		(void) inven_takeoff(o_ptr, 255);
+		(void)inven_takeoff(o_ptr, 255);
 	}
 
 	/* Wear the new stuff */

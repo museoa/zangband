@@ -73,7 +73,7 @@ void delete_held_object(s16b *o_idx_ptr, object_type *o_ptr)
 
 	/* Wipe the object */
 	object_wipe(o_ptr);
-	
+
 	/* Count objects */
 	o_cnt--;
 }
@@ -1853,7 +1853,7 @@ object_type *object_prep(int k_idx)
 	o_ptr->flags1 = k_ptr->flags1;
 	o_ptr->flags2 = k_ptr->flags2;
 	o_ptr->flags3 = k_ptr->flags3;
-	
+
 	return (o_ptr);
 }
 
@@ -2200,7 +2200,7 @@ static object_type *make_artifact(void)
 {
 	int i;
 	int k_idx = 0;
-	
+
 	object_type *o_ptr;
 
 	/* Moria had no artifacts */
@@ -4190,7 +4190,7 @@ object_type *make_object(u16b delta_level, obj_theme theme)
 	if (one_in_(prob))
 	{
 		o_ptr = make_artifact();
-		
+
 		if (o_ptr) return (o_ptr);
 	}
 
@@ -4412,7 +4412,7 @@ object_type *make_gold(int coin_type)
 	s16b i;
 
 	s32b base;
-	
+
 	object_type *o_ptr;
 
 	if (coin_type)
@@ -4479,7 +4479,7 @@ void place_gold(int x, int y)
 
 		/* Acquire object */
 		o_ptr = &o_list[o_idx];
-		
+
 		/* Make some gold */
 		object_copy(o_ptr, make_gold(0));
 
@@ -4840,7 +4840,7 @@ void drop_near(object_type *j_ptr, int chance, int x, int y)
 void acquirement(int x1, int y1, int num, bool great, bool known)
 {
 	object_type *o_ptr;
-	
+
 	int i;
 
 	obj_theme theme;
@@ -4861,7 +4861,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 			{
 				/* Make a great object (if possible) */
 				o_ptr = make_object(40, theme);
-				
+
 				/* Paranoia */
 				if (!o_ptr) continue;
 			}
@@ -4869,7 +4869,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 			{
 				/* Make a good object (if possible) */
 				o_ptr = make_object(20, theme);
-				
+
 				/* Paranoia */
 				if (!o_ptr) continue;
 			}
@@ -4877,7 +4877,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
 			/* Check to see if the object is worth anything */
 			if (object_value_real(o_ptr) > 0) break;
 		}
-		
+
 		/* Paranoia */
 		if (i >= 1000) return;
 
@@ -4927,8 +4927,8 @@ s16b *look_up_list(object_type *o_ptr)
 	/* Failure - the object is inconsistant */
 	quit("Failed to look up object.");
 
-    /* Quiet a warning - in gcc marking quit() 'noreturn' would also work */
-    return (0);
+	/* Quiet a warning - in gcc marking quit() 'noreturn' would also work */
+	return (0);
 }
 
 /*
@@ -5081,11 +5081,11 @@ object_type *item_split(object_type *o_ptr, int num)
 
 	/* Obtain a local object */
 	object_copy(q_ptr, o_ptr);
-	
+
 	/* Update item totals */
 	o_ptr->number -= num;
 	q_ptr->number = num;
-	
+
 	/* Notice the change */
 	if (num && !floor_item(o_ptr))
 	{
@@ -5101,13 +5101,13 @@ object_type *item_split(object_type *o_ptr, int num)
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	}
-	
+
 	/* Distribute charges of wands or rods */
 	distribute_charges(o_ptr, q_ptr, num);
-	
+
 	/* Fill in holes... */
 	item_optimize(o_ptr);
-	
+
 	/* Done - return new item */
 	return (q_ptr);
 }
@@ -5189,7 +5189,7 @@ void item_optimize(object_type *o_ptr)
 		if (list == &p_ptr->inventory)
 		{
 			delete_held_object(list, o_ptr);
-			
+
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN);
 		}
@@ -5364,7 +5364,7 @@ object_type *inven_carry(object_type *o_ptr)
 
 	/* Add the item to the pack */
 	o_ptr = add_object_list(&p_ptr->inventory, o_ptr);
-	
+
 	/* Now held */
 	o_ptr->held = TRUE;
 
@@ -5415,7 +5415,7 @@ object_type *inven_takeoff(object_type *o_ptr, int amt)
 
 	/* Paranoia */
 	if (amt <= 0) return (NULL);
-	
+
 	/* Split item */
 	q_ptr = item_split(o_ptr, amt);
 
@@ -5480,7 +5480,7 @@ void inven_drop(object_type *o_ptr, int amt)
 
 	/* Error check */
 	if (amt <= 0) return;
-	
+
 	/* Describe item */
 	item_describe(o_ptr);
 
@@ -5493,7 +5493,7 @@ void inven_drop(object_type *o_ptr, int amt)
 		/* Take off first */
 		o_ptr = inven_takeoff(o_ptr, amt);
 	}
-		
+
 	/* Get local object */
 	q_ptr = item_split(o_ptr, amt);
 
@@ -5508,7 +5508,7 @@ void inven_drop(object_type *o_ptr, int amt)
 
 	/* Drop it near the player */
 	drop_near(q_ptr, 0, p_ptr->px, p_ptr->py);
-	
+
 	/* Update total weight */
 	p_ptr->update |= PU_WEIGHT;
 }

@@ -670,7 +670,7 @@ static void quest_reward(int num, int x, int y)
 			/* Make a good object */
 			o_ptr = make_object(15, dun_theme);
 		}
-		
+
 		if (!o_ptr) continue;
 
 		/* We need a 'good' item - so check the price */

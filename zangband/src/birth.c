@@ -1394,8 +1394,8 @@ static void player_outfit(void)
 		case RACE_GHOUL:
 		{
 			/* Scrolls of satisfy hunger */
-			q_ptr = object_prep(
-							lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
+			q_ptr =
+				object_prep(lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
 			q_ptr->number = (byte)rand_range(2, 5);
 			object_aware(q_ptr);
 			object_known(q_ptr);

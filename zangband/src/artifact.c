@@ -1878,7 +1878,7 @@ bool activate_effect(object_type *o_ptr)
 			case ART_KERI:
 			{
 				object_type *q_ptr;
-			
+
 				msg_print("Your rag feels warm for a moment...");
 
 				/* Hack - Create the food ration */

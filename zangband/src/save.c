@@ -1045,7 +1045,7 @@ static void wr_extra(void)
 
 	/* Trap detection status */
 	wr_byte(p_ptr->detected);
-	
+
 	/* Compact the objects before saving inventory */
 	compact_objects(0);
 

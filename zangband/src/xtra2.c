@@ -779,7 +779,7 @@ bool monster_death(int m_idx, bool explode)
 
 			/* Make an object */
 			q_ptr = make_object(delta_level, r_ptr->obj_drop);
-			
+
 			/* Paranoia */
 			if (!q_ptr) continue;
 
@@ -3254,7 +3254,7 @@ void gain_level_reward(int chosen_reward)
 	int px = p_ptr->px;
 
 	object_type *q_ptr;
-	
+
 	char wrath_reason[32] = "";
 	int nasty_chance = 6;
 	int tval, sval;
