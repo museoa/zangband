@@ -863,7 +863,7 @@ typedef struct field_type field_type;
  * 2) a pointer to a structure cast to void that contains the
  *	information the action needs to complete its job.
  */
-typedef void (*field_action_type)(s16b *field_ptr, void*);
+typedef void (*field_action_type)(s16b *field_ptr, vptr);
 
 
 

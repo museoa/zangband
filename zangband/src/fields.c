@@ -1081,7 +1081,7 @@ s16b place_field(int y, int x, s16b t_idx)
  *
  * It returns FALSE if the field deleted itself, TRUE otherwise.
  */
-bool field_hook_single(s16b *field_ptr, int action, void *action_struct)
+bool field_hook_single(s16b *field_ptr, int action, vptr action_struct)
 {
 	/* Point to the field */
 	field_type *f_ptr = &fld_list[*field_ptr];
@@ -1114,7 +1114,7 @@ bool field_hook_single(s16b *field_ptr, int action, void *action_struct)
  * Note the code must take into account fields deleting
  * themselves.
  */
-void field_hook(s16b *field_ptr, int action, void *action_struct)
+void field_hook(s16b *field_ptr, int action, vptr action_struct)
 {
 	field_type *f_ptr;
 	
@@ -1150,7 +1150,7 @@ void field_hook(s16b *field_ptr, int action, void *action_struct)
  * in the specified list which match the required
  * field type.
  */
-bool field_hook_special(s16b *field_ptr, u16b ftype, void *action_struct)
+bool field_hook_special(s16b *field_ptr, u16b ftype, vptr action_struct)
 {
 	field_type *f_ptr;
 	field_thaum *t_ptr;
@@ -1196,7 +1196,7 @@ bool field_hook_special(s16b *field_ptr, u16b ftype, void *action_struct)
  * Call the required action function for the first field
  * in the specified list with that function.
  */
-s16b *field_hook_find(s16b *field_ptr, int action, void *action_struct)
+s16b *field_hook_find(s16b *field_ptr, int action, vptr action_struct)
 {
 	field_type *f_ptr;
 	
@@ -1354,7 +1354,7 @@ void test_field_data_integrity(void)
 
 
 /* Simple function that does nothing */
-void field_action_nothing(s16b *field_ptr, void *nothing)
+void field_action_nothing(s16b *field_ptr, vptr nothing)
 {
 	/* Hack - ignore 'field_ptr' */
 	(void) field_ptr;
@@ -1368,7 +1368,7 @@ void field_action_nothing(s16b *field_ptr, void *nothing)
 
 
 /* Simple function that deletes the field */
-void field_action_delete(s16b *field_ptr, void *nothing)
+void field_action_delete(s16b *field_ptr, vptr nothing)
 {		
 	/* Hack - ignore 'nothing' */
 	(void) nothing;
@@ -1384,7 +1384,7 @@ void field_action_delete(s16b *field_ptr, void *nothing)
 /*
  * The function that now controls the glyph of warding rune.
  */
-void field_action_glyph_warding(s16b *field_ptr, void *input)
+void field_action_glyph_warding(s16b *field_ptr, vptr input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -1437,7 +1437,7 @@ void field_action_glyph_warding(s16b *field_ptr, void *input)
 /*
  * The function that now controls the exploding rune spell.
  */
-void field_action_glyph_explode(s16b *field_ptr, void *input)
+void field_action_glyph_explode(s16b *field_ptr, vptr input)
 {
 	int px = p_ptr-> px;
 	int py = p_ptr-> py;
@@ -1502,7 +1502,7 @@ void field_action_glyph_explode(s16b *field_ptr, void *input)
  *
  * In nightmare mode, they reappear as monsters.
  */
-void field_action_corpse_decay(s16b *field_ptr, void *nothing)
+void field_action_corpse_decay(s16b *field_ptr, vptr nothing)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -1561,7 +1561,7 @@ void field_action_corpse_decay(s16b *field_ptr, void *nothing)
 /* 
  * Special action to raise corpses.
  */
-void field_action_corpse_raise(s16b *field_ptr, void *input)
+void field_action_corpse_raise(s16b *field_ptr, vptr input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -1660,7 +1660,7 @@ static char corpse_type(char feat)
 /*
  * Initialise a corpse / skeleton after being loaded from a savefile.
  */
-void field_action_corpse_load(s16b *field_ptr, void *nothing)
+void field_action_corpse_load(s16b *field_ptr, vptr nothing)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -1684,7 +1684,7 @@ void field_action_corpse_load(s16b *field_ptr, void *nothing)
 /*
  * Initialise corpse / skeletons
  */
-void field_action_corpse_init(s16b *field_ptr, void *input)
+void field_action_corpse_init(s16b *field_ptr, vptr input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -1717,7 +1717,7 @@ void field_action_corpse_init(s16b *field_ptr, void *input)
 /*
  * Looking at a corpse tells you what type of monster it was
  */
-void field_action_corpse_look(s16b *field_ptr, void *output)
+void field_action_corpse_look(s16b *field_ptr, vptr output)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -1750,7 +1750,7 @@ void field_action_corpse_look(s16b *field_ptr, void *output)
 /*
  * Try to tunnel into a wall.
  */
-void field_action_wall_tunnel(s16b *field_ptr, void *input)
+void field_action_wall_tunnel(s16b *field_ptr, vptr input)
 {	
 	int *dig = (int *) input;
 	
@@ -1775,7 +1775,7 @@ void field_action_wall_tunnel(s16b *field_ptr, void *input)
 /*
  * Invisible walls interact with GF_KILL_WALL
  */
-void field_action_wall_gf(s16b *field_ptr, void *input)
+void field_action_wall_gf(s16b *field_ptr, vptr input)
 {	
 	field_magic_target *f_m_t = (field_magic_target*) input;
 	
@@ -1797,7 +1797,7 @@ void field_action_wall_gf(s16b *field_ptr, void *input)
  * The various types of interaction used by
  * the "interact with grid" command.
  */
-void field_action_interact_tunnel(s16b *field_ptr, void *output)
+void field_action_interact_tunnel(s16b *field_ptr, vptr output)
 {
 	int *action = (int *)output;
 
@@ -1811,7 +1811,7 @@ void field_action_interact_tunnel(s16b *field_ptr, void *output)
 }
 
 
-void field_action_interact_disarm(s16b *field_ptr, void *output)
+void field_action_interact_disarm(s16b *field_ptr, vptr output)
 {
 	int *action = (int *)output;
 	
@@ -1825,7 +1825,7 @@ void field_action_interact_disarm(s16b *field_ptr, void *output)
 }
 
 
-void field_action_interact_open(s16b *field_ptr, void *output)
+void field_action_interact_open(s16b *field_ptr, vptr output)
 {
 	int *action = (int *)output;
 	
@@ -2035,7 +2035,7 @@ void place_trap(int y, int x)
 /*
  * Initialise the trap
  */
-void field_action_trap_init(s16b *field_ptr, void *nothing)
+void field_action_trap_init(s16b *field_ptr, vptr nothing)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2061,7 +2061,7 @@ void field_action_trap_init(s16b *field_ptr, void *nothing)
 /*
  * Try to disarm a trap.
  */
-void field_action_trap_disarm(s16b *field_ptr, void *input)
+void field_action_trap_disarm(s16b *field_ptr, vptr input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2089,7 +2089,7 @@ void field_action_trap_disarm(s16b *field_ptr, void *input)
 /*
  * Traps interact with magic.
  */
-void field_action_trap_gf(s16b *field_ptr, void *input)
+void field_action_trap_gf(s16b *field_ptr, vptr input)
 {
 	field_magic_target *f_m_t = (field_magic_target*) input;
 	
@@ -2160,7 +2160,7 @@ static void hit_trap(field_type *f_ptr)
  * What horrible fate awaits the player after stepping
  * on this particular trap?
  */
-void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_door(s16b *field_ptr, vptr nothing)
 {	
 	int dam;
 	
@@ -2201,7 +2201,7 @@ void field_action_hit_trap_door(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_pit(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_pit(s16b *field_ptr, vptr nothing)
 {	
 	int dam;
 	
@@ -2230,7 +2230,7 @@ void field_action_hit_trap_pit(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_spike(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_spike(s16b *field_ptr, vptr nothing)
 {	
 	int dam;
 	
@@ -2272,7 +2272,7 @@ void field_action_hit_trap_spike(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_poison_pit(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_poison_pit(s16b *field_ptr, vptr nothing)
 {	
 	int dam;
 	
@@ -2326,7 +2326,7 @@ void field_action_hit_trap_poison_pit(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_curse(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2374,7 +2374,7 @@ void field_action_hit_trap_curse(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_teleport(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_teleport(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2392,7 +2392,7 @@ void field_action_hit_trap_teleport(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_element(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_element(s16b *field_ptr, vptr nothing)
 {	
 	int dam;
 	
@@ -2452,7 +2452,7 @@ void field_action_hit_trap_element(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_ba_element(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2516,7 +2516,7 @@ void field_action_hit_trap_ba_element(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_gas(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2594,7 +2594,7 @@ void field_action_hit_trap_gas(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_traps(s16b *field_ptr, vptr nothing)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -2621,7 +2621,7 @@ void field_action_hit_trap_traps(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_temp_stat(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_temp_stat(s16b *field_ptr, vptr nothing)
 {	
 	int dam;
 	
@@ -2687,7 +2687,7 @@ void field_action_hit_trap_temp_stat(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_perm_stat(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_perm_stat(s16b *field_ptr, vptr nothing)
 {	
 	int dam;
 	
@@ -2713,7 +2713,7 @@ void field_action_hit_trap_perm_stat(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_lose_xp(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2731,7 +2731,7 @@ void field_action_hit_trap_lose_xp(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_disenchant(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2749,7 +2749,7 @@ void field_action_hit_trap_disenchant(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_drop_item(s16b *field_ptr, vptr nothing)
 {	
 	int item;
 	
@@ -2781,7 +2781,7 @@ void field_action_hit_trap_drop_item(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_mutate(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2798,7 +2798,7 @@ void field_action_hit_trap_mutate(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_new_life(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2824,7 +2824,7 @@ void field_action_hit_trap_new_life(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_no_lite(s16b *field_ptr, vptr nothing)
 {	
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -2865,7 +2865,7 @@ void field_action_hit_trap_no_lite(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_hunger(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2892,7 +2892,7 @@ void field_action_hit_trap_hunger(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_no_gold(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2918,7 +2918,7 @@ void field_action_hit_trap_no_gold(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_haste_mon(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -2940,7 +2940,7 @@ void field_action_hit_trap_haste_mon(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_raise_mon(s16b *field_ptr, vptr nothing)
 {	
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -2962,7 +2962,7 @@ void field_action_hit_trap_raise_mon(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_drain_magic(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -3011,7 +3011,7 @@ void field_action_hit_trap_drain_magic(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_aggravate(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -3030,7 +3030,7 @@ void field_action_hit_trap_aggravate(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_summon(s16b *field_ptr, vptr nothing)
 {	
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -3056,7 +3056,7 @@ void field_action_hit_trap_summon(s16b *field_ptr, void *nothing)
 }
 
 
-void field_action_hit_trap_lose_memory(s16b *field_ptr, void *nothing)
+void field_action_hit_trap_lose_memory(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -3151,13 +3151,13 @@ void make_lockjam_door(int y, int x, int power, bool jam)
 	 * Hack - note that hack_fld_ptr is a global that is overwritten
 	 * by the place_field() function.
 	 */
-	(void)field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, (void *) &power);
+	(void)field_hook_single(hack_fld_ptr, FIELD_ACT_INIT, (vptr) &power);
 }
 
 /*
  * Initialise a field with a counter
  */
-void field_action_counter_init(s16b *field_ptr, void *input)
+void field_action_counter_init(s16b *field_ptr, vptr input)
 {
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -3198,7 +3198,7 @@ void field_action_counter_init(s16b *field_ptr, void *input)
 }
 
 
-void field_action_door_unlock(s16b *field_ptr, void *input)
+void field_action_door_unlock(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -3237,7 +3237,7 @@ void field_action_door_unlock(s16b *field_ptr, void *input)
 }
 
 
-void field_action_door_bash(s16b *field_ptr, void *input)
+void field_action_door_bash(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -3275,7 +3275,7 @@ void field_action_door_bash(s16b *field_ptr, void *input)
 }
 
 
-void field_action_door_lock_monster(s16b *field_ptr, void *input)
+void field_action_door_lock_monster(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -3333,7 +3333,7 @@ void field_action_door_lock_monster(s16b *field_ptr, void *input)
 }
 
 
-void field_action_door_jam_monster(s16b *field_ptr, void *input)
+void field_action_door_jam_monster(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -3414,7 +3414,7 @@ void field_action_door_jam_monster(s16b *field_ptr, void *input)
 /*
  * Doors interact with various magic effects
  */
-void field_action_door_gf(s16b *field_ptr, void *input)
+void field_action_door_gf(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3485,7 +3485,7 @@ void field_action_door_gf(s16b *field_ptr, void *input)
 /*
  * Interact with a store
  */
-void field_action_door_store(s16b *field_ptr, void *nothing)
+void field_action_door_store(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -3505,7 +3505,7 @@ void field_action_door_store(s16b *field_ptr, void *nothing)
 /*
  * Interact with a building
  */
-void field_action_door_build(s16b *field_ptr, void *nothing)
+void field_action_door_build(s16b *field_ptr, vptr nothing)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 	
@@ -3546,7 +3546,7 @@ static bool test_gold(s32b *cost)
 /*
  * Weaponmaster1
  */
-void field_action_weaponmaster1(s16b *field_ptr, void *input)
+void field_action_weaponmaster1(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3560,7 +3560,7 @@ void field_action_weaponmaster1(s16b *field_ptr, void *input)
 /*
  * Weaponmaster2
  */
-void field_action_weaponmaster2(s16b *field_ptr, void *input)
+void field_action_weaponmaster2(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3592,7 +3592,7 @@ void field_action_weaponmaster2(s16b *field_ptr, void *input)
 /*
  * Recharge1
  */
-void field_action_recharge1(s16b *field_ptr, void *input)
+void field_action_recharge1(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3609,7 +3609,7 @@ void field_action_recharge1(s16b *field_ptr, void *input)
 /*
  * Recharge2
  */
-void field_action_recharge2(s16b *field_ptr, void *input)
+void field_action_recharge2(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3654,7 +3654,7 @@ void field_action_recharge2(s16b *field_ptr, void *input)
 /*
  * Weaponplus1
  */
-void field_action_weaponplus1(s16b *field_ptr, void *input)
+void field_action_weaponplus1(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3668,7 +3668,7 @@ void field_action_weaponplus1(s16b *field_ptr, void *input)
 /*
  * Weaponplus2
  */
-void field_action_weaponplus2(s16b *field_ptr, void *input)
+void field_action_weaponplus2(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3693,7 +3693,7 @@ void field_action_weaponplus2(s16b *field_ptr, void *input)
 /*
  * Armourplus1
  */
-void field_action_armourplus1(s16b *field_ptr, void *input)
+void field_action_armourplus1(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3707,7 +3707,7 @@ void field_action_armourplus1(s16b *field_ptr, void *input)
 /*
  * Armourplus2
  */
-void field_action_armourplus2(s16b *field_ptr, void *input)
+void field_action_armourplus2(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3732,7 +3732,7 @@ void field_action_armourplus2(s16b *field_ptr, void *input)
 /*
  * Mutate1
  */
-void field_action_mutate1(s16b *field_ptr, void *input)
+void field_action_mutate1(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3747,7 +3747,7 @@ void field_action_mutate1(s16b *field_ptr, void *input)
 /*
  * Mutate2
  */
-void field_action_mutate2(s16b *field_ptr, void *input)
+void field_action_mutate2(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3794,7 +3794,7 @@ void field_action_mutate2(s16b *field_ptr, void *input)
 /*
  * Buymap1
  */
-void field_action_buymap1(s16b *field_ptr, void *input)
+void field_action_buymap1(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3808,7 +3808,7 @@ void field_action_buymap1(s16b *field_ptr, void *input)
 /*
  * Buymap2
  */
-void field_action_buymap2(s16b *field_ptr, void *input)
+void field_action_buymap2(s16b *field_ptr, vptr input)
 {	
 	field_type *f_ptr = &fld_list[*field_ptr];
 
@@ -3843,7 +3843,7 @@ void field_action_buymap2(s16b *field_ptr, void *input)
 /*
  * Bookstore will buy/sell
  */
-void field_action_isbook_tester(s16b *field_ptr, void *input)
+void field_action_isbook_tester(s16b *field_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -3856,7 +3856,7 @@ void field_action_isbook_tester(s16b *field_ptr, void *input)
 /*
  * Weaponstore will buy/sell
  */
-void field_action_isweapon_tester(s16b *field_ptr, void *input)
+void field_action_isweapon_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -3869,7 +3869,7 @@ void field_action_isweapon_tester(s16b *field_ptr, void *input)
 /*
  * Armourstore will buy/sell
  */
-void field_action_isarmour_tester(s16b *field_ptr, void *input)
+void field_action_isarmour_tester(s16b *field_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -3883,7 +3883,7 @@ void field_action_isarmour_tester(s16b *field_ptr, void *input)
 /*
  * Weapon/Armourstore will buy/sell
  */
-void field_action_isweaparmour_tester(s16b *field_ptr, void *input)
+void field_action_isweaparmour_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -3897,7 +3897,7 @@ void field_action_isweaparmour_tester(s16b *field_ptr, void *input)
 /*
  * Ammo store will buy/sell
  */
-void field_action_isammo_tester(s16b *field_ptr, void *input)
+void field_action_isammo_tester(s16b *field_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -3910,7 +3910,7 @@ void field_action_isammo_tester(s16b *field_ptr, void *input)
 /*
  * Potion store will buy/sell
  */
-void field_action_ispotion_tester(s16b *field_ptr, void *input)
+void field_action_ispotion_tester(s16b *field_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -3926,7 +3926,7 @@ void field_action_ispotion_tester(s16b *field_ptr, void *input)
 /*
  * Scroll store will buy/sell
  */
-void field_action_isscroll_tester(s16b *field_ptr, void *input)
+void field_action_isscroll_tester(s16b *field_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -3943,7 +3943,7 @@ void field_action_isscroll_tester(s16b *field_ptr, void *input)
 /*
  * Statue store will buy/sell
  */
-void field_action_isstatue_tester(s16b *field_ptr, void *input)
+void field_action_isstatue_tester(s16b *field_ptr, vptr input)
 {
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -3959,7 +3959,7 @@ void field_action_isstatue_tester(s16b *field_ptr, void *input)
 /*
  * Figurine store will buy/sell
  */
-void field_action_isfigurine_tester(s16b *field_ptr, void *input)
+void field_action_isfigurine_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -3975,7 +3975,7 @@ void field_action_isfigurine_tester(s16b *field_ptr, void *input)
 /*
  * Food store will buy/sell
  */
-void field_action_isfood_tester(s16b *field_ptr, void *input)
+void field_action_isfood_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -3992,7 +3992,7 @@ void field_action_isfood_tester(s16b *field_ptr, void *input)
 /*
  * Magic charges store will buy/sell
  */
-void field_action_isrecharge_tester(s16b *field_ptr, void *input)
+void field_action_isrecharge_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -4005,7 +4005,7 @@ void field_action_isrecharge_tester(s16b *field_ptr, void *input)
 /*
  * Jeweler will buy/sell
  */
-void field_action_isjewel_tester(s16b *field_ptr, void *input)
+void field_action_isjewel_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -4020,7 +4020,7 @@ void field_action_isjewel_tester(s16b *field_ptr, void *input)
 /*
  * Weildable items store will buy/sell
  */
-void field_action_iswield_tester(s16b *field_ptr, void *input)
+void field_action_iswield_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 		
@@ -4033,7 +4033,7 @@ void field_action_iswield_tester(s16b *field_ptr, void *input)
 /*
  * Fletcher will buy/sell
  */
-void field_action_isfletcher_tester(s16b *field_ptr, void *input)
+void field_action_isfletcher_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	
@@ -4047,7 +4047,7 @@ void field_action_isfletcher_tester(s16b *field_ptr, void *input)
 /*
  * Swordsman will buy/sell
  */
-void field_action_issword_tester(s16b *field_ptr, void *input)
+void field_action_issword_tester(s16b *field_ptr, vptr input)
 {	
 	field_obj_test *f_o_ptr = (field_obj_test *) input;
 	

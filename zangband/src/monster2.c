@@ -1610,7 +1610,7 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 		
 	/* Call the hook */
 	field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-		 (void *) &mon_enter_test);
+		 (vptr) &mon_enter_test);
 			 
 	/* Get result */
 	if (!mon_enter_test.do_move) return (FALSE);
@@ -2543,7 +2543,7 @@ bool summon_specific(int who, int y1, int x1, int lev, int type,
 		
 		/* Call the hook */
 		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST, 
-			 (void *)&mon_enter_test);
+			 (vptr) &mon_enter_test);
 			 
 		/* Get result */
 		if (!mon_enter_test.do_move) continue;

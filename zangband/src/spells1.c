@@ -5424,7 +5424,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				
 				/* Affect fields on the grid */
 				field_hook(&area(y, x)->fld_idx,
-					FIELD_ACT_MAGIC_TARGET, (void *) &f_m_t);
+					FIELD_ACT_MAGIC_TARGET, (vptr) &f_m_t);
 				
 				/* Restore notice variable */
 				notice = f_m_t.notice;
@@ -5444,7 +5444,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, u16b flg)
 				
 				/* Affect fields on the grid */
 				field_hook(&area(y, x)->fld_idx,
-					FIELD_ACT_MAGIC_TARGET, (void *) &f_m_t);
+					FIELD_ACT_MAGIC_TARGET, (vptr) &f_m_t);
 				
 				/* Restore notice variable */
 				notice = f_m_t.notice;

@@ -718,7 +718,7 @@ static bool store_will_buy(object_type *o_ptr)
 	
 	/* Will the store !not! buy this item? */
 	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
-		 FIELD_ACT_STORE_ACT1, (void *) &f_o_t);
+		 FIELD_ACT_STORE_ACT1, (vptr) &f_o_t);
 	
 	/* We don't want this item type? */
 	if (f_o_t.result == TRUE) return (FALSE);
@@ -728,7 +728,7 @@ static bool store_will_buy(object_type *o_ptr)
 	
 	/* Will the store buy this item? */
 	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
-		 FIELD_ACT_STORE_ACT2, (void *) &f_o_t);
+		 FIELD_ACT_STORE_ACT2, (vptr) &f_o_t);
 
 	/* Check restriction flags */
 	

@@ -860,7 +860,7 @@ bool do_cmd_open_aux(int y, int x)
 		if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 		/* Success? */
-		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (void *) &i))
+		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr) &i))
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_MON_LITE);
@@ -1197,7 +1197,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	int dig = p_ptr->skill_dig;
 	
 	s16b *fld_ptr = field_hook_find(&c_ptr->fld_idx,
-			 FIELD_ACT_INTERACT_TEST, (void *) &action);
+			 FIELD_ACT_INTERACT_TEST, (vptr) &action);
 			 
 	/* Take a turn */
 	p_ptr->energy_use = 100;
@@ -1217,7 +1217,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 
 	if (*fld_ptr && (action == 0))
 	{
-		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (void *)&dig))
+		if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&dig))
 		{
 			/* Notice new floor grids */
 			if (!cave_floor_grid(c_ptr))
@@ -1716,7 +1716,7 @@ bool do_cmd_disarm_aux(cave_type *c_ptr, int dir)
 	if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 	/* Success */
-	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (void *)&i))
+	if (!field_hook_single(fld_ptr, FIELD_ACT_INTERACT, (vptr)&i))
 	{
 		/* Message */
 		msg_format("You have disarmed the %s.", t_ptr->name);
@@ -1923,7 +1923,7 @@ void do_cmd_alter(void)
 		}
 
 		else if (*field_hook_find(&c_ptr->fld_idx, FIELD_ACT_INTERACT_TEST,
-		                          (void *)&action))
+		                          (vptr)&action))
 		{
 			switch (action)
 			{

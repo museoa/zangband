@@ -1893,7 +1893,7 @@ static void process_world(void)
 		if (o_ptr->held_m_idx) continue;
 
 		field_hook(&area(o_ptr->iy, o_ptr->ix)->fld_idx,
-			 FIELD_ACT_OBJECT_ON, (void *) o_ptr);
+			 FIELD_ACT_OBJECT_ON, (vptr) o_ptr);
 
 		if (!o_ptr->timeout) continue;
 

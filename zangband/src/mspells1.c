@@ -383,7 +383,7 @@ static bool summon_possible(int y1, int x1)
 		
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-				 (void *)&mon_enter_test);
+				 (vptr) &mon_enter_test);
 			 
 			/* Get result */
 			if (!mon_enter_test.do_move) return (FALSE);

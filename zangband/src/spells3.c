@@ -104,7 +104,7 @@ bool teleport_away(int m_idx, int dis)
 		
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-				 (void *) &mon_enter_test);
+				 (vptr) &mon_enter_test);
 			 
 			/* Get result */
 			if (!mon_enter_test.do_move) continue;
@@ -135,7 +135,7 @@ bool teleport_away(int m_idx, int dis)
 	
 	/* Process fields under the monster. */
 	field_hook(&c_ptr->fld_idx,
-			 FIELD_ACT_MONSTER_LEAVE, (void *) m_ptr);
+			 FIELD_ACT_MONSTER_LEAVE, (vptr) m_ptr);
 
 	/* Update the new location */
 	area(ny,nx)->m_idx = m_idx;
@@ -152,7 +152,7 @@ bool teleport_away(int m_idx, int dis)
 	
 	/* Process fields under the monster. */
 	field_hook(&c_ptr->fld_idx,
-			 FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
+			 FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
 	
 	/* Redraw the old grid */
 	lite_spot(oy, ox);
@@ -247,7 +247,7 @@ void teleport_to_player(int m_idx)
 		
 			/* Call the hook */
 			field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-				 (void *) &mon_enter_test);
+				 (vptr) &mon_enter_test);
 			 
 			/* Get result */
 			if (!mon_enter_test.do_move) continue;
@@ -283,7 +283,7 @@ void teleport_to_player(int m_idx)
 	
 	/* Process fields under the monster. */
 	field_hook(&c_ptr->fld_idx,
-			 FIELD_ACT_MONSTER_LEAVE, (void *) m_ptr);
+			 FIELD_ACT_MONSTER_LEAVE, (vptr) m_ptr);
 
 	/* Update the new location */
 	area(ny,nx)->m_idx = m_idx;
@@ -300,7 +300,7 @@ void teleport_to_player(int m_idx)
 	
 	/* Process fields under the monster. */
 	field_hook(&c_ptr->fld_idx,
-			 FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
+			 FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
 
 	/* Redraw the old grid */
 	lite_spot(oy, ox);

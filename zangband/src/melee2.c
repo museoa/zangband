@@ -1991,7 +1991,7 @@ static void process_monster(int m_idx)
 	c_ptr = area(oy,ox);
 
 	/* Process fields under the monster. */
-	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ON, (void *) m_ptr);
+	field_hook(&c_ptr->fld_idx, FIELD_ACT_MONSTER_ON, (vptr) m_ptr);
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep)
@@ -2566,7 +2566,7 @@ static void process_monster(int m_idx)
 		
 		/* Call the hook */
 		field_hook(&c_ptr->fld_idx, FIELD_ACT_MON_ENTER_TEST,
-			 (void *) &mon_enter_test);
+			 (vptr) &mon_enter_test);
 			 
 		/* Take turn in some cases. */
 		if (!mon_enter_test.do_move && do_move) do_turn = TRUE;
@@ -2703,7 +2703,7 @@ static void process_monster(int m_idx)
 			
 			/* Process fields under the monster. */
 			field_hook(&old_ptr->fld_idx,
-				 FIELD_ACT_MONSTER_LEAVE, (void *) m_ptr);
+				 FIELD_ACT_MONSTER_LEAVE, (vptr) m_ptr);
 			
 			/* Hack -- Update the old location */
 			old_ptr->m_idx = c_ptr->m_idx;
@@ -2734,7 +2734,7 @@ static void process_monster(int m_idx)
 			
 			/* Process fields under the monster. */
 			field_hook(&old_ptr->fld_idx,
-				 FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
+				 FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
 
 			/* Redraw the old grid */
 			lite_spot(oy, ox);

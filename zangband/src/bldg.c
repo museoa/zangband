@@ -471,7 +471,7 @@ static void display_build(field_type *f_ptr, store_type *b_ptr)
 
 	/* Display building-specific information */
 	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
-		 FIELD_ACT_STORE_ACT1, (void *) &factor);
+		 FIELD_ACT_STORE_ACT1, (vptr) &factor);
 
 	/* Show your gold */
 	building_prt_gold();
@@ -1806,7 +1806,7 @@ static bool process_build_hook(field_type *f_ptr, store_type *b_ptr)
 	factor = ((300 - factor) * bo_ptr->inflate) / 100;
 	
 	field_hook(&area(p_ptr->py, p_ptr->px)->fld_idx,
-		 FIELD_ACT_STORE_ACT2, (void *) &factor);
+		 FIELD_ACT_STORE_ACT2, (vptr) &factor);
 		
 	/* Hack XXX XXX, factor is returned as 2 if we want a redraw */
 	if (factor == 2)

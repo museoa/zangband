@@ -1782,7 +1782,7 @@ bool raise_dead(int y, int x, bool pet)
 		c_ptr = area(fy, fx);
 
 		/* Raise Corpses / Skeletons */
-		if (field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (void *)&pet))
+		if (field_hook_special(&c_ptr->fld_idx, FTYPE_CORPSE, (vptr) &pet))
 		{
 			if (player_has_los_grid(c_ptr)) obvious = TRUE;
 		}
@@ -2528,7 +2528,7 @@ bool earthquake(int cy, int cx, int r)
 							/* Call the hook */
 							field_hook(&c_ptr->fld_idx,
 								 FIELD_ACT_MON_ENTER_TEST,
-								 (void *)&mon_enter_test);
+								 (vptr) &mon_enter_test);
 
 							/* Get result */
 							if (!mon_enter_test.do_move) continue;
@@ -3240,7 +3240,7 @@ bool teleport_swap(int dir)
 
 	/* Process fields under the monster. */
 	field_hook(&area(m_ptr->fy, m_ptr->fx)->fld_idx,
-		FIELD_ACT_MONSTER_ENTER, (void *) m_ptr);
+		FIELD_ACT_MONSTER_ENTER, (vptr) m_ptr);
 
 	/* Redraw the old grid */
 	lite_spot(ty, tx);
