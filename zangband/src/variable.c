@@ -347,6 +347,9 @@ s16b panel_row_min, panel_row_max;
 s16b panel_col_min, panel_col_max;
 s16b panel_col_prt, panel_row_prt;
 
+s16b map_wid = 66;
+s16b map_hgt = 22;
+
 /*
  * Player location in dungeon
  */

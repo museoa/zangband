@@ -93,13 +93,13 @@
  * Number of grids used to display the dungeon (vertically).
  * Must be a multiple of 11, probably hard-coded to 22.
  */
-#define SCREEN_HGT      22
+/*#define SCREEN_HGT      22  Complain if these are used.*/
 
 /*
  * Number of grids used to display the dungeon (horizontally).
  * Must be a multiple of 33, probably hard-coded to 66.
  */
-#define SCREEN_WID      66
+/*#define SCREEN_WID      66*/
 
 
 /*
@@ -581,6 +581,7 @@
 /*
  * More maximum values
  */
+#define MAX_DETECT		22		/* Maximum detection range */
 #define MAX_SIGHT       20      /* Maximum view distance */
 #define MAX_RANGE       18      /* Maximum range (spells, etc) */
 

@@ -1094,8 +1094,8 @@ void do_cmd_locate(void)
 		/* Prepare to ask which way to look */
 		sprintf(out_val,
 		        "Map sector [%d(%02d),%d(%02d)], which is%s your sector.  Direction?",
-		        y2 / (SCREEN_HGT / 2), y2 % (SCREEN_HGT / 2),
-		        x2 / (SCREEN_WID / 2), x2 % (SCREEN_WID / 2), tmp_val);
+		        y2 / (map_hgt / 2), y2 % (map_hgt / 2),
+		        x2 / (map_wid / 2), x2 % (map_wid / 2), tmp_val);
 
 		/* Assume no direction */
 		dir = 0;

@@ -310,44 +310,50 @@ static void build_store(int n, int yy, int xx)
 	cave[y][x].feat = FEAT_SHOP_HEAD + n;
 }
 
+/* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
+
+/* This will be removed later. */
+#define TOWN_WID	66
+#define TOWN_HGT	22
+
 
 static void add_town_wall(void)
 {
 	int i;
 
 	/* Upper and lower walls */
-	for (i = 0; i < SCREEN_WID; i++)
+	for (i = 0; i < TOWN_WID; i++)
 	{
 		/* Wall with doors in middle */
-		if (i == SCREEN_WID / 2)
+		if (i == TOWN_WID / 2)
 		{
 			/* Make town gates (locked) */
 			cave[0][i].feat = FEAT_DOOR_HEAD + 4;
-			cave[SCREEN_HGT - 1][i].feat = FEAT_DOOR_HEAD + 4;
+			cave[TOWN_HGT - 1][i].feat = FEAT_DOOR_HEAD + 4;
 		}
 		else
 		{
 			/* Make walls */
 			cave[0][i].feat = FEAT_PERM_OUTER;
-			cave[SCREEN_HGT - 1][i].feat = FEAT_PERM_OUTER;
+			cave[TOWN_HGT - 1][i].feat = FEAT_PERM_OUTER;
 		}
 	}
 
 	/* Left and right walls */
-	for (i = 1; i < SCREEN_HGT - 1; i++)
+	for (i = 1; i < TOWN_HGT - 1; i++)
 	{
 		/* Walls with doors in middle. */
-		if (i == SCREEN_HGT / 2)
+		if (i == TOWN_HGT / 2)
 		{
 			/* Make town gates (locked) */
 			cave[i][0].feat = FEAT_DOOR_HEAD + 4;
-			cave[i][SCREEN_WID - 1].feat = FEAT_DOOR_HEAD + 4;
+			cave[i][TOWN_WID - 1].feat = FEAT_DOOR_HEAD + 4;
 		}
 		else
 		{
 			/* Make walls */
 			cave[i][0].feat = FEAT_PERM_OUTER;
-			cave[i][SCREEN_WID - 1].feat = FEAT_PERM_OUTER;
+			cave[i][TOWN_WID - 1].feat = FEAT_PERM_OUTER;
 		}
 	}
 }
@@ -402,8 +408,8 @@ static void town_gen_hack(u16b town_num, int *xx, int *yy)
 	while (TRUE)
 	{
 		/* Pick a location at least "three" from the outer walls */
-		*yy = rand_range(3, SCREEN_HGT - 4);
-		*xx = rand_range(3, SCREEN_WID - 4);
+		*yy = rand_range(3, TOWN_HGT - 4);
+		*xx = rand_range(3, TOWN_WID - 4);
 
 		/* Require a floor grid */
 		if ((cave[*yy][*xx].feat == FEAT_PEBBLES) ||
@@ -473,9 +479,9 @@ static void town_gen(u16b town_num, int *xx, int *yy)
 	}
 
 	/* Place some floors */
-	for (y = 1; y < SCREEN_HGT - 1; y++)
+	for (y = 1; y < TOWN_HGT - 1; y++)
 	{
-		for (x = 1; x < SCREEN_WID - 1; x++)
+		for (x = 1; x < TOWN_WID - 1; x++)
 		{
 			if (vanilla_town)
 			{
@@ -608,7 +614,7 @@ static void init_towns(void)
 		y = randint(max_wild);
 
 		/* See if space is free */
-		if (!town_blank(x, y, SCREEN_WID / 16 + 1, SCREEN_HGT / 16 + 1)) continue;
+		if (!town_blank(x, y, TOWN_WID / 16 + 1, TOWN_HGT / 16 + 1)) continue;
 
 		/* Add town */
 		strcpy(town[town_count].name, "town");
@@ -619,9 +625,9 @@ static void init_towns(void)
 		town[town_count].y = y;
 
 		/* Place town on wilderness */
-		for (j = 0; j < (SCREEN_HGT / 16 + 1); j++)
+		for (j = 0; j < (TOWN_HGT / 16 + 1); j++)
 		{
-			for (i = 0; i < (SCREEN_WID / 16 + 1); i++)
+			for (i = 0; i < (TOWN_WID / 16 + 1); i++)
 			{
 				w_ptr = &wild[town[town_count].y + j][town[town_count].x + i].done;
 
@@ -668,13 +674,13 @@ static void init_vanilla_town(void)
 	town[1].seed = rand_int(0x10000000);
 	town[1].numstores = 9;
 	town[1].type = 1;
-	town[1].x = max_wild / 2 - SCREEN_WID / 32 - 1;
-	town[1].y = max_wild / 2 - SCREEN_HGT / 32 - 1;
+	town[1].x = max_wild / 2 - TOWN_WID / 32 - 1;
+	town[1].y = max_wild / 2 - TOWN_HGT / 32 - 1;
 
 	/* Place town on wilderness */
-	for (j = 0; j < (SCREEN_HGT / 16 + 1); j++)
+	for (j = 0; j < (TOWN_HGT / 16 + 1); j++)
 	{
-		for (i = 0; i < (SCREEN_WID / 16 + 1); i++)
+		for (i = 0; i < (TOWN_WID / 16 + 1); i++)
 		{
 			wild[town[1].y + j][town[1].x + i].done.town = 1;
 		}
@@ -4646,8 +4652,8 @@ static void wild_done(void)
 	py = (s16b)p_ptr->wilderness_y;
 
 	/* Determine number of panels */
-	max_panel_rows = (max_wild * 16 / SCREEN_HGT) * 2;
-	max_panel_cols = (max_wild * 16 / SCREEN_WID) * 2;
+	max_panel_rows = (max_wild * 16 / map_hgt) * 2;
+	max_panel_cols = (max_wild * 16 / map_wid) * 2;
 
 	/* Assume illegal panel */
 	panel_row = max_panel_rows;

@@ -1367,11 +1367,11 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
  */
 void panel_bounds(void)
 {
-	panel_row_min = panel_row * (SCREEN_HGT / 2);
-	panel_row_max = panel_row_min + SCREEN_HGT - 1;
+	panel_row_min = panel_row * (map_hgt / 2);
+	panel_row_max = panel_row_min + map_hgt - 1;
 	panel_row_prt = panel_row_min - 1;
-	panel_col_min = panel_col * (SCREEN_WID / 2);
-	panel_col_max = panel_col_min + SCREEN_WID - 1;
+	panel_col_min = panel_col * (map_wid / 2);
+	panel_col_max = panel_col_min + map_wid - 1;
 	panel_col_prt = panel_col_min - 13;
 }
 
@@ -1383,11 +1383,11 @@ void panel_bounds(void)
  */
 void panel_bounds_center(void)
 {
-	panel_row = panel_row_min / (SCREEN_HGT / 2);
-	panel_row_max = panel_row_min + SCREEN_HGT - 1;
+	panel_row = panel_row_min / (map_hgt / 2);
+	panel_row_max = panel_row_min + map_hgt - 1;
 	panel_row_prt = panel_row_min - 1;
-	panel_col = panel_col_min / (SCREEN_WID / 2);
-	panel_col_max = panel_col_min + SCREEN_WID - 1;
+	panel_col = panel_col_min / (map_wid / 2);
+	panel_col_max = panel_col_min + map_wid - 1;
 	panel_col_prt = panel_col_min - 13;
 }
 
@@ -1402,29 +1402,29 @@ void panel_bounds_center(void)
 bool change_panel(int dy, int dx)
 {
 	/* Apply the motion */
-	int y = panel_row_min + dy * (SCREEN_HGT / 2);
-	int x = panel_col_min + dx * (SCREEN_WID / 2);
+	int y = panel_row_min + dy * (map_hgt / 2);
+	int x = panel_col_min + dx * (map_wid / 2);
 
 	/* Verify the row */
-	if (y > max_panel_rows * (SCREEN_HGT / 2)) y = max_panel_rows * (SCREEN_HGT / 2);
+	if (y > max_panel_rows * (map_hgt / 2)) y = max_panel_rows * (map_hgt / 2);
 	else if (y < 0) y = 0;
 
 	/* Verify the col */
-	if (x > max_panel_cols * (SCREEN_WID / 2)) x = max_panel_cols * (SCREEN_WID / 2);
+	if (x > max_panel_cols * (map_wid / 2)) x = max_panel_cols * (map_wid / 2);
 	else if (x < 0) x = 0;
 
 	/* Verify wilderness */
 	if (!dun_level)
 	{
-		if (y > wild_grid.y_max - SCREEN_HGT) y = wild_grid.y_max - SCREEN_HGT;
+		if (y > wild_grid.y_max - map_hgt) y = wild_grid.y_max - map_hgt;
 		if (y < wild_grid.y_min) y = wild_grid.y_min;
-		if (x > wild_grid.x_max - SCREEN_WID) x = wild_grid.x_max - SCREEN_WID;
+		if (x > wild_grid.x_max - map_wid) x = wild_grid.x_max - map_wid;
 		if (x < wild_grid.x_min) x = wild_grid.x_min;
 
 		if (vanilla_town)
 		{
-			x = max_wild * 8 - SCREEN_WID / 2 - 15;
-			y = max_wild * 8 - SCREEN_HGT / 2 - 5;
+			x = max_wild * 8 - map_wid / 2 - 15;
+			y = max_wild * 8 - map_hgt / 2 - 5;
 		}
 	}
 
@@ -1482,16 +1482,16 @@ void verify_panel(void)
 		int prow_min;
 		int pcol_min;
 
-		int max_prow_min = max_panel_rows * (SCREEN_HGT / 2);
-		int max_pcol_min = max_panel_cols * (SCREEN_WID / 2);
+		int max_prow_min = max_panel_rows * (map_hgt / 2);
+		int max_pcol_min = max_panel_cols * (map_wid / 2);
 
 		/* Center vertically */
-		prow_min = y - SCREEN_HGT / 2;
+		prow_min = y - map_hgt / 2;
 		if (prow_min > max_prow_min) prow_min = max_prow_min;
 		else if (prow_min < 0) prow_min = 0;
 
 		/* Center horizontally */
-		pcol_min = x - SCREEN_WID / 2;
+		pcol_min = x - map_wid / 2;
 		if (pcol_min > max_pcol_min) pcol_min = max_pcol_min;
 		else if (pcol_min < 0) pcol_min = 0;
 
@@ -1513,7 +1513,7 @@ void verify_panel(void)
 		/* Scroll screen when 2 grids from top/bottom edge */
 		if ((y < panel_row_min + 2) || (y > panel_row_max - 2))
 		{
-			prow = ((y - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
+			prow = ((y - map_hgt / 4) / (map_hgt / 2));
 			if (prow > max_panel_rows) prow = max_panel_rows;
 			else if (prow < 0) prow = 0;
 		}
@@ -1521,7 +1521,7 @@ void verify_panel(void)
 		/* Scroll screen when 4 grids from left/right edge */
 		if ((x < panel_col_min + 4) || (x > panel_col_max - 4))
 		{
-			pcol = ((x - SCREEN_WID / 4) / (SCREEN_WID / 2));
+			pcol = ((x - map_wid / 4) / (map_wid / 2));
 			if (pcol > max_panel_cols) pcol = max_panel_cols;
 			else if (pcol < 0) pcol = 0;
 		}
@@ -2719,22 +2719,22 @@ bool target_set(int mode)
 						y += dy;
 
 						/* Do not move horizontally if unnecessary */
-						if (((x < panel_col_min + SCREEN_WID / 2) && (dx > 0)) ||
-							 ((x > panel_col_min + SCREEN_WID / 2) && (dx < 0)))
+						if (((x < panel_col_min + map_wid / 2) && (dx > 0)) ||
+							 ((x > panel_col_min + map_wid / 2) && (dx < 0)))
 						{
 							dx = 0;
 						}
 
 						/* Do not move vertically if unnecessary */
-						if (((y < panel_row_min + SCREEN_HGT / 2) && (dy > 0)) ||
-							 ((y > panel_row_min + SCREEN_HGT / 2) && (dy < 0)))
+						if (((y < panel_row_min + map_hgt / 2) && (dy > 0)) ||
+							 ((y > panel_row_min + map_hgt / 2) && (dy < 0)))
 						{
 							dy = 0;
 						}
 
 						/* Apply the motion */
-						if ((y >= panel_row_min+SCREEN_HGT) || (y < panel_row_min) ||
-						    (x >= panel_col_min+SCREEN_WID) || (x < panel_col_min))
+						if ((y >= panel_row_min + map_hgt) || (y < panel_row_min) ||
+						    (x >= panel_col_min + map_wid) || (x < panel_col_min))
 						{
 							if (change_panel(dy, dx)) target_set_prepare(mode);
 						}
@@ -2888,22 +2888,22 @@ bool target_set(int mode)
 				y += dy;
 
 				/* Do not move horizontally if unnecessary */
-				if (((x < panel_col_min + SCREEN_WID / 2) && (dx > 0)) ||
-					 ((x > panel_col_min + SCREEN_WID / 2) && (dx < 0)))
+				if (((x < panel_col_min + map_wid / 2) && (dx > 0)) ||
+					 ((x > panel_col_min + map_wid / 2) && (dx < 0)))
 				{
 					dx = 0;
 				}
 
 				/* Do not move vertically if unnecessary */
-				if (((y < panel_row_min + SCREEN_HGT / 2) && (dy > 0)) ||
-					 ((y > panel_row_min + SCREEN_HGT / 2) && (dy < 0)))
+				if (((y < panel_row_min + map_hgt / 2) && (dy > 0)) ||
+					 ((y > panel_row_min + map_hgt / 2) && (dy < 0)))
 				{
 					dy = 0;
 				}
 
 				/* Apply the motion */
-				if ((y >= panel_row_min + SCREEN_HGT) || (y < panel_row_min) ||
-					 (x >= panel_col_min + SCREEN_WID) || (x < panel_col_min))
+				if ((y >= panel_row_min + map_hgt) || (y < panel_row_min) ||
+					 (x >= panel_col_min + map_wid) || (x < panel_col_min))
 				{
 					if (change_panel(dy, dx)) target_set_prepare(mode);
 				}
@@ -3636,21 +3636,21 @@ bool tgt_pt(int *x, int *y)
 			if (!dun_level)
 			{
 				/* Hack -- Verify x */
-				if ((*x >= wild_grid.x_max - 1) || (*x >= panel_col_min + SCREEN_WID)) (*x)--;
+				if ((*x >= wild_grid.x_max - 1) || (*x >= panel_col_min + map_wid)) (*x)--;
 				else if ((*x <= wild_grid.x_min) || (*x <= panel_col_min)) (*x)++;
 
 				/* Hack -- Verify y */
-				if ((*y >= wild_grid.y_max - 1) || (*y >= panel_row_min + SCREEN_HGT)) (*y)--;
+				if ((*y >= wild_grid.y_max - 1) || (*y >= panel_row_min + map_hgt)) (*y)--;
 				else if ((*y <= wild_grid.y_min) || (*y <= panel_row_min)) (*y)++;
 			}
 			else
 			{
 				/* Hack -- Verify x */
-				if ((*x >= cur_wid - 1) || (*x >= panel_col_min + SCREEN_WID)) (*x)--;
+				if ((*x >= cur_wid - 1) || (*x >= panel_col_min + map_wid)) (*x)--;
 				else if ((*x <= 0) || (*x <= panel_col_min)) (*x)++;
 
 				/* Hack -- Verify y */
-				if ((*y >= cur_hgt - 1) || (*y >= panel_row_min + SCREEN_HGT)) (*y)--;
+				if ((*y >= cur_hgt - 1) || (*y >= panel_row_min + map_hgt)) (*y)--;
 				else if ((*y <= 0) || (*y <= panel_row_min)) (*y)++;
 			}
 

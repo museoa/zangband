@@ -1946,18 +1946,22 @@ void display_map(int *cy, int *cx)
 
 	u16b w_type, town;
 
-	byte ma[SCREEN_HGT + 2][SCREEN_WID + 2];
-	char mc[SCREEN_HGT + 2][SCREEN_WID + 2];
+	byte **ma;
+	char **mc;
 
-	byte mp[SCREEN_HGT + 2][SCREEN_WID + 2];
+	byte **mp;
 
 	bool old_view_special_lite;
 	bool old_view_granite_lite;
 
 	bool fake_monochrome = (!use_graphics || streq(ANGBAND_SYS, "ibm"));
 
-	int yrat = cur_hgt / SCREEN_HGT;
-	int xrat = cur_wid / SCREEN_WID;
+	int yrat = cur_hgt / map_hgt;
+	int xrat = cur_wid / map_wid;
+	
+	/* Take care of rounding */
+	if (cur_hgt % map_hgt) yrat++;
+	if (cur_wid % map_wid) xrat++;
 
 	/* Save lighting effects */
 	old_view_special_lite = view_special_lite;
@@ -1966,11 +1970,25 @@ void display_map(int *cy, int *cx)
 	/* Disable lighting effects */
 	view_special_lite = FALSE;
 	view_granite_lite = FALSE;
+	
+	/* Allocate the maps */
+	C_MAKE(ma, (map_hgt + 2), byte_ptr);
+	C_MAKE(mc, (map_hgt + 2), char_ptr);
+	C_MAKE(mp, (map_hgt + 2), byte_ptr);
+	
+	/* Allocate and wipe each line map */
+	for (i = 0; i < (map_hgt + 2); i++)
+	{
+		/* Allocate one row each array */
+		C_MAKE(ma[i], (map_wid + 2), byte);
+		C_MAKE(mc[i], (map_wid + 2), char);
+		C_MAKE(mp[i], (map_wid + 2), byte);
+	}
 
 	/* Clear the chars and attributes */
-	for (y = 0; y < SCREEN_HGT + 2; ++y)
+	for (y = 0; y < map_hgt + 2; ++y)
 	{
-		for (x = 0; x < SCREEN_WID + 2; ++x)
+		for (x = 0; x < map_wid + 2; ++x)
 		{
 			/* Nothing here */
 			ma[y][x] = TERM_WHITE;
@@ -1990,16 +2008,20 @@ void display_map(int *cy, int *cx)
 		y = py / 16 + *cy;
 
 		/* recenter */
-		x = x - SCREEN_WID / 2;
+		x = x - map_wid / 2;
 		if (x < 0) x = 0;
 
-		y = y - SCREEN_HGT / 2;
+		y = y - map_hgt / 2;
 		if (y < 0) y = 0;
+		
+		/* Player location in wilderness */
+		(*cy) += py / 16 - y + 1 + ROW_MAP;
+		(*cx) += px / 16 - x + 1 + COL_MAP;
 
 		/* Fill in the map */
-		for (i = 0; i < SCREEN_WID; ++i)
+		for (i = 0; i < map_wid; ++i)
 		{
-			for (j = 0; j < SCREEN_HGT; ++j)
+			for (j = 0; j < map_hgt; ++j)
 			{
 				/* Only draw blocks inside map */
 				if (((x + i + 1) >= max_wild) || ((y + j + 1) >= max_wild)) continue;
@@ -2010,19 +2032,24 @@ void display_map(int *cy, int *cx)
 				w_type = wild[j + y][i + x].done.wild;
 
 				/* Get attr / char pair for wilderness block type */
+				
+				/* Add in effects of sea / roads */
 				if (w_type >= WILD_SEA)
 				{
 					ma[j + 1][i + 1] = TERM_BLUE;
 					mc[j + 1][i + 1] = '~';
+				}
+				else if (wild[j + y][i + x].done.info &
+					 (WILD_INFO_ROAD | WILD_INFO_TRACK))
+				{
+					ma[j + 1][i + 1] = TERM_UMBER;
+					mc[j + 1][i + 1] = '+';
 				}
 				else
 				{
 					ma[j + 1][i + 1] = wild_gen_data[w_type].w_attr;
 					mc[j + 1][i + 1] = wild_gen_data[w_type].w_char;
 				}
-
-				/* Road / rivers later */
-
 
 				/* Hack - draw towns/specials */
 				/* Eventually will get attr,char from town data structure. */
@@ -2048,7 +2075,11 @@ void display_map(int *cy, int *cx)
 		}
 	}
 	else
-	{
+	{		
+		/* Player location in dungeon */
+		(*cy) = py / yrat + 1 + ROW_MAP;
+		(*cx) = px / xrat + 1 + COL_MAP;
+		
 		/* Fill in the map of dungeon */
 		for (i = 0; i < cur_wid; ++i)
 		{
@@ -2094,27 +2125,27 @@ void display_map(int *cy, int *cx)
 	}
 
 	/* Corners */
-	i = SCREEN_WID + 1;
-	j = SCREEN_HGT + 1;
+	i = map_wid + 1;
+	j = map_hgt + 1;
 
 	/* Draw the corners */
 	mc[0][0] = mc[0][i] = mc[j][0] = mc[j][i] = '+';
 
 	/* Draw the horizontal edges */
-	for (i = 1; i <= SCREEN_WID; i++) mc[0][i] = mc[j][i] = '-';
+	for (i = 1; i <= map_wid; i++) mc[0][i] = mc[j][i] = '-';
 
 	/* Draw the vertical edges */
-	for (j = 1; j <= SCREEN_HGT; j++) mc[j][0] = mc[j][i] = '|';
+	for (j = 1; j <= map_hgt; j++) mc[j][0] = mc[j][i] = '|';
 
 
 	/* Display each map line in order */
-	for (j = 0; j < SCREEN_HGT+2; ++j)
+	for (j = 0; j < map_hgt + 2; ++j)
 	{
 		/* Start a new line */
 		Term_gotoxy(COL_MAP, j);
 
 		/* Display the line */
-		for (i = 0; i < SCREEN_WID+2; ++i)
+		for (i = 0; i < map_wid + 2; ++i)
 		{
 			ta = ma[j][i];
 			tc = mc[j][i];
@@ -2131,22 +2162,26 @@ void display_map(int *cy, int *cx)
 		}
 	}
 
-	if (!dun_level)
-	{
-		/* Player location in wilderness */
-		(*cy) += py / 16 - y + 1 + ROW_MAP;
-		(*cx) += px / 16 - x + 1 + COL_MAP;
-	}
-	else
-	{
-		/* Player location in dungeon */
-		(*cy) = py / yrat + 1 + ROW_MAP;
-		(*cx) = px / xrat + 1 + COL_MAP;
-	}
 
 	/* Restore lighting effects */
 	view_special_lite = old_view_special_lite;
 	view_granite_lite = old_view_granite_lite;
+	
+	
+	
+	/* Free each line map */
+	for (i = 0; i < (map_hgt + 2); i++)
+	{
+		/* Free one row each array */
+		C_FREE(ma[i], (map_wid + 2), byte);
+		C_FREE(mc[i], (map_wid + 2), char);
+		C_FREE(mp[i], (map_wid + 2), byte);
+	}
+	
+	/* Free the maps */
+	C_FREE(ma, (map_hgt + 2), byte_ptr);
+	C_FREE(mc, (map_hgt + 2), char_ptr);
+	C_FREE(mp, (map_hgt + 2), byte_ptr);
 }
 
 
@@ -2452,12 +2487,6 @@ void do_cmd_view_map(void)
  * algorithm will be able to "stop" scanning at various points.
  * Oh, and outside of the "torch radius", only "lite" grids need to be scanned.
  */
-
-
-
-
-
-
 
 
 /*
@@ -3763,7 +3792,7 @@ void update_flow(void)
 
 
 /*
- * Hack -- map the current panel (plus some) ala "magic mapping"
+ * Hack -- map a region ala "magic mapping"
  */
 void map_area(void)
 {
@@ -3773,10 +3802,10 @@ void map_area(void)
 
 
 	/* Pick an area to map */
-	y1 = panel_row_min - randint(10);
-	y2 = panel_row_max + randint(10);
-	x1 = panel_col_min - randint(20);
-	x2 = panel_col_max + randint(20);
+	y1 = py - MAX_DETECT - randint(10);
+	y2 = py + MAX_DETECT + randint(10);
+	x1 = px - MAX_DETECT - randint(20);
+	x2 = px + MAX_DETECT + randint(20);
 
 	if (!dun_level)
 	{

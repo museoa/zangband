@@ -1320,7 +1320,7 @@ void report_magics(void)
 
 
 /*
- * Detect all traps on current panel
+ * Detect all traps in range
  */
 bool detect_traps(void)
 {
@@ -1329,12 +1329,14 @@ bool detect_traps(void)
 	cave_type       *c_ptr;
 
 
-	/* Scan the current panel */
-	for (y = panel_row_min; y <= panel_row_max; y++)
+	/* Scan a radius MAX_DETECT circle */
+	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
 	{
-		for (x = panel_col_min; x <= panel_col_max; x++)
+		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
 			if (!in_bounds2(y, x)) continue;
+			
+			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 			/* Access the grid */
 			c_ptr = area(y,x);
@@ -1374,7 +1376,7 @@ bool detect_traps(void)
 
 
 /*
- * Detect all doors on current panel
+ * Detect all doors in range
  */
 bool detect_doors(void)
 {
@@ -1385,12 +1387,14 @@ bool detect_doors(void)
 	cave_type *c_ptr;
 
 
-	/* Scan the panel */
-	for (y = panel_row_min; y <= panel_row_max; y++)
+	/* Scan a radius MAX_DETECT circle */
+	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
 	{
-		for (x = panel_col_min; x <= panel_col_max; x++)
+		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
 			if (!in_bounds2(y, x)) continue;
+			
+			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 			c_ptr = area(y,x);
 
@@ -1431,7 +1435,7 @@ bool detect_doors(void)
 
 
 /*
- * Detect all stairs on current panel
+ * Detect all stairs in range
  */
 bool detect_stairs(void)
 {
@@ -1442,12 +1446,14 @@ bool detect_stairs(void)
 	cave_type *c_ptr;
 
 
-	/* Scan the panel */
-	for (y = panel_row_min; y <= panel_row_max; y++)
+	/* Scan a radiuc MAX_DETECT circle */
+	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
 	{
-		for (x = panel_col_min; x <= panel_col_max; x++)
+		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
 			if (!in_bounds2(y, x)) continue;
+
+			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 			c_ptr = area(y,x);
 
@@ -1479,7 +1485,7 @@ bool detect_stairs(void)
 
 
 /*
- * Detect any treasure on the current panel
+ * Detect any treasure in range
  */
 bool detect_treasure(void)
 {
@@ -1490,12 +1496,14 @@ bool detect_treasure(void)
 	cave_type *c_ptr;
 
 
-	/* Scan the current panel */
-	for (y = panel_row_min; y <= panel_row_max; y++)
+	/* Scan a radius MAX_DETECT circle */
+	for (y = py - MAX_DETECT; y <= py + MAX_DETECT; y++)
 	{
-		for (x = panel_col_min; x <= panel_col_max; x++)
+		for (x = px - MAX_DETECT; x <= px + MAX_DETECT; x++)
 		{
 			if (!in_bounds2(y, x)) continue;
+			
+			if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 			c_ptr = area(y,x);
 
@@ -1537,7 +1545,7 @@ bool detect_treasure(void)
 
 
 /*
- * Detect all "gold" objects on the current panel
+ * Detect all "gold" objects in range
  */
 bool detect_objects_gold(void)
 {
@@ -1562,8 +1570,12 @@ bool detect_objects_gold(void)
 		x = o_ptr->ix;
 
 		/* Only detect nearby objects */
+#if 0		
 		if (!panel_contains(y, x)) continue;
+#endif /* 0 */
 
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
+		
 		/* Detect "gold" objects */
 		if (o_ptr->tval == TV_GOLD)
 		{
@@ -1595,7 +1607,7 @@ bool detect_objects_gold(void)
 
 
 /*
- * Detect all "normal" objects on the current panel
+ * Detect all "normal" objects in range
  */
 bool detect_objects_normal(void)
 {
@@ -1620,8 +1632,12 @@ bool detect_objects_normal(void)
 		x = o_ptr->ix;
 
 		/* Only detect nearby objects */
+#if 0		
 		if (!panel_contains(y, x)) continue;
+#endif /* 0 */
 
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
+		
 		/* Detect "real" objects */
 		if (o_ptr->tval != TV_GOLD)
 		{
@@ -1653,7 +1669,7 @@ bool detect_objects_normal(void)
 
 
 /*
- * Detect all "magic" objects on the current panel.
+ * Detect all "magic" objects in range.
  *
  * This will light up all spaces with "magic" items, including artifacts,
  * ego-items, potions, scrolls, books, rods, wands, staves, amulets, rings,
@@ -1684,7 +1700,11 @@ bool detect_objects_magic(void)
 		x = o_ptr->ix;
 
 		/* Only detect nearby objects */
+#if 0		
 		if (!panel_contains(y, x)) continue;
+#endif /* 0 */
+
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Examine the tval */
 		tv = o_ptr->tval;
@@ -1732,7 +1752,7 @@ bool detect_objects_magic(void)
 
 
 /*
- * Detect all "normal" monsters on the current panel
+ * Detect all "normal" monsters in range
  */
 bool detect_monsters_normal(void)
 {
@@ -1754,8 +1774,12 @@ bool detect_monsters_normal(void)
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
+#if 0
 		/* Only detect nearby monsters */
 		if (!panel_contains(y, x)) continue;
+#endif /* 0 */
+
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect all non-invisible monsters */
 		if ((!(r_ptr->flags2 & RF2_INVISIBLE)) ||
@@ -1788,7 +1812,7 @@ bool detect_monsters_normal(void)
 
 
 /*
- * Detect all "invisible" monsters around the player
+ * Detect all "invisible" monsters in range
  */
 bool detect_monsters_invis(void)
 {
@@ -1807,10 +1831,13 @@ bool detect_monsters_invis(void)
 		/* Location */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
-
+#if 0
 		/* Only detect nearby monsters */
 		if (!panel_contains(y, x)) continue;
+#endif /* 0 */
 
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
+		
 		/* Detect invisible monsters */
 		if (r_ptr->flags2 & RF2_INVISIBLE)
 		{
@@ -1849,7 +1876,7 @@ bool detect_monsters_invis(void)
 
 
 /*
- * Detect all "evil" monsters on current panel
+ * Detect all "evil" monsters in range
  */
 bool detect_monsters_evil(void)
 {
@@ -1870,8 +1897,12 @@ bool detect_monsters_evil(void)
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
+#if 0
 		/* Only detect nearby monsters */
 		if (!panel_contains(y, x)) continue;
+#endif /* 0 */
+		
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect evil monsters */
 		if (r_ptr->flags3 & RF3_EVIL)
@@ -1915,7 +1946,7 @@ bool detect_monsters_evil(void)
 
 
 /*
- * Detect all (string) monsters on current panel
+ * Detect all (string) monsters in range
  */
 bool detect_monsters_string(cptr Match)
 {
@@ -1936,8 +1967,12 @@ bool detect_monsters_string(cptr Match)
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
+#if 0
 		/* Only detect nearby monsters */
 		if (!panel_contains(y, x)) continue;
+#endif /* 0 */
+		
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect monsters with the same symbol */
 		if (strchr(Match, r_ptr->d_char))
@@ -1998,8 +2033,12 @@ bool detect_monsters_xxx(u32b match_flag)
 		y = m_ptr->fy;
 		x = m_ptr->fx;
 
+#if 0
 		/* Only detect nearby monsters */
 		if (!panel_contains(y, x)) continue;
+#endif /* 0 */
+
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect evil monsters */
 		if (r_ptr->flags3 & (match_flag))
@@ -4263,7 +4302,7 @@ void wall_breaker(void)
 
 
 /*
- * Detect all "nonliving", "undead" or "demonic" monsters on current panel
+ * Detect all "nonliving", "undead" or "demonic" monsters in range
  */
 bool detect_monsters_nonliving(void)
 {
@@ -4284,7 +4323,12 @@ bool detect_monsters_nonliving(void)
 		x = m_ptr->fx;
 
 		/* Only detect nearby monsters */
+#if 0		
 		if (!panel_contains(y, x)) continue;
+#endif /* 0 */
+	
+		/* Only detect monsters in range */
+		if (distance(px, py, x, y) > MAX_DETECT) continue;
 
 		/* Detect non-living monsters */
 		if (!monster_living(r_ptr))

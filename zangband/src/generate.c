@@ -949,127 +949,6 @@ static bool cave_gen(void)
 	return TRUE;
 }
 
-#if 0
-
-/*
- * Builds the arena after it is entered -KMW-
- */
-static void build_arena(void)
-{
-	int yval, y_height, y_depth, xval, x_left, x_right;
-	register int i, j;
-
-	yval = SCREEN_HGT / 2;
-	xval = SCREEN_WID / 2;
-	y_height = yval - 10 + SCREEN_HGT;
-	y_depth = yval + 10 + SCREEN_HGT;
-	x_left = xval - 32 + SCREEN_WID;
-	x_right = xval + 32 + SCREEN_WID;
-
-	for (i = y_height; i <= y_height + 5; i++)
-		for (j = x_left; j <= x_right; j++)
-		{
-			cave[i][j].feat = FEAT_PERM_EXTRA;
-			cave[i][j].info |= (CAVE_GLOW | CAVE_MARK);
-		}
-	for (i = y_depth; i >= y_depth - 5; i--)
-		for (j = x_left; j <= x_right; j++)
-		{
-			cave[i][j].feat = FEAT_PERM_EXTRA;
-			cave[i][j].info |= (CAVE_GLOW | CAVE_MARK);
-		}
-	for (j = x_left; j <= x_left + 17; j++)
-		for (i = y_height; i <= y_depth; i++)
-		{
-			cave[i][j].feat = FEAT_PERM_EXTRA;
-			cave[i][j].info |= (CAVE_GLOW | CAVE_MARK);
-		}
-	for (j = x_right; j >= x_right - 17; j--)
-		for (i = y_height; i <= y_depth; i++)
-		{
-			cave[i][j].feat = FEAT_PERM_EXTRA;
-			cave[i][j].info |= (CAVE_GLOW | CAVE_MARK);
-		}
-
-	cave[y_height+6][x_left+18].feat = FEAT_PERM_EXTRA;
-	cave[y_height+6][x_left+18].info |= (CAVE_GLOW | CAVE_MARK);
-	cave[y_depth-6][x_left+18].feat = FEAT_PERM_EXTRA;
-	cave[y_depth-6][x_left+18].info |= (CAVE_GLOW | CAVE_MARK);
-	cave[y_height+6][x_right-18].feat = FEAT_PERM_EXTRA;
-	cave[y_height+6][x_right-18].info |= (CAVE_GLOW | CAVE_MARK);
-	cave[y_depth-6][x_right-18].feat = FEAT_PERM_EXTRA;
-	cave[y_depth-6][x_right-18].info |= (CAVE_GLOW | CAVE_MARK);
-
-	i = y_height + 5;
-	j = xval + SCREEN_WID;
-	cave[i][j].feat = FEAT_BLDG_HEAD + 2;
-	cave[i][j].info |= (CAVE_GLOW | CAVE_MARK);
-	player_place(i + 1, j);
-}
-
-
-/*
- * Town logic flow for generation of arena -KMW-
- */
-static void arena_gen(void)
-{
-	int y, x;
-	int qy = SCREEN_HGT;
-	int qx = SCREEN_WID;
-	bool daytime;
-
-	/* Day time */
-	if ((turn % (10L * TOWN_DAWN)) < ((10L * TOWN_DAWN) / 2))
-		daytime = TRUE;
-
-	/* Night time */
-	else
-		daytime = FALSE;
-
-	/* Start with solid walls */
-	for (y = 0; y < MAX_HGT; y++)
-	{
-		for (x = 0; x < MAX_WID; x++)
-		{
-			/* Create "solid" perma-wall */
-			cave[y][x].feat = FEAT_PERM_SOLID;
-
-			/* Illuminate and memorize the walls */
-			cave[y][x].info |= (CAVE_GLOW | CAVE_MARK);
-		}
-	}
-
-	/* Then place some floors */
-	for (y = qy + 1; y < qy + SCREEN_HGT - 1; y++)
-	{
-		for (x = qx + 1; x < qx + SCREEN_WID - 1; x++)
-		{
-			/* Create empty floor */
-			cave[y][x].feat = FEAT_FLOOR;
-
-			/* Darken and forget the floors */
-			cave[y][x].info &= ~(CAVE_GLOW | CAVE_MARK);
-
-			/* Day time */
-			if (daytime)
-			{
-				/* Perma-Lite */
-				cave[y][x].info |= (CAVE_GLOW);
-
-				/* Memorize */
-				if (view_perma_grids) cave[y][x].info |= (CAVE_MARK);
-			}
-		}
-	}
-
-	build_arena();
-
-	place_monster_aux(py + 5, px, arena_monsters[p_ptr->arena_number],
-	    FALSE, FALSE, FALSE, FALSE);
-}
-
-#endif
-
 
 #if 0
 
@@ -1118,14 +997,14 @@ static bool level_gen(cptr *why)
 
 		do
 		{
-			level_height = randint(MAX_HGT/SCREEN_HGT);
-			level_width = randint(MAX_WID/SCREEN_WID);
+			level_height = randint(MAX_HGT / map_hgt);
+			level_width = randint(MAX_WID / map_wid);
 		}
-		while ((level_height == MAX_HGT/SCREEN_HGT) &&
-			   (level_width == MAX_WID/SCREEN_WID));
+		while ((level_height == MAX_HGT / map_hgt) &&
+			   (level_width == MAX_WID / map_wid));
 
-		cur_hgt = level_height * SCREEN_HGT;
-		cur_wid = level_width * SCREEN_WID;
+		cur_hgt = level_height * map_hgt;
+		cur_wid = level_width * map_wid;
 
 		/* Determine number of panels */
 		max_panel_rows = level_height * 2 - 2;
@@ -1145,8 +1024,8 @@ static bool level_gen(cptr *why)
 		cur_wid = MAX_WID;
 
 		/* Determine number of panels */
-		max_panel_rows = (cur_hgt / SCREEN_HGT) * 2 - 2;
-		max_panel_cols = (cur_wid / SCREEN_WID) * 2 - 2;
+		max_panel_rows = (cur_hgt / map_hgt) * 2 - 2;
+		max_panel_cols = (cur_wid / map_wid) * 2 - 2;
 
 		/* Assume illegal panel */
 		panel_row = max_panel_rows;
@@ -1208,8 +1087,8 @@ void generate_cave(void)
 		py = (s16b)p_ptr->wilderness_y;
 
 		/* Determine number of panels */
-		max_panel_rows = (max_wild * 16 / SCREEN_HGT) * 2;
-		max_panel_cols = (max_wild * 16 / SCREEN_WID) * 2;
+		max_panel_rows = (max_wild * 16 / map_hgt) * 2;
+		max_panel_cols = (max_wild * 16 / map_wid) * 2;
 
 		/* Assume illegal panel */
 		panel_row = max_panel_rows;
