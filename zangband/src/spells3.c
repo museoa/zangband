@@ -2754,8 +2754,7 @@ void display_spell_list(void)
 			chance -= 3 * (p_ptr->lev - spell.min_lev);
 
 			/* Reduce failure rate by INT/WIS adjustment */
-			chance -=
-				3 * (adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 1);
+			chance -= adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 3;
 
 			/* Not enough mana to cast */
 			if (spell.mana_cost > p_ptr->csp)
@@ -2887,7 +2886,7 @@ s16b spell_chance(int spell, int realm)
 	chance -= 3 * (p_ptr->lev - s_ptr->slevel);
 
 	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= 3 * (adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 1);
+	chance -= adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 3;
 
 	/* Get mana cost */
 	smana = spell_mana(spell, realm);

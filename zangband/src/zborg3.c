@@ -2008,7 +2008,7 @@ int borg_spell_fail_rate(int realm, int book, int what)
 	}
 
 	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= 3 * (adj_mag_stat[stat] - 1);
+	chance -= adj_mag_stat[stat] - 3;
 
 	/* Collect the spell cost */
 	power = borg_spell_mana(realm, book, what);
@@ -2255,7 +2255,7 @@ int borg_mindcr_fail_rate(int spell, int level)
 	chance -= 3 * (bp_ptr->lev - as->level);
 
 	/* Reduce failure rate by WIS adjustment */
-	chance -= 3 * (adj_mag_stat[my_stat_ind[A_WIS]] - 1);
+	chance -= adj_mag_stat[my_stat_ind[A_WIS]] - 3;
 
 	/* If there is not enough mana the fail rate plummets */
 	if (as->power > bp_ptr->csp) chance += 5 * (as->power - bp_ptr->csp);

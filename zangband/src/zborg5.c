@@ -3185,7 +3185,7 @@ static s32b borg_power_aux3(void)
 		value += ((adj_mag_mana[my_stat_ind[A_INT]] * bp_ptr->lev) / 2) * 155L;
 
 		/* bonus for fail rate */
-		value += adj_mag_stat[my_stat_ind[A_INT]] * 5010L;
+		value += adj_mag_stat[my_stat_ind[A_INT]] * 1670L;
 
 		/* mage should try to get min fail to 0 */
 		if (borg_class == CLASS_MAGE || borg_class == CLASS_HIGH_MAGE)
@@ -3213,7 +3213,7 @@ static s32b borg_power_aux3(void)
 		value += ((adj_mag_mana[my_stat_ind[A_WIS]] * bp_ptr->lev) / 2) * 150L;
 
 		/* bonus for fail rate */
-		value += adj_mag_stat[my_stat_ind[A_WIS]] * 3000L;
+		value += adj_mag_stat[my_stat_ind[A_WIS]] * 1000L;
 
 		/* priest should try to get min fail to 0 */
 		if (borg_class == CLASS_PRIEST || borg_class == CLASS_MINDCRAFTER)

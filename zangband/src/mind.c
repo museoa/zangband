@@ -182,7 +182,7 @@ static int get_mindcraft_power(int *sn)
 		chance -= 3 * (plev - spell.min_lev);
 
 		/* Reduce failure rate by INT/WIS adjustment */
-		chance -= 3 * (adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 1);
+		chance -= adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 3;
 
 		/* Not enough mana to cast */
 		if (spell.mana_cost > p_ptr->csp)
@@ -483,7 +483,7 @@ void do_cmd_mindcraft(void)
 	chance -= 3 * (plev - spell.min_lev);
 
 	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= 3 * (adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 1);
+	chance -= adj_mag_stat[p_ptr->stat[mp_ptr->spell_stat].ind] - 3;
 
 	/* Not enough mana to cast */
 	if (spell.mana_cost > p_ptr->csp)
