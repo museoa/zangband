@@ -1028,10 +1028,10 @@ struct option_type
  * Quest type-specific data.
  */
 
-/* General */
-typedef struct quest_gen quest_gen;
+/* Bounty */
+typedef struct quest_bnt quest_bnt;
 
-struct quest_gen
+struct quest_bnt
 {
 	/* Mail quests */
 	u16b place;
@@ -1068,14 +1068,45 @@ struct quest_wld
 	byte depth;	/* Power of monsters */
 };
 
+/* Message */
+typedef struct quest_msg quest_msg;
+
+struct quest_msg
+{
+	u16b place;	/* Town to go to */
+	u16b shop;	/* Person to give it to */
+};
+
+
+/* Find item */
+typedef struct quest_fit quest_fit;
+
+struct quest_fit
+{
+	u16b a_idx;	/* Artifact index */
+	u16b place;	/* Dungeon it is in */
+};
+
+
+/* Find place */
+typedef struct quest_fpl quest_fpl;
+
+struct quest_fpl
+{
+	u16b place;	/* Place to find */
+};
+
 
 /* The union holding the quest-specific data */
 typedef union quest_data_type quest_data_type;
 union quest_data_type
 {
-	quest_gen gen;
+	quest_bnt bnt;
 	quest_dun dun;
 	quest_wld wld;
+	quest_msg msg;
+	quest_fit fit;
+	quest_fpl fpl;
 };
 
 /*

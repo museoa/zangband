@@ -142,9 +142,14 @@
  * Quest type
  */
 #define QUEST_TYPE_UNKNOWN			0
-#define QUEST_TYPE_GENERAL			1
+#define QUEST_TYPE_BOUNTY			1
 #define QUEST_TYPE_DUNGEON			2
 #define QUEST_TYPE_WILD				3
+#define QUEST_TYPE_MESSAGE			4
+#define QUEST_TYPE_FIND_ITEM		5
+#define QUEST_TYPE_FIND_PLACE		6
+
+
 
 /*
  * Quest creation types

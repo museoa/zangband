@@ -1511,18 +1511,20 @@ static bool wr_savefile_new(void)
 		{
 			case QUEST_TYPE_UNKNOWN: break;
 
-			case QUEST_TYPE_GENERAL:
+			case QUEST_TYPE_BOUNTY:
 			{
-				wr_u16b(quest[i].data.gen.place);
-				wr_u16b(quest[i].data.gen.shop);
-				wr_u16b(quest[i].data.gen.r_idx);
-				wr_u16b(quest[i].data.gen.cur_num);
-				wr_u16b(quest[i].data.gen.max_num);
+				/* Bounty quests */
+				wr_u16b(quest[i].data.bnt.place);
+				wr_u16b(quest[i].data.bnt.shop);
+				wr_u16b(quest[i].data.bnt.r_idx);
+				wr_u16b(quest[i].data.bnt.cur_num);
+				wr_u16b(quest[i].data.bnt.max_num);
 				break;
 			}
 
 			case QUEST_TYPE_DUNGEON:
 			{
+				/* Dungeon quests */
 				wr_u16b(quest[i].data.dun.r_idx);
 				wr_u16b(quest[i].data.dun.level);
 
@@ -1534,9 +1536,33 @@ static bool wr_savefile_new(void)
 
 			case QUEST_TYPE_WILD:
 			{
+				/* Wilderness quests */
 				wr_u16b(quest[i].data.wld.place);
 				wr_u16b(quest[i].data.wld.data);
 				wr_byte(quest[i].data.wld.depth);
+				break;
+			}
+			
+			case QUEST_TYPE_MESSAGE:
+			{
+				/* Message quests */
+				wr_u16b(quest[i].data.msg.place);
+				wr_u16b(quest[i].data.msg.shop);
+				break;
+			}
+			
+			case QUEST_TYPE_FIND_ITEM:
+			{
+				/* Find item quests */
+				wr_u16b(quest[i].data.fit.a_idx);
+				wr_u16b(quest[i].data.fit.place);
+				break;
+			}
+			
+			case QUEST_TYPE_FIND_PLACE:
+			{
+				/* Find place quests */
+				wr_u16b(quest[i].data.fpl.place);
 				break;
 			}
 

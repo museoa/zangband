@@ -2738,23 +2738,26 @@ static void rd_quests(int max_quests)
 		/* Data - quest-type specific */
 		switch (q_ptr->type)
 		{
-				/* Un-initialised quests */
-			case QUEST_TYPE_UNKNOWN: break;
-
-				/* General quests */
-			case QUEST_TYPE_GENERAL:
+			case QUEST_TYPE_UNKNOWN:
 			{
-				rd_u16b(&q_ptr->data.gen.place);
-				rd_u16b(&q_ptr->data.gen.shop);
-				rd_u16b(&q_ptr->data.gen.r_idx);
-				rd_u16b(&q_ptr->data.gen.cur_num);
-				rd_u16b(&q_ptr->data.gen.max_num);
+				/* Un-initialised quests */
 				break;
 			}
 
-				/* Dungeon quests */
+			case QUEST_TYPE_BOUNTY:
+			{
+				/* Bounty quests */
+				rd_u16b(&q_ptr->data.bnt.place);
+				rd_u16b(&q_ptr->data.bnt.shop);
+				rd_u16b(&q_ptr->data.bnt.r_idx);
+				rd_u16b(&q_ptr->data.bnt.cur_num);
+				rd_u16b(&q_ptr->data.bnt.max_num);
+				break;
+			}
+
 			case QUEST_TYPE_DUNGEON:
 			{
+				/* Dungeon quests */
 				rd_u16b(&q_ptr->data.dun.r_idx);
 				rd_u16b(&q_ptr->data.dun.level);
 
@@ -2764,12 +2767,35 @@ static void rd_quests(int max_quests)
 				break;
 			}
 
-				/* Wilderness quests */
 			case QUEST_TYPE_WILD:
 			{
+				/* Wilderness quests */
 				rd_u16b(&q_ptr->data.wld.place);
 				rd_u16b(&q_ptr->data.wld.data);
 				rd_byte(&q_ptr->data.wld.depth);
+				break;
+			}
+			
+			case QUEST_TYPE_MESSAGE:
+			{
+				/* Message quests */
+				rd_u16b(&q_ptr->data.msg.place);
+				rd_u16b(&q_ptr->data.msg.shop);
+				break;
+			}
+			
+			case QUEST_TYPE_FIND_ITEM:
+			{
+				/* Find item quests */
+				rd_u16b(&q_ptr->data.fit.a_idx);
+				rd_u16b(&q_ptr->data.fit.place);
+				break;
+			}
+			
+			case QUEST_TYPE_FIND_PLACE:
+			{
+				/* Find place quests */
+				rd_u16b(&q_ptr->data.fpl.place);
 				break;
 			}
 

@@ -489,7 +489,7 @@ void quest_discovery(void)
 				continue;
 			}
 
-			case QUEST_TYPE_GENERAL:
+			case QUEST_TYPE_BOUNTY:
 			{
 
 				/* Paranoia */
@@ -585,7 +585,7 @@ void activate_quests(int level)
 		q_ptr = &quest[i];
 
 		/* Is the quest relevant? */
-		if ((q_ptr->type == QUEST_TYPE_GENERAL)
+		if ((q_ptr->type == QUEST_TYPE_BOUNTY)
 			|| ((q_ptr->type == QUEST_TYPE_DUNGEON)
 				&& (q_ptr->data.dun.level == level)))
 		{
@@ -1133,7 +1133,7 @@ bool do_cmd_knowledge_quests(int dummy)
 				continue;
 			}
 
-			case QUEST_TYPE_GENERAL:
+			case QUEST_TYPE_BOUNTY:
 			{
 
 				/* Paranoia */
