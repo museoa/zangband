@@ -443,11 +443,12 @@ static s16b o_pop(void)
 	/*
 	 * If the number remaining is less than one third of the
 	 * total number of allocated objects, then add a new object
-	 * to the end of the list.
+	 * to the end of the list.  Also if the current number of 
+	 * objects is 0 we can create a new object.
 	 *
 	 * Feel free to tune this parameter.
 	 */
-	if ((o_max - o_cur) * 3 < o_max)
+	if ((o_max - o_cur) * 3 < o_max || !o_cur)
 	{
 		/* Initial allocation */
 		if (o_max < z_info->o_max)
