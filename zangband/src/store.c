@@ -1656,6 +1656,9 @@ static void store_sell(void)
 	object_type *o_ptr;
 
 	cptr q, s;
+	
+	/* Get an item */
+	s = "You have nothing that I want.";
 
 	/* Prepare a prompt */
 	if (st_ptr->type == BUILD_STORE_HOME)
@@ -1664,6 +1667,9 @@ static void store_sell(void)
 
 		/* Home takes anything */
 		item_tester_hook = NULL;
+		
+		/* Get an item */
+		o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN));
 	}
 	else
 	{
@@ -1671,13 +1677,10 @@ static void store_sell(void)
 
 		/* Only allow items the store will buy */
 		item_tester_hook = store_will_stock;
+		
+		/* Get an item */
+		o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_STORE));
 	}
-
-
-	/* Get an item */
-	s = "You have nothing that I want.";
-
-	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_STORE));
 
 	/* Not a valid item */
 	if (!o_ptr) return;
