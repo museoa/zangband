@@ -1324,9 +1324,6 @@ void generate_cave(void)
 
 		return;
 	}
-
-	/* The dungeon is not ready */
-	character_dungeon = FALSE;
 	
 	/* Generate */
 	for (num = 0; TRUE; num++)
