@@ -213,7 +213,7 @@ static sint critical_melee(int chance, int sleeping_bonus, char m_name[], object
 	else
 	{
 		mult_m_crit = 10;
-		msg_format("You hit the %s.", m_name);
+		msg_format("You hit %s.", m_name);
 	}
 
 	return (mult_m_crit);

@@ -4404,7 +4404,7 @@ static void build_target_vault(int x0, int y0, int xsize, int ysize)
  *
  * Miniture rooms are then scattered across the vault.
  */
-static void build_elemental_vault(x0, y0, xsiz, ysiz)
+static void build_elemental_vault(int x0, int y0, int xsiz, int ysiz)
 {
 	int grd, roug;
 
