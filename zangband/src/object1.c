@@ -2203,7 +2203,7 @@ void show_inven(void)
 		{
 			/* Hack - no equippy char */
 			a = TERM_WHITE;
-			c = ' '
+			c = ' ';
 		}
 
 		Term_draw(col + 3, j + 1, a, c);
@@ -2343,7 +2343,7 @@ void show_equip(void)
 		{
 			/* Hack - no equippy char */
 			a = TERM_WHITE;
-			c = ' '
+			c = ' ';
 		}
 
 		Term_draw(col + 3, j + 1, a, c);
