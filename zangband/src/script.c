@@ -91,8 +91,8 @@ errr init_script(void)
 
 	Py_SetProgramName((char*)argv0);
 
+#ifdef __djgpp__
 	/* Set the enviroment variables */
-#if __djgpp__
 	setenv("PYTHONPATH", ANGBAND_DIR_SCRIPT, 1);
 	setenv("PYTHONHOME", ANGBAND_DIR_SCRIPT, 1);
 #endif /* __djgpp__ */
