@@ -1347,15 +1347,15 @@ bool make_attack_normal(int m_idx)
 					if (p_ptr->hold_life && (rand_int(100) < 50))
 					{
 						msg_print("You keep hold of your life force!");
-                                                resist_drain = TRUE;
+						resist_drain = TRUE;
 					}
 					else
 					{
-                                                s32b d = damroll(60, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
+						s32b d = damroll(60, 6) + (p_ptr->exp / 100) * MON_DRAIN_LIFE;
 						if (p_ptr->hold_life)
 						{
 							msg_print("You feel your life slipping away!");
-							lose_exp(d/10);
+							lose_exp(d / 10);
 						}
 						else
 						{
@@ -1365,32 +1365,32 @@ bool make_attack_normal(int m_idx)
 					}
 
 					/* Heal the attacker? */
-					if (!(p_ptr->prace == RACE_ZOMBIE || p_ptr->prace == RACE_VAMPIRE
-						|| p_ptr->prace == RACE_SPECTRE || p_ptr->prace == RACE_SKELETON
-						|| p_ptr->prace == RACE_GOLEM)
-                                                 && (damage > 2) && !(resist_drain))
+					if (!(p_ptr->prace == RACE_ZOMBIE ||
+					      p_ptr->prace == RACE_VAMPIRE ||
+					      p_ptr->prace == RACE_SPECTRE ||
+					      p_ptr->prace == RACE_SKELETON ||
+					      p_ptr->prace == RACE_GOLEM) &&
+					    (damage > 2) && !(resist_drain))
 					{
-                                                bool did_heal = FALSE;
+						bool did_heal = FALSE;
 
-                                                if (m_ptr->hp < m_ptr->maxhp) did_heal = TRUE;
+						if (m_ptr->hp < m_ptr->maxhp) did_heal = TRUE;
 
 						/* Heal */
 						m_ptr->hp += damroll(4, damage / 6);
-                                                if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
+						if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
 
 						/* Redraw (later) if needed */
 						if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
 						/* Special message */
-                                                if ((m_ptr->ml) && (did_heal))
+						if ((m_ptr->ml) && (did_heal))
 						{
 							msg_format("%^s appears healthier.", m_name);
 						}
 					}
 				}
-
 			}
-
 
 			/* Hack -- only one of cut or stun */
 			if (do_cut && do_stun)
@@ -1462,10 +1462,6 @@ bool make_attack_normal(int m_idx)
 			{
 				sound(SOUND_EXPLODE);
 
-                                /* Cancel Invulnerability */
-                                if (m_ptr->invulner)
-                                        m_ptr->invulner = 0;
-
 				if (mon_take_hit(m_idx, m_ptr->hp + 1, &fear, NULL))
 				{
 					blinked = FALSE;
@@ -1479,8 +1475,14 @@ bool make_attack_normal(int m_idx)
 				{
 					if (!(r_ptr->flags3 & RF3_IM_FIRE))
 					{
+						int dam = damroll(2, 6);
+
+						/* Modify the damage */
+						dam = mon_damage_mod(m_ptr, dam, 0);
+
 						msg_format("%^s is suddenly very hot!", m_name);
-						if (mon_take_hit(m_idx, damroll(2, 6), &fear,
+
+						if (mon_take_hit(m_idx, dam, &fear,
 						    " turns into a pile of ash."))
 						{
 							blinked = FALSE;
@@ -1498,8 +1500,14 @@ bool make_attack_normal(int m_idx)
 				{
 					if (!(r_ptr->flags3 & RF3_IM_ELEC))
 					{
+						int dam = damroll(2, 6);
+
+						/* Modify the damage */
+						dam = mon_damage_mod(m_ptr, dam, 0);
+
 						msg_format("%^s gets zapped!", m_name);
-						if (mon_take_hit(m_idx, damroll(2, 6), &fear,
+
+						if (mon_take_hit(m_idx, dam, &fear,
 						    " turns into a pile of cinder."))
 						{
 							blinked = FALSE;

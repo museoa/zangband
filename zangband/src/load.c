@@ -583,11 +583,11 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->xtra2);
 
 	/* Feeling - from 2.3.1, "savefile version 1" */
-	if (sf_version >= 1) 
+	if (sf_version >= 1)
 	{
 		rd_byte(&o_ptr->feeling);
 	}
-	
+
 	/* Inscription */
 	rd_string(buf, 128);
 
@@ -595,15 +595,15 @@ static void rd_item(object_type *o_ptr)
 	if (sf_version < 1)
 	{
 		byte i;
-		
+
 		for (i=0; i <= FEEL_MAX; i++)
 		{
 			if (game_inscriptions[i] == NULL)
 			{
 				continue;
 			}
-			
-			if (streq(buf,game_inscriptions[i])) 
+
+			if (streq(buf,game_inscriptions[i]))
 			{
 				o_ptr->feeling = i;
 				buf[0] = 0;
@@ -611,7 +611,7 @@ static void rd_item(object_type *o_ptr)
 			}
 		}
 	}
-	
+
 	/* Save the inscription */
 	if (buf[0]) o_ptr->inscription = quark_add(buf);
 
@@ -939,7 +939,7 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
 
-	/* Monster invulnerability introduced from 2.3.2 + */
+	/* Monster invulnerability introduced from 2.3.2+ */
 	if (sf_version < 2)
 		m_ptr->invulner = 0;
 	else

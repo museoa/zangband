@@ -1188,7 +1188,7 @@ static int store_carry(object_type *o_ptr)
 
 	/* Erase the inscription */
 	o_ptr->inscription = 0;
-	
+
 	/* Erase the "feeling" */
 	o_ptr->feeling = FEEL_NONE;
 

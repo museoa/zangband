@@ -2941,20 +2941,14 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 	/* Quest monsters cannot be polymorphed */
 	if (r_ptr->flags1 & RF1_QUESTOR) do_poly = FALSE;
 
-	/* "Unique" monsters can only be "killed" by the player */
-	if (r_ptr->flags1 & (RF1_UNIQUE))
+	/* "Unique" and "quest" monsters can only be "killed" by the player. */
+	if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags1 & RF1_QUESTOR))
 	{
-		/* Uniques may only be killed by the player */
 		if (who && (dam > m_ptr->hp)) dam = m_ptr->hp;
 	}
 
-	/*
-	 * "Quest" monsters can only be "killed" by the player
-	 */
-	if (r_ptr->flags1 & RF1_QUESTOR)
-	{
-		if ((who > 0) && (dam > m_ptr->hp)) dam = m_ptr->hp;
-	}
+	/* Modify the damage */
+	dam = mon_damage_mod(m_ptr, dam, 0);
 
 	/* Check for death */
 	if (dam > m_ptr->hp)
@@ -3091,17 +3085,6 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		/* Wake the monster up */
 		m_ptr->csleep = 0;
 
-		if ((m_ptr->invulner)&& !(randint(PENETRATE_INVULNERABILITY )==1))
-               {
-
-                        if(m_ptr->ml)
-                        {
-                                msg_format("%^s is unharmed.", m_name);
-                        }
-               }
-               else
-               {
-
 		/* Hurt the monster */
 		m_ptr->hp -= dam;
 
@@ -3135,7 +3118,7 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 			if (note && seen) msg_format("%^s%s", m_name, note);
 
 			/* Hack -- Pain message */
-			else if (dam > 0) message_pain(c_ptr->m_idx, dam);
+			else message_pain(c_ptr->m_idx, dam);
 
 			/* Hack -- handle sleep */
 			if (do_sleep) m_ptr->csleep = do_sleep;
@@ -3157,23 +3140,22 @@ static bool project_m(int who, int r, int y, int x, int dam, int typ)
 		else
 		{
 			/* HACK - anger the monster before showing the sleep message */
-			if (do_sleep && !is_hostile(m_ptr) && !(m_ptr->invulner))
+			if (do_sleep && !is_hostile(m_ptr))
 			{
 				msg_format("%^s gets angry!", m_name);
 				set_hostile(m_ptr);
 			}
-			
+
 			/* Give detailed messages if visible or destroyed */
-                        if (note && seen && !(m_ptr->invulner))
-                                msg_format("%^s%s", m_name, note);
+			if (note && seen)
+				msg_format("%^s%s", m_name, note);
 
 			/* Hack -- Pain message */
-			else if ((dam > 0) && !(m_ptr->invulner))
+			else
 				message_pain(c_ptr->m_idx, dam);
 
 			/* Anger friendly monsters */
-			if (((dam > 0) || get_angry) && !is_hostile(m_ptr) 
-				&& !do_sleep && !(m_ptr->invulner))
+			if (((dam > 0) || get_angry) && !is_hostile(m_ptr) && !do_sleep)
 			{
 				msg_format("%^s gets angry!", m_name);
 				set_hostile(m_ptr);

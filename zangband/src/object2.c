@@ -755,7 +755,7 @@ void object_known(object_type *o_ptr)
 {
 	/* Remove "default inscriptions" */
 	o_ptr->feeling = FEEL_NONE;
-	
+
 	/* Clear the "Felt" info */
 	o_ptr->ident &= ~(IDENT_SENSE);
 
@@ -1510,9 +1510,9 @@ bool object_similar(object_type *o_ptr, object_type *j_ptr)
 
 
 	/* Hack -- require semi-matching "inscriptions" */
-	if (o_ptr->inscription && j_ptr->inscription && 
-		(o_ptr->inscription != j_ptr->inscription)) 
-	  return (0);
+	if (o_ptr->inscription && j_ptr->inscription &&
+	    (o_ptr->inscription != j_ptr->inscription))
+		return (0);
 
 	/* Hack -- normally require matching "inscriptions" */
 	if (!stack_force_notes && (o_ptr->inscription != j_ptr->inscription)) return (0);
@@ -1559,7 +1559,7 @@ void object_absorb(object_type *o_ptr, object_type *j_ptr)
 
 	/* Hack -- blend "feelings" */
 	if (j_ptr->feeling) o_ptr->feeling = j_ptr->feeling;
-	
+
 	/* Hack -- could average discounts XXX XXX XXX */
 	/* Hack -- save largest discount XXX XXX XXX */
 	if (o_ptr->discount < j_ptr->discount) o_ptr->discount = j_ptr->discount;

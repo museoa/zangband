@@ -748,7 +748,7 @@ static int wiz_create_itemtype(void)
 	/* Analyze choice */
 	for (num = -1; num < max_num; num++)
 	{
-		if(listsym[num] == ch) break;
+		if (listsym[num] == ch) break;
 	}
 
 	/* Bail out if choice is illegal */
@@ -800,7 +800,7 @@ static int wiz_create_itemtype(void)
 	/* Analyze choice */
 	for (num = -1; num < max_num; num++)
 	{
-		if(listsym[num] == ch) break;
+		if (listsym[num] == ch) break;
 	}
 
 	/* Bail out if choice is "illegal" */

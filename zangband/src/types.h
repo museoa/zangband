@@ -544,7 +544,7 @@ struct object_type
 
 	u16b inscription;	/* Inscription index */
 	u16b art_name;      /* Artifact name (random artifacts) */
-	
+
 	byte feeling;          /* Game generated inscription number (eg, pseudo-id) */
 
 	u32b art_flags1;        /* Flags, set 1  Alas, these were necessary */
@@ -612,7 +612,7 @@ struct monster_type
 	byte stunned;		/* Monster is stunned */
 	byte confused;		/* Monster is confused */
 	byte monfear;		/* Monster is afraid */
-        byte invulner;          /* Monster is temporarily invulnerable */
+	byte invulner;          /* Monster is temporarily invulnerable */
 
 	byte cdis;			/* Current dis from player */
 

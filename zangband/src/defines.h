@@ -1,4 +1,4 @@
-]/* CVS: Last edit by $Author$ on $Date$ */
+/* CVS: Last edit by $Author$ on $Date$ */
 /* File: defines.h */
 
 /* Purpose: global constants and macro definitions */
@@ -506,7 +506,7 @@
  */
 #define NASTY_MON       50              /* 1/chance of inflated monster level */
 
-/* 1/x chance of hurting even if invulnerable!*/
+/* 1/x chance of hurting even if invulnerable! */
 #define PENETRATE_INVULNERABILITY 13
 
 

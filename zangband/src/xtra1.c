@@ -2688,7 +2688,6 @@ void calc_bonuses(void)
 		p_ptr->dis_to_d -= 5;
 	}
 
-
 	/* Invulnerability */
 	if (p_ptr->invuln)
 	{

@@ -2218,7 +2218,7 @@ bool lose_all_info(void)
 
 		/* Remove "default inscriptions" */
 		o_ptr->feeling = FEEL_NONE;
-		
+
 		/* Hack -- Clear the "empty" flag */
 		o_ptr->ident &= ~(IDENT_EMPTY);
 

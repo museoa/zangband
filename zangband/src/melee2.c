@@ -143,16 +143,16 @@ void mon_take_hit_mon(int m_idx, int dam, bool *fear, cptr note)
 	/* Wake it up */
 	m_ptr->csleep = 0;
 
-	if ((m_ptr->invulner)&& !(randint(PENETRATE_INVULNERABILITY )==1))
+	if ((m_ptr->invulner) && !(randint(PENETRATE_INVULNERABILITY) == 1))
 	{
 		if (m_ptr->ml)
 		{
 			char m_name[80];
-        
-				/* Extract monster name */
-                        monster_desc(m_name, m_ptr, 0);
 
-				msg_format("%^s is unharmed.", m_name);
+			/* Extract monster name */
+			monster_desc(m_name, m_ptr, 0);
+
+			msg_format("%^s is unharmed.", m_name);
 		}
 
 		return;
@@ -1145,7 +1145,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 		case RBE_EXP_80:        power =  5; break;
 		case RBE_DISEASE:       power =  5; break;
 		case RBE_TIME:          power =  5; break;
-		case RBE_EXP_VAMP:	power =  5; break;
+		case RBE_EXP_VAMP:      power =  5; break;
 		}
 
 
@@ -1342,8 +1342,8 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 			/* Roll out the damage */
 			damage = damroll(d_dice, d_side);
 
-                        /* Assume no healing effect */
-                        heal_effect = FALSE;                         
+			/* Assume no healing effect */
+			heal_effect = FALSE;
 
 			pt = GF_MISSILE;
 
@@ -1474,9 +1474,9 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				{
 					pt = GF_OLD_DRAIN;
 					heal_effect = TRUE;
-                                        break;
+					break;
 				}
-	
+
 			default:
 				{
 					pt = 0;
@@ -1497,18 +1497,17 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				{
 					if ((monster_living(tr_ptr)) && (damage > 2))
 					{
-						
 						bool did_heal = FALSE;
-						
+
 						if (m_ptr->hp < m_ptr->maxhp) did_heal = TRUE;
-						
+
 						/* Heal */
 						m_ptr->hp += damroll(4, damage / 6);
 						if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
-						
+
 						/* Redraw (later) if needed */
 						if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
-         
+
 						/* Special message */
 						if ((m_ptr->ml) && (did_heal))
 						{
@@ -1627,9 +1626,8 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 	{
 		sound(SOUND_EXPLODE);
 
-                /* Cancel Invulnerability */
-                if (m_ptr->invulner)
-                        m_ptr->invulner = 0;
+		/* Cancel Invulnerability */
+		if (m_ptr->invulner) m_ptr->invulner = 0;
 
 		mon_take_hit_mon(m_idx, m_ptr->hp + 1, &fear, " explodes into tiny shreds.");
 
@@ -1902,25 +1900,23 @@ static void process_monster(int m_idx)
 		}
 	}
 
-        /* Handle Invulnerability */
-        if (m_ptr->invulner)
-        {
-                /* Reduce by one, note if expires */
-                m_ptr->invulner--;
+	/* Handle Invulnerability */
+	if (m_ptr->invulner)
+	{
+		/* Reduce by one, note if expires */
+		m_ptr->invulner--;
 
-                if (!(m_ptr->invulner) && m_ptr->ml)
-                {
-                        char m_name[80];
+		if (!(m_ptr->invulner) && m_ptr->ml)
+		{
+			char m_name[80];
 
-                        /* Acquire the monster name */
-                        monster_desc(m_name, m_ptr, 0);
+			/* Acquire the monster name */
+			monster_desc(m_name, m_ptr, 0);
 
-                        /* Dump a message */
-                        msg_format("%^s is no longer invulnerable.", m_name);
-                }
-        }
-
-
+			/* Dump a message */
+			msg_format("%^s is no longer invulnerable.", m_name);
+		}
+	}
 
 	/* No one wants to be your friend if you're aggravating */
 	if (!is_hostile(m_ptr) && p_ptr->aggravate)

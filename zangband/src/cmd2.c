@@ -2767,7 +2767,6 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 					note_dies = " is destroyed.";
 				}
 
-
 				/* Handle unseen monster */
 				if (!visible)
 				{
@@ -2791,15 +2790,6 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 					/* Hack -- Track this monster */
 					if (m_ptr->ml) health_track(c_ptr->m_idx);
-
-					/* Anger friends */
-					if ((!is_hostile(m_ptr)) && !(m_ptr->invulner))
-					{
-						char m_name[80];
-						monster_desc(m_name, m_ptr, 0);
-						msg_format("%s gets angry!", m_name);
-						set_hostile(m_ptr);
-					}
 				}
 
 				/* Apply special damage XXX XXX XXX */
@@ -2808,6 +2798,9 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
+
+				/* Modify the damage */
+				tdam = mon_damage_mod(m_ptr, tdam, 0);
 
 				/* Complex message */
 				if (wizard)
@@ -2827,6 +2820,15 @@ void do_cmd_fire_aux(int item, object_type *j_ptr)
 				{
 					/* Message */
 					message_pain(c_ptr->m_idx, tdam);
+
+					/* Anger friends */
+					if ((tdam > 0) && !is_hostile(m_ptr))
+					{
+						char m_name[80];
+						monster_desc(m_name, m_ptr, 0);
+						msg_format("%s gets angry!", m_name);
+						set_hostile(m_ptr);
+					}
 
 					/* Take note */
 					if (fear && m_ptr->ml)
@@ -3151,6 +3153,9 @@ void do_cmd_throw_aux(int mult)
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
 
+				/* Modify the damage */
+				tdam = mon_damage_mod(m_ptr, tdam, 0);
+
 				/* Complex message */
 				if (wizard)
 				{
@@ -3171,9 +3176,8 @@ void do_cmd_throw_aux(int mult)
 					message_pain(c_ptr->m_idx, tdam);
 
 					/* Anger friends */
-					if (!is_hostile(m_ptr)  
-						&& !object_is_potion(q_ptr) 
-						&& !(m_ptr->invulner))
+					if ((tdam > 0) && !is_hostile(m_ptr) &&
+					    !object_is_potion(q_ptr))
 					{
 						char m_name[80];
 						monster_desc(m_name, m_ptr, 0);
@@ -3209,16 +3213,19 @@ void do_cmd_throw_aux(int mult)
 	/* Potions smash open */
 	if (object_is_potion(q_ptr))
 	{
-		if ((hit_body) || (hit_wall) || (randint(100) < j))
+		if (hit_body || hit_wall || (randint(100) < j))
 		{
 			/* Message */
 			msg_format("The %s shatters!", o_name);
 
 			if (potion_smash_effect(0, y, x, q_ptr->sval))
 			{
-                                monster_type *m_ptr = &m_list[cave[y][x].m_idx];
-				if (cave[y][x].m_idx && !is_hostile(&m_list[cave[y][x].m_idx])
-                                        && !(m_ptr->invulner))
+				monster_type *m_ptr = &m_list[cave[y][x].m_idx];
+
+				/* ToDo (Robert): fix the invulnerability */
+				if (cave[y][x].m_idx &&
+				    !is_hostile(&m_list[cave[y][x].m_idx]) &&
+				    !(m_ptr->invulner))
 				{
 					char m_name[80];
 					monster_desc(m_name, &m_list[cave[y][x].m_idx], 0);

@@ -2027,7 +2027,7 @@ bool alloc_horde(int y, int x)
  */
 bool alloc_monster(int dis, bool slp)
 {
-	int			y, x;
+	int			y = 0, x = 0;
 	int         attempts_left = 10000;
 
 	/* Find a legal, distant, unoccupied, space */

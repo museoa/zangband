@@ -269,7 +269,7 @@ void monster_death(int m_idx)
 				case RBE_EXP_80:    typ = GF_MISSILE; break;
 				case RBE_DISEASE:   typ = GF_POIS; break;
 				case RBE_TIME:      typ = GF_TIME; break;
-                                case RBE_EXP_VAMP:  typ = GF_MISSILE; break;
+				case RBE_EXP_VAMP:  typ = GF_MISSILE; break;
 			}
 
 			project(m_idx, 3, y, x, damage, typ, flg);
@@ -832,6 +832,22 @@ void monster_death(int m_idx)
 	}
 }
 
+/*
+ * Modify the physical damage done to the monster.
+ * (for example when it's invulnerable or shielded)
+ *
+ * ToDo: Accept a damage-type to calculate the modified damage from
+ * things like fire, frost, lightning, poison, ... attacks.
+ *
+ * "type" is not yet used and should be 0.
+ */
+int mon_damage_mod(monster_type *m_ptr, int dam, int type)
+{
+	if (m_ptr->invulner && !(randint(PENETRATE_INVULNERABILITY) == 1))
+		return (0);
+	else
+		return (dam);
+}
 
 
 
@@ -874,26 +890,8 @@ bool mon_take_hit(int m_idx, int dam, bool *fear, cptr note)
 	/* Redraw (later) if needed */
 	if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
-
 	/* Wake it up */
 	m_ptr->csleep = 0;
-
-	if ((m_ptr->invulner)&& !(randint(PENETRATE_INVULNERABILITY )==1))
-
-	{
-		if (m_ptr->ml)
-		{
-			char m_name[80];
-        
-				/* Extract monster name */
-                        monster_desc(m_name, m_ptr, 0);
-
-				msg_format("%^s is unharmed.", m_name);
-		}
-
-
-		return FALSE;
- 	}
 
 	/* Hurt it */
 	m_ptr->hp -= dam;

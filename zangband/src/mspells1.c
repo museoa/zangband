@@ -620,11 +620,11 @@ static bool spell_tactic(byte spell)
  */
 static bool spell_invulner(byte spell)
 {
-        /* Invulnerability */
-        if (spell == 160 + 3) return (TRUE);
+	/* Invulnerability */
+	if (spell == 160 + 3) return (TRUE);
 
-        /* Not invulnerability */
-        return (FALSE);
+	/* No invulnerability */
+	return (FALSE);
 }
 
 /*
@@ -708,8 +708,8 @@ static int choose_attack_spell(int m_idx, byte spells[], byte num)
 		/* Annoyance spell? */
 		if (spell_annoy(spells[i])) annoy[annoy_num++] = spells[i];
 
-                /* Invulnerability spell? */
-                if (spell_invulner(spells[i])) invul[invul_num++] = spells[i];
+		/* Invulnerability spell? */
+		if (spell_invulner(spells[i])) invul[invul_num++] = spells[i];
 
 		/* Haste spell? */
 		if (spell_haste(spells[i])) haste[haste_num++] = spells[i];
@@ -769,12 +769,12 @@ static int choose_attack_spell(int m_idx, byte spells[], byte num)
 		return (tactic[rand_int(tactic_num)]);
 	}
 
-        /* Cast globe of invulnerability if not already in effect */
-        if (invul_num && (rand_int(100) < 50) && !(m_ptr->invulner))
-        {
-                /* Choose Globe of Invulnerability */
-                return (invul[rand_int(invul_num)]);
-        }
+	/* Cast globe of invulnerability if not already in effect */
+	if (invul_num && !(m_ptr->invulner) && (rand_int(100) < 50))
+	{
+		/* Choose Globe of Invulnerability */
+		return (invul[rand_int(invul_num)]);
+	}
 
 	/* Haste self if we aren't already somewhat hasted (rarely) */
 	if (haste_num && (rand_int(100) < (20 + r_ptr->speed - m_ptr->mspeed)))
@@ -2097,25 +2097,23 @@ bool make_attack_spell(int m_idx)
 			break;
 		}
 
-                /* RF6_INVULNER */
+		/* RF6_INVULNER */
 		case 160+3:
 		{
-
 			disturb(1, 0);
 
 			/* Message */
 			if (!seen)
 			{
-                                msg_format("%^s mumbles powerfully.", m_name);
+				msg_format("%^s mumbles powerfully.", m_name);
 			}
 			else
 			{
-                                msg_format("%^s casts a Globe of Invulnerability.", m_name);
+				msg_format("%^s casts a Globe of Invulnerability.", m_name);
 			}
 
-                        if (!(m_ptr->invulner))
-                                m_ptr->invulner = randint(4) + 4;
-
+			if (!(m_ptr->invulner))
+				m_ptr->invulner = randint(4) + 4;
 
 			break;
 		}

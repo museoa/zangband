@@ -1684,8 +1684,7 @@ char inkey(void)
 
 #ifdef USE_SCRIPT
 
-	if (result = inkey_borg_callback(inkey_base, inkey_xtra,
-	                                 inkey_flag, inkey_scan))
+	if ((result = inkey_borg_callback(inkey_base, inkey_xtra, inkey_flag, inkey_scan)))
 	{
 		/* Cancel the various "global parameters" */
 		inkey_base = inkey_xtra = inkey_flag = inkey_scan = FALSE;
@@ -1876,7 +1875,7 @@ char inkey(void)
 
 #ifdef USE_SCRIPT
 
-	if (result = inkey_callback(ch)) return result;
+	if ((result = inkey_callback(ch))) return result;
 
 #endif /* USE_SCRIPT */
 

@@ -593,7 +593,7 @@ static void wr_item(object_type *o_ptr)
 
 	/* Feelings */
 	wr_byte(o_ptr->feeling);
-	
+
 	/* Save the inscription (if any) */
 	if (o_ptr->inscription)
 	{

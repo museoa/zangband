@@ -1139,13 +1139,13 @@ s16b arena_monsters[MAX_ARENA_MONS] =
 /*
  * Store owners (exactly four "possible" owners per store, chosen randomly)
  * { name, purse, max greed, min greed, haggle_per, tolerance, race, unused }
- * 
+ *
  * Lifted extra shopkeepers from CthAngband (don't you just love open source
  * development? ;-)). Since this gave less than 32 unique names for some
  * shops, those have their first x names copied to reach 32.
- * 
+ *
  * For the weapon and armour shops, several owners have a limit of 5k.
- * 
+ *
  * I want to do 50k owners, but the purse is currently s16b. Perhaps
  * we should just store 1/10th of the purse?
  */
@@ -6472,11 +6472,11 @@ martial_arts ma_blows[MAX_MA] =
 #endif
 };
 
-/* 
+/*
  * Table of game-generated inscriptions (indexed by the defines in
  * defines.h). -- RG
  */
-cptr game_inscriptions[] = 
+cptr game_inscriptions[] =
 {
 	NULL,            /* FEEL_NONE */
 	"broken",        /* FEEL_BROKEN */
@@ -6489,5 +6489,3 @@ cptr game_inscriptions[] =
 	"excellent",     /* FEEL_EXCELLENT */
 	"special",       /* FEEL_SPECIAL */
 };
-
-	  

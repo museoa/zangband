@@ -3045,7 +3045,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 	/* Backup value for "line" */
 	int back = 0;
-	
+
 	/* Loop counter */
 	int cnt;
 
@@ -3063,7 +3063,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 	/* Hold a string to show */
 	char shower[81];
-   
+
 	/* Describe this thing */
 	char caption[128];
 
@@ -3075,10 +3075,10 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 	/* Lower case version of the buffer, for searching */
 	char lc_buf[1024];
-   
+
 	/* Aux pointer for making lc_buf (and find!) lowercase */
 	cptr lc_buf_ptr;
-   
+
 	/* Sub-menu information */
 	char hook[10][32];
 
@@ -3237,11 +3237,12 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 			/* Make a lower case version of buf for searching */
 			strcpy(lc_buf, buf);
+
 			for (lc_buf_ptr = lc_buf; *lc_buf_ptr != 0; lc_buf_ptr++)
 			{
 				lc_buf[lc_buf_ptr-lc_buf] = tolower(*lc_buf_ptr);
-			}		   
-		   
+			}
+
 			/* Hack -- keep searching */
 			if (find && !i && !strstr(lc_buf, find)) continue;
 
@@ -3260,10 +3261,10 @@ bool show_file(cptr name, cptr what, int line, int mode)
 				while ((str = strstr(str, shower)) != NULL)
 				{
 					int len = strlen(shower);
-					
+
 					/* Display the match */
 					Term_putstr(str-lc_buf, i+2, len, TERM_YELLOW, &buf[str-lc_buf]);
-					
+
 					/* Advance */
 					str += len;
 				}
@@ -3328,20 +3329,21 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		{
 			/* Get "finder" */
 			prt("Find: ", 23, 0);
+
 			if (askfor_aux(finder, 80))
 			{
 				/* Find it */
 				find = finder;
 				back = line;
 				line = line + 1;
-			   
+
 				/* Make finder lowercase */
-				for (cnt = 0; finder[cnt] != 0; cnt++) 
+				for (cnt = 0; finder[cnt] != 0; cnt++)
 				{
 					finder[cnt] = tolower(finder[cnt]);
 				}
-			   
-			        /* Show it */
+
+				/* Show it */
 				strcpy(shower, finder);
 			}
 		}
@@ -3352,6 +3354,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			char tmp[81];
 			prt("Goto Line: ", 23, 0);
 			strcpy(tmp, "0");
+
 			if (askfor_aux(tmp, 80))
 			{
 				line = atoi(tmp);
@@ -3364,6 +3367,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			char tmp[81];
 			prt("Goto File: ", 23, 0);
 			strcpy(tmp, "help.hlp");
+
 			if (askfor_aux(tmp, 80))
 			{
 				if (!show_file(tmp, NULL, 0, mode)) k = ESCAPE;

@@ -386,7 +386,7 @@ static bool gamble_comm(int cmd)
 			screen_load();
 			return FALSE;
 		}
-		
+
 		clear_bldg(5, 23);
 
 		/* Set maximum bet */

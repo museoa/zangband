@@ -129,7 +129,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val, int 
 {
 	object_type forge;
 	object_type *q_ptr;
-	
+
 
 	/* Get local object */
 	q_ptr = &forge;
@@ -1854,7 +1854,7 @@ static void spoil_mon_info(cptr fname)
 		if (flags5 & (RF5_HOLD))              vp[vn++] = "paralyze";
 		if (flags6 & (RF6_HASTE))             vp[vn++] = "haste-self";
 		if (flags6 & (RF6_HEAL))              vp[vn++] = "heal-self";
-                if (flags6 & (RF6_INVULNER))          vp[vn++] = "make invulnerable";
+		if (flags6 & (RF6_INVULNER))          vp[vn++] = "make invulnerable";
 		if (flags6 & (RF6_BLINK))             vp[vn++] = "blink-self";
 		if (flags6 & (RF6_TPORT))             vp[vn++] = "teleport-self";
 		if (flags6 & (RF6_XXX3))              vp[vn++] = "do something";
@@ -2220,7 +2220,7 @@ static void spoil_mon_info(cptr fname)
 				case RBE_EXP_80:        q = "lower experience (by 80d6+)"; break;
 				case RBE_DISEASE:       q = "disease"; break;
 				case RBE_TIME:          q = "time"; break;
-                                case RBE_EXP_VAMP:      q = "drain life force"; break;
+				case RBE_EXP_VAMP:      q = "drain life force"; break;
 			}
 
 

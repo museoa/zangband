@@ -1104,7 +1104,7 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 	/* Test for hit */
-	if ((!(r_ptr->flags2 & (RF2_QUANTUM)) || !rand_int(2)) && test_hit_norm(chance, r_ptr->ac, m_ptr->ml))
+	if ((!(r_ptr->flags2 & RF2_QUANTUM) || !rand_int(2)) && test_hit_norm(chance, r_ptr->ac, m_ptr->ml))
 	{
 		/* Sound */
 		sound(SOUND_HIT);
@@ -1120,19 +1120,21 @@ static void natural_attack(s16b m_idx, int attack, bool *fear, bool *mdeath)
 		/* No negative damage */
 		if (k < 0) k = 0;
 
+		/* Modify the damage */
+		k = mon_damage_mod(m_ptr, k, 0);
+
 		/* Complex message */
 		if (wizard)
 		{
 			msg_format("You do %d (out of %d) damage.", k, m_ptr->hp);
 		}
 
-		if ((!is_hostile(m_ptr)) && !(m_ptr->invulner))
+		if ((k > 0) && !is_hostile(m_ptr))
 		{
 			msg_format("%^s gets angry!", m_name);
 			set_hostile(m_ptr);
 		}
 
-		
 		/* Damage, check for fear and mdeath */
 		switch (attack)
 		{
@@ -1353,7 +1355,7 @@ void py_attack(int y, int x)
 			if ((p_ptr->pclass == CLASS_MONK) && monk_empty_hands())
 			{
 				int special_effect = 0, stun_effect = 0, times = 0;
-				martial_arts * ma_ptr = &ma_blows[0], * old_ptr = &ma_blows[0];
+				martial_arts *ma_ptr = &ma_blows[0], *old_ptr = &ma_blows[0];
 				int resist_stun = 0;
 
 				if (r_ptr->flags1 & RF1_UNIQUE) resist_stun += 88;
@@ -1362,8 +1364,8 @@ void py_attack(int y, int x)
 				if ((r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->flags3 & RF3_NONLIVING))
 					resist_stun += 88;
 
-				for (times = 0; times < (p_ptr->lev < 7 ? 1 : p_ptr->lev / 7); times++)
 				/* Attempt 'times' */
+				for (times = 0; times < (p_ptr->lev < 7 ? 1 : p_ptr->lev / 7); times++)
 				{
 					do
 					{
@@ -1485,17 +1487,6 @@ void py_attack(int y, int x)
 				{
 					int step_k = k;
 
-					if ((o_ptr->name1 == ART_CHAINSWORD) && (randint(2) != 1))
-					{
-						char chainsword_noise[1024];
-						if (!get_rnd_line("chainswd.txt", 0, chainsword_noise))
-							msg_print(chainsword_noise);
-					}
-
-					if (o_ptr->name1 == ART_VORPAL_BLADE)
-						msg_print("Your Vorpal Blade goes snicker-snack!");
-					else
-						msg_format("Your weapon cuts deep into %s!", m_name);
 					do
 					{
 						k += step_k;
@@ -1512,6 +1503,25 @@ void py_attack(int y, int x)
 			/* No negative damage */
 			if (k < 0) k = 0;
 
+			/* Modify the damage */
+			k = mon_damage_mod(m_ptr, k, 0);
+
+			/* Vorpal blade / Chainsword message */
+			if (vorpal_cut && (k > 0))
+			{
+				if ((o_ptr->name1 == ART_CHAINSWORD) && (randint(2) != 1))
+				{
+					char chainsword_noise[1024];
+					if (!get_rnd_line("chainswd.txt", 0, chainsword_noise))
+						msg_print(chainsword_noise);
+				}
+
+				if (o_ptr->name1 == ART_VORPAL_BLADE)
+					msg_print("Your Vorpal Blade goes snicker-snack!");
+				else
+					msg_format("Your weapon cuts deep into %s!", m_name);
+			}
+
 			/* Complex message */
 			if (wizard)
 			{
@@ -1525,7 +1535,7 @@ void py_attack(int y, int x)
 				break;
 			}
 
-			 if ((!is_hostile(m_ptr)) && !(m_ptr->invulner))
+			if ((k > 0) && !is_hostile(m_ptr))
 			{
 				msg_format("%^s gets angry!", m_name);
 				set_hostile(m_ptr);
