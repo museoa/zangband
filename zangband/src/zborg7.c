@@ -1402,10 +1402,10 @@ bool borg_recharging(void)
 		borg_read_scroll(SV_SCROLL_RECHARGING))
 	{
 		/* Message */
-		borg_note_fmt("Recharging %s", inventory[i].o_name);
+		borg_note_fmt("Recharging %s", inventory[charge].o_name);
 
 		/* Recharge the item */
-		borg_keypress(I2A(i));
+		borg_keypress(I2A(charge));
 
 		/* Success */
 		return (TRUE);
