@@ -14690,3 +14690,18 @@ F:RAND_50 | ATTR_MULTI | CAN_SWIM |
 F:STUPID | WEIRD_MIND | MULTIPLY | BASH_DOOR | LITE_1
 F:ANIMAL | NO_FEAR
 D:This mass of worms seems to shimmer with strange power.
+
+N:888:Giant time fly
+G:F:G
+I:130:3d8:12:10:50
+W:31:3:0:1800
+O:0:0:0
+B:BITE:PARALYZE
+F:FORCE_SLEEP | 
+F:RAND_50 | RAND_25 | WILD_DUNGEON_01 | WILD_MOUNT2 |
+F:WEIRD_MIND | BASH_DOOR | 
+F:ANIMAL | CAN_FLY
+S:1_IN_5 | 
+S:BR_TIME | HASTE | SLOW
+D:It wasn't there a second ago....
+
