@@ -202,7 +202,13 @@ s16b track_shop_size;
 s16b shop_num = -1;
 
 
+/*
+ * MT - Current "traps"
+ */
 
+borg_trap *borg_traps;
+s16b track_trap_num;
+s16b track_trap_size;
 /*
  * Location variables
  */
@@ -385,7 +391,6 @@ borg_take *borg_takes;
 s16b borg_kills_cnt;
 s16b borg_kills_nxt;
 borg_kill *borg_kills;
-
 
 /*
  * Maintain a set of grids marked as "BORG_VIEW"

@@ -2743,6 +2743,52 @@ void borg_map_info(map_block *mb_ptr, term_map *map, vptr dummy)
 				track_shop_num++;
 			}
 		}
+		
+		/* MT - Handle adding of traps to the borg_traps array */
+		else if(t_ptr->type == FTYPE_TRAP)
+		{
+			/* Check for an existing trap */
+			for (i = 0; i < track_trap_num; i++)
+			{
+				/* Stop if we already knew about this trap */
+				if (borg_traps[i].t_idx == map->field) break;
+			}
+
+			/* Do we need to increase the size of the trap array? */
+			if (i == track_trap_size)
+			{
+				borg_trap *temp;
+				
+				/* Double size of arrays */
+				track_trap_size *= 2;
+
+				/* Make new (bigger) array */
+				C_MAKE(temp, track_trap_size, borg_trap);
+
+				/* Copy into new array */
+				C_COPY(temp, borg_traps, track_trap_num, borg_trap);
+
+				/* Get rid of old array */
+				FREE(borg_traps);
+
+				/* Use new array */
+				borg_traps = temp;
+			}
+			
+			/* Track the newly discovered trap */
+			if (i == track_shop_num)
+			{
+				/* Position */
+				borg_traps[i].x = x;
+				borg_traps[i].y = y;
+
+				/* Information */
+				borg_traps[i].t_idx = map->field;
+
+				/* One more trap */
+				track_trap_num++;
+			}
+		}
 	}
 
 	/* 
@@ -2784,6 +2830,11 @@ void borg_map_erase(vptr dummy)
 
 	/* Forget old monsters */
 	(void)C_WIPE(borg_kills, BORG_KILLS_MAX, borg_kill);
+
+	/* MT - Forget traps */
+	(void)C_WIPE(borg_traps, track_trap_size, borg_trap);
+	track_trap_num = 0;
+	track_trap_size = 1;
 }
 
 

@@ -187,6 +187,7 @@ struct map_block
 
 	u16b kill;	/* Entry into "kill" list */
 	u16b take;	/* Entry into "take" list */
+	u16b trap;	/* MT - Entry into "trap" list */
 
 	byte feat;	/* Terrain feature */
 	byte info;	/* info flags */

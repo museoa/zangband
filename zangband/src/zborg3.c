@@ -2611,6 +2611,13 @@ void borg_init_3(void)
 
 	/* Make the stores in the town */
 	C_MAKE(borg_shops, track_shop_size, borg_shop);
+
+	/* MT - Track the trap locations */
+	track_trap_num = 0;
+	track_trap_size = 1;
+	
+	/* MT - Initialize trap array */
+	C_MAKE(borg_traps, track_trap_size, borg_trap);
 }
 
 #else
