@@ -1859,6 +1859,12 @@ static void borg_notice_inven_item(list_item *l_ptr)
 			{
 				bp_ptr->able.fuel += number;
 			}
+			
+			if (k_ptr->sval == SV_LITE_LANTERN)
+			{
+				bp_ptr->able.fuel += 2;
+			}
+			
 			break;
 		}
 

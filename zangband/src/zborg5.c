@@ -3123,12 +3123,12 @@ static s32b borg_power_aux3(void)
 			}
 		}
 	}
-
-
+	
 	/*** Reward various things ***/
 
 	/* Hack -- Reward light radius */
 	value += (bp_ptr->cur_lite * 100000L);
+	
 
 	/* Hack -- Reward for wearing a permanent light */
 	if (bp_ptr->able.fuel >= 1000)
@@ -3625,8 +3625,8 @@ static s32b borg_power_aux4(void)
 	/*** Basic abilities ***/
 
 	/* Reward fuel */
-	for (k = 0; (k < 5) && (k < bp_ptr->able.fuel); k++) value += 60000L;
-	for (; (k < 10) && (k < bp_ptr->able.fuel); k++) value += 6000L;
+	for (k = 0; (k < 5) && (k < bp_ptr->able.fuel); k++) value += 6000L;
+	for (; (k < 10) && (k < bp_ptr->able.fuel); k++) value += 600L;
 
 	/* Reward Food */
 	/* if hungry, food is THE top priority */
@@ -3780,7 +3780,7 @@ static s32b borg_power_aux4(void)
 		for (k = 0; (k < 5) && (k < bp_ptr->able.csw); k++) value += 250L;
 		for (; (k < 10) && (k < bp_ptr->able.csw); k++) value += 55L;
 	}
-
+	
 	/* Reward Cures */
 	if (!(bp_ptr->flags2 & TR2_RES_CONF))
 	{
