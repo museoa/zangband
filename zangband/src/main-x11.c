@@ -2846,7 +2846,7 @@ errr init_x11(int argc, char *argv[])
 	if (arg_graphics)
 	{
 		/* Build the name of the "graf" file */
-		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8x8.bmp");
+		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X8.bmp");
 
 		/* Use graphics if bitmap file exists */
 		if (0 == fd_close(fd_open(filename, O_RDONLY)))
