@@ -547,6 +547,25 @@ static void do_cmd_aim_wand_aux(object_type *o_ptr)
 		msg_print("You must first pick up the wands.");
 		return;
 	}
+	
+	/* Notice empty wandss */
+	if (o_ptr->pval <= 0)
+	{
+		if (flush_failure) flush();
+		msg_print("The wand has no charges left.");
+		o_ptr->info |= (OB_EMPTY);
+
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+		return;
+	}
+	
+	/* Sound */
+	sound(SOUND_ZAP);
 
 	/* Aim the wand */
 	use_charge = use_object(o_ptr, &ident);
