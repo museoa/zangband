@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "struct.h"
 #include "icon.h"
 
 

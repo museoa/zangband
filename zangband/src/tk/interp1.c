@@ -11,7 +11,6 @@
  */
 
 #include "tnb.h"
-#include "struct.h"
 #include "icon.h"
 
 
@@ -2235,8 +2234,6 @@ void angtk_init(void)
 
 	/* Tcl commands */
 	CommandInfo_Init(g_interp, commandInit, NULL);
-
-	init_const(g_interp);
 
 	/* Standard color palette */
 	init_palette();
