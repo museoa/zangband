@@ -948,8 +948,6 @@ struct field_magic_target
 	bool notice; /* Does the player notice? */
 };
 
-
-
 /*
  * An entry for the object/monster allocation functions
  *

@@ -37,8 +37,6 @@ bool teleport_away(int m_idx, int dis)
 	monster_type *m_ptr = &m_list[m_idx];
 	cave_type *c_ptr = NULL;
 	
-	bool m_can_enter;
-
 	/* Paranoia */
 	if (!m_ptr->r_idx) return (FALSE);
 
@@ -162,9 +160,6 @@ void teleport_to_player(int m_idx)
 	bool look = TRUE;
 	monster_type *m_ptr = &m_list[m_idx];
 	cave_type *c_ptr = NULL;
-	
-	bool m_can_enter;
-
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return;
@@ -299,7 +294,6 @@ void teleport_player(int dis)
 	bool look = TRUE;
 	cave_type *c_ptr;
 
-	bool p_can_enter;
 	byte dummy;
 
 	if (p_ptr->anti_tele)
@@ -462,7 +456,7 @@ void teleport_player_to(int ny, int nx)
 	int y, x, oy, ox, dis = 0, ctr = 0;
 
 	cave_type *c_ptr;
-	bool p_can_enter;
+
 	byte dummy;
 
 	if (p_ptr->anti_tele)
@@ -486,8 +480,8 @@ void teleport_player_to(int ny, int nx)
 		c_ptr = area(y, x);
 		
 		/* Can enter grid? */
-		if (cave_naked_grid(c_ptr) && !fields_have_flags(c_ptr->fld_idx,
-				 FIELD_INFO_ENTER, FIELD_INFO_ENTER)) break;
+		if (cave_naked_grid(c_ptr) && fields_have_flags(c_ptr->fld_idx,
+				 FIELD_INFO_ENTER, 0)) break;
 
 		/* Occasionally advance the distance */
 		if (++ctr > (4 * dis * dis + 4 * dis + 1))

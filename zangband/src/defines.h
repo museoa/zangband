@@ -3684,7 +3684,7 @@ extern int PlayerUID;
 #define FIELD_INFO_ENTER	0x0100  /* Grid blocks entry by entities */
 #define FIELD_INFO_NO_MAGIC	0x0200  /* Grid blocks magic */
 #define FIELD_INFO_PERM		0x0400  /* Grid is not affected by disintegrate */
-#define FIELD_INFO_DUMMY10	0x0800
+#define FIELD_INFO_NO_OBJCT	0x0800	/* Grid cannot hold objects */
 #define FIELD_INFO_DUMMY11	0x1000
 #define FIELD_INFO_DUMMY12	0x2000
 #define FIELD_INFO_DUMMY13	0x4000
@@ -3718,7 +3718,7 @@ extern int PlayerUID;
 #define FIELD_ACT_MONSTER_AI	14 /* Monster AI hook */
 #define FIELD_ACT_XXXX15		15
 #define FIELD_ACT_PLAYER_INTERACT	16 /* The player interacts with grid */
-#define FIELD_ACT_OBJECT_TEST	17 /* Test to see if can drop on field */
+#define FIELD_ACT_XXXX17		17
 
 #define FIELD_ACTION_MAX		18	/* The last action + 1 */
 

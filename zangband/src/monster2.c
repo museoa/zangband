@@ -1552,6 +1552,13 @@ bool place_monster_one(int y, int x, int r_idx, bool slp, bool friendly, bool pe
 		/* Cannot create */
 		return (FALSE);
 	}
+	
+	/* Check to see if fields dissallow placement */
+	if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER, FIELD_INFO_ENTER))
+	{ 
+		/* Cannot create */
+		return(FALSE);
+	}
 
 
 	/* Powerful monster */

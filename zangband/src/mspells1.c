@@ -368,9 +368,17 @@ static bool summon_possible(int y1, int x1)
 			/* ...nor on the Pattern */
 			if ((c_ptr->feat >= FEAT_PATTERN_START) &&
 			    (c_ptr->feat <= FEAT_PATTERN_XTRA2)) continue;
+				
+			/* Check to see if fields dissallow placement */
+			if (fields_have_flags(c_ptr->fld_idx, FIELD_INFO_ENTER,
+				 FIELD_INFO_ENTER))
+			{ 
+				/* Cannot create */
+				return(FALSE);
+			}
 
-			/* Require empty floor grid in line of sight */
-			if (cave_empty_grid(c_ptr) && los(y1, x1, y, x)) return (TRUE);
+			/* Require empty floor grid in line of sight of player */
+			if (cave_empty_grid(c_ptr) && (c_ptr->info & CAVE_VIEW)) return (TRUE);
 		}
 	}
 
