@@ -2116,12 +2116,6 @@ static errr rd_dungeon(void)
 
 		if (p_ptr->depth)
 		{
-			/* Hack - save values stomped on by create_wilderness() */
-			int min_wid = p_ptr->min_wid;
-			int min_hgt = p_ptr->min_hgt;
-			int max_wid = p_ptr->max_wid;
-			int max_hgt = p_ptr->max_hgt;
-
 			dun_level_backup = p_ptr->depth;
 
 			change_level(p_ptr->depth);
@@ -2144,8 +2138,11 @@ static errr rd_dungeon(void)
 			/* Load dungeon map */
 			load_map(0, 0, cur_wid, cur_hgt);
 
-			/* Strip the wilderness map */
-			strip_map(min_wid, min_hgt, max_wid, max_hgt);
+			/*
+			 * Strip the wilderness map
+			 * A square WILD_BLOCK_SIZE * WILD_VIEW in width.
+			 */
+			strip_map(0, 0, 9 * 16, 9 * 16);
 
 			px = px_back;
 			py = py_back;
@@ -2195,10 +2192,6 @@ static errr rd_dungeon(void)
 
 			/* Load dungeon map */
 			load_map(0, 0, cur_wid, cur_hgt);
-
-			/* Strip the wilderness map */
-			strip_map(p_ptr->min_wid, p_ptr->min_hgt,
-					  p_ptr->max_wid, p_ptr->max_hgt);
 
 			px = px_back;
 			py = py_back;
