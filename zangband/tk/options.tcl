@@ -787,7 +787,6 @@ proc NSOptions::SetOptions {oop page} {
 			]
 			lappend data \
 				autosave_freq 0 25000 50 \
-				ambient_delay 0 500 5 \
 				monster_delay 0 500 5
 
 			NSCanvist::DeleteAll $canvistId
@@ -1017,7 +1016,6 @@ proc NSOptions::GetPage {page} {
 				delay_factor
 				hitpoint_warn
 				autosave_freq
-				ambient_delay
 				monster_delay
 			}
 		}

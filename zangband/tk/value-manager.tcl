@@ -140,8 +140,6 @@ proc NSValueManager::InitModule {} {
 	Manage TERM_L_BLUE [palette set 180] ; # ~turquoise2
 	Manage TERM_L_UMBER [palette set 52]
 	
-	Manage ambient_delay 120
-
 	Manage tip,current 1000
 	Manage tip,show 1
 
@@ -658,21 +656,12 @@ proc Setting {keyword args} {
 	# Set
 	if {[llength $args]} {
 		set value [lindex $args 0]
-		switch -- $keyword {
-			default {
-				angband setting set $keyword $value
-			}
+			angband setting set $keyword $value
 		}
 
 	# Get
 	} else {
-		switch -- $keyword {
-			ambient_delay{
-				return [Value $keyword]
-			}
-			default {
-				return [angband setting set $keyword]
-			}
+			return [angband setting set $keyword]
 		}
 	}
 

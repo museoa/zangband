@@ -60,7 +60,6 @@ Manage TV_STATUE #BBBBBB
 Manage TV_SWORD #FFFFFF
 Manage TV_TRUMP_BOOK #FF9900
 Manage TV_WAND #00BB00
-Manage ambient_delay 120
 Manage bigmap,scale 4
 Manage choicewindow,autoexpand 1
 Manage choicewindow,show 0
