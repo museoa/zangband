@@ -327,7 +327,14 @@ static u16b select_building(byte pop, byte magic, byte law, u16b *build,
 	if (build[BUILD_STORE_HOME])
 	{
 		wild_build[BUILD_STORE_HOME].gen = 0;
-	}
+    }
+
+    /* Hack - Not more than one magetower per city */
+    if (build[BUILD_MAGETOWER0] || build[BUILD_MAGETOWER1])
+    {
+        wild_build[BUILD_MAGETOWER0].gen = 0;
+        wild_build[BUILD_MAGETOWER1].gen = 0;
+    }
 
 	total = 0;
 
