@@ -27,16 +27,16 @@ static int toluaI_ui_notice_stuff00(lua_State* tolua_S)
  if (
      !tolua_isnoobj(tolua_S,1)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'notice_stuff'.");
+  return 0;
+ }
  else
  {
   {
    notice_stuff();
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'notice_stuff'.");
  return 0;
 }
 
@@ -46,16 +46,16 @@ static int toluaI_ui_update_stuff00(lua_State* tolua_S)
  if (
      !tolua_isnoobj(tolua_S,1)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'update_stuff'.");
+  return 0;
+ }
  else
  {
   {
    update_stuff();
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'update_stuff'.");
  return 0;
 }
 
@@ -65,16 +65,16 @@ static int toluaI_ui_redraw_stuff00(lua_State* tolua_S)
  if (
      !tolua_isnoobj(tolua_S,1)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'redraw_stuff'.");
+  return 0;
+ }
  else
  {
   {
    redraw_stuff();
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'redraw_stuff'.");
  return 0;
 }
 
@@ -84,16 +84,16 @@ static int toluaI_ui_window_stuff00(lua_State* tolua_S)
  if (
      !tolua_isnoobj(tolua_S,1)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'window_stuff'.");
+  return 0;
+ }
  else
  {
   {
    window_stuff();
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'window_stuff'.");
  return 0;
 }
 
@@ -103,16 +103,16 @@ static int toluaI_ui_handle_stuff00(lua_State* tolua_S)
  if (
      !tolua_isnoobj(tolua_S,1)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'handle_stuff'.");
+  return 0;
+ }
  else
  {
   {
    handle_stuff();
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'handle_stuff'.");
  return 0;
 }
 
@@ -122,7 +122,10 @@ static int toluaI_ui_inkey00(lua_State* tolua_S)
  if (
      !tolua_isnoobj(tolua_S,1)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'inkey'.");
+  return 0;
+ }
  else
  {
   {
@@ -131,9 +134,6 @@ static int toluaI_ui_inkey00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'inkey'.");
- return 0;
 }
 
 /* function: bell */
@@ -143,7 +143,10 @@ static int toluaI_ui_bell00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'bell'.");
+  return 0;
+ }
  else
  {
   cptr reason = ((cptr)  tolua_getstring(tolua_S,1,0));
@@ -151,9 +154,6 @@ static int toluaI_ui_bell00(lua_State* tolua_S)
    bell(reason);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'bell'.");
  return 0;
 }
 
@@ -164,7 +164,10 @@ static int toluaI_ui_sound00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'sound'.");
+  return 0;
+ }
  else
  {
   int val = ((int)  tolua_getnumber(tolua_S,1,0));
@@ -172,9 +175,6 @@ static int toluaI_ui_sound00(lua_State* tolua_S)
    sound(val);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'sound'.");
  return 0;
 }
 
@@ -185,7 +185,10 @@ static int toluaI_ui_msg_print00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'msg_print'.");
+  return 0;
+ }
  else
  {
   cptr msg = ((cptr)  tolua_getstring(tolua_S,1,0));
@@ -193,9 +196,6 @@ static int toluaI_ui_msg_print00(lua_State* tolua_S)
    msg_print(msg);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'msg_print'.");
  return 0;
 }
 
@@ -208,7 +208,10 @@ static int toluaI_ui_message00(lua_State* tolua_S)
      !tolua_istype(tolua_S,3,LUA_TSTRING,0) ||
      !tolua_isnoobj(tolua_S,4)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'message'.");
+  return 0;
+ }
  else
  {
   u16b message_type = ((u16b)  tolua_getnumber(tolua_S,1,0));
@@ -219,9 +222,6 @@ static int toluaI_ui_message00(lua_State* tolua_S)
   }
  }
  return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'message'.");
- return 0;
 }
 
 /* function: message_flush */
@@ -230,16 +230,16 @@ static int toluaI_ui_message_flush00(lua_State* tolua_S)
  if (
      !tolua_isnoobj(tolua_S,1)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'message_flush'.");
+  return 0;
+ }
  else
  {
   {
    message_flush();
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'message_flush'.");
  return 0;
 }
 
@@ -249,16 +249,16 @@ static int toluaI_ui_screen_save00(lua_State* tolua_S)
  if (
      !tolua_isnoobj(tolua_S,1)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'screen_save'.");
+  return 0;
+ }
  else
  {
   {
    screen_save();
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'screen_save'.");
  return 0;
 }
 
@@ -268,16 +268,16 @@ static int toluaI_ui_screen_load00(lua_State* tolua_S)
  if (
      !tolua_isnoobj(tolua_S,1)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'screen_load'.");
+  return 0;
+ }
  else
  {
   {
    screen_load();
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'screen_load'.");
  return 0;
 }
 
@@ -291,7 +291,10 @@ static int toluaI_ui_c_put_str00(lua_State* tolua_S)
      !tolua_istype(tolua_S,4,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,5)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'c_put_str'.");
+  return 0;
+ }
  else
  {
   byte attr = ((byte)  tolua_getnumber(tolua_S,1,0));
@@ -302,9 +305,6 @@ static int toluaI_ui_c_put_str00(lua_State* tolua_S)
    c_put_str(attr,str,col,row);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'c_put_str'.");
  return 0;
 }
 
@@ -317,7 +317,10 @@ static int toluaI_ui_put_str00(lua_State* tolua_S)
      !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,4)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'put_str'.");
+  return 0;
+ }
  else
  {
   cptr str = ((cptr)  tolua_getstring(tolua_S,1,0));
@@ -327,9 +330,6 @@ static int toluaI_ui_put_str00(lua_State* tolua_S)
    put_str(str,col,row);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'put_str'.");
  return 0;
 }
 
@@ -343,7 +343,10 @@ static int toluaI_ui_c_prt00(lua_State* tolua_S)
      !tolua_istype(tolua_S,4,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,5)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'c_prt'.");
+  return 0;
+ }
  else
  {
   byte attr = ((byte)  tolua_getnumber(tolua_S,1,0));
@@ -354,9 +357,6 @@ static int toluaI_ui_c_prt00(lua_State* tolua_S)
    c_prt(attr,str,col,row);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'c_prt'.");
  return 0;
 }
 
@@ -369,7 +369,10 @@ static int toluaI_ui_prt00(lua_State* tolua_S)
      !tolua_istype(tolua_S,3,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,4)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'prt'.");
+  return 0;
+ }
  else
  {
   cptr str = ((cptr)  tolua_getstring(tolua_S,1,0));
@@ -379,9 +382,6 @@ static int toluaI_ui_prt00(lua_State* tolua_S)
    prt(str,col,row);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'prt'.");
  return 0;
 }
 
@@ -393,7 +393,10 @@ static int toluaI_ui_c_roff00(lua_State* tolua_S)
      !tolua_istype(tolua_S,2,LUA_TSTRING,0) ||
      !tolua_isnoobj(tolua_S,3)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'c_roff'.");
+  return 0;
+ }
  else
  {
   byte a = ((byte)  tolua_getnumber(tolua_S,1,0));
@@ -402,9 +405,6 @@ static int toluaI_ui_c_roff00(lua_State* tolua_S)
    c_roff(a,str);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'c_roff'.");
  return 0;
 }
 
@@ -415,7 +415,10 @@ static int toluaI_ui_roff00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TSTRING,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'roff'.");
+  return 0;
+ }
  else
  {
   cptr str = ((cptr)  tolua_getstring(tolua_S,1,0));
@@ -423,9 +426,6 @@ static int toluaI_ui_roff00(lua_State* tolua_S)
    roff(str);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'roff'.");
  return 0;
 }
 
@@ -436,7 +436,10 @@ static int toluaI_ui_clear_from00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'clear_from'.");
+  return 0;
+ }
  else
  {
   int row = ((int)  tolua_getnumber(tolua_S,1,0));
@@ -444,9 +447,6 @@ static int toluaI_ui_clear_from00(lua_State* tolua_S)
    clear_from(row);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'clear_from'.");
  return 0;
 }
 
@@ -457,7 +457,10 @@ static int toluaI_ui_pause_line00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'pause_line'.");
+  return 0;
+ }
  else
  {
   int row = ((int)  tolua_getnumber(tolua_S,1,0));
@@ -465,9 +468,6 @@ static int toluaI_ui_pause_line00(lua_State* tolua_S)
    pause_line(row);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'pause_line'.");
  return 0;
 }
 
@@ -478,7 +478,10 @@ static int toluaI_ui_request_command00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,tolua_tag(tolua_S,"bool"),0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'request_command'.");
+  return 0;
+ }
  else
  {
   bool shopping = ((bool)  tolua_getbool(tolua_S,1,0));
@@ -486,9 +489,6 @@ static int toluaI_ui_request_command00(lua_State* tolua_S)
    request_command(shopping);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'request_command'.");
  return 0;
 }
 

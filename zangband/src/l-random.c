@@ -44,7 +44,10 @@ static int toluaI_random_rand_int00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'rand_int'.");
+  return 0;
+ }
  else
  {
   u32b m = ((u32b)  tolua_getnumber(tolua_S,1,0));
@@ -54,9 +57,6 @@ static int toluaI_random_rand_int00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'rand_int'.");
- return 0;
 }
 
 /* function: randint */
@@ -66,7 +66,10 @@ static int toluaI_random_randint00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'randint'.");
+  return 0;
+ }
  else
  {
   u32b m = ((u32b)  tolua_getnumber(tolua_S,1,0));
@@ -76,9 +79,6 @@ static int toluaI_random_randint00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'randint'.");
- return 0;
 }
 
 /* function: randint0 */
@@ -88,7 +88,10 @@ static int toluaI_random_randint000(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'randint0'.");
+  return 0;
+ }
  else
  {
   u32b m = ((u32b)  tolua_getnumber(tolua_S,1,0));
@@ -98,9 +101,6 @@ static int toluaI_random_randint000(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'randint0'.");
- return 0;
 }
 
 /* function: randint1 */
@@ -110,7 +110,10 @@ static int toluaI_random_randint100(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'randint1'.");
+  return 0;
+ }
  else
  {
   u32b m = ((u32b)  tolua_getnumber(tolua_S,1,0));
@@ -120,9 +123,6 @@ static int toluaI_random_randint100(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'randint1'.");
- return 0;
 }
 
 /* function: rand_range */
@@ -133,7 +133,10 @@ static int toluaI_random_rand_range00(lua_State* tolua_S)
      !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,3)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'rand_range'.");
+  return 0;
+ }
  else
  {
   u32b A = ((u32b)  tolua_getnumber(tolua_S,1,0));
@@ -144,9 +147,6 @@ static int toluaI_random_rand_range00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'rand_range'.");
- return 0;
 }
 
 /* function: rand_spread */
@@ -157,7 +157,10 @@ static int toluaI_random_rand_spread00(lua_State* tolua_S)
      !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,3)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'rand_spread'.");
+  return 0;
+ }
  else
  {
   u32b A = ((u32b)  tolua_getnumber(tolua_S,1,0));
@@ -168,9 +171,6 @@ static int toluaI_random_rand_spread00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'rand_spread'.");
- return 0;
 }
 
 /* function: damroll */
@@ -181,7 +181,10 @@ static int toluaI_random_damroll00(lua_State* tolua_S)
      !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,3)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'damroll'.");
+  return 0;
+ }
  else
  {
   uint num = ((uint)  tolua_getnumber(tolua_S,1,0));
@@ -192,9 +195,6 @@ static int toluaI_random_damroll00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'damroll'.");
- return 0;
 }
 
 /* function: maxroll */
@@ -205,7 +205,10 @@ static int toluaI_random_maxroll00(lua_State* tolua_S)
      !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,3)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'maxroll'.");
+  return 0;
+ }
  else
  {
   uint num = ((uint)  tolua_getnumber(tolua_S,1,0));
@@ -216,9 +219,6 @@ static int toluaI_random_maxroll00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'maxroll'.");
- return 0;
 }
 
 /* function: Rand_state_init */
@@ -228,7 +228,10 @@ static int toluaI_random_Rand_state_init00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'Rand_state_init'.");
+  return 0;
+ }
  else
  {
   u32b seed = ((u32b)  tolua_getnumber(tolua_S,1,0));
@@ -236,9 +239,6 @@ static int toluaI_random_Rand_state_init00(lua_State* tolua_S)
    Rand_state_init(seed);
   }
  }
- return 0;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'Rand_state_init'.");
  return 0;
 }
 
@@ -249,7 +249,10 @@ static int toluaI_random_Rand_div00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'Rand_div'.");
+  return 0;
+ }
  else
  {
   u32b m = ((u32b)  tolua_getnumber(tolua_S,1,0));
@@ -259,9 +262,6 @@ static int toluaI_random_Rand_div00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'Rand_div'.");
- return 0;
 }
 
 /* function: Rand_normal */
@@ -272,7 +272,10 @@ static int toluaI_random_Rand_normal00(lua_State* tolua_S)
      !tolua_istype(tolua_S,2,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,3)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'Rand_normal'.");
+  return 0;
+ }
  else
  {
   int mean = ((int)  tolua_getnumber(tolua_S,1,0));
@@ -283,9 +286,6 @@ static int toluaI_random_Rand_normal00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'Rand_normal'.");
- return 0;
 }
 
 /* function: Rand_simple */
@@ -295,7 +295,10 @@ static int toluaI_random_Rand_simple00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'Rand_simple'.");
+  return 0;
+ }
  else
  {
   u32b m = ((u32b)  tolua_getnumber(tolua_S,1,0));
@@ -305,9 +308,6 @@ static int toluaI_random_Rand_simple00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'Rand_simple'.");
- return 0;
 }
 
 /* function: one_in_ */
@@ -317,7 +317,10 @@ static int toluaI_random_one_in_00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'one_in_'.");
+  return 0;
+ }
  else
  {
   u32b m = ((u32b)  tolua_getnumber(tolua_S,1,0));
@@ -327,9 +330,6 @@ static int toluaI_random_one_in_00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'one_in_'.");
- return 0;
 }
 
 /* function: saving_throw */
@@ -339,7 +339,10 @@ static int toluaI_random_saving_throw00(lua_State* tolua_S)
      !tolua_istype(tolua_S,1,LUA_TNUMBER,0) ||
      !tolua_isnoobj(tolua_S,2)
  )
-  goto tolua_lerror;
+ {
+  tolua_error(tolua_S,"#ferror in function 'saving_throw'.");
+  return 0;
+ }
  else
  {
   s32b m = ((s32b)  tolua_getnumber(tolua_S,1,0));
@@ -349,9 +352,6 @@ static int toluaI_random_saving_throw00(lua_State* tolua_S)
   }
  }
  return 1;
-tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'saving_throw'.");
- return 0;
 }
 
 /* Open function */
