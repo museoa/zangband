@@ -751,7 +751,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_CURE_LIGHT:
 		{
-			if (hp_player(damroll(2, 8))) ident = TRUE;
+			if (hp_player(38)) ident = TRUE;
 			if (set_blind(0)) ident = TRUE;
 			if (set_cut(p_ptr->cut - 10)) ident = TRUE;
 			break;
@@ -759,7 +759,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_CURE_SERIOUS:
 		{
-			if (hp_player(damroll(4, 8))) ident = TRUE;
+			if (hp_player(75)) ident = TRUE;
 			if (set_blind(0)) ident = TRUE;
 			if (set_confused(0)) ident = TRUE;
 			if (set_cut((p_ptr->cut / 2) - 50)) ident = TRUE;
@@ -768,7 +768,7 @@ static void do_cmd_quaff_potion_aux(int item)
 
 		case SV_POTION_CURE_CRITICAL:
 		{
-			if (hp_player(damroll(6, 8))) ident = TRUE;
+			if (hp_player(150)) ident = TRUE;
 			if (set_blind(0)) ident = TRUE;
 			if (set_confused(0)) ident = TRUE;
 			if (set_poisoned(0)) ident = TRUE;
@@ -1854,7 +1854,7 @@ static void do_cmd_use_staff_aux(int item)
 
 		case SV_STAFF_CURE_LIGHT:
 		{
-			if (hp_player(randint(8))) ident = TRUE;
+			if (hp_player(50)) ident = TRUE;
 			break;
 		}
 
