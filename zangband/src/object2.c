@@ -12,7 +12,24 @@
 
 #include "angband.h"
 
-/* Temp object used to return an object not allocated via o_pop() yet. */
+/*
+ * Temp object used to return an object not allocated via o_pop().
+ *
+ * This is used by object_dup() and by object_prep() to
+ * return "new" objects.  Note that these routines delete
+ * any object stored here before they use it.  This means
+ * that object (quark) refcounting will work.  This should
+ * be the only "static" object used, unless you make
+ * absolutely sure the memory management is correct.
+ *
+ * Be very careful - object_copy() does not duplicate
+ * references, where as object_dup() does.  Make sure any
+ * allocated object will be wiped eventually.  temp_object
+ * is wiped when ever it is used so it is safe.
+ *
+ * Note - because several routines use this variable, any
+ * statically allocated object returned must be used asap.
+ */
 static object_type temp_object;
 
 
@@ -167,7 +184,8 @@ void delete_object_list(s16b *o_idx_ptr)
  */
 void drop_object_list(s16b *o_idx_ptr, int x, int y)
 {
-	object_type *o_ptr, *q_ptr = &temp_object;
+	object_type *o_ptr;
+	object_type *q_ptr;
 
 	/* Drop objects being carried */
 	OBJ_ITT_START (*o_idx_ptr, o_ptr)
@@ -568,34 +586,34 @@ void move_object(s16b *tgt_list_ptr, s16b *cur_list_ptr, object_type *o_ptr)
  */
 void swap_objects(object_type *o1_ptr, object_type *o2_ptr)
 {
-	object_type temp_obj;
+	object_type temp;
 	
 	/* Copy the objcet */
-	object_copy (&temp_obj, o2_ptr);
+	object_copy (&temp, o2_ptr);
 
 	/* Copy the object */
 	object_copy(o2_ptr, o1_ptr);
 
 	/* Get correct next-object fields */
-	o2_ptr->next_o_idx = temp_obj.next_o_idx;
-	temp_obj.next_o_idx = o1_ptr->next_o_idx;
+	o2_ptr->next_o_idx = temp.next_o_idx;
+	temp.next_o_idx = o1_ptr->next_o_idx;
 	
 	/* Get correct position fields */
-	o2_ptr->ix = temp_obj.ix;
-	temp_obj.ix = o1_ptr->ix;
-	o2_ptr->iy = temp_obj.iy;
-	temp_obj.iy = o1_ptr->iy;
+	o2_ptr->ix = temp.ix;
+	temp.ix = o1_ptr->ix;
+	o2_ptr->iy = temp.iy;
+	temp.iy = o1_ptr->iy;
 	
 	/* Get correct region */
-	o2_ptr->region = temp_obj.region;
-	temp_obj.region = o1_ptr->region;
+	o2_ptr->region = temp.region;
+	temp.region = o1_ptr->region;
 	
 	/* Get correct allocated value */
-	o2_ptr->allocated = temp_obj.allocated;
-	temp_obj.allocated = o1_ptr->allocated;
+	o2_ptr->allocated = temp.allocated;
+	temp.allocated = o1_ptr->allocated;
 
 	/* Copy the object */
-	object_copy(o1_ptr, &temp_obj);
+	object_copy(o1_ptr, &temp);
 }
 
 /*
@@ -1806,10 +1824,6 @@ void object_copy(object_type *o_ptr, const object_type *j_ptr)
 {
 	/* Copy the structure */
 	COPY(o_ptr, j_ptr, object_type);
-	
-	/* Allocate quarks */
-	quark_dup(o_ptr->xtra_name);
-	quark_dup(o_ptr->inscription);
 }
 
 /*
@@ -1825,6 +1839,10 @@ object_type *object_dup(const object_type *o_ptr)
 	
 	/* Copy it */
 	object_copy(q_ptr, o_ptr);
+	
+	/* Allocate quarks */
+	quark_dup(o_ptr->xtra_name);
+	quark_dup(o_ptr->inscription);
 
 	/* Return a pointer to the static object */
 	return (q_ptr);
