@@ -109,10 +109,10 @@ errr init_object_alloc(void)
 	/*** Analyze object allocation info ***/
 
 	/* Clear the "aux" array */
-	(void)C_WIPE(&aux, MAX_DEPTH, s16b);
+	(void)C_WIPE(aux, MAX_DEPTH, s16b);
 
 	/* Clear the "num" array */
-	(void)C_WIPE(&num, MAX_DEPTH, s16b);
+	(void)C_WIPE(num, MAX_DEPTH, s16b);
 
 	/* Free the old "alloc_kind_table" (if it exists) */
 	if (alloc_kind_table)
@@ -198,13 +198,7 @@ errr init_object_alloc(void)
 			}
 		}
 	}
-	
-	/* Erase the "aux" array */
-	(void)C_FREE(&aux, MAX_DEPTH, s16b);
-
-	/* Erase the "num" array */
-	(void)C_FREE(&num, MAX_DEPTH, s16b);
-	
+		
 	/* Success */
 	return (0);
 }
