@@ -1490,12 +1490,14 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 	/* Penalize too-good artifacts */
 	if (!a_scroll)
 	{
-		if (total_flags >= target_flags * 2 && one_in_(2))
+		if (total_flags >= target_flags * 2 && total_flags >= 5000 &&
+				one_in_(2))
 		{
 			random_curse(o_ptr, FALSE);
 			total_flags = flag_cost(o_ptr, o_ptr->pval);
 		}
-		if (total_flags >= target_flags * 3 && !one_in_(WEIRD_LUCK))
+		if (total_flags >= target_flags * 3 && total_flags >= 10000 &&
+				!one_in_(WEIRD_LUCK))
 		{
 			random_curse(o_ptr, (one_in_(3) ? TRUE : FALSE));
 			total_flags = flag_cost(o_ptr, o_ptr->pval);
