@@ -4527,8 +4527,8 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
  * Determines if a map location is currently "on screen" -RAK-
  */
 #define panel_contains(X,Y) \
-  (((Y) >= p_ptr->panel_y1) && ((Y) <= p_ptr->panel_y2) && \
-   ((X) >= p_ptr->panel_x1) && ((X) <= p_ptr->panel_x2))
+  (((Y) >= p_ptr->panel_y1) && ((Y) < p_ptr->panel_y2) && \
+   ((X) >= p_ptr->panel_x1) && ((X) < p_ptr->panel_x2))
 
 /*
  * Determine if a "legal" grid is a "floor" grid
