@@ -3099,6 +3099,9 @@ void wiz_lite(void)
 				o_ptr->info |= OB_SEEN;
 			}
 			OBJ_ITT_END;
+			
+			/* Notice the change */
+			note_spot(x, y);
 		}
 	}
 

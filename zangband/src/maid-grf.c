@@ -2520,19 +2520,23 @@ void prt_map(void)
 			{
 				/* Get overhead map square */
 				mb_ptr = map_loc(x, y);
-	
-				/* Get attributes from overhead map */
-				*pa++ = mb_ptr->a;
-				*pc++ = mb_ptr->c;
-				*pta++ = mb_ptr->ta;
-				*ptc++ = mb_ptr->tc;
+				
+				if (mb_ptr->a)
+				{
+					/* Get attributes from overhead map */
+					*pa++ = mb_ptr->a;
+					*pc++ = mb_ptr->c;
+					*pta++ = mb_ptr->ta;
+					*ptc++ = mb_ptr->tc;
+				}
+				else
+				{
+					map_info(x, y, pa++, pc++, pta++, ptc++);
+				}
 			}
 			else
 			{
-				*pa++ = 0;
-				*pc++ = ' ';
-				*pta++ = 0;
-				*ptc++ = ' ';
+				map_info(x, y, pa++, pc++, pta++, ptc++);
 			}
 		}
 
