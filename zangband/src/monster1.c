@@ -1845,14 +1845,8 @@ bool are_enemies(monster_type *m_ptr, monster_type *n_ptr)
 		return TRUE;
 	}
 
-	/* Pet vs. non-pet */
-	if (is_pet(m_ptr) != is_pet(n_ptr))
-	{
-		return TRUE;
-	}
-
-	/* Friendly vs. non-friendly */
-	if (is_friendly(m_ptr) != is_friendly(n_ptr))
+	/* Hostile vs. non-hostile */
+	if (is_hostile(m_ptr) != is_hostile(n_ptr))
 	{
 		return TRUE;
 	}
