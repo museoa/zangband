@@ -110,7 +110,7 @@ void resize_map(void)
 	handle_stuff();
 
 	/* Place the cursor on the player */
-	move_cursor_relative(p_ptr->px, p_ptr->py);
+	if (!character_icky) move_cursor_relative(p_ptr->px, p_ptr->py);
 
 	/* Refresh */
 	Term_fresh();

@@ -1198,10 +1198,9 @@ static void load_font(term_data *td, cptr fontname)
 	td->font_wid = gdk_char_width(td->font, '@');
 	td->font_hgt = td->font->ascent + td->font->descent;
 	
-	if (use_bigtile)
-		td->font_twid = 2 * td->font_wid;
-	else
-		td->font_twid = td->font_wid;
+	/* Bigtile size */
+	td->font_twid = 2 * td->font_wid;
+
 }
 
 
@@ -1239,9 +1238,11 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 	{
 		/* Need to get a new tile image */	
 		if (td->tiles) gdk_image_destroy(td->tiles);
+		if (td->b_tiles) gdk_image_destroy(td->b_tiles);
 	
 		/* Resize tiles */
 		td->tiles = resize_tiles(td->font_wid, td->font_hgt);
+		td->b_tiles = resize_tiles(td->font_twid, td->font_hgt);
 
 		/* Get a new temp */ 
 		if (td->temp) gdk_image_destroy(td->temp);
@@ -1249,7 +1250,7 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 		/* Initialize the transparency temp storage*/			
 		td->temp = gdk_image_new(GDK_IMAGE_FASTEST,
 						gdk_visual_get_system(),
-						td->font_wid, td->font_hgt);
+						td->font_twid, td->font_hgt);
 	}
 
 #endif /* USE_GRAPHICS */
@@ -1490,9 +1491,11 @@ static void graf_nuke(void)
 
 		/* Free previously allocated tiles */
 		if (td->tiles) gdk_image_destroy(td->tiles);
+		if (td->b_tiles) gdk_image_destroy(td->b_tiles);
 
 		/* Forget pointer */
 		td->tiles = NULL;
+		td->b_tiles = NULL;
 
 		/* Free previously allocated transparency buffer */
 		if (td->temp) gdk_image_destroy(td->temp);
@@ -1532,15 +1535,7 @@ static void graf_init(void)
 
 			/* Resize tiles */
 			td->tiles = resize_tiles(td->font_wid, td->font_hgt);
-			
-			if (use_bigtile)
-			{
-				td->b_tiles = resize_tiles(td->font_twid, td->font_hgt);
-			}
-			else
-			{
-				td->b_tiles = NULL;
-			}
+			td->b_tiles = resize_tiles(td->font_twid, td->font_hgt);
 			
 			/* Initialize the transparency temp storage*/			
 			td->temp = gdk_image_new(GDK_IMAGE_FASTEST, gdk_visual_get_system(),
@@ -1653,6 +1648,21 @@ static void change_trans_mode_event_handler(GtkButton *was_clicked,
 	/* Hack - force redraw */
 	Term_key_push(KTRL('R'));
 }
+
+/*
+ * Toggles the boolean value of use_bigtile
+ */
+static void change_bigtile_mode_event_handler(GtkButton *was_clicked,
+										gpointer user_data)
+{
+	/* Hack - Ignore unused parameters */
+	(void) was_clicked;
+	(void) user_data;
+
+	/* Toggle the bigtile mode */
+	toggle_bigtile();
+}
+
 
 #endif /* USE_GRAPHICS */
 
@@ -2113,6 +2123,9 @@ static void graf_menu_update_handler(GtkWidget *widget, gpointer user_data)
 	check_menu_item(
 		"<Angband>/Options/Graphics/Transparency",
 		use_transparency);
+	check_menu_item(
+		"<Angband>/Options/Graphics/BigTile",
+		use_bigtile);
 }
 
 #endif /* USE_GRAPHICS */
@@ -2369,6 +2382,8 @@ static GtkItemFactoryEntry main_menu_items[] =
 	  NULL, 0, (char * ) "<Separator>" },
 	{ (char * ) "/Options/Graphics/Transparency", NULL,
 	  change_trans_mode_event_handler, 0, (char * ) "<CheckItem>" },
+	{ (char * ) "/Options/Graphics/BigTile", NULL,
+	  change_bigtile_mode_event_handler, 0, (char * ) "<CheckItem>" },
 #endif /* USE_GRAPHICS */
 };
 

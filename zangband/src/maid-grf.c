@@ -303,6 +303,24 @@ bool is_bigtiled(int x, int y)
 	return (FALSE);
 }
 
+void toggle_bigtile(void)
+{
+	if (use_bigtile)
+	{
+		/* Hack - disable bigtile mode */
+		Term_bigregion(-1, -1, -1);
+		
+		use_bigtile = FALSE;
+	}
+	else
+	{
+		use_bigtile = TRUE;
+	}
+	
+	/* Hack - redraw everything + recalc bigtile regions */
+	angband_term[0]->resize_hook();
+}
+
 #endif /* USE_GRAPHICS */
 
 

@@ -313,6 +313,7 @@ extern void build_gamma_table(int gamma);
 extern cptr get_default_font(int term_num);
 extern bool pick_graphics(int graphics, int *xsize, int *ysize, char *filename);
 extern bool is_bigtiled(int x, int y);
+extern void toggle_bigtile(void);
 extern void map_get_player(int *x, int *y);
 extern bool map_in_bounds(int x, int y);
 extern map_block *map_loc(int dx, int dy);
