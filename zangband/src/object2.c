@@ -2703,8 +2703,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int lev_dif, byte flags)
 
 
 	/* Cursed some of the time (only wearable items) */
-	if ((randint0(100) < 15) && (flags & OC_NORMAL)
-		 && item_tester_hook_wear(o_ptr))
+	if ((randint0(100) < 15) && (flags & OC_NORMAL))
 	{
 		o_ptr->ident |= (IDENT_CURSED);
 	}

@@ -1376,23 +1376,6 @@ void identify_pack(void)
 	}
 }
 
-#define ENCHANT_MAX 25
-
-/*
- * Used by the "enchant" function (chance of failure)
- *
- * Formula: 1000-0.064x^3
- */
-static int enchant_table[ENCHANT_MAX + 1] =
-{
-	0, 115, 221, 319, 407,
-	488, 561, 627, 686, 738,
-	784, 824, 859, 889, 914,
-	936, 953, 967, 978, 986,
-	992, 996, 998, 999, 999,
-	1000
-};
-
 
 /*
  * Removes curses from items in inventory
@@ -1408,8 +1391,8 @@ static int remove_curse_aux(int all)
 {
 	int i, cnt = 0;
 
-	/* Attempt to uncurse items being worn */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	/* Attempt to uncurse all items */
+	for (i = 0; i < INVEN_TOTAL; i++)
 	{
 		u32b f1, f2, f3;
 
@@ -1447,9 +1430,12 @@ static int remove_curse_aux(int all)
 
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);
+		
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 		/* Window stuff */
-		p_ptr->window |= (PW_EQUIP);
+		p_ptr->window |= (PW_EQUIP | PW_INVEN);
 
 		/* Count the uncursings */
 		cnt++;
@@ -1676,6 +1662,24 @@ static void break_curse(object_type *o_ptr)
 		o_ptr->feeling = FEEL_UNCURSED;
 	}
 }
+
+
+#define ENCHANT_MAX 25
+
+/*
+ * Used by the "enchant" function (chance of failure)
+ *
+ * Formula: 1000-0.064x^3
+ */
+static int enchant_table[ENCHANT_MAX + 1] =
+{
+	0, 115, 221, 319, 407,
+	488, 561, 627, 686, 738,
+	784, 824, 859, 889, 914,
+	936, 953, 967, 978, 986,
+	992, 996, 998, 999, 999,
+	1000
+};
 
 
 /*
