@@ -2644,13 +2644,21 @@ static void store_sell(int *store_top)
 
 	/* Prepare a prompt */
 	if (st_ptr->type == BUILD_STORE_HOME)
+	{
 		q = "Drop which item? ";
+
+		/* Home takes anything */
+		item_tester_hook = NULL;
+	}
 	else
+	{
 		q = "Sell which item? ";
 
-	/* Only allow items the store will buy */
-	item_tester_hook = store_will_buy;
-
+		/* Only allow items the store will buy */
+		item_tester_hook = store_will_buy;
+	}
+	
+	
 	/* Get an item */
 	s = "You have nothing that I want.";
 	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR))) return;
