@@ -3455,10 +3455,11 @@ static s32b borg_power_aux3(void)
 	/*** Penalize various things ***/
 
 	/* Penalize various flags */
-	if (borg_skill[BI_CRSTELE]) value -= 10000L;
-	if (borg_skill[BI_CRSAGRV]) value -= 8000L;
-	if (borg_skill[BI_CRSNOTELE]) value -= 10000L;
-	if (borg_skill[BI_CRSNOMAGIC]) value -= 100000L;
+	if (bp_ptr->flags3 & TR3_TELEPORT) value -= 10000L;
+	if (bp_ptr->flags3 & TR3_AGGRAVATE) value -= 8000L;
+	if (bp_ptr->flags3 & TR3_TY_CURSE) value -= 100000L;
+	if (bp_ptr->flags3 & TR3_NO_TELE) value -= 10000L;
+	if ((bp_ptr->flags3 & TR3_NO_MAGIC) && bp_ptr->realm2) value -= 100000L;
 
 	/*** Penalize armor weight ***/
 	if (my_stat_ind[A_STR] < 15)

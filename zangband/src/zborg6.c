@@ -1364,7 +1364,7 @@ static bool borg_escape(int b_q)
 	int sv_mana;
 
 	/* Not if locked down */
-	if (borg_skill[BI_CRSNOTELE]) return (FALSE);
+	if (bp_ptr->flags3 & TR3_NO_TELE) return (FALSE);
 
 	/* if we have Dim Door spell */
 	amt_dim_door = (borg_spell_okay_fail(REALM_SORCERY, 2, 3, allow_fail) ||

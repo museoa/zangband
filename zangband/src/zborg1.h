@@ -369,14 +369,9 @@ extern borg_player *bp_ptr;
 #define BI_BMAXDAM	36
 #define BI_HEAVYWEPON	37
 #define BI_HEAVYBOW	38
-#define BI_CRSTELE	39
-#define BI_CRSAGRV	40
-#define BI_CRSTY	41
-#define BI_CRSNOTELE	42		/* no teleport */
-#define BI_CRSNOMAGIC	43		/* no magic */
 
 
-#define BI_MAX		44
+#define BI_MAX		39
 
 
 /*

@@ -1789,7 +1789,7 @@ bool borg_spell(int realm, int book, int what)
 	if (!borg_spell_okay(realm, book, what)) return (FALSE);
 
 	/* Not if locked down */
-	if (borg_skill[BI_CRSNOMAGIC]) return (FALSE);
+	if (bp_ptr->flags3 & TR3_NO_MAGIC) return (FALSE);
 
 	/* Look for the book */
 	i = borg_book[realm][book];
@@ -1992,7 +1992,7 @@ bool borg_mindcr(int spell, int level)
 	if (!borg_mindcr_okay(spell, level)) return (FALSE);
 
 	/* Not if locked down */
-	if (borg_skill[BI_CRSNOMAGIC]) return (FALSE);
+	if (bp_ptr->flags3 & TR3_NO_MAGIC) return (FALSE);
 
 	/* Debugging Info */
 	borg_note_fmt
