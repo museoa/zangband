@@ -505,12 +505,6 @@
 /* Hallucination stuff */
 #define MAX_SILLY_ATTACK		28
 
-/*
- * Size of memory reserved for initialization of some arrays
- */
-#define FAKE_NAME_SIZE  40 * 1024L
-#define FAKE_TEXT_SIZE 120 * 1024L
-
 
 /*
  * Maximum number of high scores in the high score file
@@ -2862,6 +2856,13 @@
 	 TR1_STEALTH | TR1_SEARCH | TR1_INFRA | TR1_TUNNEL | \
      TR1_SPEED | TR1_BLOWS)
 
+/*
+ * Flag set 3 -- mask for "ignore element" flags.
+ */
+#define TR3_IGNORE_MASK \
+	(TR3_IGNORE_ACID | TR3_IGNORE_ELEC | TR3_IGNORE_FIRE | \
+	 TR3_IGNORE_COLD )
+
 
 /*
  * Hack - Flags that were not part of Moria.
@@ -4289,20 +4290,6 @@ extern int PlayerUID;
 #define TOKENIZE_CHECKQUOTE 0x01  /* Special handling of single quotes */
 
 /*
- * Parse errors
- */
-#define PARSE_ERROR_GENERIC                  1
-#define PARSE_ERROR_OBSOLETE_FILE            2
-#define PARSE_ERROR_MISSING_RECORD_HEADER    3
-#define PARSE_ERROR_NON_SEQUENTIAL_RECORDS   4
-#define PARSE_ERROR_INVALID_FLAG             5
-#define PARSE_ERROR_UNDEFINED_DIRECTIVE      6
-#define PARSE_ERROR_OUT_OF_MEMORY            7
-#define PARSE_ERROR_OUT_OF_BOUNDS            8
-#define PARSE_ERROR_TOO_FEW_ARGUMENTS        9
-#define PARSE_ERROR_MAX                     10
-
-/*
  * Automatic note taking types
  */
 #define NOTE_BIRTH		1
@@ -4378,3 +4365,7 @@ extern int PlayerUID;
 #define DISPLAY_PLAYER_MAX		3
 
 
+/*
+ * HACK - define if the source contains the cleanup_angband() function.
+ */
+#define HAS_CLEANUP

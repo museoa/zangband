@@ -2116,7 +2116,7 @@ void do_cmd_visuals(void)
 			fprintf(fff, "# Monster attr/char definitions\n\n");
 
 			/* Dump monsters */
-			for (i = 0; i < max_r_idx; i++)
+			for (i = 0; i < z_info->r_max; i++)
 			{
 				monster_race *r_ptr = &r_info[i];
 
@@ -2176,7 +2176,7 @@ void do_cmd_visuals(void)
 			fprintf(fff, "# Object attr/char definitions\n\n");
 
 			/* Dump objects */
-			for (i = 0; i < max_k_idx; i++)
+			for (i = 0; i < z_info->k_max; i++)
 			{
 				object_kind *k_ptr = &k_info[i];
 
@@ -2236,7 +2236,7 @@ void do_cmd_visuals(void)
 			fprintf(fff, "# Feature attr/char definitions\n\n");
 
 			/* Dump features */
-			for (i = 0; i < max_f_idx; i++)
+			for (i = 0; i < z_info->f_max; i++)
 			{
 				feature_type *f_ptr = &f_info[i];
 
@@ -2296,7 +2296,7 @@ void do_cmd_visuals(void)
 			fprintf(fff, "# Field attr/char definitions\n\n");
 
 			/* Dump features */
-			for (i = 0; i < max_t_idx; i++)
+			for (i = 0; i < z_info->t_max; i++)
 			{
 				field_thaum *t_ptr = &t_info[i];
 
@@ -2368,8 +2368,8 @@ void do_cmd_visuals(void)
 				if (i == ESCAPE) break;
 
 				/* Analyze */
-				if (i == 'n') r = (r + max_r_idx + 1) % max_r_idx;
-				if (i == 'N') r = (r + max_r_idx - 1) % max_r_idx;
+				if (i == 'n') r = (r + z_info->r_max + 1) % z_info->r_max;
+				if (i == 'N') r = (r + z_info->r_max - 1) % z_info->r_max;
 				if (i == 'a') r_ptr->x_attr = (byte)(ca + 1);
 				if (i == 'A') r_ptr->x_attr = (byte)(ca - 1);
 				if (i == 'c') r_ptr->x_char = (byte)(cc + 1);
@@ -2423,8 +2423,8 @@ void do_cmd_visuals(void)
 				if (i == ESCAPE) break;
 
 				/* Analyze */
-				if (i == 'n') k = (k + max_k_idx + 1) % max_k_idx;
-				if (i == 'N') k = (k + max_k_idx - 1) % max_k_idx;
+				if (i == 'n') k = (k + z_info->k_max + 1) % z_info->k_max;
+				if (i == 'N') k = (k + z_info->k_max - 1) % z_info->k_max;
 				if (i == 'a') k_info[k].x_attr = (byte)(ca + 1);
 				if (i == 'A') k_info[k].x_attr = (byte)(ca - 1);
 				if (i == 'c') k_info[k].x_char = (byte)(cc + 1);
@@ -2478,8 +2478,8 @@ void do_cmd_visuals(void)
 				if (i == ESCAPE) break;
 
 				/* Analyze */
-				if (i == 'n') f = (f + max_f_idx + 1) % max_f_idx;
-				if (i == 'N') f = (f + max_f_idx - 1) % max_f_idx;
+				if (i == 'n') f = (f + z_info->f_max + 1) % z_info->f_max;
+				if (i == 'N') f = (f + z_info->f_max - 1) % z_info->f_max;
 				if (i == 'a') f_info[f].x_attr = (byte)(ca + 1);
 				if (i == 'A') f_info[f].x_attr = (byte)(ca - 1);
 				if (i == 'c') f_info[f].x_char = (byte)(cc + 1);
@@ -2533,8 +2533,8 @@ void do_cmd_visuals(void)
 				if (i == ESCAPE) break;
 
 				/* Analyze */
-				if (i == 'n') f = (f + max_t_idx + 1) % max_t_idx;
-				if (i == 'N') f = (f + max_t_idx - 1) % max_t_idx;
+				if (i == 'n') f = (f + z_info->t_max + 1) % z_info->t_max;
+				if (i == 'N') f = (f + z_info->t_max - 1) % z_info->t_max;
 				if (i == 'a') t_info[f].f_attr = (byte)(ca + 1);
 				if (i == 'A') t_info[f].f_attr = (byte)(ca - 1);
 				if (i == 'c') t_info[f].f_char = (byte)(cc + 1);
@@ -3136,10 +3136,10 @@ static void do_cmd_knowledge_uniques(void)
 	u16b	*who;
 
 	/* Allocate the "who" array */
-	C_MAKE(who, max_r_idx, u16b);
+	C_MAKE(who, z_info->r_max, u16b);
 
 	/* Collect matching monsters */
-	for (n = 0, i = 1; i < max_r_idx; i++)
+	for (n = 0, i = 1; i < z_info->r_max; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 
@@ -3161,7 +3161,7 @@ static void do_cmd_knowledge_uniques(void)
 		message_flush();
 
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, max_r_idx, u16b);
+		C_KILL(who, z_info->r_max, u16b);
 
 		return;
 	}
@@ -3180,7 +3180,7 @@ static void do_cmd_knowledge_uniques(void)
 	if (!fff)
 	{
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, max_r_idx, u16b);
+		C_KILL(who, z_info->r_max, u16b);
 
 		return;
 	}
@@ -3197,7 +3197,7 @@ static void do_cmd_knowledge_uniques(void)
 	}
 
 	/* Free the "who" array */
-	C_KILL(who, max_r_idx, u16b);
+	C_KILL(who, z_info->r_max, u16b);
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3420,10 +3420,10 @@ static void do_cmd_knowledge_kill_count(void)
 	u16b	*who;
 
 	/* Allocate the "who" array */
-	C_MAKE(who, max_r_idx, u16b);
+	C_MAKE(who, z_info->r_max, u16b);
 
 	/* Collect matching monsters */
-	for (n = 0, i = 1; i < max_r_idx; i++)
+	for (n = 0, i = 1; i < z_info->r_max; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 
@@ -3442,7 +3442,7 @@ static void do_cmd_knowledge_kill_count(void)
 		message_flush();
 
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, max_r_idx, u16b);
+		C_KILL(who, z_info->r_max, u16b);
 
 		return;
 	}
@@ -3461,7 +3461,7 @@ static void do_cmd_knowledge_kill_count(void)
 	if (!fff)
 	{
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, max_r_idx, u16b);
+		C_KILL(who, z_info->r_max, u16b);
 
 		return;
 	}
@@ -3470,7 +3470,7 @@ static void do_cmd_knowledge_kill_count(void)
 		/* Monsters slain */
 		int kk;
 
-		for (kk = 1; kk < max_r_idx; kk++)
+		for (kk = 1; kk < z_info->r_max; kk++)
 		{
 			monster_race *r_ptr = &r_info[kk];
 
@@ -3571,7 +3571,7 @@ static void do_cmd_knowledge_kill_count(void)
 	}
 	
 	/* Free the "who" array */
-	C_KILL(who, max_r_idx, u16b);
+	C_KILL(who, z_info->r_max, u16b);
 
 	/* Close the file */
 	my_fclose(fff);
@@ -3605,7 +3605,7 @@ static void do_cmd_knowledge_objects(void)
 	if (!fff) return;
 
 	/* Scan the object kinds */
-	for (k = 1; k < max_k_idx; k++)
+	for (k = 1; k < z_info->k_max; k++)
 	{
 		object_kind *k_ptr = &k_info[k];
 
@@ -3693,7 +3693,7 @@ static void do_cmd_knowledge_quests(void)
 	/* Failure */
 	if (!fff) return;
 
-	for (i = 1; i < max_quests; i++)
+	for (i = 1; i < z_info->q_max; i++)
 	{
 		/* No info from "silent" quests */
 		if (quest[i].flags & QUEST_FLAG_SILENT) continue;

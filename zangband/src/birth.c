@@ -1304,7 +1304,7 @@ static void player_wipe(void)
 	}
 
 	/* Wipe the quests */
-	for (i = 0; i < max_quests; i++)
+	for (i = 0; i < z_info->q_max; i++)
 	{
 		quest[i].status = QUEST_STATUS_UNTAKEN;
 
@@ -1323,7 +1323,7 @@ static void player_wipe(void)
 
 
 	/* Start with no artifacts made yet */
-	for (i = 0; i < max_a_idx; i++)
+	for (i = 0; i < z_info->a_max; i++)
 	{
 		artifact_type *a_ptr = &a_info[i];
 		a_ptr->cur_num = 0;
@@ -1333,7 +1333,7 @@ static void player_wipe(void)
 	k_info_reset();
 
 	/* Reset the "monsters" */
-	for (i = 1; i < max_r_idx; i++)
+	for (i = 1; i < z_info->r_max; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 

@@ -317,7 +317,7 @@ static void spoil_obj_desc(cptr fname)
 		}
 
 		/* Acquire legal item types */
-		for (k = 1; k < max_k_idx; k++)
+		for (k = 1; k < z_info->k_max; k++)
 		{
 			object_kind *k_ptr = &k_info[k];
 
@@ -1269,7 +1269,7 @@ static void spoil_artifact(cptr fname)
 		}
 
 		/* Now search through all of the artifacts */
-		for (j = 1; j < max_a_idx; ++j)
+		for (j = 1; j < z_info->a_max; ++j)
 		{
 			artifact_type *a_ptr = &a_info[j];
 
@@ -1358,10 +1358,10 @@ static void spoil_mon_desc(cptr fname)
 
 
 	/* Allocate the "who" array */
-	C_MAKE(who, max_r_idx, s16b);
+	C_MAKE(who, z_info->r_max, s16b);
 
 	/* Scan the monsters */
-	for (i = 1; i < max_r_idx; i++)
+	for (i = 1; i < z_info->r_max; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 
@@ -1441,7 +1441,7 @@ static void spoil_mon_desc(cptr fname)
 	}
 
 	/* Free the "who" array */
-	C_KILL(who, max_r_idx, s16b);
+	C_KILL(who, z_info->r_max, s16b);
 
 	/* End it */
 	fprintf(fff, "\n");
@@ -1588,10 +1588,10 @@ static void spoil_mon_info(cptr fname)
 	spoiler_blanklines(1);
 
 	/* Allocate the "who" array */
-	C_MAKE(who, max_r_idx, s16b);
+	C_MAKE(who, z_info->r_max, s16b);
 
 	/* Scan the monsters */
-	for (i = 1; i < max_r_idx; i++)
+	for (i = 1; i < z_info->r_max; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 
@@ -2322,7 +2322,7 @@ static void spoil_mon_info(cptr fname)
 	}
 
 	/* Free the "who" array */
-	C_KILL(who, max_r_idx, s16b);
+	C_KILL(who, z_info->r_max, s16b);
 
 	/* Check for errors */
 	if (ferror(fff))

@@ -836,9 +836,9 @@ static void init_towns(int xx, int yy)
 	town_count = 1;
 
 	/*
-	 * Try to add max_towns towns.
+	 * Try to add z_info->wp_max towns.
 	 */
-	while (town_count < max_towns)
+	while (town_count < z_info->wp_max)
 	{
 		if (first_try)
 		{
@@ -1189,7 +1189,7 @@ static u16b create_node(u16b node, bool branch)
 
 	wild_choice_tree_type	*tree_ptr;
 
-	if (d_tree_count >= max_w_node)
+	if (d_tree_count >= z_info->wn_max)
 	{
 		/*
 		 * Return zero (known as the location of the tree's
@@ -4029,7 +4029,7 @@ void create_wilderness(void)
 	}
 
 	/* Huge wilderness */
-	max_wild = max_wild_size;
+	max_wild = z_info->ws_max;
 
 	/* Create "height" information of wilderness */
 	create_hgt_map();
@@ -4301,7 +4301,7 @@ void create_wilderness(void)
 
 	/* Free up memory used to create the wilderness */
 #if 0
-	C_FREE(wild_choice_tree, max_w_node, wild_choice_tree_type);
+	C_FREE(wild_choice_tree, z_info->wn_max, wild_choice_tree_type);
 	C_FREE(wild_temp_dist, max_wild, byte);
 #endif
 

@@ -1453,25 +1453,25 @@ static bool wr_savefile_new(void)
 
 
 	/* Dump the monster lore */
-	tmp16u = max_r_idx;
+	tmp16u = z_info->r_max;
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++) wr_lore(i);
 
 
 	/* Dump the object memory */
-	tmp16u = max_k_idx;
+	tmp16u = z_info->k_max;
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++) wr_xtra(i);
 
 	/* Dump the towns */
-	tmp16u = max_towns;
+	tmp16u = z_info->wp_max;
 	wr_u16b(tmp16u);
 
 	/* Dump the quests */
-	tmp16u = max_quests;
+	tmp16u = z_info->q_max;
 	wr_u16b(tmp16u);
 
-	for (i = 0; i < max_quests; i++)
+	for (i = 0; i < z_info->q_max; i++)
 	{
 		/* Save status for every quest */
 		wr_s16b(quest[i].status);
@@ -1500,7 +1500,7 @@ static bool wr_savefile_new(void)
 	wr_s32b((s32b) max_wild);
 
 	/* Hack -- Dump the artifacts */
-	tmp16u = max_a_idx;
+	tmp16u = z_info->a_max;
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++)
 	{

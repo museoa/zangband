@@ -313,7 +313,7 @@ bool monster_death(int m_idx, bool explode)
 	/* Search for an active quest on this dungeon level */
 	if (!quest_num)
 	{
-		for (i = max_quests - 1; i > 0; i--)
+		for (i = z_info->q_max - 1; i > 0; i--)
 		{
 			/* Quest is not active */
 			if (quest[i].status != QUEST_STATUS_TAKEN)

@@ -2002,7 +2002,7 @@ static void build_type7(int by0, int bx0)
 		dummy++;
 
 		/* Access a random vault record */
-		v_ptr = &v_info[randint0(max_v_idx)];
+		v_ptr = &v_info[randint0(z_info->v_max)];
 
 		/* Accept the first lesser vault */
 		if (v_ptr->typ == 7) break;
@@ -2099,7 +2099,7 @@ static void build_type8(int by0, int bx0)
 		dummy++;
 
 		/* Access a random vault record */
-		v_ptr = &v_info[randint0(max_v_idx)];
+		v_ptr = &v_info[randint0(z_info->v_max)];
 
 		/* Accept the first greater vault */
 		if (v_ptr->typ == 8) break;

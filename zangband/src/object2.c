@@ -539,7 +539,7 @@ s16b o_pop(void)
 
 
 	/* Initial allocation */
-	if (o_max < max_o_idx)
+	if (o_max < z_info->o_max)
 	{
 		/* Get next space */
 		i = o_max;
@@ -1700,7 +1700,7 @@ s16b lookup_kind(int tval, int sval)
 	int bk = 0;
 
 	/* Look for it */
-	for (k = 1; k < max_k_idx; k++)
+	for (k = 1; k < z_info->k_max; k++)
 	{
 		object_kind *k_ptr = &k_info[k];
 
@@ -2164,7 +2164,7 @@ bool make_artifact(object_type *o_ptr)
 	if (!p_ptr->depth) return (FALSE);
 
 	/* Check the artifact list */
-	for (i = 1; i < max_a_idx; i++)
+	for (i = 1; i < z_info->a_max; i++)
 	{
 		artifact_type *a_ptr = &a_info[i];
 
@@ -3567,7 +3567,7 @@ static void a_m_aux_4(object_type *o_ptr)
 			/* Pick a random non-unique monster race */
 			while (1)
 			{
-				i = randint1(max_r_idx - 1);
+				i = randint1(z_info->r_max - 1);
 
 				r_ptr = &r_info[i];
 				
@@ -3603,7 +3603,7 @@ static void a_m_aux_4(object_type *o_ptr)
 			/* Pick a random monster race */
 			while (1)
 			{
-				i = randint1(max_r_idx - 1);
+				i = randint1(z_info->r_max - 1);
 
 				r_ptr = &r_info[i];
 

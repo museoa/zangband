@@ -2123,7 +2123,7 @@ static errr rd_dungeon(void)
 	rd_u16b(&limit);
 
 	/* Verify maximum */
-	if (limit > max_o_idx)
+	if (limit > z_info->o_max)
 	{
 		note(format("Too many (%d) object entries!", limit));
 		return (151);
@@ -2202,7 +2202,7 @@ static errr rd_dungeon(void)
 	rd_u16b(&limit);
 
 	/* Hack -- verify */
-	if (limit > max_m_idx)
+	if (limit > z_info->m_max)
 	{
 		note(format("Too many (%d) monster entries!", limit));
 		return (161);
@@ -2259,7 +2259,7 @@ static errr rd_dungeon(void)
 		rd_u16b(&limit);
 
 		/* Verify maximum */
-		if (limit > max_fld_idx)
+		if (limit > z_info->fld_max)
 		{
 			note(format("Too many (%d) field entries!", limit));
 			return (151);
@@ -2448,7 +2448,7 @@ static errr rd_savefile_new_aux(void)
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > max_r_idx)
+	if (tmp16u > z_info->r_max)
 	{
 		note(format("Too many (%u) monster races!", tmp16u));
 		return (21);
@@ -2466,7 +2466,7 @@ static errr rd_savefile_new_aux(void)
 	{
 		monster_race *r_ptr;
 
-		for (i = 0; i < max_r_idx; i++)
+		for (i = 0; i < z_info->r_max; i++)
 		{
 			/* Access that monster */
 			r_ptr = &r_info[i];
@@ -2485,7 +2485,7 @@ static errr rd_savefile_new_aux(void)
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > max_k_idx)
+	if (tmp16u > z_info->k_max)
 	{
 		note(format("Too many (%u) object kinds!", tmp16u));
 		return (22);
@@ -2516,12 +2516,12 @@ static errr rd_savefile_new_aux(void)
 		if (z_older_than(2, 2, 3))
 		{
 			/* Ignore higher numbers of towns */
-			if (max_towns_load > max_towns)
-				max_towns_load = max_towns;
+			if (max_towns_load > z_info->wp_max)
+				max_towns_load = z_info->wp_max;
 		}
 
 		/* Incompatible save files */
-		if (max_towns_load > max_towns)
+		if (max_towns_load > z_info->wp_max)
 		{
 			note(format("Too many (%u) towns!", max_towns_load));
 			return (23);
@@ -2534,7 +2534,7 @@ static errr rd_savefile_new_aux(void)
 		if (!z_older_than(2, 2, 3))
 		{
 			/* Incompatible save files */
-			if (max_quests_load > max_quests)
+			if (max_quests_load > z_info->q_max)
 			{
 				note(format("Too many (%u) quests!", max_quests_load));
 				return (23);
@@ -2543,7 +2543,7 @@ static errr rd_savefile_new_aux(void)
 
 		for (i = 0; i < max_quests_load; i++)
 		{
-			if (i < max_quests)
+			if (i < z_info->q_max)
 			{
 				rd_s16b(&quest[i].status);
 
@@ -2631,17 +2631,17 @@ static errr rd_savefile_new_aux(void)
 		rd_s32b(&wild_y_size);
 
 		/* Incompatible save files */
-		if ((wild_x_size > max_wild_size) || (wild_y_size > max_wild_size))
+		if ((wild_x_size > z_info->ws_max) || (wild_y_size > z_info->ws_max))
 		{
 			note(format("Wilderness is too big (%u/%u)!", wild_x_size, wild_y_size));
 			return (23);
 		}
 
-		/* Hack - if size is zero - set to max_wild_size */
+		/* Hack - if size is zero - set to z_info->ws_max */
 		if ((wild_x_size == 0) && (wild_y_size == 0))
 		{
-			wild_x_size = max_wild_size;
-			wild_y_size = max_wild_size;
+			wild_x_size = z_info->ws_max;
+			wild_y_size = z_info->ws_max;
 		}
 
 		/* Hack - set size of wilderness to x size only */
@@ -2718,7 +2718,7 @@ static errr rd_savefile_new_aux(void)
 		int v;
 
 		/* Wipe the quests */
-		for (i = 0; i < max_quests; i++)
+		for (i = 0; i < z_info->q_max; i++)
 		{
 			quest[i].status = QUEST_STATUS_UNTAKEN;
 
@@ -2931,7 +2931,7 @@ static errr rd_savefile_new_aux(void)
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
-	if (tmp16u > max_a_idx)
+	if (tmp16u > z_info->a_max)
 	{
 		note(format("Too many (%u) artifacts!", tmp16u));
 		return (24);
@@ -3015,7 +3015,7 @@ static errr rd_savefile_new_aux(void)
 	}
 
 	/* Paranoia */
-	if (town_count > max_towns)
+	if (town_count > z_info->wp_max)
 	{
 		note("Error - increase number of towns in misc.txt");
 			return (33);

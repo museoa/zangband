@@ -842,6 +842,9 @@ int main(int argc, char *argv[])
 	/* Play the game */
 	play_game(new_game);
 
+	/* Free resources */
+	cleanup_angband();
+
 	/* Quit */
 	quit(NULL);
 

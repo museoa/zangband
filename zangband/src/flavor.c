@@ -592,7 +592,7 @@ void flavor_init(void)
 	Rand_quick = FALSE;
 
 	/* Analyze every object */
-	for (i = 1; i < max_k_idx; i++)
+	for (i = 1; i < z_info->k_max; i++)
 	{
 		object_kind *k_ptr = &k_info[i];
 

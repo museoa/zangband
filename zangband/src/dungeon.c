@@ -3328,21 +3328,21 @@ static void dungeon(void)
 		int i;
 
 		/* Hack -- Compact the monster list occasionally */
-		if (m_cnt + 32 > max_m_idx) compact_monsters(64);
+		if (m_cnt + 32 > z_info->m_max) compact_monsters(64);
 
 		/* Hack -- Compress the monster list occasionally */
 		if (m_cnt + 32 < m_max) compact_monsters(0);
 
 
 		/* Hack -- Compact the object list occasionally */
-		if (o_cnt + 32 > max_o_idx) compact_objects(64);
+		if (o_cnt + 32 > z_info->o_max) compact_objects(64);
 
 		/* Hack -- Compress the object list occasionally */
 		if (o_cnt + 32 < o_max) compact_objects(0);
 
 
 		/* Hack -- Compact the field list occasionally */
-		if (fld_cnt + 32 > max_fld_idx) compact_fields(64);
+		if (fld_cnt + 32 > z_info->fld_max) compact_fields(64);
 
 		/* Hack -- Compress the field list occasionally */
 		if (fld_cnt + 32 < fld_max) compact_fields(0);
@@ -3696,9 +3696,6 @@ void play_game(bool new_game)
 	 */
 	if (arg_force_original) rogue_like_commands = FALSE;
 	if (arg_force_roguelike) rogue_like_commands = TRUE;
-
-	/* Initialize vault info */
-	if (init_v_info()) quit("Cannot initialize vaults");
 
 	/* React to changes */
 	Term_xtra(TERM_XTRA_REACT, 0);

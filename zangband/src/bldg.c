@@ -309,7 +309,7 @@ int quest_number(int level)
 	if (p_ptr->inside_quest)
 		return (p_ptr->inside_quest);
 
-	for (i = 0; i < max_quests; i++)
+	for (i = 0; i < z_info->q_max; i++)
 	{
 		if (quest[i].status != QUEST_STATUS_TAKEN) continue;
 

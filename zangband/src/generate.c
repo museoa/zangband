@@ -833,7 +833,7 @@ static bool cave_gen(void)
 	if (!alloc_stairs(FEAT_LESS, rand_range(1, 2), 3)) return FALSE;
 
 	/* Handle the quest monster placements */
-	for (i = 0; i < max_quests; i++)
+	for (i = 0; i < z_info->q_max; i++)
 	{
 		if ((quest[i].status == QUEST_STATUS_TAKEN) &&
 		    ((quest[i].type == QUEST_TYPE_KILL_LEVEL) ||
@@ -1198,7 +1198,7 @@ void generate_cave(void)
 		feeling = extract_feeling();
 
 		/* Prevent object over-flow */
-		if (o_max >= max_o_idx)
+		if (o_max >= z_info->o_max)
 		{
 			/* Message */
 			why = "too many objects";
@@ -1207,7 +1207,7 @@ void generate_cave(void)
 			okay = FALSE;
 		}
 		/* Prevent monster over-flow */
-		else if (m_max >= max_m_idx)
+		else if (m_max >= z_info->m_max)
 		{
 			/* Message */
 			why = "too many monsters";

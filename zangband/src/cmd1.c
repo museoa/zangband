@@ -2022,7 +2022,7 @@ static void summon_pattern_vortex(int y, int x)
 	int i;
 
 	/* Find the pattern vortex */
-	for (i = 1; i < max_r_idx; i++)
+	for (i = 1; i < z_info->r_max; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 

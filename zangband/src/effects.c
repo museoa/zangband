@@ -2370,7 +2370,7 @@ bool lose_all_info(void)
 	/* Hack - Remove all knowledge about objects */
 	
 	/* Scan the object kinds */
-	for (k = 1; k < max_k_idx; k++)
+	for (k = 1; k < z_info->k_max; k++)
 	{
 		object_kind *k_ptr = &k_info[k];
 	

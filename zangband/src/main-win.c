@@ -4312,6 +4312,22 @@ static void hook_quit(cptr str)
 
 	if (hIcon) DestroyIcon(hIcon);
 
+	/* Free strings */
+	string_free(ini_file);
+	string_free(argv0);
+	string_free(ANGBAND_DIR_XTRA_FONT);
+	string_free(ANGBAND_DIR_XTRA_GRAF);
+	string_free(ANGBAND_DIR_XTRA_SOUND);
+	string_free(ANGBAND_DIR_XTRA_HELP);
+
+#ifdef USE_MUSIC
+	string_free(ANGBAND_DIR_XTRA_MUSIC);
+#endif /* USE_MUSIC */
+
+#ifdef HAS_CLEANUP
+	cleanup_angband();
+#endif /* HAS_CLEANUP */
+
 	exit(0);
 }
 

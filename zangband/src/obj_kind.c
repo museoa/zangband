@@ -51,7 +51,7 @@ void k_info_reset(void)
 	int i;
 
 	/* Reset the "objects" */
-	for (i = 1; i < max_k_idx; i++)
+	for (i = 1; i < z_info->k_max; i++)
 	{
 		object_kind *k_ptr = &k_info[i];
 
@@ -68,7 +68,7 @@ void k_info_reset(void)
 object_kind *k_info_add(object_kind *k_info_entry)
 {
 	/* Resize if necessary */
-	while (k_info_size <= max_k_idx)
+	while (k_info_size <= z_info->k_max)
 	{
 		k_info_size += K_INFO_RESIZE;
 
@@ -83,13 +83,13 @@ object_kind *k_info_add(object_kind *k_info_entry)
 	}
 
 	/* Increase the maximum index of the array */
-	max_k_idx++;
+	z_info->k_max++;
 
 	/* Copy the new object_kind */
-	COPY(&k_info[max_k_idx-1], k_info_entry, object_kind);
+	COPY(&k_info[z_info->k_max-1], k_info_entry, object_kind);
 
 	/* Success */
-	return (&k_info[max_k_idx-1]);
+	return (&k_info[z_info->k_max-1]);
 }
 
 
@@ -124,7 +124,7 @@ errr init_object_alloc(void)
 	alloc_kind_size = 0;
 
 	/* Scan the objects */
-	for (i = 1; i < max_k_idx; i++)
+	for (i = 1; i < z_info->k_max; i++)
 	{
 		k_ptr = &k_info[i];
 
@@ -163,7 +163,7 @@ errr init_object_alloc(void)
 	table = alloc_kind_table;
 
 	/* Scan the objects */
-	for (i = 1; i < max_k_idx; i++)
+	for (i = 1; i < z_info->k_max; i++)
 	{
 		k_ptr = &k_info[i];
 
@@ -204,11 +204,11 @@ errr init_object_alloc(void)
 	/* Free the old ego item allocation table (if it exists) */
 	if (alloc_ego_table)
 	{
-		C_KILL(alloc_ego_table, max_e_idx, alloc_entry);
+		C_KILL(alloc_ego_table, z_info->e_max, alloc_entry);
 	}
 	
 	/* Create the ego item allocation table */
-	C_MAKE(alloc_ego_table, max_e_idx, alloc_entry);
+	C_MAKE(alloc_ego_table, z_info->e_max, alloc_entry);
 	
 	/* Access the table */
 	table = alloc_ego_table;
@@ -217,7 +217,7 @@ errr init_object_alloc(void)
 	alloc_ego_size = 0;
 	
 	/* Count the number of legal entries */
-	for (i = 1; i < max_e_idx; i++)
+	for (i = 1; i < z_info->e_max; i++)
 	{
 		e_ptr = &e_info[i];
 		
@@ -240,7 +240,7 @@ errr init_object_alloc(void)
 	
 	
 	/* Scan the ego items */
-	for (i = 1; i < max_e_idx; i++)
+	for (i = 1; i < z_info->e_max; i++)
 	{
 		e_ptr = &e_info[i];
 		

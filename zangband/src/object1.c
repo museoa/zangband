@@ -32,7 +32,7 @@ void reset_visuals(void)
 	int i;
 
 	/* Extract some info about terrain features */
-	for (i = 0; i < max_f_idx; i++)
+	for (i = 0; i < z_info->f_max; i++)
 	{
 		feature_type *f_ptr = &f_info[i];
 
@@ -46,7 +46,7 @@ void reset_visuals(void)
 	}
 
 	/* Extract default attr/char code for objects */
-	for (i = 0; i < max_k_idx; i++)
+	for (i = 0; i < z_info->k_max; i++)
 	{
 		object_kind *k_ptr = &k_info[i];
 
@@ -56,7 +56,7 @@ void reset_visuals(void)
 	}
 
 	/* Extract default attr/char code for monsters */
-	for (i = 0; i < max_r_idx; i++)
+	for (i = 0; i < z_info->r_max; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 
@@ -66,7 +66,7 @@ void reset_visuals(void)
 	}
 	
 	/* Extract default attr/char code for fields */
-	for (i = 0; i < max_t_idx; i++)
+	for (i = 0; i < z_info->t_max; i++)
 	{
 		field_thaum *t_ptr = &t_info[i];
 

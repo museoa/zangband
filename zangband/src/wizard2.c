@@ -716,7 +716,7 @@ static int wiz_create_itemtype(void)
 	Term_clear();
 
 	/* We have to search the whole itemlist. */
-	for (num = 0, i = 1; (num < 60) && (i < max_k_idx); i++)
+	for (num = 0, i = 1; (num < 60) && (i < z_info->k_max); i++)
 	{
 		object_kind *k_ptr = &k_info[i];
 
@@ -1158,7 +1158,7 @@ static void wiz_create_item(void)
 	if (k_ptr->flags3 & TR3_INSTA_ART)
 	{
 		/* Find the "special" artifact this object belongs to */
-		for (i = 1; i < max_a_idx; i++)
+		for (i = 1; i < z_info->a_max; i++)
 		{
 			artifact_type *a_ptr = &a_info[i];
 
@@ -1303,7 +1303,7 @@ static void do_cmd_wiz_learn(void)
 	object_type *q_ptr;
 
 	/* Scan every object */
-	for (i = 1; i < max_k_idx; i++)
+	for (i = 1; i < z_info->k_max; i++)
 	{
 		object_kind *k_ptr = &k_info[i];
 
@@ -1358,7 +1358,7 @@ static void do_cmd_wiz_named(int r_idx, bool slp)
 	/* if (!r_idx) return; */
 
 	/* Prevent illegal monsters */
-	if (r_idx >= max_r_idx) return;
+	if (r_idx >= z_info->r_max) return;
 
 	/* Try 10 times */
 	for (i = 0; i < 10; i++)
@@ -1693,7 +1693,7 @@ void output_monster_matlab(void)
 	fprintf(fff, "xx=[];\n");
 
 	/* Min and max monsters to output in the matrix */
-	max = max_r_idx;
+	max = z_info->r_max;
 	min = 20;
 
 	for (i = min; i < max; i++)
@@ -1958,7 +1958,7 @@ void do_cmd_debug(void)
 		/* Complete a Quest -KMW- */
 		case 'q':
 		{
-			for (i = 0; i < max_quests; i++)
+			for (i = 0; i < z_info->q_max; i++)
 			{
 				if (p_ptr->quest[i].status == QUEST_STATUS_TAKEN)
 				{
@@ -1968,7 +1968,7 @@ void do_cmd_debug(void)
 					break;
 				}
 			}
-			if (i == max_quests)
+			if (i == z_info->q_max)
 			{
 				msg_print("No current quest");
 				message_flush();

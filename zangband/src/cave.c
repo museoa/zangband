@@ -920,8 +920,8 @@ static void image_monster(byte *ap, char *cp)
 	/* Random symbol from set above */
 	if (use_graphics)
 	{
-		(*cp) = r_info[randint1(max_r_idx - 1)].x_char;
-		(*ap) = r_info[randint1(max_r_idx - 1)].x_attr;
+		(*cp) = r_info[randint1(z_info->r_max - 1)].x_char;
+		(*ap) = r_info[randint1(z_info->r_max - 1)].x_attr;
 	}
 	else
 	/* Text mode */
@@ -951,8 +951,8 @@ static void image_object(byte *ap, char *cp)
 
 	if (use_graphics)
 	{
-		(*cp) = k_info[randint1(max_k_idx - 1)].x_char;
-		(*ap) = k_info[randint1(max_k_idx - 1)].x_attr;
+		(*cp) = k_info[randint1(z_info->k_max - 1)].x_char;
+		(*ap) = k_info[randint1(z_info->k_max - 1)].x_attr;
 	}
 	else
 	{
@@ -1604,8 +1604,8 @@ void map_info(int y, int x, byte *ap, char *cp)
 				{
 					if (use_graphics)
 					{
-						c = r_info[randint1(max_r_idx - 1)].x_char;
-						a = r_info[randint1(max_r_idx - 1)].x_attr;
+						c = r_info[randint1(z_info->r_max - 1)].x_char;
+						a = r_info[randint1(z_info->r_max - 1)].x_attr;
 					}
 					else
 					{

@@ -1480,10 +1480,10 @@ void do_cmd_query_symbol(void)
 	prt(buf, 0, 0);
 
 	/* Allocate the "who" array */
-	C_MAKE(who, max_r_idx, u16b);
+	C_MAKE(who, z_info->r_max, u16b);
 
 	/* Collect matching monsters */
-	for (n = 0, i = 1; i < max_r_idx; i++)
+	for (n = 0, i = 1; i < z_info->r_max; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 
@@ -1523,7 +1523,7 @@ void do_cmd_query_symbol(void)
 	if (!n)
 	{
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, max_r_idx, u16b);
+		C_KILL(who, z_info->r_max, u16b);
 
 		return;
 	}
@@ -1557,7 +1557,7 @@ void do_cmd_query_symbol(void)
 	if (query != 'y')
 	{
 		/* XXX XXX Free the "who" array */
-		C_KILL(who, max_r_idx, u16b);
+		C_KILL(who, z_info->r_max, u16b);
 
 		return;
 	}
@@ -1654,7 +1654,7 @@ void do_cmd_query_symbol(void)
 	}
 
 	/* Free the "who" array */
-	C_KILL(who, max_r_idx, u16b);
+	C_KILL(who, z_info->r_max, u16b);
 
 	/* Re-display the identity */
 	prt(buf, 0, 0);
@@ -1701,7 +1701,7 @@ bool research_mon(void)
 	}
 
 	/* Allocate the "who" array */
-	C_MAKE(who, max_r_idx, u16b);
+	C_MAKE(who, z_info->r_max, u16b);
 
 	/* Find that character info, and describe it */
 	for (i = 0; ident_info[i]; ++i)
@@ -1723,7 +1723,7 @@ bool research_mon(void)
 
 
 	/* Collect matching monsters */
-	for (n = 0, i = 1; i < max_r_idx; i++)
+	for (n = 0, i = 1; i < z_info->r_max; i++)
 	{
 		monster_race *r_ptr = &r_info[i];
 
@@ -1739,7 +1739,7 @@ bool research_mon(void)
 		cheat_know = oldcheat;
 
 		/* Free the "who" array */
-		C_KILL(who, max_r_idx, u16b);
+		C_KILL(who, z_info->r_max, u16b);
 
 		/* Restore */
 		screen_load();
@@ -1845,7 +1845,7 @@ bool research_mon(void)
 	cheat_know = oldcheat;
 
 	/* Free the "who" array */
-	C_KILL(who, max_r_idx, u16b);
+	C_KILL(who, z_info->r_max, u16b);
 
 	/* Restore */
 	screen_load();

@@ -371,7 +371,7 @@ errr process_pref_file_command(char *buf)
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
-			if ((i < 0) || (i >= max_r_idx)) return (1);
+			if ((i < 0) || (i >= z_info->r_max)) return (1);
 			r_ptr = &r_info[i];
 			if (n1) r_ptr->x_attr = n1;
 			if (n2) r_ptr->x_char = n2;
@@ -388,7 +388,7 @@ errr process_pref_file_command(char *buf)
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
-			if ((i < 0) || (i >= max_k_idx)) return (1);
+			if ((i < 0) || (i >= z_info->k_max)) return (1);
 			k_ptr = &k_info[i];
 			if (n1) k_ptr->x_attr = n1;
 			if (n2) k_ptr->x_char = n2;
@@ -405,7 +405,7 @@ errr process_pref_file_command(char *buf)
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
-			if ((i < 0) || (i >= max_t_idx)) return (1);
+			if ((i < 0) || (i >= z_info->t_max)) return (1);
 			t_ptr = &t_info[i];
 			if (n1) t_ptr->f_attr = n1;
 			if (n2) t_ptr->f_char = n2;
@@ -422,7 +422,7 @@ errr process_pref_file_command(char *buf)
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
-			if ((i < 0) || (i >= max_f_idx)) return (1);
+			if ((i < 0) || (i >= z_info->f_max)) return (1);
 			f_ptr = &f_info[i];
 			if (n1) f_ptr->x_attr = n1;
 			if (n2) f_ptr->x_char = n2;
@@ -439,7 +439,7 @@ errr process_pref_file_command(char *buf)
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
-			if ((i < 0) || (i >= max_f_idx)) return (1);
+			if ((i < 0) || (i >= z_info->f_max)) return (1);
 			f_ptr = &f_info[i];
 			if (n1) f_ptr->w_attr = n1;
 			if (n2) f_ptr->w_char = n2;
@@ -470,7 +470,7 @@ errr process_pref_file_command(char *buf)
 			j = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
-			for (i = 1; i < max_k_idx; i++)
+			for (i = 1; i < z_info->k_max; i++)
 			{
 				object_kind *k_ptr = &k_info[i];
 				if (k_ptr->tval == j)
@@ -2954,7 +2954,7 @@ errr file_character(cptr name, bool full)
 	{
 		u32b Total = 0;
 
-		for (k = 1; k < max_r_idx; k++)
+		for (k = 1; k < z_info->r_max; k++)
 		{
 			monster_race *r_ptr = &r_info[k];
 
@@ -3021,7 +3021,7 @@ errr file_character(cptr name, bool full)
 	fprintf(fff, "\n\n");
 	
 	/* Print all homes in the different towns */
-	for (i = 1; i < max_towns; i++)
+	for (i = 1; i < z_info->wp_max; i++)
 	{
 		for (j = 0; j < town[i].numstores; j++)
 		{
@@ -4153,7 +4153,7 @@ static void show_info(void)
 		o_ptr->kn_flags3 = o_ptr->flags3;
 	}
 
-	for (i = 1; i < max_towns; i++)
+	for (i = 1; i < z_info->wp_max; i++)
 	{
 		for (j = 0; j < town[i].numstores; j++)
 		{
@@ -4236,7 +4236,7 @@ static void show_info(void)
 		if (inkey() == ESCAPE) return;
 	}
 	
-	for (i = 1; i < max_towns; i++)
+	for (i = 1; i < z_info->wp_max; i++)
 	{
 		for (l = 0; l < town[i].numstores; l++)
 		{

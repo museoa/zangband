@@ -467,12 +467,12 @@ wild_choice_tree_type *wild_choice_tree;
 byte *wild_temp_dist;
 
 /*
- * The array of dungeon items [max_o_idx]
+ * The array of dungeon items [z_info->o_max]
  */
 object_type *o_list;
 
 /*
- * The array of dungeon monsters [max_m_idx]
+ * The array of dungeon monsters [z_info->m_max]
  */
 monster_type *m_list;
 
@@ -481,20 +481,13 @@ monster_type *m_list;
  */
 field_type *fld_list;
 
-
-
-/*
- * Maximum number of towns
- */
-u16b max_towns;
-
 /*
  * Number of towns used.
  */
 u16b town_count;
 
 /*
- * The towns [max_towns]
+ * The towns [z_info->wp_max]
  */
 town_type *town;
 
@@ -506,7 +499,7 @@ object_type *inventory;
 
 
 /*
- * The size of "alloc_kind_table" (at most max_k_idx * 4)
+ * The size of "alloc_kind_table" (at most z_info->k_max * 4)
  */
 s16b alloc_kind_size;
 
@@ -517,7 +510,7 @@ alloc_entry *alloc_kind_table;
 
 
 /*
- * The size of "alloc_race_table" (at most max_r_idx)
+ * The size of "alloc_race_table" (at most z_info->r_max)
  */
 s16b alloc_race_size;
 
@@ -528,7 +521,7 @@ alloc_entry *alloc_race_table;
 
 
 /*
- * The size of the "alloc_ego_table" (at most max_e_idx)
+ * The size of the "alloc_ego_table" (at most z_info->e_max)
  */
 s16b alloc_ego_size;
 
@@ -596,9 +589,13 @@ server_type *svr_ptr = &s_body;
 
 
 /*
+ * Structure (not array) of size limits
+ */
+maxima *z_info;
+
+/*
  * The vault generation arrays
  */
-header *v_head;
 vault_type *v_info;
 char *v_name;
 char *v_text;
@@ -606,7 +603,6 @@ char *v_text;
 /*
  * The terrain feature arrays
  */
-header *f_head;
 feature_type *f_info;
 char *f_name;
 char *f_text;
@@ -614,7 +610,6 @@ char *f_text;
 /*
  * The object kind arrays
  */
-header *k_head;
 object_kind *k_info;
 char *k_name;
 char *k_text;
@@ -622,7 +617,6 @@ char *k_text;
 /*
  * The artifact arrays
  */
-header *a_head;
 artifact_type *a_info;
 char *a_name;
 char *a_text;
@@ -630,7 +624,6 @@ char *a_text;
 /*
  * The ego-item arrays
  */
-header *e_head;
 ego_item_type *e_info;
 char *e_name;
 char *e_text;
@@ -639,7 +632,6 @@ char *e_text;
 /*
  * The monster race arrays
  */
-header *r_head;
 monster_race *r_info;
 char *r_name;
 char *r_text;
@@ -792,81 +784,9 @@ byte (*get_obj_num_hook)(int k_idx);
 
 
 /*
- * Maximum number of quests
- */
-u16b max_quests;
-
-/*
- * Maximum number of monsters in r_info.txt
- */
-u16b max_r_idx;
-
-/*
- * Maximum number of items in k_info.txt
- */
-u16b max_k_idx;
-
-/*
- * Maximum number of vaults in v_info.txt
- */
-u16b max_v_idx;
-
-/*
- * Maximum number of terrain features in f_info.txt
- */
-u16b max_f_idx;
-
-/*
- * Maximum number of artifacts in a_info.txt
- */
-u16b max_a_idx;
-
-/*
- * Maximum number of ego-items in e_info.txt
- */
-u16b max_e_idx;
-
-/*
- * Maximum number of objects in the level
- */
-u16b max_o_idx;
-
-/*
- * Maximum number of monsters in the level
- */
-u16b max_m_idx;
-
-/*
- * Maximum number of fields on the level
- */
-u16b max_fld_idx;
-
-/*
- * Maximum number of field types
- */
-u16b max_t_idx;
-
-
-/*
- * Maximum size of the wilderness
- */
-s32b max_wild_size;
-
-/*
  * Current size of the wilderness
  */
 s32b max_wild;
-
-/*
- * Maximum number of nodes in the wilderness decision tree
- */
-u16b max_w_node;
-
-/*
- * Maximum number of types of wilderness block.
- */
-u16b max_w_block;
-
 
 /* Get rid of the quest stuff? */
 

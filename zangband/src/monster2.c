@@ -413,7 +413,7 @@ s16b m_pop(void)
 
 
 	/* Normal allocation */
-	if (m_max < max_m_idx)
+	if (m_max < z_info->m_max)
 	{
 		/* Access the next hole */
 		i = m_max;
@@ -744,7 +744,7 @@ void monster_desc(char *desc, const monster_type *m_ptr, int mode)
 
 			do
 			{
-				hallu_race = &r_info[randint1(max_r_idx - 1)];
+				hallu_race = &r_info[randint1(z_info->r_max - 1)];
 			}
 			while (hallu_race->flags1 & RF1_UNIQUE);
 
@@ -2415,7 +2415,7 @@ bool summon_named_creature(int oy, int ox, int r_idx, bool slp,
 	/* if (!r_idx) return; */
 
 	/* Prevent illegal monsters */
-	if (r_idx >= max_r_idx) return FALSE;
+	if (r_idx >= z_info->r_max) return FALSE;
 
 	/* Try 10 times */
 	for (i = 0; i < 10; i++)
