@@ -3656,9 +3656,9 @@ static u16b flow_y = 0;
 static void update_flow_aux(int y, int x, int n)
 {
 	cave_type *c_ptr;
-
+#if 0
 	int old_head = flow_head;
-
+#endif /* 0 */
 	/* Get the grid */
 	c_ptr = area(y,x);
 
@@ -3680,12 +3680,13 @@ static void update_flow_aux(int y, int x, int n)
 	/* Enqueue that entry */
 	temp_y[flow_head] = y;
 	temp_x[flow_head] = x;
-
+#if 0
 	/* Advance the queue */
 	if (++flow_head == TEMP_MAX) flow_head = 0;
 
 	/* Hack -- notice overflow by forgetting new entry */
 	if (flow_head == flow_tail) flow_head = old_head;
+#endif /* 0 */
 }
 
 #endif /* MONSTER_FLOW */
