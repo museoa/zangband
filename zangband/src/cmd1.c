@@ -2725,7 +2725,7 @@ void move_player(int dir, int do_pickup)
 			/* Jungle */
 			else if (c_ptr->feat == FEAT_JUNGLE)
 			{
-				msg_print("There jungle is impassable.");
+				msg_print("The jungle is impassable.");
 
 				if (!(p_ptr->confused || p_ptr->stun || p_ptr->image))
 					energy_use = 0;
