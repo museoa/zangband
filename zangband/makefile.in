@@ -31,11 +31,6 @@ GAMEGROUP = @GAMEGROUP@
 CFLAGS += -DDEFAULT_PATH=\"$(DESTDIR)lib/\"
 
 #
-# Rerun configure with previous command line
-#
-CONFIGURE = ./config.status --recheck && ./config.status
-
-#
 # Default verbose settings
 #
 ifdef V
@@ -106,7 +101,11 @@ zangband: $(objs-y)
 ## Hack - make sure the build system is consistant.
 ##
 makefile: configure makefile.in
-	$(CONFIGURE)
+	if [ -f ./config.status ] ; then \
+	    ./config.status --recheck && ./config.status; \
+	else \
+		./configure; \
+	fi
 	
 configure: configure.in
 	aclocal
