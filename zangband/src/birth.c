@@ -1359,7 +1359,7 @@ static const byte player_init[MAX_CLASS][3][2] =
 	{
 	 /* Mindcrafter */
 	 {TV_SWORD, SV_DAGGER},
-	 {TV_POTION, SV_POTION_RESTORE_MANA},
+	 {TV_POTION, SV_POTION_RES_WIS},
 	 {TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR},
 	 },
 
@@ -1474,7 +1474,7 @@ static void player_outfit(void)
 	}
 	else if (p_ptr->pclass == CLASS_HIGH_MAGE)
 	{
-		/* Hack -- Give the player some arrows */
+		/* Hack -- Give the player a wand of magic missile */
 		q_ptr = object_prep(lookup_kind(TV_WAND, SV_WAND_MAGIC_MISSILE));
 		q_ptr->number = 1;
 		q_ptr->pval = (byte)rand_range(25, 30);
