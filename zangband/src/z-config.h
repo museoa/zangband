@@ -422,7 +422,7 @@
 /*
  * OPTION: Person to bother if something goes wrong.
  */
-#define MAINTAINER	"rr9@angband.org"
+#define MAINTAINER	"sfuerst@zangband.org"
 
 
 /*
@@ -528,4 +528,10 @@
  * Optional use of 64bit type
  */
 /* #define USE_64B */
+
+/*
+ * Allow execution of arbitrary lua scripts using
+ * the '@' debug command.  (Insecure)
+ */
+/* #define DEBUG_SCRIPTS */
 

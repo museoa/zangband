@@ -1842,13 +1842,15 @@ void do_cmd_debug(void)
 			do_cmd_wiz_hack_ben();
 			break;
 		}
-
+		
+#ifdef DEBUG_SCRIPTS
 		case '@':
 		{
 			/* Execute script */
 			do_cmd_script();
 			break;
 		}
+#endif DEBUG_SCRIPTS
 
 		default:
 		{
