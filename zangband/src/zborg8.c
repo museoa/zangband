@@ -3245,7 +3245,7 @@ bool borg_think_dungeon(void)
 	/*** Deal with inventory objects ***/
 
 	/* check for anything that should be inscribed */
-	if (borg_inscribe_food()) return (TRUE);
+	/* if (borg_inscribe_food()) return (TRUE); */
 
 	/* Use things */
 	if (borg_use_things()) return (TRUE);
