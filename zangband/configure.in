@@ -5,7 +5,7 @@ dnl the source distribution is installed correctly.
 AC_INIT(src/main.c)
 
 dnl write the resulting #defines into a header file
-AC_CONFIG_HEADERS(src/autoconf.h)
+AM_CONFIG_HEADER(src/autoconf.h)
 
 AC_ARG_WITH(setgid,
 [  --with-setgid=NAME      setgid usage: install angband as group NAME],
@@ -207,5 +207,34 @@ AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(gethostname mkdir select strstr strtol usleep mkstemp)
+
+dnl A nice function to test compiler options (like warnings)
+AC_DEFUN(AC_CHECK_CC_OPT,
+[AC_MSG_CHECKING(whether ${CC-cc} accepts [$1])
+echo 'void f(void); void f(){};' > conftest.c
+if test -z "`${CC-cc} -c $1 conftest.c 2>&1`"; then
+  CFLAGS="$1 $CFLAGS"
+  AC_MSG_RESULT($1)
+else
+  AC_MSG_RESULT(no $1)
+fi
+rm -f conftest*
+])
+
+dnl Check for lots of extra warning options
+AC_CHECK_CC_OPT(-pedantic)
+AC_CHECK_CC_OPT(-W)
+AC_CHECK_CC_OPT(-Wall)
+AC_CHECK_CC_OPT(-Wmissing-prototypes)
+AC_CHECK_CC_OPT(-Wmissing-declarations)
+AC_CHECK_CC_OPT(-Wno-long-long)
+AC_CHECK_CC_OPT(-Wwrite-strings)
+AC_CHECK_CC_OPT(-Wpointer-arith)
+AC_CHECK_CC_OPT(-Wbad-function-cast)
+AC_CHECK_CC_OPT(-Wsign-compare)
+AC_CHECK_CC_OPT(-Waggregate-return)
+AC_CHECK_CC_OPT(-Wstrict-prototypes)
+AC_CHECK_CC_OPT(-Wredundant-decls)
+AC_CHECK_CC_OPT(-Wunreachable-code)
 
 AC_OUTPUT(makefile)
