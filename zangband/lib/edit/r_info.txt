@@ -537,7 +537,7 @@ D:A disembodied eye, floating a few feet above the ground.
 N:33:Rock lizard
 G:R:U
 I:110:3d4:20:5:15
-W:3:1:0:6
+W:2:1:0:6
 B:BITE:HURT:1d1
 F:WILD_DUNGEON_01
 F:ANIMAL | CAN_SWIM | WILD_MOUNT1 | WILD_MOUNT2
@@ -638,7 +638,7 @@ D:It is a smallish, slimy, icky, hungry creature.
 N:42:Metallic green centipede
 G:c:G
 I:120:3d5:5:10:10
-W:1:1:0:7
+W:2:1:0:7
 B:CRAWL:HURT:1d1
 F:RAND_50 | WILD_DUNGEON_01 | WILD_MOUNT1 | WILD_FOREST2 | DROP_SKELETON
 F:WEIRD_MIND | BASH_DOOR | 
@@ -1061,7 +1061,7 @@ D:It is a large slimy mass of worms.
 N:79:Clear worm mass
 G:w:B
 I:100:3d4:7:3:10
-W:4:2:0:1
+W:3:2:0:1
 B:CRAWL:POISON:1d2
 F:ATTR_CLEAR | CAN_SWIM | WILD_DUNGEON_01
 F:RAND_50 | RAND_25 | 
@@ -1764,7 +1764,7 @@ D:The legendary archer steals from the rich (you qualify).
 N:139:Nurgling
 G:u:U
 I:110:6d10:20:16:30
-W:4:2:0:5
+W:8:2:0:5
 B:BITE:DISEASE:1d8
 F:FRIENDS | FRIEND | WILD_DUNGEON_01
 F:OPEN_DOOR | BASH_DOOR | IM_POIS |
