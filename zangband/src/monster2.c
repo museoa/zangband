@@ -13,11 +13,7 @@
 
 #include "angband.h"
 
-#define MAX_HORROR 20
-#define MAX_FUNNY 22
-#define MAX_COMMENT 5
-
-static cptr horror_desc[MAX_HORROR] =
+cptr horror_desc[MAX_SAN_HORROR] =
 {
 	"abominable",
 	"abysmal",
@@ -44,7 +40,7 @@ static cptr horror_desc[MAX_HORROR] =
 	"unspeakable",
 };
 
-static cptr funny_desc[MAX_FUNNY] =
+cptr funny_desc[MAX_SAN_FUNNY] =
 {
 	"silly",
 	"hilarious",
@@ -74,7 +70,7 @@ static cptr funny_desc[MAX_FUNNY] =
 	"preposterous",
 };
 
-static cptr funny_comments[MAX_COMMENT] =
+cptr funny_comments[MAX_SAN_COMMENT] =
 {
 	"Wow, cosmic, man!",
 	"Rad!",
@@ -972,21 +968,20 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		if (is_pet(m_ptr) && (randint(8) != 1))
 			return; /* Pet eldritch horrors are safe most of the time */
 
-		if (randint(power) < p_ptr->skill_sav)
+		if (saving_throw(p_ptr->skill_sav * 100 / power))
 		{
 			return; /* Save, no adverse effects */
 		}
-
 
 		if (p_ptr->image)
 		{
 			/* Something silly happens... */
 			msg_format("You behold the %s visage of %s!",
-				funny_desc[rand_int(MAX_FUNNY)], m_name);
+				funny_desc[rand_int(MAX_SAN_FUNNY)], m_name);
 
 			if (randint(3) == 1)
 			{
-				msg_print(funny_comments[rand_int(MAX_COMMENT)]);
+				msg_print(funny_comments[rand_int(MAX_SAN_COMMENT)]);
 				p_ptr->image = p_ptr->image + randint(r_ptr->level);
 			}
 
@@ -995,7 +990,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 
 		/* Something frightening happens... */
 		msg_format("You behold the %s visage of %s!",
-			horror_desc[rand_int(MAX_HORROR)], m_name);
+			horror_desc[rand_int(MAX_SAN_HORROR)], m_name);
 
 		r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
 
@@ -1006,7 +1001,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		if ((p_ptr->prace == RACE_SKELETON) || (p_ptr->prace == RACE_ZOMBIE)
 			|| (p_ptr->prace == RACE_VAMPIRE) || (p_ptr->prace == RACE_SPECTRE))
 		{
-			if (randint(100) < (25 + p_ptr->lev)) return;
+			if (saving_throw(25 + p_ptr->lev)) return;
 		}
 	}
 	else
@@ -1014,7 +1009,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		msg_print("Your sanity is shaken by reading the Necronomicon!");
 	}
 
-	if (randint(power) < p_ptr->skill_sav) /* Mind blast */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power)) /* Mind blast */
 	{
 		if (!p_ptr->resist_conf)
 		{
@@ -1027,14 +1022,14 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		return;
 	}
 
-	if (randint(power) < p_ptr->skill_sav) /* Lose int & wis */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power)) /* Lose int & wis */
 	{
 		do_dec_stat(A_INT);
 		do_dec_stat(A_WIS);
 		return;
 	}
 
-	if (randint(power) < p_ptr->skill_sav) /* Brain smash */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power)) /* Brain smash */
 	{
 		if (!p_ptr->resist_conf)
 		{
@@ -1055,7 +1050,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		return;
 	}
 
-	if (randint(power) < p_ptr->skill_sav) /* Permanent lose int & wis */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power)) /* Permanent lose int & wis */
 	{
 		if (dec_stat(A_INT, 10, TRUE)) happened = TRUE;
 		if (dec_stat(A_WIS, 10, TRUE)) happened = TRUE;
@@ -1064,7 +1059,7 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 		return;
 	}
 
-	if (randint(power) < p_ptr->skill_sav) /* Amnesia */
+	if (!saving_throw(p_ptr->skill_sav * 100 / power)) /* Amnesia */
 	{
 
 		if (lose_all_info())
@@ -1074,8 +1069,8 @@ void sanity_blast(monster_type *m_ptr, bool necro)
 
 	/* Else gain permanent insanity */
 	if ((p_ptr->muta3 & MUT3_MORONIC) && (p_ptr->muta2 & MUT2_BERS_RAGE) &&
-	   ((p_ptr->muta2 & MUT2_COWARDICE) || (p_ptr->resist_fear)) &&
-	   ((p_ptr->muta2 & MUT2_HALLU) || (p_ptr->resist_chaos)))
+		((p_ptr->muta2 & MUT2_COWARDICE) || (p_ptr->resist_fear)) &&
+		((p_ptr->muta2 & MUT2_HALLU) || (p_ptr->resist_chaos)))
 	{
 		/* The poor bastard already has all possible insanities! */
 		return;
