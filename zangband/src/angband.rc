@@ -116,6 +116,7 @@ ANGBAND MENU
   MENUITEM "&Sound", 410
   MENUITEM SEPARATOR
   MENUITEM "Activate Screensaver", 420
+  MENUITEM "&Map", 430
  }
 
  POPUP "&Help"

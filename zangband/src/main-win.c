@@ -174,6 +174,7 @@
 #define IDM_OPTIONS_NEW_GRAPHICS 402
 #define IDM_OPTIONS_SOUND		410
 #define IDM_OPTIONS_SAVER		420
+#define IDM_OPTIONS_MAP			430
 
 #define IDM_HELP_CONTENTS       901
 
@@ -387,6 +388,11 @@ struct _term_data
 
 	uint tile_wid;
 	uint tile_hgt;
+
+	uint map_tile_wid;
+	uint map_tile_hgt;
+
+	bool map_active;
 };
 
 
@@ -1921,11 +1927,24 @@ static errr Term_curs_win(int x, int y)
 	RECT rc;
 	HDC hdc;
 
+	int tile_wid, tile_hgt;
+
+	if (td->map_active)
+	{
+		tile_wid = td->map_tile_wid;
+		tile_hgt = td->map_tile_hgt;
+	}
+	else
+	{
+		tile_wid = td->tile_wid;
+		tile_hgt = td->tile_hgt;
+	}
+
 	/* Frame the grid */
-	rc.left = x * td->tile_wid + td->size_ow1;
-	rc.right = rc.left + td->tile_wid;
-	rc.top = y * td->tile_hgt + td->size_oh1;
-	rc.bottom = rc.top + td->tile_hgt;
+	rc.left = x * tile_wid + td->size_ow1;
+	rc.right = rc.left + tile_wid;
+	rc.top = y * tile_hgt + td->size_oh1;
+	rc.bottom = rc.top + tile_hgt;
 
 	/* Cursor is done as a yellow "box" */
 	hdc = GetDC(td->w);
@@ -2109,8 +2128,16 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 	h1 = infGraph.CellHeight;
 
 	/* Size of window cell */
-	w2 = td->tile_wid;
-	h2 = td->tile_hgt;
+	if (td->map_active)
+	{
+		w2 = td->map_tile_wid;
+		h2 = td->map_tile_hgt;
+	}
+	else
+	{
+		w2 = td->tile_wid;
+		h2 = td->tile_hgt;
+	}
 
 	/* Location of window cell */
 	x2 = x * w2 + td->size_ow1;
@@ -2238,6 +2265,90 @@ static errr Term_pict_win(int x, int y, int n, const byte *ap, const char *cp)
 
 	/* Success */
 	return 0;
+}
+
+
+#ifdef USE_TRANSPARENCY
+extern void map_info(int y, int x, byte *ap, char *cp, byte *tap, char *tcp);
+#else /* USE_TRANSPARENCY */
+extern void map_info(int y, int x, byte *ap, char *cp);
+#endif /* USE_TRANSPARENCY */
+
+
+static void windows_map(void)
+{
+	term_data *td = &data[0];
+	byte a, c;
+	int x, min_x, max_x;
+	int y, min_y, max_y;
+
+#ifdef USE_TRANSPARENCY
+	byte ta, tc;
+#endif
+
+	/* Only in graphics mode */
+	if (!use_graphics) return;
+
+	/* Clear screen */
+	Term_xtra_win_clear();
+
+	td->map_tile_wid = (td->tile_wid * td->cols) / MAX_WID;
+	td->map_tile_hgt = (td->tile_hgt * td->rows) / MAX_HGT;
+	td->map_active = TRUE;
+
+	/* Is the player in the wilderness? */
+	if (dun_level == 0)
+	{
+		/* Work out offset of corner of dungeon-sized segment of the wilderness */
+		min_x = wild_grid.x_min;
+		min_y = wild_grid.y_min;
+		max_x = wild_grid.x_max;
+		max_y = wild_grid.y_max;
+	}
+	else
+	{
+		min_x = 0;
+		min_y = 0;
+		max_x = cur_wid;
+		max_y = cur_hgt;
+	}
+
+	/* Draw the map */
+	for (x = min_x; x < max_x; x++)
+	{
+		for (y = min_y; y < max_y; y++)
+		{
+#ifdef USE_TRANSPARENCY
+			map_info(y, x, &a, (char*)&c, &ta, (char*)&tc);
+#else /* USE_TRANSPARENCY */
+			map_info(y, x, &a, (char*)&c);
+#endif /* USE_TRANSPARENCY */
+
+			/* Ignore non-graphics */
+			if ((a & 0x80) && (c & 0x80))
+			{
+#ifdef USE_TRANSPARENCY
+				Term_pict_win(x - min_x, y - min_y, 1, &a, &c, &ta, &tc);
+#else /* USE_TRANSPARENCY */
+				Term_pict_win(x - min_x, y - min_y, 1, &a, &c);
+#endif /* USE_TRANSPARENCY */
+			}
+		}
+	}
+
+	/* Hilite the player */
+	Term_curs_win(px - min_x, py - min_y);
+
+	/* Wait for a keypress, flush key buffer */
+	Term_inkey(&c, TRUE, TRUE);
+	Term_flush();
+
+	/* Switch off the map display */
+	td->map_active = FALSE;
+
+	/* Restore screen */
+	Term_xtra_win_clear();
+	Term_redraw();
 }
 
 
@@ -2620,6 +2731,13 @@ static void setup_menus(void)
 	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 	EnableMenuItem(hm, IDM_OPTIONS_SAVER,
 	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+
+	/* Menu "Options", Item "Map" */
+	if (use_graphics != GRAPHICS_NONE)
+		EnableMenuItem(GetMenu(data[0].w), IDM_OPTIONS_MAP, MF_BYCOMMAND | MF_ENABLED);
+	else
+		EnableMenuItem(GetMenu(data[0].w), IDM_OPTIONS_MAP,
+		               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 
 	/* Menu "Options", update all */
 	CheckMenuItem(hm, IDM_OPTIONS_NO_GRAPHICS,
@@ -3165,6 +3283,12 @@ static void process_menus(WORD wCmd)
 		}
 
 #endif
+
+		case IDM_OPTIONS_MAP:
+		{
+			windows_map();
+			break;
+		}
 
 		case IDM_HELP_CONTENTS:
 		{
@@ -4207,4 +4331,6 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	return (0);
 }
 
+
 #endif /* WINDOWS */
+
