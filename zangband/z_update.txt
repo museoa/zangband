@@ -12,7 +12,7 @@ ZAngband 2.5.0:
  Angband).
 -Revised monster and object listings to distribute them more evenly
  throughout the dungeon.
--Removed makefile.org  (It was a copy of makfile.std)
+-Removed makefile.org  (It was a copy of makfile.std).
 -Removed the overhead map in vanilla town mode - it isn't needed.
 -Removed some warnings given by VC.
 -Uniques are now entered correctly in the monster list even if blinded
@@ -36,7 +36,7 @@ ZAngband 2.5.0:
 -Changed the power of many rods/ wands/ staves/ scrolls and artifacts.
  They are more useful now.
 -Most wands/ staves/ rods and a few scrolls are cheaper.
--Changed the prices of the armour.  Changed the prices of the ego
+-Changed the prices of the armor.  Changed the prices of the ego
  items.
 -Rebalancing the artifacts.  A few have had a price cut.  A few have
  had various flags removed.
@@ -73,9 +73,9 @@ ZAngband 2.5.0:
  player is likely to get caught in the ball/breath.
 -Restored the wizard-mode damage message which will now also display
  the damage for shield bashes.
--Changed the way base hitpoints are calulated to reduce the spread
+-Changed the way base hitpoints are calculated to reduce the spread
  caused by extreme life rating values.
--Coordinates are now diplayed when targetting in wizard mode.
+-Coordinates are now displayed when targeting in wizard mode.
 -Pressing '|' on the options screen will save them to "pref-opt.prf".
 -Enhancements and fixes to main-win.c, main-mac.c, main-mac.new and
  main-mac-carbon.c.
@@ -95,7 +95,7 @@ ZAngband 2.5.0:
  healing and teleporting.
 -Added a new type of bolt (a "steel bolt"). Some missiles are no
  longer sold in the stores. Missile rarity tweaked.
--Fixed grapics in the x11 port.
+-Fixed graphics in the x11 port.
 -Fixed the problems with too much or too little speed (patch by
  Mitsuhiro Itakura).
 -You can no longer recall into rubble.
@@ -104,7 +104,7 @@ ZAngband 2.5.0:
 -Fixed a bug when using a scroll of mundanity on the floor.
 -Fixed the stack overflow in the dungeon creation routines.
 -Fixed a problem with partial knowledge of stats when identifying
- Patern Weapons.
+ Pattern Weapons.
 -Fixed a bug that allowed the player to attack monsters in walls
  without using any energy.
 -Fixed a problem with item activations when wielding them from
@@ -113,10 +113,10 @@ ZAngband 2.5.0:
  character moving at a faster speed than the monster.
 -Caverns are rarer deeper in the dungeon.
 -Store memory allocation is now dynamic.
--Removed a number of unused variables, intializations and some
+-Removed a number of unused variables, initializations and some
  dead code.
 -Throwing potions at monsters will now identify the potion if the
- player oberves appropriate effects.
+ player observes appropriate effects.
 -Monsters now receive AC bonuses and penalties on certain types of
  terrain.
 -Updated the FAQ.
