@@ -2838,10 +2838,8 @@ static errr rd_savefile_new_aux(void)
 	u16b tmp16u;
 	u32b tmp32u;
 
-#ifdef VERIFY_CHECKSUMS
 	u32b n_x_check, n_v_check;
 	u32b o_x_check, o_v_check;
-#endif
 
 	u16b max_towns_load;
 	u16b max_quests_load;
@@ -3418,8 +3416,6 @@ static errr rd_savefile_new_aux(void)
 	}
 
 
-#ifdef VERIFY_CHECKSUMS
-
 	/* Save the checksum */
 	n_v_check = v_check;
 
@@ -3447,8 +3443,6 @@ static errr rd_savefile_new_aux(void)
 		note("Invalid encoded checksum");
 		return (11);
 	}
-
-#endif
 
 	/* Success */
 	return (0);

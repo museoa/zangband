@@ -2502,16 +2502,12 @@ static void process_command(void)
 			break;
 		}
 
-#ifndef VERIFY_SAVEFILE
-
 		case KTRL('S'):
 		{
 			/* Hack -- Save and don't quit */
 			do_cmd_save_game(FALSE);
 			break;
 		}
-
-#endif /* VERIFY_SAVEFILE */
 
 		case KTRL('T'):
 		{

@@ -1886,22 +1886,6 @@ bool save_player(void)
 		/* Hack -- Pretend the character was loaded */
 		character_loaded = TRUE;
 
-#ifdef VERIFY_SAVEFILE
-
-		/* Lock on savefile */
-		strnfmt(temp, 1024, "%s.lok", savefile);
-
-		/* Grab permissions */
-		safe_setuid_grab();
-
-		/* Remove lock file */
-		fd_kill(temp);
-
-		/* Drop permissions */
-		safe_setuid_drop();
-
-#endif
-
 		/* Success */
 		result = TRUE;
 	}
@@ -1935,10 +1919,6 @@ bool load_player(void)
 	errr err = 0;
 
 	byte vvv[4];
-
-#ifdef VERIFY_TIMESTAMP
-	struct stat statbuf;
-#endif
 
 	cptr what = "generic";
 
@@ -1977,60 +1957,6 @@ bool load_player(void)
 	(void)fd_close(fd);
 
 
-#ifdef VERIFY_SAVEFILE
-
-	/* Verify savefile usage */
-	if (!err)
-	{
-		FILE *fkk;
-
-		char temp[1024];
-
-		/* Extract name of lock file */
-		strnfmt(temp, 1024, "%s.lok", savefile);
-
-		/* Grab permissions */
-		safe_setuid_grab();
-
-		/* Check for lock */
-		fkk = my_fopen(temp, "r");
-
-		/* Drop permissions */
-		safe_setuid_drop();
-
-		/* Oops, lock exists */
-		if (fkk)
-		{
-			/* Close the file */
-			my_fclose(fkk);
-
-			/* Message */
-			msgf("Savefile is currently in use.");
-			message_flush();
-
-			/* Oops */
-			return (FALSE);
-		}
-
-		/* Grab permissions */
-		safe_setuid_grab();
-
-		/* Create a lock file */
-		fkk = my_fopen(temp, "w");
-
-		/* Drop permissions */
-		safe_setuid_drop();
-
-		/* Dump a line of info */
-		froff(fkk, "Lock file for savefile '%s'\n", savefile);
-
-		/* Close the lock file */
-		my_fclose(fkk);
-	}
-
-#endif
-
-
 	/* Okay */
 	if (!err)
 	{
@@ -2053,20 +1979,6 @@ bool load_player(void)
 	/* Process file */
 	if (!err)
 	{
-
-#ifdef VERIFY_TIMESTAMP
-
-		/* Grab permissions */
-		safe_setuid_grab();
-
-		/* Get the timestamp */
-		(void)fstat(fd, &statbuf);
-
-		/* Drop permissions */
-		safe_setuid_drop();
-
-#endif
-
 		/* Read the first four bytes */
 		if (fd_read(fd, (char *)(vvv), 4)) err = -1;
 
@@ -2107,24 +2019,6 @@ bool load_player(void)
 		/* Message (below) */
 		if (err) what = "Broken savefile";
 	}
-
-#ifdef VERIFY_TIMESTAMP
-	/* Verify timestamp */
-	if (!err && !arg_wizard)
-	{
-		/* Hack -- Verify the timestamp */
-		if (sf_when > (statbuf.st_ctime + 100) ||
-			sf_when < (statbuf.st_ctime - 100))
-		{
-			/* Message */
-			what = "Invalid timestamp";
-
-			/* Oops */
-			err = -1;
-		}
-	}
-#endif
-
 
 	/* Okay */
 	if (!err)
@@ -2190,30 +2084,6 @@ bool load_player(void)
 		return (TRUE);
 	}
 
-
-#ifdef VERIFY_SAVEFILE
-
-	/* Verify savefile usage */
-	if (TRUE)
-	{
-		char temp[1024];
-
-		/* Extract name of lock file */
-		strnfmt(temp, 1024, "%s.lok", savefile);
-
-		/* Grab permissions */
-		safe_setuid_grab();
-
-		/* Remove lock */
-		fd_kill(temp);
-
-		/* Drop permissions */
-		safe_setuid_drop();
-	}
-
-#endif
-
-
 	/* Message */
 	msgf("Error (%s) reading %d.%d.%d savefile.",
 			   what, z_major, z_minor, z_patch);
@@ -2223,16 +2093,3 @@ bool load_player(void)
 	return (FALSE);
 }
 
-
-void remove_loc(void)
-{
-#ifdef VERIFY_SAVEFILE
-	char temp[1024];
-
-	/* Lock on savefile */
-	strnfmt(temp, 1024, "%s.lok", savefile);
-
-	/* Remove lock file */
-	fd_kill(temp);
-#endif /* VERIFY_SAVEFILE */
-}

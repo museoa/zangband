@@ -278,18 +278,6 @@ static void change_path(cptr info)
 			break;
 		}
 
-#ifdef VERIFY_SAVEFILE
-
-		case 'b':
-		case 'd':
-		case 'e':
-		case 's':
-		{
-			quit_fmt("Restricted option '-d%s'", info);
-		}
-
-#else  /* VERIFY_SAVEFILE */
-
 		case 'b':
 		{
 			string_free(ANGBAND_DIR_BONE);
@@ -324,8 +312,6 @@ static void change_path(cptr info)
 			ANGBAND_DIR_SCRIPT = string_make(s + 1);
 			break;
 		}
-
-#endif /* VERIFY_SAVEFILE */
 
 #endif /* FIXED_PATHS */
 
@@ -363,7 +349,11 @@ static void game_usage(void)
 	puts("  -M       Request monochrome mode");
 	puts("  -s<num>  Show <num> high scores (default 10)");
 	puts("  -u<who>  Use your <who> savefile");
+#ifdef FIXED_PATHS
+	puts("  -du=<dir>  Define user dir path");
+#else /* FIXED_PATHS */
 	puts("  -d<def>  Define a 'lib' dir sub-path");
+#endif /* FIXED_PATHS */
 
 	/* Print the name and help for each available module */
 	for (i = 0; i < (int)NUM_ELEMENTS(modules); i++)
@@ -433,6 +423,9 @@ int main(int argc, char *argv[])
 
 	/* Get the file paths */
 	init_stuff();
+	
+	/* Catch nasty signals */
+	signals_init();
 
 	/* Drop permissions and initialize multiuser stuff */
 	init_setuid();
@@ -597,9 +590,6 @@ int main(int argc, char *argv[])
 	/* Gtk and Tk initialise earlier */
 	if (!(streq(ANGBAND_SYS, "gtk") || streq(ANGBAND_SYS, "tnb")))
 	{
-		/* Catch nasty signals */
-		signals_init();
-
 		/* Initialize */
 		init_angband();
 	}

@@ -151,7 +151,6 @@ extern char *mp_c;
 extern byte *mp_ta;
 extern char *mp_tc;
 extern int player_uid;
-extern int player_euid;
 extern int player_egid;
 extern char player_name[32];
 extern char player_base[32];
@@ -640,7 +639,6 @@ extern void do_cmd_racial_power(void);
 /* save.c */
 extern bool save_player(void);
 extern bool load_player(void);
-extern void remove_loc(void);
 
 /* spells1.c */
 extern void take_hit(int damage, cptr kb_str);
