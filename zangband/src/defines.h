@@ -3321,37 +3321,38 @@
 #define RF8_WILD_WASTE2         0x00000020
 #define RF8_WILD_SWAMP1         0x00000040
 #define RF8_WILD_SWAMP2         0x00000080
-#define RF8_NOT_FOREST1         0x00000100
-#define RF8_NOT_FOREST2         0x00000200
-#define RF8_NOT_MOUNT1          0x00000400
-#define RF8_NOT_MOUNT2          0x00000800
-#define RF8_NOT_WASTE1          0x00001000
-#define RF8_NOT_WASTE2          0x00002000
-#define RF8_NOT_SWAMP1          0x00004000
-#define RF8_NOT_SWAMP2          0x00008000
-#define RF8_WILD_SHORE          0x00010000
-#define RF8_WILD_OCEAN          0x00020000
-#define RF8_WILD_GRASS          0x00040000
-#define RF8_WILD_TOWN           0x00080000
-#define RF8_DUNGEON_01          0x00100000
-#define RF8_DUNGEON_02          0x00200000
-#define RF8_DUNGEON_03          0x00400000
-#define RF8_DUNGEON_04          0x00800000
-#define RF8_DUNGEON_05          0x01000000
-#define RF8_DUNGEON_06          0x02000000
-#define RF8_DUNGEON_07          0x04000000
-#define RF8_DUNGEON_08          0x08000000
-#define RF8_DUNGEON_09          0x10000000
-#define RF8_DUNGEON_10          0x20000000
-#define RF8_DUNGEON_11          0x40000000
-#define RF8_DUNGEON_12          0x80000000
+#define RF8_WILD_SHORE          0x00000100
+#define RF8_WILD_OCEAN          0x00000200
+#define RF8_WILD_GRASS          0x00000400
+#define RF8_WILD_TOWN           0x00000800
+#define RF8_DUN_DARKWATER       0x00001000
+#define RF8_DUN_LAIR            0x00002000
+#define RF8_DUN_TEMPLE          0x00004000
+#define RF8_DUN_TOWER           0x00008000
+#define RF8_DUN_RUIN            0x00010000
+#define RF8_DUN_GRAVE           0x00020000
+#define RF8_DUN_CAVERN          0x00040000
+#define RF8_DUN_PLANAR          0x00080000
+#define RF8_DUN_HELL            0x00100000
+#define RF8_DUN_HORROR          0x00200000
+#define RF8_DUN_MINE            0x00400000
+#define RF8_DUN_CITY            0x00800000
+#define RF8_DUN_XTRA1			0x01000000
+#define RF8_DUN_XTRA2			0x02000000
+#define RF8_DUN_XTRA3			0x04000000
+#define RF8_DUN_XTRA4			0x08000000
+#define RF8_DUN_XTRA5			0x10000000
+#define RF8_DUN_XTRA6			0x20000000
+#define RF8_DUN_XTRA7			0x40000000
+#define RF8_DUN_XTRA8			0x80000000
+
 
 /*
  * Useful flag combinations
  */
 
-#define RF8_DUNGEON             0xFFF00000
-#define RF8_WILD                0x000700FF
+#define RF8_DUNGEON             0xFFFFF000
+#define RF8_WILD                0x000007FF
 
 
 /*
