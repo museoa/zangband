@@ -2027,9 +2027,6 @@ void do_cmd_bldg(void)
 		p_ptr->oldpx = px;
 	}
 
-	/* Forget the lite */
-	forget_lite();
-
 	/* Forget the view */
 	forget_view();
 
@@ -2095,7 +2092,7 @@ void do_cmd_bldg(void)
 	Term_clear();
 
 	/* Update the visuals */
-	p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_BONUS | PU_LITE);
+	p_ptr->update |= (PU_VIEW | PU_MONSTERS | PU_BONUS);
 
 	/* Redraw entire screen */
 	p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_EQUIPPY | PR_MAP);

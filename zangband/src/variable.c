@@ -397,12 +397,6 @@ char history[4][60];
 char savefile[1024];
 
 
-/*
- * Array of grids lit by player lite (see "cave.c")
- */
-s16b lite_n;
-s16b lite_y[LITE_MAX];
-s16b lite_x[LITE_MAX];
 
 /*
  * Array of grids viewable to the player (see "cave.c")

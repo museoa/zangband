@@ -2726,11 +2726,11 @@ bool destroy_area(int y1, int x1, int r, int full)
 	}
 
 
-	/* Mega-Hack -- Forget the view and lite */
-	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
+	/* Mega-Hack -- Forget the view */
+	p_ptr->update |= (PU_UN_VIEW);
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_FLOW);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);
@@ -3154,11 +3154,11 @@ bool earthquake(int cy, int cx, int r)
 	}
 
 
-	/* Mega-Hack -- Forget the view and lite */
-	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
+	/* Mega-Hack -- Forget the view */
+	p_ptr->update |= (PU_UN_VIEW);
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_FLOW);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_DISTANCE);
@@ -3703,7 +3703,7 @@ bool teleport_swap(int dir)
 	verify_panel();
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_FLOW);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_DISTANCE);
@@ -3956,7 +3956,7 @@ bool wall_stone(void)
 	bool dummy = (project(0, 1, py, px, 0, GF_STONE_WALL, flg));
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_FLOW);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_MONSTERS);

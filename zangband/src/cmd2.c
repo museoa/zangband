@@ -803,7 +803,7 @@ static bool do_cmd_open_aux(int y, int x)
 			cave_set_feat(y, x, FEAT_OPEN);
 
 			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+			p_ptr->update |= (PU_VIEW | PU_MONSTERS);
 
 			/* Sound */
 			sound(SOUND_OPENDOOR);
@@ -833,7 +833,7 @@ static bool do_cmd_open_aux(int y, int x)
 		cave_set_feat(y, x, FEAT_OPEN);
 
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+		p_ptr->update |= (PU_VIEW | PU_MONSTERS);
 
 		/* Sound */
 		sound(SOUND_OPENDOOR);
@@ -999,7 +999,7 @@ static bool do_cmd_close_aux(int y, int x)
 		cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
 
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+		p_ptr->update |= (PU_VIEW | PU_MONSTERS);
 
 		/* Sound */
 		sound(SOUND_SHUTDOOR);
@@ -1151,7 +1151,7 @@ static bool twall(int y, int x, byte feat)
 	cave_set_feat(y, x, feat);
 
 	/* Update some things */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
 
 	/* Result */
 	return (TRUE);
@@ -1410,7 +1410,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 	if (!cave_floor_grid(c_ptr))
 	{
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
 	}
 
 	/* Result */
@@ -1583,7 +1583,7 @@ bool easy_open_door(int y, int x)
 			cave_set_feat(y, x, FEAT_OPEN);
 
 			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+			p_ptr->update |= (PU_VIEW | PU_MONSTERS);
 
 			/* Sound */
 			sound(SOUND_OPENDOOR);
@@ -1610,7 +1610,7 @@ bool easy_open_door(int y, int x)
 		cave_set_feat(y, x, FEAT_OPEN);
 
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+		p_ptr->update |= (PU_VIEW | PU_MONSTERS);
 
 		/* Sound */
 		sound(SOUND_OPENDOOR);
@@ -2000,7 +2000,7 @@ static bool do_cmd_bash_aux(int y, int x, int dir)
 		move_player(dir, FALSE);
 
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_LITE);
+		p_ptr->update |= (PU_VIEW);
 		p_ptr->update |= (PU_DISTANCE);
 	}
 

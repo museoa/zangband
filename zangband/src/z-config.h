@@ -568,7 +568,11 @@
 /* # define SHOW_LIFE_RATE */
 
 /* Do we want different characters for different races? */
-# define VARIABLE_PLAYER_GRAPH
+/* 
+ * Too slow for general use - note that the 16x16 tiles use a
+ * much faster version.
+ */
+/* # define VARIABLE_PLAYER_GRAPH */
 
 /* For longer martial arts descriptions */
 # define VERBOSE_MARTIAL_ARTS

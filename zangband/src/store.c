@@ -3644,9 +3644,6 @@ void do_cmd_store(void)
 		town[p_ptr->town_num].store[which].type = which;
 	}
 
-	/* Forget the lite */
-	forget_lite();
-
 	/* Forget the view */
 	forget_view();
 
@@ -3844,7 +3841,7 @@ void do_cmd_store(void)
 
 
 	/* Update everything */
-	p_ptr->update |= (PU_VIEW | PU_LITE);
+	p_ptr->update |= (PU_VIEW);
 	p_ptr->update |= (PU_MONSTERS);
 
 	/* Redraw entire screen */

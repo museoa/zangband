@@ -2722,6 +2722,11 @@ static errr init_other(void)
 		C_MAKE(wild[i], max_wild_size, wild_type);
 	}
 
+	/*** Prepare "vinfo" array ***/
+
+	/* Used by "update_view()" */
+	(void)vinfo_init();
+
 
 	/*** Prepare the various "bizarre" arrays ***/
 

@@ -3917,7 +3917,7 @@ static void dungeon(void)
 	window_stuff();
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_DISTANCE);
+	p_ptr->update |= (PU_VIEW | PU_FLOW | PU_DISTANCE);
 
 	/* Update stuff */
 	update_stuff();
@@ -4428,9 +4428,6 @@ void play_game(bool new_game)
 
 		/* Cancel the health bar */
 		health_track(0);
-
-		/* Forget the lite */
-		forget_lite();
 
 		/* Forget the view */
 		forget_view();

@@ -26,9 +26,8 @@
 * Potions (death, detonations etc.) May need to rebalance
 * Wands
 * Rods
-* Staves  Damage from these three probably need to be adjusted.
-*	-Some values have been changed: need more testing. (This isn't very
-*        important until the new spell system is put in as a whole.)
+* Staves  Damage from these three probably need to be adjusted. Done.
+*
 * Spells  - will probably have to wait for new system
 * Ego items.
 *  - Number of attacks for various ego items has been lowered for larger
@@ -47,17 +46,11 @@
 *      (deadliness instead of + to dam.)
 *  - done
 * Weapon Master
-*  - done (but the formulae need to be checked.)
+*  - done
 *
 * Shops - item prices may need to change to reflect their altered value to
-*      the player.
-*  - Not sure this is important. The whole store value system may need to be
-*   rewritten anyway.  At the moment, a -ve value means the item is worthless.
-*   This may not make sense.  A long sword (-1,-1) is still better than a
-*   dagger (+0,+0) IMHO - so should be priced as such.  Maybe an estimate of
-*   the items worth should depend on what it does to the player...
+*      the player.  Done.
 *
-* Anything else?
 */
 
 
@@ -2848,7 +2841,7 @@ void move_player(int dir, int do_pickup)
 		verify_panel();
 
 		/* Update stuff */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+		p_ptr->update |= (PU_VIEW | PU_FLOW);
 
 		/* Update the monsters */
 		p_ptr->update |= (PU_DISTANCE);

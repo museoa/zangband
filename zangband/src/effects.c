@@ -16,7 +16,7 @@
 /*
  * Set "p_ptr->blind", notice observable changes
  *
- * Note the use of "PU_UN_LITE" and "PU_UN_VIEW", which is needed to
+ * Note the use of "PU_UN_VIEW", which is needed to
  * memorize any terrain features which suddenly become "visible".
  * Note that blindness is currently the only thing which can affect
  * "player_can_see_bold()".
@@ -63,7 +63,7 @@ bool set_blind(int v)
 	if (disturb_state) disturb(0, 0);
 
 	/* Fully update the visuals */
-	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE | PU_VIEW | PU_LITE | PU_MONSTERS);
+	p_ptr->update |= (PU_UN_VIEW | PU_VIEW | PU_MONSTERS);
 
 	/* Redraw map */
 	p_ptr->redraw |= (PR_MAP);

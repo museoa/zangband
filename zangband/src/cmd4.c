@@ -43,11 +43,11 @@ void do_cmd_redraw(void)
 	/* Update stuff */
 	p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
 
-	/* Forget lite/view */
-	p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
+	/* Forget view */
+	p_ptr->update |= (PU_UN_VIEW);
 
-	/* Update lite/view */
-	p_ptr->update |= (PU_VIEW | PU_LITE);
+	/* Update view */
+	p_ptr->update |= (PU_VIEW);
 
 	/* Update monsters */
 	p_ptr->update |= (PU_MONSTERS);
@@ -108,11 +108,11 @@ void do_cmd_redraw_term(int window)
 		/* Update stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS);
 
-		/* Forget lite/view */
-		p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
+		/* Forget view */
+		p_ptr->update |= (PU_UN_VIEW);
 
-		/* Update lite/view */
-		p_ptr->update |= (PU_VIEW | PU_LITE);
+		/* Update view */
+		p_ptr->update |= (PU_VIEW);
 
 		/* Update monsters */
 		p_ptr->update |= (PU_MONSTERS);

@@ -2046,9 +2046,7 @@ static void calc_torch(void)
 
 	}
 
-	/* max radius is 5 without rewriting other code -- */
-	/* see cave.c:update_lite() and defines.h:LITE_MAX */
-	if (p_ptr->cur_lite > 5) p_ptr->cur_lite = 5;
+	/* The old radius 5 limit is no more... */
 
 	/*
 	 * Check if the player doesn't have a lite source,
@@ -2068,8 +2066,8 @@ static void calc_torch(void)
 	/* Notice changes in the "lite radius" */
 	if (p_ptr->old_lite != p_ptr->cur_lite)
 	{
-		/* Update the lite */
-		p_ptr->update |= (PU_LITE);
+		/* Update the view */
+		p_ptr->update |= (PU_VIEW);
 
 		/* Update the monsters */
 		p_ptr->update |= (PU_MONSTERS);
@@ -3716,32 +3714,11 @@ void update_stuff(void)
 	/* Character is in "icky" mode, no screen updates */
 	if (character_icky) return;
 
-
-	if (p_ptr->update & (PU_UN_LITE))
-	{
-		p_ptr->update &= ~(PU_UN_LITE);
-		forget_lite();
-	}
-
-	if (p_ptr->update & (PU_UN_VIEW))
-	{
-		p_ptr->update &= ~(PU_UN_VIEW);
-		forget_view();
-	}
-
-
 	if (p_ptr->update & (PU_VIEW))
 	{
 		p_ptr->update &= ~(PU_VIEW);
 		update_view();
 	}
-
-	if (p_ptr->update & (PU_LITE))
-	{
-		p_ptr->update &= ~(PU_LITE);
-		update_lite();
-	}
-
 
 	if (p_ptr->update & (PU_FLOW))
 	{

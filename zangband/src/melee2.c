@@ -2982,7 +2982,7 @@ static void process_monster(int m_idx)
 	if (do_view)
 	{
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
 	}
 
 

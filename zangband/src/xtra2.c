@@ -486,7 +486,7 @@ void monster_death(int m_idx)
 		cave_set_feat(y, x, FEAT_MORE);
 
 		/* Remember to update everything */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MONSTERS);
 	}
 
 #ifdef USE_CORPSES

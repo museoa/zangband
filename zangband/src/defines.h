@@ -2167,10 +2167,8 @@
 /* xxx (many) */
 /* xxx (many) */
 #define PU_UN_VIEW      0x00010000L     /* Forget view */
-#define PU_UN_LITE      0x00020000L     /* Forget lite */
 /* xxx (many) */
 #define PU_VIEW         0x00100000L     /* Update view */
-#define PU_LITE         0x00200000L     /* Update lite */
 /* xxx */
 #define PU_MONSTERS     0x01000000L     /* Update monsters */
 #define PU_DISTANCE     0x02000000L     /* Update distances */

@@ -394,7 +394,7 @@ void teleport_player(int dis)
 	verify_panel();
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_FLOW);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_DISTANCE);
@@ -478,7 +478,7 @@ void teleport_player_to(int ny, int nx)
 	verify_panel();
 
 	/* Update stuff */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+	p_ptr->update |= (PU_VIEW | PU_FLOW);
 
 	/* Update the monsters */
 	p_ptr->update |= (PU_DISTANCE);
