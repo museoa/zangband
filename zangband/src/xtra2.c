@@ -2987,10 +2987,10 @@ bool get_aim_dir(int *dp)
 	cptr	p;
 	
 	/* Initialize */
-	*dp = 0
+	*dp = 0;
 	
 	/* Global direction */
-	dir = p_ptr->command_dir
+	dir = command_dir;
 	
 	/* Hack -- auto-target if requested */
 	if (use_old_target && target_okay()) dir = 5;
@@ -3089,7 +3089,7 @@ bool get_aim_dir(int *dp)
 
 #ifdef ALLOW_REPEAT /* TNB */
 
-	repeat_push(p_ptr->command_dir);
+	repeat_push(command_dir);
 
 #endif /* ALLOW_REPEAT -- TNB */
 
