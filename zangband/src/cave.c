@@ -3651,6 +3651,26 @@ void update_mon_lite(void)
 	temp_n = 0;
 }
 
+void clear_mon_lite(void)
+{
+	int i;
+	cave_type *c_ptr;
+		
+	/* Clear all monster lit squares */
+	for (i = 0; i < lite_n; i++)
+	{
+		/* Point to grid */
+		c_ptr = area(lite_y[i], lite_x[i]);
+		
+		/* Clear monster illumination flag */
+		c_ptr->info &= ~(CAVE_MNLT);	
+	}
+	
+	/* Empty the array */
+	lite_n = 0;
+}
+
+
 
 
 /*

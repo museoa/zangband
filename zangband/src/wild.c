@@ -186,6 +186,9 @@ void change_level(int level)
 	/* Hack - reset trap detection flag */
 	p_ptr->detected = FALSE;
 	
+	/* Clear the monster lights */
+	clear_mon_lite();
+	
 	if (!level)
 	{
 		/* In the wilderness */
@@ -216,7 +219,7 @@ void change_level(int level)
 /*
  * Builds a store at a given pseudo-location
  *
- * As of Z 2.3.6 the town is moved back to (0,0) - and is overlayed
+ * As of Z 2.5.0 the town is moved back to (0,0) - and is overlayed
  * on top of the wilderness.
  *
  * As of 2.8.1 (?) the town is actually centered in the middle of a

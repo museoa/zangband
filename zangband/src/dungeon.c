@@ -4305,7 +4305,6 @@ void play_game(bool new_game)
 	/* Window stuff */
 	window_stuff();
 
-
 	/* Generate a dungeon level if needed */
 	if (!character_dungeon) generate_cave();
 

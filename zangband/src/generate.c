@@ -1131,9 +1131,6 @@ void generate_cave(void)
 {
 	int y, x, num;
 
-	/* Forget old monster - lit squares */
-	lite_n = 0;
-
 	/* Build the wilderness */
 	if (!dun_level)
 	{
