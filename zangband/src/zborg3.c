@@ -2055,6 +2055,13 @@ bool borg_activate_aux2(int act_index, bool real_use)
 					borg_activate_aux(BORG_ACT_HEAL_SERIOUS2, real_use));
 		}
 
+		/* Phase door has several entries */
+		case BORG_ACT_PHASE_DOOR:
+		{
+			return (borg_activate_aux(BORG_ACT_PHASE_DOOR, real_use) ||
+					borg_activate_aux(BORG_ACT_PHASE_DOOR2, real_use));
+		}
+
 		/* Teleport has several entries */
 		case BORG_ACT_TELEPORT:
 		{
