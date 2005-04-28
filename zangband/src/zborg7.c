@@ -3235,7 +3235,6 @@ bool borg_leave_level(bool bored)
 	{
 		/* Take next stairs */
 		stair_more = TRUE;
-		borg_note("via deze?");
 
 		/* Attempt to use those stairs */
 		if (borg_flow_stair_more(GOAL_BORE)) return (TRUE);
