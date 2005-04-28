@@ -909,6 +909,14 @@ bool borg_twitchy(void)
 }
 
 
+/* short hand options for borg_flow_spread */
+#define BORG_FLOW_SIMPLE		0x00000000L
+#define BORG_FLOW_OPTIMIZE		0x00000001L
+#define BORG_FLOW_AVOID 		0x00000002L
+#define BORG_FLOW_OPTI_AVOID    0x00000003L
+#define BORG_FLOW_TUNNELING		0x00000004L
+#define BORG_FLOW_FEAT_HURT		0x00000008L
+
 /*
  * Spread a "flow" from the "destination" grids outwards
  *
@@ -969,8 +977,9 @@ bool borg_twitchy(void)
  * If a "depth" is given, then the flow will only be spread to that
  * depth, note that the maximum legal value of "depth" is 250.
  */
-static void borg_flow_spread(int depth, bool optimize, bool avoid,
-                             bool tunneling, bool feat_hurt)
+static void borg_flow_spread(int depth, u32b flow_how)
+/*							 bool optimize, bool avoid,
+                             bool tunneling, bool feat_hurt)*/
 {
 	int i;
 	int n, o = 0;
@@ -980,6 +989,11 @@ static void borg_flow_spread(int depth, bool optimize, bool avoid,
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
 	int player_cost = mb_ptr->cost;
+
+	bool optimize	= (flow_how & BORG_FLOW_OPTIMIZE) ? TRUE : FALSE;
+	bool avoid		= (flow_how & BORG_FLOW_AVOID) ? TRUE : FALSE;
+	bool tunneling  = (flow_how & BORG_FLOW_TUNNELING) ? TRUE : FALSE;
+	bool feat_hurt  = (flow_how & BORG_FLOW_FEAT_HURT) ? TRUE : FALSE;
 
 	/* Now process the queue */
 	while (flow_head != flow_tail)
@@ -1199,7 +1213,7 @@ static void borg_flow_reverse(void)
 	borg_flow_enqueue_grid(c_x, c_y);
 
 	/* Spread, but do NOT optimize */
-	borg_flow_spread(250, FALSE, FALSE, FALSE, FALSE);
+	borg_flow_spread(250, BORG_FLOW_SIMPLE);
 }
 
 /*
@@ -1379,7 +1393,7 @@ static bool borg_flow_block(int x, int y, cptr reason, int why)
 	borg_flow_enqueue_grid(x, y);
 
 	/* Spread the flow */
-	borg_flow_spread(250, TRUE, TRUE, FALSE, FALSE);
+	borg_flow_spread(250, BORG_FLOW_OPTI_AVOID);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit(reason, why)) return (FALSE);
@@ -1450,7 +1464,7 @@ bool borg_flow_shop_entry(int i)
 	borg_flow_enqueue_grid(x, y);
 
 	/* Spread the flow */
-	borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
+	borg_flow_spread(250, BORG_FLOW_OPTIMIZE);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("shop", GOAL_SHOP)) return (FALSE);
@@ -1631,22 +1645,29 @@ bool borg_find_dungeon(void)
 	int p;
 
 	/* Do this only on the surface */
-	if (bp_ptr->depth || vanilla_town) return (FALSE);
-
-	/* No trekking through the wilderness in the dark */
-	if (bp_ptr->hour < 6 || bp_ptr->hour > 17) return (FALSE);
-
-	/* Not when the borg is exploring the wilderness */
-	if (goal && goal != GOAL_CAVE) return (FALSE);
+	if (bp_ptr->depth) return (FALSE);
 
 	/* Find the target depth */
 	p = borg_prepared_depth();
 
-	/* Not when the borg knows only a few towns */
-	if (p > 20 &&
-		(bp_ptr->lev > 20 && borg_town_num < 5) ||
-		(bp_ptr->lev > 30 && borg_town_num < 13) ||
-		(bp_ptr->lev > 40 && borg_town_num < 19)) return (FALSE);
+	/* A bit of trickery for the vanilla_town */
+	if (vanilla_town)
+	{
+		/* Tell the borg to enter the only existing dungeon */
+		goal = GOAL_CAVE;
+		goal_dungeon = 0;
+	}
+	else
+	{
+		/* Not when the borg knows only a few towns */
+		if (p > 20 &&
+			(bp_ptr->lev > 20 && borg_town_num < 5) ||
+			(bp_ptr->lev > 30 && borg_town_num < 13) ||
+			(bp_ptr->lev > 40 && borg_town_num < 19)) return (FALSE);
+	}
+
+	/* Not when the borg is exploring the wilderness */
+	if (goal && goal != GOAL_CAVE) return (FALSE);
 
 	/* Remember previous effort */
 	if (goal == GOAL_CAVE)
@@ -1696,17 +1717,14 @@ bool borg_find_dungeon(void)
 		{
 			/* Note */
 			borg_note("# Recalling into dungeon.");
-
-			/* Give it a shot */
-			return (TRUE);
+		}
+		else
+		{
+			/* Take those stairs */
+			borg_keypress('>');
 		}
 
-		goal_fleeing = TRUE;
-		goal_leaving = TRUE;
-		stair_more = TRUE;
-
-		/* Attempt to use those stairs */
-		if (borg_flow_stair_more(GOAL_BORE)) return (TRUE);
+		return (TRUE);
 	}
 
 	/* Go closer to that dungeon */
@@ -1765,7 +1783,7 @@ bool borg_flow_stair_both(int why)
 	}
 
 	/* Spread the flow */
-	borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
+	borg_flow_spread(250, BORG_FLOW_OPTIMIZE);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("stairs", why)) return (FALSE);
@@ -1804,12 +1822,13 @@ bool borg_flow_stair_less(int why)
 	if ((bp_ptr->lev > 35) || !bp_ptr->cur_lite)
 	{
 		/* Spread the flow */
-		borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
+		borg_flow_spread(250, BORG_FLOW_OPTIMIZE);
 	}
 	else
 	{
 		/* Spread the flow, No Optimize, Avoid */
-		borg_flow_spread(250, FALSE, (bool) !borg_desperate, FALSE, FALSE);
+		borg_flow_spread(250, (borg_desperate) ? BORG_FLOW_SIMPLE
+                                               : BORG_FLOW_AVOID);
 	}
 
 	/* Attempt to Commit the flow */
@@ -1860,7 +1879,7 @@ bool borg_flow_stair_more(int why)
 	}
 
 	/* Spread the flow */
-	borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
+	borg_flow_spread(250, BORG_FLOW_OPTIMIZE);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("down-stairs", why)) return (FALSE);
@@ -1893,7 +1912,7 @@ bool borg_flow_glyph(int why)
 	}
 
 	/* Spread the flow */
-	borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
+	borg_flow_spread(250, BORG_FLOW_OPTIMIZE);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("glyph of warding", why)) return (FALSE);
@@ -1950,7 +1969,7 @@ bool borg_flow_light(int why)
 	}
 
 	/* Spread the flow */
-	borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
+	borg_flow_spread(250, BORG_FLOW_OPTIMIZE);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("a lighted area", why)) return (FALSE);
@@ -2115,7 +2134,8 @@ bool borg_flow_kill_aim(bool viewable)
 				borg_flow_enqueue_grid(o_x, o_y);
 
 				/* Spread the flow */
-				borg_flow_spread(5, TRUE, (bool) !viewable, FALSE, FALSE);
+				borg_flow_spread(5, (viewable) ? BORG_FLOW_OPTIMIZE
+											   : BORG_FLOW_OPTI_AVOID);
 
 				/* Attempt to Commit the flow */
 				if (!borg_flow_commit("targetable position", GOAL_KILL))
@@ -2276,7 +2296,7 @@ bool borg_flow_kill_corridor(bool viewable)
 		borg_flow_enqueue_grid(m_x, m_y);
 
 		/* Spread the flow */
-		borg_flow_spread(15, TRUE, FALSE, TRUE, FALSE);
+		borg_flow_spread(15, BORG_FLOW_OPTIMIZE | BORG_FLOW_TUNNELING);
 
 		/* Attempt to Commit the flow */
 		if (!borg_flow_commit("anti-summon corridor", GOAL_KILL))
@@ -2407,7 +2427,7 @@ bool borg_flow_non_hurt(void)
 	borg_flow_enqueue_grid(c_x, c_y);
 
 	/* Spread, but do NOT optimize and allow painful feats */
-	borg_flow_spread(10, FALSE, FALSE, FALSE, TRUE);
+	borg_flow_spread(10, BORG_FLOW_FEAT_HURT);
 
 	/* Scan the entire map */
 	MAP_ITT_START (mb_ptr)
@@ -2445,7 +2465,7 @@ bool borg_flow_non_hurt(void)
 	borg_flow_enqueue_grid(x, y);
 
 	/* Spread the flow */
-	borg_flow_spread(30, TRUE, TRUE, FALSE, TRUE);
+	borg_flow_spread(30, BORG_FLOW_OPTI_AVOID | BORG_FLOW_FEAT_HURT);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("to a safe feat", GOAL_FEAT)) return (FALSE);
@@ -2682,7 +2702,8 @@ bool borg_flow_kill(bool viewable, int nearness)
 	/* if we are not flowing toward monsters that we can see, make sure they */
 	/* are at least easily reachable.  The second flag is whether or not */
 	/* to avoid unknown squares.  This was for performance when we have ESP. */
-	borg_flow_spread(nearness, TRUE, (bool) !viewable, FALSE, FALSE);
+	borg_flow_spread(nearness, (viewable) ? BORG_FLOW_OPTIMIZE
+										  : BORG_FLOW_OPTI_AVOID);
 
 
 	/* Attempt to Commit the flow */
@@ -2814,7 +2835,8 @@ bool borg_flow_take(bool viewable, int nearness)
 	/* if we are not flowing toward items that we can see, make sure they */
 	/* are at least easily reachable.  The second flag is weather or not  */
 	/* to avoid unkown squares.  This was for performance. */
-	borg_flow_spread(nearness, TRUE, (bool) !viewable, FALSE, FALSE);
+	borg_flow_spread(nearness, (viewable) ? BORG_FLOW_OPTIMIZE
+										  : BORG_FLOW_OPTI_AVOID);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("item", GOAL_TAKE)) return (FALSE);
@@ -3408,7 +3430,7 @@ static bool borg_flow_dark_2(void)
 	}
 
 	/* Spread the flow */
-	borg_flow_spread(5, TRUE, FALSE, FALSE, FALSE);
+	borg_flow_spread(5, BORG_FLOW_OPTIMIZE);
 
 
 	/* Attempt to Commit the flow */
@@ -3496,7 +3518,7 @@ static bool borg_flow_dark_3(int b_stair)
 	}
 
 	/* Spread the flow (limit depth) */
-	borg_flow_spread(5, TRUE, TRUE, FALSE, FALSE);
+	borg_flow_spread(5, BORG_FLOW_OPTI_AVOID);
 
 
 	/* Attempt to Commit the flow */
@@ -3594,7 +3616,7 @@ static bool borg_flow_dark_4(int b_stair)
 	borg_flow_border(x1, y1, x2, y2, TRUE);
 
 	/* Spread the flow (limit depth) */
-	borg_flow_spread(32, TRUE, TRUE, FALSE, FALSE);
+	borg_flow_spread(32, BORG_FLOW_OPTI_AVOID);
 
 	/* Clear the edges */
 	borg_flow_border(x1, y1, x2, y2, FALSE);
@@ -3666,7 +3688,7 @@ static bool borg_flow_dark_5(int b_stair)
 	}
 
 	/* Spread the flow */
-	borg_flow_spread(250, TRUE, TRUE, FALSE, FALSE);
+	borg_flow_spread(250, BORG_FLOW_OPTI_AVOID);
 
 
 	/* Attempt to Commit the flow */
@@ -4272,7 +4294,7 @@ bool borg_flow_spastic(bool bored)
 	borg_flow_enqueue_grid(b_x, b_y);
 
 	/* Spread the flow */
-	borg_flow_spread(250, TRUE, FALSE, FALSE, FALSE);
+	borg_flow_spread(250, BORG_FLOW_OPTIMIZE);
 
 	/* Attempt to Commit the flow */
 	if (!borg_flow_commit("spastic", GOAL_XTRA)) return (FALSE);
