@@ -2240,7 +2240,7 @@ bool borg_think_dungeon(void)
 	borg_times_twitch++;
 
 	/* Phase to get out of being twitchy up to 3 times per level. */
-	if (borg_times_twitch < 3)
+	if (bp_ptr->depth && borg_times_twitch < 3)
 	{
 		borg_note("# Considering Phase (twitchy)");
 
@@ -2322,7 +2322,7 @@ bool borg_think_dungeon(void)
 
 
 	/* Teleport to get out of being twitchy up to 5 times per level. */
-	if (borg_times_twitch < 5)
+	if (bp_ptr->depth && borg_times_twitch < 5)
 	{
 		borg_note("# Teleport (twitchy)");
 
