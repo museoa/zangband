@@ -1481,9 +1481,6 @@ static int borg_guess_race_name(cptr who)
 		who = partial;
 	}
 
-	/* Skip the prefix */
-	who += 4;								   
-
 	/* Start the search */
 	m = 0;
 	n = borg_unique_size;
@@ -1514,16 +1511,8 @@ static int borg_guess_race_name(cptr who)
 		return (borg_unique_what[m]);
 	}
 
-	/* Assume player ghost */
-	if (!prefix(who, "The "))
-	{
-		/* What sort of monster is this? */
-		borg_note("# Assuming unknown (%s)", who);
-
-		/* Oops */
-		return (0);
-	}
-
+	/* Skip the prefix */
+	who += 4;								   
 
 	/* Start the search */
 	m = 0;
