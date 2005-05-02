@@ -3074,6 +3074,28 @@ errr file_character(cptr name, bool full)
 }
 
 
+#define RESIZE_SHOW_FILE	-2
+static cptr resize_name = NULL;
+static cptr resize_what = NULL;
+static int resize_line  = 0;
+static int resize_hgt   = 0;
+
+
+/*
+ * Resizing can happen while show_file is waiting for input.  The resize can
+ * be done by show_file, except that then there should be no input
+ */
+void resize_show_file(void)
+{
+	int dummy;
+
+	(void)show_file(resize_name, resize_what, resize_line, RESIZE_SHOW_FILE);
+
+	/* Get size */
+	Term_get_size(&dummy, &resize_hgt);
+}
+
+
 /*
  * Recursive file perusal.
  *
@@ -3141,6 +3163,8 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 	/* Sub-menu information */
 	char hook[62][32];
+
+	void (*old_hook) (void);
 
 
 	/* Get size */
@@ -3230,6 +3254,18 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		return (TRUE);
 	}
 	
+	/* Remember what the resize hook was */
+	old_hook = angband_term[0]->resize_hook;
+
+	/* Hack - change the redraw hook so bigscreen works */
+	angband_term[0]->resize_hook = resize_show_file;
+
+	/* Remember essentials for resizing */
+	resize_name = name;
+	resize_what = what;
+	resize_line = line;
+	resize_hgt  = hgt;
+
 	/* Pre-Parse the file */
 	while (TRUE)
 	{
@@ -3282,7 +3318,7 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		next++;
 	}
 	
-	screen_save();
+	if (mode != RESIZE_SHOW_FILE) screen_save();
 
 	/* Save the number of "real" lines */
 	size = next;
@@ -3433,8 +3469,20 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			}
 		}
 
-		/* Get a keypress */
-		k = inkey();
+		/* Leave in case of resize */
+		if (mode == RESIZE_SHOW_FILE)
+		{
+			/* Hack: the file  will be closed by the other instance of show_file */
+			return (TRUE);
+		}
+		else
+		{
+			/* Get a keypress */
+			k = inkey();
+		}
+
+		/* Correct hgt after a resize */
+		if (hgt != resize_hgt) hgt = resize_hgt;
 
 		/* Hack -- return to last screen */
 		if (k == '<') break;
@@ -3620,6 +3668,15 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 	/* Close the file */
 	my_fclose(fff);
+
+	/* Hack - change the redraw hook so bigscreen works */
+	angband_term[0]->resize_hook = old_hook;
+
+	/* The size may have changed during the menu display */
+	angband_term[0]->resize_hook();
+
+	/* Hack - Flush it */
+	Term_fresh();
 
 	/* Escape */
 	if (k == ESCAPE) return (FALSE);
