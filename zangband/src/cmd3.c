@@ -1132,6 +1132,15 @@ void ang_sort_swap_hook(const vptr u, const vptr v, int a, int b)
 }
 
 
+static int resize_monster;
+void (*resize_old_hook) (void);
+
+void resize_monster_recall(void)
+{
+	/* Put the monster description on the newly-sized screen.*/
+	screen_roff_mon(resize_monster, 0);
+}
+
 /*
  * Identify a character, allow recall of monsters
  *
@@ -1364,8 +1373,26 @@ void do_cmd_query_symbol(void)
 				roff(" [(r)ecall, ESC]");
 			}
 
+			/* Remember what the resize hook was */
+			resize_old_hook = angband_term[0]->resize_hook;
+
+			/* Hack - change the redraw hook so bigscreen works */
+			angband_term[0]->resize_hook = resize_monster_recall;
+
+			/* Remember the monster for resizing */
+			resize_monster = who[i];
+
 			/* Command */
 			query = inkey();
+
+			/* Hack - change the redraw hook so bigscreen works */
+			angband_term[0]->resize_hook = resize_old_hook;
+
+			/* The size may have changed during the monster recall */
+			angband_term[0]->resize_hook();
+
+			/* Hack - Flush it */
+			Term_fresh();
 
 			/* Unrecall */
 			if (recall)
