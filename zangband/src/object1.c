@@ -209,10 +209,13 @@ static void roff_obj_aux(const object_type *o_ptr)
 	/* Extract the bonuses */
 	object_bonuses_known(o_ptr, &b);
 
+	/* Make sure the examination starts top left */
+	Term_gotoxy(0, 0);
+
 	/* Show the item in a message including its pack letter */
 	item_describe_roff((object_type *)o_ptr);
 
-	/* Start a bit lower */
+	/* Start the description a bit lower */
 	roff("\n\n");
 
 	/* If you don't know anything about the item */
@@ -846,8 +849,19 @@ static void roff_obj_aux(const object_type *o_ptr)
 	roff("\n");
 }
 
+static const object_type *resize_o_ptr;
+
+static void resize_ident_fully(void)
+{
+	/* Recall object */
+	roff_obj_aux(resize_o_ptr);
+}
+
+
 void identify_fully_aux(const object_type *o_ptr)
 {
+	void (*old_hook) (void);
+
 	/* Books, a hack */
 	if ((o_ptr->tval >= TV_BOOKS_MIN) && (o_ptr->tval <= TV_BOOKS_MAX))
 	{
@@ -861,9 +875,27 @@ void identify_fully_aux(const object_type *o_ptr)
 	/* Recall object */
 	roff_obj_aux(o_ptr);
 
+	/* Remember what the resize hook was */
+	old_hook = angband_term[0]->resize_hook;
+
+	/* Hack - change the redraw hook so bigscreen works */
+	angband_term[0]->resize_hook = resize_ident_fully;
+
+	/* Remember essentials for resizing */
+	resize_o_ptr = o_ptr;
+
 	/* Wait for the player to read the info */
 	(void)inkey();
 	
+	/* Hack - change the redraw hook so bigscreen works */
+	angband_term[0]->resize_hook = old_hook;
+
+	/* The size may have changed during the object description */
+	angband_term[0]->resize_hook();
+
+	/* Hack - Flush it */
+	Term_fresh();
+
 	/* Restore the screen */
 	screen_load();
 }
