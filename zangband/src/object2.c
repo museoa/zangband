@@ -4654,6 +4654,10 @@ static cptr item_describe_aux(object_type *o_ptr, bool back_step)
 			/* No more items? */
 			return (format("There are %s.", o_name));
 		}
+		else if (list == &c_ptr->o_idx)
+		{
+			return (format("On the ground: %s.", o_name));
+		}
 	}
 	else
 	{
@@ -4691,6 +4695,9 @@ static cptr item_describe_aux(object_type *o_ptr, bool back_step)
 			return (format("%s%s", lab, o_name));
 		}
 	}
+
+	/* Missed it all */
+	return (NULL);
 }
 
 
