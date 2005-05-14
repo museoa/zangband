@@ -1135,7 +1135,7 @@ void ang_sort_swap_hook(const vptr u, const vptr v, int a, int b)
 static int resize_monster;
 void (*resize_old_hook) (void);
 
-void resize_monster_recall(void)
+static void resize_monster_recall(void)
 {
 	/* Put the monster description on the newly-sized screen.*/
 	screen_roff_mon(resize_monster, 0);

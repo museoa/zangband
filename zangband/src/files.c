@@ -3085,7 +3085,7 @@ static int resize_hgt   = 0;
  * Resizing can happen while show_file is waiting for input.  The resize can
  * be done by show_file, except that then there should be no input
  */
-void resize_show_file(void)
+static void resize_show_file(void)
 {
 	int dummy;
 
