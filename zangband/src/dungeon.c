@@ -3257,6 +3257,9 @@ void play_game(bool new_game)
 	/* Roll new character */
 	if (new_game)
 	{
+		/* Initialize the panel bounds to prevent a crash (rr9) */
+		verify_panel();
+
 		/* Wipe everything */
 		wipe_all_list();
 
