@@ -2455,11 +2455,8 @@ void prt_map(void)
 		/* Scan the columns of row "y" */
 		for (x = xmin; x <= xmax; x++)
 		{
-			if (in_bounds(x, y))
-			{
-				/* Get map info */
-				map_info(x, y, pa++, pc++, pta++, ptc++);
-			}
+			/* Get map info */
+			map_info(x, y, pa++, pc++, pta++, ptc++);
 		}
 
 
