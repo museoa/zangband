@@ -779,7 +779,7 @@ static cptr suffix_spell[] =
 	" magically summons hounds.",	/*84 RF5_S_HOUND */
 	" magically summons hydras.",	/*85 RF5_S_HYDRA */
 	" magically summons an angel!",	/*86 RF5_S_ANGEL */
-	" magically summons a hellish adversary!",	/*87 RF5_S_DEMON */
+	" magically summons a demon from the Courts of Chaos!",	/*87 RF5_S_DEMON */
 	" magically summons an undead adversary!",	/*88 RF5_S_UNDEAD */
 	" magically summons a dragon!",	/*89 RF5_S_DRAGON */
 	" magically summons greater undead!",	/*90 RF5_S_HI_UNDEAD */
