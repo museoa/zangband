@@ -318,6 +318,15 @@
 # define SAVEFILE_USE_UID
 #endif /* SET_UID */
 
+/*
+ * Hack -- Mach-O (native binary format of OS X) is basically a Un*x
+ * but has Mac OS/Windows-like user interface
+ */
+#ifdef MACH_O_CARBON
+# ifdef SAVEFILE_USE_UID
+#  undef SAVEFILE_USE_UID
+# endif /* SAVEFILE_USE_UID */
+#endif /* MACH_O_CARBON */
 
 /* Include maid-grf.c stuff */
 #ifdef ALLOW_BORG
