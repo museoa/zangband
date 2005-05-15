@@ -557,7 +557,6 @@ osx: APPBIN := $(APPCONT)/MacOS
 osx: APPRES := $(APPCONT)/Resources
 
 osx: ICONFILES := ZAngband.icns Save.icns Edit.icns Data.icns
-osx: TILES := 8x8.png 16x16.png 32x32.png
 osx: PLIST := ZAngband.xml
 osx: RESSRCS := ZAngband.r
 osx: SOUNDSRCS := Sound.r
@@ -600,6 +599,14 @@ osx: osx-objs
 	install -m 644 $(PLIST) $(APPCONT)/Info.plist
 	$(SETFILE) -a B $(APPBNDL)
 
+osx-install-tiles: TILES   := 8x8.png 16x16.png 32x32.png
+osx-install-tiles: APPNAME := ZAngband.app
+osx-install-tiles: APPBNDL := ../$(APPNAME)
+osx-install-tiles: APPCONT := $(APPBNDL)/Contents
+osx-install-tiles: APPRES  := $(APPCONT)/Resources
+
+osx-install-tiles: osx $(TILES)
+	install -m 644 $(TILES) $(APPRES)
 
 ##########################################################
 
