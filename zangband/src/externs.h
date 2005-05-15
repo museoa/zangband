@@ -897,6 +897,10 @@ extern bool repeat_pull(int *what);
 extern void repeat_clear(void);
 extern void repeat_check(void);
 
+#ifdef PRIVATE_USER_PATH
+extern void create_user_dirs(void);
+#endif /* PRIVATE_USER_PATH */
+
 /* xtra1.c */
 extern s16b modify_stat_value(int value, int amount);
 extern void stat_format(char *buf, uint max, cptr fmt, va_list *vp);
@@ -1227,3 +1231,16 @@ extern int usleep(huge usecs);
 # endif	/* HAS_USLEEP */
 extern void user_name(char *buf, int id);
 #endif /* SET_UID */
+
+#if defined(MAC_MPW) || defined(MACH_O_CARBON)
+/* main-mac.c, or its derivatives */
+extern u32b _fcreator;
+extern u32b _ftype;
+# if defined(MAC_MPW) && defined(CARBON)
+extern void convert_pathname(char *path);
+# endif
+# if defined(MACH_O_CARBON)
+extern void fsetfileinfo(cptr path, u32b fcreator, u32b ftype);
+# endif
+#endif
+

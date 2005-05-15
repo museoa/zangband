@@ -40,7 +40,7 @@
 PORTS := default_port linux linux-svga linux-no-gtk openbsd freebsd main-cap \
 		 vt100 solaris sgi dec isc next aix dos ibm borland gcu
 
-OTHER_PORTS := amiga cygwin emx lcc linux-tk freebsd-tk mingw
+OTHER_PORTS := amiga cygwin emx lcc linux-tk freebsd-tk mingw osx
 
 ##
 ## This is the default port to compile.
@@ -532,6 +532,73 @@ borland: LIBS := cw32.lib import32.lib
 borland: INSTALL := copy zangband.exe ..
 borland: EXEC := .exe
 
+##
+## Variation -- Compile using gcc on Mac OS X
+##
+osx: TOOLDIR := /Developer/Tools
+osx: REZ := $(TOOLDIR)/Rez
+osx: # DEREZ := $(TOOLDIR)/DeRez
+osx: SETFILE := $(TOOLDIR)/SetFile
+
+osx: CFLAGS := -Wall -O2 -fpascal-strings -DMACH_O_CARBON \
+               -DPRIVATE_USER_PATH=\"~/Library/Preferences\" -DUSE_PRIVATE_PATHS
+osx: LIBS := -framework CoreFoundation -framework QuickTime -framework Carbon
+
+# Application bundle -- a directory looking like an ordinary application
+
+# Name of the game
+osx: APPNAME := ZAngband.app
+# Bundle of the game (it must be a directory whose name ends in ".app")
+osx: APPBNDL := ../$(APPNAME)
+
+# A bundle must have these subdirectories
+osx: APPCONT := $(APPBNDL)/Contents
+osx: APPBIN := $(APPCONT)/MacOS
+osx: APPRES := $(APPCONT)/Resources
+
+osx: ICONFILES := ZAngband.icns Save.icns Edit.icns Data.icns
+osx: TILES := 8x8.png 16x16.png 32x32.png
+osx: PLIST := ZAngband.xml
+osx: RESSRCS := ZAngband.r
+osx: SOUNDSRCS := Sound.r
+osx: RFLAGS := -i /Developer/Headers/FlatCarbon -d MACH_O_CARBON
+
+osx: LIBFILES := \
+  ../lib/edit/*.txt \
+  ../lib/file/*.txt \
+  ../lib/help/*.txt \
+  ../lib/help/*.hlp \
+  ../lib/pref/*.prf \
+  ../lib/script/*.lua
+
+osx-objs: $(OBJS) main-crb.o $(RESSRCS) $(ICONFILES) $(PLIST) $(LIBFILES)
+	$(MAKE-ZANGBAND)
+osx: osx-objs
+	[ -d $(APPBNDL) ] || mkdir $(APPBNDL)
+	[ -d $(APPCONT) ] || mkdir $(APPCONT)
+	[ -d $(APPBIN) ] || mkdir $(APPBIN)
+	[ -d $(APPRES) ] || mkdir $(APPRES)
+
+	[ -d $(APPRES)/lib ] || mkdir $(APPRES)/lib
+	[ -d $(APPRES)/lib/edit ] || mkdir $(APPRES)/lib/edit
+	[ -d $(APPRES)/lib/file ] || mkdir $(APPRES)/lib/file
+	[ -d $(APPRES)/lib/help ] || mkdir $(APPRES)/lib/help
+	[ -d $(APPRES)/lib/pref ] || mkdir $(APPRES)/lib/pref
+	[ -d $(APPRES)/lib/script ] || mkdir $(APPRES)/lib/script
+
+	cp ../lib/edit/*.txt $(APPRES)/lib/edit
+	cp ../lib/file/*.txt $(APPRES)/lib/file
+	cp ../lib/help/*.txt $(APPRES)/lib/help
+	cp ../lib/help/*.hlp $(APPRES)/lib/help
+	cp ../lib/pref/*.prf $(APPRES)/lib/pref
+	cp ../lib/script/*.lua $(APPRES)/lib/script
+
+	install -m 755 $^ $(APPBIN)/zangband
+	install -m 644 $(ICONFILES) $(APPRES)
+	
+	$(REZ) $(RFLAGS) -o $(APPRES)/zangband.rsrc $(RESSRCS)
+	install -m 644 $(PLIST) $(APPCONT)/Info.plist
+	$(SETFILE) -a B $(APPBNDL)
 
 
 ##########################################################

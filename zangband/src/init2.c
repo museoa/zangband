@@ -153,18 +153,6 @@ void init_file_paths(char *path)
 	/*** Build the sub-directory names ***/
 
 	/* Build a path name */
-	strcpy(tail, "apex");
-	ANGBAND_DIR_APEX = string_make(path);
-
-	/* Build a path name */
-	strcpy(tail, "bone");
-	ANGBAND_DIR_BONE = string_make(path);
-
-	/* Build a path name */
-	strcpy(tail, "data");
-	ANGBAND_DIR_DATA = string_make(path);
-
-	/* Build a path name */
 	strcpy(tail, "edit");
 	ANGBAND_DIR_EDIT = string_make(path);
 
@@ -185,10 +173,6 @@ void init_file_paths(char *path)
 	ANGBAND_DIR_INFO = string_make(path);
 
 	/* Build a path name */
-	strcpy(tail, "save");
-	ANGBAND_DIR_SAVE = string_make(path);
-
-	/* Build a path name */
 	strcpy(tail, "pref");
 	ANGBAND_DIR_PREF = string_make(path);
 
@@ -207,6 +191,44 @@ void init_file_paths(char *path)
 	ANGBAND_DIR_USER = string_make(path);
 
 #endif /* PRIVATE_USER_PATH */
+
+#ifdef USE_PRIVATE_PATHS
+
+	/* Build a path name */
+	path_make(buf, ANGBAND_DIR_USER, "scores");
+	ANGBAND_DIR_APEX = string_make(buf);
+
+	/* Build a path name */
+	path_make(buf, ANGBAND_DIR_USER, "bone");
+	ANGBAND_DIR_BONE = string_make(buf);
+
+	/* Build a path name */
+	path_make(buf, ANGBAND_DIR_USER, "data");
+	ANGBAND_DIR_DATA = string_make(buf);
+
+	/* Build a path name */
+	path_make(buf, ANGBAND_DIR_USER, "save");
+	ANGBAND_DIR_SAVE = string_make(buf);
+
+#else /* USE_PRIVATE_PATHS */
+
+	/* Build a path name */
+	strcpy(tail, "apex");
+	ANGBAND_DIR_APEX = string_make(path);
+
+	/* Build a path name */
+	strcpy(tail, "bone");
+	ANGBAND_DIR_BONE = string_make(path);
+
+	/* Build a path name */
+	strcpy(tail, "data");
+	ANGBAND_DIR_DATA = string_make(path);
+
+	/* Build a path name */
+	strcpy(tail, "save");
+	ANGBAND_DIR_SAVE = string_make(path);
+
+#endif /* USE_PRIVATE_PATHS */
 
 	/* Build a path name */
 	strcpy(tail, "xtra");

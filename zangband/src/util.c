@@ -16,7 +16,7 @@
  * ToDo: Add error handling.
  * ToDo: Only create the directories when actually writing files.
  */
-static void create_user_dir(void)
+void create_user_dirs(void)
 {
 	char dirpath[1024];
 	char subdirpath[1024];
@@ -33,6 +33,35 @@ static void create_user_dir(void)
 
 	/* Create the directory */
 	mkdir(subdirpath, 0700);
+
+#ifdef USE_PRIVATE_PATHS
+
+	/* Build the path to the scores sub-directory */
+	path_build(dirpath, sizeof(dirpath), subdirpath, "scores");
+
+	/* Create the directory */
+	mkdir(dirpath, 0700);
+
+	/* Build the path to the savefile sub-directory */
+	path_build(dirpath, sizeof(dirpath), subdirpath, "bone");
+
+	/* Create the directory */
+	mkdir(dirpath, 0700);
+
+	/* Build the path to the savefile sub-directory */
+	path_build(dirpath, sizeof(dirpath), subdirpath, "data");
+
+	/* Create the directory */
+	mkdir(dirpath, 0700);
+
+	/* Build the path to the savefile sub-directory */
+	path_build(dirpath, sizeof(dirpath), subdirpath, "save");
+
+	/* Create the directory */
+	mkdir(dirpath, 0700);
+
+#endif /* USE_PRIVATE_PATHS */
+
 }
 
 #endif /* PRIVATE_USER_PATH */
@@ -174,7 +203,7 @@ void init_setuid(void)
 #ifdef PRIVATE_USER_PATH
 
 	/* Create a directory for the users files. */
-	create_user_dir();
+	create_user_dirs();
 
 #endif /* PRIVATE_USER_PATH */
 }
@@ -851,12 +880,23 @@ void path_build(char *buf, int max, cptr path, cptr file)
 FILE *my_fopen(cptr file, cptr mode)
 {
 	char buf[1024];
+	FILE *fff;
 
 	/* Hack -- Try to parse the path */
 	if (path_parse(buf, 1024, file)) return (NULL);
 
 	/* Attempt to fopen the file anyway */
-	return (fopen(buf, mode));
+	fff = fopen(buf, mode);
+
+#if defined(MAC_MPW) || defined(MACH_O_CARBON)
+
+	/* Set file creator and type */
+	if (fff && strchr(mode, 'w')) fsetfileinfo(buf, _fcreator, _ftype);
+
+#endif
+
+	/* Return open file or NULL */
+	return (fff);
 }
 
 
@@ -1090,38 +1130,36 @@ errr fd_move(cptr file, cptr what)
  * This function should fail if the file already exists
  *
  * Note that we assume that the file should be "binary"
- *
- * XXX XXX XXX The horrible "BEN_HACK" code is for compiling under
- * the CodeWarrior compiler, in which case, for some reason, none
- * of the "O_*" flags are defined, and we must fake the definition
- * of "O_RDONLY", "O_WRONLY", and "O_RDWR" in "A-win-h", and then
- * we must simulate the effect of the proper "open()" call below.
  */
 int fd_make(cptr file, int mode)
 {
 	char buf[1024];
+	int fd;
 
 	/* Hack -- Try to parse the path */
-	if (path_parse(buf, 1024, file)) return (-1);
+	if (path_parse(buf, sizeof(buf), file)) return (-1);
 
-#ifdef BEN_HACK
-
-	/* Check for existance */
-	/* if (fd_close(fd_open(file, O_RDONLY | O_BINARY))) return (1); */
-
-	/* Mega-Hack -- Create the file */
-	(void)my_fclose(my_fopen(file, "wb"));
-
-	/* Re-open the file for writing */
-	return (open(buf, O_WRONLY | O_BINARY, mode));
-
-#else  /* BEN_HACK */
+#if defined(MACINTOSH)
 
 	/* Create the file, fail if exists, write-only, binary */
-	return (open(buf, O_CREAT | O_EXCL | O_WRONLY | O_BINARY, mode));
+	fd = open(buf, O_CREAT | O_EXCL | O_WRONLY | O_BINARY);
 
-#endif /* BEN_HACK */
+#else
 
+	/* Create the file, fail if exists, write-only, binary */
+	fd = open(buf, O_CREAT | O_EXCL | O_WRONLY | O_BINARY, mode);
+
+#endif
+
+#if defined(MAC_MPW) || defined(MACH_O_CARBON)
+
+	/* Set file creator and type */
+	if (fd >= 0) fsetfileinfo(buf, _fcreator, _ftype);
+
+#endif
+
+	/* Return descriptor */
+	return (fd);
 }
 
 
