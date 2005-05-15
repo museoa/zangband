@@ -540,7 +540,7 @@ borland: EXEC := .exe
 ## Hack - GCC requires other flags
 ##
 ifeq (gcc, $(findstring gcc, $(CC)))
-	CFLAGS += -fno-strength-reduce
+    CFLAGS += -fno-strength-reduce
 endif
 
 ##
