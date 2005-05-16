@@ -145,10 +145,11 @@ static int see_interesting(int x, int y)
 }
 
 
-#define RUN_MODE_START  0  /* Beginning of run */
-#define RUN_MODE_OPEN   1  /* Running in a room or open area */
-#define RUN_MODE_FOLLOW 2  /* Running in a corridor */
-#define RUN_MODE_FINISH 3  /* End of run */
+#define RUN_MODE_START    0  /* Beginning of run */
+#define RUN_MODE_OPEN     1  /* Running in a room or open area */
+#define RUN_MODE_CORRIDOR 2  /* Running in a corridor */
+#define RUN_MODE_WALL     3  /* Running along a wall */
+#define RUN_MODE_FINISH   4  /* End of run */
 
 /* 
  * Due to a fortunate coincidence, there are exactly 32 interesting
@@ -412,6 +413,60 @@ RUN_W | RUN_SE | RUN_NE,
 RUN_NW | RUN_NE | RUN_SE | RUN_SW
 };
 
+
+/*
+ * Lists of walls that, if all set, mean we're probably running
+ * alongside a wall.
+ *
+ * For horizontal or vertical walls this means that at least two walls
+ * are present on one side along our path.
+ *
+ * ToDo: support diagonal walls
+ */
+static const u32b wall_test_mask[10][6] =
+{
+/* 0 */ {0, 0, 0, 0, 0, 0},
+/* 1 */ {0, 0, 0, 0, 0, 0},
+/* 2 */ {
+		RUN_E | RUN_SE,
+		RUN_E | RUN_NE,
+		RUN_W | RUN_SW,
+		RUN_W | RUN_NW,
+		RUN_SE | RUN_NE,
+		RUN_SW | RUN_NW,
+	},
+
+/* 3 */ {0, 0, 0, 0, 0, 0},
+/* 4 */ {
+		RUN_S | RUN_SW,
+		RUN_S | RUN_SE,
+		RUN_N | RUN_NW,
+		RUN_N | RUN_NE,
+		RUN_SW | RUN_SE,
+		RUN_NW | RUN_NE,
+	},
+/* 5 */ {0, 0, 0, 0, 0, 0},
+/* 6 */ {
+		RUN_S | RUN_SW,
+		RUN_S | RUN_SE,
+		RUN_N | RUN_NW,
+		RUN_N | RUN_NE,
+		RUN_SW | RUN_SE,
+		RUN_NW | RUN_NE,
+	},
+/* 7 */ {0, 0, 0, 0, 0, 0},
+/* 8 */ {
+		RUN_E | RUN_SE,
+		RUN_E | RUN_NE,
+		RUN_W | RUN_SW,
+		RUN_W | RUN_NW,
+		RUN_SE | RUN_NE,
+		RUN_SW | RUN_NW,
+	},
+/* 9 */ {0, 0, 0, 0, 0, 0},
+};
+
+
 /*
  * Determine the run algorithm to use.
  *
@@ -440,13 +495,27 @@ static void run_choose_mode(void)
 	/* Check for evidence we're in a corridor */
 	for (i = 0; i < NUM_ELEMENTS(corridor_test_mask); i++)
 	{
-		/* 
+		/*
 		 * If none of the elements in the mask are _not_
 		 * set, we're in a corridor.
 		 */
 		if (!(~wall_dirs & corridor_test_mask[i]))
 		{
-			p_ptr->run.mode = RUN_MODE_FOLLOW;
+			p_ptr->run.mode = RUN_MODE_CORRIDOR;
+			return;
+		}
+	}
+
+	/* Check for evidence we're following a wall */
+	for (i = 0; i < NUM_ELEMENTS(wall_test_mask[p_ptr->run.cur_dir]); i++)
+	{
+		/*
+		 * If none of the elements in the mask are _not_
+		 * set, we're following a wall.
+		 */
+		if (!(~wall_dirs & wall_test_mask[p_ptr->run.cur_dir][i]))
+		{
+			p_ptr->run.mode = RUN_MODE_WALL;
 			return;
 		}
 	}
@@ -484,7 +553,7 @@ static int check_interesting(void)
  * The corridor running algorithm.
  *
  * We start by determining all two-move combinations that the player could possibly
- * make, where the first move shares at least one component (N, E, S or W) with
+ * make, where the first move shares at least one component (N, E, S, or W) with
  * the move made last turn.
  *
  * Then we use various tests (given in the run_checks[] table above) to remove
@@ -496,7 +565,7 @@ static int check_interesting(void)
  * See run_checks[] for more detailed comments on some of the situations we
  * test for.
  */
-static void run_follow(int starting)
+static void run_corridor(int starting)
 {
 	int px = p_ptr->px;
 	int py = p_ptr->py;
@@ -630,6 +699,67 @@ static void run_open(void)
 }
 
 
+static const int run_wall_check[10][2][2] =
+{
+/* 0 */ {{0, 0}, {0, 0}},
+/* 1 */ {{0, 0}, {0, 0}},
+/* 2 */ {{4, 1}, {6, 3}},
+/* 3 */ {{0, 0}, {0, 0}},
+/* 4 */ {{2, 1}, {8, 7}},
+/* 5 */ {{0, 0}, {0, 0}},
+/* 6 */ {{2, 3}, {8, 9}},
+/* 7 */ {{0, 0}, {0, 0}},
+/* 8 */ {{4, 7}, {6, 9}},
+/* 9 */ {{0, 0}, {0, 0}},
+};
+
+
+/*
+ * Run alongside a wall
+ *
+ * XXX Write this
+ */
+static void run_wall(void)
+{
+	unsigned int i;
+
+	int px = p_ptr->px;
+	int py = p_ptr->py;
+
+	int dir = p_ptr->run.old_dir;
+	int dx = ddx[dir];
+	int dy = ddy[dir];
+
+	if (check_interesting())
+	{
+		p_ptr->run.mode = RUN_MODE_FINISH;
+		return;
+	}
+
+	/* Check if we are coming up to an opening in the wall */
+	for (i = 0; i < NUM_ELEMENTS(run_wall_check[dir]); i++)
+	{
+		int wall_dir  = run_wall_check[dir][i][0];
+		int floor_dir = run_wall_check[dir][i][1];
+
+		if ( see_wall(px + ddx[wall_dir ], py + ddy[wall_dir ]) &&
+	            !see_wall(px + ddx[floor_dir], py + ddy[floor_dir]))
+		{
+			p_ptr->run.mode = RUN_MODE_FINISH;
+			return;
+		}
+	}
+
+	p_ptr->run.cur_dir = dir;
+
+	if (see_wall(px + dx, py + dy))
+	{
+		p_ptr->run.mode = RUN_MODE_FINISH;
+		return;
+	}
+}
+
+
 
 /*
  * Take one step along a run path
@@ -676,8 +806,12 @@ void run_step(int dir)
 			run_open();
 			break;
 
-		case RUN_MODE_FOLLOW:
-			run_follow(starting);
+		case RUN_MODE_CORRIDOR:
+			run_corridor(starting);
+			break;
+
+		case RUN_MODE_WALL:
+			run_wall();
 			break;
 
 		case RUN_MODE_FINISH:
