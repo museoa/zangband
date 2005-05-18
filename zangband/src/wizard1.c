@@ -138,7 +138,7 @@ static void kind_info(char *buf, char *dam, char *wgt, int *lev, s32b *val,
 	q_ptr = object_prep(k);
 
 	/* It is known */
-	q_ptr->info |= (OB_KNOWN);
+	q_ptr->info |= (OB_STOREB);
 
 	/* Cancel bonuses */
 	q_ptr->pval = 0;
@@ -1742,7 +1742,12 @@ static void spoil_mon_info(cptr fname)
 		else
 			spoil_out(" creature");
 
-		spoil_out(" moves");
+		if (flags7 & RF6_CAN_FLY)
+		{
+			spoil_out("flies");
+		}
+		else
+			spoil_out("moves");
 
 		if ((flags1 & (RF0_RAND_50)) && (flags1 & (RF0_RAND_25)))
 		{
@@ -1805,6 +1810,11 @@ static void spoil_mon_info(cptr fname)
 			if (flags1 & (RF0_ESCORTS)) spoil_out("escorts.  ");
 			else
 				spoil_out("an escort.  ");
+		}
+
+		if (flags1 & RF0_FRIENDS)
+		{
+			spoil_out("%^s usually appears in groups.  ", wd_che[msex]);
 		}
 
 		if (flags1 & (RF0_CHAR_MIMIC))
@@ -1978,6 +1988,7 @@ static void spoil_mon_info(cptr fname)
 
 		/* Collect special abilities. */
 		vn = 0;
+		if (flags7 & (RF6_CAN_SWIM))  vp[vn++] = "swim";
 		if (flags2 & (RF1_OPEN_DOOR)) vp[vn++] = "open doors";
 		if (flags2 & (RF1_BASH_DOOR)) vp[vn++] = "bash down doors";
 		if (flags2 & (RF1_PASS_WALL)) vp[vn++] = "pass through walls";
@@ -1986,7 +1997,7 @@ static void spoil_mon_info(cptr fname)
 		if (flags2 & (RF1_KILL_BODY)) vp[vn++] = "destroy weaker monsters";
 		if (flags2 & (RF1_TAKE_ITEM)) vp[vn++] = "pick up objects";
 		if (flags2 & (RF1_KILL_ITEM)) vp[vn++] = "destroy objects";
-		if (flags7 & (RF6_LITE_1 | RF6_LITE_2)) vp[vn++] = "carrys a light";
+		if (flags7 & (RF6_LITE_1 | RF6_LITE_2)) vp[vn++] = "light the dungeon";
 
 		if (vn)
 		{
@@ -2375,7 +2386,7 @@ static void spoil_mon_info(cptr fname)
 				}
 				case RBE_TIME:
 				{
-					q = "time";
+					q = "distrupt the time continuum";
 					break;
 				}
 				case RBE_EXP_VAMP:
