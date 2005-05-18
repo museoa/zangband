@@ -844,6 +844,19 @@ static void roff_obj_aux(const object_type *o_ptr)
 			roff(".  ");
 		}
 	}
+
+	/* If it is a weapon */
+	if (o_ptr->tval >= TV_BOW && o_ptr->tval <= TV_SWORD)
+	{
+		/* Obtain the "hold" value */
+		int hold = adj_str_hold[p_ptr->stat[A_STR].ind];
+
+		/* If you are not strong enough for this weapon */
+		if (hold < o_ptr->weight / 10)
+		{
+			roff("You are not strong enough to wield this weapon effectively.  ");
+		}
+	}
 	
 	/* Final blank line */
 	roff("\n");
