@@ -2189,8 +2189,18 @@ static bool borg_test_stuff_star(void)
 			if (!l_ptr) continue;
 		}
 
-		/* All items should first be id'd */
-		if (!borg_obj_known_p(l_ptr)) continue;
+		/* All items should first be identified */
+		if (!borg_obj_known_p(l_ptr))
+		{
+			/* Except when the pseudo-id says it is special */
+			if (!strstr(l_ptr->o_name, "{special") &&
+				!strstr(l_ptr->o_name, "{terrible")) continue;
+
+			/* Track it */
+			b_i = i;
+
+			break;
+		}
 
 		/* Ignore items that were *id*'d before */
 		if (borg_obj_known_full(l_ptr)) continue;
