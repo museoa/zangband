@@ -1512,7 +1512,8 @@ static int borg_guess_race_name(cptr who)
 	}
 
 	/* Skip the prefix */
-	who += 4;								   
+	if (prefix(who, "The ")) who += 4;
+	else if (prefix(who, "Your ")) who += 5;
 
 	/* Start the search */
 	m = 0;
