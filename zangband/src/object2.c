@@ -3827,10 +3827,6 @@ object_type *make_object(int level, int delta_level, obj_theme *theme)
 }
 
 
-/* Hack - predeclare for debug code below */
-static s16b *look_up_list(object_type *o_ptr);
-
-
 /*
  * Put an object on the ground.
  * We assume the grid is in bounds.
@@ -4442,7 +4438,7 @@ void acquirement(int x1, int y1, int num, bool great, bool known)
  * We know the item is in our equipment, our
  * inventory, or is on the floor underneith us.
  */
-static s16b *look_up_list(object_type *o_ptr)
+s16b *look_up_list(object_type *o_ptr)
 {
 	object_type *j_ptr;
 

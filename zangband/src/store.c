@@ -1692,6 +1692,8 @@ static void store_sell(void)
 
 	cptr q, s;
 	
+	s16b *list;
+
 	/* Get an item */
 	s = "You have nothing that I want.";
 
@@ -1795,6 +1797,19 @@ static void store_sell(void)
 		else
 			msgf("I have not the room in my store to keep it.");
 		return;
+	}
+
+	/* Get list to ensure that the object is in the inv */
+	list = look_up_list(o_ptr);
+
+	/* Take off equipment */
+	if (!list)
+	{
+		/* Take off first */
+		o_ptr = inven_takeoff(o_ptr);
+
+		/* Paranoia */
+		if (!o_ptr) return;
 	}
 
 	/* Real store */

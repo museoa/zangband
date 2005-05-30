@@ -593,6 +593,7 @@ extern bool object_similar(const object_type *o_ptr, const object_type *j_ptr);
 extern void object_absorb(object_type *o_ptr, const object_type *j_ptr);
 extern bool object_equal(const object_type *o_ptr, const object_type *j_ptr);
 extern s16b lookup_kind(int tval, int sval);
+extern s16b *look_up_list(object_type *o_ptr);
 extern void object_wipe(object_type *o_ptr);
 extern object_type *object_prep(int k_idx);
 extern object_type *object_dup(const object_type *o_ptr);
