@@ -1636,7 +1636,7 @@ static bool borg_think_dungeon_brave(void)
 			borg_keypress('>');
 
 			/* If the borg leaves the wilderness */
-			if (!bp_ptr->depth) borg_leave_wilderness();
+			if (!bp_ptr->depth) borg_leave_surface();
 
 			/* Success */
 			return (TRUE);

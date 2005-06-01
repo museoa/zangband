@@ -3992,12 +3992,12 @@ void do_cmd_borg(void)
 				/* Print */
 				print_rel(c, TERM_RED, borg_shops[i].x, borg_shops[i].y);
 
-				/* Count */
-				n++;
+				/* Count the visited shops */
+				if (borg_shops[i].visit) n++;
 			}
 
 			/* Get keypress */
-			msgf("There are %d known shops.", n);
+			msgf("There are %d known shops, %d were visited.", borg_shop_num, n);
 			message_flush();
 
 			/* Redraw map */

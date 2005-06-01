@@ -1709,7 +1709,10 @@ bool borg_find_dungeon(void)
 		/* Reached the place */
 		goal_dungeon = -1;
 
-		/* If the dungeon was visited and the target depth is not shallow */
+		/* If the borg leaves the surface */
+		if (!bp_ptr->depth) borg_leave_surface();
+
+			/* If the dungeon was visited and the target depth is not shallow */
 		if (p >= borg_dungeons[b_i].min_depth + 4 &&
 			borg_dungeons[b_i].min_depth != 0 &&
 			borg_dungeons[b_i].min_depth < 5 + borg_dungeons[b_i].max_depth != 0 &&
@@ -4308,7 +4311,7 @@ bool borg_flow_spastic(bool bored)
 
 
 /* Clear some bools that are used in the wilderness */
-void borg_leave_wilderness(void)
+void borg_leave_surface(void)
 {
 	int i;
 

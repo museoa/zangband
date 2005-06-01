@@ -97,7 +97,7 @@ extern bool borg_find_home(void);
 extern bool borg_waits_daylight(void);
 extern bool borg_flow_dark_wild(void);
 extern void borg_flow_goal_wild(void);
-extern void borg_leave_wilderness(void);
+extern void borg_leave_surface(void);
 
 /* Flow towards unexplored grids */
 extern bool borg_flow_dark(bool neer);
