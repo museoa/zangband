@@ -2,7 +2,7 @@ This is a document file listing the changes in Zangband (compared to
 the standard Angband 2.8.1.) No long explanations, just a list. See
 code for details. In reversed chronological order (more or less):
 
-Changes in Zangband 2.7.5:
+Changes in Zangband 2.7.5pre1:
 
 2005-06-04 14:26  rr9
 
