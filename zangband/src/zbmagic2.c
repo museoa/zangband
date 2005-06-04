@@ -2010,7 +2010,7 @@ static int borg_damage_artifact_monster(cptr act)
 		case BORG_TOUCH:
 		{
 			/* Hacking Whirlwind */
-			if (gf = MAX_GF) return (borg_attack_whirlwind());
+			if (gf == MAX_GF) return (borg_attack_whirlwind());
 
 			return (borg_launch_touch(dam, gf));
 		}
