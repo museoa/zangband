@@ -916,7 +916,6 @@ static bool compare_weaponless(void)
 {
 	int i;
 	int intmaxdam = 0, intmindam = 10;
-	int num_blow = (p_ptr->lev < 7 ? 1 : p_ptr->lev / 7);
 
 	if (p_ptr->rp.pclass != CLASS_MONK)
 	{

@@ -1660,10 +1660,10 @@ bool borg_find_dungeon(void)
 	else
 	{
 		/* Not when the borg knows only a few towns */
-		if (p > 20 &&
-			(bp_ptr->lev > 20 && borg_town_num < 5) ||
-			(bp_ptr->lev > 30 && borg_town_num < 13) ||
-			(bp_ptr->lev > 40 && borg_town_num < 19)) return (FALSE);
+		if ((p > 20) &&
+		    ((bp_ptr->lev > 20 && borg_town_num < 5) ||
+		     (bp_ptr->lev > 30 && borg_town_num < 13) ||
+		     (bp_ptr->lev > 40 && borg_town_num < 19))) return (FALSE);
 	}
 
 	/* Not when the borg is exploring the wilderness */

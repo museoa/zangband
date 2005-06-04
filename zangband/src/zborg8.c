@@ -995,7 +995,7 @@ static bool borg_think_home_grab_aux(void)
 static bool borg_build_weaponmaster(void)
 {
 	int i;
-	list_item *l_ptr;
+	list_item *l_ptr = NULL;
 
 	/* Not when the borg is broke */
 	if (borg_gold < 2000) return (FALSE);
@@ -1047,7 +1047,7 @@ static bool borg_build_weaponmaster(void)
 	}
 
 	/* nothing interesting in the inven */
-	if (i == inven_num + 1) return (FALSE);
+	if (!l_ptr || (i == inven_num + 1)) return (FALSE);
 
 	/* *id* the weapon */
 	borg_keypress('E');
@@ -1065,7 +1065,7 @@ static bool borg_build_recharge(void)
 {
 	int i, count = 0, max_pval = 0;
 	char buf[4];
-	list_item *l_ptr;
+	list_item *l_ptr = NULL;
 
 	/* Does the borg have enough gold for an id? */
 	if (borg_gold < 700) return (FALSE);
@@ -1130,7 +1130,7 @@ static bool borg_build_recharge(void)
 	}
 
 	/* Nothing to charge */
-	if (i == inven_num) return (FALSE);
+	if (!l_ptr || (i == inven_num)) return (FALSE);
 
 	/* Get string corresponding to number */
 	(void)strnfmt(buf, 4, "%d\n", count);

@@ -2945,57 +2945,6 @@ bool borg_play_magic(bool bored)
 }
 
 
-/*
- * Count the number of items worth "selling"
- *
- * This determines the choice of stairs.
- *
- * XXX XXX XXX Total hack, by the way...
- */
-static int borg_count_sell(void)
-{
-	int i, k = 0;
-
-	s32b price;
-	s32b greed;
-
-
-	/* Calculate "greed" factor */
-	greed = (borg_gold / 100L) + 100L;
-
-	/* Minimal greed */
-	if (greed < 1000L) greed = 1000L;
-	if (greed > 25000L) greed = 25000L;
-
-
-	/* Count "sellable" items */
-	for (i = 0; i < inven_num; i++)
-	{
-		list_item *l_ptr = &inventory[i];
-
-		/* Skip empty / unaware items */
-		if (!l_ptr->k_idx) continue;
-
-		/* Skip "crappy" items */
-		if (l_ptr->cost <= 0) continue;
-
-		/* Obtain the base price */
-		price = ((l_ptr->cost < 30000L) ? l_ptr->cost : 30000L);
-
-		/* Skip cheap "known" (or "average") items */
-		if ((price * l_ptr->number < greed) &&
-			(borg_obj_known_p(l_ptr) ||
-			 strstr(l_ptr->o_name, "{average"))) continue;
-
-		/* Count remaining items */
-		k++;
-	}
-
-	/* Result */
-	return (k);
-}
-
-
 /* Scan the item list and recharge items before leaving the level. */
 bool borg_wait_recharge(void)
 {

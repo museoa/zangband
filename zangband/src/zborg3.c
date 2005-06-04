@@ -2007,7 +2007,7 @@ static bool borg_activate_aux(int act_index, bool real_use)
 
 
 /* Fiddle a bit with peculiar activations */
-bool borg_activate_aux2(int act_index, bool real_use)
+static bool borg_activate_aux2(int act_index, bool real_use)
 {
 	switch (act_index)
 	{

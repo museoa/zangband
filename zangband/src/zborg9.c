@@ -3960,7 +3960,7 @@ void do_cmd_borg(void)
 		case '7':
 		{
 			/* Command: debug -- show towns */
-			int i, n = 0;
+			int i;
 
 			/* Get keypress */
 			msgf("There are %d known towns.", borg_town_num);
@@ -4008,7 +4008,7 @@ void do_cmd_borg(void)
 		case '9':
 		{
 			/* Command: debug -- show dungeons */
-			int i, n = 0;
+			int i;
 
 			for (i = 0; i < borg_dungeon_num; i++)
 			{

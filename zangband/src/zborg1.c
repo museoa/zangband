@@ -744,7 +744,7 @@ void borg_note(cptr fmt, ...)
 /*
  * Abort the Borg, noting the reason
  */
-void borg_oops_aux(cptr what)
+static void borg_oops_aux(cptr what)
 {
 	char buf[1024];
 
