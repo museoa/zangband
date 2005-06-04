@@ -37,11 +37,11 @@
 /* User-visible version */
 #define VER_MAJOR 2
 #define VER_MINOR 7
-#define VER_PATCH 4
+#define VER_PATCH 5
 #define VER_EXTRA 0
 
 /* Versions after release */
-#define VER_AFTER "b"
+#define VER_AFTER ""
 
 /* Stringify argument */
 #define Z_STR(a) Z_STR1(a)
