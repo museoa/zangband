@@ -4471,7 +4471,7 @@ void borg_update(void)
 		when_detect_evil = 0;
 
 		/* No goal yet */
-		goal == GOAL_NONE;
+		goal = GOAL_NONE;
 
 		/* Hack -- Clear "shop" goals */
 		goal_shop = -1;
