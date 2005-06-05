@@ -296,7 +296,6 @@ END_COLOR_DEPTH_LIST
  */
 static errr Term_xtra_dos_event(int v);
 static void Term_xtra_dos_react(void);
-static void Term_xtra_dos_clear(void);
 static errr Term_xtra_dos(int n, int v);
 static errr Term_user_dos(int n);
 static errr Term_curs_dos(int x, int y);
@@ -577,55 +576,6 @@ static void Term_xtra_dos_react(void)
 		}
 	}
 #endif /* USE_SPECIAL_BACKGROUND */
-}
-
-
-/*
- * Clear a terminal
- *
- * Fills the terminal area with black color or with
- * the background image
- */
-static void Term_xtra_dos_clear(void)
-{
-	term_data *td = (term_data*)(Term->data);
-
-#ifdef USE_BACKGROUND
-	int bgrnd;
-#endif /* USE_BACKGROUND */
-
-	int x1, y1;
-	int w1, h1;
-
-	/* Location */
-	x1 = td->x;
-	y1 = td->y;
-
-	/* Size */
-	w1 = td->tile_wid * td->cols;
-	h1 = td->tile_hgt * td->rows;
-
-#ifdef USE_BACKGROUND
-
-	bgrnd = td->window_type;
-
-	if (background[bgrnd])
-	{
-		/* Draw the background */
-		stretch_blit(background[bgrnd], screen,
-			0, 0, background[bgrnd]->w, background[bgrnd]->h,
-			x1, y1, w1, h1);
-	}
-	else
-
-#endif /* USE_BACKGROUND */
-
-	{
-		/* Draw the Term black */
-		rectfill(screen,
-	        	x1, y1, x1 + w1 - 1, y1 + h1 - 1,
-			COLOR_OFFSET + TERM_DARK);
-	}
 }
 
 

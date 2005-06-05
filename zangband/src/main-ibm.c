@@ -615,8 +615,6 @@ static errr Term_xtra_ibm_event(int v)
  */
 static errr Term_xtra_ibm(int n, int v)
 {
-	int i;
-
 	/* Analyze the request */
 	switch (n)
 	{
