@@ -696,7 +696,38 @@ static void run_corridor(int starting)
 
 	p_ptr->run.old_dir = p_ptr->run.cur_dir;
 
-	/* XXX Don't-cut-corners code goes here */
+	/* Not cutting corners takes extra work */
+	if (!find_cut)
+	{
+		if (p_ptr->run.cur_dir == 1)
+		{
+			if (see_wall(px, py + 1) && !see_wall(px - 1, py))
+				p_ptr->run.cur_dir = 4;
+			if (!see_wall(px, py + 1) && see_wall(px - 1, py))
+				p_ptr->run.cur_dir = 2;
+		}
+		else if (p_ptr->run.cur_dir == 3)
+		{
+			if (see_wall(px, py + 1) && !see_wall(px + 1, py))
+				p_ptr->run.cur_dir = 6;
+			if (!see_wall(px, py + 1) && see_wall(px + 1, py))
+				p_ptr->run.cur_dir = 2;
+		}
+		if (p_ptr->run.cur_dir == 7)
+		{
+			if (see_wall(px, py - 1) && !see_wall(px - 1, py))
+				p_ptr->run.cur_dir = 4;
+			if (!see_wall(px, py - 1) && see_wall(px - 1, py))
+				p_ptr->run.cur_dir = 8;
+		}
+		if (p_ptr->run.cur_dir == 9)
+		{
+			if (see_wall(px, py - 1) && !see_wall(px + 1, py))
+				p_ptr->run.cur_dir = 6;
+			if (!see_wall(px, py - 1) && see_wall(px + 1, py))
+				p_ptr->run.cur_dir = 8;
+		}
+	}
 }
 
 
