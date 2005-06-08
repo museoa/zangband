@@ -296,7 +296,7 @@ static const struct
  * #...#
  * ##@##
  *
- * Note that this, like the previous set, can result
+ * Note that this, like the next set, can result
  * in missing an actual (but unusual) branch.
  * Generally the player will see the branch once we
  * move another step, but by that point it's too
@@ -470,9 +470,9 @@ static const u32b wall_test_mask[10][6] =
 /*
  * Check if a square appears to be a corridor.
  */
-bool see_corridor(int px, int py)
+static bool see_corridor(int px, int py)
 {
-	int i;
+	unsigned int i;
 	u32b wall_dirs = 0;
 
 	/* Check valid dirs */
