@@ -73,7 +73,7 @@ objs-$(amiga) += src/sound-ami.o
 objs-$(cygwin) += src/angband.res src/readdib.o
 ifeq ($(cygwin),y)
 src/angband.res : src/angband.rc
-	windres $< -O coff -o $@
+	windres $< -O coff -o $@ -I src
 endif
 
 objs-$(lcc) += src/angband.res src/readdib.o
