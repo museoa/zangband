@@ -2300,11 +2300,15 @@ static bool borg_test_stuff_pseudo(void)
 		/* Ignore items that were id'd before */
 		if (borg_obj_known_p(l_ptr)) continue;
 
-		/* Item has to be weapon, armor or ammo */
-		if (l_ptr->tval < TV_SHOT || l_ptr->tval > TV_DRAG_ARMOR) continue;
+		/* Item has to be weapon, armor, ammo or light */
+		if (l_ptr->tval < TV_SHOT || l_ptr->tval > TV_LITE) continue;
 
-		/* Item does not have a pseudo-id already (or comment) */
-		if (strstr(l_ptr->o_name, "{")) continue;
+		/* But only an artifact light */
+		if (l_ptr->tval == TV_LITE &&
+			k_info[l_ptr->k_idx].sval <= SV_LITE_GALADRIEL)	continue;									  
+
+		/* Item does not have a pseudo-id already */
+		if (borg_obj_known_pseudo(l_ptr)) continue;
 
 		/* Track it */
 		b_i = i;
@@ -2332,18 +2336,23 @@ static bool borg_test_stuff_pseudo(void)
 			/* Switch to equipment but not in case you go there immediately */
 			for (i = 0; i < inven_num; i++)
 			{
-				if (inventory[i].tval >= TV_SHOT &&
-					inventory[i].tval <= TV_DRAG_ARMOR &&
-					!borg_obj_known_p(&inventory[i]))
-				{
-					borg_keypress('/');
-					break;
-				}
+				/* Known objects can not be sensed anymore */
+				if (borg_obj_known_p(&inventory[i])) continue;
+
+				/* Is it the right sort of object */
+				if (inventory[i].tval < TV_SHOT && inventory[i].tval > TV_LITE) continue;
+
+				/* Only artifact lights */
+				if (l_ptr->tval == TV_LITE && k_info[l_ptr->k_idx].sval <= SV_LITE_GALADRIEL) continue;
+
+				/* Found an object that is not the target */
+				borg_keypress('/');
+				break;
 			}
 		}
 
 		/* Log -- may be cancelled */
-		borg_note("# pseudo identifying %s.", l_ptr->o_name);
+		borg_note("# Pseudo identifying %s (%c).", l_ptr->o_name, I2A(b_i));
 
 		/* Select the item */
 		borg_keypress(I2A(b_i));
@@ -2422,8 +2431,9 @@ bool borg_wear_stuff(void)
 		/* Ring fiddling */
 		ii = i;
 
-		/* Skip empty / unaware items */
-		if (!l_ptr->k_idx) continue;
+		/* Skip items without (pseudo-)id */
+		if (!borg_obj_known_p(l_ptr) &&
+			!borg_obj_known_pseudo(l_ptr)) continue;
 
 		/* Skip useless items */
 		if (borg_worthless_item(l_ptr)) continue;

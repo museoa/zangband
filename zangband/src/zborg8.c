@@ -1014,8 +1014,8 @@ static bool borg_build_weaponmaster(void)
 			l_ptr = &inventory[i - 1];
 		}
 
-		/* There is no item */
-		if (!l_ptr) return (FALSE);
+		/* There is no item, try the next one */
+		if (!l_ptr) continue;
 
 		/* It has to be a weapon */
 		if (l_ptr->tval < TV_DIGGING || l_ptr->tval > TV_SWORD) continue;
@@ -1029,8 +1029,8 @@ static bool borg_build_weaponmaster(void)
 		}
 		else
 		{
-			/* If the sensing shows it is interesting */
-			if (!strstr(l_ptr->o_name, "{excellent") ||
+			/* If the sensing shows it is an uncursed artifact */
+			if (!borg_obj_known_pseudo(l_ptr) ||
 				!strstr(l_ptr->o_name, "{special")) continue;
 		}
 

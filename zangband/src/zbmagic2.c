@@ -2245,8 +2245,7 @@ static bool borg_missile_type(list_item *l_ptr)
 		l_ptr->tval > TV_BOLT) return (0);
 
 	/* Cursed missiles are ignored */
-	if (!streq(l_ptr->o_name, "") &&
-		strstr(l_ptr->o_name, "{cursed")) return (GF_NONE);
+	if (KN_FLAG(l_ptr, TR_CURSED)) return (GF_NONE);
 
 	/* Flaming missiles */
 	if (KN_FLAG(l_ptr, TR_BRAND_FIRE)) return (GF_ARROW_FLAME);

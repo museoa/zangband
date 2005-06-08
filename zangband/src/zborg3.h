@@ -47,6 +47,12 @@
 	((T)->info & (OB_MENTAL))
 
 /*
+ * Is the object pseudo known?
+ */
+#define borg_obj_known_pseudo(T) \
+	((T)->info & (OB_SENSE))
+
+/*
  * Is the object an ego item or artifact?
  */
 #define borg_obj_is_ego_art(T) \
