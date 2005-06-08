@@ -468,6 +468,37 @@ static const u32b wall_test_mask[10][6] =
 
 
 /*
+ * Check if a square appears to be a corridor.
+ */
+bool see_corridor(int px, int py)
+{
+	int i;
+	u32b wall_dirs = 0;
+
+	/* Check valid dirs */
+	for (i = 1; i < 10; i++)
+	{
+		if (see_wall(px + ddx[i], py + ddy[i]))
+			wall_dirs |= basic_dir_mask[i];
+	}
+
+	/* Check for evidence we're in a corridor */
+	for (i = 0; i < NUM_ELEMENTS(corridor_test_mask); i++)
+	{
+		/*
+		 * If none of the elements in the mask are _not_
+		 * set, we're in a corridor.
+		 */
+		if (!(~wall_dirs & corridor_test_mask[i]))
+		{
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+/*
  * Determine the run algorithm to use.
  *
  * If we seem to be in a corridor, use the "follow" algorithm.
@@ -671,8 +702,6 @@ static void run_corridor(int starting)
 
 /*
  * Run in an open area
- *
- * XXX Write this
  */
 static void run_open(void)
 {
@@ -691,7 +720,9 @@ static void run_open(void)
 
 	p_ptr->run.cur_dir = dir;
 
-	if (see_wall(px + dx, py + dy))
+	/* Stop before running into a wall or entering a corridor. */
+	if (see_wall(px + dx, py + dy) ||
+	    see_corridor(px + dx, py + dy))
 	{
 		p_ptr->run.mode = RUN_MODE_FINISH;
 		return;
@@ -716,8 +747,6 @@ static const int run_wall_check[10][2][2] =
 
 /*
  * Run alongside a wall
- *
- * XXX Write this
  */
 static void run_wall(void)
 {
@@ -752,7 +781,9 @@ static void run_wall(void)
 
 	p_ptr->run.cur_dir = dir;
 
-	if (see_wall(px + dx, py + dy))
+	/* Stop before running into a wall or entering a corridor. */
+	if (see_wall(px + dx, py + dy) ||
+	    see_corridor(px + dx, py + dy))
 	{
 		p_ptr->run.mode = RUN_MODE_FINISH;
 		return;
