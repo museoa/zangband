@@ -52,7 +52,7 @@ AC_PROG_CPP
 AC_ARG_WITH(with_windows,
 [  --with-windows=yes	Use windows support])
 
-if test -n "$windows" -a "$windows" != "no" ; then
+if test -n "$with_windows" -a "$with_windows" != "no" ; then
 	dnl Detect cygwin
 	case `(uname -s) 2>/dev/null` in
 	  *cygwin* ) CYGWIN=yes;;
