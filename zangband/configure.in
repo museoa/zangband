@@ -49,19 +49,24 @@ AC_PROG_CC
 AC_PROG_CPP
 
 
-dnl Detect cygwin
-case `(uname -s) 2>/dev/null` in
-  *cygwin* ) CYGWIN=yes;;
-  *CYGWIN* ) CYGWIN=yes;;
-         * ) CYGWIN=no;;
-esac
+AC_ARG_WITH(with_windows,
+[  --with-windows=yes	Use windows support])
 
-if test "$CYGWIN" = "yes"; then
-  AC_DEFINE(WINDOWS, 1, [WIN32 port])
-  LIBS="$LIBS -lwinmm"
-  LDFLAGS="$LDFLAGS -s -mwindows -e _mainCRTStartup"
-  cygwin="y"
-  AC_SUBST(cygwin)
+if test -n "$windows" -a "$windows" != "no" ; then
+	dnl Detect cygwin
+	case `(uname -s) 2>/dev/null` in
+	  *cygwin* ) CYGWIN=yes;;
+	  *CYGWIN* ) CYGWIN=yes;;
+	         * ) CYGWIN=no;;
+	esac
+
+	if test "$CYGWIN" = "yes"; then
+	  AC_DEFINE(WINDOWS, 1, [WIN32 port])
+	  LIBS="$LIBS -lwinmm"
+	  LDFLAGS="$LDFLAGS -s -mwindows -e _mainCRTStartup"
+	  cygwin="y"
+	  AC_SUBST(cygwin)
+	fi
 fi
 
 if test "x$with_x11" != "xno" ; then
