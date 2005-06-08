@@ -737,7 +737,7 @@ I:19:12:0
 W:5:0:30:50
 A:5/1:60/1
 F:SHOW_MODS
-D:Just anout anyone can shoot an arrow with a bow.
+D:Just about anyone can shoot an arrow with a bow.
 
 N:74:& Long Bow~
 G:}:U
