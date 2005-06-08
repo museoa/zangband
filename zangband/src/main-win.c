@@ -432,7 +432,7 @@ static term_data *my_td;
 /*
  * game in progress
  */
-bool game_in_progress = FALSE;
+static bool game_in_progress = FALSE;
 
 /*
  * note when "open"/"new" become valid
