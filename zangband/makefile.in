@@ -236,13 +236,13 @@ configure.in: .version
 .makefiles: $(makefiles)
 	for i in $(notdir $(NORMOBJS)) ; do \
 		for j in $(makefiles) ; do \
-			if [ x"`grep $$i $$j | sed 1q`" == x ]; then \
+			if [ x"`grep $$i $$j | sed 1q`" = x ]; then \
 				echo "Error: makefile $$j has $$i missing"; \
 				k="stop"; \
 			fi; \
 		done; \
 	done; \
-	if [ "x$$k" == "xstop" ]; then \
+	if [ "x$$k" = "xstop" ]; then \
 		exit 1; \
 	fi; \
 	touch .makefiles;
