@@ -3960,11 +3960,7 @@ void do_cmd_borg(void)
 		case '7':
 		{
 			/* Command: debug -- show towns */
-			int i;
-
-			/* Get keypress */
-			msgf("There are %d known towns.", borg_town_num);
-			message_flush();
+			int i, n = 0;
 
 			for (i = 0; i < borg_town_num; i++)
 			{
@@ -3974,8 +3970,15 @@ void do_cmd_borg(void)
 					(borg_towns[i].visit) ? 'T' : 'F',
 					borg_towns[i].name);
 
+				if (borg_towns[i].visit) n++;
+
 				message_flush();
 			}
+
+			/* Sign off */
+			msgf("There are %d known towns, %d %s visited.",
+				borg_town_num, n, (n == 1) ? "was" : "were");
+			message_flush();
 
 			break;
 		}
@@ -3997,7 +4000,8 @@ void do_cmd_borg(void)
 			}
 
 			/* Get keypress */
-			msgf("There are %d known shops, %d were visited.", borg_shop_num, n);
+			msgf("There are %d known shops, %d %s visited.",
+				borg_shop_num, n, (n == 1) ? "was" : "were");
 			message_flush();
 
 			/* Redraw map */
@@ -4008,7 +4012,7 @@ void do_cmd_borg(void)
 		case '9':
 		{
 			/* Command: debug -- show dungeons */
-			int i;
+			int i, n = 0;
 
 			for (i = 0; i < borg_dungeon_num; i++)
 			{
