@@ -1778,8 +1778,9 @@ static void calc_mana(void)
 		o_ptr = &p_ptr->equipment[EQUIP_HANDS];
 
 		/* Normal gloves hurt mage-type spells */
-		if (o_ptr->k_idx && (o_ptr->pval > 0) &&
-			!((FLAG(o_ptr, TR_FREE_ACT)) || (FLAG(o_ptr, TR_DEX))))
+		if (o_ptr->k_idx &&
+			!((FLAG(o_ptr, TR_FREE_ACT)) || 
+			  (FLAG(o_ptr, TR_DEX) && (o_ptr->pval > 0))))
 		{
 			/* Encumbered */
 			p_ptr->state.cumber_glove = TRUE;
