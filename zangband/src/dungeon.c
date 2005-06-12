@@ -1150,7 +1150,7 @@ static void process_world(void)
 	else if ((c_ptr->feat == FEAT_DEEP_SWAMP) && !p_ptr->tim.invuln &&
 		!FLAG(p_ptr, TR_WILD_WALK))
 	{
-		int damage = resist(depth / 2, res_pois_lvl);
+		int damage = resist(depth / 2 + 1, res_pois_lvl);
 		cptr message;
 		cptr hit_from;
 
