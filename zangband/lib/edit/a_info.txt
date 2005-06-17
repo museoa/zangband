@@ -645,7 +645,7 @@ L:MAKE:		set_obj_flag(object, 2, TR2_HEAVY_CURSE)
 L:MAKE:		set_obj_flag(object, 2, TR2_AGGRAVATE)
 L:MAKE:		set_obj_flag(object, 2, TR2_TY_CURSE)
 L:MAKE:	end
-L:BONUS:	b.stat[A_STR] = b.stat[STAT_STR] + object.to_a / 5
+L:BONUS:	b.stat[A_STR] = object.to_a / 5
 L:SPOIL:	return "Random ability & high resist (warrior); curse, heavy curse, aggravate, ty curse (non-warrior); +1 str / +5 ac"
 
 
@@ -787,7 +787,7 @@ W:70:40:5:35000
 P:6:0d0:0:0:12
 F:STEALTH | FREE_ACT | IM_ACID | SEE_INVIS | INSTA_ART
 L:BONUS:	if player.rp.pclass == CLASS_ROGUE then
-L:BONUS:		b.stat[A_DEX] = b.stat[STAT_DEX] + 3 + player.lev / 10
+L:BONUS:		b.stat[A_DEX] = 3 + player.lev / 10
 L:BONUS:	end
 L:SPOIL:	return "+3 DEX +1 / 10 levels (rogues)"
 D:This cloak, woven from strands of solid shadow, is particularly dangerous 
