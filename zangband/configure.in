@@ -123,7 +123,7 @@ AC_SEARCH_LIBS([initscr], [ncurses curses],
 	AC_SEARCH_LIBS([tgetent], [termcap],
 		AC_DEFINE(USE_CAP, 1, [Use termcap port])))
 
-if test "x$with_gtk" != "xno" ; then
+if test "x$with_gtk" != "xno" -a "x$with_x11" != "xno" ; then
 	AC_SEARCH_LIBS([gtk_init_check], [gtk],
 		AC_DEFINE(USE_GTK, 1, [Use gtk port]))
 fi
