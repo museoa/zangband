@@ -1692,8 +1692,6 @@ static void store_sell(void)
 
 	cptr q, s;
 	
-	s16b *list;
-
 	/* Get an item */
 	s = "You have nothing that I want.";
 
@@ -1722,17 +1720,29 @@ static void store_sell(void)
 	/* Not a valid item */
 	if (!o_ptr) return;
 
-	/* Hack -- Cannot remove cursed items */
-	if ((!o_ptr->allocated) && cursed_p(o_ptr))
+	/* Is this item from the equipment? */
+	if (player_item_equip(o_ptr))
 	{
-		/* Oops */
-		msgf("Hmmm, it seems to be cursed.");
+		/* Hack -- Cannot remove cursed items */
+		if (cursed_p(o_ptr))
+		{
+			/* Oops */
+			msgf("Hmmm, it seems to be cursed.");
 
-		/* Set the knowledge flag for the player */
-		o_ptr->kn_flags[2] |= TR2_CURSED;
+			/* Set the knowledge flag for the player */
+			o_ptr->kn_flags[2] |= TR2_CURSED;
 
-		/* Nope */
-		return;
+			/* Nope */
+			return;
+		}
+		else
+		{
+			/* Take off first */
+			o_ptr = inven_takeoff(o_ptr);
+
+			/* Paranoia */
+			if (!o_ptr) return;
+		}
 	}
 
 	/* Assume one item */
@@ -1797,19 +1807,6 @@ static void store_sell(void)
 		else
 			msgf("I have not the room in my store to keep it.");
 		return;
-	}
-
-	/* Get list to ensure that the object is in the inv */
-	list = look_up_list(o_ptr);
-
-	/* Take off equipment */
-	if (!list)
-	{
-		/* Take off first */
-		o_ptr = inven_takeoff(o_ptr);
-
-		/* Paranoia */
-		if (!o_ptr) return;
 	}
 
 	/* Real store */

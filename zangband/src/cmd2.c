@@ -2195,7 +2195,7 @@ static int critical_shot(int chance, int sleeping_bonus, cptr o_name,
  * thrown item.
  */
 static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
-                              bool hit_success, int x, int y)
+                              bool hit_success, int x, int y, bool equipped_item)
 {
 	/* Chance of breakage (during attacks) */
 	int breakage = (hit_body ? breakage_chance(o_ptr) : 0);
@@ -2216,7 +2216,15 @@ static void throw_item_effect(object_type *o_ptr, bool hit_body, bool hit_wall,
 	{
 		msgf("The %v returns to your hand.", OBJECT_FMT(o_ptr, FALSE, 3));
 
-		inven_carry(o_ptr);
+		/* Pick up the item */
+		o_ptr = inven_carry(o_ptr);
+
+		/* Did the item come from the equipment? */
+		if (equipped_item) 
+		{
+			/* Stick the item back in the equip */
+			do_cmd_wield_aux(o_ptr, TRUE);
+		}
 
 		return;
 	}
@@ -2315,6 +2323,8 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	long tdam;
 	int slay;
 
+	bool equipped_item = FALSE;
+
 #if 0
 	/* Assume no weapon of velocity or accuracy bonus. */
 	int special_dam = 0;
@@ -2357,8 +2367,34 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	}
 #endif /* 0 */
 
+	/* Hack -- Cannot remove cursed items */
+	if (player_item_equip(o_ptr) && cursed_p(o_ptr))
+	{
+		/* Oops */
+		msgf("Hmmm, it seems to be cursed.");
+
+		/* Set the knowledge flag for the player */
+		o_ptr->kn_flags[2] |= TR2_CURSED;
+
+		/* Nope */
+		return;
+	}
+
 	/* Get a direction (or cancel) */
 	if (!get_aim_dir(&dir)) return;
+
+	/* Is it in the equipment? */
+	if (player_item_equip(o_ptr))
+	{
+		/* Take it off */
+		o_ptr = inven_takeoff(o_ptr);
+
+		/* Remember this for items with TR_RETURN */
+		equipped_item = TRUE;
+
+		/* Paranoia */
+		if (!o_ptr) return;
+	}
 
 	/* Duplicate the object */
 	i_ptr = object_dup(o_ptr);
@@ -2698,7 +2734,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 				tdam = mon_damage_mod(m_ptr, tdam, 0);
 								
 				/* Drop (or break) near that location (i_ptr is now invalid) */
-				throw_item_effect(i_ptr, TRUE, FALSE, TRUE, x, y);
+				throw_item_effect(i_ptr, TRUE, FALSE, TRUE, x, y, equipped_item);
 
 				/* Complex message */
 				if (p_ptr->state.wizard)
@@ -2732,7 +2768,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 			else
 			{
 				/* Drop (or break) near that location (i_ptr is now invalid) */
-				throw_item_effect(i_ptr, TRUE, FALSE, FALSE, x, y);
+				throw_item_effect(i_ptr, TRUE, FALSE, FALSE, x, y, equipped_item);
 			}
 
 			/* Stop looking */
@@ -2741,7 +2777,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 	}
 
 	/* Drop (or break) near that location (i_ptr is now invalid) */
-	throw_item_effect(i_ptr, FALSE, hit_wall, FALSE, x, y);
+	throw_item_effect(i_ptr, FALSE, hit_wall, FALSE, x, y, equipped_item);
 }
 
 
@@ -2801,19 +2837,6 @@ void do_cmd_throw_aux(int mult)
 
 	/* Not a valid item */
 	if (!o_ptr) return;
-
-	/* Hack -- Cannot remove cursed items */
-	if ((!o_ptr->allocated) && cursed_p(o_ptr))
-	{
-		/* Oops */
-		msgf("Hmmm, it seems to be cursed.");
-
-		/* Set the knowledge flag for the player */
-		o_ptr->kn_flags[2] |= TR2_CURSED;
-
-		/* Nope */
-		return;
-	}
 
 	do_cmd_fire_aux(mult, o_ptr, NULL);
 }

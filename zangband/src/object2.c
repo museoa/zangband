@@ -4584,6 +4584,16 @@ bool player_item(object_type *o_ptr)
 	if (o_list == &p_ptr->inventory) return (TRUE);
 
 	/* Elsewhere */
+	return (FALSE);
+}
+
+/* Is the item in the player's equipment? */
+bool player_item_equip(object_type *o_ptr)
+{
+	/* Elsewhere */
+	if (o_ptr->allocated) return (FALSE);
+	
+	/* Equipment */
 	return (TRUE);
 }
 
@@ -5184,19 +5194,14 @@ void inven_drop(object_type *o_ptr, int amt)
 
 	int slot;
 
-	s16b *list;
-
 	/* Error check */
 	if (amt <= 0) return;
 
 	/* Describe item */
 	item_describe(o_ptr);
 
-	/* Get list */
-	list = look_up_list(o_ptr);
-
 	/* Take off equipment */
-	if (!list)
+	if (player_item_equip(o_ptr))
 	{
 		/* Take off first */
 		o_ptr = inven_takeoff(o_ptr);

@@ -89,33 +89,14 @@ void do_cmd_equip(void)
 	}
 }
 
-
-/*
- * Wield or wear a single item from the pack or floor
- */
-void do_cmd_wield(void)
+/* Do the wielding */
+void do_cmd_wield_aux(object_type *q_ptr, bool silently)
 {
 	int slot;
-
-	object_type *q_ptr;
 
 	object_type *o_ptr;
 
 	cptr act;
-
-	cptr q, s;
-
-	/* Restrict the choices */
-	item_tester_hook = item_tester_hook_wear;
-
-	/* Get an item */
-	q = "Wear/Wield which item? ";
-	s = "You have nothing you can wear or wield.";
-
-	q_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
-
-	/* Not a valid item */
-	if (!q_ptr) return;
 
 	/* Check the slot */
 	slot = wield_slot(q_ptr);
@@ -155,9 +136,6 @@ void do_cmd_wield(void)
 			 OBJECT_FMT(q_ptr, FALSE, 0)))
 			return;
 	}
-
-	/* Take a turn */
-	p_ptr->state.energy_use = 100;
 
 	/* Split object */
 	q_ptr = item_split(q_ptr, 1);
@@ -203,7 +181,7 @@ void do_cmd_wield(void)
 	}
 
 	/* Message */
-	msgf("%s %v (%c).", act, OBJECT_FMT(o_ptr, TRUE, 3), I2A(slot));
+	if (!silently) msgf("%s %v (%c).", act, OBJECT_FMT(o_ptr, TRUE, 3), I2A(slot));
 
 	/* Cursed! */
 	if (cursed_p(o_ptr))
@@ -238,6 +216,35 @@ void do_cmd_wield(void)
 	notice_item();
 
 	make_noise(1);
+}
+
+
+/*
+ * Wield or wear a single item from the pack or floor
+ */
+void do_cmd_wield(void)
+{
+	cptr q, s;
+
+	object_type *q_ptr;
+
+	/* Restrict the choices */
+	item_tester_hook = item_tester_hook_wear;
+
+	/* Get an item */
+	q = "Wear/Wield which item? ";
+	s = "You have nothing you can wear or wield.";
+
+	q_ptr = get_item(q, s, (USE_INVEN | USE_FLOOR));
+
+	/* Not a valid item */
+	if (!q_ptr) return;
+
+	/* Take a turn */
+	p_ptr->state.energy_use = 100;
+
+	/* Do the work */
+	do_cmd_wield_aux(q_ptr, FALSE);
 }
 
 
@@ -305,7 +312,7 @@ void do_cmd_drop(void)
 	if (!o_ptr) return;
 
 	/* Hack -- Cannot remove cursed items */
-	if ((!o_ptr->allocated) && cursed_p(o_ptr))
+	if (player_item_equip(o_ptr) && cursed_p(o_ptr))
 	{
 		/* Oops */
 		msgf("Hmmm, it seems to be cursed.");
