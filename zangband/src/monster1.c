@@ -1626,6 +1626,7 @@ void display_visible(void)
 	char c1, c2;
 	byte a1, a2;
 	monster_race *r_ptr;
+	char mon_name[80];
 
 	/* Erase the window */
     clear_from(0);
@@ -1669,38 +1670,55 @@ void display_visible(void)
 			a2 = TERM_WHITE;
 		}
 
-		/* Dump the name */
-		if (FLAG(r_ptr, RF_UNIQUE))
+		/* Just making sure there is a monster */
+		if (r_ptr->r_see)
 		{
-			roff(CLR_L_BLUE "%s", mon_race_name(r_ptr));
-		}
-		else if (FLAG(r_ptr, RF_QUESTOR))
-		{
-			roff(CLR_L_RED "%s", mon_race_name(r_ptr));
-		}
-		else
-		{
-			roff("%s", mon_race_name(r_ptr));
-		}
+			/* Append count */
+			roff("%d (", r_ptr->r_see);
 
-		/* Append the "standard" attr/char info */
-		roff(" ('");
-		Term_addch(a1, c1);
-		roff("')");
+			/* Append the "standard" attr/char info */
+			Term_addch(a1, c1);
 
-		/* Append the "optional" attr/char info */
-		roff("/('");
-		Term_addch(a2, c2);
-		roff("'):");
+			/* If show the monster graphic too */
+			if (use_graphics != GRAPHICS_NONE)
+			{
+				/* Append the "optional" attr/char info */
+				roff(" / ");
+				Term_addch(a2, c2);
+			}
 
-		/* Wizards get extra info */
-		if (p_ptr->state.wizard)
-		{
-			roff(" (" CLR_L_BLUE "%d)", i);
+			/* Separator */
+			roff(") ");
+
+			/* Copy the name into a string */
+			strcpy(mon_name, mon_race_name(r_ptr));
+
+			/* Pluralize the name if needed */
+			if (r_ptr->r_see > 1) plural_aux(mon_name); 
+
+			/* Dump the name */
+			if (FLAG(r_ptr, RF_UNIQUE))
+			{
+				/* Uniques are blue */
+				roff(CLR_L_BLUE "%s", mon_name);
+			}
+			else if (FLAG(r_ptr, RF_QUESTOR))
+			{
+				/* Quest monsters are red */
+				roff(CLR_L_RED "%s", mon_name);
+			}
+			else
+			{
+				/* The rest is white */
+			 	roff("%s", mon_name);
+			}
+
+			/* Wizards get extra info */
+			if (p_ptr->state.wizard)
+			{
+				roff(" (" CLR_L_BLUE "%d)", i);
+			}
 		}
-
-		/* Append count */
-		roff("[%d]", r_ptr->r_see);
 
 		/* Look for the next one */
 		while (i > 0)
