@@ -849,12 +849,12 @@ static void display_banner(wild_done_type *w_ptr)
 				if (castle_in_town)
 				{
 					/* Town with home and castle */
-					banner = "Move around, press * for town, h for home, c for castle or any key to exit.";
+					banner = "Move around, press * for town, H for home, C for castle or any key to exit.";
 				}
 				else
 				{
 					/* Town with home and no castle */
-					banner = "Move around, press * for town, h for home or any key to exit.";
+					banner = "Move around, press * for town, H for home or any key to exit.";
 				}
 			}
 			/* Town with no home */
@@ -863,7 +863,7 @@ static void display_banner(wild_done_type *w_ptr)
 				if (castle_in_town)
 				{
 					/* Town with castle and no home */
-					banner = "Move around, press * for town, c for castle or any key to exit.";
+					banner = "Move around, press * for town, C for castle or any key to exit.";
 				}
 				else
 				{
@@ -1006,7 +1006,7 @@ static bool dump_info_test(char c, int town)
 			return (TRUE);
 		}
 
-		case 'h':
+		case 'H':
 		{
 			/* Display the items in the home needs a home */
 			for (i = 0; i < place[town].numstores; i++)
@@ -1024,7 +1024,7 @@ static bool dump_info_test(char c, int town)
 			return (build_found && visited_town);
 		}
 
-		case 'c':
+		case 'C':
 		{
 			/* Display the items in the home needs a home */
 			for (i = 0; i < place[town].numstores; i++)
@@ -1081,7 +1081,7 @@ static bool do_cmd_view_map_aux(char c, int town)
 			break;
 		}
 
-		case 'h':
+		case 'H':
 		{
 			/* Display the items in the home */
 			(void)dump_home_info(fff, town);
@@ -1090,7 +1090,7 @@ static bool do_cmd_view_map_aux(char c, int town)
 			break;
 		}
 
-		case 'c':
+		case 'C':
 		{
 			/* Display the quests taken */
 			dump_castle_info(fff, town);
