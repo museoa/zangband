@@ -2952,6 +2952,9 @@ static void process_monster(int m_idx)
 		{
 			/* Dump a message */
 			msgf("%^v is no longer invulnerable.", MONSTER_FMT(m_ptr, 0));
+
+			/* Redraw the health bar */
+			if (p_ptr->health_who == m_idx)	p_ptr->redraw |= (PR_HEALTH);
 		}
 	}
 
@@ -2993,6 +2996,9 @@ static void process_monster(int m_idx)
 				/* Acquire the monster poss + dump message*/
 				msgf("%^s recovers %v courage.", m_name,
 					 MONSTER_FMT(m_ptr, 0x22));
+
+				/* Redraw the health bar */
+				if (p_ptr->health_who == m_idx)	p_ptr->redraw |= (PR_HEALTH);
 			}
 		}
 	}
