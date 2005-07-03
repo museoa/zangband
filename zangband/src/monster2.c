@@ -1295,9 +1295,6 @@ void update_mon_vis(u16b r_idx, int increment)
 	monster_race *r_ptr = &r_info[r_idx];
 	int i;
 
-	/* Changes on screen */
-	p_ptr->window |= PW_VISIBLE;
-
 	/* Paranoia */
 #if 0
 	if (!r_ptr->r_see && (increment == -1)) core("Monster visibility error!");
@@ -1312,6 +1309,9 @@ void update_mon_vis(u16b r_idx, int increment)
 	/* Disturb if necessary */
 	if (disturb_view)
 		disturb(FALSE);
+
+	/* Changes on screen */
+	p_ptr->window |= PW_VISIBLE;
 
 	/* Update 'most powerful seen monster' */
 	if (r_ptr->r_see)
