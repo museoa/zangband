@@ -1624,11 +1624,11 @@ static bool mimic_desc(char *m_name, const monster_race *r_ptr)
 		{
 			if (mon_name_cont(r_ptr, "Tome "))
 			{
-				strcpy(m_name, "tome");
+				strcpy(m_name, "Tome");
 			}
 			else
 			{
-				strcpy(m_name, "scroll");
+				strcpy(m_name, "Scroll");
 			}
 
 			return (TRUE);
@@ -1636,13 +1636,13 @@ static bool mimic_desc(char *m_name, const monster_race *r_ptr)
 
 		case '!':
 		{
-			strcpy(m_name, "potion");
+			strcpy(m_name, "Potion");
 			return (TRUE);
 		}
 
 		case '=':
 		{
-			strcpy(m_name, "ring");
+			strcpy(m_name, "Ring");
 			return (TRUE);
 		}
 
@@ -1654,13 +1654,13 @@ static bool mimic_desc(char *m_name, const monster_race *r_ptr)
 
 		case '&':
 		{
-			strcpy(m_name, "chest");
+			strcpy(m_name, "Chest");
 			return (TRUE);
 		}
 
 		case '(':
 		{
-			strcpy(m_name, "cloak");
+			strcpy(m_name, "Cloak");
 			return (TRUE);
 		}
 
