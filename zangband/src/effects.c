@@ -3322,6 +3322,9 @@ void take_hit(int damage, cptr hit_from)
 
 		chg_virtue(V_SACRIFICE, 10);
 
+		/* Make sure the HPs on the screen are below zero */
+		handle_stuff();
+
 		/* Hack -- Note death */
 		if (!last_words)
 		{
