@@ -1491,7 +1491,7 @@ P:0:1d10:11:13:0
 F:STEALTH | RES_DARK | INFRA |
 F:BRAND_COLD | SLAY_UNDEAD | RES_COLD | SEE_INVIS | SHOW_MODS | THROW
 F:INSTA_ART
-L:BONUS:	b.pspeed = (player.level + 4) / 5
+L:BONUS:	b.pspeed = (player.lev + 4) / 5
 L:SPOIL:	return "+1 speed / 5 levels"
 
 # The Spear 'Soulsucker'
