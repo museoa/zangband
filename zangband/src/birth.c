@@ -874,8 +874,7 @@ static bool get_player_class(void)
 
 	/* Extra info */
 	put_fstr(QUESTION_COL, QUESTION_ROW,
-				"Your 'class' determines various intrinsic abilities and bonuses.\n"
-				"Any entries in parentheses should only be used by advanced players.");
+				"Your 'class' determines various intrinsic abilities and bonuses.");
 
 	/* Tabulate classes */
 	for (i = 0; i < MAX_CLASS; i++)
