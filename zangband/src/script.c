@@ -604,11 +604,11 @@ void apply_object_trigger(int trigger_id, object_type *o_ptr, cptr format, ...)
 /*
  * Callback for using an object
  *
- * If the object is a scroll of identify this function may have a side effect.
- * The side effect is that the o_ptr no longer points at the scroll of identity
- * because of the sorting done by the identify_spell.
- * This side effect is countered in do_cmd_read_scroll_aux, the only place where
- * it matters.
+ * If the object is a scroll or staff of identify this function may have a side
+ * effect.  The side effect is that the o_ptr no longer points at the scroll or
+ * staff of identity because of the inv sorting done by the identify_spell.
+ * This side effect is countered in do_cmd_read_scroll_aux and
+ * do_cmd_use_staff_aux.
  */
 bool use_object(object_type *o_ptr, bool *id_return, int dir)
 {

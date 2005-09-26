@@ -306,7 +306,7 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 	 */
 	OBJ_ITT_START (p_ptr->inventory, j_ptr)
 	{
-		/* retrieve the pointer of the original scroll */
+		/* Retrieve the pointer of the original scroll */
 		if (object_equal(&temp, j_ptr)) o_ptr = j_ptr;
 	}
 	OBJ_ITT_END;
@@ -406,6 +406,7 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 {
 	int chance, lev;
 	bool ident, use_charge;
+	object_type temp, *j_ptr;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if (floor_item(o_ptr) && (o_ptr->number > 1))
@@ -413,6 +414,9 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 		msgf("You must first pick up the staffs.");
 		return;
 	}
+
+	/* Hack: Copy item into temp, needed to counter reorder confusion */
+	COPY(&temp, o_ptr, object_type);
 
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
@@ -470,6 +474,14 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	/* Use the staff */
 	use_charge = use_object(o_ptr, &ident, FALSE);
 	
+	/* Hack: Counter the confusion caused by reordering with identify */
+	OBJ_ITT_START (p_ptr->inventory, j_ptr)
+	{
+		/* Retrieve the pointer of the original staff */
+		if (object_equal(&temp, j_ptr)) o_ptr = j_ptr;
+	}
+	OBJ_ITT_END;
+
 	/* Hack - the staff may destroy itself when activated on the ground */
 	if (o_ptr->k_idx)
 	{
