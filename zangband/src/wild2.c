@@ -2306,7 +2306,7 @@ const dun_gen_type *pick_dungeon_type(void)
 	return (d_ptr);
 }
 
-
+/* Return the name of this type of dungeon */
 cptr dungeon_type_name(u32b dun)
 {
 	switch(dun)
@@ -2335,8 +2335,64 @@ cptr dungeon_type_name(u32b dun)
 		
 		case RF7_DUN_CITY: return("City");
 		
-		default: return ("Unknown");
+		default: return (NULL);
 	}
+}
+
+/* Return as a string the possible dungeons for a monster */
+cptr dungeon_list_name(const monster_race *r_ptr, bool quest)
+{
+	char buf1[80];
+	char buf2[80];
+	char prev[80];
+	u32b dun, start = RF7_DUN_DARKWATER;
+	int num = 0;
+
+	/* Do we want all the dungeons or ignore the town dungeon for quests */
+	if (quest) start = RF7_DUN_LAIR;
+
+	/* Hack:  use the overflow to end loop */
+	for (dun = start; dun >= start; dun *= 2)
+	{
+		/* If this monster can take this dungeon */
+		if (r_ptr->flags[7] & dun)
+		{
+			/* Count it */
+			num++;
+
+			/* Single dungeon format */
+			strnfmt(buf1, 80, "a %s", dungeon_type_name(dun));
+
+			/* Multiple dungeon format */
+			if (num == 1)
+			{
+				/* First dungeon */
+				strnfmt(buf2, 80, "or a %s", dungeon_type_name(dun));
+			}
+			else if (num == 2)
+			{
+				/* Second dungeon */
+				strnfmt(buf2, 80, "a %s %s", dungeon_type_name(dun), prev);
+			}
+			else
+			{
+				/* Even more dungeons */
+				strnfmt(buf2, 80, "a %s, %s", dungeon_type_name(dun), prev);
+			}
+
+			/* Remember for next round */
+			strcpy(prev, buf2);
+		}
+	}
+
+	/* No dungeon available */
+	if (!num) return (NULL);
+
+	/* If there is 1 dungeon available */
+	if (num == 1) return (format("%s", buf1));
+
+	/* There are multiple dungeon available */
+	return (format("%s", buf2));
 }
 
 

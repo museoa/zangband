@@ -565,8 +565,42 @@ void quest_discovery(void)
 }
 
 
-/*
- * Is this dungeon level a special (winner) quest level? */
+/* Return the level appropriate for this quest */
+int quest_level(quest_type *q_ptr)
+{
+	dun_type *d_ptr = dungeon();
+	monster_race *r_ptr = &r_info[q_ptr->data.bnt.r_idx];
+
+	/* How about the winner quest */
+	if (q_ptr->x_type == QX_KILL_WINNER) return (q_ptr->data.dun.level);
+
+	/* Or maybe a bounty */
+	if (q_ptr->type != QUEST_TYPE_BOUNTY) return (-1);
+
+	/* Is the player inside the right sort of dungeon? */
+	if (r_ptr->flags[7] & d_ptr->habitat)
+	{
+		/* Create a starting level */
+		int min_level = d_ptr->min_level;
+
+		/* How deep is the dungeon? */
+		int depth = d_ptr->max_level - min_level;
+
+		/* How many have been killed? */
+		int cur_num = q_ptr->data.bnt.cur_num;
+
+		/* Top out at how many monsters? */
+		int max_num = q_ptr->data.bnt.max_num;
+
+		/* Spread the monsters evenly throughout the dungeon */
+		return (min_level + (depth * (cur_num + 1)) / (max_num + 1));
+	}
+
+	/* Failure */
+	return (-1);
+}
+
+/* Is this dungeon level awinner or bounty quest level? */
 bool is_special_level(int level)
 {
 	int i;
@@ -577,17 +611,15 @@ bool is_special_level(int level)
 	{
 		q_ptr = &quest[i];
 
-		/* Must be dungeon quest */
-		if (q_ptr->type != QUEST_TYPE_DUNGEON) continue;
-		
-		/* Must be winner quest */
-		if (q_ptr->x_type != QX_KILL_WINNER) continue;
+		/* Must be dungeon or bounty quest */
+		if (q_ptr->type != QUEST_TYPE_DUNGEON &&
+			q_ptr->type != QUEST_TYPE_BOUNTY) continue;
 		
 		/* Is the quest still there? */
 		if (q_ptr->status > QUEST_STATUS_TAKEN) continue;
 
-		/* Does the level match? */
-		if (q_ptr->data.dun.level == level) return (TRUE);
+		/* Is this a quest at a certain level? */
+		if (quest_level(q_ptr) == level) return (TRUE);
 	}
 
 	return (FALSE);
@@ -645,7 +677,7 @@ void activate_quests(int level)
 					int min_level = d_ptr->min_level;
 
 					/* How deep is the dungeon? */
-					int depth = MIN(d_ptr->max_level, 99) - min_level;
+					int depth = d_ptr->max_level - min_level;
 
 					/* How many have been killed? */
 					int cur_num = q_ptr->data.bnt.cur_num;
@@ -960,6 +992,9 @@ void trigger_quest_complete(byte x_type, vptr data)
 
 					/* Increment number killed */
 					q_ptr->data.bnt.cur_num++;
+
+					/* Bang in a new stairs */
+					create_stairs(m_ptr->fx, m_ptr->fy);
 
 					if (q_ptr->data.bnt.cur_num >= q_ptr->data.bnt.max_num)
 					{
@@ -1517,7 +1552,26 @@ static bool request_find_item(int dummy)
 	return (TRUE);
 }
 
+/* Does this monster occur only ina darkwater dungeon? */
+static bool darkwater_only_monster(const monster_race *r_ptr)
+{
+	u32b dun;
 
+	/* Can the monster appear in a darkwater dungeon */
+	if (!(FLAG(r_ptr, RF_DUN_DARKWATER))) return (FALSE);
+
+	/* Hack:  use the overflow to end loop */
+	for (dun = RF7_DUN_LAIR; dun >= RF7_DUN_LAIR; dun *= 2)
+	{
+		/* Count the number of dungeons this monster appear in */
+		if (r_ptr->flags[7] & dun) return (FALSE);
+	}
+
+	/* No other dungeon means this monster is darkwater only */
+	return (TRUE);
+}
+
+/* Prevent funny bounty quests */
 static bool monster_quest(const monster_race *r_ptr)
 {
 	int i;
@@ -1535,11 +1589,17 @@ static bool monster_quest(const monster_race *r_ptr)
 	if (FLAG(r_ptr, RF_NEVER_MOVE) || FLAG(r_ptr, RF_FRIENDS)) return (FALSE);
 	
 	/* No uniques that are already dead */
-	if ((FLAG(r_ptr, RF_UNIQUE) || FLAG(r_ptr, RF_UNIQUE_7))
-			&& (r_ptr->cur_num >= r_ptr->max_num))
-		{
-			return (FALSE);
-		}
+	if ((FLAG(r_ptr, RF_UNIQUE) || FLAG(r_ptr, RF_UNIQUE_7)) &&
+		(r_ptr->cur_num >= r_ptr->max_num))
+	{
+		return (FALSE);
+	}
+
+	/* Ignore monsters that can only be on the surface */
+	if (r_ptr->flags[7] < RF7_DUN_DARKWATER) return (TRUE);
+
+	/* Ignore monsters that can only be in a darkwater dungeon */
+	if (darkwater_only_monster(r_ptr)) return (FALSE);
 
 	/* For all the quests */
 	for (i = 0; i < q_max; i++)
@@ -1586,12 +1646,14 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 		plural_aux(buf);
 
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 128, "Kill %d %s.", num, buf);
+		(void)strnfmt(q_ptr->name, 128, "Kill %d %s in %s dungeon.",
+					  num, buf, dungeon_list_name(r_ptr, TRUE));
 	}
 	else
 	{
 		/* XXX XXX Create quest name */
-		(void)strnfmt(q_ptr->name, 128, "Kill %s.", mon_race_name(r_ptr));
+		(void)strnfmt(q_ptr->name, 128, "Kill %s in %s dungeon.",
+					  mon_race_name(r_ptr), dungeon_list_name(r_ptr, TRUE));
 	}
 	
 	/* We need to place the monster(s) when the dungeon is made */

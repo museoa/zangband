@@ -1080,7 +1080,7 @@ extern void create_wilderness(void);
 extern void move_wild(void);
 extern void shift_in_bounds(int *x, int *y);
 extern byte the_floor(void);
-extern void change_level(int);
+extern void change_level(int level);
 extern int base_level(void);
 extern void wipe_all_list(void);
 extern dun_type *dungeon(void);
@@ -1088,6 +1088,7 @@ extern void move_dun_level(int direction);
 extern int max_dun_level_reached(void);
 extern cptr building_name(byte build_type);
 extern void building_char(byte build_type, byte *a, char *c);
+extern cptr dungeon_list_name(const monster_race *r_ptr, bool quest);
 extern cptr dungeon_type_name(u32b dun);
 
 
