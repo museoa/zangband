@@ -1308,9 +1308,6 @@ static void do_cmd_wiz_jump(void)
 	{
 		char tmp_val[160];
 
-		/* Default */
-		strnfmt(tmp_val, 160, "%d", p_ptr->depth);
-
 		/* Does this dungeon start right at the surface */
 		if (min_depth == 1)
 		{

@@ -431,58 +431,86 @@ static void sense_inventory(void)
  */
 static void pattern_teleport(void)
 {
-	int min_level = 0;
-	int max_level = 99;
-
 	/* Ask for level */
 	if (get_check("Teleport level? "))
 	{
+		/* Get dungeon */
+		dun_type *d_ptr = dungeon();
+
+		/* Set dungeon params */
+		int min_level = d_ptr->min_level;
+		int max_level = d_ptr->max_level;
+
 		char tmp_val[160];
+
+		/* Hack: Is the char about to jump past Oberon? */
+		if (r_info[QW_OBERON].max_num && max_level > 99) max_level = 99;
+
+		/* Hack: Is the char about to jump past The Serpent? */
+		if (r_info[QW_SERPENT].max_num && max_level > 100) max_level = 100;
 
 		/* Only downward in ironman mode */
 		if (ironman_downward)
+		{
+			/* Don't allow to go up */
 			min_level = p_ptr->depth;
 
-		/* Maximum level */
-		if (p_ptr->depth > 100)
-			max_level = dungeon()->max_level;
-		else if (p_ptr->depth == 100)
-			max_level = 100;
-
-		/* Default */
-		strnfmt(tmp_val, 160, "%d", p_ptr->depth);
-
-		/* Ask for a level */
-		if (!get_string(tmp_val, 11, "Teleport to level (%d-%d): ",
-						min_level, max_level)) return;
+			/* Ask for a level */
+			if (!get_string(tmp_val, 11, "Teleport to level (%d-%d): ",
+							min_level, max_level)) return;
+		}
+		/* Does this dungeon start right at the surface */
+		else if (min_level == 1)
+		{
+			/* Ask for a level */
+			if (!get_string(tmp_val, 11, "Teleport to level (0-%d): ",
+							max_level)) return;
+		}
+		/* Ignore the depths between the surface and the start */
+		else
+		{
+			/* Ask for a level */
+			if (!get_string(tmp_val, 11, "Teleport to level (0, %d-%d): ",
+							min_level, max_level)) return;
+		}
 
 		/* Extract request */
 		p_ptr->cmd.arg = atoi(tmp_val);
+
+		/* Paranoia */
+		if (p_ptr->cmd.arg < min_level)
+		{
+			/* Go to the highest available level */
+			if (ironman_downward) 
+			{
+				/* Current level */
+				p_ptr->cmd.arg = min_level;
+			}
+			else
+			{
+				/* Surface */
+				p_ptr->cmd.arg = 0;
+			}
+		}
+
+		/* Paranoia */
+		if (p_ptr->cmd.arg > max_level) p_ptr->cmd.arg = max_level;
+
+		/* Accept request */
+		msgf("You teleport to dungeon level %d.", p_ptr->cmd.arg);
+
+		/* Change level */
+		p_ptr->depth = p_ptr->cmd.arg;
+
+		/* Leaving */
+		p_ptr->state.leaving = TRUE;
 	}
+	/* Jump around on this level? */
 	else if (get_check("Normal teleport? "))
 	{
+		/* Ploink */
 		teleport_player(200);
-		return;
 	}
-	else
-	{
-		return;
-	}
-
-	/* Paranoia */
-	if (p_ptr->cmd.arg < min_level) p_ptr->cmd.arg = min_level;
-
-	/* Paranoia */
-	if (p_ptr->cmd.arg > max_level) p_ptr->cmd.arg = max_level;
-
-	/* Accept request */
-	msgf("You teleport to dungeon level %d.", p_ptr->cmd.arg);
-
-	/* Change level */
-	p_ptr->depth = p_ptr->cmd.arg;
-
-	/* Leaving */
-	p_ptr->state.leaving = TRUE;
 }
 
 
