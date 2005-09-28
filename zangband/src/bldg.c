@@ -1294,6 +1294,17 @@ bool compare_weapons(void)
 }
 
 
+/* Check if the transaction is allowed */
+bool check_trans(cptr question)
+{
+	/* If the option is set ask for confirmation */
+	if (check_transaction && !get_check(question)) return (FALSE);
+
+	/* All is well */
+	return (TRUE);
+}
+
+
 /*
  * Enchant item
  */

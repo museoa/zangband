@@ -830,6 +830,7 @@ extern void display_build(const field_type *f_ptr);
 extern void do_cmd_bldg(const field_type *f_ptr);
 extern bool compare_weapons(void);
 extern bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac, bool weap);
+extern bool check_trans(cptr);
 extern void building_recharge(s32b cost);
 extern bool building_healer(void);
 extern void record_aura(void);

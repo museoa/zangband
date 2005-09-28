@@ -859,11 +859,13 @@ L:BUILD1:building_options("E) Examine Weapons (".. factor * 3 .."gp)")
 L:BUILD2:local cost
 L:BUILD2:if (command == 'E') then
 L:BUILD2:	cost = factor * 3
-L:BUILD2:	if (test_gold(cost) == TRUE) then
-L:BUILD2:		if compare_weapons() == TRUE then
-L:BUILD2:			player.au = player.au - cost
+L:BUILD2:	if (check_trans("Do you really want to examine your weapon? ")) then
+L:BUILD2:		if (test_gold(cost) == TRUE) then
+L:BUILD2:			if compare_weapons() == TRUE then
+L:BUILD2:				player.au = player.au - cost
+L:BUILD2:			end
+L:BUILD2:			message_flush()
 L:BUILD2:		end
-L:BUILD2:		message_flush()
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
 L:BUILD2:end
@@ -882,16 +884,20 @@ L:BUILD1:				  "R) Recharge Items",
 L:BUILD1:				  "I) Identify Items (".. factor * 5 .."gp)")
 L:BUILD2:local cost
 L:BUILD2:if (command == 'R') then
-L:BUILD2:	building_recharge(factor)
+L:BUILD2:	if (check_trans("Do you really want to recharge your wand? ")) then
+L:BUILD2:		building_recharge(factor)
+L:BUILD2:		message_flush()
+L:BUILD2:	end
 L:BUILD2:	done = TRUE
-L:BUILD2:	message_flush()
 L:BUILD2:elseif (command == 'I') then
 L:BUILD2:	cost = factor * 5
-L:BUILD2:	if (test_gold(cost) == TRUE) then
-L:BUILD2:		identify_pack()
-L:BUILD2:		msgf("Your posessions have been identified.")
-L:BUILD2:		message_flush()
-L:BUILD2:		player.au = player.au - cost
+L:BUILD2:	if (check_trans("Do you really want to identify your items? ")) then
+L:BUILD2:		if (test_gold(cost) == TRUE) then
+L:BUILD2:			identify_pack()
+L:BUILD2:			msgf("Your posessions have been identified.")
+L:BUILD2:			message_flush()
+L:BUILD2:			player.au = player.au - cost
+L:BUILD2:		end
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
 L:BUILD2:end
@@ -909,8 +915,10 @@ L:BUILD1:                 player.lev / 5 .. ",+" .. 5 * (player.lev / 3) .. "%).
 L:BUILD1:				  "",
 L:BUILD1:				  "E) Enchant Weapons (".. factor * 5 .."gp)")
 L:BUILD2:if (command == 'E') then
-L:BUILD2:	enchant_item(factor * 5, TRUE, TRUE, FALSE, TRUE)
-L:BUILD2:	message_flush()
+L:BUILD2:	if (check_trans("Do you really want to enchant your weapon? ")) then
+L:BUILD2:		enchant_item(factor * 5, TRUE, TRUE, FALSE, TRUE)
+L:BUILD2:		message_flush()
+L:BUILD2:	end
 L:BUILD2:	done = TRUE
 L:BUILD2:end
 
@@ -926,8 +934,10 @@ L:BUILD1:building_options("$CBased on your skill, we can improve up to +" .. pla
 L:BUILD1:				  "",
 L:BUILD1:				  "E) Enchant Armour (".. factor * 5 .."gp)")
 L:BUILD2:if (command == 'E') then
-L:BUILD2:	enchant_item(factor * 5, FALSE, FALSE, TRUE, FALSE)
-L:BUILD2:	message_flush()
+L:BUILD2:	if (check_trans("Do you really want to enchant your armour? ")) then
+L:BUILD2:		enchant_item(factor * 5, FALSE, FALSE, TRUE, FALSE)
+L:BUILD2:		message_flush()
+L:BUILD2:	end
 L:BUILD2:	done = TRUE
 L:BUILD2:end
 
@@ -942,15 +952,17 @@ L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("E) Expose yourself to raw chaos (".. 50 * factor * (count_mutations() + 1).."gp)")
 L:BUILD2:local cost
 L:BUILD2:if (command == 'E') then
-L:BUILD2:	cost = 50 * factor * (count_mutations() + 1)
-L:BUILD2:	if (test_gold(cost) == TRUE) then
-L:BUILD2:		if (lose_mutation(0) == TRUE) then
-L:BUILD2:			msgf("You feel oddly normal.")
-L:BUILD2:		else
-L:BUILD2:			gain_mutation(0)
+L:BUILD2:	if (check_trans("Do you really want to expose yourself to chaos? ")) then
+L:BUILD2:		cost = 50 * factor * (count_mutations() + 1)
+L:BUILD2:		if (test_gold(cost) == TRUE) then
+L:BUILD2:			if (lose_mutation(0) == TRUE) then
+L:BUILD2:				msgf("You feel oddly normal.")
+L:BUILD2:			else
+L:BUILD2:				gain_mutation(0)
+L:BUILD2:			end
+L:BUILD2:			player.au = player.au - cost
+L:BUILD2:			message_flush()
 L:BUILD2:		end
-L:BUILD2:		player.au = player.au - cost
-L:BUILD2:		message_flush()
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
 L:BUILD2:end
@@ -966,11 +978,13 @@ L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_options("E) Examine Map (".. factor * 5 .."gp)")
 L:BUILD2:local cost
 L:BUILD2:if (command == 'E') then
-L:BUILD2:	cost = factor * 5
-L:BUILD2:	if (test_gold(cost) == TRUE) then
-L:BUILD2:		msgf("You learn of the lay of the lands.")
-L:BUILD2:		map_wilderness(20, player.wilderness_x / 16, player.wilderness_y / 16)
-L:BUILD2:		player.au = player.au - cost
+L:BUILD2:	if (check_trans("Do you really want to read the map? ")) then
+L:BUILD2:		cost = factor * 5
+L:BUILD2:		if (test_gold(cost) == TRUE) then
+L:BUILD2:			msgf("You learn of the lay of the lands.")
+L:BUILD2:			map_wilderness(20, player.wilderness_x / 16, player.wilderness_y / 16)
+L:BUILD2:			player.au = player.au - cost
+L:BUILD2:		end
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
 L:BUILD2:	message_flush()
@@ -1885,9 +1899,11 @@ L:BUILD1:building_options("R) Read about monsters (".. 100 * factor .."gp)")
 L:BUILD2:local cost
 L:BUILD2:if (command == 'R') then
 L:BUILD2:	cost = 100 * factor
-L:BUILD2:	if (test_gold(cost) == TRUE) then
-L:BUILD2:		if (research_mon() == TRUE) then
-L:BUILD2:			player.au = player.au - cost
+L:BUILD2:	if (check_trans("Do you really want to read about monsters? ")) then
+L:BUILD2:		if (test_gold(cost) == TRUE) then
+L:BUILD2:			if (research_mon() == TRUE) then
+L:BUILD2:				player.au = player.au - cost
+L:BUILD2:			end
 L:BUILD2:		end
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
@@ -1965,11 +1981,13 @@ L:BUILD1:building_options("R) Restore Stats (".. 20 * factor .."gp)")
 L:BUILD2:local cost
 L:BUILD2:if (command == 'R') then
 L:BUILD2:	cost = 20 * factor
-L:BUILD2:	if (test_gold(cost) == TRUE) then
-L:BUILD2:		if (building_healer() == TRUE) then
-L:BUILD2:			player.au = player.au - cost
-L:BUILD2:		else
-L:BUILD2:			msgf("You are in fine health already.")
+L:BUILD2:	if (check_trans("Do you really want to heal your ills? ")) then
+L:BUILD2:		if (test_gold(cost) == TRUE) then
+L:BUILD2:			if (building_healer() == TRUE) then
+L:BUILD2:				player.au = player.au - cost
+L:BUILD2:			else
+L:BUILD2:				msgf("You are in fine health already.")
+L:BUILD2:			end
 L:BUILD2:		end
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
@@ -1995,14 +2013,18 @@ L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_magetower(factor, TRUE)
 L:BUILD2:local cost
 L:BUILD2:if (command == 'R') then
-L:BUILD2:	cost = factor * 5
-L:BUILD2:	if (test_gold(cost) == TRUE) then
-L:BUILD2:		record_aura()
-L:BUILD2:		player.au = player.au - cost
+L:BUILD2:	if (check_trans("Do you really want to record your aura? ")) then
+L:BUILD2:		cost = factor * 5
+L:BUILD2:		if (test_gold(cost) == TRUE) then
+L:BUILD2:			record_aura()
+L:BUILD2:			player.au = player.au - cost
+L:BUILD2:		end
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
 L:BUILD2:elseif (command == 'T') then
-L:BUILD2:	building_magetower(factor, FALSE)
+L:BUILD2:	if (check_trans("Do you really want to teleport elsewhere? ")) then
+L:BUILD2:		building_magetower(factor, FALSE)
+L:BUILD2:	end
 L:BUILD2:	done = TRUE
 L:BUILD2:end
 L:BUILD2:message_flush()
@@ -2018,14 +2040,18 @@ L:PENTER:do_cmd_bldg(field)
 L:BUILD1:building_magetower(factor, TRUE)
 L:BUILD2:local cost
 L:BUILD2:if (command == 'R') then
-L:BUILD2:	cost = factor * 5
-L:BUILD2:	if (test_gold(cost) == TRUE) then
-L:BUILD2:		record_aura()
-L:BUILD2:		player.au = player.au - cost
+L:BUILD2:	if (check_trans("Do you really want to record your aura? ")) then
+L:BUILD2:		cost = factor * 5
+L:BUILD2:		if (test_gold(cost) == TRUE) then
+L:BUILD2:			record_aura()
+L:BUILD2:			player.au = player.au - cost
+L:BUILD2:		end
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
 L:BUILD2:elseif (command == 'T') then
-L:BUILD2:	building_magetower(factor, FALSE)
+L:BUILD2:	if (check_trans("Do you really want to teleport elsewhere? ")) then
+L:BUILD2:		building_magetower(factor, FALSE)
+L:BUILD2:	end
 L:BUILD2:	done = TRUE
 L:BUILD2:end
 L:BUILD2:message_flush()
