@@ -564,12 +564,40 @@ void quest_discovery(void)
 	}
 }
 
+/* Return the depth this quest and dungeon will have a questor */
+int quest_depth(quest_type *q_ptr, dun_type *d_ptr)
+{
+	int min_level, depth;
+	int cur_num, max_num;
+
+	/* Paranoia */
+	if (!q_ptr || !d_ptr) return (-1);
+
+	/* Create a starting level */
+	min_level = d_ptr->min_level;
+
+	/* How deep is the dungeon? */
+	depth = d_ptr->max_level - min_level;
+
+	/* How many have been killed? */
+	cur_num = q_ptr->data.bnt.cur_num;
+
+	/* Top out at how many monsters? */
+	max_num = q_ptr->data.bnt.max_num;
+
+	/* Spread the monsters evenly throughout the dungeon */
+	return (min_level + (depth * (cur_num + 1)) / (max_num + 1));
+}
+
 
 /* Return the level appropriate for this quest */
 int quest_level(quest_type *q_ptr)
 {
 	dun_type *d_ptr = dungeon();
 	monster_race *r_ptr = &r_info[q_ptr->data.bnt.r_idx];
+
+	/* No dungeon no level */
+	if (!d_ptr) return (-1);
 
 	/* How about the winner quest */
 	if (q_ptr->x_type == QX_KILL_WINNER) return (q_ptr->data.dun.level);
@@ -578,35 +606,22 @@ int quest_level(quest_type *q_ptr)
 	if (q_ptr->type != QUEST_TYPE_BOUNTY) return (-1);
 
 	/* Is the player inside the right sort of dungeon? */
-	if (r_ptr->flags[7] & d_ptr->habitat)
-	{
-		/* Create a starting level */
-		int min_level = d_ptr->min_level;
-
-		/* How deep is the dungeon? */
-		int depth = d_ptr->max_level - min_level;
-
-		/* How many have been killed? */
-		int cur_num = q_ptr->data.bnt.cur_num;
-
-		/* Top out at how many monsters? */
-		int max_num = q_ptr->data.bnt.max_num;
-
-		/* Spread the monsters evenly throughout the dungeon */
-		return (min_level + (depth * (cur_num + 1)) / (max_num + 1));
-	}
+	if (r_ptr->flags[7] & d_ptr->habitat) return (quest_depth(q_ptr, d_ptr));
 
 	/* Failure */
 	return (-1);
 }
 
-/* Is this dungeon level awinner or bounty quest level? */
+/* Is this dungeon level a winner or bounty quest level? */
 bool is_special_level(int level)
 {
 	int i;
-
 	quest_type *q_ptr;
 
+	/* Not on the surface */
+	if (!level) return (FALSE);
+
+	/* Loop through the quests */
 	for (i = 0; i < q_max; i++)
 	{
 		q_ptr = &quest[i];
@@ -666,31 +681,18 @@ void activate_quests(int level)
 				dun_type *d_ptr = dungeon();
 				monster_race *r_ptr = &r_info[q_ptr->data.bnt.r_idx];
 
-				/* Hack - toggle QUESTOR flag */
-				SET_FLAG(r_ptr, RF_QUESTOR);
+				/* No dungeon dno quest */
+				if (!d_ptr) break;
 
-				/* Is the player inside the right sort of dungeon? */
-				if (level &&
+				/* Is the player inside the right dungeon and depth? */
+				if (level == quest_depth(q_ptr, d_ptr) &&
 					r_ptr->flags[7] & d_ptr->habitat)
 				{
-					/* Create a starting level */
-					int min_level = d_ptr->min_level;
+					/* Activate the quest */
+					q_ptr->flags |= QUEST_FLAG_ACTIVE;
 
-					/* How deep is the dungeon? */
-					int depth = d_ptr->max_level - min_level;
-
-					/* How many have been killed? */
-					int cur_num = q_ptr->data.bnt.cur_num;
-
-					/* Top out at how many monsters? */
-					int max_num = q_ptr->data.bnt.max_num;
-
-					/* Spread the monsters evenly throughout the dungeon */
-					if (level == min_level + (depth * (cur_num + 1)) / (max_num + 1))
-					{
-						/* Activate the quest */
-						q_ptr->flags |= QUEST_FLAG_ACTIVE;
-					}
+					/* Hack - toggle QUESTOR flag */
+					SET_FLAG(r_ptr, RF_QUESTOR);
 				}
 				
 				break;
@@ -748,6 +750,34 @@ void activate_quests(int level)
 }
 
 
+/* Check if there an active quest on this level, preventing stair creation */
+static bool multiple_quests(int level)
+{
+	int i;
+	quest_type *q_ptr;
+
+	/* Not on the surface */
+	if (!level) return (FALSE);
+
+	/* Loop through the quests */
+	for (i = 0; i < q_max; i++)
+	{
+		q_ptr = &quest[i];
+
+		/* Quest must be active */
+		if (!(q_ptr->flags & QUEST_FLAG_ACTIVE)) continue;
+
+		/* Quest must be unfinished */
+		if (q_ptr->status != QUEST_STATUS_TAKEN) continue;
+
+		/* Must be at the right depth */
+		if (quest_level(q_ptr) == level) return (TRUE);
+	}
+
+	return (FALSE);
+}
+
+
 /*
  * Create a magical staircase
  */
@@ -761,6 +791,9 @@ static void create_stairs(int x, int y)
 	
 	/* Paranoia - not on deepest dungeon level */
 	if (p_ptr->depth == dungeon()->max_level) return;
+
+	/* Check if there are remaining quests on this level */
+	if (multiple_quests(p_ptr->depth)) return;
 
 	/* Stagger around */
 	while ((cave_perma_grid(c_ptr) || c_ptr->o_idx) && !(i > 100))
@@ -1638,6 +1671,9 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 	
 	/* We have taken the quest */
 	q_ptr->status = QUEST_STATUS_TAKEN;
+
+	/* Hack - toggle QUESTOR flag */
+	SET_FLAG(r_ptr, RF_QUESTOR);
 
 	if (num != 1)
 	{
