@@ -309,7 +309,7 @@ monster_race *r_info;
 /***** Functions *****/
 
 /* monster2.c */
-extern void summon_specific(int who, int x1, int y1, int lev, int type, bool group, bool friendly, bool pet);
+extern bool summon_specific(int who, int x1, int y1, int lev, int type, bool group, bool friendly, bool pet);
 extern void summon_cloned_creature(int x1, int y1, int r_idx, bool pet);
 extern monster_race *monst_race(int r_idx);
 extern cptr *mon_race_name(monster_race *r_ptr);
