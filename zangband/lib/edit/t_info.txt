@@ -916,7 +916,7 @@ L:BUILD1:				  "",
 L:BUILD1:				  "E) Enchant Weapons (".. factor * 5 .."gp)")
 L:BUILD2:if (command == 'E') then
 L:BUILD2:	if (check_trans("Do you really want to enchant your weapon? ")) then
-L:BUILD2:		enchant_item(factor * 5, TRUE, TRUE, FALSE, TRUE)
+L:BUILD2:		enchant_item(factor * 5, TRUE, TRUE, FALSE, TRUE, FALSE)
 L:BUILD2:		message_flush()
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
@@ -935,7 +935,7 @@ L:BUILD1:				  "",
 L:BUILD1:				  "E) Enchant Armour (".. factor * 5 .."gp)")
 L:BUILD2:if (command == 'E') then
 L:BUILD2:	if (check_trans("Do you really want to enchant your armour? ")) then
-L:BUILD2:		enchant_item(factor * 5, FALSE, FALSE, TRUE, FALSE)
+L:BUILD2:		enchant_item(factor * 5, FALSE, FALSE, TRUE, FALSE, FALSE)
 L:BUILD2:		message_flush()
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
@@ -2091,3 +2091,24 @@ L:BUILD2:if (command == 'R') then
 L:BUILD2:	build_cmd_quest(25)
 L:BUILD2:	done = TRUE
 L:BUILD2:end
+
+# Magesmith (bows)
+N:147:Magesmith (bows and arrows)
+G:7:y
+W:100:3:0
+I:FEAT | VIS | MARK | NFT_LOOK | NO_OBJECT | PERM
+D:2:0:0:0:0:0:0:0
+L:SBINIT:place_sb(rand_range(90, 125), 0)
+L:PENTER:do_cmd_bldg(field)
+L:BUILD1:building_options("$CBased on your skill, we can improve up to (+"..
+L:BUILD1:                 player.lev / 5 .. ",+" .. 5 * (player.lev / 3) .. "%).",
+L:BUILD1:				  "",
+L:BUILD1:				  "E) Enchant bows or arrows (".. factor * 5 .."gp)")
+L:BUILD2:if (command == 'E') then
+L:BUILD2:	if (check_trans("Do you really want to enchant? ")) then
+L:BUILD2:		enchant_item(factor * 5, TRUE, TRUE, FALSE, FALSE, TRUE)
+L:BUILD2:		message_flush()
+L:BUILD2:	end
+L:BUILD2:	done = TRUE
+L:BUILD2:end
+

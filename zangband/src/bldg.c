@@ -1308,7 +1308,7 @@ bool check_trans(cptr question)
 /*
  * Enchant item
  */
-bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac, bool weap)
+bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac, bool weap, bool bow)
 {
 	bool okay = FALSE;
 	object_type *o_ptr;
@@ -1316,7 +1316,12 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac, bool weap)
 	int maxenchant = (p_ptr->lev / 5);
 	int maxenchant_d = (p_ptr->lev / 3);
 
-	if (weap)
+	if (bow)
+	{
+		/* Select bows and arrows */
+		item_tester_hook = item_tester_hook_fletcher;
+	}
+	else if (weap)
 	{
 		/* Select weapons */
 		item_tester_hook = item_tester_hook_melee_weapon;
@@ -1382,12 +1387,24 @@ bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac, bool weap)
 	}
 	else
 	{
-		msgf("Improved %v for %d gold.", OBJECT_FMT(o_ptr, TRUE, 1),
-			 cost * o_ptr->number);
+		/* Charge the price for every item in the stack */
+		cost *= o_ptr->number;
+
+		/* Alter the cost for arrows */
+		if (bow && o_ptr->tval != TV_BOW)
+		{
+			/* Divide by magic number */
+			cost = cost / 20;
+		}
+
+		/* Throw in a identify for free */
+		identify_item(o_ptr);
+
+		msgf("Improved %v for %d gold.", OBJECT_FMT(o_ptr, TRUE, 1), cost);
 		message_flush();
 
-		/* Charge the money */
-		p_ptr->au -= (cost * o_ptr->number);
+		/* Pay */
+		p_ptr->au -= cost;
 
 		/* Something happened */
 		return (TRUE);

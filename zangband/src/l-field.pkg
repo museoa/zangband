@@ -94,5 +94,5 @@ extern void gamble_dice_slots(void);
 extern bool inn_rest(void);
 extern bool compare_weapons(void);
 extern void building_recharge(s32b cost);
-extern bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac, bool weap);
+extern bool enchant_item(s32b cost, bool to_hit, bool to_dam, bool to_ac, bool weap, bool bow);
 extern bool check_trans(cptr);
