@@ -1056,7 +1056,7 @@ s32b flag_cost(const object_type *o_ptr, int plusses)
 		if (cursed_p(o_ptr))
 			total -= 7500;
 		else
-			total += 250;
+			total -= 12200;
 	}
 	if (FLAG(o_ptr, TR_AGGRAVATE)) total -= 5000;
 	if (FLAG(o_ptr, TR_BLESSED)) total += 200;
