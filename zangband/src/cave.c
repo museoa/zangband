@@ -1098,19 +1098,27 @@ void note_spot(int x, int y)
 	int px = p_ptr->px;
 	int py = p_ptr->py;
 
+	bool door;
+
 	object_type *o_ptr;
 	field_type *f_ptr;
 
 	cave_type *c_ptr = area(x, y);
 	pcave_type *pc_ptr = parea(x, y);
 
-	/* Is it lit + in view + player is not blind? */
-	if (((c_ptr->info & (CAVE_GLOW | CAVE_MNLT))
+	/* Are we checking a door?  Then light or not doesn't matter. */
+	door = c_ptr->feat == FEAT_OPEN || c_ptr->feat == FEAT_CLOSED;
+	
+	/* Allow doors.  If not: is it lit + in view + player is not blind? */
+	if (door ||
+		(((c_ptr->info & (CAVE_GLOW | CAVE_MNLT))
 		 || (pc_ptr->player & (GRID_LITE)))
-		&& player_has_los_grid(pc_ptr) && !p_ptr->tim.blind)
+		&& player_has_los_grid(pc_ptr) && !p_ptr->tim.blind))
 	{
-		/* Memorize certain non-torch-lit wall grids */
-		if (!cave_floor_grid(c_ptr) && !(pc_ptr->player & (GRID_LITE)))
+		/* Memorize certain non-torch-lit wall grids, but not doors */
+		if (!cave_floor_grid(c_ptr) &&
+			!(pc_ptr->player & (GRID_LITE)) &&
+			!door)
 		{
 			int yy, xx;
 
