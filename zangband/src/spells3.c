@@ -1333,39 +1333,6 @@ bool explosive_rune(void)
 
 
 /*
- * Identify everything being carried.
- * Done by a potion of "self knowledge".
- */
-void identify_pack(void)
-{
-	int i;
-	object_type *o_ptr;
-
-	/* Identify equipment */
-	for (i = 0; i < EQUIP_MAX; i++)
-	{
-		o_ptr = &p_ptr->equipment[i];
-
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
-
-		/* Identify it */
-		identify_item(o_ptr);
-	}
-
-	/* Identify inventory */
-	OBJ_ITT_START (p_ptr->inventory, o_ptr)
-	{
-		/* Identify it */
-		identify_item(o_ptr);
-	}
-	OBJ_ITT_END;
-	
-	/* Notice changes */
-	notice_inven();
-}
-
-/*
  * Try to remove a curse from an item
  *
  * Note that Items which are "Perma-Cursed" (The One Ring,
@@ -2206,6 +2173,58 @@ bool ident_spell(void)
 bool ident_scroll(int k_idx)
 {
 	return (ident_spell_aux(k_idx));
+}
+
+
+/*
+ * Identify everything being carried.
+ * Done by a potion of "self knowledge".
+ */
+bool identify_pack(void)
+{
+	int i;
+	object_type *o_ptr;
+	bool success = FALSE;
+
+	/* Identify equipment */
+	for (i = 0; i < EQUIP_MAX; i++)
+	{
+		o_ptr = &p_ptr->equipment[i];
+
+		/* Skip non-objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Does this item need identification? */
+		if (item_tester_unknown(o_ptr))
+		{
+			/* Remember for later */
+			success = TRUE;
+
+			/* Identify it */
+			identify_item(o_ptr);
+		}
+	}
+
+	/* Identify inventory */
+	OBJ_ITT_START (p_ptr->inventory, o_ptr)
+	{
+		/* Does this item need identification? */
+		if (item_tester_unknown(o_ptr))
+		{
+			/* Remember for later */
+			success = TRUE;
+
+			/* Identify it */
+			identify_item(o_ptr);
+		}
+	}
+	OBJ_ITT_END;
+	
+	/* Notice changes */
+	notice_inven();
+
+	/* Report */
+	return (success);
 }
 
 

@@ -893,10 +893,13 @@ L:BUILD2:elseif (command == 'I') then
 L:BUILD2:	cost = factor * 5
 L:BUILD2:	if (check_trans("Do you really want to identify your items? ")) then
 L:BUILD2:		if (test_gold(cost) == TRUE) then
-L:BUILD2:			identify_pack()
-L:BUILD2:			msgf("Your posessions have been identified.")
+L:BUILD2:			if (identify_pack()) then
+L:BUILD2:				msgf("Your posessions have been identified.")
+L:BUILD2:				player.au = player.au - cost
+L:BUILD2:			else
+L:BUILD2:				msgf("Your have nothing to idenitfy, that's for free.")
+L:BUILD2:			end
 L:BUILD2:			message_flush()
-L:BUILD2:			player.au = player.au - cost
 L:BUILD2:		end
 L:BUILD2:	end
 L:BUILD2:	done = TRUE
