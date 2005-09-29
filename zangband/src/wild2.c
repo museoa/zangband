@@ -1344,6 +1344,9 @@ static bool monster_habitat_ok(int r_idx)
 	/* Hack - no aquatic monsters */
 	if (FLAG(r_ptr, RF_AQUATIC)) return (FALSE);
 
+	/* Pevent some nasties with huge range and tracking ability */
+	if (r_ptr->aaf == 90 && FLAG(r_ptr, RF_PASS_WALL)) return (FALSE);
+
 	/* In this dungeon? */
 	if (r_ptr->flags[7] & dun_habitat) return (TRUE);
 
