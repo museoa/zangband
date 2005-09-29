@@ -111,8 +111,6 @@ void sense_item(object_type *o_ptr, bool heavy, bool wield, bool msg)
 
 	int slot;
 
-	bool okay = FALSE;
-
 	/* Valid "tval" codes */
 	switch (o_ptr->tval)
 	{
@@ -134,13 +132,11 @@ void sense_item(object_type *o_ptr, bool heavy, bool wield, bool msg)
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		{
-			okay = TRUE;
 			break;
 		}
 		case TV_FIGURINE:
 		{
-			if (!heavy)
-				okay = TRUE;
+			if (heavy) return;
 			break;
 		}
 		default:
