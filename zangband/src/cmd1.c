@@ -595,31 +595,75 @@ void search(void)
 
 
 /*
- * Determine if the object can be picked up, and has "=g" in its inscription.
+ * Can this object be picked up due to "=g" or "=h" as its inscription.
  */
 bool auto_pickup_okay(const object_type *o_ptr)
 {
+	object_type *q_ptr;
 	cptr s;
+	int count;
 
 	/* It can't be carried */
 	if (!inven_carry_okay(o_ptr)) return (FALSE);
 
-	/* No inscription */
-	if (!o_ptr->inscription) return (FALSE);
-
-	/* Find a '=' */
-	s = strchr(quark_str(o_ptr->inscription), '=');
-
-	/* Process inscription */
-	while (s)
+	/* First try for =g */
+	if (o_ptr->inscription)
 	{
-		/* Auto-pickup on "=g" */
-		if (s[1] == 'g') return (TRUE);
+		/* Find a '=' */
+		s = strchr(quark_str(o_ptr->inscription), '=');
 
-		/* Find another '=' */
-		s = strchr(s + 1, '=');
+		/* Process inscription */
+		while (s)
+		{
+			/* Auto-pickup on "=g" */
+			if (s[1] == 'g') return (TRUE);
+
+			/* Find another '=' */
+			s = strchr(s + 1, '=');
+		}
 	}
 
+	/*
+	 * This can be done nicer if there is a field for this.in k_info
+	 * That would eliminate the necessity to keep the item in the inv.
+	 * Than you can use this option for collecting anyhting interesting
+	 */
+
+	/* Loop through the inventory to find =h */
+	OBJ_ITT_START (p_ptr->inventory, q_ptr)
+	{
+		/* Is there a similar item (we know there is room) */
+		if (o_ptr->tval == q_ptr->tval &&
+			o_ptr->sval == q_ptr->sval)
+		{
+			/* Is there an inscription */
+			if (!q_ptr->inscription) continue;
+
+			/* Find a '=' */
+			s = strchr(quark_str(q_ptr->inscription), '=');
+
+			/* Process inscription */
+			while (s)
+			{
+				/* Auto-pickup on "=h" */
+				if (s[1] == 'h')
+				{
+					/* Pick up the limit */
+					count = atoi(s+2);
+
+					/* Limit the stack? */
+					if (!count ||
+						(count && q_ptr->number < count)) return (TRUE);
+				}
+
+				/* Find another '=' */
+				s = strchr(s + 1, '=');
+			}
+
+		}
+	}
+	OBJ_ITT_END;
+	
 	/* Don't auto pickup */
 	return (FALSE);
 }

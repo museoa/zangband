@@ -598,9 +598,18 @@ The {=g} Inscription
 --------------------
 The {=g} inscription on an object prompts Zangband to automatically
 pick it up. This instruction overrides any auto-pickup options chosen
-chosen by the player (if necessary). The primary prupose is to allow
-easy retrieval of missiles such as arrows and bolts once they have been
+by the player (if necessary). The primary prupose is to allow easy
+retrieval of missiles such as arrows and bolts once they have been
 fired at a target.
+
+The {=h} Inscription
+--------------------
+The {=h} inscription on an object in your inventory prompts Zangband
+to automatically pick up a similar object when that is encountered on
+the floor.  Add a number behind it and Zangband will automatically pick
+up more until you have that number in your inventory. This instruction
+overrides any auto-pickup options chosen by the player (if necessary).
+The primary prupose is to allow easy pickup of items you always carry.
 
 
 ***** <ObjectTypes>
