@@ -1033,6 +1033,22 @@ static void display_inventory(void)
 	/* Erase the extra lines and the "more" prompt */
 	clear_region(0, k + 6, 18);
 
+	/*
+	 * Hack hack.  Can't use the hack with toggle_bigtile.  That procedure
+	 * calls a redraw that uses this procedure so that starts looping.
+	 */
+	if (use_bigtile)
+	{
+		int i;
+
+		/* Loop through the unused lines */
+		for (i = k + 7; i < 18; i++)
+		{
+			/* Remove remains of big_tile that was ignored by clear_region */
+			put_fstr(4, i, " ");
+		}
+	}
+
 	/* Assume "no current page" */
 	put_fstr(20, 5, "        ");
 
@@ -1064,12 +1080,21 @@ static void store_prt_gold(void)
 static void display_store(void)
 {
 	int wid, hgt;
+	bool reuse_bigtile = FALSE;
 
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 
 	/* Clear screen */
 	Term_clear();
+
+ 	/* Hack - disable bigtile mode */
+	if (use_bigtile)
+	{
+		/* Remember the temporary toggle of bigtile */
+		reuse_bigtile = TRUE;
+		toggle_bigtile();
+	}
 
 	/* The "Home" is special */
 	if (st_ptr->type == BUILD_STORE_HOME)
@@ -1114,6 +1139,9 @@ static void display_store(void)
 
 	/* Display the current gold */
 	store_prt_gold();
+
+ 	/* Restore bigtile mode if it was enabled */
+ 	if (reuse_bigtile) toggle_bigtile();
 
 	/* Draw in the inventory */
 	display_inventory();
@@ -2454,7 +2482,6 @@ void do_cmd_store(const field_type *f1_ptr)
 	int maintain_num;
 	int tmp_chr;
 	int i;
-	bool reuse_bigtile = FALSE;
 
 	object_type *o_ptr;
 	
@@ -2523,14 +2550,6 @@ void do_cmd_store(const field_type *f1_ptr)
 
 	/* Forget the view */
 	forget_view();
-
- 	/* Hack - disable bigtile mode */
-	if (use_bigtile)
-	{
-		/* Remember the temporary toggle of bigtile */
-		reuse_bigtile = TRUE;
-		toggle_bigtile();
-	}
 
 	/* Hack -- Character is in "icky" mode */
 	screen_save();
@@ -2699,9 +2718,6 @@ void do_cmd_store(const field_type *f1_ptr)
 
 	/* Free turn XXX XXX XXX */
 	p_ptr->state.energy_use = 0;
-
- 	/* Restore bigtile mode if it was enabled */
- 	if (reuse_bigtile) toggle_bigtile();
 
 	/* Hack -- Character is no longer in "icky" mode */
 	screen_load();
