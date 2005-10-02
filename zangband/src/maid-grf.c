@@ -1150,6 +1150,7 @@ static void resize_big_map(void)
  */
 void do_cmd_view_map(void)
 {
+	bool reuse_bigtile = FALSE;
 	int py = p_ptr->py;
 	int px = p_ptr->px;
 
@@ -1160,6 +1161,14 @@ void do_cmd_view_map(void)
 
 	/* No overhead map in vanilla town mode. */
 	if (!p_ptr->depth && vanilla_town) return;
+
+ 	/* Hack - disable bigtile mode */
+	if (use_bigtile)
+	{
+		/* Remember the temporary toggle of bigtile */
+		reuse_bigtile = TRUE;
+		toggle_bigtile();
+	}
 
 	/* Remember what the resize hook was */
 	hook = angband_term[0]->resize_hook;
@@ -1301,6 +1310,9 @@ void do_cmd_view_map(void)
 
 	/* Hack - Flush it */
 	Term_fresh();
+
+ 	/* Restore bigtile mode if it was enabled */
+ 	if (reuse_bigtile) toggle_bigtile();
 }
 
 
@@ -2743,13 +2755,6 @@ void display_map(int *cx, int *cy)
 	
 	place_type *pl_ptr;
 	
-		
-	/* Hack - disable bigtile mode */
-	if (use_bigtile)
-	{
-		Term_bigregion(-1, -1, -1);
-	}
-
 	/* Get size */
 	Term_get_size(&wid, &hgt);
 	hgt -= 2;

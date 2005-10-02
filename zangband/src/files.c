@@ -2511,16 +2511,29 @@ static void display_player_middle(void)
  */
 static void display_player_standard(void)
 {
+	bool reuse_bigtile = FALSE;
+
 	/* Basic info */
 	display_player_top();
+
+ 	/* Hack - disable bigtile mode */
+	if (use_bigtile)
+	{
+		/* Remember the temporary toggle of bigtile */
+		reuse_bigtile = TRUE;
+		toggle_bigtile();
+	}
 
 	/* Extra info */
 	display_player_middle();
 
-	put_fstr(25, 15, "(Miscellaneous Abilities)");
+	put_fstr(23, 15, "Miscellaneous Abilities");
 
 	/* Display the abilities */
 	display_player_abilities();
+
+ 	/* Restore bigtile mode if it was enabled */
+ 	if (reuse_bigtile) toggle_bigtile();
 }
 
 

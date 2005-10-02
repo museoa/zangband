@@ -1912,6 +1912,7 @@ void do_cmd_bldg(const field_type *f_ptr)
 {
 	store_type *b_ptr;
 	bool leave_build = FALSE;
+	bool reuse_bigtile = FALSE;
 
 	/* Disturb */
 	disturb(FALSE);
@@ -1935,6 +1936,14 @@ void do_cmd_bldg(const field_type *f_ptr)
 
 	/* Hack -- Increase "icky" depth */
 	screen_save();
+
+ 	/* Hack - disable bigtile mode */
+	if (use_bigtile)
+	{
+		/* Remember the temporary toggle of bigtile */
+		reuse_bigtile = TRUE;
+		toggle_bigtile();
+	}
 
 	/* No command argument */
 	p_ptr->cmd.arg = 0;
@@ -1983,6 +1992,9 @@ void do_cmd_bldg(const field_type *f_ptr)
 
 	/* Free turn XXX XXX XXX */
 	p_ptr->state.energy_use = 0;
+
+ 	/* Restore bigtile mode if it was enabled */
+ 	if (reuse_bigtile) toggle_bigtile();
 
 	/* Hack -- Character is no longer in "icky" mode */
 	screen_load();

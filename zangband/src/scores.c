@@ -272,6 +272,7 @@ static bool display_scores_aux2(int from, int to, int note,
 {
 	int i, j, k, n, place;
 	byte attr;
+	bool reuse_bigtile;
 
 	high_score the_score;
 
@@ -285,6 +286,14 @@ static bool display_scores_aux2(int from, int to, int note,
 
 	/* Seek to the beginning */
 	if (highscore_seek(0)) return (FALSE);
+
+ 	/* Hack - disable bigtile mode */
+	if (use_bigtile)
+	{
+		/* Remember the temporary toggle of bigtile */
+		reuse_bigtile = TRUE;
+		toggle_bigtile();
+	}
 
 	/* Determine how many entries that is on a page */
 	entries = entries_on_page();
@@ -442,8 +451,17 @@ static bool display_scores_aux2(int from, int to, int note,
 		}
 
 		/* Hack -- notice Escape */
-		if (j == ESCAPE) return (FALSE);
+		if (j == ESCAPE)
+		{
+ 			/* Restore bigtile mode if it was enabled */
+ 			if (reuse_bigtile) toggle_bigtile();
+
+			return (FALSE);
+		}
 	}
+
+ 	/* Restore bigtile mode if it was enabled */
+ 	if (reuse_bigtile) toggle_bigtile();
 
 	return (TRUE);
 }

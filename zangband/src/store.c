@@ -2454,6 +2454,7 @@ void do_cmd_store(const field_type *f1_ptr)
 	int maintain_num;
 	int tmp_chr;
 	int i;
+	bool reuse_bigtile = FALSE;
 
 	object_type *o_ptr;
 	
@@ -2523,6 +2524,13 @@ void do_cmd_store(const field_type *f1_ptr)
 	/* Forget the view */
 	forget_view();
 
+ 	/* Hack - disable bigtile mode */
+	if (use_bigtile)
+	{
+		/* Remember the temporary toggle of bigtile */
+		reuse_bigtile = TRUE;
+		toggle_bigtile();
+	}
 
 	/* Hack -- Character is in "icky" mode */
 	screen_save();
@@ -2691,6 +2699,9 @@ void do_cmd_store(const field_type *f1_ptr)
 
 	/* Free turn XXX XXX XXX */
 	p_ptr->state.energy_use = 0;
+
+ 	/* Restore bigtile mode if it was enabled */
+ 	if (reuse_bigtile) toggle_bigtile();
 
 	/* Hack -- Character is no longer in "icky" mode */
 	screen_load();

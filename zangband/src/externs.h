@@ -262,6 +262,7 @@ extern cptr gf_color[MAX_GF];
 extern int owner_names_max;
 extern int owner_suffix_max;
 
+extern void toggle_bigtile(void);
 /* birth.c */
 extern void player_birth(void);
 
