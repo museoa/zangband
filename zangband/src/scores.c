@@ -77,6 +77,31 @@ static int highscore_where(const high_score *score)
 }
 
 
+/* Just determine how many entries there are. */
+static int highscore_last(void)
+{
+	int i;
+
+	high_score the_score;
+
+	/* Paranoia -- it may not have opened */
+	if (highscore_fd < 0) return (-1);
+
+	/* Go to the start of the highscore file */
+	if (highscore_seek(0)) return (-1);
+
+	/* Read until we get a read failure */
+	for (i = 0; i < MAX_HISCORES; i++)
+	{
+		/* If there is nothing to read, break loop */
+		if (highscore_read(&the_score)) break;
+	}
+
+	/* The "last" entry is always usable */
+	return (i);
+}
+
+
 /*
  * Actually place an entry into the high score file
  * Return the location (0 is best) or -1 on "failure"
@@ -224,10 +249,10 @@ static int entries_on_page(void)
 /* Find out what range is nice on the current page size */
 static void determine_scores_page(int *from, int *to, int note)
 {
-	int entries;
+	int last;
 
 	/* Determine how many entries that is on a page */
-	entries = entries_on_page();
+	int entries = entries_on_page();
 
 	/* If the note belongs on the first or second page */
 	if (note <= 3 * entries / 2)
@@ -239,6 +264,9 @@ static void determine_scores_page(int *from, int *to, int note)
 		return;
 	}
 
+	/* Determine the last entry */
+	last = highscore_last();
+
 	/* A page with the score nicely in the middle */
 	*from = note - entries / 2;
 	*to = note + entries / 2;
@@ -247,18 +275,134 @@ static void determine_scores_page(int *from, int *to, int note)
 	if (!(entries % 2)) *to -= 1;
 
 	/* If the range overshoots  the last page */
-	if (*to >= MAX_HISCORES)
+	if (*to >= last)
 	{
-		*from = MAX_HISCORES - entries;
-		*to = MAX_HISCORES;
+		*from = last - entries;
+		*to = last;
 
 		/* This entry does not get saved, only displayed */
-		if (note == MAX_HISCORES)
+		if (note == last)
 		{
 			*from += 1;
 			*to += 1;
 		}
 	}
+}
+
+static void display_score_page(int from, int note, const high_score *score)
+{
+	int i, j = from;
+	int place = from + 1;
+	int len;
+	byte attr;
+
+	char out_val[256];
+	high_score the_score;
+
+	/* Determine how many entries that is on a page */
+	int entries = entries_on_page();
+
+	/* Remember for resize */
+	score_from = from;
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Title */
+	put_fstr(0, 0, "                %s Hall of Fame", VERSION_NAME);
+
+	/* Indicate non-top scores */
+	if (from > 0)
+	{
+		put_fstr(40, 0, "(from position %d)", from + 1);
+	}
+
+	/* Dump entries */
+	for (i = 0; i < entries; i++, j++, place++)
+	{
+		int pr, pc, clev, mlev, cdun, mdun;
+		cptr user, gold, when, aged;
+
+		/* Hack -- indicate death in yellow */
+		attr = (j == note) ? TERM_YELLOW : TERM_WHITE;
+
+		/* Mega-Hack -- insert a "fake" record */
+		if ((note == j) && score)
+		{
+			the_score = (*score);
+			attr = TERM_L_GREEN;
+			score = NULL;
+			note = -1;
+			j--;
+		}
+		/* Read a normal record */
+		else
+		{
+			/* Read the proper record */
+			if (highscore_seek(j)) break;
+			if (highscore_read(&the_score)) break;
+		}
+
+		/* Extract the race/class */
+		pr = atoi(the_score.p_r);
+		pc = atoi(the_score.p_c);
+
+		/* Extract the level info */
+		clev = atoi(the_score.cur_lev);
+		mlev = atoi(the_score.max_lev);
+		cdun = atoi(the_score.cur_dun);
+		mdun = atoi(the_score.max_dun);
+
+		/* Hack -- extract the gold and such */
+		for (user = the_score.uid; isspace(*user); user++) /* loop */ ;
+		for (when = the_score.day; isspace(*when); when++) /* loop */ ;
+		for (gold = the_score.gold; isspace(*gold); gold++) /* loop */ ;
+		for (aged = the_score.turns; isspace(*aged); aged++) /* loop */ ;
+
+		/* Dump some info */
+		len = strnfmt(out_val, 256, "%3d.%9s  %s the %s %s, Level %d",
+				place, the_score.pts, the_score.who,
+				race_info[pr].title, class_info[pc].title, clev);
+
+		/* Append a "maximum level" */
+		if (mlev > clev) strnfcat(out_val, 256, &len, " (Max %d)", mlev);
+
+		/* Dump the first line */
+		put_fstr(0, i * 4 + 2, "%s%s", color_seq[attr], out_val);
+
+		/* Some people die outside of the dungeon */
+		if (cdun)
+		{
+			/* Another line of info */
+			len = strnfmt(out_val, 256, "               Killed by %s on %s %d",
+					the_score.how, "Dungeon Level", cdun);
+
+		}
+		else
+		{
+			/* Died outside */
+			len = strnfmt(out_val, 256,
+					"               Killed by %s in the outside world.",
+					the_score.how);
+		}
+
+		/* Append a "maximum level" */
+		if (mdun > cdun) strnfcat(out_val, 256, &len, " (Max %d)", mdun);
+
+		/* Dump the info */
+		put_fstr(0, i * 4 + 3, "%s%s", color_seq[attr], out_val);
+
+		/* And still another line of info */
+		put_fstr(0, i * 4 + 4,
+			"%s               (User %s, Date %s, Gold %s, Turn %s).",
+				 color_seq[attr], user, when, gold, aged);
+	}
+
+	/* Bottom line */
+	prtf(15, entries * 4 + 3, "[Press ESC to quit, any other key to continue.]");
+
+	/* Remember ending of the list */
+	score_to = place;
 }
 
 /*
@@ -268,17 +412,9 @@ static void determine_scores_page(int *from, int *to, int note)
  * Mega-Hack -- allow "fake" entry at the given position.
  */
 static bool display_scores_aux2(int from, int to, int note,
-						 const high_score *score, bool no_wait)
+						 const high_score *score)
 {
-	int i, j, k, n, place;
-	byte attr;
-	bool reuse_bigtile;
-
-	high_score the_score;
-
-	char out_val[256];
-	
-	int len;
+	int first, last;
 	int entries;
 
 	/* Paranoia -- it may not have opened */
@@ -286,14 +422,6 @@ static bool display_scores_aux2(int from, int to, int note,
 
 	/* Seek to the beginning */
 	if (highscore_seek(0)) return (FALSE);
-
- 	/* Hack - disable bigtile mode */
-	if (use_bigtile)
-	{
-		/* Remember the temporary toggle of bigtile */
-		reuse_bigtile = TRUE;
-		toggle_bigtile();
-	}
 
 	/* Determine how many entries that is on a page */
 	entries = entries_on_page();
@@ -305,166 +433,29 @@ static bool display_scores_aux2(int from, int to, int note,
 		to = entries;
 	}
 
-	/* Remember ending of the list */
-	score_to = to;
-
-	/* Hack -- Count the high scores */
-	for (i = 0; i < MAX_HISCORES; i++)
-	{
-		if (highscore_read(&the_score)) break;
-	}
+	/* Pickup the last entry */
+	last = highscore_last();
 
 	/* Hack -- allow "fake" entry to be last */
-	if (note == i) i++;
+	if (note == last) last++;
 
 	/* Forget about the last entries */
-	if (i > to) i = to;
+	if (last > to) last = to;
 
 	/* Show 'entries' per page, until "done" */
-	for (k = from, place = k + 1; k < i; k += entries)
+	for (first = from; first < last; first += entries_on_page())
 	{
-		/* Clear screen */
-		Term_clear();
+		/* Drop a page on screen */
+		display_score_page(first, note, score);
 
-		/* Title */
-		put_fstr(0, 0, "                %s Hall of Fame", VERSION_NAME);
-
-		/* Indicate non-top scores */
-		if (k > 0)
-		{
-			put_fstr(40, 0, "(from position %d)", k + 1);
-		}
-
-		/* Dump entries */
-		for (j = k, n = 0; j < i && n < entries; place++, j++, n++)
-		{
-			int pr, pc, clev, mlev, cdun, mdun;
-
-			cptr user, gold, when, aged;
-
-			/* Remember the current starting point */
-			score_from = k;
-
-			/* Hack -- indicate death in yellow */
-			attr = (j == note) ? TERM_YELLOW : TERM_WHITE;
-
-
-			/* Mega-Hack -- insert a "fake" record */
-			if ((note == j) && score)
-			{
-				the_score = (*score);
-				attr = TERM_L_GREEN;
-				score = NULL;
-				note = -1;
-				j--;
-			}
-
-			/* Read a normal record */
-			else
-			{
-				/* Read the proper record */
-				if (highscore_seek(j)) break;
-				if (highscore_read(&the_score)) break;
-			}
-
-			/* Extract the race/class */
-			pr = atoi(the_score.p_r);
-			pc = atoi(the_score.p_c);
-
-			/* Extract the level info */
-			clev = atoi(the_score.cur_lev);
-			mlev = atoi(the_score.max_lev);
-			cdun = atoi(the_score.cur_dun);
-			mdun = atoi(the_score.max_dun);
-
-			/* Hack -- extract the gold and such */
-			for (user = the_score.uid; isspace(*user); user++) /* loop */ ;
-			for (when = the_score.day; isspace(*when); when++) /* loop */ ;
-			for (gold = the_score.gold; isspace(*gold); gold++) /* loop */ ;
-			for (aged = the_score.turns; isspace(*aged); aged++) /* loop */ ;
-
-			/* Dump some info */
-			len = strnfmt(out_val, 256, "%3d.%9s  %s the %s %s, Level %d",
-					place, the_score.pts, the_score.who,
-					race_info[pr].title, class_info[pc].title, clev);
-
-			/* Append a "maximum level" */
-			if (mlev > clev) strnfcat(out_val, 256, &len, " (Max %d)", mlev);
-
-			/* Dump the first line */
-			put_fstr(0, n * 4 + 2, "%s%s", color_seq[attr], out_val);
-
-			/* Some people die outside of the dungeon */
-			if (cdun)
-			{
-				/* Another line of info */
-				len = strnfmt(out_val, 256, "               Killed by %s on %s %d",
-						the_score.how, "Dungeon Level", cdun);
-
-			}
-			else
-			{
-				/* Died outside */
-				len = strnfmt(out_val, 256,
-						"               Killed by %s in the outside world.",
-						the_score.how);
-			}
-
-			/* Append a "maximum level" */
-			if (mdun > cdun) strnfcat(out_val, 256, &len, " (Max %d)", mdun);
-
-			/* Dump the info */
-			put_fstr(0, n * 4 + 3, "%s%s", color_seq[attr], out_val);
-
-			/* And still another line of info */
-			put_fstr(0, n * 4 + 4,
-				"%s               (User %s, Date %s, Gold %s, Turn %s).",
-					 color_seq[attr], user, when, gold, aged);
-		}
-
-
-		/* Wait for response */
-		prtf(15, entries * 4 + 3, "[Press ESC to quit, any other key to continue.]");
-
-		/* No keystrokes needed during resizing */
-		if (no_wait) return (TRUE);
-
-		j = inkey();
-		clear_row(entries * 4 + 3);
-
-		/* Check for resize, entries may have changed */
-		if (score_resize)
-		{
-			/* set back to default */
-			score_resize = FALSE;
-
-			/* Not all of the previous range was shown yet */
-			if (score_to < to)
-			{
-				/* Show rest of the range */
-				return (display_scores_aux2(score_from + entries_on_page(),
-											to,
-											score_idx,
-											score_score,
-											FALSE));
-			}
-		}
-
-		/* Hack -- notice Escape */
-		if (j == ESCAPE)
-		{
- 			/* Restore bigtile mode if it was enabled */
- 			if (reuse_bigtile) toggle_bigtile();
-
-			return (FALSE);
-		}
+		/* Wait for the user */
+		if (inkey() == ESCAPE) return (FALSE);
 	}
 
- 	/* Restore bigtile mode if it was enabled */
- 	if (reuse_bigtile) toggle_bigtile();
-
+	/* Last page finished */
 	return (TRUE);
 }
+
 
 /* Make sense of the display range and redraw the screen */
 static void resize_scores(void)
@@ -478,17 +469,16 @@ static void resize_scores(void)
 	if (score_idx == -1 || score_to < score_idx)
 	{
 		/* Display the list */
-		(void)display_scores_aux2(score_from, score_from + entries_on_page(),
-								  -1, NULL, TRUE);
+		display_score_page(score_from, -1, NULL);
 	}
-	else
 	/* So this page has score_idx at its center */
+	else
 	{
 		/* Make new range for the new page */
 		determine_scores_page(&from, &to, score_idx);
 
 		/* Display the list */
-		(void)display_scores_aux2(from, to, score_idx, score_score, TRUE);
+		display_score_page(from, score_idx, score_score);
 	}
 }
 
@@ -497,6 +487,15 @@ bool display_scores_aux(int from, int to, int note, const high_score *score)
 {
 	bool outcome;
 	void (*hook) (void);
+	bool reuse_bigtile = FALSE;
+
+ 	/* Hack - disable bigtile mode */
+	if (use_bigtile)
+	{
+		/* Remember the temporary toggle of bigtile */
+		reuse_bigtile = TRUE;
+		toggle_bigtile();
+	}
 
 	/* Remember the old hook */
 	hook = angband_term[0]->resize_hook
@@ -505,10 +504,13 @@ bool display_scores_aux(int from, int to, int note, const high_score *score)
 	angband_term[0]->resize_hook = resize_scores;
 
 	/* Display the scores */
-	outcome = display_scores_aux2(from, to, note, score, FALSE);
+	outcome = display_scores_aux2(from, to, note, score);
 
 	/* Restore the old resize hook */
 	angband_term[0]->resize_hook = hook;
+
+	/* Restore bigtile mode if it was enabled originally */
+ 	if (reuse_bigtile) toggle_bigtile();
 
 	/* The size may have changed during the scores display */
 	angband_term[0]->resize_hook();
@@ -724,7 +726,6 @@ void enter_score(void)
 static void top_twenty(void)
 {
 	int from, to;
-	bool cont;
 
 	/* Clear screen */
 	Term_clear();
@@ -737,11 +738,8 @@ static void top_twenty(void)
 		return;
 	}
 
-	/* Show the first page of the highscore */
-	cont = display_scores_aux(0, 5, score_idx, NULL);
-
 	/* If the user didn't press ESC, show the second page too */
-	if (cont)
+	if (display_scores_aux(0, 5, score_idx, NULL))
 	{
 		/* Determine what the second page will be */
 		determine_scores_page(&from, &to, score_idx);
@@ -760,8 +758,7 @@ static void top_twenty(void)
  */
 void predict_score(void)
 {
-	int j, from, to;
-	bool cont;
+	int from, to;
 
 	high_score the_score;
 
@@ -808,19 +805,12 @@ void predict_score(void)
 	/* Hack -- no cause of death */
 	strcpy(the_score.how, "nobody (yet!)");
 
-
-	/* See where the entry would be placed */
-	j = highscore_where(&the_score);
-
-	/* Keep it for resizing */
-	score_idx = j;
+	/* See where the entry would be placed and keep it for resizing */
+	score_idx = highscore_where(&the_score);
 	score_score = &the_score;
 
-	/* Show the first page of the highscore */
-	cont = display_scores_aux(0, 5, score_idx, &the_score);
-
 	/* If the user didn't press ESC, show the second page too */
-	if (cont)
+	if (display_scores_aux(0, 5, score_idx, &the_score))
 	{
 		/* Determine what the second page will be */
 		determine_scores_page(&from, &to, score_idx);
