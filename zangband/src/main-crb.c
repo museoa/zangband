@@ -4968,7 +4968,7 @@ static void menu(long mc)
 					/* Mega-Hack - No current player XXX XXX XXX XXX */
 					else
 					{
-						display_scores_aux(0, MAX_HISCORES, -1, NULL);
+						display_scores_aux(0, MAX_HISCORES, -1, NULL, FALSE);
 					}
 
 #endif

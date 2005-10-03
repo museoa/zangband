@@ -482,10 +482,14 @@ static void resize_scores(void)
 	}
 }
 
-
-bool display_scores_aux(int from, int to, int note, const high_score *score)
+/*
+ * Show a bunch of scores.  The bool two_page is there so the game can display
+ * two pages after eachother with a redraw in between.  That redraw caused the
+ * screen to flicker as it was overwritten immediately with the next score list.
+ */
+void display_scores_aux(int from, int to, int note, const high_score *score,
+						bool two_page)
 {
-	bool outcome;
 	void (*hook) (void);
 	bool reuse_bigtile = FALSE;
 
@@ -503,23 +507,32 @@ bool display_scores_aux(int from, int to, int note, const high_score *score)
 	/* set the resize hook to scores */
 	angband_term[0]->resize_hook = resize_scores;
 
-	/* Display the scores */
-	outcome = display_scores_aux2(from, to, note, score);
+	if (display_scores_aux2(from, to, note, score) && two_page)
+	{
+		int first, last;
+
+		/* Determine what the second page will be */
+		determine_scores_page(&from, &to, note);
+
+		/* Show the second page */
+		(void)display_scores_aux2(first, last, note, score);
+	}
 
 	/* Restore the old resize hook */
 	angband_term[0]->resize_hook = hook;
 
-	/* Restore bigtile mode if it was enabled originally */
- 	if (reuse_bigtile) toggle_bigtile();
-
-	/* The size may have changed during the scores display */
-	angband_term[0]->resize_hook();
+	/* If there is a resize hook (pregame there isn't) */
+	if (hook)
+	{
+		/* The size may have changed during the scores display */
+		angband_term[0]->resize_hook();
+	}
 
 	/* Hack - Flush it */
 	Term_fresh();
 
-	/* Allow another call depending on the outcome of this call */
-	return (outcome);
+	/* Restore bigtile mode if it was enabled originally */
+ 	if (reuse_bigtile) toggle_bigtile();
 }
 
 
@@ -546,7 +559,7 @@ void display_scores(int from, int to)
 	Term_clear();
 
 	/* Display the scores */
-	(void)display_scores_aux(from, to, -1, NULL);
+	display_scores_aux(from, to, -1, NULL, FALSE);
 
 	/* Shut the high score file */
 	(void)fd_close(highscore_fd);
@@ -719,14 +732,11 @@ void enter_score(void)
 }
 
 
-
 /*
  * Displays some relevant portion of the high score list.
  */
 static void top_twenty(void)
 {
-	int from, to;
-
 	/* Clear screen */
 	Term_clear();
 
@@ -738,15 +748,8 @@ static void top_twenty(void)
 		return;
 	}
 
-	/* If the user didn't press ESC, show the second page too */
-	if (display_scores_aux(0, 5, score_idx, NULL))
-	{
-		/* Determine what the second page will be */
-		determine_scores_page(&from, &to, score_idx);
-
-		/* Show the second page */
-		(void)display_scores_aux(from, to, score_idx, NULL);
-	}
+	/* Show the first two pages */
+	display_scores_aux(0, 5, 0, NULL, TRUE);
 
 	/* Success */
 	return;
@@ -758,8 +761,6 @@ static void top_twenty(void)
  */
 void predict_score(void)
 {
-	int from, to;
-
 	high_score the_score;
 
 	/* No score file */
@@ -809,15 +810,8 @@ void predict_score(void)
 	score_idx = highscore_where(&the_score);
 	score_score = &the_score;
 
-	/* If the user didn't press ESC, show the second page too */
-	if (display_scores_aux(0, 5, score_idx, &the_score))
-	{
-		/* Determine what the second page will be */
-		determine_scores_page(&from, &to, score_idx);
-
-		/* Show the second page */
-		(void)display_scores_aux(from, to, score_idx, &the_score);
-	}
+	/* Display two pages */
+	display_scores_aux(0, 5, score_idx, &the_score, TRUE);
 }
 
 
@@ -1047,7 +1041,7 @@ void ingame_score(bool *initialized, bool game_in_progress)
 			screen_save();
 
 			/* Show all the scores */
-			(void)display_scores_aux(0, MAX_HISCORES, -1, NULL);
+			display_scores_aux(0, MAX_HISCORES, -1, NULL, FALSE);
 
 			/* Load screen */
 			screen_load();
