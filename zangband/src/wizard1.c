@@ -1363,10 +1363,10 @@ static void spoil_mon_desc(cptr fname)
 	froff(fff, "Monster Spoilers for %s Version %s\n",
 			VERSION_NAME, VERSION_STRING);
 	froff(fff, "-------------------------------------------\n\n");
-	froff(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
-			"Name", "Lev", "Rar", "Spd", "Hp", "Ac", "Visual Info");
-	froff(fff, "%-40.40s%4s%4s%6s%8s%4s  %11.11s\n",
-			"----", "---", "---", "---", "--", "--", "-----------");
+	froff(fff, "%-40.40s%4s%4s%6s%8s%4s%13.13s %11.11s\n",
+			"Name", "Lev", "Rar", "Spd", "Hp", "Ac", "Exp", "Visual Info");
+	froff(fff, "%-40.40s%4s%4s%6s%8s%4s%13.13s %11.11s\n",
+			"----", "---", "---", "---", "--", "--", "---", "-----------");
 
 
 	/* Allocate the "who" array */
@@ -1744,10 +1744,10 @@ static void spoil_mon_info(cptr fname)
 
 		if (flags7 & RF6_CAN_FLY)
 		{
-			spoil_out("flies");
+			spoil_out(" flies");
 		}
 		else
-			spoil_out("moves");
+			spoil_out(" moves");
 
 		if ((flags1 & (RF0_RAND_50)) && (flags1 & (RF0_RAND_25)))
 		{
