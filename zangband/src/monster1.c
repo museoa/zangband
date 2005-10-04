@@ -454,6 +454,10 @@ static void roff_mon_aux(int r_idx, int remem)
 		{
 			roff(CLR_SLATE " on dungeon level %d", r_ptr->level);
 		}
+
+		/* List the possible dungeons for this monster */
+		roff(CLR_SLATE " in %s dungeon", dungeon_list_name(r_ptr, FLAG(r_ptr, RF_QUESTOR)));
+
 		old = TRUE;
 	}
 
