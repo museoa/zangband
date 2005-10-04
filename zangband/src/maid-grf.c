@@ -893,16 +893,14 @@ static void display_banner(wild_done_type *w_ptr)
 				if (pl_ptr->dungeon->recall_depth == 0)
 				{
 					/* It is still guarded by monsters */
-					banner = format("Guarded %s dungeon %s of %s.",
-								dungeon_type_name(pl_ptr->dungeon->habitat),
-								place_dir, banner);
+					banner = format("Guarded %s %s of %s.",
+								pl_ptr->name, place_dir, banner);
 				}
 				else
 				{
 					/* No monsters to guard it */
-					banner = format("Unguarded %s dungeon %s of %s.",
-								dungeon_type_name(pl_ptr->dungeon->habitat),
-								place_dir, banner);
+					banner = format("Unguarded %s %s of %s.",
+								pl_ptr->name, place_dir, banner);
 				}
 			}
 			/* It is a wilderness quest */

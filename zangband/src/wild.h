@@ -179,6 +179,7 @@ extern void draw_city(place_type *pl_ptr);
 extern void draw_dungeon(place_type *pl_ptr);
 extern void van_town_gen(place_type *pl_ptr);
 extern void init_vanilla_town(void);
+extern bool use_stair_to_surface;
 
 /* quest.c */
 extern void pick_wild_quest(int *xsize, int *ysize, byte *flags);

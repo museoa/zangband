@@ -20,6 +20,9 @@
 static int wild_stairs_x = 0;
 static int wild_stairs_y = 0;
 
+/* Flag to show that the player arrived to the surface using a staircase */
+bool use_stair_to_surface = FALSE;
+
 /*
  * Building information
  *
@@ -1094,6 +1097,41 @@ static void draw_general(int x0, int y0, store_type *st_ptr, int x, int y)
 
 
 /*
+ * Hack.  When the player entered the dungeon with a recall but returned
+ * by the stairs then the position is hacked to be on the stairs.
+ */
+static void move_char_to_stairs(int dx, int dy, u32b dun)
+{
+	wild_done_type *w_ptr;
+
+	place_type *pl_ptr;
+
+	/* Only get the char on stairs if required by this option */
+	if (!dungeon_stair) return;
+
+	/* Get wilderness square */
+	w_ptr = &wild[p_ptr->py / WILD_BLOCK_SIZE]
+				 [p_ptr->px / WILD_BLOCK_SIZE].done;
+
+	/* Do we have a place here? */
+	pl_ptr = (w_ptr->place ? &place[w_ptr->place] : NULL);
+
+	/* Just checking */
+	if (!pl_ptr) return;
+
+	/* Is this for the right dungeon, there could be two on the map */
+	if (dun != pl_ptr->dungeon->habitat) return;
+
+	/* Hack the player coords on the staircase */
+	p_ptr->px = pl_ptr->x * WILD_BLOCK_SIZE + dx;
+	p_ptr->py = pl_ptr->y * WILD_BLOCK_SIZE + dy;
+
+	/* Only do this once when the stair was used */
+	use_stair_to_surface = FALSE;
+}
+
+
+/*
  * Draw a building / store of a given type at a given position
  */
 static void draw_building(byte type, byte x, byte y, u16b store, place_type *pl_ptr)
@@ -1118,6 +1156,12 @@ static void draw_building(byte type, byte x, byte y, u16b store, place_type *pl_
 	{
 		wild_stairs_x = xx + 4;
 		wild_stairs_y = yy + 4;
+	}
+
+	/* Hack the player on the stairs if necessary */
+	if (use_stair_to_surface)
+	{
+		move_char_to_stairs(xx + 4, yy + 4, RF7_DUN_DARKWATER);
 	}
 
 	/* What are we drawing? */
@@ -1487,7 +1531,7 @@ static void make_dun_buildings(int count, int x_max, int y_max)
  *
  * These draw the entrance on a pre-allocated region.
  */
-static void draw_dun_dark_water(void)
+static void draw_dun_dark_water(u32b dun)
 {
 	int i;
 
@@ -1514,11 +1558,14 @@ static void draw_dun_dark_water(void)
 	/* Add stairs */
 	set_feat_bold(16, 16, FEAT_MORE);
 	
+	/* Hack the player on the stairs if necessary */
+	if (use_stair_to_surface) move_char_to_stairs(16, 16, dun);
+
 	/* Add monsters */
 	entrance_monsters(32, 32);
 }
 
-static void draw_dun_cave(void)
+static void draw_dun_cave(u32b dun)
 {
 	int xsize, ysize;
 	
@@ -1641,6 +1688,9 @@ static void draw_dun_cave(void)
 	/* Add stairs */
 	set_feat_bold(xsize / 2, ysize / 2, FEAT_MORE);
 
+	/* Hack the player on the stairs if necessary */
+	if (use_stair_to_surface) move_char_to_stairs(xsize / 2, ysize / 2, dun);
+
 	/* XXX XXX XXX Hack - make sure we have the correct sized region later on */
 	set_feat_bold(xsize, ysize, FEAT_DIRT);
 
@@ -1649,7 +1699,7 @@ static void draw_dun_cave(void)
 	entrance_monsters(xsize, ysize);
 }
 
-static void draw_dun_temple(void)
+static void draw_dun_temple(u32b dun)
 {
 	int xsize, ysize;
 	int x0, y0;
@@ -1691,36 +1741,50 @@ static void draw_dun_temple(void)
 	generate_door(x0 + 1, y0 + 1, x0 + x, y0 + y, FALSE);
 	generate_door(x0 + 1, y0 + 1, x0 + x, y0 + y, FALSE);
 	
-	/* Add stairs */
+	/* Make coords for stairs */
 	switch (randint0(4))
 	{
 		case 0:
 		{
-			set_feat_bold(x0 - x + 1, y0 - y + 1, FEAT_MORE);
+			x0 = x0 - x + 1;
+			y0 = y0 - y + 1;
+			break;
 		}
 		
 		case 1:
 		{
-			set_feat_bold(x0 - x + 1, y0 + y - 1, FEAT_MORE);
+			x0 = x0 - x + 1;
+			y0 = y0 + y - 1;
+			break;
 		}
 		
 		case 2:
 		{
-			set_feat_bold(x0 + x - 1, y0 - y + 1, FEAT_MORE);
+			x0 = x0 + x - 1;
+			y0 = y0 - y + 1;
+			break;
 		}
 		
 		case 3:
 		{
-			set_feat_bold(x0 + x - 1, y0 + y - 1, FEAT_MORE);
+			x0 = x0 + x - 1;
+			y0 = y0 + y - 1;
+			break;
 		}
 	}	
+
+	/* Add the stairs */
+	set_feat_bold(x0, y0, FEAT_MORE);
+
+	/* Hack the player on the stairs if necessary */
+	if (use_stair_to_surface) move_char_to_stairs(x0, y0, dun);
 
 	/* Add monsters */
 	entrance_monsters(xsize, ysize);
 
 }
 
-static void draw_dun_tower(void)
+static void draw_dun_tower(u32b dun)
 {
 	int xsize, ysize;
 	int x0, y0;
@@ -1759,11 +1823,14 @@ static void draw_dun_tower(void)
 	/* Add stairs */
 	set_feat_bold(xsize / 2, ysize / 2, FEAT_MORE);
 
+	/* Hack the player on the stairs if necessary */
+	if (use_stair_to_surface) move_char_to_stairs(xsize / 2, ysize / 2, dun);
+
 	/* Add monsters */
 	entrance_monsters(xsize, ysize);
 }
 
-static void draw_dun_ruin(void)
+static void draw_dun_ruin(u32b dun)
 {
 	int xsize, ysize;
 	int x0, y0;
@@ -1788,6 +1855,9 @@ static void draw_dun_ruin(void)
 
 	/* Place stairs */
 	set_feat_bold(x0, y0, FEAT_MORE);
+
+	/* Hack the player on the stairs if necessary */
+	if (use_stair_to_surface) move_char_to_stairs(x0, y0, dun);
 
 	count = (xsize / 16) * (ysize / 16);
 	
@@ -1847,7 +1917,7 @@ static void draw_dun_ruin(void)
 	entrance_monsters(xsize, ysize);
 }
 
-static void draw_dun_grave(void)
+static void draw_dun_grave(u32b dun)
 {
 	int xsize, ysize;
 	int x0, y0;
@@ -1876,6 +1946,9 @@ static void draw_dun_grave(void)
 
 	/* Place stairs */
 	set_feat_bold(x0, y0, FEAT_MORE);
+
+	/* Hack the player on the stairs if necessary */
+	if (use_stair_to_surface) move_char_to_stairs(x0, y0, dun);
 
 	count = (xsize / 4) * (ysize / 4);
 	
@@ -1922,7 +1995,7 @@ static void draw_dun_grave(void)
  *
  * XXX XXX Should we have tracks?
  */
-static void draw_dun_mine(void)
+static void draw_dun_mine(u32b dun)
 {
 	int x0 = 8, y0 = 8;
 
@@ -1935,11 +2008,14 @@ static void draw_dun_mine(void)
 	/* Place stairs */
 	set_feat_bold(x0, y0, FEAT_MORE);
 	
+	/* Hack the player on the stairs if necessary */
+	if (use_stair_to_surface) move_char_to_stairs(x0, y0, dun);
+
 	/* Add monsters */
 	entrance_monsters(16, 16);
 }
 
-static void draw_dun_city(void)
+static void draw_dun_city(u32b dun)
 {
 	int xsize, ysize;
 	int x0, y0;
@@ -1964,6 +2040,9 @@ static void draw_dun_city(void)
 	/* Place stairs */
 	set_feat_bold(x0, y0, FEAT_MORE);
 
+	/* Hack the player on the stairs if necessary */
+	if (use_stair_to_surface) move_char_to_stairs(x0, y0, dun);
+
 	count = (xsize / 16) * (ysize / 16);
 	
 	/* Draw a random number of buildings */
@@ -1980,6 +2059,7 @@ void draw_dungeon(place_type *pl_ptr)
 {
 	int x, y;
 	int i, j;
+	u32b habitat;
 
 	/* Paranoia */
 	if (pl_ptr->region) quit("Dungeon entrance already has region during creation.");
@@ -1997,18 +2077,29 @@ void draw_dungeon(place_type *pl_ptr)
 	/* Hack -- Induce consistant layout */
 	Rand_value = pl_ptr->seed;
 	
+	/* Shorthand */
+	habitat = pl_ptr->dungeon->habitat;
+
 	/* Save for monster placement on entrance */
-	dun_habitat = pl_ptr->dungeon->habitat;
 	dun_level = pl_ptr->dungeon->min_level + 1;
 	
-	/* Hack - no monsters if have been here before */
-	if (pl_ptr->dungeon->recall_depth) dun_habitat = 0;
+	/* Has this dungeon been explored? */
+	if (pl_ptr->dungeon->recall_depth)
+	{
+		/* No monsters */
+		dun_habitat = 0;
+	}
+	else
+	{
+		/* Right sort of monsters */
+		dun_habitat = habitat;
+	}
 	
-	switch (pl_ptr->dungeon->habitat)
+	switch (habitat)
 	{
 		case RF7_DUN_DARKWATER:
 		{
-			draw_dun_dark_water();
+			draw_dun_dark_water(habitat);
 			
 			break;
 		}
@@ -2017,14 +2108,14 @@ void draw_dungeon(place_type *pl_ptr)
 		case RF7_DUN_CAVERN:
 		case RF7_DUN_HELL:
 		{
-			draw_dun_cave();
+			draw_dun_cave(habitat);
 			
 			break;
 		}
 		
 		case RF7_DUN_TEMPLE:
 		{
-			draw_dun_temple();
+			draw_dun_temple(habitat);
 			
 			break;
 		}
@@ -2033,35 +2124,35 @@ void draw_dungeon(place_type *pl_ptr)
 		case RF7_DUN_PLANAR:
 		case RF7_DUN_HORROR:
 		{
-			draw_dun_tower();
+			draw_dun_tower(habitat);
 			
 			break;
 		}
 		
 		case RF7_DUN_RUIN:
 		{
-			draw_dun_ruin();
+			draw_dun_ruin(habitat);
 			
 			break;
 		}
 		
 		case RF7_DUN_GRAVE:
 		{
-			draw_dun_grave();
+			draw_dun_grave(habitat);
 			
 			break;
 		}
 
 		case RF7_DUN_MINE:
 		{
-			draw_dun_mine();
+			draw_dun_mine(habitat);
 			
 			break;
 		}
 		
 		case RF7_DUN_CITY:
 		{
-			draw_dun_city();
+			draw_dun_city(habitat);
 		
 			break;
 		}
@@ -2086,6 +2177,12 @@ void draw_dungeon(place_type *pl_ptr)
 
 			/* Add down stairs */
 			set_feat_bold(x, y, FEAT_MORE);
+
+			/* Hack the player on the stairs if necessary */
+			if (use_stair_to_surface)
+			{
+				move_char_to_stairs(x, y, RF7_DUN_DARKWATER);
+			}
 		}
 	}
 	
@@ -2651,14 +2748,14 @@ static void create_dungeons(int xx, int yy)
 		pl_ptr->xsize = 8;
 		pl_ptr->ysize = 8;
 		
-		/* We are a dugneon */
+		/* We are a dungeon */
 		pl_ptr->type = TOWN_DUNGEON;
 		
 		/* We have monsters */
 		pl_ptr->monst_type = TOWN_MONST_ABANDONED;
-		
-		/* Hack - A really crap name */
-		strcpy(pl_ptr->name, "Dungeon");
+
+		/* No name yet */
+		strcpy(place[best].name, "Dungeon");
 
 		/* Increment number of places */
 		place_count++;
@@ -2709,6 +2806,10 @@ static void create_dungeons(int xx, int yy)
 		
 		/* Initialise best dungeon */
 		init_dungeon(&place[best], &dungeons[dungeon_list[i]]);
+
+		/* A name */
+		strcpy(place[best].name, format("%s dungeon",
+			dungeon_type_name(place[best].dungeon->habitat)));
 	}
 	
 	

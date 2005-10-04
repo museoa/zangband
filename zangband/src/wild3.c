@@ -2185,6 +2185,9 @@ void move_dun_level(int direction)
 		{
 			/* Go to surface. */
 			p_ptr->depth = 0;
+
+			/* Force the player to arrive on the staircase */
+			use_stair_to_surface = TRUE;
 		}
 	}
 	
