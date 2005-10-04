@@ -1,4 +1,4 @@
-/* File: wild1.h */
+/* File: generate.h */
 
 /* Purpose: Dungeon generation header file */
 
