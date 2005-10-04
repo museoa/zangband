@@ -26,7 +26,7 @@ cptr notes_file(void)
 	 * Hack -- extract first 8 characters of name and
 	 * Create the file name from the character's name plus .txt
 	 */
-	(void)strnfmt(fname, 15, "%.8s.txt", player_base);
+	(void)strnfmt(fname, 15, "%.4snote.txt", player_base);
 
 	path_make(buf, ANGBAND_DIR_USER, fname);
 
@@ -104,7 +104,7 @@ void add_note(char code, cptr note, ...)
 			}
 			else
 			{
-				(void)strnfmt(depths, 32, "  Town");
+				(void)strnfmt(depths, 32, "%s", place[p_ptr->place_num].name);
 			}
 		}
 		else
