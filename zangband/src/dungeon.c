@@ -65,7 +65,9 @@ static byte value_check_aux1(const object_type *o_ptr)
 	if (cursed_p(o_ptr)) return FEEL_CURSED;
 
 	/* Worthless is "bad" */
-	if (!object_value(o_ptr)) return FEEL_BAD;
+	if (o_ptr->to_a < 0 ||
+		o_ptr->to_h + o_ptr->to_d < 0 ||
+		!object_value(o_ptr)) return FEEL_BAD;
 
 	/* Default to "average" */
 	return FEEL_AVERAGE;
