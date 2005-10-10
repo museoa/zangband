@@ -1892,6 +1892,7 @@ static void display_player_stat_info(void)
 	int row, col;
 
 	object_type *o_ptr;
+	bonuses_type bflags;
 	object_flags oflags;
 	s16b k_idx;
 
@@ -1967,6 +1968,9 @@ static void display_player_stat_info(void)
 		/* Acquire "known" flags */
 		object_flags_known(o_ptr, &oflags);
 
+		/* Acquire bonuses */
+		object_bonuses_known(o_ptr, &bflags);
+
 		/* Initialize color based of sign of pval. */
 		for (stat = 0; stat < A_MAX; stat++)
 		{
@@ -1975,19 +1979,19 @@ static void display_player_stat_info(void)
 			c = '.';
 
 			/* Boost */
-			if (oflags.flags[0] & (1 << stat))
+			if (bflags.stat[stat])
 			{
 				/* Default */
 				c = '*';
 
 				/* Good */
-				if (o_ptr->pval > 0)
+				if (bflags.stat[stat])
 				{
 					/* Good */
 					a = TERM_L_GREEN;
 
 					/* Label boost */
-					if (o_ptr->pval < 10) c = '0' + o_ptr->pval;
+					if (bflags.stat[stat] < 10) c = '0' + bflags.stat[stat];
 				}
 
 				if (oflags.flags[1] & (1 << stat))
@@ -2003,7 +2007,7 @@ static void display_player_stat_info(void)
 					a = TERM_RED;
 
 					/* Label boost */
-					if (-o_ptr->pval < 10) c = '0' - o_ptr->pval;
+					if (bflags.stat[stat] < 10) c = '0' - bflags.stat[stat];
 				}
 			}
 
