@@ -1385,11 +1385,15 @@ static bool uncurse_item(object_type *o_ptr, bool all)
 	/* Take away the feeling */
 	o_ptr->feeling = FEEL_NONE;
 
-	/* Strip awareness of feeling */
-	o_ptr->info &= ~(OB_SENSE);
+	/* If this item had been sensed, do it again */
+	if (o_ptr->info & OB_SENSE)
+	{
+		/* Strip awareness of feeling */
+		o_ptr->info &= ~(OB_SENSE);
 
-	/* Renew feeling */
-	sense_item(o_ptr, heavy, TRUE, FALSE);
+		/* Renew feeling */
+		sense_item(o_ptr, heavy, TRUE, FALSE);
+	}
 
 	/* Recalculate the bonuses */
 	p_ptr->update |= (PU_BONUS);
