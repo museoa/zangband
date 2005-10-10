@@ -509,13 +509,11 @@ void display_scores_aux(int from, int to, int note, const high_score *score,
 
 	if (display_scores_aux2(from, to, note, score) && two_page)
 	{
-		int first, last;
-
 		/* Determine what the second page will be */
 		determine_scores_page(&from, &to, note);
 
 		/* Show the second page */
-		(void)display_scores_aux2(first, last, note, score);
+		(void)display_scores_aux2(from, to, note, score);
 	}
 
 	/* Restore the old resize hook */
