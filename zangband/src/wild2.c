@@ -1120,7 +1120,7 @@ static void move_char_to_stairs(int dx, int dy, u32b dun)
 	if (!pl_ptr) return;
 
 	/* Is this for the right dungeon, there could be two on the map */
-	if (dun != pl_ptr->dungeon->habitat) return;
+	if (dun != pl_ptr->dungeon->habitat && !vanilla_town) return;
 
 	/* Hack the player coords on the staircase */
 	p_ptr->px = pl_ptr->x * WILD_BLOCK_SIZE + dx;
@@ -3085,6 +3085,9 @@ static void town_gen_hack(place_type *pl_ptr)
 
 	/* Clear previous contents, add down stairs */
 	set_feat_bold(xx, yy, FEAT_MORE);
+
+	/* Hack the player on the stairs if necessary */
+	if (use_stair_to_surface) move_char_to_stairs(xx, yy, 0);
 
 	wild_stairs_x = xx;
 	wild_stairs_y = yy;
