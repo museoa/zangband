@@ -803,15 +803,25 @@ void carry(int pickup)
 					handle_stuff();
 
 					/* Prompt for it */
-					prtf(0, 0, "Pick up %s? [y/n/k] ", o_name);
+					if (rogue_like_commands)
+						prtf(0, 0, "Pick up %s? [y/n/^D] ", o_name);
+					else
+						prtf(0, 0, "Pick up %s? [y/n/k] ", o_name);
 
 					/* Get an acceptable answer */
 					while (TRUE)
 					{
+						/* Get the player to answer */
 						i = inkey();
+						
+						/* Hack:  Avoid movement and destroy confusion */
+						if (rogue_like_commands && i == 'k') i = ' ';
+						if (rogue_like_commands && i == KTRL('D')) i = 'k';
+
 						if (quick_messages) break;
 						if (i == ESCAPE) break;
 						if (strchr("YyNnKk", i)) break;
+
 						bell("Illegal pick-up command!");
 					}
 
@@ -921,15 +931,25 @@ void carry(int pickup)
 			handle_stuff();
 
 			/* Prompt for it */
-			prtf(0, 0,"Pick up %v? [y/n/k] ", OBJECT_FMT(fo_ptr, TRUE, 3));
+			if (rogue_like_commands)
+				prtf(0, 0, "Pick up %s? [y/n/^D] ", o_name);
+			else
+				prtf(0, 0, "Pick up %s? [y/n/k] ", o_name);
 
 			/* Get an acceptable answer */
 			while (TRUE)
 			{
+				/* Get the player to answer */
 				i = inkey();
+
+				/* Hack:  Avoid movement and destroy confusion */
+				if (rogue_like_commands && i == 'k') i = ' ';
+				if (rogue_like_commands && i == KTRL('D')) i = 'k';
+				
 				if (quick_messages) break;
 				if (i == ESCAPE) break;
 				if (strchr("YyNnKk", i)) break;
+
 				bell("Illegal pick-up command!");
 			}
 
