@@ -4126,7 +4126,7 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 #define find_ignore_stairs		p_ptr->options[16]
 #define find_ignore_doors		p_ptr->options[17]
 #define find_cut				p_ptr->options[18]
-#define find_examine			p_ptr->options[19]
+/* {TRUE,  0, NULL,					"Number 19" }, p_ptr->options[19] */
 #define disturb_view			p_ptr->options[20]
 #define disturb_near			p_ptr->options[21]
 #define disturb_panel			p_ptr->options[22]

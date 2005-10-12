@@ -175,10 +175,6 @@ Run past known corners    [find_cut]
     in "faster" running, but may cause you to run into a "lurking"
     monster.
 
-***** <find_examine>
-Run into potential corners    [find_examine]
-    Fully explore "potential corners" in hallways.
-
 ***** <disturb_move>
 Disturb whenever any monster moves    [disturb_move]
     Disturb the player when any monster moves, appears, or disappears.

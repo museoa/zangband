@@ -6086,7 +6086,7 @@ option_type option_info[OPT_MAX] =
 	{FALSE, 2, "find_ignore_stairs",	"Run past stairs" },
 	{TRUE,  2, "find_ignore_doors",		"Run through open doors" },
 	{FALSE, 2, "find_cut",				"Run past known corners" },
-	{TRUE,  2, "find_examine",			"Run into potential corners" },
+	{TRUE,  0, NULL,					"Number 19" },
 	{TRUE,  2, "disturb_view",			"Disturb whenever new monster is seen" },
 	{TRUE,  2, "disturb_near",			"Disturb whenever viewable monster moves" },
 	{TRUE,  2, "disturb_panel",			"Disturb whenever map panel changes" },
