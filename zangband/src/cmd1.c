@@ -799,6 +799,9 @@ void carry(int pickup)
 					/* Paranoia XXX XXX XXX */
 					message_flush();
 
+					/* Make sure of correct view */
+					handle_stuff();
+
 					/* Prompt for it */
 					prtf(0, 0, "Pick up %s? [y/n/k] ", o_name);
 
@@ -913,6 +916,9 @@ void carry(int pickup)
 
 			/* Paranoia XXX XXX XXX */
 			message_flush();
+
+			/* Make sure of correct view */
+			handle_stuff();
 
 			/* Prompt for it */
 			prtf(0, 0,"Pick up %v? [y/n/k] ", OBJECT_FMT(fo_ptr, TRUE, 3));
