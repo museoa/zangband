@@ -69,7 +69,7 @@ processed as a debug command. The debug commands are:
 'z': Either use maximum sighting range or a command count to remove
      all monsters up to that range. May take a command count.
 'A': Prints your current alignment.
-'C': [To be completed].
+'C': Creates a standard artifact. Takes a command count.
 'F': do_cmd_wiz_feature. Takes a command count.
 'H': Summons a group of similar creatures(never OOD).
 'M': Get a Mutation. Use the commmand count to specify a mutation.
