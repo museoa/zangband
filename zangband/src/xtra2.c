@@ -2038,7 +2038,16 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 		boring = TRUE;
 
 		/* Default */
-		s1 = (p_ptr->tim.blind) ? "You are aware of " : "You see ";
+		if (p_ptr->tim.blind || !p_ptr->cur_lite)
+		{
+			/* Blind version */
+			s1 = "You are aware of ";
+		}
+		else
+		{
+			/* Seeing version */
+			s1 = "You see ";
+		}
 		s2 = "";
 		s3 = "";
 
