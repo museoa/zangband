@@ -1645,7 +1645,7 @@ static void borg_parse_aux(cptr msg, int len)
 	}
 
 	/* If the borg opens an open door */
-	if (prefix(msg, "You see nothing there to open") &&
+	if (prefix(msg, "There is nothing to open") &&
 		!bp_ptr->status.confused)
 	{
 		borg_open_door_failed = TRUE;
@@ -1653,7 +1653,7 @@ static void borg_parse_aux(cptr msg, int len)
 	}
 
 	/* If the borg closes an closed door */
-	if (prefix(msg, "You see nothing there to close") &&
+	if (prefix(msg, "There is nothing to close") &&
 		!bp_ptr->status.confused)
 	{
 		borg_close_door_failed = TRUE;
@@ -1686,17 +1686,8 @@ static void borg_parse_aux(cptr msg, int len)
 		return;
 	}
 
-	/* Feature XXX XXX XXX */
-	if (prefix(msg, "You see nothing there "))
-	{
-		my_no_alter = TRUE;
-		/* Clear goals */
-		goal = GOAL_NONE;
-		return;
-
-	}
 	/* Tunneling not understood correctly */
-	if (prefix(msg, "You cannot tunnel through air."))
+	if (prefix(msg, "You cannot tunnel"))
 	{
 		my_no_alter = TRUE;
 

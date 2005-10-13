@@ -221,8 +221,8 @@ static void roff_obj_aux(const object_type *o_ptr)
 	/* If you don't know anything about the item */
 	if (!object_known_p(o_ptr) && !object_aware_p(o_ptr))
 	{
-		/* say so */
-		roff("You see nothing special.");
+		/* Say so */
+		roff("You know nothing special.");
 	}
 
 	/* Hack.  Not all armour and weapons have a description in k_idx.txt */
@@ -237,8 +237,8 @@ static void roff_obj_aux(const object_type *o_ptr)
 			 o_ptr->flags[2] == 0 &&
 			 o_ptr->flags[3] == 0))
 		{
-			/* say nothing is known */
-			roff("You see nothing special.");
+			/* Say nothing is known */
+			roff("You know nothing special.");
 		}
 	}
 

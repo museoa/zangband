@@ -452,7 +452,7 @@ void init_player_quests(void)
 static cptr find_quest[] =
 {
 	"You find the following inscription in the floor",
-	"You see a message inscribed in the wall",
+	"There is a message inscribed in the wall",
 	"There is a sign saying",
 	"Something is written on the staircase",
 	"You find a scroll with the following message",

@@ -1802,7 +1802,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 				{
 					/* We've spotted it */
-					msgf("You see %v!", MONSTER_FMT( m_ptr, 0x88));
+					msgf("You discover %v!", MONSTER_FMT( m_ptr, 0x88));
 
 					/* Toggle flag */
 					m_ptr->smart &= ~(SM_MIMIC);
@@ -1815,7 +1815,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 				if ((t_ptr->smart & SM_MIMIC) && t_ptr->ml)
 				{
 					/* We've spotted it */
-					msgf("You see %v!", MONSTER_FMT(t_ptr, 0x88));
+					msgf("You discover %v!", MONSTER_FMT(t_ptr, 0x88));
 					
 					/* Toggle flag */
 					t_ptr->smart &= ~(SM_MIMIC);
@@ -2499,7 +2499,7 @@ static void take_move(int m_idx, int *mm)
 			if ((m_ptr->smart & SM_MIMIC) && m_ptr->ml)
 			{
 				/* We've spotted it */
-				msgf("You see %v!", MONSTER_FMT(m_ptr, 0x88));
+				msgf("You discover %v!", MONSTER_FMT(m_ptr, 0x88));
 
 				/* Toggle flag */
 				m_ptr->smart &= ~(SM_MIMIC);

@@ -2029,7 +2029,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 	field_type *f_ptr;
 
 	/* Repeat forever */
-	while (1)
+	while (TRUE)
 	{
 		/* Paranoia */
 		query = ' ';
@@ -2038,7 +2038,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 		boring = TRUE;
 
 		/* Default */
-		s1 = "You see ";
+		s1 = (p_ptr->tim.blind) ? "You are aware of " : "You see ";
 		s2 = "";
 		s3 = "";
 
@@ -2436,7 +2436,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 			cptr name = f_name + f_info[feat].name;
 
 			/* Hack -- handle unknown grids */
-			if (feat == FEAT_NONE) name = "unknown grid";
+			if (feat == FEAT_NONE) name = "an unknown grid";
 
 			/* Pick a prefix for the pattern and stairs */
 			if (*s2 && cave_perma_grid(pc_ptr))

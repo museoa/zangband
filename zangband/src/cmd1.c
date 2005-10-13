@@ -986,7 +986,7 @@ void carry(int pickup)
 	item_tester_hook = inven_carry_okay;
 
 	/* Get an object */
-	o_ptr = get_item("Get which item? ", "You see nothing there.", (USE_FLOOR));
+	o_ptr = get_item("Get which item? ", "There is nothing there.", (USE_FLOOR));
 
 	/* Not a valid item */
 	if (!o_ptr) return;

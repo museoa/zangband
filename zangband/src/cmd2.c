@@ -786,7 +786,7 @@ void do_cmd_open(void)
 		if (!((c_ptr->feat == FEAT_CLOSED) || o_ptr))
 		{
 			/* Message */
-			msgf(MSGT_NOTHING_TO_OPEN, "You see nothing there to open.");
+			msgf(MSGT_NOTHING_TO_OPEN, "There is nothing to open.");
 		}
 
 		/* Monster in the way */
@@ -926,7 +926,7 @@ void do_cmd_close(void)
 		if (!in_bounds2(x, y))
 		{
 			/* Message */
-			msgf("You see nothing there to close.");
+			msgf("There is nothing to close.");
 
 			disturb(FALSE);
 			return;
@@ -939,7 +939,7 @@ void do_cmd_close(void)
 		if ((c_ptr->feat != FEAT_OPEN) && (c_ptr->feat != FEAT_BROKEN))
 		{
 			/* Message */
-			msgf("You see nothing there to close.");
+			msgf("There is nothing to close.");
 		}
 
 		/* Monster in the way */
@@ -1020,7 +1020,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	if (!(pc_ptr->feat))
 	{
 		/* Message */
-		msgf("You see nothing there.");
+		msgf("You can not tunnel unknown grids.");
 
 		/* Nope */
 		return (FALSE);
@@ -1043,7 +1043,7 @@ static bool do_cmd_tunnel_aux(int x, int y)
 	if (cave_floor_grid(c_ptr) && !(cave_semi_grid(c_ptr)))
 	{
 		/* Message */
-		msgf("You see nothing there to tunnel.");
+		msgf("There is nothing to tunnel.");
 
 		/* Nope */
 		return (FALSE);
@@ -1590,7 +1590,7 @@ void do_cmd_disarm(void)
 		if (!in_bounds2(x, y))
 		{
 			/* Message */
-			msgf("You see nothing there to disarm.");
+			msgf("There is nothing to disarm.");
 
 			disturb(FALSE);
 			return;
@@ -1606,7 +1606,7 @@ void do_cmd_disarm(void)
 		if (!is_visible_trap(c_ptr) && !o_ptr)
 		{
 			/* Message */
-			msgf("You see nothing there to disarm.");
+			msgf("There is nothing to disarm.");
 		}
 
 		/* Monster in the way */
@@ -1815,7 +1815,7 @@ void do_cmd_spike(void)
 		if (!in_bounds2(x, y))
 		{
 			/* Message */
-			msgf("You see nothing there to spike.");
+			msgf("There is nothing to spike.");
 
 			disturb(FALSE);
 			return;
@@ -1828,7 +1828,7 @@ void do_cmd_spike(void)
 		if (c_ptr->feat != FEAT_CLOSED)
 		{
 			/* Message */
-			msgf("You see nothing there to spike.");
+			msgf("There is nothing to spike.");
 
 			disturb(FALSE);
 			return;
