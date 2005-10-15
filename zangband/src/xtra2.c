@@ -1944,9 +1944,9 @@ static void target_set_prepare(int mode)
 	temp_n = 0;
 
 	/* Scan the current panel */
-	for (y = p_ptr->panel_y1; y <= p_ptr->panel_y2; y++)
+	for (y = p_ptr->panel_y1; y < p_ptr->panel_y2; y++)
 	{
-		for (x = p_ptr->panel_x1; x <= p_ptr->panel_x2; x++)
+		for (x = p_ptr->panel_x1; x < p_ptr->panel_x2; x++)
 		{
 			cave_type *c_ptr;
 
@@ -2038,7 +2038,7 @@ static int target_set_aux(int x, int y, int mode, cptr info)
 		boring = TRUE;
 
 		/* Default */
-		if (p_ptr->tim.blind || !p_ptr->cur_lite)
+		if (p_ptr->tim.blind)
 		{
 			/* Blind version */
 			s1 = "You are aware of ";
@@ -2750,6 +2750,9 @@ bool target_set(int mode)
 		/* Arbitrary grids */
 		else
 		{
+			/* Now keep looking at every grid */
+			flag = FALSE;
+
 			/* Default prompt */
 			strcpy(info, "q,t,p,m,+,-,<dir>");
 
