@@ -69,7 +69,7 @@ L:MENTT:local race
 L:MENTT:race = monst_race(r_idx)
 L:MENTT:do_turn = TRUE
 L:MENTT:if (do_move == TRUE) then
-L:MENTT:	if (bAnd(race.flags[0], RF0_NEVER_BLOW) ~= 0) and
+L:MENTT:	if (bAnd(race.flags[0], RF0_NEVER_BLOW) == 0) and
 L:MENTT:		(randint1(BREAK_GLYPH) < race.level) then
 L:MENTT:		if visible == TRUE then
 L:MENTT:			msgf("The rune of protection is broken!")
@@ -90,7 +90,7 @@ L:MENTT:local race
 L:MENTT:race = monst_race(r_idx)
 L:MENTT:do_turn = TRUE
 L:MENTT:if (do_move == TRUE) then
-L:MENTT:	if (bAnd(race.flags[0], RF0_NEVER_BLOW) ~= 0) and
+L:MENTT:	if (bAnd(race.flags[0], RF0_NEVER_BLOW) == 0) and
 L:MENTT:		(randint1(BREAK_MINOR_GLYPH) < race.level) then
 L:MENTT:		if (field.fx == player.px) and (field.fy = player.py) then
 L:MENTT:			msgf("The rune explodes!")
