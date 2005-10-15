@@ -433,7 +433,6 @@ s16b m_pop(void)
 	return (0);
 }
 
-
 /*
  * Apply a "monster restriction function" to the "monster allocation table"
  */
@@ -446,6 +445,14 @@ void get_mon_num_prep(monster_hook_type monster_hook)
 	{
 		/* Get the entry */
 		alloc_entry *entry = &alloc_race_table[i];
+
+		/* Hack:  When you switch from vanilla_town to wilderness this can crash the game */
+		if (entry->index >= z_info->r_max)
+		{
+			entry->prob1 = 0;
+			entry->prob2 = 0;
+			continue;
+		}
 
 		/* Accept monsters which pass the restriction, if any */
 
