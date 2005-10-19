@@ -2741,6 +2741,10 @@ monster_type *summon_named_creature(int x1, int y1, int r_idx, bool slp,
 		if (m_ptr) break;
 	}
 
+	/* Make sure that the lights of this monsters are displayed */
+	if (FLAG(&r_info[r_idx], RF_LITE_1) ||
+		FLAG(&r_info[r_idx], RF_LITE_2)) p_ptr->update |= (PU_MON_LITE);
+
 	return (m_ptr);
 }
 
