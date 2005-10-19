@@ -1808,7 +1808,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					m_ptr->smart &= ~(SM_MIMIC);
 
 					/* It is in the monster list now */
-					update_mon_vis(m_ptr->r_idx, 1);
+					update_mon_vis(m_ptr->r_idx, 1, TRUE);
 				}
 
 				/* Look to see if we've spotted a mimic */
@@ -1821,7 +1821,7 @@ static bool monst_attack_monst(int m_idx, int t_idx)
 					t_ptr->smart &= ~(SM_MIMIC);
 
 					/* It is in the monster list now */
-					update_mon_vis(t_ptr->r_idx, 1);
+					update_mon_vis(t_ptr->r_idx, 1, TRUE);
 				}
 
 				if ((p_ptr->tim.image) && one_in_(3))
@@ -2505,7 +2505,7 @@ static void take_move(int m_idx, int *mm)
 				m_ptr->smart &= ~(SM_MIMIC);
 
 				/* It is in the monster list now */
-				update_mon_vis(m_ptr->r_idx, 1);
+				update_mon_vis(m_ptr->r_idx, 1, TRUE);
 			}
 
 			/* Hack -- Update the old location */

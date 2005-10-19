@@ -111,7 +111,7 @@ void delete_monster_idx(int i)
 	/* Decrement visibility count */
 	if (m_ptr->ml && !(m_ptr->smart & SM_MIMIC))
 	{
-		update_mon_vis(m_ptr->r_idx, -1);
+		update_mon_vis(m_ptr->r_idx, -1, FALSE);
 	}
 
 	/* Hack -- remove target monster */
@@ -1297,7 +1297,7 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 }
 
 
-void update_mon_vis(u16b r_idx, int increment)
+void update_mon_vis(u16b r_idx, int increment, bool monster_in_los)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 	int i;
@@ -1313,9 +1313,8 @@ void update_mon_vis(u16b r_idx, int increment)
 	/* Update the counter */
 	r_ptr->r_see += increment;
 
-	/* Disturb if necessary */
-	if (disturb_view)
-		disturb(FALSE);
+	/* Disturb if necessary, only in LOS, not with ESP around the corner */
+	if (disturb_view && monster_in_los) disturb(FALSE);
 
 	/* Changes on screen */
 	p_ptr->window |= PW_VISIBLE;
@@ -1585,7 +1584,8 @@ void update_mon(int m_idx, bool full)
 			/* Increment monster visibility counter if we know about it */
 			if (!(m_ptr->smart & SM_MIMIC))
 			{
-				update_mon_vis(m_ptr->r_idx, 1);
+				update_mon_vis(m_ptr->r_idx, 1,
+					projectable(p_ptr->px, p_ptr->py, m_ptr->fx, m_ptr->fy));
 			}
 
 			/* Draw the monster */
@@ -1611,7 +1611,7 @@ void update_mon(int m_idx, bool full)
 			/* Decrement monster visibility counter if we know about it */
 			if (!(m_ptr->smart & SM_MIMIC))
 			{
-				update_mon_vis(m_ptr->r_idx, -1);
+				update_mon_vis(m_ptr->r_idx, -1, FALSE);
 			}
 
 			/* Erase the monster */

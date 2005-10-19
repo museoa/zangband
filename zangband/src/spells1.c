@@ -2872,7 +2872,7 @@ static bool project_m(int who, int r, int x, int y, int dam, int typ)
 		m_ptr->smart &= ~(SM_MIMIC);
 
 		/* It is in the monster list now if visible */
-		if (m_ptr->ml) update_mon_vis(m_ptr->r_idx, 1);
+		if (m_ptr->ml) update_mon_vis(m_ptr->r_idx, 1, TRUE);
 
 		/* We've spotted it */
 		msgf("You've found %s!", m_name);

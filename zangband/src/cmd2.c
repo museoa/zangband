@@ -2651,7 +2651,7 @@ void do_cmd_fire_aux(int mult, object_type *o_ptr, const object_type *j_ptr)
 				m_ptr->smart &= ~(SM_MIMIC);
 
 				/* It is in the monster list now */
-				update_mon_vis(m_ptr->r_idx, 1);
+				update_mon_vis(m_ptr->r_idx, 1, TRUE);
 			}
 
 			/* Did we hit it (penalize range) */
