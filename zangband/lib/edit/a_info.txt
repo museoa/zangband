@@ -1225,7 +1225,7 @@ P:0:5d4:0:0:0
 F:DEX | HIDE_TYPE | VORPAL |
 F:SUST_DEX | SHOW_MODS | SPEED | INSTA_ART
 L:HIT:	if player.rp.pclass == CLASS_WARRIOR then
-L:HIT:		damage = damage * 2
+L:HIT:		dam = dam * 2
 L:HIT:	end
 L:SPOIL:	return "Double damage (warrior)"
 
