@@ -1873,6 +1873,39 @@ static void display_player_flag_info(void)
 	display_player_flag_aux(col, row++, "EvilCurse:", TR_TY_CURSE);
 }
 
+/* Establish a letter and colour for this pval */
+static void pval_to_letter(int pval, bool sustain, char *letter, char *colour)
+{
+	/* No boost */
+	if (!pval)
+	{
+		/* Sustain or default */
+		*colour = (sustain) ? TERM_GREEN : TERM_SLATE;
+		*letter = (sustain) ? 's' : '.';
+	}
+	/* Good */
+	else if (pval > 0)
+	{
+		/* Set *colour based on sustain */
+		*colour = (sustain) ? TERM_GREEN : TERM_L_GREEN;
+
+		/* Label boost */
+		*letter = (pval < 10) ? ('0' + pval) : '*';
+	}
+	/* Bad */
+	else
+	{
+		/* Set *colour based on sustain */
+		*colour = (sustain) ? TERM_L_RED : TERM_RED;
+
+		/* Label boost */
+		*letter = (-pval < 10) ? ('0' - pval) : '*';
+	}
+
+	/* Handle monochrome */
+	if (!use_color) *colour = TERM_WHITE;
+}
+
 
 /*
  * Special display, part 2b
@@ -1882,6 +1915,7 @@ static void display_player_flag_info(void)
  * Positive mods with a sustain will be dark green.
  * Sustains (with no modification) will be a dark green 's'.
  * Negative mods (from a curse) will be red.
+ * Negative mods with a sustain will be light red.
  * Huge mods (>9), like from MICoMorgoth, will be a '*'
  * No mod, no sustain, will be a slate '.'
  */
@@ -1890,6 +1924,7 @@ static void display_player_stat_info(void)
 	int i, e_adj, r_adj, c_adj;
 	int stat_col, stat;
 	int row, col;
+	bool sustain = FALSE;
 
 	object_type *o_ptr;
 	bonuses_type bflags;
@@ -1974,53 +2009,11 @@ static void display_player_stat_info(void)
 		/* Initialize color based of sign of pval. */
 		for (stat = 0; stat < A_MAX; stat++)
 		{
-			/* Default */
-			a = TERM_SLATE;
-			c = '.';
+			/* Is this stat sustained? */
+			sustain = (oflags.flags[1] & (1 << stat)) ? TRUE : FALSE;
 
-			/* Boost */
-			if (bflags.stat[stat])
-			{
-				/* Default */
-				c = '*';
-
-				/* Good */
-				if (bflags.stat[stat])
-				{
-					/* Good */
-					a = TERM_L_GREEN;
-
-					/* Label boost */
-					if (bflags.stat[stat] < 10) c = '0' + bflags.stat[stat];
-				}
-
-				if (oflags.flags[1] & (1 << stat))
-				{
-					/* Dark green for sustained stats. */
-					a = TERM_GREEN;
-				}
-
-				/* Bad */
-				if (o_ptr->pval < 0)
-				{
-					/* Bad */
-					a = TERM_RED;
-
-					/* Label boost */
-					if (bflags.stat[stat] < 10) c = '0' - bflags.stat[stat];
-				}
-			}
-
-			/* Sustain */
-			else if (oflags.flags[1] & (1 << stat))
-			{
-				/* Dark green "s" */
-				a = TERM_GREEN;
-				c = 's';
-			}
-
-			/* Handle monochrome */
-			if (!use_color) a = TERM_WHITE;
+			/* Pick up the right letter for the display */
+			pval_to_letter(bflags.stat[stat], sustain, &c, &a);
 
 			/* Dump proper character */
 			Term_putch(col, row + stat, a, c);
@@ -2036,24 +2029,14 @@ static void display_player_stat_info(void)
 	/* Check stats */
 	for (stat = 0; stat < A_MAX; stat++)
 	{
-		/* Default */
-		a = TERM_SLATE;
-		c = '.';
+		int dummy = 0;
 
 		/* Sustain */
-		if (oflags.flags[1] & 1 << stat)
-		{
-			/* Dark green "s" */
-			a = TERM_GREEN;
-			c = 's';
-		}
-
+		sustain = (oflags.flags[1] & 1 << stat) ? TRUE : FALSE;
 
 		/* Mutations ... */
 		if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 		{
-			int dummy = 0;
-
 			if (stat == A_STR)
 			{
 				if (p_ptr->muta3 & MUT3_HYPER_STR) dummy += 4;
@@ -2116,44 +2099,10 @@ static void display_player_stat_info(void)
 				if (p_ptr->muta3 & MUT3_XTRA_EYES) dummy -= 1;
 				if (p_ptr->muta3 & MUT3_ILL_NORM) dummy = 0;
 			}
-
-			/* Boost */
-			if (dummy)
-			{
-				/* Default */
-				c = '*';
-
-				/* Good */
-				if (dummy > 0)
-				{
-					/* Good */
-					a = TERM_L_GREEN;
-
-					/* Label boost */
-					if (dummy < 10) c = '0' + dummy;
-				}
-
-				/* Sustains */
-				if (oflags.flags[1] & (1 << stat))
-				{
-					a = TERM_GREEN;
-				}
-
-				/* Bad */
-				if (dummy < 0)
-				{
-					/* Bad */
-					a = TERM_RED;
-
-					/* Label boost */
-					if (-dummy < 10) c = '0' - dummy;
-				}
-			}
 		}
 
-
-		/* No color */
-		if (!use_color) a = TERM_WHITE;
+		/* Pick up the right letter for the display */
+		pval_to_letter(dummy, sustain, &c, &a);
 
 		/* Dump */
 		Term_putch(col, row + stat, a, c);
@@ -2167,6 +2116,7 @@ static void display_player_skill_info(void)
 	int skill;
 
 	object_type *o_ptr;
+	bonuses_type bflags;
 	object_flags oflags;
 	s16b k_idx;
 
@@ -2206,42 +2156,37 @@ static void display_player_skill_info(void)
 		/* Acquire "known" flags */
 		object_flags_known(o_ptr, &oflags);
 
+		/* Acquire bonuses */
+		object_bonuses_known(o_ptr, &bflags);
+
 		/* Initialize color based of sign of pval. */
 		for (skill = 0; skill < 7; skill++)
 		{
-			/* Default */
-			a = TERM_SLATE;
-			c = '.';
+			int dummy = 0;
 
-			/* Boost */
-			if (oflags.flags[0] & (TR0_SP << skill))
-			{
-				/* Default */
-				c = '*';
+			/* Spell bonus */
+			if (skill == 0) dummy = bflags.sp_bonus;
 
-				/* Good */
-				if (o_ptr->pval > 0)
-				{
-					/* Good */
-					a = TERM_L_GREEN;
+			/* Stealth bonus */
+			else if (skill == 1) dummy = bflags.skills[SKILL_STL];
 
-					/* Label boost */
-					if (o_ptr->pval < 10) c = '0' + o_ptr->pval;
-				}
+			/* Search bonus */
+			else if (skill == 2) dummy = bflags.skills[SKILL_FOS];
 
-				/* Bad */
-				if (o_ptr->pval < 0)
-				{
-					/* Bad */
-					a = TERM_RED;
+			/* Infra bonus */
+			else if (skill == 3) dummy = bflags.see_infra;
 
-					/* Label boost */
-					if (-o_ptr->pval < 10) c = '0' - o_ptr->pval;
-				}
-			}
+			/* Tunnel bonus */
+			else if (skill == 4) dummy = bflags.skills[SKILL_DIG];
 
-			/* Handle monochrome */
-			if (!use_color) a = TERM_WHITE;
+			/* Speed bonus */
+			else if (skill == 5) dummy = bflags.pspeed;
+
+			/* Blows bonus */
+			else if (skill == 6) dummy = bflags.extra_blows;
+
+			/* Pick up the right letter for the display */
+			pval_to_letter(dummy, FALSE, &c, &a);
 
 			/* Dump proper character */
 			Term_putch(col, row + skill, a, c);
@@ -2257,10 +2202,6 @@ static void display_player_skill_info(void)
 	for (skill = 0; skill < 7; skill++)
 	{
 		int dummy = 0;
-
-		/* Default */
-		a = TERM_SLATE;
-		c = '.';
 
 		if (p_ptr->muta1 || p_ptr->muta2 || p_ptr->muta3)
 		{
@@ -2296,35 +2237,8 @@ static void display_player_skill_info(void)
 			dummy += p_ptr->lev / 10;
 		}
 
-		/* Boost */
-		if (dummy)
-		{
-			/* Default */
-			c = '*';
-
-			/* Good */
-			if (dummy > 0)
-			{
-				/* Good */
-				a = TERM_L_GREEN;
-
-				/* Label boost */
-				if (dummy < 10) c = '0' + dummy;
-			}
-
-			/* Bad */
-			if (dummy < 0)
-			{
-				/* Bad */
-				a = TERM_RED;
-
-				/* Label boost */
-				if (-dummy < 10) c = '0' - dummy;
-			}
-		}
-
-		/* No color */
-		if (!use_color) a = TERM_WHITE;
+		/* Pick up the right letter for the display */
+		pval_to_letter(dummy, FALSE, &c, &a);
 
 		/* Dump */
 		Term_putch(col, row + skill, a, c);
