@@ -41,6 +41,7 @@
 /* Number of wilderness places */
 #define NUM_TOWNS		20
 #define NUM_DUNGEON		20
+#define NUM_PLACES		(NUM_TOWNS + NUM_DUNGEON)
 
 /* Dodgy replacement for SCREEN_WID and SCREEN_HGT */
 
