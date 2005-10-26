@@ -415,9 +415,6 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 		return;
 	}
 
-	/* Hack: Copy item into temp, needed to counter reorder confusion */
-	COPY(&temp, o_ptr, object_type);
-
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
 
@@ -470,6 +467,9 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 
 	/* Sound */
 	sound(SOUND_ZAP);
+
+	/* Hack: Copy item into temp, needed to counter reorder confusion */
+	COPY(&temp, o_ptr, object_type);
 
 	/* Use the staff */
 	use_charge = use_object(o_ptr, &ident, FALSE);

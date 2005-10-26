@@ -1415,8 +1415,7 @@ static void store_purchase(void)
 
 	s32b price, best;
 
-	object_type *j_ptr;
-
+	object_type *j_ptr, temp, *t_ptr;
 	object_type *o_ptr;
 
 	char out_val[160];
@@ -1584,14 +1583,26 @@ static void store_purchase(void)
 				return;
 			}
 
+			/* Hack: Copy item into temp, needed to counter reorder confusion */
+			COPY(&temp, j_ptr, object_type);
+
+			/* Handle stuff */
+			notice_stuff();
+			handle_stuff();
+
+			/* Hack: Counter the confusion caused by reordering with identify */
+			OBJ_ITT_START (p_ptr->inventory, t_ptr)
+			{
+				/* Retrieve the pointer of the original staff */
+				if (object_equal(&temp, t_ptr)) j_ptr = t_ptr;
+			}
+			OBJ_ITT_END;
+
 			/* Get slot */
 			item_new = get_item_position(p_ptr->inventory, j_ptr);
 
 			/* Describe the final result */
 			msgf("You have %v (%c).", OBJECT_FMT(j_ptr, TRUE, 3), I2A(item_new));
-
-			/* Handle stuff */
-			handle_stuff();
 
 			/* Note how many slots the store used to have */
 			i = get_list_length(st_ptr->stock);
@@ -1716,7 +1727,7 @@ static void store_sell(void)
 
 	object_type *q_ptr;
 
-	object_type *o_ptr;
+	object_type *o_ptr, temp, *t_ptr;
 
 	cptr q, s;
 	
@@ -1910,11 +1921,24 @@ static void store_sell(void)
 				q_ptr->ac = 0;
 			}
 
+			/* Hack: Copy item into temp, needed to counter reorder confusion */
+			COPY(&temp, o_ptr, object_type);
+
+			/* Hack: Early sort */
+			notice_stuff();
+			handle_stuff();
+
+			/* Hack: Counter the confusion caused by reordering with identify */
+			OBJ_ITT_START (p_ptr->inventory, t_ptr)
+			{
+				/* Retrieve the pointer of the original staff */
+				if (object_equal(&temp, t_ptr)) o_ptr = t_ptr;
+			}
+			OBJ_ITT_END;
+
+
 			/* Take the item from the player, describe the result */
 			item_increase(o_ptr, -amt);
-
-			/* Handle stuff */
-			handle_stuff();
 
 			/* The store gets that (known) item */
 			q_ptr = store_carry(q_ptr);
