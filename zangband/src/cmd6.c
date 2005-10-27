@@ -57,6 +57,7 @@
 static void do_cmd_eat_food_aux(object_type *o_ptr)
 {
 	bool ident;
+	object_type temp, *t_ptr;
 
 	/* Sound */
 	sound(SOUND_EAT);
@@ -66,6 +67,9 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 
 	/* Is Identity known? */
 	ident = object_aware_p(o_ptr);
+
+	/* Hack to ensure the right reference to the inv in the message */
+	if (!ident) COPY(&temp, o_ptr, object_type);
 
 	/* Eat the food */
 	(void)use_object(o_ptr, &ident, FALSE);
@@ -87,10 +91,24 @@ static void do_cmd_eat_food_aux(object_type *o_ptr)
 
 		object_aware(o_ptr);
 		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
+
+		/* Handle stuff */
+		notice_item();	
+		notice_stuff();
+
+		/* Hack: Counter the confusion caused by reordering with identify */
+		OBJ_ITT_START (p_ptr->inventory, t_ptr)
+		{
+			/* Retrieve the pointer of the original staff */
+			if (object_equal(&temp, t_ptr)) o_ptr = t_ptr;
+		}
+		OBJ_ITT_END;
 	}
-	
-	/* Notice changes */
-	notice_item();	
+	else
+	{
+		/* Notice changes */
+		notice_item();
+	}
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -184,6 +202,7 @@ void do_cmd_eat_food(void)
 static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 {
 	bool ident;
+	object_type temp, *t_ptr;
 
 	/* Sound */
 	sound(SOUND_QUAFF);
@@ -193,6 +212,9 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 
 	/* Is Identity known? */
 	ident = object_aware_p(o_ptr);
+
+	/* Hack to ensure the right reference to the inv in the message */
+	if (!ident) COPY(&temp, o_ptr, object_type);
 
 	/* Quaff the potion */
 	(void)use_object(o_ptr, &ident, FALSE);
@@ -220,10 +242,24 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 
 		object_aware(o_ptr);
 		gain_exp((lev + p_ptr->lev / 2) / p_ptr->lev);
-	}
 
-	/* Notice changes */
-	notice_item();
+		/* Handle stuff */
+		notice_item();	
+		notice_stuff();
+
+		/* Hack: Counter the confusion caused by reordering with identify */
+		OBJ_ITT_START (p_ptr->inventory, t_ptr)
+		{
+			/* Retrieve the pointer of the original staff */
+			if (object_equal(&temp, t_ptr)) o_ptr = t_ptr;
+		}
+		OBJ_ITT_END;
+	}
+	else
+	{
+		/* Notice changes */
+		notice_item();
+	}
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
