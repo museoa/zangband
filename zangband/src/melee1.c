@@ -1632,7 +1632,7 @@ bool make_attack_normal(int m_idx)
 
 
 		/* Analyze "visible" monsters only */
-		if (alive && visible)
+		if (visible)
 		{
 			/* Count "obvious" attacks (and ones that cause damage) */
 			if (obvious || damage || (r_ptr->r_blows[ap_cnt] > 10))
