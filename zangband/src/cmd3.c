@@ -369,6 +369,7 @@ static bool high_level_book(const object_type *o_ptr)
 bool destroy_item_aux(object_type *o_ptr, int amt)
 {
 	bool gain_expr = FALSE;
+	int temp_num;
 
 	/* Can the player destroy the object? */
 	if (!can_player_destroy_object(o_ptr))
@@ -383,9 +384,16 @@ bool destroy_item_aux(object_type *o_ptr, int amt)
 	/* Take a turn */
 	p_ptr->state.energy_use += 100;
 
+	/* Trick a bit to keep the numbers right */
+	temp_num = o_ptr->number;
+	o_ptr->number = amt;
+
 	/* Message */
 	msgf("You destroy %v.", OBJECT_FMT(o_ptr, TRUE, 3));
 	sound(SOUND_DESTITEM);
+
+	/* Trick it back */
+	o_ptr->number = temp_num;
 
 	if (high_level_book(o_ptr))
 	{
