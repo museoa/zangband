@@ -462,7 +462,9 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff("It is very sharp and can cut your foes.  ");
 	}
 
-	if (o_ptr->tval >= TV_DIGGING && o_ptr->tval <= TV_SWORD)
+	if (o_ptr->tval >= TV_SHOT &&
+		o_ptr->tval != TV_BOW &&
+		o_ptr->tval <= TV_SWORD)
 	{
 		if (FLAG(of_ptr, TR_KILL_DRAGON))
 		{
@@ -733,32 +735,36 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff("It has been blessed by the gods.  ");
 	}
 
-	/* Collect protections */
-	vn = 0;
-	if (FLAG(of_ptr, TR_SLAY_ANIMAL)) vp[vn++] = "natural creatures";
-	if (FLAG(of_ptr, TR_SLAY_EVIL))   vp[vn++] = "evil monsters";
-	if (FLAG(of_ptr, TR_SLAY_UNDEAD)) vp[vn++] = "the undead";
-	if (FLAG(of_ptr, TR_SLAY_DEMON))  vp[vn++] = "demons";
-	if (FLAG(of_ptr, TR_SLAY_ORC))    vp[vn++] = "orcs";
-	if (FLAG(of_ptr, TR_SLAY_TROLL))  vp[vn++] = "trolls";
-	if (FLAG(of_ptr, TR_SLAY_GIANT))  vp[vn++] = "giants";
-	if (FLAG(of_ptr, TR_SLAY_DRAGON)) vp[vn++] = "dragons";
-
-	/* Print protections */
-	if (vn)
+	/* Exclude ammo */
+	if (o_ptr->tval >= TV_BOW)
 	{
-		roff("It provides protection from ");
+		/* Collect protections */
+		vn = 0;
+		if (FLAG(of_ptr, TR_SLAY_ANIMAL)) vp[vn++] = "natural creatures";
+		if (FLAG(of_ptr, TR_SLAY_EVIL))   vp[vn++] = "evil monsters";
+		if (FLAG(of_ptr, TR_SLAY_UNDEAD)) vp[vn++] = "the undead";
+		if (FLAG(of_ptr, TR_SLAY_DEMON))  vp[vn++] = "demons";
+		if (FLAG(of_ptr, TR_SLAY_ORC))    vp[vn++] = "orcs";
+		if (FLAG(of_ptr, TR_SLAY_TROLL))  vp[vn++] = "trolls";
+		if (FLAG(of_ptr, TR_SLAY_GIANT))  vp[vn++] = "giants";
+		if (FLAG(of_ptr, TR_SLAY_DRAGON)) vp[vn++] = "dragons";
 
-		/* Scan */
-		for (n = 0; n < vn; n++)
+		/* Print protections */
+		if (vn)
 		{
-			if (n > 0 && n == vn - 1) roff(" and ");
-			else if (n > 0)  roff(", ");
-	
-			roff(CLR_BLUE "%s", vp[n]);
-		}
+			roff("It provides protection from ");
 
-		roff(".  ");
+			/* Scan */
+			for (n = 0; n < vn; n++)
+			{
+				if (n > 0 && n == vn - 1) roff(" and ");
+				else if (n > 0)  roff(", ");
+		
+				roff(CLR_BLUE "%s", vp[n]);
+			}
+
+			roff(".  ");
+		}
 	}
 
 	/* Collect vulnerabilities */
