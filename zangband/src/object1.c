@@ -413,59 +413,59 @@ static void roff_obj_aux(const object_type *o_ptr)
 		roff(CLR_L_GREEN "shots per turn" CLR_DEFAULT ".  ");
 	}
 
-	/* Collect brands */
-	vn = 0;
-	if (FLAG(of_ptr, TR_BRAND_ACID)) vp[vn++] = "acid";
-	if (FLAG(of_ptr, TR_BRAND_ELEC)) vp[vn++] = "electricity";
-	if (FLAG(of_ptr, TR_BRAND_FIRE)) vp[vn++] = "fire";
-	if (FLAG(of_ptr, TR_BRAND_COLD)) vp[vn++] = "frost";
-
-	/* Describe brands */
-	if (vn)
-	{
-		roff("It does extra damage from ");
-
-		/* Scan */
-		for (n = 0; n < vn; n++)
-		{
-			if (n > 0 && n == vn - 1) roff(" and ");
-			else if (n > 0)  roff(", ");
-
-			roff(CLR_VIOLET "%s", vp[n]);
-		}
-
-		roff(".  ");
-	}
-
-	if (FLAG(of_ptr, TR_BRAND_POIS))
-	{
-		roff("It " CLR_VIOLET "poisons" CLR_DEFAULT " your foes.  ");
-	}
-
-	if (FLAG(of_ptr, TR_CHAOTIC))
-	{
-		roff("It produces " CLR_VIOLET "chaotic effects" CLR_DEFAULT ".  ");
-	}
-
-	if (FLAG(of_ptr, TR_VAMPIRIC))
-	{
-		roff("It " CLR_VIOLET "drains life" CLR_DEFAULT " from your foes.  ");
-	}
-
-	if (FLAG(of_ptr, TR_IMPACT))
-	{
-		roff("It can cause " CLR_VIOLET "earthquakes" CLR_DEFAULT ".  ");
-	}
-
-	if (FLAG(of_ptr, TR_VORPAL))
-	{
-		roff("It is very sharp and can cut your foes.  ");
-	}
-
 	if (o_ptr->tval >= TV_SHOT &&
 		o_ptr->tval != TV_BOW &&
 		o_ptr->tval <= TV_SWORD)
 	{
+		/* Collect brands */
+		vn = 0;
+		if (FLAG(of_ptr, TR_BRAND_ACID)) vp[vn++] = "acid";
+		if (FLAG(of_ptr, TR_BRAND_ELEC)) vp[vn++] = "electricity";
+		if (FLAG(of_ptr, TR_BRAND_FIRE)) vp[vn++] = "fire";
+		if (FLAG(of_ptr, TR_BRAND_COLD)) vp[vn++] = "frost";
+
+		/* Describe brands */
+		if (vn)
+		{
+			roff("It does extra damage from ");
+
+			/* Scan */
+			for (n = 0; n < vn; n++)
+			{
+				if (n > 0 && n == vn - 1) roff(" and ");
+				else if (n > 0)  roff(", ");
+
+				roff(CLR_VIOLET "%s", vp[n]);
+			}
+
+			roff(".  ");
+		}
+
+		if (FLAG(of_ptr, TR_BRAND_POIS))
+		{
+			roff("It " CLR_VIOLET "poisons" CLR_DEFAULT " your foes.  ");
+		}
+
+		if (FLAG(of_ptr, TR_CHAOTIC))
+		{
+			roff("It produces " CLR_VIOLET "chaotic effects" CLR_DEFAULT ".  ");
+		}
+
+		if (FLAG(of_ptr, TR_VAMPIRIC))
+		{
+			roff("It " CLR_VIOLET "drains life" CLR_DEFAULT " from your foes.  ");
+		}
+
+		if (FLAG(of_ptr, TR_IMPACT))
+		{
+			roff("It can cause " CLR_VIOLET "earthquakes" CLR_DEFAULT ".  ");
+		}
+
+		if (FLAG(of_ptr, TR_VORPAL))
+		{
+			roff("It is very sharp and can cut your foes.  ");
+		}
+
 		if (FLAG(of_ptr, TR_KILL_DRAGON))
 		{
 			roff("It is a great bane of " CLR_YELLOW "dragons" CLR_DEFAULT ".  ");
@@ -499,16 +499,17 @@ static void roff_obj_aux(const object_type *o_ptr)
 
 			roff(".  ");
 		}
+
+		if (FLAG(of_ptr, TR_GHOUL_TOUCH))
+		{
+			roff("It gives you a paralyzing touch.  ");
+		}
+		if (FLAG(of_ptr, TR_PSI_CRIT) && o_ptr->tval != TV_BOW)
+		{
+			roff("It uses psychic energy to strike great blows.  ");
+		}
 	}
 
-	if (FLAG(of_ptr, TR_GHOUL_TOUCH))
-	{
-		roff("It gives you a paralyzing touch.  ");
-	}
-	if (FLAG(of_ptr, TR_PSI_CRIT))
-	{
-		roff("It uses psychic energy to strike great blows.  ");
-	}
 	if (FLAG(of_ptr, TR_RETURN))
 	{
 		roff("It returns when thrown.  ");
