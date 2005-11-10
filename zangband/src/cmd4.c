@@ -3294,20 +3294,34 @@ void do_cmd_save_screen(void)
  */
 static void print_monster_string(FILE *fff, byte a, char c, cptr name, int num)
 {
+	/* Do some trickery to get the columns aligned */
+	cptr spaces = "     ";
+	int length = 0, count = num;
+
+	/* How long is this int as a string? */
+	while (count)
+	{
+		length++;
+		count /= 10;
+	}
+
+	/* Skip a few spaces */
+	spaces += length;
+
 	if (c == '$')
 	{
 		/* Hack - no unique coins */
-		froff(fff, "  %s$$" CLR_WHITE "     %d pile of %s\n", color_seq[a], num, name);
+		froff(fff, "  %s$$" CLR_WHITE " %s %d pile of %s\n", color_seq[a], spaces, num, name);
 	}
 	else
 	{
 		if (num)
 		{
-			froff(fff, "  %s%c" CLR_WHITE "     %d %s\n", color_seq[a], c, num, name);
+			froff(fff, "  %s%c" CLR_WHITE " %s %d %s\n", color_seq[a], c, spaces, num, name);
 		}
 		else
 		{
-			froff(fff, "  %s%c" CLR_WHITE "     %s\n", color_seq[a], c, name);
+			froff(fff, "  %s%c" CLR_WHITE " %s  %s\n", color_seq[a], c, spaces, name);
 		}
 	}
 }
@@ -3689,9 +3703,8 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 
 		if (FLAG(r_ptr, RF_UNIQUE))
 		{
-			bool dead = (r_ptr->max_num == 0);
-
-			if (dead)
+			/* Has this unique been killed */
+			if (r_ptr->max_num == 0)
 			{
 				print_monster_string(fff, r_ptr->d_attr, r_ptr->d_char, mon_race_name(r_ptr), 0);
 				total++;
@@ -3699,11 +3712,11 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 		}
 		else
 		{
-			s16b this = r_ptr->r_pkills;
+			s16b kills = r_ptr->r_pkills;
 
-			if (this > 0)
+			if (kills > 0)
 			{
-				if (this < 2)
+				if (kills < 2)
 				{
 					print_monster_string(fff, r_ptr->d_attr, r_ptr->d_char, mon_race_name(r_ptr), 1);
 				}
@@ -3712,10 +3725,10 @@ static bool do_cmd_knowledge_kill_count(int dummy)
 					char ToPlural[80];
 					strcpy(ToPlural, mon_race_name(r_ptr));
 					plural_aux(ToPlural);
-					print_monster_string(fff, r_ptr->d_attr, r_ptr->d_char, ToPlural, this);
+					print_monster_string(fff, r_ptr->d_attr, r_ptr->d_char, ToPlural, kills);
 				}
 
-				total += this;
+				total += kills;
 			}
 		}
 	}
