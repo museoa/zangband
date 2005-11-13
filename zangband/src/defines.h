@@ -4464,14 +4464,14 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
  */
 #define OBJ_ITT_START(OSTART, O) \
 	do { \
-		s16b _this_o_idx, _next_o_idx = 0; \
+		s16b O##_this_o_idx, O##_next_o_idx = 0; \
 		\
-		for (_this_o_idx = (OSTART); _this_o_idx; _this_o_idx = _next_o_idx) \
+		for (O##_this_o_idx = (OSTART); O##_this_o_idx; O##_this_o_idx = O##_next_o_idx) \
 		{ \
-			(O) = &o_list[_this_o_idx];\
+			(O) = &o_list[O##_this_o_idx];\
 			assert((O)->k_idx); \
 			\
-			_next_o_idx = (O)->next_o_idx;
+			O##_next_o_idx = (O)->next_o_idx;
 
 #define OBJ_ITT_END \
 		} \
@@ -4482,14 +4482,14 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
  */
 #define FLD_ITT_START(FSTART, F) \
 	do { \
-		s16b _this_f_idx, _next_f_idx = 0; \
+		s16b F##_this_f_idx, F##_next_f_idx = 0; \
 		\
-		for (_this_f_idx = (FSTART); _this_f_idx; _this_f_idx = _next_f_idx) \
+		for (F##_this_f_idx = (FSTART); F##_this_f_idx; F##_this_f_idx = F##_next_f_idx) \
 		{ \
-			(F) = &fld_list[_this_f_idx];\
+			(F) = &fld_list[F##_this_f_idx];\
 			assert((F)->t_idx); \
 			\
-			_next_f_idx = (F)->next_f_idx;
+			F##_next_f_idx = (F)->next_f_idx;
 
 #define FLD_ITT_END \
 		} \
@@ -4677,30 +4677,6 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
  */
 #define is_hostile(T) \
 	 ((bool)(!(is_pet(T) || is_friendly(T))))
-
-
-/*
- * Helper macro so call path_build() with correct buffer size.
- */
-#define path_make(B, P, F) \
-	do \
-	{ \
-		assert(sizeof(B) > sizeof(void*)); \
-		path_build((B), sizeof(B), (P), (F)); \
-	} \
-	while (FALSE)
-
-
-
-/*
- * Hack -- Prepare to use the "Secure" routines
- */
-#if defined(SET_UID) && defined(SECURE)
-extern int PlayerUID;
-# define getuid() PlayerUID
-# define geteuid() PlayerUID
-#endif
-
 
 
 /*** Color constants ***/

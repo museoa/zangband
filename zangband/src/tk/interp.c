@@ -1212,9 +1212,9 @@ objcmd_floor(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 					if (i == tval_cnt) continue;
 				}
 	
-				/* Found a match */
+				/* Found a match (Hack - knows too much about OBJ_ITT */
 				Tcl_ListObjAppendElement(interp, listObjPtr,
-					Tcl_NewIntObj(_this_o_idx));
+					Tcl_NewIntObj(o_ptr_this_o_idx));
 	
 				/* Return x matches */
 				if (request_limit && (++cnt >= match_limit)) break;

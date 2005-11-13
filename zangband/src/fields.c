@@ -1266,10 +1266,12 @@ void test_field_data_integrity(void)
 				if (!f_ptr->t_idx)
 				{
 					msgf("Dead Field");
-					msgf("Field %d", _this_f_idx);
+					/* Hack - this knows too much about FLD_ITT */
+					msgf("Field %d", f_ptr_this_f_idx);
 				}
 
-				if (_this_f_idx > fld_max)
+				/* Hack - this knows too much about FLD_ITT */
+				if (f_ptr_this_f_idx > fld_max)
 				{
 					msgf("Field index inconsistancy.");
 				}
