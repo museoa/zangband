@@ -46,9 +46,10 @@
 
 
 /*
- * Local "savefile" pointer
+ * Local "savefile" file descriptor
  */
-static FILE *fff;
+static int savefile_fd;
+static errr savefile_errr;
 
 /*
  * Hack -- old "encryption" byte
@@ -195,10 +196,12 @@ static bool is_weapon(const object_type *o_ptr)
 
 static byte sf_get(void)
 {
-	byte c, v;
+	char c;
+	byte v;
 
 	/* Get a character, decode the value */
-	c = getc(fff) & 0xFF;
+	savefile_errr |= my_getc(&c, savefile_fd);
+	
 	v = c ^ xor_byte;
 	xor_byte = c;
 
@@ -3426,6 +3429,7 @@ static errr rd_savefile_new_aux(void)
 	/* Verify */
 	if (o_v_check != n_v_check)
 	{
+		/* plog_fmt("checksum %d, %d", o_v_check, n_v_check); */
 		note("Invalid checksum");
 		return (11);
 	}
@@ -3455,29 +3459,27 @@ static errr rd_savefile_new_aux(void)
  */
 errr rd_savefile_new(void)
 {
-	errr err;
+	/* No errors yet */
+	savefile_errr = 0;
 
 	/* Grab permissions */
 	safe_setuid_grab();
 
 	/* The savefile is a binary file */
-	fff = my_fopen(savefile, "rb");
+	savefile_fd = fd_open(savefile, O_RDONLY | O_BINARY);
 
 	/* Drop permissions */
 	safe_setuid_drop();
 
 	/* Paranoia */
-	if (!fff) return (-1);
+	if (savefile_fd < 0) return (-1);
 
 	/* Call the sub-function */
-	err = rd_savefile_new_aux();
-
-	/* Check for errors */
-	if (ferror(fff)) err = -1;
+	savefile_errr |= rd_savefile_new_aux();
 
 	/* Close the file */
-	my_fclose(fff);
+	fd_close(savefile_fd);
 
 	/* Result */
-	return (err);
+	return (savefile_errr);
 }

@@ -65,6 +65,7 @@ OBJ = \
 	z-term.obj \
 	z-rand.obj \
 	z-form.obj \
+	z-file.obj \
 	xtra2.obj \
 	xtra1.obj \
 	wizard2.obj \

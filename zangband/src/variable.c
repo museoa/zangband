@@ -159,7 +159,6 @@ char *mp_tc = NULL;
  * User info
  */
 int player_uid;
-int player_euid;
 int player_egid;
 
 /*
@@ -748,11 +747,4 @@ cptr gf_color[MAX_GF];
  */
 int owner_names_max;
 int owner_suffix_max;
-
-/* Get rid of this? */
-
-/*
- * Flags for initialization
- */
-int init_flags;
 

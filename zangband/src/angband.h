@@ -38,6 +38,7 @@
 #include "z-form.h"
 #include "z-rand.h"
 #include "z-term.h"
+#include "z-file.h"
 
 /*
  * Include the high-level includes.

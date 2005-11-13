@@ -46,7 +46,9 @@ OBJS := variable.o tables.o util.o cave.o \
 	maid-grf.o main-ros.o \
 	z-util.o z-virt.o z-form.o z-rand.o z-term.o\
 	l-monst.o l-object.o l-player.o l-random.o l-ui.o l-misc.o\
-	l-spell.o l-field.o
+	l-spell.o l-field.o \
+	zborg1.o zborg2.o zborg3.o zborg4.o zborg5.o zborg6.o zborg7.o \
+	zborg8.o zborg9.o zbmagic1.o zbmagic2.o zbmagic3.o
 
 
 # Defaults for norcy

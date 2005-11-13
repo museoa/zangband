@@ -565,7 +565,7 @@ void quest_discovery(void)
 }
 
 /* Return the depth this quest and dungeon will have a questor */
-int quest_depth(quest_type *q_ptr, dun_type *d_ptr)
+static int quest_depth(quest_type *q_ptr, dun_type *d_ptr)
 {
 	int min_level, depth;
 	int cur_num, max_num;
@@ -591,7 +591,7 @@ int quest_depth(quest_type *q_ptr, dun_type *d_ptr)
 
 
 /* Return the level appropriate for this quest */
-int quest_level(quest_type *q_ptr)
+static int quest_level(quest_type *q_ptr)
 {
 	dun_type *d_ptr = dungeon();
 	monster_race *r_ptr = &r_info[q_ptr->data.bnt.r_idx];

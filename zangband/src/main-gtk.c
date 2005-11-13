@@ -2879,9 +2879,6 @@ errr init_gtk(int argc, char **argv, unsigned char *new_game)
 	plog_aux = hook_plog;
 	quit_aux = hook_quit;
 	core_aux = hook_quit;
-
-	/* Catch nasty signals */
-	signals_init();
 	
 	/* Need to initialize system type */
 	ANGBAND_SYS = "gtk";

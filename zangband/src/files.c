@@ -1874,7 +1874,7 @@ static void display_player_flag_info(void)
 }
 
 /* Establish a letter and colour for this pval */
-static void pval_to_letter(int pval, bool sustain, char *letter, char *colour)
+static void pval_to_letter(int pval, bool sustain, char *letter, byte *colour)
 {
 	/* No boost */
 	if (!pval)

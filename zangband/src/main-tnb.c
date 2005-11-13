@@ -342,9 +342,6 @@ int init_tnb(int argc, cptr *argv)
 	/* Initialize */
 	angtk_init();
 	
-	/* Catch nasty signals */
-	signals_init();
-	
 	/* Initialize */
 	init_angband();
 

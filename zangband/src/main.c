@@ -207,7 +207,7 @@ static void init_stuff(void)
 			/* plog_fmt("Cannot access the '%s' file!", buf); */
 		
 			/* Reset to be "./lib/" */
-			strcpy(path, "./lib/");	
+			strcpy(path, "./lib/");
 		}
 		
 		fd_close(fd);

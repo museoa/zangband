@@ -416,3 +416,7 @@
  */
 /* #define DEBUG_SCRIPTS */
 
+/*
+ * Just testing  - move me elsewhere?
+ */
+/* #define SECURE */

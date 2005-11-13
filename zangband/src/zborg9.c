@@ -4003,7 +4003,7 @@ void do_cmd_borg(void)
 		case '9':
 		{
 			/* Command: debug -- show dungeons */
-			int i, n = 0;
+			int i;
 
 			for (i = 0; i < borg_dungeon_num; i++)
 			{

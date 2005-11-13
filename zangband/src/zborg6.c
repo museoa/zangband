@@ -2416,7 +2416,7 @@ bool borg_on_safe_feat(byte feat)
 /* If the borg stands on something painfull he'd better move */
 bool borg_flow_non_hurt(void)
 {
-	int x, y;
+	int x = 0, y = 0;
 	int c, b_c = 255;
 	map_block *mb_ptr = map_loc(c_x, c_y);
 
@@ -3724,7 +3724,7 @@ static bool borg_flow_wild_check(int x, int y)
 /* Prepare to flow somewhere in the wilderness */
 bool borg_flow_dark_wild(void)
 {
-	int x, y, side = 0;
+	int x = 0, y, side = 0;
 	int loop_min, loop_max;
 
 	int base_x = c_x / WILD_BLOCK_SIZE;

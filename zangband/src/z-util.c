@@ -147,7 +147,9 @@ void plog(cptr str)
 /*
  * Redefinable "quit" action
  */
+void (*quit_init) (void) = NULL;
 void (*quit_aux) (cptr) = NULL;
+
 
 /*
  * Exit (ala "exit()").  If 'str' is NULL, do "exit(0)".
@@ -157,6 +159,9 @@ void (*quit_aux) (cptr) = NULL;
  */
 void quit(cptr str)
 {
+	/* Pre-quit stuff */
+	if (quit_init) (*quit_init) ();
+
 	/* Attempt to use the aux function */
 	if (quit_aux) (*quit_aux) (str);
 

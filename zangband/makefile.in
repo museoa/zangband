@@ -46,7 +46,7 @@ endif
 # Standard configuration method.
 #
 define CONFIGURE
-	if [ -x ./config.status ] ; then \
+	@if [ -x ./config.status ] ; then \
 	    ./config.status --recheck && ./config.status; \
 	else \
 		./configure; \
@@ -62,7 +62,7 @@ scandir = $(addprefix $(subdir),$(addsuffix /makefile.zb,$(dirs)))
 
 files = angdos.cfg readme z_faq.txt z_update.txt
 
-clean-files = zangband .default_path
+clean-files = zangband .default_path .makefiles .version
 distclean-files = *.bak gmon.out config.log config.status
 
 srcfiles = configure configure.in makefile makefile.in
@@ -234,7 +234,7 @@ configure.in: .version
 		
 # Test to see that all source files are in the other makefiles.
 .makefiles: $(makefiles)
-	for i in $(notdir $(NORMOBJS)) ; do \
+	@for i in $(notdir $(NORMOBJS) $(BORGOBJS)) ; do \
 		for j in $(makefiles) ; do \
 			if [ x"`grep $$i $$j | sed 1q`" = x ]; then \
 				echo "Error: makefile $$j has $$i missing"; \

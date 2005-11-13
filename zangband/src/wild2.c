@@ -2697,7 +2697,7 @@ static void create_dungeons(int xx, int yy)
 	
 	int x, y;
 	
-	int best;
+	int best = -1;
 	
 	long best_val, score;
 	

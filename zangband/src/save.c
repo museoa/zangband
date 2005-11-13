@@ -451,7 +451,8 @@ static errr rd_savefile(void)
  * Some "local" parameters, used to help write savefiles
  */
 
-static FILE *fff;	/* Current save "file" */
+static int savefile_fd;	/* Current savefile fd */
+static errr savefile_errr;
 
 static byte xor_byte;	/* Simple encryption */
 
@@ -468,7 +469,7 @@ static void sf_put(byte v)
 {
 	/* Encode the value, write a character */
 	xor_byte ^= v;
-	(void)putc((int)xor_byte, fff);
+	savefile_errr |= my_putc(xor_byte, savefile_fd);
 
 	/* Maintain the checksum info */
 	v_stamp += v;
@@ -1743,7 +1744,7 @@ static bool wr_savefile_new(void)
 
 
 	/* Error in save */
-	if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
+	if (savefile_errr) return FALSE;
 
 	/* Successful save */
 	return TRUE;
@@ -1752,8 +1753,6 @@ static bool wr_savefile_new(void)
 
 /*
  * Medium level player saver
- *
- * XXX XXX XXX Angband 2.8.0 will use "fd" instead of "fff" if possible
  */
 static bool save_player_aux(char *name)
 {
@@ -1761,14 +1760,14 @@ static bool save_player_aux(char *name)
 	int fd;
 	int mode = 0644;
 
+	/* No errors yet */
+	savefile_errr = 0;
 
 	/* No file yet */
-	fff = NULL;
-
+	savefile_fd = 0;
 
 	/* File type is "SAVE" */
 	FILE_TYPE(FILE_TYPE_SAVE);
-
 
 	/* Grab permissions */
 	safe_setuid_grab();
@@ -1789,19 +1788,19 @@ static bool save_player_aux(char *name)
 		safe_setuid_grab();
 
 		/* Open the savefile */
-		fff = my_fopen(name, "wb");
+		savefile_fd = fd_open(name, O_WRONLY | O_BINARY);
 
 		/* Drop permissions */
 		safe_setuid_drop();
 
 		/* Successful open */
-		if (fff)
+		if (savefile_fd >= 0)
 		{
 			/* Write the savefile */
 			if (wr_savefile_new()) ok = TRUE;
 
 			/* Attempt to close it */
-			my_fclose(fff);
+			(void) fd_close(savefile_fd);
 		}
 
 		/* Grab permissions */

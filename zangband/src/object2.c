@@ -4649,11 +4649,11 @@ static cptr item_describe_aux(object_type *o_ptr, bool back_step)
 			/* Item is in the equipment */
 			item = GET_ARRAY_INDEX(p_ptr->equipment, o_ptr);
 			
-			/* No more items? */
-			return (format("You were %s: %s (%c).", describe_use(item), o_name, I2A(item)));
-			
 			/* Restore old number of items */
 			o_ptr->number = num;
+			
+			/* No more items? */
+			return (format("You were %s: %s (%c).", describe_use(item), o_name, I2A(item)));
 		}
 		else if (list == &p_ptr->inventory)
 		{

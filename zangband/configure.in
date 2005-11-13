@@ -45,7 +45,7 @@ AC_ARG_WITH(gtk,
 [  --with-gtk=yes          Use gtk support (you'll need to turn of sgid flag)])
 
 # Checks for programs.
-AC_PROG_CC
+AC_PROG_CC(gcc-3.4 gcc cc egcs)
 AC_PROG_CPP
 
 
