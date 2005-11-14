@@ -336,6 +336,8 @@ static errr term_win_init(term_win *s, int w, int h)
 	s->big_x1 = -1;
 	s->big_y1 = -1;
 	s->big_y2 = -1;
+	
+	s->wipe_bigtile = FALSE;
 
 	/* Success */
 	return (0);
