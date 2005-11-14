@@ -2738,7 +2738,7 @@ static void create_dungeons(int xx, int yy)
 		pl_ptr->monst_type = TOWN_MONST_ABANDONED;
 
 		/* No name yet */
-		strcpy(place[best].name, "Dungeon");
+		strcpy(pl_ptr->name, "Dungeon");
 
 		/* Increment number of places */
 		place_count++;
