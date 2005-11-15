@@ -735,9 +735,6 @@ void enter_score(void)
  */
 static void top_twenty(void)
 {
-	/* Clear screen */
-	Term_clear();
-
 	/* No score file */
 	if (highscore_fd < 0)
 	{
@@ -747,7 +744,7 @@ static void top_twenty(void)
 	}
 
 	/* Show the first two pages */
-	display_scores_aux(0, 5, 0, NULL, TRUE);
+	display_scores_aux(0, 5, score_idx, NULL, TRUE);
 
 	/* Success */
 	return;
