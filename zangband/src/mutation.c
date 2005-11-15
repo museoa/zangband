@@ -1048,14 +1048,20 @@ void mutation_power_aux(const mutation_type *mut_ptr)
 		lite_spot(px, py);
 		lite_spot(ox, oy);
 
-		/* Process fields under the player. */
-		field_script(area(px, py), FIELD_ACT_PLAYER_ENTER, "");
-
 		verify_panel();
 
 		p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
 		p_ptr->update |= (PU_DISTANCE);
 		p_ptr->window |= (PW_OVERHEAD | PW_DUNGEON);
+		
+		/* Handle stuff */
+		handle_stuff();
+
+		/* Refresh */
+		Term_fresh();
+		
+		/* Process fields under the player. */
+		field_script(area(px, py), FIELD_ACT_PLAYER_ENTER, "");		
 	}
 
 	else if (mut_ptr->which == MUT1_SWAP_POS)

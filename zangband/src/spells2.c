@@ -2436,11 +2436,23 @@ bool earthquake(int cx, int cy, int r)
 			/* Redraw the new spot */
 			lite_spot(px, py);
 
+			/* Check for new panel */
+			verify_panel();			
+			
+			/* Update stuff */
+			p_ptr->update |= (PU_VIEW | PU_FLOW | PU_MON_LITE);
+
+			/* Update the monsters */
+			p_ptr->update |= (PU_DISTANCE);
+			
+			/* Handle stuff */
+			handle_stuff();
+
+			/* Refresh */
+			Term_fresh();
+			
 			/* Process fields under the player. */
 			field_script(area(px, py), FIELD_ACT_PLAYER_ENTER, "");
-
-			/* Check for new panel */
-			verify_panel();
 		}
 
 		/* Important -- no wall on player */
@@ -3219,13 +3231,6 @@ bool teleport_swap(int dir)
 	/* Redraw the new grid */
 	lite_spot(px, py);
 
-	/* Process fields under the player. */
-	field_script(area(px, py), FIELD_ACT_PLAYER_ENTER, "");
-
-	/* Process fields under the monster. */
-	field_script(area(m_ptr->fx, m_ptr->fy),
-			   FIELD_ACT_MONSTER_ENTER, "");
-
 	/* Check for new panel (redraw map) */
 	verify_panel();
 
@@ -3247,6 +3252,13 @@ bool teleport_swap(int dir)
 
 	/* Handle stuff XXX XXX XXX */
 	handle_stuff();
+	
+	/* Process fields under the player. */
+	field_script(area(px, py), FIELD_ACT_PLAYER_ENTER, "");
+
+	/* Process fields under the monster. */
+	field_script(area(m_ptr->fx, m_ptr->fy),
+			   FIELD_ACT_MONSTER_ENTER, "");
 
 	/* Success */
 	return TRUE;

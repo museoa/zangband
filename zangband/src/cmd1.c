@@ -2631,9 +2631,6 @@ void move_player(int dir, int do_pickup)
 		/* Redraw old spot */
 		lite_spot(ox, oy);
 
-		/* Process fields under the player. */
-		field_script(area(x, y), FIELD_ACT_PLAYER_ENTER, "");
-
 		/* Sound */
 		/* sound(SOUND_WALK); */
 
@@ -2645,6 +2642,15 @@ void move_player(int dir, int do_pickup)
 
 		/* Update the monsters */
 		p_ptr->update |= (PU_DISTANCE);
+		
+		/* Handle stuff */
+		handle_stuff();
+
+		/* Refresh */
+		Term_fresh();
+		
+		/* Process fields under the player. */
+		field_script(area(x, y), FIELD_ACT_PLAYER_ENTER, "");
 
 		/* Warn about traps */
 
