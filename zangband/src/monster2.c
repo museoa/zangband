@@ -111,7 +111,7 @@ void delete_monster_idx(int i)
 	/* Decrement visibility count */
 	if (m_ptr->ml && !(m_ptr->smart & SM_MIMIC))
 	{
-		update_mon_vis(m_ptr->r_idx, -1, FALSE);
+		update_mon_vis(m_ptr->r_idx, -1);
 	}
 
 	/* Hack -- remove target monster */
@@ -1297,7 +1297,7 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 }
 
 
-void update_mon_vis(u16b r_idx, int increment, bool monster_in_los)
+void update_mon_vis(u16b r_idx, int increment)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 	int i;
@@ -1314,7 +1314,7 @@ void update_mon_vis(u16b r_idx, int increment, bool monster_in_los)
 	r_ptr->r_see += increment;
 
 	/* Disturb if necessary, only in LOS, not with ESP around the corner */
-	if (disturb_view && monster_in_los) disturb(FALSE);
+	if (disturb_view) disturb(FALSE);
 
 	/* Changes on screen */
 	p_ptr->window |= PW_VISIBLE;
@@ -1509,7 +1509,11 @@ void update_mon(int m_idx, bool full)
 		/* Paranoia */
 		if (in_boundsp(fx, fy))
 		{
+			/* Grab grid where the monster is */
 			pc_ptr = parea(fx, fy);
+
+			/* To catch monsters that are in range in the dark */
+			if (flag && player_has_los_grid(pc_ptr)) easy = TRUE;
 
 			/* Normal line of sight, and not blind */
 			if (player_has_los_grid(pc_ptr) && !p_ptr->tim.blind)
@@ -1584,8 +1588,7 @@ void update_mon(int m_idx, bool full)
 			/* Increment monster visibility counter if we know about it */
 			if (!(m_ptr->smart & SM_MIMIC))
 			{
-				update_mon_vis(m_ptr->r_idx, 1,
-					projectable(p_ptr->px, p_ptr->py, m_ptr->fx, m_ptr->fy));
+				update_mon_vis(m_ptr->r_idx, 1);
 			}
 
 			/* Draw the monster */
@@ -1611,7 +1614,7 @@ void update_mon(int m_idx, bool full)
 			/* Decrement monster visibility counter if we know about it */
 			if (!(m_ptr->smart & SM_MIMIC))
 			{
-				update_mon_vis(m_ptr->r_idx, -1, FALSE);
+				update_mon_vis(m_ptr->r_idx, -1);
 			}
 
 			/* Erase the monster */

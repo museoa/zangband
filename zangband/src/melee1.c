@@ -1650,7 +1650,7 @@ bool make_attack_normal(int m_idx)
 					m_ptr->smart &= ~(SM_MIMIC);
 
 					/* It is in the monster list now */
-					update_mon_vis(m_ptr->r_idx, 1, TRUE);
+					update_mon_vis(m_ptr->r_idx, 1);
 				}
 			}
 		}
