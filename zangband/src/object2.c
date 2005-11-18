@@ -3858,8 +3858,11 @@ static bool put_object(object_type *o_ptr, int x, int y)
 		j_ptr->region = cur_region;
 
 		/* Notice + Redraw */
-		note_spot(x, y);
-		
+		if (player_has_los_grid(parea(x, y)))
+		{
+			note_spot(x, y);
+		}
+			
 		/* Debug - scan player list for this item and complain if we find it */
 		look_up_list(j_ptr);
 

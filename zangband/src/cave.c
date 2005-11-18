@@ -3265,8 +3265,11 @@ void cave_set_feat(int x, int y, int feat)
 	c_ptr->feat = feat;
 
 	/* Notice + Redraw */
-	if (character_dungeon) note_spot(x, y);
-
+	if (character_dungeon && player_has_los_grid(parea(x, y)))
+	{
+		note_spot(x, y);
+	}
+	
 	/* Hack - if under player, notice change */
 	if ((x == p_ptr->px) && (y == p_ptr->py))
 	{

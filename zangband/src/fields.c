@@ -205,7 +205,10 @@ void delete_field(int x, int y)
 	if (!in_boundsp(x, y)) return;
 
 	/* Note + Lite the spot */
-	if (character_dungeon) note_spot(x, y);
+	if (character_dungeon && player_has_los_grid(parea(x, y)))
+	{
+		note_spot(x, y);
+	}
 }
 
 

@@ -529,7 +529,10 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 			c_ptr->info |= (CAVE_GLOW);
 
 			/* Notice + Redraw */
-			note_spot(x, y);
+			if (player_has_los_grid(parea(x, y)))
+			{
+				note_spot(x, y);
+			}
 			
 			/* Observe (after lighting) */
 			if (player_can_see_bold(x, y)) obvious = TRUE;
@@ -548,12 +551,15 @@ static bool project_f(int who, int r, int x, int y, int dam, int typ)
 
 			/* Notice */
 			if (known) obvious = TRUE;
-
+			
 			/* Turn off the light. */
 			c_ptr->info &= ~(CAVE_GLOW);
-			
+
 			/* Notice + Redraw */
-			note_spot(x, y);
+			if (player_has_los_grid(parea(x, y)))
+			{
+				note_spot(x, y);
+			}
 
 			/* Mega-Hack -- Update the monster in the affected grid */
 			/* This allows "spear of light" (etc) to work "correctly" */
