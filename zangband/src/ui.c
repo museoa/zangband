@@ -597,7 +597,7 @@ bool display_menu(menu_type *options, int select, bool scroll, int disp(int),
 {
 	int i = -1, j, cnt;
 	bool ask = FALSE;
-	char choice;
+	char choice = '\n';
 	int num = 0;
 	int save_choice;
 	

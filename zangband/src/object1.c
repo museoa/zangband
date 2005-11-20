@@ -2774,7 +2774,7 @@ object_type *get_item(cptr pmt, cptr str, int mode)
 	bool allow_inven = FALSE;
 	bool allow_floor = FALSE;
 
-	int command_wrk;
+	int command_wrk = 0;
 
 	bool toggle = FALSE;
 

@@ -1359,7 +1359,8 @@ static void secure_fd_kill(cptr buf)
 
 static void secure_fd_move(cptr buf, cptr aux)
 {
-	(void) buf, aux;
+	(void) buf;
+	(void) aux;
 }
 
 static int secure_fd_make(cptr buf, int mode)

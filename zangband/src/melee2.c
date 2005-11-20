@@ -820,6 +820,10 @@ static void find_safety(monster_type *m_ptr, int *xp, int *yp)
 	sint *x_offsets;
 
 	cave_type *c_ptr;
+	
+	/* Hack - if we can't find anything, don't move */
+	*xp = fx;
+	*yp = fy;
 
 	/* Start with adjacent locations, spread further */
 	for (d = 1; d < 10; d++)
