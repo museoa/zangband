@@ -2100,7 +2100,7 @@ static bool ident_spell_aux(int k_idx)
 {
 	cptr q, s;
 	object_type *o_ptr, *j_ptr;
-	bool disappear = FALSE, back_step = FALSE, skip = FALSE;
+	bool disappear = FALSE;
 
 	/* Only un-id'ed items */
 	item_tester_hook = item_tester_unknown;
@@ -2117,50 +2117,71 @@ static bool ident_spell_aux(int k_idx)
 	/* Identify it */
 	identify_item(o_ptr);
 
-	/* Hack.  Do the sorting now */
-	o_ptr = reorder_pack_watch(o_ptr);
+	/*
+	 * Now comes the big trickery to get the items sorted and combined 
+	 * before the messages about the identify result are displayed.  This way
+	 * the reference to where the item is in the inventory is correct.
+	 */
 
-	/* Hack.  Do the combining now */
-	o_ptr = combine_pack_watch(o_ptr);
-
-	/* Find out if the id was by scroll */
+	/* First find out if the id was by scroll */
 	OBJ_ITT_START (p_ptr->inventory, j_ptr)
 	{
-		/* No need to skip anything now */
-		skip = FALSE;
-
-		/* Was it exactly one scroll? */
-		if (j_ptr->k_idx == k_idx &&
-			j_ptr->number == 1)
+		/* Was this the scroll? */
+		if (j_ptr->k_idx == k_idx)
 		{
-			/* That will disappear */
-			disappear = TRUE;
+			/* If it is a scroll */
+			if (j_ptr->tval == TV_SCROLL)
+			{
+				/* The identify was done on itself.  Message from parent */
+				if (j_ptr == o_ptr) return (TRUE);
 
-			/* If you read the id scroll on itself, list it just once */
-			skip = TRUE;
-		}
+				/* It will disappear */
+				if (j_ptr->number == 1) disappear = TRUE;
+			}
 
-		/* Found the original */
-		if (o_ptr == j_ptr)
-		{
-			/* The id scroll is located before object */
-			if (disappear) back_step = TRUE;
+			/* Hack the knowledge of this item */
+			if (!object_aware_p(j_ptr))
+			{
+				object_aware(o_ptr);
 
-			/* We know enough */
+				/* And award xp for using the unknown item */
+				gain_exp((get_object_level(o_ptr) + p_ptr->lev / 2) /
+													p_ptr->lev);
+			}
+
 			break;
 		}
 	}
 	OBJ_ITT_END;
 
-	/* Do we need the hack for the right letter in the inventory? */
-	if (back_step)
+	/* We have all the items identified.  Now sort and combine */
+	o_ptr = reorder_pack_watch(o_ptr);
+	o_ptr = combine_pack_watch(o_ptr);
+
+	/* If the id was by a scroll that is about to disappear */
+	if (disappear)
 	{
-		/* Not quite the description */
-		if (!skip) item_describe_faux(o_ptr);
+		/* Loop through the inventory */
+		OBJ_ITT_START (p_ptr->inventory, j_ptr)
+		{
+			/* If the id scroll is located before the id'd item */
+			if (j_ptr->k_idx == k_idx)
+			{
+				/* The id_scroll will disappear but is still there now */
+				item_describe_faux(o_ptr);
+
+				/* Leave */
+				return (TRUE);
+			}
+
+			/* If the id scroll is located after the id'd item do nothing */
+			if (o_ptr == j_ptr) break;
+		}
+		OBJ_ITT_END;
 	}
-	else
-		/* Description */
-		item_describe(o_ptr);
+
+	/* Description */
+	item_describe(o_ptr);
 
 	/* Something happened */
 	return (TRUE);
@@ -2174,7 +2195,7 @@ bool ident_spell(void)
 }
 
 /* Identify an object by reading an identify scroll */
-bool ident_scroll(int k_idx)
+bool ident_by_item(const int k_idx)
 {
 	return (ident_spell_aux(k_idx));
 }
@@ -2318,16 +2339,17 @@ bool mundane_spell(void)
  * Fully "identify" an object in the inventory  -BEN-
  * This routine returns TRUE if an item was identified.
  */
-bool identify_fully(void)
+static bool ident_fully_aux(const int k_idx)
 {
-	object_type *o_ptr;
+	object_type *o_ptr, *j_ptr;
 	cptr q, s;
+	bool disappear = FALSE, backstep = FALSE;
 
 	/* Only un-*id*'ed items */
 	item_tester_hook = item_tester_unknown_star;
 
 	/* Get an item */
-	q = "Identify which item? ";
+	q = "*Identify* which item? ";
 	s = "You have nothing to *identify*.";
 
 	o_ptr = get_item(q, s, (USE_EQUIP | USE_INVEN | USE_FLOOR));
@@ -2348,11 +2370,79 @@ bool identify_fully(void)
 	/* Handle stuff */
 	handle_stuff();
 
+	/*
+	 * Now comes the big trickery to get the items sorted and combined 
+	 * before the messages about the identify result are displayed.  This way
+	 * the reference to where the item is in the inventory is correct.
+	 */
+
+	/* First find out if the id was by scroll */
+	OBJ_ITT_START (p_ptr->inventory, j_ptr)
+	{
+		/* Was this the scroll? */
+		if (j_ptr->k_idx == k_idx)
+		{
+			/* If it is just one scroll it will disappear with use */
+			if (j_ptr->number == 1) disappear = TRUE;
+
+			/* Hack the knowledge of this scroll */
+			if (!object_aware_p(j_ptr))
+			{
+				object_aware(j_ptr);
+
+				/* And award xp for using the unknown item */
+				gain_exp((get_object_level(o_ptr) + p_ptr->lev / 2) /
+													p_ptr->lev);
+			}
+
+			break;
+		}
+	}
+	OBJ_ITT_END;
+
+	/* We have all the items identified.  Now sort and combine */
+	o_ptr = reorder_pack_watch(o_ptr);
+	o_ptr = combine_pack_watch(o_ptr);
+
+	/* If the id was by a scroll that is about to disappear */
+	if (disappear)
+	{
+		/* Loop through the inventory */
+		OBJ_ITT_START (p_ptr->inventory, j_ptr)
+		{
+			/* If the id scroll is located before the id'd item */
+			if (j_ptr->k_idx == k_idx)
+			{
+				/* The id_scroll will disappear but is still there now */
+				backstep = TRUE;
+
+				/* Get out loop */
+				break;
+			}
+
+			/* If the id scroll is located after the id'd item do nothing */
+			if (o_ptr == j_ptr) break;
+		}
+		OBJ_ITT_END;
+	}
+
 	/* Describe it fully */
-	identify_fully_aux(o_ptr);
+	identify_fully_aux(o_ptr, backstep);
 
 	/* Success */
 	return (TRUE);
+}
+
+/* Star identify an object by reading a scroll */
+bool ident_star_scroll(const int k_idx)
+{
+	return (ident_fully_aux(k_idx));
+}
+
+/* Star identify an object by reading a scroll */
+bool identify_fully(void)
+{
+	return (ident_fully_aux(0));
 }
 
 /*

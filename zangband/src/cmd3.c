@@ -547,7 +547,7 @@ void do_cmd_observe(void)
 	if (!o_ptr) return;
 
 	/* Describe it fully */
-	identify_fully_aux(o_ptr);
+	identify_fully_aux(o_ptr, FALSE);
 }
 
 static bool item_tester_inscribed(const object_type *o_ptr)

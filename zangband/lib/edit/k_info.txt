@@ -1663,7 +1663,7 @@ I:70:12:0
 W:5:0:5:50
 A:1/1:9/1:17/1:52/1
 F:EASY_KNOW
-L:USE:	if not ident_scroll(object.k_idx) then result = FALSE end
+L:USE:	if not ident_by_item(object.k_idx) then result = FALSE end
 L:USE:	ident = TRUE
 D:This scroll identifies one item.
 
@@ -1673,7 +1673,7 @@ I:70:13:0
 W:30:0:5:500
 A:30/1:60/1:90/1
 F:EASY_KNOW
-L:USE:	if not identify_fully() then result = FALSE end
+L:USE:	if not ident_star_scroll(object.k_idx) then result = FALSE end
 L:USE:	ident = TRUE
 D:This scroll identifies one item and reveals all of its powers.
 
@@ -3306,7 +3306,7 @@ I:55:5:21
 W:17:0:50:400
 A:17/1:35/1:60/1
 P:0:1d2:0:0:0
-L:USE:	result = ident_spell()
+L:USE:	result = ident_by_item(object.k_idx)
 L:USE:	ident = TRUE
 D:This staff identifies an item.
 
@@ -3776,7 +3776,7 @@ W:75:0:15:13000
 A:43/16:75/8
 P:0:1d1:0:0:0
 F:EASY_KNOW
-L:USE:	if not ident_spell() then use_charge = FALSE end; ident = TRUE
+L:USE:	if not ident_by_item(object.k_idx) then use_charge = FALSE end; ident = TRUE
 D:This rod identifies one object.
 
 N:373:Curing

@@ -3863,6 +3863,7 @@ static bool put_object(object_type *o_ptr, int x, int y)
 			note_spot(x, y);
 		}
 			
+		
 		/* Debug - scan player list for this item and complain if we find it */
 		look_up_list(j_ptr);
 
@@ -4623,7 +4624,7 @@ void item_charges(object_type *o_ptr)
 /*
  * Describe an item in the inventory.
  */
-static cptr item_describe_aux(object_type *o_ptr, bool back_step)
+static cptr item_describe_aux(object_type *o_ptr, const bool backstep)
 {
 	char o_name[256];
 	char lab[40] = "";
@@ -4687,7 +4688,7 @@ static cptr item_describe_aux(object_type *o_ptr, bool back_step)
 			if (show_labels) strnfmt(lab, 40, "In your pack: ");
 
 			/* Hack to get that letter correct in case a scroll disappears */
-			if (back_step)
+			if (backstep)
 				return (format("%s%s (%c).", lab, o_name, I2A(item - 1)));
 			else
 				return (format("%s%s (%c).", lab, o_name, I2A(item)));
@@ -4722,9 +4723,9 @@ void item_describe(object_type *o_ptr)
 /*
  * Describe an item in the inventory.
  */
-void item_describe_roff(object_type *o_ptr)
+void item_describe_roff(object_type *o_ptr, const bool backstep)
 {
-	roff("%s", item_describe_aux(o_ptr, FALSE));
+	roff("%s", item_describe_aux(o_ptr, backstep));
 }
 
 

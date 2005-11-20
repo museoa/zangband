@@ -2027,7 +2027,7 @@ static void store_examine(void)
 	o_ptr = get_list_item(st_ptr->stock, item);
 
 	/* Describe it fully */
-	identify_fully_aux(o_ptr);
+	identify_fully_aux(o_ptr, FALSE);
 
 	return;
 }

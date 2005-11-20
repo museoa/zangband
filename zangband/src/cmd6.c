@@ -202,6 +202,13 @@ static void do_cmd_quaff_potion_aux(object_type *o_ptr)
 	/* Quaff the potion */
 	(void)use_object(o_ptr, &ident, FALSE);
 
+	/*
+	 * Hack: Do the sorting now in case a potion of *Enlightment* has just
+	 * changed the order of the inventory
+	 */
+	o_ptr = reorder_pack_watch(o_ptr);
+	o_ptr = combine_pack_watch(o_ptr);
+
 	if (p_ptr->rp.prace == RACE_SKELETON)
 	{
 		msgf("Some of the fluid falls through your jaws!");
@@ -295,8 +302,9 @@ void do_cmd_quaff_potion(void)
  */
 static void do_cmd_read_scroll_aux(object_type *o_ptr)
 {
-	object_type temp, *j_ptr;
 	bool ident, used_up;
+	object_type *j_ptr;
+	s32b orig_temp = 0;
 
 	/* Take a turn */
 	p_ptr->state.energy_use = 100;
@@ -304,20 +312,28 @@ static void do_cmd_read_scroll_aux(object_type *o_ptr)
 	/* Is Identity known? */
 	ident = object_aware_p(o_ptr);
 
-	/* Copy item into temp */
-	COPY(&temp, o_ptr, object_type);
+	/* Tag this staff in a temp field */
+	orig_temp = o_ptr->temp_cost;
+	o_ptr->temp_cost = -111;
 
 	/* Read the scroll */
 	used_up = use_object(o_ptr, &ident, FALSE);
 	
 	/*
-	 * Counter the side effect of use_object on an identify scroll
-	 * by finding the original item
+	 * Hack:  try to find a tagged item.
+	 * This is needed when a scroll of identify has changed the order
+	 * of the inventory as a side effect.  In that case o_ptr doesn't
+	 * necessarily point at the original scroll.
 	 */
 	OBJ_ITT_START (p_ptr->inventory, j_ptr)
 	{
-		/* Retrieve the pointer of the original scroll */
-		if (object_equal(&temp, j_ptr)) o_ptr = j_ptr;
+		/* Was there a tagged item? */
+		if (j_ptr->temp_cost == -111)
+		{
+			/* Get the pointer that points to the original item */
+			o_ptr = j_ptr;
+			o_ptr->temp_cost = orig_temp;
+		}
 	}
 	OBJ_ITT_END;
 
@@ -416,7 +432,8 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 {
 	int chance, lev;
 	bool ident, use_charge;
-	object_type temp, *j_ptr;
+	object_type *j_ptr;
+	s32b orig_temp = 0;
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if (floor_item(o_ptr) && (o_ptr->number > 1))
@@ -478,17 +495,28 @@ static void do_cmd_use_staff_aux(object_type *o_ptr)
 	/* Sound */
 	sound(SOUND_ZAP);
 
-	/* Hack: Copy item into temp, needed to counter reorder confusion */
-	COPY(&temp, o_ptr, object_type);
+	/* Tag this staff in a temp field */
+	orig_temp = o_ptr->temp_cost;
+	o_ptr->temp_cost = -111;
 
 	/* Use the staff */
 	use_charge = use_object(o_ptr, &ident, FALSE);
-	
-	/* Hack: Counter the confusion caused by reordering with identify */
+
+	/*
+	 * Hack:  try to find a tagged item.
+	 * This is needed when a staff of perception has changed the order
+	 * of the inventory as a side effect.  In that case o_ptr doesn't
+	 * necessarily point at the original staff.
+	 */
 	OBJ_ITT_START (p_ptr->inventory, j_ptr)
 	{
-		/* Retrieve the pointer of the original staff */
-		if (object_equal(&temp, j_ptr)) o_ptr = j_ptr;
+		/* Was there a tagged item? */
+		if (j_ptr->temp_cost == -111)
+		{
+			/* Get the pointer that points to the original item */
+			o_ptr = j_ptr;
+			o_ptr->temp_cost = orig_temp;
+		}
 	}
 	OBJ_ITT_END;
 

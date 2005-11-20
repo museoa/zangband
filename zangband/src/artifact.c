@@ -2539,7 +2539,7 @@ bool create_artifact(object_type *o_ptr, int level, bool a_scroll)
 		o_ptr->kn_flags[2] = o_ptr->flags[2];
 		o_ptr->kn_flags[3] = o_ptr->flags[3];
 
-		identify_fully_aux(o_ptr);
+		identify_fully_aux(o_ptr, FALSE);
 
 		if (!(get_string(dummy_name, 80,
         				 "What do you want to call the artifact? ")))

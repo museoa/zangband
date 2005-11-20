@@ -188,7 +188,7 @@ cptr item_activation(const object_type *o_ptr)
 /*
  * Fully describe the known information about an item
  */
-static void roff_obj_aux(const object_type *o_ptr)
+static void roff_obj_aux(const object_type *o_ptr, const bool backstep)
 {
 	object_kind *k_ptr;
 	bonuses_type b;
@@ -213,7 +213,7 @@ static void roff_obj_aux(const object_type *o_ptr)
 	Term_gotoxy(0, 0);
 
 	/* Show the item in a message including its pack letter */
-	item_describe_roff((object_type *)o_ptr);
+	item_describe_roff((object_type *)o_ptr, backstep);
 
 	/* Start the description a bit lower */
 	roff("\n\n");
@@ -870,15 +870,16 @@ static void roff_obj_aux(const object_type *o_ptr)
 }
 
 static const object_type *resize_o_ptr;
+static bool resize_backstep;
 
 static void resize_ident_fully(void)
 {
 	/* Recall object */
-	roff_obj_aux(resize_o_ptr);
+	roff_obj_aux(resize_o_ptr, resize_backstep);
 }
 
 
-void identify_fully_aux(const object_type *o_ptr)
+void identify_fully_aux(const object_type *o_ptr, const bool backstep)
 {
 	void (*old_hook) (void);
 
@@ -893,7 +894,7 @@ void identify_fully_aux(const object_type *o_ptr)
 	screen_save();
 
 	/* Recall object */
-	roff_obj_aux(o_ptr);
+	roff_obj_aux(o_ptr, backstep);
 
 	/* Remember what the resize hook was */
 	old_hook = angband_term[0]->resize_hook;
@@ -903,6 +904,7 @@ void identify_fully_aux(const object_type *o_ptr)
 
 	/* Remember essentials for resizing */
 	resize_o_ptr = o_ptr;
+	resize_backstep = backstep;
 
 	/* Wait for the player to read the info */
 	(void)inkey();
