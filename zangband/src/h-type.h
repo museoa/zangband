@@ -98,6 +98,26 @@ typedef unsigned int uint;
 /* The largest possible unsigned integer */
 typedef unsigned long huge;
 
+/* Try to get a 64 bit type */
+#if (defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L) || defined HAVE_STDINT_H
+
+#include <stdint.h>
+
+/* Use standard types */
+typedef uint16_t u16b;
+typedef int16_t s16b;
+
+typedef uint32_t u32b;
+typedef int32_t s32b;
+
+#ifdef USE_64B
+typedef uint64_t u64b;
+typedef int64_t s64b;
+#endif /* USE_64B */
+
+#else /* __STDC__ && __STDC_VERSION__ */
+
+/* Try some hacks to get the right type sizes */
 
 /* Signed/Unsigned 16 bit value */
 typedef signed short s16b;
@@ -120,13 +140,6 @@ typedef signed long s32b;
 typedef unsigned long u32b;
 
 #ifdef USE_64B
-
-/* Try to get a 64 bit type */
-# if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
-#  include <stdint.h>
-#  define ANG_U64B uint64_t
-#  define ANG_S64B int64_t
-# endif	/* __STDC__ && __STDC_VERSION__ */
 
 /* Define this for Microsoft Dev Studio C++ 6.0 */
 # ifdef MSDEV
@@ -154,5 +167,11 @@ typedef ANG_S64B s64b;
 #endif /* USE_64B */
 
 #endif /* L64 */
+
+#endif /* __STDC__ && __STDC_VERSION__ */
+
+
+
+
 
 #endif
