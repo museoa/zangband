@@ -1220,7 +1220,13 @@ static bool panel_bounds(int x, int y, int wid, int hgt)
 		x = max_wild * WILD_BLOCK_SIZE / 2 - wid / 2 - 15;
 		y = max_wild * WILD_BLOCK_SIZE / 2 - hgt / 2 - 5;
 	}
-	else
+	/*
+	 * Center_player in the wilderness is very disconcerting if the screen
+	 * is large and we prune the panel to the shifting wilderness limits.
+	 *
+	 * So we have the black bands where the wilderness is unmapped instead.
+	 */
+	else if (!center_player || p_ptr->depth)
 	{
 		/* Bounds */
 		if (y > p_ptr->max_hgt - hgt) y = p_ptr->max_hgt - hgt;
