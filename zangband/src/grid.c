@@ -39,9 +39,6 @@ bool new_player_spot(void)
 
 		/* Refuse to start on anti-teleport grids */
 		if (c_ptr->info & (CAVE_ICKY)) continue;
-
-		/* Done */
-		break;
 		
 		/* Save the new player grid */
 		p_ptr->py = y;
