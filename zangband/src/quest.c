@@ -564,49 +564,17 @@ void quest_discovery(void)
 	}
 }
 
-/* Return the depth this quest and dungeon will have a questor */
-static int quest_depth(quest_type *q_ptr, dun_type *d_ptr)
-{
-	int min_level, depth;
-	int cur_num, max_num;
 
-	/* Paranoia */
-	if (!q_ptr || !d_ptr) return (-1);
-
-	/* Create a starting level */
-	min_level = d_ptr->min_level;
-
-	/* How deep is the dungeon? */
-	depth = d_ptr->max_level - min_level;
-
-	/* How many have been killed? */
-	cur_num = q_ptr->data.bnt.cur_num;
-
-	/* Top out at how many monsters? */
-	max_num = q_ptr->data.bnt.max_num;
-
-	/* Spread the monsters evenly throughout the dungeon */
-	return (min_level + (depth * (cur_num + 1)) / (max_num + 1));
-}
-
-
-/* Return the level appropriate for this quest */
+/* Is this one of the winner quest levels? */
 static int quest_level(quest_type *q_ptr)
 {
 	dun_type *d_ptr = dungeon();
-	monster_race *r_ptr = &r_info[q_ptr->data.bnt.r_idx];
 
 	/* No dungeon no level */
 	if (!d_ptr) return (-1);
 
 	/* How about the winner quest */
 	if (q_ptr->x_type == QX_KILL_WINNER) return (q_ptr->data.dun.level);
-
-	/* Or maybe a bounty */
-	if (q_ptr->type != QUEST_TYPE_BOUNTY) return (-1);
-
-	/* Is the player inside the right sort of dungeon? */
-	if (r_ptr->flags[7] & d_ptr->habitat) return (quest_depth(q_ptr, d_ptr));
 
 	/* Failure */
 	return (-1);
@@ -626,9 +594,8 @@ bool is_special_level(int level)
 	{
 		q_ptr = &quest[i];
 
-		/* Must be dungeon or bounty quest */
-		if (q_ptr->type != QUEST_TYPE_DUNGEON &&
-			q_ptr->type != QUEST_TYPE_BOUNTY) continue;
+		/* Must be dungeon (winner) quest */
+		if (q_ptr->type != QUEST_TYPE_DUNGEON) continue;
 		
 		/* Is the quest still there? */
 		if (q_ptr->status > QUEST_STATUS_TAKEN) continue;
@@ -678,22 +645,8 @@ void activate_quests(int level)
 			
 			case QUEST_TYPE_BOUNTY:
 			{
-				dun_type *d_ptr = dungeon();
-				monster_race *r_ptr = &r_info[q_ptr->data.bnt.r_idx];
-
-				/* No dungeon dno quest */
-				if (!d_ptr) break;
-
-				/* Is the player inside the right dungeon and depth? */
-				if (level == quest_depth(q_ptr, d_ptr) &&
-					r_ptr->flags[7] & d_ptr->habitat)
-				{
-					/* Activate the quest */
-					q_ptr->flags |= QUEST_FLAG_ACTIVE;
-
-					/* Hack - toggle QUESTOR flag */
-					SET_FLAG(r_ptr, RF_QUESTOR);
-				}
+				/* Hack - activate the quest always */
+				q_ptr->flags |= QUEST_FLAG_ACTIVE;
 				
 				break;
 			}
@@ -1033,9 +986,6 @@ void trigger_quest_complete(byte x_type, vptr data)
 					{
 						/* Complete the quest */
 						q_ptr->status = QUEST_STATUS_COMPLETED;
-
-						/* Monster is no longer 'QUESTOR' */
-						r_info[q_ptr->data.bnt.r_idx].flags[0] &= ~(RF0_QUESTOR);
 					}
 				}
 
@@ -1671,9 +1621,6 @@ static quest_type *insert_bounty_quest(u16b r_idx, u16b num)
 	
 	/* We have taken the quest */
 	q_ptr->status = QUEST_STATUS_TAKEN;
-
-	/* Hack - toggle QUESTOR flag */
-	SET_FLAG(r_ptr, RF_QUESTOR);
 
 	if (num != 1)
 	{
