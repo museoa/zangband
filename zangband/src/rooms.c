@@ -5165,36 +5165,36 @@ struct room_type
  */
 room_type room_list[ROOM_TYPES] =
 {
-	{1,  30, build_type1, RT_SIMPLE},	/* Simple Rectangle */
-	{1,  10, build_type2, RT_FANCY},	/* Overlapping */
+	{1, 100, build_type1, RT_SIMPLE},	/* Simple Rectangle */
+	{1,  50, build_type2, RT_FANCY},	/* Overlapping */
 	{1,  10, build_type20, RT_RUIN},	/* Collapsed */
-	{3,  10, build_type3, RT_FANCY},	/* Crossed */
+	{3,  20, build_type3, RT_FANCY},	/* Crossed */
 	{3,  10, build_type4, RT_BUILDING | RT_CRYPT},	/* Large nested */
-	{3,  10, build_type11, RT_NATURAL | RT_FANCY},	/* Circle */
+	{3,  20, build_type11, RT_NATURAL | RT_FANCY},	/* Circle */
 	{3,  10, build_type14, RT_COMPLEX},	/* Large with walls */
 	{3,  10, build_type15, RT_STRANGE},	/* Parallelogram */
-	{3,  10, build_type16, RT_RUIN | RT_NATURAL},	/* Rectangle minus inverse overlap */
+	{3,  20, build_type16, RT_RUIN | RT_NATURAL},	/* Rectangle minus inverse overlap */
 	{3,  10, build_type17, RT_RUIN},	/* Triangles */
 	{3,  10, build_type23, RT_FANCY},	/* Semicircle */
-	{3,  10, build_type24, RT_COMPLEX},	/* Hourglass */
-	{3,  10, build_type25, RT_BUILDING},	/* Connected rooms */
+	{3,  2, build_type24, RT_COMPLEX},	/* Hourglass */
+	{3,  5, build_type25, RT_BUILDING},	/* Connected rooms */
 	{5,  10, build_type9, RT_NATURAL},	/* Fractal cave */
-	{5,  10, build_type13, RT_NATURAL},	/* Large with fractal feature */
-	{5,  10, build_type18, RT_BUILDING},	/* Chambers */
-	{5,  10, build_type19, RT_STRANGE},	/* Channel */
+	{5,  5, build_type13, RT_NATURAL},	/* Large with fractal feature */
+	{5,  20, build_type18, RT_BUILDING},	/* Chambers */
+	{5,  1, build_type19, RT_STRANGE},	/* Channel */
 	{7,  10, build_type22, RT_COMPLEX},	/* Very large pillared chamber */
-	{10, 10, build_type5, RT_ANIMAL | RT_TAG_CROWDED},	/* Monster nest */
+	{10, 5, build_type5, RT_ANIMAL | RT_TAG_CROWDED},	/* Monster nest */
 	{10, 10, build_type12, RT_CRYPT},	/* Crypt I */
 	{10, 10, build_type21, RT_CRYPT},	/* Crypt II */
-	{12, 10, build_type7, RT_DENSE},	/* Small vault */
+	{12, 2, build_type7, RT_DENSE},	/* Small vault */
 	{12, 10, build_type10, RT_RVAULT},	/* Random vault */
 	{15, 10, build_type6, RT_DENSE | RT_TAG_CROWDED},	/* Monster pit */
-	{20, 10, build_type8, RT_DENSE},	/* Large vault */
-	{25, 10, build_type10, RT_RVAULT},	/* Random vault */
-	{30, 10, build_type5, RT_ANIMAL | RT_TAG_CROWDED},	/* Monster nest */
-	{35, 10, build_type7, RT_DENSE},	/* Small vault */
+	{20, 2, build_type8, RT_DENSE},	/* Large vault */
+	{25, 5, build_type10, RT_RVAULT},	/* Random vault */
+	{30, 5, build_type5, RT_ANIMAL | RT_TAG_CROWDED},	/* Monster nest */
+	{35, 5, build_type7, RT_DENSE},	/* Small vault */
 	{40, 10, build_type6, RT_DENSE | RT_TAG_CROWDED},	/* Monster pit */
-	{45, 10, build_type8, RT_DENSE},	/* Large vault */
+	{45, 2, build_type8, RT_DENSE},	/* Large vault */
 };
 
 

@@ -2263,7 +2263,7 @@ static const dun_gen_type dungeons[] =
 
 	{{50, 10, 10, 0}, RF7_DUN_LAIR, 10, 50, 1,
 		100, 100,
-		RT_NATURAL | RT_COMPLEX | RT_RUIN,
+		RT_SIMPLE | RT_NATURAL | RT_COMPLEX | RT_RUIN,
 		FEAT_DIRT,
 		LQ_WATER | LQ_ACID | LQ_SWAMP,
 		DF_NONE},
@@ -2284,14 +2284,14 @@ static const dun_gen_type dungeons[] =
 
 	{{10, 20, 20, 0}, RF7_DUN_RUIN, 20, 80, 1,
 		0, 150,
-		RT_RUIN,
+		RT_SIMPLE | RT_RUIN,
 		FEAT_PEBBLES,
 		LQ_WATER | LQ_LAVA | LQ_SWAMP,
 		DF_TRACK | DF_ROAD},
 
 	{{50, 20, 20, 0}, RF7_DUN_GRAVE, 30, 100, 1,
 		50, 150,
-		RT_COMPLEX | RT_FANCY | RT_CRYPT,
+		RT_SIMPLE | RT_COMPLEX | RT_FANCY | RT_CRYPT,
 		FEAT_FLOOR_TILE,
 		LQ_WATER | LQ_SWAMP,
 		DF_TRACK | DF_ROAD},
@@ -2305,7 +2305,7 @@ static const dun_gen_type dungeons[] =
 
 	{{30, 30, 40, 0}, RF7_DUN_PLANAR, 40, 127, 1,
 		0, 250,
-		RT_COMPLEX | RT_DENSE | RT_FANCY | RT_RVAULT,
+		RT_SIMPLE | RT_COMPLEX | RT_DENSE | RT_FANCY | RT_RVAULT,
 		FEAT_SAND,
 		LQ_ACID | LQ_LAVA,
 		DF_TRACK},
