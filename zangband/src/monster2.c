@@ -714,7 +714,8 @@ static int filter_mon_loc(int x, int y)
 				/* Not a monster for this dungeon? */
 				if (!(r_ptr->flags[7] & (pl_ptr->dungeon->habitat)))
 				{
-					entry->prob2 = 0;
+					/* Make it much less likely */
+					entry->prob2 = entry->prob2 / 2;
 				}
 			}
 		}
