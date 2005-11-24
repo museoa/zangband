@@ -979,9 +979,6 @@ void trigger_quest_complete(byte x_type, vptr data)
 					/* Increment number killed */
 					q_ptr->data.bnt.cur_num++;
 
-					/* Bang in a new stairs */
-					create_stairs(m_ptr->fx, m_ptr->fy);
-
 					if (q_ptr->data.bnt.cur_num >= q_ptr->data.bnt.max_num)
 					{
 						/* Complete the quest */
