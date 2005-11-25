@@ -717,6 +717,13 @@ static int filter_mon_loc(int x, int y)
 					/* Make it much less likely */
 					entry->prob2 = entry->prob2 / 2;
 				}
+				
+				/* Wilderness monster */
+				if (!FLAG(r_ptr, RF_DUNGEON))
+				{
+					/* Not seen here */
+					entry->prob2 = 0;
+				}
 			}
 		}
 		
