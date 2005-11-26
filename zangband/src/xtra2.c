@@ -1235,6 +1235,22 @@ static bool panel_bounds(int x, int y, int wid, int hgt)
 		if (x < p_ptr->min_wid) x = p_ptr->min_wid;
 	}
 	
+	/* Prevent going outside bounds of wilderness */
+	if (!p_ptr->depth)
+	{
+		if (x < 0) x = 0;
+		if (x + wid >= WILD_SIZE * WILD_BLOCK_SIZE)
+		{
+			x = WILD_SIZE * WILD_BLOCK_SIZE - wid;
+		}
+		
+		if (y < 0) y = 0;
+		if (y + hgt >= WILD_SIZE * WILD_BLOCK_SIZE)
+		{
+			y = WILD_SIZE * WILD_BLOCK_SIZE - hgt;
+		}
+	}
+	
 	xmax = x + wid;
 	ymax = y + hgt;
 	
