@@ -670,6 +670,7 @@ static bool cave_gen(dun_type *d_ptr)
 	{
 		if (cheat_room) msgf("Lake on the level.");
 		build_lake(dun->feat_deep_liquid, dun->feat_shal_liquid, dun->feat_floor);
+		cavern = TRUE;
 	}
 
 	else if (one_in_(DUN_CAV1 / (p_ptr->depth + DUN_CAV2)) && !empty_level &&
@@ -948,7 +949,7 @@ static bool cave_gen(dun_type *d_ptr)
 					 Rand_normal(DUN_AMT_INVIS, 3));
 	}
 
-	if (empty_level && (!one_in_(DARK_EMPTY) || (randint1(100) > p_ptr->depth)))
+	if ((empty_level || cavern) && (!one_in_(DARK_EMPTY) || (randint1(100) > p_ptr->depth)))
 	{
 		/* Lite the cave */
 		for (y = p_ptr->min_hgt; y < p_ptr->max_hgt; y++)
