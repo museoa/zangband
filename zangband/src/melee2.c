@@ -2518,9 +2518,19 @@ static void take_move(int m_idx, int *mm)
 			/* Mega-Hack -- move the old monster, if any */
 			if (c_ptr->m_idx)
 			{
+				/* Race of other monster */
+				monster_race *ro_ptr = &r_info[c_ptr->m_idx];
+				
 				/* Move the old monster */
 				y_ptr->fy = oy;
 				y_ptr->fx = ox;
+				
+				/* Notice changes in view */
+				if ((FLAG(ro_ptr, RF_LITE_1) || FLAG(ro_ptr, RF_LITE_2)))
+				{
+					/* Update some things */
+					p_ptr->update |= (PU_MON_LITE);
+				}
 
 				/* Update the old monster */
 				update_mon(c_ptr->m_idx, TRUE);
@@ -2531,6 +2541,13 @@ static void take_move(int m_idx, int *mm)
 
 			/* Hack -- Update the new location */
 			c_ptr->m_idx = m_idx;
+			
+			/* Notice changes in view */
+			if ((FLAG(r_ptr, RF_LITE_1) || FLAG(r_ptr, RF_LITE_2)))
+			{
+				/* Update some things */
+				p_ptr->update |= (PU_MON_LITE);
+			}
 
 			/* Move the monster */
 			m_ptr->fy = ny;
@@ -2667,13 +2684,6 @@ static void take_move(int m_idx, int *mm)
 	{
 		/* Cast spell */
 		if (make_attack_spell(m_idx)) return;
-	}
-
-	/* Notice changes in view */
-	if (do_move && (FLAG(r_ptr, RF_LITE_1) || FLAG(r_ptr, RF_LITE_2)))
-	{
-		/* Update some things */
-		p_ptr->update |= (PU_MON_LITE);
 	}
 
 	/* Learn things from observable monster */
