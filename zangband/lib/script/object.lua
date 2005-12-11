@@ -127,7 +127,7 @@ function do_life_potion()
 end
 
 function werewindle()
-	local i = randint1(13)
+	local n = randint1(13)
 
 	if n <= 5 then
 		teleport_player(10)
