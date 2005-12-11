@@ -246,8 +246,8 @@ static void random_misc(object_type *o_ptr)
 			SET_FLAG(o_ptr, TR_FEATHER);
 			break;
 		case 15:
-			if (o_ptr->tval != TV_GLOVES)
-				goto bad_type;
+			/* Gloves only, retry otherwise */
+			if (o_ptr->tval != TV_GLOVES) goto bad_type;
 
 			SET_FLAG(o_ptr, TR_GHOUL_TOUCH);
 			break;
@@ -317,8 +317,8 @@ static void random_misc(object_type *o_ptr)
 			SET_FLAG(o_ptr, TR_LUCK_10);
 			break;
 		case 39:
-			if (o_ptr->tval != TV_BOOTS)
-				goto bad_type;
+			/* Boots only, retry otherwise */
+			if (o_ptr->tval != TV_BOOTS) goto bad_type;
 
 			SET_FLAG(o_ptr, TR_WILD_WALK);
 			break;
@@ -327,37 +327,79 @@ static void random_misc(object_type *o_ptr)
 
 static void random_curse(object_type *o_ptr, bool evil)
 {
+  fizzle_curse:
 	switch (randint1(evil ? 32 : 18))
 	{
 		case 1:
 		case 19:
+		{
+			/* If the object gives immunity try a different curse */
+			if (FLAG(o_ptr, TR_IM_ACID)) goto fizzle_curse;
+
+			/* Add curse */
 			SET_FLAG(o_ptr, TR_HURT_ACID);
 			break;
+		}
 		case 2:
 		case 20:
+		{
+			/* If the object gives immunity try a different curse */
+			if (FLAG(o_ptr, TR_IM_ELEC)) goto fizzle_curse;
+
+			/* Add curse */
 			SET_FLAG(o_ptr, TR_HURT_ELEC);
 			break;
+		}
 		case 3:
 		case 21:
+		{
+			/* If the object gives immunity try a different curse */
+			if (FLAG(o_ptr, TR_IM_FIRE)) goto fizzle_curse;
+
+			/* Add curse */
 			SET_FLAG(o_ptr, TR_HURT_FIRE);
 			break;
+		}
 		case 4:
 		case 22:
+		{
+			/* If the object gives immunity try a different curse */
+			if (FLAG(o_ptr, TR_IM_COLD)) goto fizzle_curse;
+
+			/* Add curse */
 			SET_FLAG(o_ptr, TR_HURT_COLD);
 			break;
+		}
 		case 5:
+		{
+			/* If the object gives immunity try a different curse */
+			if (FLAG(o_ptr, TR_IM_LITE)) goto fizzle_curse;
+
+			/* Add curse */
 			SET_FLAG(o_ptr, TR_HURT_LITE);
 			break;
+		}
 		case 6:
+		{
+			/* If the object gives immunity try a different curse */
+			if (FLAG(o_ptr, TR_IM_DARK)) goto fizzle_curse;
+
+			/* Add curse */
 			SET_FLAG(o_ptr, TR_HURT_DARK);
 			break;
+		}
 		case 7:
 		case 8:
 			SET_FLAG(o_ptr, TR_AGGRAVATE);
 			break;
 		case 9:
+		{
+			/* If the object gives regeneration try a different curse */
+			if (FLAG(o_ptr, TR_REGEN)) goto fizzle_curse;
+
 			SET_FLAG(o_ptr, TR_SLOW_HEAL);
 			break;
+		}
 		case 10:
 		case 23:
 			SET_FLAG(o_ptr, TR_DRAIN_STATS);
