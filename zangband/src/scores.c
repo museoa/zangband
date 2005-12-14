@@ -592,6 +592,17 @@ void enter_score(void)
 		return;
 	}
 
+#ifndef SCORE_CHEATERS
+	/* Cheaters are not scored */
+	if (p_ptr->state.noscore & 0xFF00)
+	{
+		msgf("Score not registered for cheaters.");
+		message_flush();
+		score_idx = -1;
+		return;
+	}
+#endif
+
 #ifndef SCORE_WIZARDS
 	/* Wizard-mode pre-empts scoring */
 	if (p_ptr->state.noscore & 0x003F)
@@ -608,17 +619,6 @@ void enter_score(void)
 	if (p_ptr->state.noscore & 0x00C0)
 	{
 		msgf("Score not registered for borgs.");
-		message_flush();
-		score_idx = -1;
-		return;
-	}
-#endif
-
-#ifndef SCORE_CHEATERS
-	/* Cheaters are not scored */
-	if (p_ptr->state.noscore & 0xFF00)
-	{
-		msgf("Score not registered for cheaters.");
 		message_flush();
 		score_idx = -1;
 		return;

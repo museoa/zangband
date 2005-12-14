@@ -499,6 +499,24 @@ static bool do_cmd_options_cheat_aux(int option)
 {
 	char buf[1024];
 
+	/* Warn the player for losing his scores */
+	if (!(p_ptr->state.noscore & 0xFF00))
+	{
+		/* Mention effects */
+		msgf("The cheat options are for cheating and experimenting.");
+		msgf("The game will not be scored if you use cheat options.");
+		message_flush();
+
+		/* Verify request */
+		if (!get_check("Are you sure you want to use cheat options? "))
+		{
+			return (FALSE);
+		}
+
+		/* Mark savefile */
+		p_ptr->state.noscore |= 0xFF00;
+	}
+	
 	/* Toggle the option */
 	(*cheat_info[option].o_var) = !(*cheat_info[option].o_var);
 	
