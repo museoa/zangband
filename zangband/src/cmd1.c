@@ -804,9 +804,9 @@ void carry(int pickup)
 
 					/* Prompt for it */
 					if (rogue_like_commands)
-						prtf(0, 0, "Pick up %s? [y/n/^D] ", o_name);
+						prtf(0, 0, "Pick up %s? [y/n/^D/ESC] ", o_name);
 					else
-						prtf(0, 0, "Pick up %s? [y/n/k] ", o_name);
+						prtf(0, 0, "Pick up %s? [y/n/k/ESC] ", o_name);
 
 					/* Get an acceptable answer */
 					while (TRUE)
@@ -827,6 +827,9 @@ void carry(int pickup)
 
 					/* Erase the prompt */
 					clear_msg();
+
+					/* Drop out of loop */
+					if (i == ESCAPE) break;
 
 					if ((i == 'Y') || (i == 'y'))
 					{
