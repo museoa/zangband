@@ -3374,6 +3374,9 @@ void take_hit(int damage, cptr hit_from)
 				/* Show all the messages */
 				message_flush();
 
+				/* Show the HP before the stop */
+				redraw_stuff();
+
 				/* Alert the user to the problem */
 				put_fstr(0, 0, "Emergency stop.  Press 'c' to continue.");
 
