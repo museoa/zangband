@@ -64,10 +64,14 @@ static byte value_check_aux1(const object_type *o_ptr)
 	/* Cursed items */
 	if (cursed_p(o_ptr)) return FEEL_CURSED;
 
+	/* Weed out weapons and arrows with negative to_h + to_d */
+	if (o_ptr->tval >= TV_SHOT &&
+		o_ptr->tval <= TV_SWORD &&
+		o_ptr->to_h + o_ptr->to_d < 0) return FEEL_BAD;
+
+
 	/* Worthless is "bad" */
-	if (o_ptr->to_a < 0 ||
-		o_ptr->to_h + o_ptr->to_d < 0 ||
-		!object_value(o_ptr)) return FEEL_BAD;
+	if (o_ptr->to_a < 0 || !object_value(o_ptr)) return FEEL_BAD;
 
 	/* Default to "average" */
 	return FEEL_AVERAGE;
