@@ -236,11 +236,31 @@ s32b price_item(object_type *o_ptr, bool flip)
 	/* Compute the final price (with rounding) */
 	price = (price * adjust + 50L) / 100L;
 
-    /* Cap the price */
-    if (flip && price > st_ptr->max_cost * 100L)
-    {
-        price = st_ptr->max_cost * 100L;
-    }
+	/* "Soft cap" the price */
+	if (flip)
+	{
+		/*
+		 * Let C = max_cost * 200. If price < C, we apply the formula
+		 * p' = p - 0.49 * p / C. If price >= C, we apply that formula
+		 * to C (giving C * 0.51) and add in 0.02 * (p - C), which
+		 * causes the formula to be continuous in the first derivative.
+		 *
+		 * Nothing actually makes that necessary, it's just kind of a
+		 * nice property. And I felt like using my calculus for
+		 * something. -RML
+		 */
+		if (price < st_ptr->max_cost * 200L)
+		{
+			long discount = 49 * price / (st_ptr->max_cost * 200L);
+			price -= price * discount / 100;
+		}
+		else
+		{
+			long base = st_ptr->max_cost * 102L;
+			long margin = (price - st_ptr->max_cost * 200L) * 2 / 100;
+			price = base + margin;
+		}
+	}
 
 	/* Note -- Never become "free" */
 	if (price <= 0L) return (1L);
@@ -1121,8 +1141,16 @@ static void display_store(void)
 		/* Put the owner name */
 		put_fstr(5, 3, "%s", owner_name);
 
-		/* Show the max price in the store (above prices) */
-		put_fstr(45, 3, "%s (%ld)", store_name, (long)(st_ptr->max_cost) * 100);
+		if (p_ptr->state.wizard)
+		{
+			/* Show the max price in the store (above prices) */
+			put_fstr(45, 3, "%s (%ld)", store_name, (long)(st_ptr->max_cost) * 100);
+		}
+		else
+		{
+			/* Show the store name (above prices) */
+			put_fstr(45, 3, "%s", store_name);
+		}
 
 		/* Label the item descriptions */
 		put_fstr(3, 5, "Item Description");
