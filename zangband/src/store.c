@@ -161,6 +161,9 @@ static const field_type *f_ptr = NULL;
 static byte info_flags;
 
 
+/* Percent of value over store limit to give when selling */
+#define MAX_SELL_MARGIN 2
+
 
 /*
  * Determine the price of an item (qty one) in a store.
@@ -251,13 +254,13 @@ s32b price_item(object_type *o_ptr, bool flip)
 		 */
 		if (price < st_ptr->max_cost * 200L)
 		{
-			long discount = 49 * price / (st_ptr->max_cost * 200L);
-			price -= price * discount / 100;
+			long discount = (100 - MAX_SELL_MARGIN) * price / (st_ptr->max_cost * 200L);
+			price -= price * discount / 200;
 		}
 		else
 		{
-			long base = st_ptr->max_cost * 102L;
-			long margin = (price - st_ptr->max_cost * 200L) * 2 / 100;
+			long base = st_ptr->max_cost * (100L + MAX_SELL_MARGIN);
+			long margin = (price - st_ptr->max_cost * 200L) * MAX_SELL_MARGIN / 100;
 			price = base + margin;
 		}
 	}
