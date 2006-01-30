@@ -111,7 +111,7 @@ function corpse_decay()
 	if (ironman_nightmare == TRUE) then
 
 		-- Summon a monster nearby if possible
-		if (summon_cloned_creature(field.fx, field.fy, race, FALSE)) then
+		if (summon_cloned_creature(field.fx, field.fy, r_idx, FALSE)) then
 			if (visible == TRUE) then
 				if (disturb_minor == TRUE) then
 					msgf("The "..name.." rises.")
