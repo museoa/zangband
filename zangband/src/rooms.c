@@ -4173,21 +4173,35 @@ static void build_type15(int bx0, int by0)
 	{
 		for (x = x1; x < x1 + w; x++)
 		{
-			if (type)
+		
+		
+			/* Boundary */
+			if ((x == x1) || (x == x1 + w - 1) || (y == 1) || (y == h - 1))
 			{
-				/* Sloping down and right */
-				set_feat_bold(x + y, y + y1, dun->feat_floor);
+				if (type)
+				{
+					set_feat_bold(x + y, y + y1, FEAT_WALL_EXTRA);
+				}
+				else
+				{
+					set_feat_bold(x + h - y, y + y1, FEAT_WALL_EXTRA);
+				}
 			}
 			else
 			{
-				/* Sloping up and right */
-				set_feat_bold(x + h - y, y + y1, dun->feat_floor);
+				if (type)
+				{
+					/* Sloping down and right */
+					set_feat_bold(x + y, y + y1, dun->feat_floor);
+				}
+				else
+				{
+					/* Sloping up and right */
+					set_feat_bold(x + h - y, y + y1, dun->feat_floor);
+				}
 			}
 		}
 	}
-
-	/* Find visible outer walls and set to be FEAT_OUTER */
-	add_outer_wall(xval, yval, light, x1, y1, x1 + h + w, y1 + h);
 }
 
 
