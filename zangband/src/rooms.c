@@ -5187,8 +5187,8 @@ room_type room_list[ROOM_TYPES] =
 	{10, 10, build_type12, RT_CRYPT},	/* Crypt I */
 	{10, 10, build_type21, RT_CRYPT},	/* Crypt II */
 	{12, 2, build_type7, RT_DENSE},	/* Small vault */
-	{12, 10, build_type10, RT_RVAULT},	/* Random vault */
-	{15, 10, build_type6, RT_DENSE | RT_TAG_CROWDED},	/* Monster pit */
+	{12, 2, build_type10, RT_RVAULT},	/* Random vault */
+	{15, 5, build_type6, RT_DENSE | RT_TAG_CROWDED},	/* Monster pit */
 	{20, 2, build_type8, RT_DENSE},	/* Large vault */
 	{25, 5, build_type10, RT_RVAULT},	/* Random vault */
 	{30, 5, build_type5, RT_ANIMAL | RT_TAG_CROWDED},	/* Monster nest */
