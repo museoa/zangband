@@ -475,7 +475,7 @@ static void build_type3(int bx0, int by0)
 			/* Large solid middle pillar */
 
 			/* Generate a small inner solid pillar */
-			generate_fill(x1b, y1a, x2b, y2a, FEAT_WALL_INNER);
+			generate_fill(x1a, y1b, x2a, y2b, FEAT_WALL_INNER);
 
 			break;
 		}
@@ -485,10 +485,10 @@ static void build_type3(int bx0, int by0)
 			/* Inner treasure vault */
 
 			/* Generate a small inner vault */
-			generate_draw(x1b, y1a, x2b, y2a, FEAT_WALL_INNER);
+			generate_draw(x1a, y1b, x2a, y2b, FEAT_WALL_INNER);
 
 			/* Open the inner vault with a secret door */
-			generate_door(x1b, y1a, x2b, y2a, TRUE);
+			generate_door(x1a, y1b, x2a, y2b, TRUE);
 
 			/* Place a treasure in the vault */
 			place_object(xval, yval, FALSE, FALSE, 0);
@@ -540,7 +540,7 @@ static void build_type3(int bx0, int by0)
 			/* Occasionally put a "plus" in the center */
 			else if (one_in_(3))
 			{
-				generate_plus(x1b, y1a, x2b, y2a, FEAT_WALL_INNER);
+				generate_plus(x1a, y1b, x2a, y2b, FEAT_WALL_INNER);
 			}
 
 			/* Occasionally put a pillar in the center */
