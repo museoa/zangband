@@ -2534,7 +2534,10 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 					}
 					else
 					{
-						place_trap(x, y);
+						if (one_in_(5))
+						{
+							place_trap(x, y);
+						}
 					}
 				}
 				else if (value < 30)
@@ -2558,7 +2561,10 @@ static void fill_treasure(int x1, int y1, int x2, int y2, int difficulty)
 				else if (value < 50)
 				{
 					/* Trap */
-					place_trap(x, y);
+					if (one_in_(5))
+					{
+						place_trap(x, y);
+					}
 				}
 				else
 				{
