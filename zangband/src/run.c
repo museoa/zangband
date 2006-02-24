@@ -828,6 +828,9 @@ static void run_wall(void)
  */
 void run_step(int dir)
 {
+	/* Get delay */
+	int msec = delay_factor * delay_factor * delay_factor;
+
 	if (dir)
 	{
 		/* Don't start by running into a wall! */
@@ -886,7 +889,13 @@ void run_step(int dir)
 			return;
 		}
 	}
-
+	
+	if (delay_run)
+	{
+		/* Delay */
+		Term_xtra(TERM_XTRA_DELAY, msec);
+	}
+	
 	/* Check for end of run */
 	if (p_ptr->run.mode == RUN_MODE_FINISH)
 	{

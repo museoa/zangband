@@ -4295,7 +4295,7 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 /* {TRUE,  0, NULL,					"Number 169" }, p_ptr->options[153] */
 #define center_player			p_ptr->options[154]
 #define avoid_center			p_ptr->options[155]
-/* {TRUE,  0, NULL,					"Number 172" }, p_ptr->options[156] */
+#define delay_run				p_ptr->options[156]
 #define limit_messages			p_ptr->options[157]
 #define check_transaction		p_ptr->options[158]
 /* {TRUE,  0, NULL,					"Number 175" }, p_ptr->options[159] */

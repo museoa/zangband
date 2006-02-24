@@ -6245,7 +6245,7 @@ option_type option_info[OPT_MAX] =
 	{TRUE,  0, NULL,					"Number 169" },
 	{FALSE, 5, "center_player",			"Always center on the player (*slow*)" },
 	{FALSE, 5, "avoid_center",			"Avoid centering while running" },
-	{TRUE,  0, NULL,					"Number 172" },
+	{TRUE,  5, "delay_run",				"Use delays whilst running" },
 	{TRUE,  5, "limit_messages",		"Only display last 50 messages in dumps" },
 	{FALSE, 1, "check_transaction",		"Prompt when buying or selling" },
 	{TRUE,  0, NULL,					"Number 175" },
