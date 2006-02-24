@@ -5559,7 +5559,7 @@ N:595:Sustenance
 G:":d
 I:40:19:0
 W:12:0:3:300
-A:12/5
+A:50/5
 F:EASY_KNOW
 D:With this amulet you will never be hungry again..
 L:TIMED: if player.food < PY_FOOD_FULL + 500 then set_food(player.food + 10) end
