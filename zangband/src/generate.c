@@ -726,7 +726,7 @@ static bool cave_gen(dun_type *d_ptr)
 	}
 
 	/* Hack -- Add some rivers */
-	if (one_in_(3) && (randint1(p_ptr->depth) > 5))
+	if (one_in_(RIVER_LEVEL) && (randint1(p_ptr->depth) > 5))
 	{
 		add_river(dun->feat_deep_liquid, dun->feat_shal_liquid);
 	}
