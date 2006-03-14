@@ -119,6 +119,14 @@
 #endif
 
 
+/*
+ * Use secure i/o via privledge seperation and communication over pipes.
+ *
+ * Only need to audit z-file.c, util.c and main.c to guarantee security of group games.
+ */
+#define SECURE
+
+
 /* Debug mode options */
 #ifdef USE_DEBUG
 
@@ -416,7 +424,3 @@
  */
 /* #define DEBUG_SCRIPTS */
 
-/*
- * Just testing  - move me elsewhere?
- */
-/* #define SECURE */
