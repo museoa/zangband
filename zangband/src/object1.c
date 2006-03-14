@@ -31,6 +31,9 @@
 void reset_visuals(void)
 {
 	int i;
+	
+	/* Paranoia - not before they exist yet */
+	if (!t_info) return;
 
 	/* Extract some info about terrain features */
 	for (i = 0; i < z_info->f_max; i++)
