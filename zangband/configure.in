@@ -42,7 +42,7 @@ if test -n "$tkdir" -a "$tkdir" != "no" ; then
 fi
 
 AC_ARG_WITH(gtk,
-[  --with-gtk=yes          Use gtk support (you'll need to turn of sgid flag)])
+[  --with-gtk=no          Don't include gtk support])
 
 # Checks for programs.
 AC_PROG_CC(gcc-3.4 gcc cc egcs)
@@ -70,15 +70,6 @@ if test -n "$with_windows" -a "$with_windows" != "no" ; then
 fi
 
 if test "x$with_x11" != "xno" ; then
-	if test "x$with_gtk" != "xno" ; then
-		# Add gtk include paths if needed
-		AC_CHECK_PROGS(GTK_CONFIG, [gtk-config], [no])
-		if test $GTK_CONFIG != "no" ; then
-			CFLAGS="$CFLAGS `$GTK_CONFIG --cflags`" 
-			LDFLAGS="$LDFLAGS `$GTK_CONFIG --libs`"
-		fi
-	fi
-
 	# Find X11 path
 	AC_PATH_X
 	if test -n "$x_includes" ; then
@@ -124,12 +115,17 @@ AC_SEARCH_LIBS([initscr], [ncurses curses],
 		AC_DEFINE(USE_CAP, 1, [Use termcap port])))
 
 if test "x$with_gtk" != "xno" -a "x$with_x11" != "xno" ; then
+	AC_CHECK_PROGS(GTK_CONFIG, [gtk-config], [no])
+	if test $GTK_CONFIG != "no" ; then
 	AC_SEARCH_LIBS([gtk_init_check], [gtk],
+		CFLAGS="$CFLAGS `$GTK_CONFIG --cflags`" 
+		LDFLAGS="$LDFLAGS `$GTK_CONFIG --libs`"
 		AC_DEFINE(USE_GTK, 1, [Use gtk port]))
+	fi
 fi
 
 dnl A function to search for header files
-AC_DEFUN(AC_SEARCH_HEADERS,
+AC_DEFUN([AC_SEARCH_HEADERS],
 [
 	for search_header in $1
 	do
@@ -244,7 +240,7 @@ AC_CHECK_FUNCS([Tk_SetClassProcs TkpSync])
 AC_CHECK_FUNCS([mkstemp usleep getpwuid getpwnam shmget])
 
 dnl A nice function to test compiler options (like warnings)
-AC_DEFUN(AC_CHECK_CC_OPT,
+AC_DEFUN([AC_CHECK_CC_OPT],
 [FLAG=`echo zangband_cv_cflag_$1 | sed s/-/_/g`
 AC_CACHE_CHECK([whether ${CC-cc} accepts $1],
 [$FLAG],
