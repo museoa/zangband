@@ -1282,11 +1282,11 @@ static void font_ok_callback(GtkWidget *widget, GtkWidget *font_selector)
 }
 
 
-static void change_font_event_handler(GtkWidget *widget, gpointer user_data)
+static void change_font_event_handler(GtkWidget *widget, guint user_data)
 {
 	GtkWidget *font_selector = gtk_font_selection_dialog_new("Select font");
 
-	term_data *td = user_data;
+	term_data *td = &data[user_data];
 	gchar *foundery[] = { (char * ) "misc", NULL};
 	gchar *spacings[] = { (char * ) "c", (char *) "m", NULL };
 	gchar *charsets[] = { (char * ) "iso8859-1", NULL};
@@ -1294,7 +1294,7 @@ static void change_font_event_handler(GtkWidget *widget, gpointer user_data)
 	/* Hack - ignore widget */
 	(void) widget;
 
-	gtk_object_set_data(GTK_OBJECT(font_selector), "term_data", user_data);
+	gtk_object_set_data(GTK_OBJECT(font_selector), "term_data", td);
 
 	/* Filter to show only fixed-width fonts */
 	gtk_font_selection_dialog_set_filter(
@@ -1329,9 +1329,9 @@ static void change_font_event_handler(GtkWidget *widget, gpointer user_data)
 /*
  * Process Terms-* menu command - hide/show terminal window
  */
-static void term_event_handler(GtkWidget *widget, gpointer user_data)
+static void term_event_handler(GtkWidget *widget, guint user_data)
 {
-	term_data *td = (term_data *)user_data;
+	term_data *td = &data[user_data];
 	
 	/* Ignore unused parameter */
 	(void) widget;
@@ -1363,7 +1363,7 @@ static void term_event_handler(GtkWidget *widget, gpointer user_data)
  */
 static void realize_event_handler(GtkWidget *widget, gpointer user_data)
 {
-	term_data *td = (term_data *)user_data;
+	term_data *td = (term_data *) user_data;
 	
 	/* Paranoia */
 	g_assert(td->drawing_area->window);
@@ -1392,7 +1392,7 @@ static void realize_event_handler(GtkWidget *widget, gpointer user_data)
  */
 static void show_event_handler(GtkWidget *widget, gpointer user_data)
 {
-	term_data *td = (term_data *)user_data;
+	term_data *td = (term_data *) user_data;
 	
 	/* Hack - ignore widget */
 	(void) widget;
@@ -1407,7 +1407,7 @@ static void show_event_handler(GtkWidget *widget, gpointer user_data)
  */
 static void hide_event_handler(GtkWidget *widget, gpointer user_data)
 {
-	term_data *td = (term_data *)user_data;
+	term_data *td = (term_data *) user_data;
 
 	/* Hack - ignore widget */
 	(void) widget;
@@ -1605,17 +1605,17 @@ static bool set_graph_mode(int graphmode)
  * Set graf_mode_request according to user selection,
  * and let Term_xtra react to the change.
  */
-static void change_graf_mode_event_handler(GtkButton *was_clicked,
-										gpointer user_data)
+static void change_graf_mode_event_handler(GtkButton *was_clicked, 
+											guint user_data)
 {
 	/* Hack - ignore parameter */
 	(void) was_clicked;
 	
 	/* Set request according to user selection */
-	if ((int)user_data != use_graphics)
+	if (user_data != use_graphics)
 	{
 		/* Try to set mode */
-		if (set_graph_mode((int)user_data))
+		if (set_graph_mode(user_data))
 		{
 			/* Reset visuals */
 #ifdef ANGBAND_2_8_1
@@ -1636,7 +1636,7 @@ static void change_graf_mode_event_handler(GtkButton *was_clicked,
  * Toggles the boolean value of use_transparency
  */
 static void change_trans_mode_event_handler(GtkButton *was_clicked,
-										gpointer user_data)
+										guint user_data)
 {
 	/* Hack - Ignore unused parameters */
 	(void) was_clicked;
@@ -1653,7 +1653,7 @@ static void change_trans_mode_event_handler(GtkButton *was_clicked,
  * Toggles the boolean value of use_bigtile
  */
 static void change_bigtile_mode_event_handler(GtkButton *was_clicked,
-										gpointer user_data)
+										guint user_data)
 {
 	/* Hack - Ignore unused parameters */
 	(void) was_clicked;
@@ -1669,7 +1669,7 @@ static void change_bigtile_mode_event_handler(GtkButton *was_clicked,
 
 
 static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event,
-										 gpointer user_data)
+										 guint user_data)
 {
 	int i, mc, ms, mo, mx;
 
@@ -1821,7 +1821,7 @@ static gboolean keypress_event_handler(GtkWidget *widget, GdkEventKey *event,
 static void size_allocate_event_handler(GtkWidget *widget, 
 	GtkAllocation *allocation, gpointer user_data)
 {
-	term_data *td = user_data;
+	term_data *td = (term_data *) user_data;
 	int old_rows, old_cols;
 	term_data *old_data = (term_data*)(Term->data);
 
@@ -1888,7 +1888,7 @@ static void size_allocate_event_handler(GtkWidget *widget,
 static gboolean expose_event_handler(GtkWidget *widget, GdkEventExpose *event,
 				 gpointer user_data)
 {
-	term_data *td = user_data;
+	term_data *td = (term_data *) user_data;
 	term_data *old_data = (term_data*)(Term->data); 
 	gint height, width;
 
@@ -2329,21 +2329,21 @@ static GtkItemFactoryEntry main_menu_items[] =
 	  NULL, 0, (char * ) "<Branch>" },
 	/* XXX XXX XXX NULL's are replaced by the program */
 	{ NULL, (char * ) "<mod1>0",
-	  term_event_handler, (guint)&data[0], (char * ) "<CheckItem>" },
+	  term_event_handler, 0, (char * ) "<CheckItem>" },
 	{ NULL, (char * ) "<mod1>1",
-	  term_event_handler, (guint)&data[1], (char * ) "<CheckItem>" },
+	  term_event_handler, 1, (char * ) "<CheckItem>" },
 	{ NULL, (char * ) "<mod1>2",
-	  term_event_handler, (guint)&data[2], (char * ) "<CheckItem>" },
+	  term_event_handler, 2, (char * ) "<CheckItem>" },
 	{ NULL, (char * ) "<mod1>3",
-	  term_event_handler, (guint)&data[3], (char * ) "<CheckItem>" },
+	  term_event_handler, 3, (char * ) "<CheckItem>" },
 	{ NULL, (char * ) "<mod1>4",
-	  term_event_handler, (guint)&data[4], (char * ) "<CheckItem>" },
+	  term_event_handler, 4, (char * ) "<CheckItem>" },
 	{ NULL, (char * ) "<mod1>5",
-	  term_event_handler, (guint)&data[5], (char * ) "<CheckItem>" },
+	  term_event_handler, 5, (char * ) "<CheckItem>" },
 	{ NULL, (char * ) "<mod1>6",
-	  term_event_handler, (guint)&data[6], (char * ) "<CheckItem>" },
+	  term_event_handler, 6, (char * ) "<CheckItem>" },
 	{ NULL, (char * ) "<mod1>7",
-	  term_event_handler, (guint)&data[7], (char * ) "<CheckItem>" },
+	  term_event_handler, 7, (char * ) "<CheckItem>" },
 
 	/* "Options" menu */
 	{ (char * ) "/Options", NULL,
@@ -2354,21 +2354,21 @@ static GtkItemFactoryEntry main_menu_items[] =
 	  NULL, 0, (char * ) "<Branch>" },
 	/* XXX XXX XXX Again, NULL's are filled by the program */
 	{ NULL, NULL,
-	  change_font_event_handler, (guint)&data[0], NULL },
+	  change_font_event_handler, 0, NULL },
 	{ NULL, NULL,
-	  change_font_event_handler, (guint)&data[1], NULL },
+	  change_font_event_handler, 1, NULL },
 	{ NULL, NULL,
-	  change_font_event_handler, (guint)&data[2], NULL },
+	  change_font_event_handler, 2, NULL },
 	{ NULL, NULL,
-	  change_font_event_handler, (guint)&data[3], NULL },
+	  change_font_event_handler, 3, NULL },
 	{ NULL, NULL,
-	  change_font_event_handler, (guint)&data[4], NULL },
+	  change_font_event_handler, 4, NULL },
 	{ NULL, NULL,
-	  change_font_event_handler, (guint)&data[5], NULL },
+	  change_font_event_handler, 5, NULL },
 	{ NULL, NULL,
-	  change_font_event_handler, (guint)&data[6], NULL },
+	  change_font_event_handler, 6, NULL },
 	{ NULL, NULL,
-	  change_font_event_handler, (guint)&data[7], NULL },
+	  change_font_event_handler, 7, NULL },
 
 #ifdef USE_GRAPHICS
 
@@ -2569,7 +2569,7 @@ static void hook_plog(cptr str)
  */
 static void destroy_sub_event_handler(GtkWidget *window, gpointer user_data)
 {
-	term_data *td = (term_data *)user_data;
+	term_data *td = (term_data *) user_data;
 	
 	/* Do nothing if window is not visible */
 	if (!td->shown) return;
@@ -2585,7 +2585,7 @@ static void destroy_sub_event_handler(GtkWidget *window, gpointer user_data)
  */
 static void delete_sub_event_handler(GtkWidget *window, gpointer user_data)
 {
-	term_data *td = (term_data *)user_data;
+	term_data *td = (term_data *) user_data;
 	
 	/* Do nothing if window is not visible */
 	if (!td->shown) return;
@@ -2696,15 +2696,15 @@ static void init_gtk_window(term_data *td, int i)
 	
 	/* Install drawing area event handlers */
 	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "realize",
-		GTK_SIGNAL_FUNC(realize_event_handler), (gpointer)td);
+		GTK_SIGNAL_FUNC(realize_event_handler), td);
 	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "show",
-		GTK_SIGNAL_FUNC(show_event_handler), (gpointer)td);
+		GTK_SIGNAL_FUNC(show_event_handler), td);
 	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "hide",
-		GTK_SIGNAL_FUNC(hide_event_handler), (gpointer)td);
+		GTK_SIGNAL_FUNC(hide_event_handler), td);
 	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "size_allocate",
-		GTK_SIGNAL_FUNC(size_allocate_event_handler), (gpointer)td);
+		GTK_SIGNAL_FUNC(size_allocate_event_handler), td);
 	gtk_signal_connect(GTK_OBJECT(td->drawing_area), "expose_event",
-		GTK_SIGNAL_FUNC(expose_event_handler), (gpointer)td);
+		GTK_SIGNAL_FUNC(expose_event_handler), td);
 
 	/* Create menu */
 	if (main_win)
