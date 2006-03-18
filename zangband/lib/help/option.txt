@@ -49,8 +49,15 @@ Use old target by default    [use_old_target]
     dangerous if you target locations on the ground, unless you clear
     them when done.
 
+***** <always_pickup_inv>
+Pick up items that are matched in the inventory    [always_pickup_inv]
+    Tells the game to pick up automatically all items that can be
+	stacked into the inventory.  Ignores the "carry_query_flag".  You
+	can	prevent further picking up of matching items by inscribing your
+	inventory item with	=h<number>.
+
 ***** <always_pickup>
-Pick things up by default    [always_pickup]
+Pick items up by default    [always_pickup]
     Tells the game that walking onto an item should attempt to pick it
     up. Otherwise, you must use the "g" command, or the "-" command
     while walking. Combined with "carry_query_flag", allows you to
