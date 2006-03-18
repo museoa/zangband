@@ -1636,22 +1636,36 @@ static bool borg_heavy_sense(void)
 /*
  * Destroy 'number' items
  */
-static void borg_destroy_item(list_item *l_ptr, int slot, int number)
+static void borg_destroy_item(list_item *l_ptr, int slot, bool destroy_weight)
 {
 	char buf[4];
+	int number = 1;
 
-	/* Message */
-	borg_note("# Destroying %s.", l_ptr->o_name);
+	/* Figure out how many */
+	if (destroy_weight)
+	{
+		/* Make a note of the reason */
+		borg_note("# Destroying for weight: %s%s",
+		(l_ptr->number == 1) ? "" : "1 of ", l_ptr->o_name);
+	}
+	else
+	{
+		/* The whole pile */
+		number = l_ptr->number;
 
-	borg_keypress('0');
-
-	/* Get string corresponding to number */
-	(void)strnfmt(buf, 4, "%d", number);
-	borg_keypresses(buf);
+		/* Message */
+		borg_note("# Destroying for room: %s.", l_ptr->o_name);
+	}
 
 	/* Destroy that item */
 	if (!KN_FLAG(l_ptr, TR_INSTA_ART))
 	{
+		borg_keypress('0');
+
+		/* Get string corresponding to number */
+		(void)strnfmt(buf, 4, "%d", number);
+		borg_keypresses(buf);
+
 		/* Try to convert the object to money! */
 		if (!borg_spell_no_reserve(REALM_SORCERY, 3, 6) &&
 			!borg_activate(BORG_ACT_ALCHEMY) &&
@@ -1712,14 +1726,13 @@ static s32b borg_values_money(list_item *l_ptr)
 	/* Reward getting stat restore potions when not needed */
 	if (tval == TV_POTION &&
 		sval >= SV_POTION_RES_STR &&
-		sval <= SV_POTION_RES_CON &&
-		!bp_ptr->status.fixstat[sval - SV_POTION_RES_STR]) return (100);
+		sval <= SV_POTION_RES_CON) return (100);
 
 	/* Less valuable items */
 	if (borg_gold > 100000) return (0);
 
 	/* The deepest Arcane book is worth 2000 or so */
-	if (tval >= TV_ARCANE_BOOK && sval == 3) return (400);
+	if (tval == TV_ARCANE_BOOK && sval == 3) return (400);
 
 	/* Less valuable items */
 	if (borg_gold > 10000) return (0);
@@ -1758,12 +1771,10 @@ static bool borg_destroy_aux(bool must_destroy)
 	int my_encumber, extra, number = 1;
 	bool destroy_weight;
 	s16b b_w = 0;
-	s32b value = -1, b_v = 100000L, my_power, my_home_power;
+	s32b value = -1, b_v = 100000L;
 	list_item *l_ptr;
 
 	/* Get the starting power and encumberment */
-	my_power = g_power;
-	my_home_power = g_power_home;
 	my_encumber = bp_ptr->encumber;
 
 	/* if the carry capacity is used for more than 120% */
@@ -1806,13 +1817,13 @@ static bool borg_destroy_aux(bool must_destroy)
 			}
 
 			/* Calculate the value of this item */
-			value = my_power - borg_power();
+			value = g_power - borg_power();
 
 			/* Useless for now.  Maybe take it home? */
 			if (!value)
 			{
 				/* Find out the difference when this item goes home */
-				value = borg_power_home() - my_home_power;
+				value = borg_power_home() - g_power_home;
 
 				/* If the home value decreases then nullify value */
 				if (value < 0) value = 0;
@@ -1880,21 +1891,8 @@ static bool borg_destroy_aux(bool must_destroy)
 	/* Attempt to consume it */
 	if (borg_consume(l_ptr)) return (TRUE);
 
-	/* Make a note of the reason */
-	borg_note("# Destroying %sfor weight, value = %d",
-		(destroy_weight) ? "" : "not ", b_v);
-
 	/* Destroy the item */
-	if (destroy_weight)
-	{
-		/* Destroy just one item */
-		borg_destroy_item(l_ptr, b_i, 1);
-	}
-	else
-	{
-		/* Destroy all the items */
-		borg_destroy_item(l_ptr, b_i, l_ptr->number);
-	}
+	borg_destroy_item(l_ptr, b_i, destroy_weight);
 
 	return (TRUE);
 }
