@@ -637,29 +637,31 @@ bool auto_pickup_okay(const object_type *o_ptr)
 			o_ptr->sval == q_ptr->sval)
 		{
 			/* Is there an inscription */
-			if (!q_ptr->inscription) continue;
-
-			/* Find a '=' */
-			s = strchr(quark_str(q_ptr->inscription), '=');
-
-			/* Process inscription */
-			while (s)
+			if (q_ptr->inscription)
 			{
-				/* Auto-pickup on "=h" */
-				if (s[1] == 'h')
+				/* Find a '=' */
+				s = strchr(quark_str(q_ptr->inscription), '=');
+
+				/* Process inscription */
+				while (s)
 				{
-					/* Pick up the limit */
-					count = atoi(s+2);
+					/* Auto-pickup on "=h" */
+					if (s[1] == 'h')
+					{
+						/* Pick up the limit */
+						count = atoi(s+2);
 
-					/* Limit the stack? */
-					if (!count ||
-						(count && q_ptr->number < count)) return (TRUE);
+						/* Limit the stack? */
+						if (!count || q_ptr->number < count) return (TRUE);
+
+						/* Limit the stack? */
+						if (q_ptr->number >= count) return (FALSE);
+					}
 				}
-
-				/* Find another '=' */
-				s = strchr(s + 1, '=');
 			}
 
+			/* Is the option turned on? */
+			if (always_pickup_inv) return (TRUE);
 		}
 	}
 	OBJ_ITT_END;

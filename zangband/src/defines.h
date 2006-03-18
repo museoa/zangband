@@ -4112,8 +4112,8 @@ static __inline void COPY_FLAG_AUX(const u32b *flags1, u32b *flags2, int num, u3
 /* {TRUE,  0, NULL,					"Number 2" }, p_ptr->options[2] */
 #define carry_query_flag		p_ptr->options[3]
 #define use_old_target			p_ptr->options[4]
-#define always_pickup			p_ptr->options[5]
-/* {TRUE,  0, NULL,					"Number 6" }, p_ptr->options[6] */
+#define always_pickup_inv		p_ptr->options[5]
+#define always_pickup			p_ptr->options[6]
 #define depth_in_feet			p_ptr->options[7]
 /* {TRUE,  0, NULL,					"Number 8" }, p_ptr->options[8] */
 /* {FALSE, 0, NULL,					"Number 9" }, p_ptr->options[9] */
