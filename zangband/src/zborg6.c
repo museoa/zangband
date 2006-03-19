@@ -1342,7 +1342,10 @@ bool borg_flow_old(int why)
 			if (borg_play_step(y, x)) return (TRUE);
 		}
 
-		/* Cancel goal */
+		/* Flow further if the borg is in the wilderness but still far away */
+		if (borg_flow_goal_wild()) return (TRUE);
+
+		/* Get a new goal then */
 		goal = GOAL_NONE;
 	}
 
@@ -1370,8 +1373,6 @@ static bool borg_flow_block(int x, int y, cptr reason, int why)
 	/* Flow a block west */
 	else if (c_x > x)
 		x = MAX(c_x - 16, x);
-	else
-		x = c_x;
 
 	/* Flow a block south */
 	if (c_y < y)
@@ -1380,8 +1381,6 @@ static bool borg_flow_block(int x, int y, cptr reason, int why)
 	/* Flow a block north */
 	else if (c_y > y)
 		y = MAX(c_y - 16, y);
-	else
-		y = c_y;
 
 	/* No need to go where you already are */
 	if (x == c_x && y == c_y) return (FALSE);
@@ -1621,16 +1620,16 @@ bool borg_find_town(void)
 						borg_towns[b_i].name,
 						GOAL_TOWN))
 	{
+		/* Remember this town */
+		goal_town = b_i;
+		goal_explore_x = borg_towns[b_i].x;
+		goal_explore_y = borg_towns[b_i].y;
+
 		/* Happy */
 		return (TRUE);
 	}
-	else
-	{
-		borg_note("Flow block failed because the target was in deep water");
-	}
 
 	goal = GOAL_NONE;
-	goal_town = -1;
 
 	/* The borg is in that town */
 	return (FALSE);
@@ -1737,12 +1736,14 @@ bool borg_find_dungeon(void)
 						GOAL_CAVE))
 	{
 		goal_dungeon = b_i;
+		goal_explore_x = borg_dungeons[b_i].x;
+		goal_explore_y = borg_dungeons[b_i].y;
 
 		/* Happy */
 		return (TRUE);
 	}
 
-	goal_dungeon = -1;
+	/* Failed to find a suitable cave */
 	goal = GOAL_NONE;
 
 	return (FALSE);
@@ -3738,8 +3739,8 @@ bool borg_flow_dark_wild(void)
 	/* No exploring in the dark */
 	if (bp_ptr->hour < 6 || bp_ptr->hour > 17) return (FALSE);
 
-	/* Does the borg already know where to go but it isn't there? */
-	if (goal == GOAL_DARK)
+	/* Does the borg already know where to go but it isn't there yet? */
+	if (goal == GOAL_EXPL)
 	{
 		x = goal_explore_x;
 		y = goal_explore_y;
@@ -3909,7 +3910,7 @@ bool borg_flow_dark_wild(void)
 	}
 
 	/* Enqueue the grid */
-	if (borg_flow_block(x, y, "unexplored wilderness", GOAL_DARK))
+	if (borg_flow_block(x, y, "unexplored wilderness", GOAL_EXPL))
 	{
 		/* Flag the global */
 		goal_explore_x = x;
@@ -3919,8 +3920,6 @@ bool borg_flow_dark_wild(void)
 	}
 
 	goal = GOAL_NONE;
-	goal_explore_x = -1;
-	goal_explore_y = -1;
 
 	/* This flow is not possible */
 	return (FALSE);
@@ -3928,55 +3927,44 @@ bool borg_flow_dark_wild(void)
 
 
 /* Reset the flow in the wilderness, based on a goal */
-void borg_flow_goal_wild(void)
+bool borg_flow_goal_wild(void)
 {
-	int x, y;
 	cptr reason;
 
-	if (bp_ptr->depth) return;
-
+	/* Just for the three wilderness flowtypes */
 	switch(goal)
 	{
-		case GOAL_SHOP:
+		case GOAL_EXPL:
 		{
-			x = borg_shops[goal_shop].x;
-			y = borg_shops[goal_shop].y;
-
-			reason = "reflowing to a shop";
-
-			break;
-		}
-		case GOAL_DARK:
-		{
-			x = goal_explore_x;
-			y = goal_explore_y;
-
-			reason = "reflowing the dark";
+			reason = "to an unknown spot (reflow)";
 
 			break;
 		}
 		case GOAL_TOWN:
 		{
-			x = borg_towns[goal_town].x;
-			y = borg_towns[goal_town].y;
-
-			reason = "reflowing to a town";
+			reason = "to a town (reflow)";
 
 			break;
 		}
 		case GOAL_CAVE:
 		{
-			x = borg_dungeons[goal_dungeon].x;
-			y = borg_dungeons[goal_dungeon].y;
-
-			reason = "reflowing to a dungeon";
+			reason = "to a dungeon (reflow)";
 
 			break;
 		}
-		default: return;
+		default:
+		{
+			goal = GOAL_NONE;
+
+			return (FALSE);
+		}
 	}
 
-	(void)borg_flow_block(x, y, reason, goal);
+	/* Renew flow with old target */
+	if (borg_flow_block(goal_explore_x, goal_explore_y, reason, goal)) return (TRUE);
+
+	/* Oh well, make a new target */
+	goal = GOAL_NONE;
 }
 
 

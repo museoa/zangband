@@ -1630,7 +1630,7 @@ static void borg_parse_aux(cptr msg, int len)
 		my_need_alter = TRUE;
 
 		/* pick a new flow */
-		borg_flow_goal_wild();
+		if (!borg_flow_goal_wild()) goal = GOAL_NONE;
 
 		return;
 	}

@@ -32,10 +32,11 @@
 #define GOAL_DARK   5			/* Exploring */
 #define GOAL_XTRA   6			/* Searching */
 #define GOAL_BORE   7			/* Leaving */
-#define GOAL_TOWN	8			/* Town Special Grid */
-#define GOAL_FEAT	9			/* Getting of painful feat */
-#define GOAL_CAVE	10			/* Reach a dungeon */
-#define GOAL_MAX	11
+#define GOAL_EXPL	8			/* Town Special Grid */
+#define GOAL_TOWN	9			/* Town Special Grid */
+#define GOAL_FEAT	10			/* Getting of painful feat */
+#define GOAL_CAVE	11			/* Reach a dungeon */
+#define GOAL_MAX	12
 
 /*
  * Flags for the "info" field of grids
