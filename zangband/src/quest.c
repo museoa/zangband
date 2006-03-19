@@ -2715,14 +2715,26 @@ void draw_quest(place_type *pl_ptr)
 	/* Hack - we now take this quest */
 	if (q_ptr->status == QUEST_STATUS_UNTAKEN)
 	{
-		q_ptr->status = QUEST_STATUS_TAKEN;
+		s32b len = 10L * TOWN_DAWN;
+		s32b tick = turn % len + len / 4;
+		int hour = (24 * tick / len) % 24;
+
+		/* If it is daytime you can spot the camp from afar. */
+		if (hour > 5 && hour < 18)
+		{
+			q_ptr->status = QUEST_STATUS_TAKEN;
+
+			/* Give a message if we discover it */
+			quest_discovery();
+		}
+		else
+		{
+			/*
+			 * At night the discovery is only when you walk into
+			 *  the camp, the call for that is in xtra1.c
+			 */
+		}
 	}
-
-	/* Mega-hack Give a message if we "discover" it */
-	quest_discovery();
-
-	/* We know about it now */
-	q_ptr->flags |= QUEST_FLAG_KNOWN;
 
 	/* Hack XXX XXX (No quest-giving store yet) */
 

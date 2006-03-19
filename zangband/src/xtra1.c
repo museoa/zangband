@@ -557,6 +557,9 @@ static void prt_depth(void)
 				else
 				{
 					prtf(COL_DEPTH, Term->hgt - 1, "Quest");
+					
+					/* Hack:  Discover this quest if it is dark */
+					discover_wild_quest(q_num);
 				}
 			}
 			else
