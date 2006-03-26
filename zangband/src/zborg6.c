@@ -1344,9 +1344,6 @@ bool borg_flow_old(int why)
 
 		/* Flow further if the borg is in the wilderness but still far away */
 		if (borg_flow_goal_wild()) return (TRUE);
-
-		/* Get a new goal then */
-		goal = GOAL_NONE;
 	}
 
 	/* Nothing to do */
@@ -1527,6 +1524,9 @@ bool borg_choose_shop(void)
 /* Find the closest shop from the closest town */
 bool borg_find_shop(void)
 {
+	/* Keep old goal */
+	if (goal) return (FALSE);
+
 	if (borg_choose_shop())
 	{
 		/* Try and visit a shop, if so desired */
@@ -1997,6 +1997,9 @@ bool borg_waits_daylight(void)
 
 	/* Is the borg at the surface? */
 	if (bp_ptr->depth) return (FALSE);
+
+	/* Can the borg make light by himself? */
+	if (bp_ptr->able.lite >= 100) return (FALSE);
 
 	/* Is it dark at all? */
 	if (bp_ptr->hour > 5 && bp_ptr->hour < 18) return (FALSE);
@@ -3963,8 +3966,10 @@ bool borg_flow_goal_wild(void)
 	/* Renew flow with old target */
 	if (borg_flow_block(goal_explore_x, goal_explore_y, reason, goal)) return (TRUE);
 
-	/* Oh well, make a new target */
-	goal = GOAL_NONE;
+	/* Keep cave as a target in order to get into a cave */
+	if (goal != GOAL_CAVE) goal = GOAL_NONE;
+
+	return (FALSE);
 }
 
 
