@@ -3017,7 +3017,10 @@ void borg_map_info(map_block *mb_ptr, const term_map *map, vptr dummy)
 				{
 					borg_shops[i].type = BUILD_CASTLE1;
 				}
-
+				else if (streq(t_ptr->name, "Home"))
+				{
+					borg_shops[i].type = BUILD_STORE_HOME;
+				}
 				/* Hack - we have never been here before */
 				borg_shops[i].when = borg_t - 1000;
 
