@@ -1535,46 +1535,41 @@ bool borg_think_store(void)
 	/* Increment 'been' count */
 	borg_shops[shop_num].b_count++;
 
-	if (borg_shops[shop_num].type)
+	/* Check out the funny shops */
+	if (borg_think_building()) return (TRUE);
+
+	/* Remove "useless" equipment */
+	if (borg_unwear_stuff()) return (TRUE);
+
+	/* Wear good stuff */
+	if (borg_wear_stuff()) return (TRUE);
+
+	/* Select what we want to do */
+	if (borg_shops[shop_num].type == BUILD_STORE_HOME)
 	{
-		/* Check out the funny shops */
-		if (borg_think_building()) return (TRUE);
+		/* Step 1 -- Sell items to the home */
+		if (borg_think_home_sell_aux()) return (TRUE);
+
+		/* Step 4 -- Buy items from the home (for the player) */
+		if (borg_think_home_buy_aux()) return (TRUE);
+
+		/* Step 5 -- Grab items from the home (for the shops) */
+		if (borg_think_home_grab_aux()) return (TRUE);
+
+		borg_note("# Nothing to do at home.");
 	}
 	else
 	{
-		/* Remove "useless" equipment */
-		if (borg_unwear_stuff()) return (TRUE);
+		/* Step 2 -- Sell items to the shops */
+		if (borg_think_shop_sell_aux(shop_num)) return (TRUE);
 
-		/* Wear good stuff */
-		if (borg_wear_stuff()) return (TRUE);
+		/* Step 3 -- Buy items from the shops (for the player) */
+		if (borg_think_shop_buy_aux(shop_num)) return (TRUE);
 
-		/* Select what we want to do */
-		if (shop_num == home_shop)
-		{
-			/* Step 1 -- Sell items to the home */
-			if (borg_think_home_sell_aux()) return (TRUE);
+		/* Step 6 -- Buy items from the shops (for the home) */
+		if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
 
-			/* Step 4 -- Buy items from the home (for the player) */
-			if (borg_think_home_buy_aux()) return (TRUE);
-
-			/* Step 5 -- Grab items from the home (for the shops) */
-			if (borg_think_home_grab_aux()) return (TRUE);
-
-			borg_note("# Nothing to do at home.");
-		}
-		else
-		{
-			/* Step 2 -- Sell items to the shops */
-			if (borg_think_shop_sell_aux(shop_num)) return (TRUE);
-
-			/* Step 3 -- Buy items from the shops (for the player) */
-			if (borg_think_shop_buy_aux(shop_num)) return (TRUE);
-
-			/* Step 6 -- Buy items from the shops (for the home) */
-			if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
-
-			borg_note("# Nothing to do in the store.");
-		}
+		borg_note("# Nothing to do in the store.");
 	}
 
 	/* Leave the store */
