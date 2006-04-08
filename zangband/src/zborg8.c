@@ -393,17 +393,12 @@ static bool borg_think_home_sell_aux(void)
 {
 	int index;
 
-	/* Hack - we need to have visited the home before */
-	if (home_shop == -1) return (FALSE);
-
 	/* Find best item to give to home. */
 	index = borg_think_home_sell_aux2();
 
 	/* Do we have an item? */
 	if (index != -1)
 	{
-		goal_shop = home_shop;
-
 		borg_think_shop_sell(index, &inventory[index]);
 
 		/* We have goal */
@@ -556,9 +551,6 @@ static bool borg_think_shop_sell_aux(int shop)
 	/* Sell nothing */
 	if (b_i == -1) return (FALSE);
 
-	/* Visit that shop */
-	goal_shop = shop;
-
 	/* Sell that item */
 	borg_think_shop_sell(b_i, &inventory[b_i]);
 
@@ -642,6 +634,28 @@ static bool borg_spends_gold_okay(list_item *l_ptr)
 	/* Spend away */
 	return (TRUE);
 }
+
+
+/* If the borg makes a purchase the next shop will be the home */
+static void borg_reenable_home(void)
+{
+	int i;
+
+	/* Loop through the shops */
+	for (i = 0; i < borg_shop_num; i++)
+	{
+		/* Skip all non-homes */
+		if (borg_shops[i].type != BUILD_STORE_HOME) continue;
+
+		/* Revisit only the home in this town */
+		if (distance(c_x, c_y, borg_shops[i].x, borg_shops[i].y) >
+			BORG_SMALL_DISTANCE) continue;
+
+		/* Allow the borg to visit the home again */
+		borg_shops[i].visit = FALSE;
+	}
+}
+
 
 /* Step 3 -- buy "useful" things from a shop (to be used) */
 static bool borg_think_shop_buy_aux(int shop)
@@ -744,11 +758,11 @@ static bool borg_think_shop_buy_aux(int shop)
 	/* Buy something */
 	if (b_n == -1) return (FALSE);
 
-	/* Visit that shop */
-	goal_shop = shop;
-
 	/* Buy that item */
 	borg_think_shop_buy(b_n);
+
+	/* Reenable the home */
+	borg_reenable_home();
 
 	/* Success */
 	return (TRUE);
@@ -822,9 +836,6 @@ static bool borg_think_home_buy_aux(void)
 
 	/* Buy nothing */
 	if (b_n == -1) return (FALSE);
-
-	/* Go to the home */
-	goal_shop = home_shop;
 
 	/* Buy that item */
 	borg_think_shop_buy(b_n);
@@ -911,11 +922,11 @@ static bool borg_think_shop_grab_aux(int shop)
 	/* Buy something */
 	if (b_n == -1) return (FALSE);
 
-	/* Visit that shop */
-	goal_shop = shop;
-
 	/* Buy that item */
 	borg_think_shop_buy(b_n);
+
+	/* Reenable the home */
+	borg_reenable_home();
 
 	/* Hack - get out of the store */
 	borg_keypress(ESCAPE);
@@ -979,9 +990,6 @@ static bool borg_think_home_grab_aux(void)
 
 	/* Do nothing */
 	if (b_n == -1) return (FALSE);
-
-	/* Visit the home */
-	goal_shop = home_shop;
 
 	/* Grab that item */
 	borg_think_shop_buy(b_n);
@@ -1354,6 +1362,9 @@ static bool borg_build_inn(void)
 	{
 		/* Wait for daybreak */
 		borg_keypress('R');
+
+		/* Did something */
+		return (TRUE);
 	}
 
 	/* Can the borg use more food? */
@@ -1361,9 +1372,12 @@ static bool borg_build_inn(void)
 	{
 		/* Have dinner */
 		borg_keypress('E');
+
+		/* Did something */
+		return (TRUE);
 	}
 
-	/* One pass takes care of all needs */
+	/* Ready */
 	return (FALSE);
 }
 
@@ -1389,8 +1403,8 @@ static bool borg_build_healer(void)
 	/* Heal me */
 	borg_keypress('R');
 
-	/* One visit is enough */
-	return (FALSE);
+	/* Ready */
+	return (TRUE);
 }
 
 
@@ -1406,9 +1420,11 @@ static bool borg_build_magetower(void)
 		/* Register */
 		borg_keypress('R');
 
+		/* Did something */
 		return (TRUE);
 	}
 
+	/* Ready */
 	return (FALSE);
 }
 
@@ -1429,6 +1445,7 @@ static bool borg_build_castle(bool large)
 		}
 		else
 		{
+			/* What tye of castle is this? */
 			if (large)
 			{
 				/* Find an artifact */
@@ -1447,51 +1464,20 @@ static bool borg_build_castle(bool large)
 	/* Try to get a reward */
 	else
 	{
-		/* Get a quest */
+		/* Hack to avoid that the borg keeps pressing 'R' */
+		if (borg_shops[shop_num].visit == 2) return (FALSE);
+
+		/* Check for quest completed */
 		borg_keypress('R');
 
-		/* To avoid pressing this button again just leave the building */
-		return (FALSE);
+		/* Hack to avoid parsing the message */
+		borg_shops[shop_num].visit = 2;
+
+		/* Try to get a quest in this building */
+		return (TRUE);
 	}
 }
 
-
-/* Handle the buildings that are not stores */
-static bool borg_think_building(void)
-{
-	/* Only the funny buildings have a type */
-	switch (borg_shops[shop_num].type)
-	{
-		case BUILD_WEAPONMASTER: return (borg_build_weaponmaster());
-
-		case BUILD_RECHARGE: return (borg_build_recharge());
-
-		case BUILD_PLUS_WEAPON: return (borg_build_weapon());
-
-		case BUILD_PLUS_ARMOUR: return (borg_build_armour());
-
-		case BUILD_MUTATE: return (FALSE);
-
-		case BUILD_MAP: return (borg_build_map());
-
-		case BUILD_LIBRARY: return (FALSE);
-
-		case BUILD_CASINO: return (borg_build_casino());
-
-		case BUILD_INN: return (borg_build_inn());
-
-		case BUILD_HEALER: return (borg_build_healer());
-
-		case BUILD_MAGETOWER0:
-		case BUILD_MAGETOWER1: return (borg_build_magetower());
-
-		case BUILD_CASTLE0: return (borg_build_castle(FALSE));
-
-		case BUILD_CASTLE1: return (borg_build_castle(TRUE));
-
-		default: return (FALSE);
-	}
-}
 
 /*
  * Deal with being in a store
@@ -1535,41 +1521,102 @@ bool borg_think_store(void)
 	/* Increment 'been' count */
 	borg_shops[shop_num].b_count++;
 
-	/* Check out the funny shops */
-	if (borg_think_building()) return (TRUE);
-
 	/* Remove "useless" equipment */
 	if (borg_unwear_stuff()) return (TRUE);
 
 	/* Wear good stuff */
 	if (borg_wear_stuff()) return (TRUE);
 
-	/* Select what we want to do */
-	if (borg_shops[shop_num].type == BUILD_STORE_HOME)
+	/* Only the funny buildings have a type */
+	switch (borg_shops[shop_num].type)
 	{
-		/* Step 1 -- Sell items to the home */
-		if (borg_think_home_sell_aux()) return (TRUE);
+		case BUILD_WEAPONMASTER:
+		{
+			/* Repeat when something got *id'd* */
+			if (borg_build_weaponmaster()) return (TRUE);
+			break;
+		}
+		case BUILD_RECHARGE:
+		{
+			if (borg_build_recharge()) return (TRUE);
+			break;
+		}
+		case BUILD_PLUS_WEAPON:
+		{
+			if (borg_build_weapon()) return (TRUE);
+			break;
+		}
+		case BUILD_PLUS_ARMOUR:
+		{
+			if (borg_build_armour()) return (TRUE);
+			break;
+		}
+		case BUILD_MUTATE: break;
 
-		/* Step 4 -- Buy items from the home (for the player) */
-		if (borg_think_home_buy_aux()) return (TRUE);
+		case BUILD_MAP:
+		{
+			if (borg_build_map()) return (TRUE);
+			break;
+		}
+		case BUILD_LIBRARY: break;
 
-		/* Step 5 -- Grab items from the home (for the shops) */
-		if (borg_think_home_grab_aux()) return (TRUE);
+		case BUILD_CASINO:
+		{
+			if (borg_build_casino()) return (TRUE);;
+			break;
+		}
+		case BUILD_INN:
+		{
+			if (borg_build_inn()) return (TRUE);
+			break;
+		}
+		case BUILD_HEALER:
+		{
+			if (borg_build_healer()) return (TRUE);;
+			break;
+		}
+		case BUILD_MAGETOWER0:
+		case BUILD_MAGETOWER1:
+		{
+			if (borg_build_magetower()) return (TRUE);
+			break;
+		}
+		case BUILD_CASTLE0:
+		{
+			if (borg_build_castle(FALSE)) return (TRUE);
+			break;
+		}
+		case BUILD_CASTLE1:
+		{
+			if (borg_build_castle(TRUE)) return (TRUE);
+			break;
+		}
+		case BUILD_STORE_HOME:
+		{
+			/* Step 1 -- Drop items at home */
+			if (borg_think_home_sell_aux()) return (TRUE);
 
-		borg_note("# Nothing to do at home.");
-	}
-	else
-	{
-		/* Step 2 -- Sell items to the shops */
-		if (borg_think_shop_sell_aux(shop_num)) return (TRUE);
+			/* Step 4 -- Get items from the home for the player */
+			if (borg_think_home_buy_aux()) return (TRUE);
 
-		/* Step 3 -- Buy items from the shops (for the player) */
-		if (borg_think_shop_buy_aux(shop_num)) return (TRUE);
+			/* Step 5 -- Get items from the home to sell */
+			if (borg_think_home_grab_aux()) return (TRUE);
 
-		/* Step 6 -- Buy items from the shops (for the home) */
-		if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
+			break;
+		}
+		default:
+		{
+			/* Step 2 -- Sell items to the shops */
+			if (borg_think_shop_sell_aux(shop_num)) return (TRUE);
 
-		borg_note("# Nothing to do in the store.");
+			/* Step 3 -- Buy items from the shops for the player */
+			if (borg_think_shop_buy_aux(shop_num)) return (TRUE);
+
+			/* Step 6 -- Buy items from the shops for the home */
+			if (borg_think_shop_grab_aux(shop_num)) return (TRUE);
+
+			break;
+		}
 	}
 
 	/* Leave the store */

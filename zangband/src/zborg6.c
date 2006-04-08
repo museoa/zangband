@@ -1504,10 +1504,15 @@ bool borg_choose_shop(void)
 		/* Visit only the shops in one town */
 		if (dist > BORG_SMALL_DISTANCE) continue;
 
+		/* First go to the home */
+		if (borg_shops[i].visit == FALSE  &&
+			borg_shops[i].type == BUILD_STORE_HOME) dist = 0;
+
 		/* Only closer shops */
 		if (dist >= b_d) continue;
 
 		goal_shop = i;
+		b_d = dist;
 	}
 
 	/* All shops have been visited */
