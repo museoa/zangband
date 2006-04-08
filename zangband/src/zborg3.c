@@ -974,7 +974,9 @@ bool borg_obj_star_id_able(list_item *l_ptr)
 	if (streq(l_ptr->xtra_name, "of Slay Dragon")) return (TRUE);
 	if (streq(l_ptr->xtra_name, "of *Slay* Dragon")) return (TRUE);
 	if (streq(l_ptr->xtra_name, "(Chaotic)")) return (TRUE);
-	if (streq(l_ptr->xtra_name, "of Slaying")) return (TRUE);
+	if (streq(l_ptr->xtra_name, "of Slaying") &&
+		l_ptr->tval >= TV_HAFTED &&
+		l_ptr->tval <= TV_SWORD) return (TRUE);
 	if (streq(l_ptr->xtra_name, "(Vampiric)")) return (TRUE);
 	if (streq(l_ptr->xtra_name, "(Trump Weapon)")) return (TRUE);
 	if (streq(l_ptr->xtra_name, "(Pattern Weapon)")) return (TRUE);
