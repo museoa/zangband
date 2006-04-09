@@ -5061,6 +5061,10 @@ static s32b borg_power_home_aux2(void)
 		value += 500 * MIN_FLOOR(num_fix_exp, 5, pile);
 	}
 
+	/* Borg loses str all too easy */
+	value += 5000 * MIN(num_fix_stat[A_STR], 5);
+	value += 500 * MIN_FLOOR(num_fix_stat[A_STR], 5, pile);
+
 	/* Keep shrooms in the house */
 	value += 5000 * MIN(num_fix_stat[6], pile);
 
