@@ -1734,8 +1734,14 @@ static s32b borg_values_money(list_item *l_ptr)
 	/* The deepest Arcane book is worth 2000 or so */
 	if (tval == TV_ARCANE_BOOK && sval == 3) return (400);
 
+	/* Keep *identifed* stuff a while longer */
+	if (borg_obj_star_id_able(l_ptr)) return (400);
+
 	/* Less valuable items */
 	if (borg_gold > 10000) return (0);
+
+	/* Keep excellent stuff a while longer */
+	if (l_ptr->xtra_name) return (200);
 
 	/* The second book is worth maybe 500 gold */
 	if (tval >= TV_BOOKS_MIN && tval <= TV_BOOKS_MAX && sval > 0) return (200);
