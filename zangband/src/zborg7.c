@@ -1657,6 +1657,9 @@ static void borg_destroy_item(list_item *l_ptr, int slot, bool destroy_weight)
 		borg_note("# Destroying for room: %s.", l_ptr->o_name);
 	}
 
+	/* Keep in synch */
+	borg_keypress(ESCAPE);
+
 	/* Destroy that item */
 	if (!KN_FLAG(l_ptr, TR_INSTA_ART))
 	{
@@ -1714,6 +1717,9 @@ static s32b borg_values_money(list_item *l_ptr)
 {
 	int tval = l_ptr->tval;
 	int sval = k_info[l_ptr->k_idx].sval;
+
+	/* Crap items are not considered */
+	if (l_ptr->cost <= 0) return (0);
 
 	/* Always try to collect fancy books */
 	if (tval >= TV_BOOKS_MIN && tval <= TV_BOOKS_MAX && tval != TV_ARCANE_BOOK)
