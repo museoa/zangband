@@ -1717,8 +1717,8 @@ bool borg_find_dungeon(void)
 		if (!bp_ptr->depth) borg_leave_surface();
 
 		/* If the dungeon was visited and the target depth is not shallow */
-		if (p >= borg_dungeons[b_i].min_depth + 4 &&
-			borg_dungeons[b_i].max_depth != borg_dungeons[b_i].min_depth &&
+		if (p > borg_dungeons[b_i].min_depth + 4 &&
+			borg_dungeons[b_i].max_depth > borg_dungeons[b_i].min_depth + 4 &&
 			bp_ptr->recall >= 4 && borg_recall())
 		{
 			/* Note */
