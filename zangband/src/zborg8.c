@@ -1464,6 +1464,7 @@ static bool borg_build_castle(bool large)
 	/* Try to get a reward */
 	else
 	{
+		borg_note("visit = %d", borg_shops[shop_num].visit);
 		/* Hack to avoid that the borg keeps pressing 'R' */
 		if (borg_shops[shop_num].visit == 2) return (FALSE);
 
@@ -1515,8 +1516,13 @@ bool borg_think_store(void)
 
 	/* Stamp the shop with a time stamp */
 	borg_shops[shop_num].when = borg_t;
-	borg_shops[shop_num].visit = TRUE;
-	borg_towns[borg_shops[shop_num].town_num].visit = TRUE;
+
+	/* Mark the shop as visited */
+	if (!borg_shops[shop_num].visit) borg_shops[shop_num].visit = TRUE;
+
+	/* Mark the town as visited */
+	if (!borg_towns[borg_shops[shop_num].town_num].visit)
+		borg_towns[borg_shops[shop_num].town_num].visit = TRUE;
 
 	/* Increment 'been' count */
 	borg_shops[shop_num].b_count++;
