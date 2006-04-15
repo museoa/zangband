@@ -2263,6 +2263,9 @@ static bool borg_test_stuff_star(void)
 			/* Select the item */
 			borg_keypress(I2A(b_i));
 
+			/* Leave the display with item properties */
+			borg_keypress(ESCAPE);
+
 			/* Success */
 			return (TRUE);
 		}
