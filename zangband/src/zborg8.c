@@ -807,20 +807,18 @@ static bool borg_think_home_buy_aux(void)
 				/* Try this ring for the other finger too. */
 				p = MAX(p, borg_think_buy_slot(l_ptr, EQUIP_RIGHT, TRUE));
 			}
+
+			/* Also try this as an inventory item */
 		}
 
-		/* Consider new inventory */
-		else
-		{
-			/* Try to get item */
-			l_ptr->treat_as = TREAT_AS_LESS;
+		/* Try to get item */
+		l_ptr->treat_as = TREAT_AS_LESS;
 
-			/* Evaluate the equipment */
-			p = borg_power() + borg_power_home();
+		/* Evaluate the equipment */
+		p = MAX(p, borg_power() + borg_power_home());
 
-			/* Restore item */
-			l_ptr->treat_as = TREAT_AS_NORM;
-		}
+		/* Restore item */
+		l_ptr->treat_as = TREAT_AS_NORM;
 
 		/* Ignore "silly" purchases */
 		if (p <= b_p) continue;

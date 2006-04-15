@@ -4889,7 +4889,7 @@ static s32b borg_power_home_aux1(void)
 		value += 1500L + (num_sustain_all - 2) * 1L;
 
 	/* Count the un*id*'d artifacts stored at home */
-	value += MIN(num_artifact, 7) * 100000;
+	value += MIN(num_artifact, 7) * 10000;
 
 	/*
 	 * Do a minus for too many duplicates.
