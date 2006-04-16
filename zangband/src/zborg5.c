@@ -3159,98 +3159,54 @@ static s32b borg_power_aux3(void)
 		value += (((bp_ptr->speed - 110) * 2500L));
 
 
-	/* Hack -- Reward strength bonus */
-	value += (my_stat_ind[A_STR] * 100L);
+	/* Reward strength bonus */
+	value += MIN(my_stat_cur[A_STR] / 10 + my_stat_add[A_STR], 22) * 100L;
+	value += MIN_FLOOR(my_stat_cur[A_STR] / 10 + my_stat_add[A_STR], 22, 40) * 25L;
 
-	/* Hack -- Reward intelligence bonus */
-	if (bp_ptr->intmana && (my_stat_ind[A_INT] <= 37))
+	/* Reward intelligence bonus */
+	if (bp_ptr->intmana)
 	{
-		value += (my_stat_ind[A_INT] * 500L);
+		/* Simple bonus for maxxing your casting stat */
+		value += MIN(40, my_stat_cur[A_INT] / 10 + my_stat_add[A_INT]) * 200L;
 
-		/* Bonus for sp. */
-		value += ((adj_mag_mana[my_stat_ind[A_INT]] * bp_ptr->lev) / 2) * 155L;
-
-		/* bonus for fail rate */
-		value += adj_mag_stat[my_stat_ind[A_INT]] * 1670L;
-
-		/* mage should try to get min fail to 0 */
-		if (borg_class == CLASS_MAGE || borg_class == CLASS_HIGH_MAGE)
+		/* (High)Mage should try to get min fail to 0 */
+		if (adj_mag_fail[my_stat_ind[A_INT]] < 1 &&
+			(borg_class == CLASS_MAGE || borg_class == CLASS_HIGH_MAGE))
 		{
-			/* Bonus for mages to in order to keep GOI fail rate down */
-			if (borg_spell_legal(REALM_SORCERY, 3, 7) ||
-				borg_spell_legal(REALM_LIFE, 3, 7))
-			{
-				value += my_stat_ind[A_INT] * 35000L;
-			}
-
-			/* other fail rates */
-			if (adj_mag_fail[my_stat_ind[A_INT]] < 1)
-				value += 90000L;
-
+				/* Hefty bonus for having no spell failures */
+				value += 70000L;
 		}
 	}
 
 	/* Hack -- Reward wisdom bonus */
-	if (bp_ptr->wismana && (my_stat_ind[A_WIS] <= 37))
+	if (bp_ptr->wismana)
 	{
-		value += (my_stat_ind[A_WIS] * 200L);
+		/* Simple bonus for maxxing your casting stat */
+		value += MIN(40, my_stat_cur[A_WIS] / 10 + my_stat_add[A_WIS]) * 200L;
 
-		/* Bonus for sp. */
-		value += ((adj_mag_mana[my_stat_ind[A_WIS]] * bp_ptr->lev) / 2) * 150L;
-
-		/* bonus for fail rate */
-		value += adj_mag_stat[my_stat_ind[A_WIS]] * 1000L;
-
-		/* priest should try to get min fail to 0 */
-		if (borg_class == CLASS_PRIEST || borg_class == CLASS_MINDCRAFTER)
+		/* Priest and Mindcarafter should try to get min fail to 0 */
+		if (adj_mag_fail[my_stat_ind[A_WIS]] < 1 &&
+			(borg_class == CLASS_PRIEST || borg_class == CLASS_MINDCRAFTER))
 		{
-			/* Bonus for priests to in order to keep Holy Word fail rate down */
-			if (borg_spell_legal(REALM_LIFE, 2, 6)) value +=
-					my_stat_ind[A_WIS] * 35000L;
-
-			if (adj_mag_fail[my_stat_ind[A_WIS]] < 1)
+				/* Hefty bonus for having no spell failures */
 				value += 70000L;
 		}
-
 	}
 
 	/* Dexterity Bonus --good for attacking and ac */
-	if (my_stat_ind[A_DEX] <= 37)
-	{
-		/* Hack -- Reward bonus */
-		value += (my_stat_ind[A_DEX] * 120L);
-	}
+	value += MIN(40, my_stat_cur[A_DEX] / 10 + my_stat_add[A_DEX]) * 120L;
 
 	/* Constitution Bonus */
-	if (my_stat_ind[A_CON] <= 37)
-	{
-		int bonus_hp =
-			(((adj_con_mhp[my_stat_ind[A_CON]] - 128) * bp_ptr->max_lev) / 2);
-
-		value += (my_stat_ind[A_CON] * 150L);
-		/* Hack -- Reward hp bonus */
-		/*   This is a bit wierd because we are not really giving a bonus for */
-		/*   what hp you have, but for the 'bonus' hp you get */
-		/*   getting over 500hp is very important. */
-		if (bonus_hp < 500)
-			value += bonus_hp * 350L;
-		else
-			value += (bonus_hp - 500) * 100L + (350L * 500);
-	}
+	value += MIN(40, my_stat_cur[A_CON] / 10 + my_stat_add[A_CON]) * 150L;
 
 
-	/* Hack -- Reward charisma bonus up to level 25 */
-	if (bp_ptr->lev < 25)
-		value += (my_stat_ind[A_CHR] * 2L);
-
-
-
-	/* HACK - a small bonus for adding to stats even above max. */
-	/*        This will allow us to swap a ring of int +6 for */
-	/*        our ring of int +2 even though we are at max int because */
-	/*        we are wielding a weapon that has +4 int */
-	/*        later it might be nice to swap to a weapon that does not */
-	/*        have an int bonus */
+	/*
+	 * A small bonus for adding to stats even above max.
+	 * This will allows the borg to swap a ring of int +6 for our ring of
+	 * int +2 even though we are at max int because we are wielding a weapon
+	 * that has +4 int later it might be nice to swap to a weapon that does
+	 * not have an int bonus.
+	 */
 	for (i = 0; i < 6; i++) value += my_stat_add[i];
 
 
@@ -3372,9 +3328,10 @@ static s32b borg_power_aux3(void)
 	
 	/* boost for getting them all */
 	if (bp_ptr->sust[A_STR] &&
-		bp_ptr->sust[A_INT] &&
-		bp_ptr->sust[A_WIS] &&
-		bp_ptr->sust[A_DEX] && bp_ptr->sust[A_CON]) value += 1000L;
+		((bp_ptr->intmana && bp_ptr->sust[A_INT]) ||
+		 (bp_ptr->wismana && bp_ptr->sust[A_WIS])) &&
+		bp_ptr->sust[A_DEX] &&
+		bp_ptr->sust[A_CON]) value += 1000L;
 
 
 	/*** XXX XXX XXX Reward "necessary" flags ***/
@@ -3456,9 +3413,9 @@ static s32b borg_power_aux3(void)
 
 
 	/*** Reward powerful armor ***/
-	value += 200 * MIN(bp_ptr->ac, 15);
-	value += 150 * MIN_FLOOR(bp_ptr->ac, 15, 75);
-	value += 50 * MIN_FLOOR(bp_ptr->ac, 75, 200);
+	value += 100 * MIN(bp_ptr->ac, 15);
+	value += 75 * MIN_FLOOR(bp_ptr->ac, 15, 75);
+	value += 25 * MIN_FLOOR(bp_ptr->ac, 75, 200);
 
 	/*** Penalize various things ***/
 
@@ -3547,7 +3504,7 @@ static s32b borg_power_aux3(void)
 	}
 
 	/*** Penalize armor weight ***/
-	if (my_stat_ind[A_STR] < 15)
+	if (my_stat_cur[A_STR] / 10 + my_stat_add[A_STR] < 15)
 	{
 		l_ptr = look_up_equip_slot(EQUIP_BODY);
 		if (l_ptr && (l_ptr->weight > 200)) value -= (l_ptr->weight - 200) * 15;
@@ -4226,7 +4183,7 @@ s32b borg_power(void)
 
 	/* Process the equipment */
 	value += borg_power_aux3();
-	
+
 	/* Process the inventory */
 	value += borg_power_aux4();
 	
