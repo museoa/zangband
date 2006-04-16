@@ -1657,9 +1657,6 @@ static void borg_destroy_item(list_item *l_ptr, int slot, bool destroy_weight)
 		borg_note("# Destroying for room: %s.", l_ptr->o_name);
 	}
 
-	/* Keep in synch */
-	borg_keypress(ESCAPE);
-
 	/* Destroy that item */
 	if (!KN_FLAG(l_ptr, TR_INSTA_ART))
 	{
