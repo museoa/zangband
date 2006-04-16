@@ -1647,6 +1647,8 @@ bool borg_find_dungeon(void)
 	int i, b_i = -1;
 	int d, b_d = BORG_MAX_DISTANCE;
 	int p;
+	int min_d, max_d;
+	bool stairs = FALSE;
 
 	/* Do this only on the surface */
 	if (bp_ptr->depth) return (FALSE);
@@ -1716,18 +1718,31 @@ bool borg_find_dungeon(void)
 		/* If the borg leaves the surface */
 		if (!bp_ptr->depth) borg_leave_surface();
 
-		/* If the dungeon was visited and the target depth is not shallow */
-		if (p > borg_dungeons[b_i].min_depth + 4 &&
-			borg_dungeons[b_i].max_depth > borg_dungeons[b_i].min_depth + 4 &&
-			bp_ptr->recall >= 4 && borg_recall())
-		{
-			/* Note */
-			borg_note("# Recalling into dungeon.");
-		}
-		else
+		/* Shorthand */
+		min_d = borg_dungeons[b_i].min_depth;
+		max_d = borg_dungeons[b_i].max_depth;
+
+		/* If the target depth is shallow */
+		if (p < min_d + 5) stairs = TRUE;
+
+		/* If the dungeon max depth is still shallow */
+		if (min_d + 5 > max_d) stairs = TRUE;
+
+		/* If the target depth is much less then the max depth */
+		if (p < max_d - 10) stairs = TRUE;
+
+		/* If the borg does not have enough recalls */
+		if (bp_ptr->recall < 5 || !borg_recall()) stairs = TRUE;
+
+		if (stairs)
 		{
 			/* Take those stairs */
 			borg_keypress('>');
+		}
+		else
+		{
+			/* Note */
+			borg_note("# Recalling into dungeon.");
 		}
 
 		return (TRUE);
