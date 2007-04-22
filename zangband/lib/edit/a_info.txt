@@ -994,8 +994,7 @@ F:INSTA_ART
 
 # The Dagger 'Narthanc'
 
-# Variable bonus: +1 str per 5 levels (rounded up)
-# Unique power: Damage increases 10% per level (applied after all other mods)
+# Variable bonus: +1 str per 10 levels (rounded up)
 N:66:'Narthanc'
 I:23:4:0
 W:7:10:12:6000
@@ -1015,8 +1014,7 @@ L:SPOIL:	return "Random high resist; +1 STR / 10 levels"
 
 # The Dagger 'Nimthanc'
 
-# Variable bonus: +1 con per 5 levels (rounded up)
-# Unique power: Damage increases 10% per level (applied after all other mods)
+# Variable bonus: +1 con per 10 levels (rounded up)
 N:67:'Nimthanc'
 I:23:4:0
 W:5:10:12:5000
@@ -1036,8 +1034,7 @@ L:SPOIL:	return "Random high resist; +1 CON / 10 levels"
 
 # The Dagger 'Dethanc'
 
-# Variable bonus: +1 dex per 5 levels (rounded up)
-# Unique power: Damage increases 10% per level (applied after all other mods)
+# Variable bonus: +1 dex per 10 levels (rounded up)
 N:68:'Dethanc'
 I:23:4:0
 W:9:10:12:5000
