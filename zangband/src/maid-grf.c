@@ -2750,6 +2750,7 @@ void display_map(int *cx, int *cy)
 	char **mtc;
 
 	int hgt, wid, yrat, xrat, xfactor, yfactor;
+
 	
 	place_type *pl_ptr;
 	
@@ -2979,8 +2980,8 @@ void display_map(int *cx, int *cy)
 		xrat = p_ptr->max_wid - p_ptr->min_wid;
 
 		/* Get scaling factors */
-		yfactor = ((yrat / hgt < 4) && (yrat > hgt)) ? 10 : 1;
-		xfactor = ((xrat / wid < 4) && (xrat > wid)) ? 10 : 1;
+		yfactor = ((yrat / hgt < 4) && (yrat > hgt)) ? 1000 : 1;
+		xfactor = ((xrat / wid < 4) && (xrat > wid)) ? 1000 : 1;
 
 		yrat = (yrat * yfactor + hgt - 1) / hgt;
 		xrat = (xrat * xfactor + wid - 1) / wid;
@@ -3018,6 +3019,10 @@ void display_map(int *cx, int *cy)
 					mp[y][x] = tp;
 				}
 			}
+
+			/* Stamp in the player */
+			ma[*cy][*cx] = TERM_WHITE;
+			mc[*cy][*cx] = '@';
 		}
 	}
 
