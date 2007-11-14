@@ -2127,6 +2127,7 @@ static bool borg_emergency_stop;
 static bool borg_disturb_other;
 static bool borg_confirm_wear;
 static bool borg_check_transaction;
+static bool borg_speak_unique;
 
 
 /* Turn on the right options */
@@ -2168,6 +2169,10 @@ static void borg_set_options(void)
 	auto_more = FALSE;
 	emergency_stop = FALSE;
 
+	/* No need to parse flavour */
+	borg_speak_unique = speak_unique;
+	speak_unique = FALSE;
+
 	/* Keep track of these options values */
 	borg_confirm_wear = confirm_wear;
 	confirm_wear = FALSE;
@@ -2204,6 +2209,7 @@ static void borg_reset_options(void)
 	/* The borg can get off-sequence with this */
 	auto_more = borg_auto_more;
 	emergency_stop = borg_emergency_stop;
+	speak_unique = borg_speak_unique;
 
 	/* Prevent some [y/n] questions */
 	disturb_other = borg_disturb_other;
