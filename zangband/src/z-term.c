@@ -1735,9 +1735,14 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 		if (Term->x1[i] > x1) Term->x1[i] = x1;
 		if (Term->x2[i] < x2) Term->x2[i] = x2;
 	}
-	
-	if ((old->cx >= Term->x1[old->cy]) && (old->cx <= Term->x2[old->cy]) &&
-		(old->cy >= Term->y1) && (old->cy <= Term->y2))
+
+	/* Hack to prevent crash while resizing */
+	Term_gotoxy(0, 0);
+
+	if ((old->cx >= Term->x1[old->cy]) && 
+		(old->cx <= Term->x2[old->cy]) &&
+		(old->cy >= Term->y1) &&
+		(old->cy <= Term->y2))
 	{
 		/* Hack -- clear all "cursor" data */
 		old->cv = 0;

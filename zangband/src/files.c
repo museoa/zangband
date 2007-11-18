@@ -3004,13 +3004,12 @@ errr file_character(cptr name, bool full)
 	return (0);
 }
 
-
-#define RESIZE_SHOW_FILE	-2
+#define RESIZE_SHOW_FILE	2
 static cptr resize_name = NULL;
 static cptr resize_what = NULL;
 static int resize_line  = 0;
 static int resize_hgt   = 0;
-
+static char resize_show[81];
 
 /*
  * Resizing can happen while show_file is waiting for input.  The resize can
@@ -3185,18 +3184,6 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		return (TRUE);
 	}
 	
-	/* Remember what the resize hook was */
-	old_hook = angband_term[0]->resize_hook;
-
-	/* Hack - change the redraw hook so bigscreen works */
-	angband_term[0]->resize_hook = resize_show_file;
-
-	/* Remember essentials for resizing */
-	resize_name = name;
-	resize_what = what;
-	resize_line = line;
-	resize_hgt  = hgt;
-
 	/* Pre-Parse the file */
 	while (TRUE)
 	{
@@ -3249,7 +3236,23 @@ bool show_file(cptr name, cptr what, int line, int mode)
 		next++;
 	}
 	
-	if (mode != RESIZE_SHOW_FILE) screen_save();
+	/* If this is during a resize */
+	if (mode == RESIZE_SHOW_FILE)
+	{
+		/* Remember the highlighted text */
+		strcpy(shower, resize_show);
+	}
+	else
+	{
+		/* Remember what the resize hook was */
+		old_hook = angband_term[0]->resize_hook;
+
+		/* Hack - change the redraw hook so bigscreen works */
+		angband_term[0]->resize_hook = resize_show_file;
+
+		/* Remember the background */
+		screen_save();
+	}
 
 	/* Save the number of "real" lines */
 	size = next;
@@ -3262,7 +3265,6 @@ bool show_file(cptr name, cptr what, int line, int mode)
 
 		/* Restart when necessary */
 		if (line >= size) line = 0;
-
 
 		/* Re-open the file if needed */
 		if (next > line)
@@ -3340,7 +3342,8 @@ bool show_file(cptr name, cptr what, int line, int mode)
 					int offset = fmt_offset(lc_buf, str);
 				
 					/* Display the match */
-					put_fstr(offset, i + 2, CLR_YELLOW "%s", shower);
+					put_fstr(offset, i + 2, CLR_YELLOW "%s", buf + offset);
+					put_fstr(offset + strlen(shower), i + 2, CLR_WHITE "%s", buf + offset + strlen(shower));
 
 					/* Advance */
 					str += strlen(shower);
@@ -3400,14 +3403,24 @@ bool show_file(cptr name, cptr what, int line, int mode)
 			}
 		}
 
-		/* Leave in case of resize */
-		if (mode == RESIZE_SHOW_FILE)
+		/* Leave if no input is desired */
+		if (mode)
 		{
-			/* Hack: the file  will be closed by the other instance of show_file */
+			/* Close file */
+			my_fclose(fff);
+
+			/* Back to wherever */
 			return (TRUE);
 		}
 		else
 		{
+			/* Remember essentials for resizing */
+			resize_line = line;
+			resize_name = name;
+			resize_what = what;
+			resize_hgt  = hgt;
+			strcpy(resize_show, shower);
+
 			/* Get a keypress */
 			k = inkey();
 		}
@@ -3601,10 +3614,13 @@ bool show_file(cptr name, cptr what, int line, int mode)
 	my_fclose(fff);
 
 	/* Hack - change the redraw hook so bigscreen works */
-	angband_term[0]->resize_hook = old_hook;
+	if (angband_term[0]->resize_hook != old_hook)
+	{
+		angband_term[0]->resize_hook = old_hook;
 
-	/* The size may have changed during the menu display */
-	angband_term[0]->resize_hook();
+		/* The size may have changed during the menu display */
+		angband_term[0]->resize_hook();
+	}
 
 	/* Hack - Flush it */
 	Term_fresh();
