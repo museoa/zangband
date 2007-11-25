@@ -1811,6 +1811,8 @@ static void store_sell(void)
 {
 	int item_pos;
 	int amt;
+	int wid, hgt;
+
 
 	s32b price, value, dummy;
 
@@ -1820,6 +1822,9 @@ static void store_sell(void)
 
 	cptr q, s;
 	
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
 	/* Get an item */
 	s = "You have nothing that I want.";
 
@@ -2038,7 +2043,7 @@ static void store_sell(void)
 			/* Re-display if item is now in store */
 			if (item_pos >= 0)
 			{
-				p_ptr->state.store_top = (item_pos / 12) * 12;
+				p_ptr->state.store_top = (item_pos / (hgt - 12)) * (hgt - 12);
 				display_inventory();
 			}
 		}
