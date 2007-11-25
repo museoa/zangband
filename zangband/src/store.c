@@ -961,10 +961,10 @@ static void display_entry(int pos)
 	Term_get_size(&wid, &hgt);
 
 	/* Get the "offset" */
-	i = (pos % 12);
+	i = (pos % (hgt - 12));
 
 	/* Label it, clear the line --(-- */
-	prtf(0, i + 6, "%c) ", I2A(i));
+	prtf(0, i + 6, "%c) ", I2A(i)); 
 
 	/* Show_store_graph perm on. */
 	a = object_attr(o_ptr);
@@ -1027,8 +1027,17 @@ static void display_entry(int pos)
 		/* Extract the "minimum" price */
 		x = price_item(o_ptr, FALSE);
 
-		/* Actually draw the price */
-		put_fstr(wid - 12, i + 6, "%9ld  ", (long)x);
+		/* Follow the money */
+		if (x > p_ptr->au)
+		{
+			/* Too expensive */
+			put_fstr(wid - 12, i + 6, CLR_L_DARK "%9ld  ", (long)x);
+		}
+		else
+		{
+			/* Actually draw the price */
+			put_fstr(wid - 12, i + 6, "%9ld  ", (long)x);
+		}
 	}
 }
 
@@ -1039,12 +1048,33 @@ static void display_entry(int pos)
  */
 static void display_inventory(void)
 {
-	int k;
+	int k, page = 0;
 
 	int stocknum = get_list_length(st_ptr->stock);
 
-	/* Display the next 12 items */
-	for (k = 0; k < 12; k++)
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
+	/* IF there is a resize and the display is not on the first page */
+	if (p_ptr->state.store_top % (hgt - 12))
+	{
+		/* Decreasing screen size */
+		if (p_ptr->state.store_top > hgt - 12) page = p_ptr->state.store_top / (hgt - 12);
+
+		/* Increasing screen size */
+		if (p_ptr->state.store_top < hgt - 12) page = 1 + p_ptr->state.store_top / (hgt - 12);
+
+		/* Correct start of page */
+		p_ptr->state.store_top = page * (hgt - 12);
+	}
+
+	/* If the resize gets all items on one page */
+	if (hgt - 12 == stocknum) p_ptr->state.store_top = 0;
+
+	/* Display the next (hgt - 12) items */
+	for (k = 0; k < hgt - 12; k++)
 	{
 		/* Do not display "dead" items */
 		if (p_ptr->state.store_top + k >= stocknum) break;
@@ -1054,7 +1084,7 @@ static void display_inventory(void)
 	}
 
 	/* Erase the extra lines and the "more" prompt */
-	clear_region(0, k + 6, 18);
+	clear_region(0, k + 6, hgt - 6);
 
 	/*
 	 * Hack hack.  Can't use the hack with toggle_bigtile.  That procedure
@@ -1076,13 +1106,13 @@ static void display_inventory(void)
 	put_fstr(20, 5, "        ");
 
 	/* Visual reminder of "more items" */
-	if (stocknum > 12)
+	if (stocknum > hgt - 12)
 	{
 		/* Show "more" reminder (after the last item) */
 		prtf(3, k + 6, "-more-");
 
 		/* Indicate the "current page" */
-		put_fstr(20, 5, "(Page %d)", p_ptr->state.store_top / 12 + 1);
+		put_fstr(20, 5, "(Page %d)", p_ptr->state.store_top / (hgt - 12) + 1);
 	}
 }
 
@@ -1092,8 +1122,13 @@ static void display_inventory(void)
  */
 static void store_prt_gold(void)
 {
-	prtf(53, 19, "Gold Remaining: ");
-	prtf(68, 19, "%9ld", (long)p_ptr->au);
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
+	prtf(53, hgt - 5, "Gold Remaining: ");
+	prtf(68, hgt - 5, "%9ld", (long)p_ptr->au);
 }
 
 
@@ -1178,33 +1213,33 @@ static void display_store(void)
 	display_inventory();
 	
 	/* Basic commands */
-	prtf(0, 22, " ESC) Exit from Building.");
+	prtf(0, hgt - 2, " ESC) Exit from Building.");
 
 	/* Browse if necessary */
-	if (get_list_length(st_ptr->stock) > 12)
+	if (get_list_length(st_ptr->stock) > hgt - 12)
 	{
-		prtf(0, 23, " SPACE) Next page of stock");
+		prtf(0, hgt - 1, " SPACE) Next page of stock");
 	}
 
 	/* Home commands */
 	if (st_ptr->type == BUILD_STORE_HOME)
 	{
-		prtf(31, 22, " g) Get an item.");
-		prtf(31, 23, " d) Drop an item.");
+		prtf(31, hgt - 2, " g) Get an item.");
+		prtf(31, hgt - 1, " d) Drop an item.");
 	}
 
 	/* Shop commands XXX XXX XXX */
 	else
 	{
-		prtf(31, 22, " p) Purchase an item.");
-		prtf(31, 23, " s) Sell an item.");
+		prtf(31, hgt - 2, " p) Purchase an item.");
+		prtf(31, hgt - 1, " s) Sell an item.");
 	}
 
 	/* Add in the eXamine option */
-	prtf(56, 22, " x) eXamine an item.");
+	prtf(56, hgt - 2, " x) eXamine an item.");
 
 	/* Prompt */
-	prtf(0, 21, "You may: ");
+	prtf(0, hgt - 3, "You may: ");
 
 	/* Refresh */
 	Term_fresh();
@@ -1443,6 +1478,7 @@ static void store_purchase(void)
 {
 	int i, amt;
 	int item, item_new;
+	int max_quant, temp_quant;
 
 	s32b price, best;
 
@@ -1450,6 +1486,11 @@ static void store_purchase(void)
 	object_type *o_ptr;
 
 	char out_val[160];
+
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 	/* Empty? */
 	if (!st_ptr->stock)
@@ -1465,7 +1506,7 @@ static void store_purchase(void)
 	i = (get_list_length(st_ptr->stock) - p_ptr->state.store_top);
 
 	/* And then restrict it to the current page */
-	if (i > 12) i = 12;
+	if (i > hgt - 12) i = hgt - 12;
 
 	/* Prompt */
 	if (st_ptr->type == BUILD_STORE_HOME)
@@ -1520,15 +1561,32 @@ static void store_purchase(void)
 		/* Find out how many the player wants */
 		if (o_ptr->number > 1)
 		{
-			/* Describe the object (fully) */
-			put_fstr(0, 1, "%s %v", "Buying",
-						OBJECT_STORE_FMT(o_ptr, TRUE, 3));
+			/* How many can we afford? */
+			max_quant = p_ptr->au / best;
 
-			/* Get a quantity */
-			amt = get_quantity(NULL, o_ptr->number);
+			/* Whichever is the smallest */
+			max_quant = MIN(o_ptr->number, max_quant);
 
-			/* Allow user abort */
-			if (amt <= 0) return;
+			/* Can we afford at least 1 item? */
+			if (max_quant)
+			{
+				/* Hack in the number */
+				temp_quant = o_ptr->number;
+				o_ptr->number = max_quant;
+
+				/* Describe the object (fully) */
+				put_fstr(0, 1, "%s %v", "Buying up to",
+							OBJECT_STORE_FMT(o_ptr, TRUE, 3));
+
+				/* Hack it back */
+				o_ptr->number = temp_quant;
+
+				/* Get a quantity */
+				amt = get_quantity(NULL, max_quant);
+
+				/* Allow user abort */
+				if (amt <= 0) return;
+			}
 		}
 	}
 
@@ -1678,7 +1736,7 @@ static void store_purchase(void)
 				/* Pick the correct screen */
 				if (p_ptr->state.store_top >= get_list_length(st_ptr->stock))
 				{
-					p_ptr->state.store_top -= 12;
+					p_ptr->state.store_top -= hgt - 12;
 				}
 			}
 			
@@ -2027,6 +2085,10 @@ static void store_examine(void)
 	object_type *o_ptr;
 	char out_val[160];
 
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 	/* Empty? */
 	if (!st_ptr->stock)
@@ -2043,7 +2105,7 @@ static void store_examine(void)
 	i = (get_list_length(st_ptr->stock) - p_ptr->state.store_top);
 
 	/* And then restrict it to the current page */
-	if (i > 12) i = 12;
+	if (i > hgt - 12) i = hgt - 12;
 
 	/* Prompt */
 	strnfmt(out_val, 160, "Which item do you want to examine? ");
@@ -2314,6 +2376,11 @@ static void store_process_command(void)
 {
 	int stocknum = get_list_length(st_ptr->stock);
 
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
 	/* Handle repeating the last command */
 	repeat_check();
 
@@ -2341,13 +2408,13 @@ static void store_process_command(void)
 		case ' ':
 		{
 			/* Browse */
-			if (stocknum <= 12)
+			if (stocknum <= hgt - 12)
 			{
 				msgf("Entire inventory is shown.");
 			}
 			else
 			{
-				p_ptr->state.store_top += 12;
+				p_ptr->state.store_top += hgt - 12;
 				if (p_ptr->state.store_top >= stocknum) p_ptr->state.store_top = 0;
 				display_inventory();
 			}
@@ -2537,9 +2604,10 @@ void do_cmd_store(const field_type *f1_ptr)
 	int maintain_num;
 	int tmp_chr;
 	int i;
+	int wid, hgt;
 
 	object_type *o_ptr;
-	
+
 	/* Disturb */
 	disturb(FALSE);
 
@@ -2639,8 +2707,11 @@ void do_cmd_store(const field_type *f1_ptr)
 		/* Hack -- Check the charisma */
 		tmp_chr = p_ptr->stat[A_CHR].use;
 
+		/* Get size */
+		Term_get_size(&wid, &hgt);
+
 		/* Clear */
-		clear_from(21);
+		clear_from(hgt - 3);
 
 		/* Update store inventory information */
 		if (st_ptr->type == BUILD_STORE_HOME)
@@ -2711,35 +2782,34 @@ void do_cmd_store(const field_type *f1_ptr)
 		/* Reset tester hook */
 		item_tester_hook = NULL;
 
-
 		/* Basic commands */
-		prtf(0, 22, " ESC) Exit from Building.");
+		prtf(0, hgt - 2, " ESC) Exit from Building.");
 
 		/* Browse if necessary */
-		if (get_list_length(st_ptr->stock) > 12)
+		if (get_list_length(st_ptr->stock) > hgt - 12)
 		{
-			prtf(0, 23, " SPACE) Next page of stock");
+			prtf(0, hgt - 1, " SPACE) Next page of stock");
 		}
 
 		/* Home commands */
 		if (st_ptr->type == BUILD_STORE_HOME)
 		{
-			prtf(31, 22, " g) Get an item.");
-			prtf(31, 23, " d) Drop an item.");
+			prtf(31, hgt - 2, " g) Get an item.");
+			prtf(31, hgt - 1, " d) Drop an item.");
 		}
 
 		/* Shop commands XXX XXX XXX */
 		else
 		{
-			prtf(31, 22, " p) Purchase an item.");
-			prtf(31, 23, " s) Sell an item.");
+			prtf(31, hgt - 2, " p) Purchase an item.");
+			prtf(31, hgt - 1, " s) Sell an item.");
 		}
 
 		/* Add in the eXamine option */
-		prtf(56, 22, " x) eXamine an item.");
+		prtf(56, hgt - 2, " x) eXamine an item.");
 
 		/* Prompt */
-		prtf(0, 21, "You may: ");
+		prtf(0, hgt - 3, "You may: ");
 
 		/* Get a command */
 		request_command(TRUE);
