@@ -355,6 +355,10 @@ static bool borg_think(void)
 
 	static char svSavefile[1024];
 	static bool justSaved = FALSE;
+	int wid, hgt;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
 
 
 	/*** Process inventory/equipment ***/
@@ -444,8 +448,8 @@ static bool borg_think(void)
 	/*** Handle stores ***/
 
 	/* Hack -- Check for being in a store */
-	if (borg_term_text_comp(53, 19, "Gold Remaining") ||
-		borg_term_text_comp(40, 23, "Gold Remaining"))
+	if (borg_term_text_comp(53, hgt - 5, "Gold Remaining") ||
+		borg_term_text_comp(40, 23, "Gold Remaining:"))
 	{
 		/* Hack -- allow user abort */
 		if (borg_cancel) return (TRUE);

@@ -264,9 +264,14 @@ static void borg_think_shop_buy(int item)
 {
 	list_item *l_ptr = &cur_list[item];
 
+	int hgt, wid;
+
+	/* Get size */
+	Term_get_size(&wid, &hgt);
+
 	/* Is the borg on page 1 but wants to be one page 2? */
-	if ((borg_term_text_comp(26, 5, "1") && item >= STORE_INVEN_MAX / 2) ||
-		(borg_term_text_comp(26, 5, "2") && item <  STORE_INVEN_MAX / 2))
+	if ((borg_term_text_comp(26, 5, "1") && item >= hgt - 12) ||
+		(borg_term_text_comp(26, 5, "2") && item <  hgt - 12))
 	{
 		/* Goto the other page */
 		borg_keypress(' ');
@@ -283,7 +288,7 @@ static void borg_think_shop_buy(int item)
 	borg_keypress('p');
 
 	/* Buy the desired item */
-	borg_keypress(I2A(item % (STORE_INVEN_MAX / 2)));
+	borg_keypress(I2A(item % (hgt - 12)));
 
 	/* Increment 'use' count */
 	borg_shops[shop_num].u_count++;
