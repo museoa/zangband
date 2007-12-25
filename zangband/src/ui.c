@@ -426,7 +426,7 @@ static int show_menu(int num, menu_type *options, int select, bool scroll,
 	/*
 	 * Display 'special' information
 	 */
-	if (disp) offset = disp(num);
+	if (disp != NULL) offset = disp(num);
 
 	/* Border on top of menu */
 	clear_row(1);
