@@ -259,45 +259,53 @@ static u16b find_good_dungeon(int level, bool repeat)
 }
 
 /*
- * Look for an appropriate town with a distance appropriate
- * for the given level.
+ * Look for the closest town that wasn't targetted with message quest yet
  */
-static u16b find_good_town(int *dist)
+static u16b find_good_town(int *best_dist)
 {
-	int i;
-	
-	int score, best_score = 0;
-	
+	int i, j;
+	int dist;
 	int best_place = 0;
 	
 	place_type *pl_ptr;
+
+	*best_dist = 999;
 	
 	for (i = 0; i < place_count; i++)
 	{
 		/* Not current town */
 		if (i == p_ptr->place_num) continue;
 	
+		/* Get the place */
 		pl_ptr = &place[i];
 		
 		/* Want towns with buildings */
 		if (!pl_ptr->numstores) continue;
-		
-		/* Get difference of distance in wilderness blocks and difficulty level */
-		score = abs(distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16) - *dist);
-		
-		/* The bigger the difference, the less likely a high score is */
-		score = randint1(WILD_SIZE - score); 
-	
-		if (score > best_score)
+
+		/* Check if there has been a quest for this town already */
+		for (j = 0; j < q_max; j++)
 		{
-			best_score = score;
+			/* Was there a message quest before? */
+			if (quest[j].type != QUEST_TYPE_MESSAGE) continue;
+
+			/* Town already used? */
+			if (quest[j].data.msg.place == i) break;
+		}
+		
+		/* This town was already targetted by a message quest */
+		if (j != q_max) continue;
+
+		/* Find the distance to this town */
+		dist = distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16);
+
+		/* Closer than before? */
+		if (dist < *best_dist)
+		{
+			/* Remember best town */
+			*best_dist = dist;
 			best_place = i;
 		}
 	}
-	
-	/* Save distance to best town */
-	pl_ptr = &place[best_place];
-	*dist = distance(pl_ptr->x, pl_ptr->y, p_ptr->px / 16, p_ptr->py / 16);
 	
 	/* Best match to reward level */
 	return (best_place);
@@ -1748,18 +1756,25 @@ static bool request_bounty(int dummy)
 }
 
 
-static quest_type *insert_message_quest(int dist)
+static quest_type *insert_message_quest()
 {
 	place_type *pl_ptr;
 	
 	quest_type *q_ptr;
 	store_type *st_ptr;
 
-	int store;
+	int store, dist;
+	int q_num;
 	u16b place_num;
 
+	/* Find a town that did not get a message quest before */
+	place_num = find_good_town(&dist);
+
+	/* All towns have been targetted */
+	if (!place_num) return (NULL);
+	
 	/* Get a new quest */
-	int q_num = q_pop();
+	q_num = q_pop();
 		
 	/* Paranoia */
 	if (!q_num) return (NULL);
@@ -1778,12 +1793,9 @@ static quest_type *insert_message_quest(int dist)
 	/* Finished when the player finds it */
 	q_ptr->x_type = QX_FIND_SHOP;
 	
-	/* Find a town that is roughly dist wilderness blocks away */
-	place_num = find_good_town(&dist);
-	
 	/* Get the place */
 	pl_ptr = &place[place_num];
-
+	
 	/* Find a store at that town */
 	do
 	{
@@ -1826,11 +1838,11 @@ static bool request_message(int dummy)
 	 * Generate a quest to send a message to a town
 	 * roughly 20 to 50 wilderness squares away.
 	 */
-	q_ptr = insert_message_quest(curr_scale * 2);
+	q_ptr = insert_message_quest();
 
 	if (!q_ptr)
 	{
-		msgf("Sorry, I don't need any to send any messages today.");
+		msgf("Sorry, I don't need to send messages anymore.");
 	
 		message_flush();
 	
