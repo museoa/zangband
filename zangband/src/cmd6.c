@@ -774,7 +774,7 @@ void do_cmd_aim_wand(void)
  */
 static void do_cmd_zap_rod_aux(object_type *o_ptr)
 {
-	int chance, dir, lev;
+	int chance, dir = 5, lev;
 	bool ident;
 
 	/* Hack -- let perception get aborted */
