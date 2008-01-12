@@ -2769,6 +2769,10 @@ static void rd_quests(int max_quests)
 				rd_u16b(&q_ptr->data.bnt.r_idx);
 				rd_u16b(&q_ptr->data.bnt.cur_num);
 				rd_u16b(&q_ptr->data.bnt.max_num);
+
+				/* toggle QUESTOR flag */
+				SET_FLAG(&r_info[q_ptr->data.dun.r_idx], RF_QUESTOR);
+				
 				break;
 			}
 
