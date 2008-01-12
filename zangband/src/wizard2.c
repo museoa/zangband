@@ -518,6 +518,9 @@ static void learn_map(void)
 			wild[j][i].done.info |= WILD_INFO_SEEN;
 		}
 	}
+
+	/* Discover all the quests too */
+	do_quest_wiz(0);
 }
 
 
@@ -1308,11 +1311,14 @@ static void do_cmd_wiz_jump(void)
 	{
 		char tmp_val[160];
 
+		tmp_val[0] = '0';
+		tmp_val[1] = '\0';
+
 		/* Does this dungeon start right at the surface */
 		if (min_depth == 1)
 		{
 			/* Ask for a level */
-			if (!get_string(tmp_val, 11, "Jump to level (0-%d): ",
+			if (!get_string(tmp_val, 4, "Jump to level (0-%d): ",
 							max_depth)) return;
 		}
 		/* Ignore the depths between the surface and the start */
@@ -1495,6 +1501,20 @@ static void do_cmd_wiz_zap_all(void)
 
 	/* Update some things */
 	p_ptr->update |= (PU_MON_LITE);
+}
+
+static void do_cmd_wiz_quest(int q_nr)
+{
+	if (q_nr)
+	{
+		/* Finish quest */
+		do_quest_wiz(q_nr);
+	}
+	else
+	{
+		/* Show all the quest and status */
+		do_cmd_knowledge_quests(TRUE);
+	}
 }
 
 
@@ -1754,6 +1774,13 @@ void do_cmd_debug(void)
 		{
 			/* Polymorph self */
 			do_poly_self();
+			break;
+		}
+
+		case 'q':
+		{
+			/* Finish quest */
+			do_cmd_wiz_quest(p_ptr->cmd.arg);
 			break;
 		}
 

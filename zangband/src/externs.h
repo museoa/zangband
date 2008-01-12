@@ -1152,7 +1152,8 @@ extern void trigger_quest_complete(byte x_type, vptr data);
 extern quest_type *lookup_quest_building(const store_type *b_ptr);
 extern void reward_quest(quest_type *q_ptr);
 extern void request_quest(const store_type *b_ptr, int scale);
-extern bool do_cmd_knowledge_quests(int dummy);
+extern bool do_cmd_knowledge_quests(int wizard);
+extern void do_quest_wiz(int q_nr);
 
 /* maid-grf.c */
 extern void init_term_callbacks(void);

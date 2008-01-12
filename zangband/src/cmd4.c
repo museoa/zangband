@@ -4278,7 +4278,7 @@ void do_cmd_checkquest(void)
 	FILE_TYPE(FILE_TYPE_TEXT);
 
 	/* Quest info */
-	(void) do_cmd_knowledge_quests(0);
+	(void) do_cmd_knowledge_quests(FALSE);
 }
 
 
